@@ -16,6 +16,7 @@ from uuid import uuid4
 from usdm3.base.api_instance import APIInstance
 from usdm4.base.globals import Globals
 
+
 class Wrapper(ApiBaseModel):
     study: Study
     usdmVersion: str

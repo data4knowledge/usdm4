@@ -5,6 +5,7 @@ def test_globals():
     globals = Globals()
     assert globals is not None
 
+
 def test_globals_clear():
     globals = Globals()
     globals.clear()

@@ -1,10 +1,9 @@
 from typing import List, Literal, Union
 from .api_base_model import ApiBaseModelWithId
-from .identifier import *
-from .study_definition_document_version import *
-from .alias_code import *
-from .code import Code as genericCode
-from .study_design import *
+from .identifier import StudyIdentifier, ReferenceIdentifier
+from .alias_code import AliasCode
+from .code import Code
+from .study_design import StudyDesign
 from .governance_date import GovernanceDate
 from .study_amendment import StudyAmendment
 from .study_title import StudyTitle
@@ -20,7 +19,7 @@ from .administrable_product import AdministrableProduct
 class StudyVersion(ApiBaseModelWithId):
     versionIdentifier: str
     rationale: str
-    studyType: Union[genericCode, None] = None
+    studyType: Union[Code, None] = None
     studyPhase: Union[AliasCode, None] = None
     documentVersionIds: List[str] = []
     dateValues: List[GovernanceDate] = []
