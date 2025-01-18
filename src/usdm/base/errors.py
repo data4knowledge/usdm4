@@ -13,6 +13,7 @@ class Errors:
         self.errors = SelErrors()
 
     def exception(self, message: str, e: Exception, location: SelErrorLocation):
+        print(f"Exception: {e}")
         message = f"Exception '{e}' raised. {message}"
         self.errors.add(message, location, self.errors.ERROR)
         message = f"Tracsback for the previous error:\n\n{traceback.format_exc()}"

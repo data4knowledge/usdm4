@@ -1,5 +1,9 @@
+from d4k_sel.error_location import KlassMethodLocation
+from usdm.base.globals import Globals
+
+
 class APIInstance:
-    def __init__(self, globals):
+    def __init__(self, globals: Globals):
         self._globals = globals
 
     def create(self, klass, params):
@@ -13,5 +17,8 @@ class APIInstance:
             params["instanceType"] = klass_name
             return klass(**params)
         except Exception as e:
-            self._globals.errors.exception(e)
+            loc = KlassMethodLocation("APIInstance", "create")
+            self._globals.errors.exception(
+                f"Error creating {klass} API instance", e, loc
+            )
             return None

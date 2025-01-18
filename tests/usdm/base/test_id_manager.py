@@ -1,5 +1,5 @@
 from usdm.base.id_manager import IdManager
-from usdm.api.v3.address import Address
+from usdm.api.address import Address
 
 
 def test_init():
