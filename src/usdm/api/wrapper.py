@@ -10,11 +10,10 @@ from usdm.api.identifier import StudyIdentifier
 from usdm.api.organization import Organization
 from usdm.api.governance_date import GovernanceDate
 from usdm.api.geographic_scope import GeographicScope
-from usdm.base.globals import Globals
-from usdm.base.api_instance import APIInstance
 from usdm import __model_version__, __package_name__, __package_version__
 from uuid import uuid4
-
+from usdm3.base.globals.globals import Globals
+from usdm3.base.api_instance import APIInstance
 
 class Wrapper(ApiBaseModel):
     study: Study
