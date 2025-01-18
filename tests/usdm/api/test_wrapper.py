@@ -1,5 +1,5 @@
 import json
-from usdm.api.wrapper import Wrapper
+from usdm4.api.wrapper import Wrapper
 
 def test_init():
     instance = Wrapper.minimum("Test Study", "SPONSOR-1234", "1.0.0")
