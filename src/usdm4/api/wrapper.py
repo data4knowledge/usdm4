@@ -12,8 +12,9 @@ from usdm4.api.governance_date import GovernanceDate
 from usdm4.api.geographic_scope import GeographicScope
 from usdm4 import __model_version__, __package_name__, __package_version__
 from uuid import uuid4
-from usdm3.base.globals.globals import Globals
+
 from usdm3.base.api_instance import APIInstance
+from usdm4.base.globals import Globals
 
 class Wrapper(ApiBaseModel):
     study: Study
