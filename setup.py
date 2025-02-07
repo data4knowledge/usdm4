@@ -15,7 +15,7 @@ setuptools.setup(
     description="A python package for using the CDISC TransCelerate USDM",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    install_requires=["pandas", "openpyxl", "pydantic", "beautifulsoup4", "pyyaml"],
+    install_requires=["pandas", "openpyxl", "pydantic", "beautifulsoup4", "pyyaml", "usdm3", "simple_error_log"],
     packages=setuptools.find_packages(where="src"),
     package_dir={"": "src"},
     package_data={"usdm_excel": ["data/*.yaml", "data/*.json"]},
