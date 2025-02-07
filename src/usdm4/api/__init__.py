@@ -121,5 +121,5 @@ __all__ = [
     "Wrapper",
     "PopulationDefinition",
     "Quantity",
-    "StudyIntervention"
+    "StudyIntervention",
 ]
