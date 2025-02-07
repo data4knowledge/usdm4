@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00041(RuleTemplate):
+class RuleDDF00041(RuleTemplate):
     """
     DDF00041: Within a study design, there must be at least one endpoint with level primary.
 

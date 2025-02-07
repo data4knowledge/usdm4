@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00087(RuleTemplate):
+class RuleDDF00087(RuleTemplate):
     """
     DDF00087: Encounter ordering using previous and next attributes is expected to be consistent with the order of corresponding scheduled activity instances according to their specified default conditions.
 

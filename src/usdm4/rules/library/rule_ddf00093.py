@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00093(RuleTemplate):
+class RuleDDF00093(RuleTemplate):
     """
     DDF00093: Date values associated to a study version must be unique regarding the combination of type and geographic scopes of the date.
 

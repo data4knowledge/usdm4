@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00155(RuleTemplate):
+class RuleDDF00155(RuleTemplate):
     """
     DDF00155: For CDISC codelist references (where the code system is 'http://www.cdisc.org'), the code system version must be a valid CDISC terminology release date in ISO 8601 date format.
 

@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00035(RuleTemplate):
+class RuleDDF00035(RuleTemplate):
     """
     DDF00035: Within a code system and corresponding version, a one-to-one relationship between code and decode is expected.
 

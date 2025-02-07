@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00068(RuleTemplate):
+class RuleDDF00068(RuleTemplate):
     """
     DDF00068: Each StudyArm must have one StudyCell for each StudyEpoch.
 

@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00032(RuleTemplate):
+class RuleDDF00032(RuleTemplate):
     """
     DDF00032: Within a study version, if more than 1 business therapeutic area is defined then they must be distinct.
 

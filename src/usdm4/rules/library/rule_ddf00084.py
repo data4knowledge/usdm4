@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00084(RuleTemplate):
+class RuleDDF00084(RuleTemplate):
     """
     DDF00084: Within a study design there must be exactly one objective with level 'Primary Objective'.
 

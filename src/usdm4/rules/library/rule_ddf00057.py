@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00057(RuleTemplate):
+class RuleDDF00057(RuleTemplate):
     """
     DDF00057: Within a study design, if more trial intent types are defined, they must be distinct.
 

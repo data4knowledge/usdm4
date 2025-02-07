@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00089(RuleTemplate):
+class RuleDDF00089(RuleTemplate):
     """
     DDF00089: Any parameter name referenced in a tag in the text should be specified in the data dictionary parameter maps.
 

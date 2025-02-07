@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00066(RuleTemplate):
+class RuleDDF00066(RuleTemplate):
     """
     DDF00066: A scheduled decision instance is expected to refer to a default condition.
 

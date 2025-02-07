@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00050(RuleTemplate):
+class RuleDDF00050(RuleTemplate):
     """
     DDF00050: A study arm must only reference study populations or cohorts that are defined within the same study design as the study arm.
 

@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00043(RuleTemplate):
+class RuleDDF00043(RuleTemplate):
     """
     DDF00043: A unit must not be specified for a planned enrollment number or a planned completion number.
 

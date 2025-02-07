@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00058(RuleTemplate):
+class RuleDDF00058(RuleTemplate):
     """
     DDF00058: Within an indication, if more indication codes are defined, they must be distinct.
 

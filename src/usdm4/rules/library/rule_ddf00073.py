@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00073(RuleTemplate):
+class RuleDDF00073(RuleTemplate):
     """
     DDF00073: Only one version of any code system is expected to be used within a study version.
 

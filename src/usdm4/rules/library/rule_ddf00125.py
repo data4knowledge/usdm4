@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00125(RuleTemplate):
+class RuleDDF00125(RuleTemplate):
     """
     DDF00125: Attributes must be included as defined in the USDM schema based on the API specification (i.e., all required properties are present and no additional attributes are present).
 

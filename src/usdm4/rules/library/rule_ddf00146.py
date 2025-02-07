@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00146(RuleTemplate):
+class RuleDDF00146(RuleTemplate):
     """
     DDF00146: A study title type must be specified using the study title type (C207419) DDF codelist.
 

@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00022(RuleTemplate):
+class RuleDDF00022(RuleTemplate):
     """
     DDF00022: An instance of a class must not refer to itself as its next instance.
 

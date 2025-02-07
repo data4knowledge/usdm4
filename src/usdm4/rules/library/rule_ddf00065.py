@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00065(RuleTemplate):
+class RuleDDF00065(RuleTemplate):
     """
     DDF00065: A scheduled decision instance is not expected to have a sub-timeline.
 

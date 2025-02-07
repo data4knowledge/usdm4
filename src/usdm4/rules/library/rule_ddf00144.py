@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00144(RuleTemplate):
+class RuleDDF00144(RuleTemplate):
     """
     DDF00144: A study geographic scope type must be specified using the geographic scope type (C207412) DDF codelist.
 

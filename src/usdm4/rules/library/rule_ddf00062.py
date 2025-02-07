@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00062(RuleTemplate):
+class RuleDDF00062(RuleTemplate):
     """
     DDF00062: When specified, the upper limit of a timing window must be a non-negative duration in ISO 8601 format.
 

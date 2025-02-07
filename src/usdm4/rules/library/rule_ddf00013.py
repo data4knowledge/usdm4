@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00013(RuleTemplate):
+class RuleDDF00013(RuleTemplate):
     """
     DDF00013: If a biomedical concept property is required then it must also be enabled, while if it is not enabled then it must not be required.
 

@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00143(RuleTemplate):
+class RuleDDF00143(RuleTemplate):
     """
     DDF00143: A study amendment reason must be coded using the study amendment reason (C207415) DDF codelist.
 

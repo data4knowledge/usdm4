@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00037(RuleTemplate):
+class RuleDDF00037(RuleTemplate):
     """
     DDF00037: At least one scheduled activity instance within a timeline must point to a timeline exit.
 

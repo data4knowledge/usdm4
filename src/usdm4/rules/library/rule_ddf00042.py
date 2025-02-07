@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00042(RuleTemplate):
+class RuleDDF00042(RuleTemplate):
     """
     DDF00042: The range specified for a planned age is not expected to be approximate.
 

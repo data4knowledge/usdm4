@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00151(RuleTemplate):
+class RuleDDF00151(RuleTemplate):
     """
     DDF00151: If geographic scope type is global then there must be only one geographic scope specified.
 

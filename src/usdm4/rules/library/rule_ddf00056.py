@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00056(RuleTemplate):
+class RuleDDF00056(RuleTemplate):
     """
     DDF00056: Within a study design, if more therapeutic areas are defined, they must be distinct.
 

@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00017(RuleTemplate):
+class RuleDDF00017(RuleTemplate):
     """
     DDF00017: Within subject enrollment, the quantity must be a number or a percentage (i.e. the unit must be empty or %).
 

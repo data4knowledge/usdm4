@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00040(RuleTemplate):
+class RuleDDF00040(RuleTemplate):
     """
     DDF00040: Each study element must be referenced by at least one study cell.
 

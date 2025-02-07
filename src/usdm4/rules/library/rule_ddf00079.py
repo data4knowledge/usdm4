@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00079(RuleTemplate):
+class RuleDDF00079(RuleTemplate):
     """
     DDF00079: If a synonym is specified then it is not expected to be equal to the name of the biomedical concept (case insensitive).
 

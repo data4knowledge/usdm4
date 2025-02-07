@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00072(RuleTemplate):
+class RuleDDF00072(RuleTemplate):
     """
     DDF00072: A study cell must only reference an epoch that is defined within the same study design as the study cell.
 

@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00012(RuleTemplate):
+class RuleDDF00012(RuleTemplate):
     """
     DDF00012: Within a study design, there must be exactly one scheduled timeline which identifies as the main Timeline.
 

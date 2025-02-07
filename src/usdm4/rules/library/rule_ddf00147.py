@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00147(RuleTemplate):
+class RuleDDF00147(RuleTemplate):
     """
     DDF00147: An objective level must be specified using the objective level (C188725) DDF codelist.
 

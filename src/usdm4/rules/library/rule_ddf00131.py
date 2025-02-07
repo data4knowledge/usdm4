@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00131(RuleTemplate):
+class RuleDDF00131(RuleTemplate):
     """
     DDF00131: Referenced items in the narrative content must be available elsewhere in the data model.
 

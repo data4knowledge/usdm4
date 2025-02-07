@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00063(RuleTemplate):
+class RuleDDF00063(RuleTemplate):
     """
     DDF00063: A standard code alias is not expected to be equal to the standard code (e.g. no equal code or decode for the same coding system version is expected).
 

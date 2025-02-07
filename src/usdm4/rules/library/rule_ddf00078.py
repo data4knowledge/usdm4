@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00078(RuleTemplate):
+class RuleDDF00078(RuleTemplate):
     """
     DDF00078: If a transition start rule is defined then an end rule is expected and vice versa.
 

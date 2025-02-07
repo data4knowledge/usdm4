@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00117(RuleTemplate):
+class RuleDDF00117(RuleTemplate):
     """
     DDF00117: A study protocol document version's protocol status must be specified using the Protocol Status Value Set Terminology (C188723) DDF codelist.
 

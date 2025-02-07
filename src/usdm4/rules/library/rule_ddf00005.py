@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00005(RuleTemplate):
+class RuleDDF00005(RuleTemplate):
     """
     DDF00005: Every study version must have exactly one study identifier with an identifier scope that references a clinical study sponsor organization.
 

@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00029(RuleTemplate):
+class RuleDDF00029(RuleTemplate):
     """
     DDF00029: An encounter must only reference encounters that are specified within the same study design.
 

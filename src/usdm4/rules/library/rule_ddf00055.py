@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00055(RuleTemplate):
+class RuleDDF00055(RuleTemplate):
     """
     DDF00055: Within a study design, if more trial types are defined, they must be distinct.
 

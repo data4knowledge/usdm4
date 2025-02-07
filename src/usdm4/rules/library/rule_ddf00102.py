@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00102(RuleTemplate):
+class RuleDDF00102(RuleTemplate):
     """
     DDF00102: A scheduled activity instance must only reference a timeline exit that is defined within the same schedule timeline as the scheduled activity instance.
 

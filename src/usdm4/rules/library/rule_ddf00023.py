@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00023(RuleTemplate):
+class RuleDDF00023(RuleTemplate):
     """
     DDF00023: To ensure consistent ordering, when both previous and next attributes are available within an entity the previous id value must match the next id value of the referred instance.
 

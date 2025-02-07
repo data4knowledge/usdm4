@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00109(RuleTemplate):
+class RuleDDF00109(RuleTemplate):
     """
     DDF00109: A study element must only reference study interventions that are defined within the same study design as the study element.
 

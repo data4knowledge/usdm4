@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00070(RuleTemplate):
+class RuleDDF00070(RuleTemplate):
     """
     DDF00070: The minimum value of a range must be less than or equal to the maximum value of the range.
 

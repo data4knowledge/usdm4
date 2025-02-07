@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00097(RuleTemplate):
+class RuleDDF00097(RuleTemplate):
     """
     DDF00097: Within a study design, the planned age range must be specified either in the study population or in all cohorts.
 

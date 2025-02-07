@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00003(RuleTemplate):
+class RuleDDF00003(RuleTemplate):
     """
     DDF00003: If the duration of an administration will vary, a quantity is not expected for the administration duration and vice versa.
 

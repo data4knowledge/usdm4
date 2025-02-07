@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00014(RuleTemplate):
+class RuleDDF00014(RuleTemplate):
     """
     DDF00014: A biomedical concept category is expected to have at least a member or a child.
 

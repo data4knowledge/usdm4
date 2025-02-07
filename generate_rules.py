@@ -22,16 +22,16 @@ class RuleGenerator:
 
     def _create_class_name(self, rule_id: str) -> str:
         """Generate a class name from the rule ID"""
-        # Remove 'DDF' prefix and convert to CamelCase
-        name = rule_id.replace("DDF", "")
-        return f"Rule{name}"
+        return f"Rule{rule_id}"
 
     def generate_rule_file(self, rule: dict) -> None:
         """Generate a single rule file from a rule dictionary"""
         rule_id = rule.get("Final CORE Rule ID")
         if not rule_id:
-            return
-
+            rule_id = rule.get("Check_ID")
+            save = True
+        else:
+            save = False
         # Create file path
         file_path = self.output_dir / f"rule_{rule_id.lower()}.py"
 
@@ -70,8 +70,9 @@ class {self._create_class_name(rule_id)}(RuleTemplate):
 '''
 
         # Write the file
-        with open(file_path, "w") as f:
-            f.write(content)
+        if save:
+            with open(file_path, "w") as f:
+                f.write(content)
 
     def generate_all_rules(self):
         """Generate all rule files from the JSON specification"""

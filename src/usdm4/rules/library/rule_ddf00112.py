@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00112(RuleTemplate):
+class RuleDDF00112(RuleTemplate):
     """
     DDF00112: A study intervention's role must be specified using the study intervention role (C207417) DDF codelist.
 

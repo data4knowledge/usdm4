@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00080(RuleTemplate):
+class RuleDDF00080(RuleTemplate):
     """
     DDF00080: All scheduled activity instances are expected to refer to an epoch.
 

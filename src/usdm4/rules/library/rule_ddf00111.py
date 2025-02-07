@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00111(RuleTemplate):
+class RuleDDF00111(RuleTemplate):
     """
     DDF00111: The unit of a planned age is expected to be specified using terms from the Age Unit (C66781) SDTM codelist.
 

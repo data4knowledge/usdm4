@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00098(RuleTemplate):
+class RuleDDF00098(RuleTemplate):
     """
     DDF00098: Within a study design, the planned sex must be specified either in the study population or in all cohorts.
 

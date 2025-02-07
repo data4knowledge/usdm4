@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00036(RuleTemplate):
+class RuleDDF00036(RuleTemplate):
     """
     DDF00036: If timing type is \"Fixed Reference\" then the corresponding attribute relativeToFrom must be filled with \"Start to Start\".
 

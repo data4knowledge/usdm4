@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00138(RuleTemplate):
+class RuleDDF00138(RuleTemplate):
     """
     DDF00138: Every identifier must be unique within the scope of an identified organization.
 

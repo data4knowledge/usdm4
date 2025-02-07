@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00100(RuleTemplate):
+class RuleDDF00100(RuleTemplate):
     """
     DDF00100: Within a study version, there must be no more than one title of each type.
 

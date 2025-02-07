@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00114(RuleTemplate):
+class RuleDDF00114(RuleTemplate):
     """
     DDF00114: If specified, the context of a condition must point to a valid instance in the activity or scheduled activity instance class.
 

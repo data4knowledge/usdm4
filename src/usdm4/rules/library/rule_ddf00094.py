@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00094(RuleTemplate):
+class RuleDDF00094(RuleTemplate):
     """
     DDF00094: Within a study version, if a date of a specific type exists with a global geographic scope then no other dates are expected with the same type.
 

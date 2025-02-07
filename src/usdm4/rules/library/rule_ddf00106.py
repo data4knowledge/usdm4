@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00106(RuleTemplate):
+class RuleDDF00106(RuleTemplate):
     """
     DDF00106: A scheduled activity instance must only reference an encounter that is defined within the same study design as the scheduled activity instance.
 

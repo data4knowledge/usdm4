@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00028(RuleTemplate):
+class RuleDDF00028(RuleTemplate):
     """
     DDF00028: An activity must only reference activities that are specified within the same study design.
 

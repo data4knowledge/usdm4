@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00141(RuleTemplate):
+class RuleDDF00141(RuleTemplate):
     """
     DDF00141: A planned sex must be specified using the Sex of Participants (C66732) SDTM codelist.
 

@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00071(RuleTemplate):
+class RuleDDF00071(RuleTemplate):
     """
     DDF00071: A study cell must only reference an arm that is defined within the same study design as the study cell.
 

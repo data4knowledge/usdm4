@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00064(RuleTemplate):
+class RuleDDF00064(RuleTemplate):
     """
     DDF00064: A scheduled decision instance is not expected to refer to a timeline exit.
 

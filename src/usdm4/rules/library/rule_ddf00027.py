@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00027(RuleTemplate):
+class RuleDDF00027(RuleTemplate):
     """
     DDF00027: To ensure consistent ordering, the same instance must not be referenced more than once as previous or next.
 

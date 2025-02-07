@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00020(RuleTemplate):
+class RuleDDF00020(RuleTemplate):
     """
     DDF00020: If the reason for a study amendment is 'Other' then this must be specified (attribute reasonOther must be completed)
 

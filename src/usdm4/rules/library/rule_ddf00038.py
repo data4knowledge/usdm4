@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00038(RuleTemplate):
+class RuleDDF00038(RuleTemplate):
     """
     DDF00038: When included in text, references to items specified in the dictionary must be specified in the correct format. They must start with <usdm:tag, end with either '/>'', and must contain name=\"parametername\" (where \"parametername\"  contain only letters, numbers or underscores).
 

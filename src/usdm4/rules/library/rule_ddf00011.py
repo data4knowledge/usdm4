@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00011(RuleTemplate):
+class RuleDDF00011(RuleTemplate):
     """
     DDF00011: Anchor timings (e.g. type is \"Fixed Reference\") must be related to a scheduled activity instance via a relativeFromScheduledInstance relationship.
 

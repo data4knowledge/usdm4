@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00060(RuleTemplate):
+class RuleDDF00060(RuleTemplate):
     """
     DDF00060: The value for each timing must be a non-negative duration specified in ISO 8601 format.
 

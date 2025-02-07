@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00123(RuleTemplate):
+class RuleDDF00123(RuleTemplate):
     """
     DDF00123: A masking role must be specified according to the extensible masking role (C207414) DDF codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist).
 

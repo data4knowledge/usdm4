@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00092(RuleTemplate):
+class RuleDDF00092(RuleTemplate):
     """
     DDF00092: Date values associated to a study protocol document version must be unique regarding the combination of type and geographic scopes of the date.
 

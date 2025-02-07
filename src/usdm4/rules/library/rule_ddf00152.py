@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00152(RuleTemplate):
+class RuleDDF00152(RuleTemplate):
     """
     DDF00152: An activity must only reference timelines that are specified within the same study design.
 

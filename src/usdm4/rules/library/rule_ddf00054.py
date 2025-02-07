@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00054(RuleTemplate):
+class RuleDDF00054(RuleTemplate):
     """
     DDF00054: Within an encounter there must be no duplicate contact modes.
 

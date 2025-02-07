@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00010(RuleTemplate):
+class RuleDDF00010(RuleTemplate):
     """
     DDF00010: The names of all child instances of the same parent class must be unique.
 

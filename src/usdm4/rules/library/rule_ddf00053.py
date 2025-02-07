@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00053(RuleTemplate):
+class RuleDDF00053(RuleTemplate):
     """
     DDF00053: Within an encounter there must be no duplicate environmental settings.
 

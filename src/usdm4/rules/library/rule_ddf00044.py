@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00044(RuleTemplate):
+class RuleDDF00044(RuleTemplate):
     """
     DDF00044: The target for a condition must not be equal to its parent.
 

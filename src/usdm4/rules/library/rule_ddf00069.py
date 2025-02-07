@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00069(RuleTemplate):
+class RuleDDF00069(RuleTemplate):
     """
     DDF00069: Each combination of arm and epoch must occur no more than once within a study design.
 

@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00148(RuleTemplate):
+class RuleDDF00148(RuleTemplate):
     """
     DDF00148: An endpoint level must be specified using the endpoint level (C188726) DDF codelist.
 

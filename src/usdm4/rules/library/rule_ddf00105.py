@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00105(RuleTemplate):
+class RuleDDF00105(RuleTemplate):
     """
     DDF00105: A scheduled activity/decision instance must only reference an epoch that is defined within the same study design as the scheduled activity/decision instance.
 

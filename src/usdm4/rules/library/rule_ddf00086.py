@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00086(RuleTemplate):
+class RuleDDF00086(RuleTemplate):
     """
     DDF00086: Syntax template text is expected to be HTML formatted.
 

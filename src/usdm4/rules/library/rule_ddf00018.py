@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00018(RuleTemplate):
+class RuleDDF00018(RuleTemplate):
     """
     DDF00018: An instance of a class must not reference itself as one of its own children.
 

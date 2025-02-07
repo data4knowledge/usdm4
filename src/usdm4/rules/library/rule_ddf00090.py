@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00090(RuleTemplate):
+class RuleDDF00090(RuleTemplate):
     """
     DDF00090: The same Biomedical Concept Category must not be referenced more than once from the same activity.
 

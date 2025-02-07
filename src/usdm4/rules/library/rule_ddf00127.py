@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00127(RuleTemplate):
+class RuleDDF00127(RuleTemplate):
     """
     DDF00127: An encounter must only be scheduled at a timing that is defined within the same study design as the encounter.
 

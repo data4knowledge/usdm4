@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00115(RuleTemplate):
+class RuleDDF00115(RuleTemplate):
     """
     DDF00115: Every study version must have a title of type \"Official Study Title\".
 

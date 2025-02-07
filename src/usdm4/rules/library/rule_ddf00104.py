@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00104(RuleTemplate):
+class RuleDDF00104(RuleTemplate):
     """
     DDF00104: A timing's relative to/from property must be specified using the Timing Relative To From Value Set Terminology (C201265) SDTM codelist.
 

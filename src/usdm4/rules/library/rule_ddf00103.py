@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00103(RuleTemplate):
+class RuleDDF00103(RuleTemplate):
     """
     DDF00103: Within a document version, the specified section numbers for narrative content must be unique.
 

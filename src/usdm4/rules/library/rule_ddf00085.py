@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00085(RuleTemplate):
+class RuleDDF00085(RuleTemplate):
     """
     DDF00085: Narrative content text is expected to be HTML formatted.
 

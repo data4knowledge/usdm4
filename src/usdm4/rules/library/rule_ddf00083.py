@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00083(RuleTemplate):
+class RuleDDF00083(RuleTemplate):
     """
     DDF00083: Within a study version, all id values must be unique.
 

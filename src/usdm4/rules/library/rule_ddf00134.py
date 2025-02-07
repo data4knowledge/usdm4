@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00134(RuleTemplate):
+class RuleDDF00134(RuleTemplate):
     """
     DDF00134: Within a study design, if more characteristics are defined, they must be distinct.
 

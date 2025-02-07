@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00025(RuleTemplate):
+class RuleDDF00025(RuleTemplate):
     """
     DDF00025: A window must not be defined for an anchor timing (i.e., type is \"Fixed Reference\").
 

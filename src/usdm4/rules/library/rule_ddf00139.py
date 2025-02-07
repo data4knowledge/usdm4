@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00139(RuleTemplate):
+class RuleDDF00139(RuleTemplate):
     """
     DDF00139: An identified organization is not expected to have more than one identifier for the study.
 

@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00052(RuleTemplate):
+class RuleDDF00052(RuleTemplate):
     """
     DDF00052: All standard code aliases referenced by an instance of the alias code class must be unique.
 

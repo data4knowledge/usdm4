@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00128(RuleTemplate):
+class RuleDDF00128(RuleTemplate):
     """
     DDF00128: A study intervention's type must be specified using the Intervention Type Response (C99078) SDTM codelist.
 

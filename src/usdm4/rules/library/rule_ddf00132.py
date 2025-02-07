@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00132(RuleTemplate):
+class RuleDDF00132(RuleTemplate):
     """
     DDF00132: Within a study design, if a planned completion number is defined, it must be specified either in the study population or in all cohorts.
 

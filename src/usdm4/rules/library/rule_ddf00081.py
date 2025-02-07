@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00081(RuleTemplate):
+class RuleDDF00081(RuleTemplate):
     """
     DDF00081: Class relationships must conform with the USDM schema based on the API specification.
 

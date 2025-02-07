@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00124(RuleTemplate):
+class RuleDDF00124(RuleTemplate):
     """
     DDF00124: Referenced items in a parameter map must be available elsewhere in the data model.
 

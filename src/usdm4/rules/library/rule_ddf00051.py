@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00051(RuleTemplate):
+class RuleDDF00051(RuleTemplate):
     """
     DDF00051: A timing's type must be specified using the Timing Type Value Set Terminology (C201264) DDF codelist.
 

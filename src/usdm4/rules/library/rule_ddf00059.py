@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00059(RuleTemplate):
+class RuleDDF00059(RuleTemplate):
     """
     DDF00059: Within a study intervention, if more intervention codes are defined, they must be distinct.
 

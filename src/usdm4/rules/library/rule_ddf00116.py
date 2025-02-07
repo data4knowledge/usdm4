@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00116(RuleTemplate):
+class RuleDDF00116(RuleTemplate):
     """
     DDF00116: A study version's study type must be specified using the Study Type Response (C99077) SDTM codelist.
 

@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00026(RuleTemplate):
+class RuleDDF00026(RuleTemplate):
     """
     DDF00026: A scheduled activity instance must not point (via the \"timeline\" relationship) to the timeline in which it is specified.
 

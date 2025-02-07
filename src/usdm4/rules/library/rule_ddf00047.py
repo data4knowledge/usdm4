@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00047(RuleTemplate):
+class RuleDDF00047(RuleTemplate):
     """
     DDF00047: A study cell must only reference elements that are defined within the same study design as the study cell.
 

@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00045(RuleTemplate):
+class RuleDDF00045(RuleTemplate):
     """
     DDF00045: At least one attribute must be specified for an address.
 

@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00074(RuleTemplate):
+class RuleDDF00074(RuleTemplate):
     """
     DDF00074: If the intervention model indicates a single group design then only one intervention is expected. In all other cases more interventions are expected.
 

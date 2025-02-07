@@ -1,7 +1,7 @@
 from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
 
 
-class Rule00096(RuleTemplate):
+class RuleDDF00096(RuleTemplate):
     """
     DDF00096: All primary endpoints must be referenced by a primary objective.
 
