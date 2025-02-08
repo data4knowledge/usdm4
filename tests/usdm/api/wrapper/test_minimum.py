@@ -1,11 +1,9 @@
 import json
-from usdm4.api.wrapper import Wrapper
+from usdm4.api.wrapper.minimum import Minimum
 
 
 def test_init():
-    instance = Wrapper.minimum("Test Study", "SPONSOR-1234", "1.0.0")
-    # assert instance.study.versions[0].titles[0].text == "Test Study"
-    # assert instance.study.versions[0].studyIdentifiers[0].text == "SPONSOR-1234"
+    instance = Minimum.minimum("Test Study", "SPONSOR-1234", "1.0.0")
     instance.study.id = "FAKE-UUID"  # UUID is dynamic
     assert json.loads(instance.to_json()) == {
         "study": {
