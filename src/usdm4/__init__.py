@@ -1,12 +1,20 @@
-from usdm4.rules.rules_validation import RuleValidation
+import json
+from usdm4.rules.rules_validation import RulesValidation
+from usdm3.rules.rules_validation_results import RulesValidationResults
+from usdm4.api.wrapper import Wrapper
+from usdm4.convert.convert import Convert
+from usdm4.minimum.minimum import Minimum
 
-__package_name__ = "USDM4"
-__package_version__ = "0.1.0"
-__model_version__ = "3.6.0"
+class USDM4:
+    
+    def validate(self, file_path: str) -> RulesValidationResults:
+        validator = RulesValidation("usdm4.rules.library")
+        return validator.validate_rules(file_path)
 
-def validate(data: dict) -> bool:
-    """
-    Validate the data against the USDM4 model.
-    """
-    return RuleValidation.validate(data)
+    def convert(self, file_path: str) -> Wrapper:
+        with open(file_path, "r") as file:
+            data = json.load(file)
+        return Convert.convert(data)
 
+    def minimum(self, study_name: str, sponsor_id: str, version: str) -> Wrapper:
+        return Minimum.minimum(study_name, sponsor_id, version)

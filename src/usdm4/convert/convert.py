@@ -1,3 +1,6 @@
+from usdm4.__version__ import __model_version__
+from usdm4.api.wrapper import Wrapper
+
 class Convert:
     
     @classmethod
@@ -6,7 +9,7 @@ class Convert:
         study = wrapper["study"]
 
         # Chnage the wrapper details
-        wrapper["usdmVersion"] = "3.6.0"
+        wrapper["usdmVersion"] = __model_version__
 
         # Change type of documents
         if study["documentedBy"]:
@@ -71,7 +74,7 @@ class Convert:
                                 ]
                                 cohorts.pop("criteria")
             version["criteria"] = criteria
-        return wrapper
+        return Wrapper.model_validate(wrapper)
 
     @staticmethod
     def _get_document(study: dict, doc_id: str):

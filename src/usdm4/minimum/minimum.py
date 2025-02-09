@@ -10,7 +10,6 @@ from usdm4.api.study_definition_document_version import StudyDefinitionDocumentV
 from usdm4.api.identifier import StudyIdentifier
 from usdm4.api.study_title import StudyTitle
 from usdm4.api.study_version import StudyVersion
-from usdm4.__init__ import __model_version__, __package_name__, __package_version__
 from usdm3.base.api_instance import APIInstance
 
 class Minimum:
@@ -20,7 +19,9 @@ class Minimum:
         """
         Create a minimum study with the given title, identifier, and version.
         """
-        api_instance = APIInstance(globals)
+        from usdm4.__init__ import __model_version__, __package_name__, __package_version__
+
+        api_instance = APIInstance()
         cdisc_code_system = "cdisc.org"
         cdisc_code_system_version = "2023-12-15"
 
