@@ -1,4 +1,4 @@
-from usdm3.rules.library.rule_template import RuleTemplate, JSONLocation
+from usdm3.rules.library.rule_template import RuleTemplate
 
 class RuleCHK0185(RuleTemplate):
     """
