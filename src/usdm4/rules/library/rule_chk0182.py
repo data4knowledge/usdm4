@@ -12,13 +12,4 @@ class RuleCHK0182(RuleTemplate):
         super().__init__("CHK0182", RuleTemplate.ERROR, "Narrative content is expected to point to a child and/or to a content item text.")
     
     def validate(self, config: dict) -> bool:
-        """
-        Validate the rule against the provided data
-        
-        Args:
-            config (dict): Standard configuration structure contain the data, CT etc
-            
-        Returns:
-            bool: True if validation passes
-        """
         raise NotImplementedError("rule is not implemented")

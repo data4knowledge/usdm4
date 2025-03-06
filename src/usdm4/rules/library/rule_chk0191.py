@@ -12,13 +12,4 @@ class RuleCHK0191(RuleTemplate):
         super().__init__("CHK0191", RuleTemplate.ERROR, "All abbreviations defined for a study version must be unique.")
     
     def validate(self, config: dict) -> bool:
-        """
-        Validate the rule against the provided data
-        
-        Args:
-            config (dict): Standard configuration structure contain the data, CT etc
-            
-        Returns:
-            bool: True if validation passes
-        """
         raise NotImplementedError("rule is not implemented")

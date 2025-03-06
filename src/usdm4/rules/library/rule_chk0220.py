@@ -12,13 +12,4 @@ class RuleCHK0220(RuleTemplate):
         super().__init__("CHK0220", RuleTemplate.ERROR, "If a dose is specified, then a corresponding administrable product must also be specified either directly or embedded in the medical device and vice versa.")
     
     def validate(self, config: dict) -> bool:
-        """
-        Validate the rule against the provided data
-        
-        Args:
-            config (dict): Standard configuration structure contain the data, CT etc
-            
-        Returns:
-            bool: True if validation passes
-        """
         raise NotImplementedError("rule is not implemented")

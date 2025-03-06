@@ -12,13 +12,4 @@ class RuleCHK0251(RuleTemplate):
         super().__init__("CHK0251", RuleTemplate.ERROR, "A medical device identifier type must be specified according to the extensible medical device identifier type (Cxxx) DDF codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist).")
     
     def validate(self, config: dict) -> bool:
-        """
-        Validate the rule against the provided data
-        
-        Args:
-            config (dict): Standard configuration structure contain the data, CT etc
-            
-        Returns:
-            bool: True if validation passes
-        """
         raise NotImplementedError("rule is not implemented")

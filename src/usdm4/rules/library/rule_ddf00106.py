@@ -1,29 +1,4 @@
-from usdm3.rules.library.rule_template import RuleTemplate
+from usdm3.rules.library.rule_ddf00106 import RuleDDF00106 as V3Rule
 
-
-class RuleDDF00106(RuleTemplate):
-    """
-    DDF00106: A scheduled activity instance must only reference an encounter that is defined within the same study design as the scheduled activity instance.
-
-    Applies to: ScheduledActivityInstance
-    Attributes: encounter
-    """
-
-    def __init__(self):
-        super().__init__(
-            "DDF00106",
-            RuleTemplate.ERROR,
-            "A scheduled activity instance must only reference an encounter that is defined within the same study design as the scheduled activity instance.",
-        )
-
-    def validate(self, config: dict) -> bool:
-        """
-        Validate the rule against the provided data
-
-        Args:
-            config (dict): Standard configuration structure contain the data, CT etc
-
-        Returns:
-            bool: True if validation passes
-        """
-        raise NotImplementedError("rule is not implemented")
+class RuleDDF00106(V3Rule):
+    pass

@@ -12,13 +12,4 @@ class RuleCHK0236(RuleTemplate):
         super().__init__("CHK0236", RuleTemplate.ERROR, "A masking is expected to be defined for at least two study roles in a study design with a double blind blinding schema.")
     
     def validate(self, config: dict) -> bool:
-        """
-        Validate the rule against the provided data
-        
-        Args:
-            config (dict): Standard configuration structure contain the data, CT etc
-            
-        Returns:
-            bool: True if validation passes
-        """
         raise NotImplementedError("rule is not implemented")

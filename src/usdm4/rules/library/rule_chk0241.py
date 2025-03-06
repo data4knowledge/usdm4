@@ -12,13 +12,4 @@ class RuleCHK0241(RuleTemplate):
         super().__init__("CHK0241", RuleTemplate.ERROR, "A study definition document version must not be referenced more than once by the same study design.")
     
     def validate(self, config: dict) -> bool:
-        """
-        Validate the rule against the provided data
-        
-        Args:
-            config (dict): Standard configuration structure contain the data, CT etc
-            
-        Returns:
-            bool: True if validation passes
-        """
         raise NotImplementedError("rule is not implemented")

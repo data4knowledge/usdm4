@@ -12,13 +12,4 @@ class RuleCHK0120(RuleTemplate):
         super().__init__("CHK0120", RuleTemplate.ERROR, "For a specified range at least a minimum or maximum value is expected.")
     
     def validate(self, config: dict) -> bool:
-        """
-        Validate the rule against the provided data
-        
-        Args:
-            config (dict): Standard configuration structure contain the data, CT etc
-            
-        Returns:
-            bool: True if validation passes
-        """
         raise NotImplementedError("rule is not implemented")

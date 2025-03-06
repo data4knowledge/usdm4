@@ -12,13 +12,4 @@ class RuleCHK0233(RuleTemplate):
         super().__init__("CHK0233", RuleTemplate.ERROR, "Every study role must apply to either a study version or at least one study design, but not both.")
     
     def validate(self, config: dict) -> bool:
-        """
-        Validate the rule against the provided data
-        
-        Args:
-            config (dict): Standard configuration structure contain the data, CT etc
-            
-        Returns:
-            bool: True if validation passes
-        """
         raise NotImplementedError("rule is not implemented")

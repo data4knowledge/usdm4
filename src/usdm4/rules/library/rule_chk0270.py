@@ -12,13 +12,4 @@ class RuleCHK0270(RuleTemplate):
         super().__init__("CHK0270", RuleTemplate.ERROR, "A observational study design's sub types must be specified according to the (Cxxxx) DDF codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist).")
     
     def validate(self, config: dict) -> bool:
-        """
-        Validate the rule against the provided data
-        
-        Args:
-            config (dict): Standard configuration structure contain the data, CT etc
-            
-        Returns:
-            bool: True if validation passes
-        """
         raise NotImplementedError("rule is not implemented")

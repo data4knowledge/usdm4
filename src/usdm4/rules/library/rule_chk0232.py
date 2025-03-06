@@ -12,13 +12,4 @@ class RuleCHK0232(RuleTemplate):
         super().__init__("CHK0232", RuleTemplate.ERROR, "A planned sex must ether include a single entry of male or female or both female and male as entries.")
     
     def validate(self, config: dict) -> bool:
-        """
-        Validate the rule against the provided data
-        
-        Args:
-            config (dict): Standard configuration structure contain the data, CT etc
-            
-        Returns:
-            bool: True if validation passes
-        """
         raise NotImplementedError("rule is not implemented")
