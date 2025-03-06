@@ -11,6 +11,7 @@ def test_validate(tmp_path):
     with open(test_file, "w") as f:
         json.dump(_expected(), f)
     result = USDM4().validate(test_file)
+    print(f"Result: {result.to_dict()}")
     assert result.passed_or_not_implemented()
 
 
