@@ -15,6 +15,16 @@ def test_validate(tmp_path):
     assert result.passed_or_not_implemented()
 
 
+def test_validate_error(tmp_path):
+    # Create temporary test file
+    #clear_rules_library() Not needed yet
+    test_file = tmp_path / "validate.json"
+    with open(test_file, "w") as f:
+        json.dump(_bad(), f)
+    result = USDM4().validate(test_file)
+    print(f"RESULT: {result._items['DDF00082']}")
+    assert not result.passed_or_not_implemented()
+
 def test_minimum():
     result = USDM4().minimum("Test Study", "SPONSOR-1234", "1")
     result.study.id = "FAKE-UUID"
@@ -23,6 +33,11 @@ def test_minimum():
     model_dump["study"]["versions"][0]["dateValues"][0]["dateValue"] = "2006-06-01"
     assert model_dump == _expected()
 
+def _bad():
+    data = _expected()
+    print(f"DATA: {type(data)}")
+    data["study"]["documentedBy"][0]["id"] = None
+    return data
 
 def _expected():
     return {
