@@ -1,8 +1,8 @@
 from usdm4.__version__ import __model_version__
 from usdm4.api.wrapper import Wrapper
 
+
 class Convert:
-    
     @classmethod
     def convert(cls, data: dict) -> dict:
         wrapper = data

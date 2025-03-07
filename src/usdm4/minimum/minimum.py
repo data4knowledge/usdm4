@@ -14,8 +14,8 @@ from usdm3.base.id_manager import IdManager
 from usdm4.__version__ import __model_version__, __package_name__, __package_version__
 from usdm3.base.api_instance import APIInstance
 
-class Minimum:
 
+class Minimum:
     @classmethod
     def minimum(cls, title: str, identifier: str, version: str) -> "Wrapper":
         """
@@ -60,15 +60,15 @@ class Minimum:
                 "decode": "Official Study Title",
             },
         )
-        study_type_code = api_instance.create(
-            Code,
-            {
-                "code": "C98388",
-                "codeSystem": cdisc_code_system,
-                "codeSystemVersion": cdisc_code_system_version,
-                "decode": "Interventional Study",
-            },
-        )
+        # study_type_code = api_instance.create(
+        #     Code,
+        #     {
+        #         "code": "C98388",
+        #         "codeSystem": cdisc_code_system,
+        #         "codeSystemVersion": cdisc_code_system_version,
+        #         "decode": "Interventional Study",
+        #     },
+        # )
         organization_type_code = api_instance.create(
             Code,
             {

@@ -8,4 +8,3 @@ class Wrapper(ApiBaseModel):
     usdmVersion: str
     systemName: Union[str, None] = None
     systemVersion: Union[str, None] = None
-

@@ -7,8 +7,8 @@ from usdm4.api.wrapper import Wrapper
 from usdm4.convert.convert import Convert
 from usdm4.minimum.minimum import Minimum
 
+
 class USDM4:
-    
     def validate(self, file_path: str) -> RulesValidationResults:
         path = self._library_path()
         validator = RulesValidation(path, "usdm4.rules.library")
