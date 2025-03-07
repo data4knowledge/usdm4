@@ -9,10 +9,13 @@ from usdm4.minimum.minimum import Minimum
 
 
 class USDM4:
+
+    def __init__(self):
+        self.root = self._root_path()
+        self.validator = RulesValidation(self.root, "usdm4.rules.library")
+
     def validate(self, file_path: str) -> RulesValidationResults:
-        path = self._library_path()
-        validator = RulesValidation(path, "usdm4.rules.library")
-        return validator.validate_rules(file_path)
+        return self.validator.validate_rules(file_path)
 
     def convert(self, file_path: str) -> Wrapper:
         with open(file_path, "r") as file:
@@ -22,6 +25,5 @@ class USDM4:
     def minimum(self, study_name: str, sponsor_id: str, version: str) -> Wrapper:
         return Minimum.minimum(study_name, sponsor_id, version)
 
-    def _library_path(self) -> str:
-        root = pathlib.Path(__file__).parent.resolve()
-        return os.path.join(root, "rules/library")
+    def _root_path(self) -> str:
+        return pathlib.Path(__file__).parent.resolve()

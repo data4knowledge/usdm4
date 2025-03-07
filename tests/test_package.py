@@ -10,9 +10,6 @@ def test_validate(tmp_path):
     with open(test_file, "w") as f:
         json.dump(_expected(), f)
     result = USDM4().validate(test_file)
-    print(
-        f"RESULT: {[v for k, v in result._items.items() if v['status'] == 'Failure']}"
-    )
     assert result.passed_or_not_implemented()
 
 
@@ -23,7 +20,6 @@ def test_validate_error(tmp_path):
     with open(test_file, "w") as f:
         json.dump(_bad(), f)
     result = USDM4().validate(test_file)
-    # print(f"RESULT: {[v for k,v in result._items.items() if v['status'] == 'Failure']}")
     assert not result.passed_or_not_implemented()
 
 

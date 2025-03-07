@@ -551,6 +551,40 @@ C188724:
     synonyms:
     - Regulator
     - Regulatory Body
+C188725:
+  conceptId: C188725
+  definition: The terminology relevant to the objective level.
+  extensible: 'false'
+  name: Objective Level Value Set Terminology
+  preferredTerm: CDISC DDF Objective Level Value Set Terminology
+  submissionValue: Objective Level Value Set Terminology
+  synonyms:
+  - Objective Level Value Set Terminology
+  terms:
+  - conceptId: C163559
+    definition: Additional scientific question(s) within the study that enable further
+      discovery research, beyond the primary and secondary objectives.
+    preferredTerm: Trial Exploratory Objective
+    submissionValue: Exploratory Objective
+    synonyms:
+    - Study Exploratory Objective
+    - Trial Exploratory Objective
+  - conceptId: C85826
+    definition: The main scientific question(s) the study is designed to answer. (CDISC
+      Glossary)
+    preferredTerm: Trial Primary Objective
+    submissionValue: Study Primary Objective
+    synonyms:
+    - Study Primary Objective
+    - Trial Primary Objective
+  - conceptId: C85827
+    definition: The supportive or ancillary scientific question(s) the study is designed
+      to answer. (CDISC Glossary)
+    preferredTerm: Trial Secondary Objective
+    submissionValue: Study Secondary Objective
+    synonyms:
+    - Study Secondary Objective
+    - Trial Secondary Objective
 C188726:
   conceptId: C188726
   definition: The terminology relevant to the endpoint level.
@@ -667,6 +701,43 @@ C201265:
       of another event.
     preferredTerm: Start to Start
     submissionValue: Start to Start
+C207419:
+  conceptId: C207419
+  definition: The terminology relevant to the study title type value set.
+  extensible: 'false'
+  name: Study Title Type Value Set Terminology
+  preferredTerm: CDISC DDF Study Title Type Value Set Terminology
+  submissionValue: Study Title Type Value Set Terminology
+  synonyms:
+  - Study Title Type Value Set Terminology
+  terms:
+  - conceptId: C207615
+    definition: The short descriptive name for the study.
+    preferredTerm: Brief Study Title
+    submissionValue: Brief Study Title
+    synonyms:
+    - Abbreviated Protocol Title
+  - conceptId: C207616
+    definition: The formal descriptive name for the study.
+    preferredTerm: Official Study Title
+    submissionValue: Official Study Title
+  - conceptId: C207617
+    definition: The descriptive name of the study that is intended for the lay public,
+      written in easily understood language.
+    preferredTerm: Public Study Title
+    submissionValue: Public Study Title
+  - conceptId: C207618
+    definition: A more extensive descriptive name of the study that is intended for
+      medical professionals, written using medical and scientific language.
+    preferredTerm: Scientific Study Title
+    submissionValue: Scientific Study Title
+  - conceptId: C207646
+    definition: A word or words formed from the beginning letters or a combination
+      of syllables and letters of a compound term, which identifies a clinical study.
+    preferredTerm: Study Acronym
+    submissionValue: Study Acronym
+    synonyms:
+    - Trial Acronym
 C66726:
   conceptId: C66726
   definition: A terminology codelist relevant to the physical form of the administered

@@ -42,29 +42,33 @@ code_lists:
 - C123650
 - C99074
 - C66726
-# Note: Some of the attribute names are the old versions and have not been updated. If they do get updated
-# then the referecnces int he code also need to be changed.
+- C188725
+- C207419
 klass_attribute_mapping:
   Study:
     studyType: C99077
     studyPhase: C66737
-  StudyProtocolVersion:
-    protocolStatus: C188723
+  StudyTitle:
+    type: C207419
+  StudyDefinitionDocument:
+    type: C207420
+  StudyDefinitionDocumentVersion:
+    status: C188723
   Organization:
     type: C188724
   Objective:
-    objectiveLevel: C188725x
+    level: C188725
   Endpoint:
-    endpointLevel: C188726
+    level: C188726
   StudyArm:
-    studyArmType: C174222
-    studyArmDataOriginType: C188727
+    type: C174222
+    dataOriginType: C188727
   StudyEpoch:
     studyEpochType: C99079
   Encounter:
-    encounterType: C188728
-    encounterEnvironmentalSetting: C127262
-    encounterContactModes: C171445
+    type: C188728
+    environmentalSetting: C127262
+    contactModes: C171445
   StudyDesign:
     interventionModel: C99076
     studyDesignBlindingScheme: C66735
@@ -74,7 +78,9 @@ klass_attribute_mapping:
   Masking:
     role: C99906x
   StudyDesignPopulation:
-    plannedSexOfParticipants: C66732
+    plannedSex: C66732
+  StudyCohort:
+    plannedSex: C66732
   Timing:
     timingType: C201264
     timingRelativeToFrom: C201265
@@ -84,6 +90,8 @@ klass_attribute_mapping:
     type: C99903x
   StudyAmendmentReason:
     code: C99904x
+  StudyAmendmentImpact:
+    type: C99912x
   EligibilityCriteria:
     category: C66797
   Administration:
@@ -92,12 +100,13 @@ klass_attribute_mapping:
   StudyIntervention:
     type: C99078
     role: C99908x
-    productDesignation: C99909x
   StudyVersion:
     titles: C99905x
   ReferenceIdentifier:
     type: C99910x
   AdministrableProduct:
     administrableDoseForm: C66726
+    productDesignation: C99909x
+    sourcing: C99914x 
   StudyRole:
     code: C99911x
