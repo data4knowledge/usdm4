@@ -51,6 +51,15 @@ class Minimum:
                 "decode": "English",
             },
         )
+        title_type = api_instance.create(
+            Code,
+            {
+                "code": "C207616",
+                "codeSystem": cdisc_code_system,
+                "codeSystemVersion": cdisc_code_system_version,
+                "decode": "Official Study Title",
+            },
+        )
         study_type_code = api_instance.create(
             Code,
             {
@@ -109,7 +118,7 @@ class Minimum:
 
         # Study Title
         study_title = api_instance.create(
-            StudyTitle, {"text": title, "type": study_type_code}
+            StudyTitle, {"text": title, "type": title_type}
         )
 
         # Governance dates

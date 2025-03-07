@@ -11,7 +11,7 @@ def test_validate(tmp_path):
     with open(test_file, "w") as f:
         json.dump(_expected(), f)
     result = USDM4().validate(test_file)
-    print(f"Result: {result.to_dict()}")
+    print(f"RESULT: {[v for k,v in result._items.items() if v['status'] == 'Failure']}")
     assert result.passed_or_not_implemented()
 
 
@@ -22,7 +22,7 @@ def test_validate_error(tmp_path):
     with open(test_file, "w") as f:
         json.dump(_bad(), f)
     result = USDM4().validate(test_file)
-    print(f"RESULT: {result._items['DDF00082']}")
+    #print(f"RESULT: {[v for k,v in result._items.items() if v['status'] == 'Failure']}")
     assert not result.passed_or_not_implemented()
 
 def test_minimum():
@@ -35,7 +35,7 @@ def test_minimum():
 
 def _bad():
     data = _expected()
-    print(f"DATA: {type(data)}")
+    #print(f"DATA: {type(data)}")
     data["study"]["documentedBy"][0]["id"] = None
     return data
 
@@ -65,7 +65,7 @@ def _expected():
                         "codeSystem": "cdisc.org",
                         "codeSystemVersion": "2023-12-15",
                         "decode": "Protocol",
-                        "id": "Code_5",
+                        "id": "Code_6",
                         "instanceType": "Code",
                     },
                     "versions": [
@@ -86,7 +86,7 @@ def _expected():
                                                 "codeSystem": "cdisc.org",
                                                 "codeSystemVersion": "2023-12-15",
                                                 "decode": "Global",
-                                                "id": "Code_6",
+                                                "id": "Code_7",
                                                 "instanceType": "Code",
                                             },
                                         },
@@ -100,7 +100,7 @@ def _expected():
                                         "codeSystem": "cdisc.org",
                                         "codeSystemVersion": "2023-12-15",
                                         "decode": "Sponsor Approval Date",
-                                        "id": "Code_7",
+                                        "id": "Code_8",
                                         "instanceType": "Code",
                                     },
                                 },
@@ -113,7 +113,7 @@ def _expected():
                                 "codeSystem": "cdisc.org",
                                 "codeSystemVersion": "2023-12-15",
                                 "decode": "Approved",
-                                "id": "Code_4",
+                                "id": "Code_5",
                                 "instanceType": "Code",
                             },
                             "version": "1",
@@ -146,7 +146,7 @@ def _expected():
                                         "codeSystem": "cdisc.org",
                                         "codeSystemVersion": "2023-12-15",
                                         "decode": "Global",
-                                        "id": "Code_6",
+                                        "id": "Code_7",
                                         "instanceType": "Code",
                                     },
                                 },
@@ -160,7 +160,7 @@ def _expected():
                                 "codeSystem": "cdisc.org",
                                 "codeSystemVersion": "2023-12-15",
                                 "decode": "Sponsor Approval Date",
-                                "id": "Code_7",
+                                "id": "Code_8",
                                 "instanceType": "Code",
                             },
                         },
@@ -185,7 +185,7 @@ def _expected():
                                 "codeSystem": "cdisc.org",
                                 "codeSystemVersion": "2023-12-15",
                                 "decode": "Clinical Study Sponsor",
-                                "id": "Code_3",
+                                "id": "Code_4",
                                 "instanceType": "Code",
                             },
                         },
@@ -210,10 +210,10 @@ def _expected():
                             "instanceType": "StudyTitle",
                             "text": "Test Study",
                             "type": {
-                                "code": "C98388",
+                                "code": "C207616",
                                 "codeSystem": "cdisc.org",
                                 "codeSystemVersion": "2023-12-15",
-                                "decode": "Interventional Study",
+                                "decode": "Official Study Title",
                                 "id": "Code_2",
                                 "instanceType": "Code",
                             },
