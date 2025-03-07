@@ -14,6 +14,35 @@ class Convert:
         # Change type of documents
         if study["documentedBy"]:
             study["documentedBy"]["instanceType"] = "StudyDefinitionDocument"
+            study["documentedBy"]["language"] = {
+                "id": "LangaugeCode_1",
+                "code": "en",
+                "codeSystem": "ISO 639-1",
+                "codeSystemVersion": "2007",
+                "decode": "English",
+                "instanceType": "Code",
+            }
+            study["documentedBy"]["documentType"] = {
+                "id": "DocumentTypeCode_1",
+                "code": "C70817",
+                "codeSystem": "cdisc.org",
+                "codeSystemVersion": "2023-12-15",
+                "decode": "Study Protocol",
+                "instanceType": "Code",
+            }
+            study["documentedBy"]["type"] = {
+                "id": "DocumentTypeCode_1",
+                "code": "C70817",
+                "codeSystem": "cdisc.org",
+                "codeSystemVersion": "2023-12-15",
+                "decode": "Protocol",
+                "instanceType": "Code",
+            }
+            study["documentedBy"]["templateName"] = "Sponsor Study Protocol Template"
+            for versions in study["documentedBy"]["versions"]:
+                Convert._move(versions, "protocolStatus", "status")
+                Convert._move(versions, "protocolVersion", "version")
+            study["documentedBy"] = [study["documentedBy"]]
 
         for version in study["versions"]:
             doc_id = version["documentVersionId"]
@@ -22,6 +51,8 @@ class Convert:
                 doc["instanceType"] = "StudyDefinitionDocumentVersion"
                 items = []
                 for content in doc["contents"]:
+                    content["displaySectionTitle"] = True
+                    content["displaySectionNumber"] = True
                     id = f"{content['id']}_ITEM"
                     items.append(
                         {
@@ -49,8 +80,10 @@ class Convert:
             # Move the organization to a StudyVersion collection
             organizations = []
             for identifier in version["studyIdentifiers"]:
+                Convert._move(identifier, "studyIdentifier", "text")
                 org = identifier["studyIdentifierScope"]
                 organizations.append(org)
+                Convert._move(org, "organizationType", "type")
                 identifier["scopeId"] = org["id"]
                 identifier.pop("studyIdentifierScope")
             version["organizations"] = organizations
@@ -79,7 +112,12 @@ class Convert:
     @staticmethod
     def _get_document(study: dict, doc_id: str):
         if study["documentedBy"]:
-            for doc in study["documentedBy"]["versions"]:
+            for doc in study["documentedBy"][0]["versions"]:
                 if doc["id"] == doc_id:
                     return doc
         return None
+
+    @staticmethod
+    def _move(data: dict, from_key: str, to_key: str) -> None:
+        data[to_key] = data[from_key]
+        data.pop(from_key)
