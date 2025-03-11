@@ -13,6 +13,19 @@ def test_validate(tmp_path):
     assert result.passed_or_not_implemented()
 
 
+def test_example_1():
+    test_file = "tests/test_files/package/example_1.json"
+    result = USDM4().validate(test_file)
+    assert not result.passed_or_not_implemented()
+
+
+def test_example_2():
+    test_file = "tests/test_files/package/example_2.json"
+    result = USDM4().validate(test_file)
+    print(f"RESULT: {[k for k, v in result._items.items() if v['status'] not in ['Not Implemented', 'Success']]}")
+    assert result.passed_or_not_implemented()
+
+
 def test_validate_error(tmp_path):
     # Create temporary test file
     # clear_rules_library() Not needed yet
