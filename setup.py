@@ -23,6 +23,7 @@ setuptools.setup(
     package_data={
         "usdm4": [
             "ct/cdisc/library_cache/library_cache.yaml",
+            "ct/cdisc/config/ct_config.yaml",
         ]
     },
     tests_require=["pytest", "pytest-cov", "pytest-mock", "python-dotenv"],
