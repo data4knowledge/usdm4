@@ -1,7 +1,7 @@
 import os
 import json
 import pathlib
-from usdm4.rules.rules_validation import RulesValidation
+from usdm4.rules.rules_validation import RulesValidation4
 from usdm3.rules.rules_validation_results import RulesValidationResults
 from usdm4.api.wrapper import Wrapper
 from usdm4.convert.convert import Convert
@@ -12,10 +12,10 @@ class USDM4:
 
     def __init__(self):
         self.root = self._root_path()
-        self.validator = RulesValidation(self.root, "usdm4.rules.library")
+        self.validator = RulesValidation4(self.root, "usdm4.rules.library")
 
     def validate(self, file_path: str) -> RulesValidationResults:
-        return self.validator.validate_rules(file_path)
+        return self.validator.validate(file_path)
 
     def convert(self, file_path: str) -> Wrapper:
         with open(file_path, "r") as file:
