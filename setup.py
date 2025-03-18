@@ -8,26 +8,24 @@ with open("src/usdm4/__version__.py") as fp:
     exec(fp.read(), package_info)
 
 setuptools.setup(
-    name=package_info["__package_name__"],
+    name="usdm4",
     version=package_info["__package_version__"],
     author="D Iberson-Hurst",
     author_email="",
-    description="A python package for using the CDISC TransCelerate USDM",
+    description="A python package for using the CDISC TransCelerate USDM, version 4",
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=[
-        "pandas",
-        "openpyxl",
-        "pydantic",
-        "beautifulsoup4",
-        "pyyaml",
         "usdm3",
-        "simple_error_log",
     ],
     packages=setuptools.find_packages(where="src"),
     package_dir={"": "src"},
-    package_data={"usdm_excel": ["data/*.yaml", "data/*.json"]},
-    tests_require=["pytest"],
+    package_data={
+        "usdm4": [
+            "ct/cdisc/library_cache/library_cache.yaml",
+        ]
+    },
+    tests_require=["pytest", "pytest-cov", "pytest-mock", "python-dotenv"],
     classifiers=[
         "Intended Audience :: Developers",
         "Programming Language :: Python",

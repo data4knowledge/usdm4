@@ -14552,6 +14552,6 @@
     "instanceType": "Study"
   },
   "usdmVersion": "3.6.0",
-  "systemName": "CDISC E2J",
+  "systemName": "Python USDM4 Package",
   "systemVersion": "0.48.0"
 }

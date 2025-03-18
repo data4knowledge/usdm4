@@ -11,7 +11,7 @@ from usdm4.api.identifier import StudyIdentifier
 from usdm4.api.study_title import StudyTitle
 from usdm4.api.study_version import StudyVersion
 from usdm3.base.id_manager import IdManager
-from usdm4.__version__ import __model_version__, __package_name__, __package_version__
+from usdm4.__version__ import __model_version__, __package_version__
 from usdm3.base.api_instance import APIInstance
 
 
@@ -205,7 +205,7 @@ class Minimum:
             {
                 "study": study,
                 "usdmVersion": __model_version__,
-                "systemName": f"Python {__package_name__} Package",
+                "systemName": "Python USDM4 Package",
                 "systemVersion": __package_version__,
             },
         )
