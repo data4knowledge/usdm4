@@ -1,6 +1,8 @@
 import json
 from src.usdm4 import USDM4
+
 # from tests.rules.helpers import clear_rules_library
+from src.usdm4.__version__ import __package_version__
 
 
 def test_validate(tmp_path):
@@ -22,7 +24,7 @@ def test_example_1():
 def test_example_2():
     test_file = "tests/test_files/package/example_2.json"
     result = USDM4().validate(test_file)
-    #print(f"RESULT: {[k for k, v in result._items.items() if v['status'] not in ['Not Implemented', 'Success']]}")
+    # print(f"RESULT: {[k for k, v in result._items.items() if v['status'] not in ['Not Implemented', 'Success']]}")
     assert result.passed_or_not_implemented()
 
 
@@ -80,7 +82,7 @@ def _expected():
                         "codeSystem": "cdisc.org",
                         "codeSystemVersion": "2023-12-15",
                         "decode": "Protocol",
-                        "id": "Code_6",
+                        "id": "Code_5",
                         "instanceType": "Code",
                     },
                     "versions": [
@@ -101,7 +103,7 @@ def _expected():
                                                 "codeSystem": "cdisc.org",
                                                 "codeSystemVersion": "2023-12-15",
                                                 "decode": "Global",
-                                                "id": "Code_7",
+                                                "id": "Code_6",
                                                 "instanceType": "Code",
                                             },
                                         },
@@ -115,7 +117,7 @@ def _expected():
                                         "codeSystem": "cdisc.org",
                                         "codeSystemVersion": "2023-12-15",
                                         "decode": "Sponsor Approval Date",
-                                        "id": "Code_8",
+                                        "id": "Code_7",
                                         "instanceType": "Code",
                                     },
                                 },
@@ -128,7 +130,7 @@ def _expected():
                                 "codeSystem": "cdisc.org",
                                 "codeSystemVersion": "2023-12-15",
                                 "decode": "Approved",
-                                "id": "Code_5",
+                                "id": "Code_4",
                                 "instanceType": "Code",
                             },
                             "version": "1",
@@ -161,7 +163,7 @@ def _expected():
                                         "codeSystem": "cdisc.org",
                                         "codeSystemVersion": "2023-12-15",
                                         "decode": "Global",
-                                        "id": "Code_7",
+                                        "id": "Code_6",
                                         "instanceType": "Code",
                                     },
                                 },
@@ -175,7 +177,7 @@ def _expected():
                                 "codeSystem": "cdisc.org",
                                 "codeSystemVersion": "2023-12-15",
                                 "decode": "Sponsor Approval Date",
-                                "id": "Code_8",
+                                "id": "Code_7",
                                 "instanceType": "Code",
                             },
                         },
@@ -200,7 +202,7 @@ def _expected():
                                 "codeSystem": "cdisc.org",
                                 "codeSystemVersion": "2023-12-15",
                                 "decode": "Clinical Study Sponsor",
-                                "id": "Code_4",
+                                "id": "Code_3",
                                 "instanceType": "Code",
                             },
                         },
@@ -239,6 +241,6 @@ def _expected():
             ],
         },
         "systemName": "Python USDM4 Package",
-        "systemVersion": "0.1.0",
+        "systemVersion": __package_version__,
         "usdmVersion": "3.6.0",
     }

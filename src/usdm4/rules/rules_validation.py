@@ -1,4 +1,4 @@
-from usdm3.rules.rules_validation import RulesValidationEngine 
+from usdm3.rules.rules_validation import RulesValidationEngine
 from usdm3.base.singleton import Singleton
 
 

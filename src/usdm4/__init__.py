@@ -1,4 +1,3 @@
-import os
 import json
 import pathlib
 from usdm4.rules.rules_validation import RulesValidation4
@@ -9,7 +8,6 @@ from usdm4.minimum.minimum import Minimum
 
 
 class USDM4:
-
     def __init__(self):
         self.root = self._root_path()
         self.validator = RulesValidation4(self.root, "usdm4.rules.library")

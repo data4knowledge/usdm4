@@ -1,5 +1,6 @@
 import json
 from usdm4.minimum.minimum import Minimum
+from src.usdm4.__version__ import __package_version__
 
 
 def test_init():
@@ -30,7 +31,7 @@ def test_init():
                         "codeSystem": "cdisc.org",
                         "codeSystemVersion": "2023-12-15",
                         "decode": "Protocol",
-                        "id": "Code_6",
+                        "id": "Code_5",
                         "instanceType": "Code",
                     },
                     "versions": [
@@ -51,7 +52,7 @@ def test_init():
                                                 "codeSystem": "cdisc.org",
                                                 "codeSystemVersion": "2023-12-15",
                                                 "decode": "Global",
-                                                "id": "Code_7",
+                                                "id": "Code_6",
                                                 "instanceType": "Code",
                                             },
                                         },
@@ -65,7 +66,7 @@ def test_init():
                                         "codeSystem": "cdisc.org",
                                         "codeSystemVersion": "2023-12-15",
                                         "decode": "Sponsor Approval Date",
-                                        "id": "Code_8",
+                                        "id": "Code_7",
                                         "instanceType": "Code",
                                     },
                                 },
@@ -78,7 +79,7 @@ def test_init():
                                 "codeSystem": "cdisc.org",
                                 "codeSystemVersion": "2023-12-15",
                                 "decode": "Approved",
-                                "id": "Code_5",
+                                "id": "Code_4",
                                 "instanceType": "Code",
                             },
                             "version": "1",
@@ -111,7 +112,7 @@ def test_init():
                                         "codeSystem": "cdisc.org",
                                         "codeSystemVersion": "2023-12-15",
                                         "decode": "Global",
-                                        "id": "Code_7",
+                                        "id": "Code_6",
                                         "instanceType": "Code",
                                     },
                                 },
@@ -125,7 +126,7 @@ def test_init():
                                 "codeSystem": "cdisc.org",
                                 "codeSystemVersion": "2023-12-15",
                                 "decode": "Sponsor Approval Date",
-                                "id": "Code_8",
+                                "id": "Code_7",
                                 "instanceType": "Code",
                             },
                         },
@@ -150,7 +151,7 @@ def test_init():
                                 "codeSystem": "cdisc.org",
                                 "codeSystemVersion": "2023-12-15",
                                 "decode": "Clinical Study Sponsor",
-                                "id": "Code_4",
+                                "id": "Code_3",
                                 "instanceType": "Code",
                             },
                         },
@@ -189,6 +190,6 @@ def test_init():
             ],
         },
         "systemName": "Python USDM4 Package",
-        "systemVersion": "0.1.0",
+        "systemVersion": __package_version__,
         "usdmVersion": "3.6.0",
     }

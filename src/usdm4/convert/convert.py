@@ -11,7 +11,7 @@ class Convert:
         # Chnage the wrapper details
         wrapper["usdmVersion"] = __model_version__
         wrapper["systemName"] = "Python USDM4 Package"
-        
+
         # Change type of documents
         if study["documentedBy"]:
             study["documentedBy"]["instanceType"] = "StudyDefinitionDocument"

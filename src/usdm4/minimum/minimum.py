@@ -60,15 +60,15 @@ class Minimum:
                 "decode": "Official Study Title",
             },
         )
-        study_type_code = api_instance.create(
-            Code,
-            {
-                "code": "C98388",
-                "codeSystem": cdisc_code_system,
-                "codeSystemVersion": cdisc_code_system_version,
-                "decode": "Interventional Study",
-            },
-        )
+        # study_type_code = api_instance.create(
+        #     Code,
+        #     {
+        #         "code": "C98388",
+        #         "codeSystem": cdisc_code_system,
+        #         "codeSystemVersion": cdisc_code_system_version,
+        #         "decode": "Interventional Study",
+        #     },
+        # )
         organization_type_code = api_instance.create(
             Code,
             {
