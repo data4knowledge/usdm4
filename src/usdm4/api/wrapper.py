@@ -1,6 +1,6 @@
 from typing import Union
-from usdm4.api.api_base_model import ApiBaseModel
-from usdm4.api.study import Study
+from .api_base_model import ApiBaseModel
+from .study import Study
 
 
 class Wrapper(ApiBaseModel):

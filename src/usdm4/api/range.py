@@ -1,11 +1,10 @@
-from typing import Literal, Union
+from typing import Literal
 from .api_base_model import ApiBaseModelWithId
-from .code import Code
+from .quantity import Quantity
 
 
 class Range(ApiBaseModelWithId):
-    minValue: float
-    maxValue: float
-    unit: Union[Code, None] = None
+    minValue: Quantity
+    maxValue: Quantity
     isApproximate: bool
     instanceType: Literal["Range"]
