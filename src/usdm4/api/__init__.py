@@ -45,7 +45,11 @@ from .study_amendment import StudyAmendment
 from .study_amendment_reason import StudyAmendmentReason
 from .study_arm import StudyArm
 from .study_cell import StudyCell
-from .study_design import StudyDesign, InterventionalStudyDesign, ObservationalStudyDesign
+from .study_design import (
+    StudyDesign,
+    InterventionalStudyDesign,
+    ObservationalStudyDesign,
+)
 from .study_element import StudyElement
 from .study_epoch import StudyEpoch
 from .identifier import (

@@ -33,7 +33,7 @@ class Minimum:
             Code,
             GeographicScope,
             GovernanceDate,
-            "Wrapper",
+            Wrapper,
         ]
 
         id_manager = IdManager(api_classes)
