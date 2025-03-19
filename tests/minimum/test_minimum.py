@@ -1,6 +1,6 @@
 import json
 from usdm4.minimum.minimum import Minimum
-from src.usdm4.__version__ import __package_version__
+from usdm4.__version__ import __package_version__, __model_version__
 
 
 def test_init():
@@ -218,5 +218,5 @@ def test_init():
         },
         "systemName": "Python USDM4 Package",
         "systemVersion": __package_version__,
-        "usdmVersion": "3.6.0",
+        "usdmVersion": __model_version__,
     }
