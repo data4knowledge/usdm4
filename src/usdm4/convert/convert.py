@@ -1,4 +1,4 @@
-from usdm4.__version__ import __model_version__
+from usdm4.__version__ import __model_version__, __package_version__
 from usdm4.api.wrapper import Wrapper
 
 
@@ -11,6 +11,7 @@ class Convert:
         # Chnage the wrapper details
         wrapper["usdmVersion"] = __model_version__
         wrapper["systemName"] = "Python USDM4 Package"
+        wrapper["systemVersion"] = __package_version__
 
         # Change type of documents
         if study["documentedBy"]:
@@ -156,6 +157,7 @@ class Convert:
 
     @staticmethod
     def _convert_population(population: dict, criteria: list) -> dict:
+        #print(f"POPULATION: {population}")
         if "plannedAge" in population:
             population["plannedAge"] = Convert._convert_range(
                 population["plannedAge"]
@@ -179,6 +181,7 @@ class Convert:
     @staticmethod
     def _convert_subject_enrollment(collection: list) -> list:
         for item in collection:
+            print(f"ITEM: {item}")
             scope = {
                 "id": f"{item['id']}_GeoScope",
                 "type": item["type"],
@@ -186,8 +189,9 @@ class Convert:
                 "instanceType": "GeographicScope",
             }
             item["forGeographicScope"] = scope
+            suffix =  f"_{scope['code']['standardCode']['decode']}" if item["code"] else ""
             item["name"] = (
-                f"{scope['type']['decode']} - {scope['code']['standardCode']['decode']}"
+                f"{scope['type']['decode']}{suffix}"
             )
             item.pop("type")
             item.pop("code")
@@ -203,7 +207,8 @@ class Convert:
 
     @staticmethod
     def _convert_range(range: dict) -> dict:
-        print(f"RANGE: {range}")
+        if not range:
+            return None
         for item in ["min", "max"]:
             key = f"{item}Value"
             if range["unit"]:
@@ -222,6 +227,8 @@ class Convert:
 
     @staticmethod
     def _convert_code_to_alias(code: dict) -> dict:
+        if not code:
+            return None
         print(f"ALIAS CODE: {code}")
         return {
             "id": f"{code['id']}_AliasCode",
