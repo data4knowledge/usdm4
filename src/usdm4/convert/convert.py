@@ -108,7 +108,40 @@ class Convert:
                                 ]
                                 cohorts.pop("criteria")
             version["criteria"] = criteria
+
+            # Process the amendments
+            for amendment in version["amendments"]:
+                Convert._convert_subject_enrollment(amendment["enrollments"])
+                amendment["geographicScopes"] = [
+                    {
+                        "id": f"{amendment['id']}_GeoScope",
+                        "type": {
+                            "id": f"{amendment['id']}_GeoScopeType",
+                            "code": "C68846",
+                            "codeSystem": "cdisc.org",
+                            "codeSystemVersion": "2023-12-15",
+                            "decode": "Global",
+                            "instanceType": "Code",
+                        },
+                        "instanceType": "GeographicScope",
+                    }
+                ]
         return Wrapper.model_validate(wrapper)
+
+    @staticmethod
+    def _convert_subject_enrollment(collection: list) -> list:
+        for item in collection:
+            scope = {
+                "id": f"{item['id']}_GeoScope",
+                "type": item["type"],
+                "code": item["code"],
+                "instanceType": "GeographicScope",
+            }
+            item["forGeographicScope"] = scope
+            item["name"] = f"{scope['type']['decode']} - {scope['code']['standardCode']['decode']}"
+            item.pop("type")
+            item.pop("code")
+        return collection
 
     @staticmethod
     def _get_document(study: dict, doc_id: str):
