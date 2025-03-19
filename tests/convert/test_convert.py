@@ -4,17 +4,17 @@ from tests.helpers.files import read_json_file, write_json_file, file_path
 SAVE = True
 
 
-def run_test(sub_dir: str, filename: str, save: bool = False):
-    full_path = file_path(sub_dir, filename)
+def run_test(sub_dir: str, file_stem: str, save: bool = False):
+    full_path = file_path(sub_dir, f"{file_stem}.json")
     result = USDM4().convert(full_path)
     if save or SAVE:
-        write_json_file(sub_dir, f"{filename}_expected", result.to_json())
-    expected = read_json_file(sub_dir, f"{filename}_expected")
+        write_json_file(sub_dir, f"{file_stem}_expected.json", result.to_json())
+    expected = read_json_file(sub_dir, f"{file_stem}_expected.json")
     assert result.to_json() == expected
 
 
-def run_validate(filename: str):
-    test_file = file_path("convert", filename)
+def run_validate(file_stem: str):
+    test_file = file_path("convert", f"{file_stem}.json")
     result = USDM4().validate(test_file)
     assert not result.passed_or_not_implemented()
 

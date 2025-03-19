@@ -145,7 +145,9 @@ class Convert:
                 bcs += study_design["biomedicalConcepts"]
                 bc_cat += study_design["bcCategories"]
                 bc_surrogates += study_design["bcSurrogates"]
-                study_design["studyInterventions"] = [x["id"] for x in study_design["studyInterventions"]]
+                study_design["studyInterventions"] = [
+                    x["id"] for x in study_design["studyInterventions"]
+                ]
                 study_design.pop("dictionaries")
             version["studyInterventions"] = interventions
             version["dictionaries"] = dictionaries
@@ -157,11 +159,9 @@ class Convert:
 
     @staticmethod
     def _convert_population(population: dict, criteria: list) -> dict:
-        #print(f"POPULATION: {population}")
+        # print(f"POPULATION: {population}")
         if "plannedAge" in population:
-            population["plannedAge"] = Convert._convert_range(
-                population["plannedAge"]
-            )
+            population["plannedAge"] = Convert._convert_range(population["plannedAge"])
         if "plannedCompletionNumber" in population:
             population["plannedCompletionNumberRange"] = Convert._convert_range(
                 population["plannedCompletionNumber"]
@@ -189,10 +189,10 @@ class Convert:
                 "instanceType": "GeographicScope",
             }
             item["forGeographicScope"] = scope
-            suffix =  f"_{scope['code']['standardCode']['decode']}" if item["code"] else ""
-            item["name"] = (
-                f"{scope['type']['decode']}{suffix}"
+            suffix = (
+                f"_{scope['code']['standardCode']['decode']}" if item["code"] else ""
             )
+            item["name"] = f"{scope['type']['decode']}{suffix}"
             item.pop("type")
             item.pop("code")
         return collection
