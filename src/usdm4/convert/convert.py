@@ -94,6 +94,10 @@ class Convert:
             for study_design in version["studyDesigns"]:
                 if "population" in study_design:
                     population = study_design["population"]
+                    if "plannedAge" in population:
+                        population["plannedAge"] = Convert._convert_range(
+                            population["plannedAge"]
+                        )
                     if population and "criteria" in population:
                         criteria += population["criteria"]
                         population["criterionIds"] = [
@@ -101,12 +105,16 @@ class Convert:
                         ]
                         population.pop("criteria")
                         if "cohorts" in population:
-                            for cohorts in population["cohorts"]:
-                                criteria += cohorts["criteria"]
-                                cohorts["criterionIds"] = [
-                                    x["id"] for x in cohorts["criteria"]
+                            for cohort in population["cohorts"]:
+                                if "plannedAge" in cohort:
+                                    cohort["plannedAge"] = Convert._convert_range(
+                                        cohort["plannedAge"]
+                                    )
+                                criteria += cohort["criteria"]
+                                cohort["criterionIds"] = [
+                                    x["id"] for x in cohort["criteria"]
                                 ]
-                                cohorts.pop("criteria")
+                                cohort.pop("criteria")
             version["criteria"] = criteria
 
             # Process the amendments
@@ -138,7 +146,9 @@ class Convert:
                 "instanceType": "GeographicScope",
             }
             item["forGeographicScope"] = scope
-            item["name"] = f"{scope['type']['decode']} - {scope['code']['standardCode']['decode']}"
+            item["name"] = (
+                f"{scope['type']['decode']} - {scope['code']['standardCode']['decode']}"
+            )
             item.pop("type")
             item.pop("code")
         return collection
@@ -150,6 +160,28 @@ class Convert:
                 if doc["id"] == doc_id:
                     return doc
         return None
+
+    @staticmethod
+    def _convert_range(range: dict) -> dict:
+        for item in ["min", "max"]:
+            key = f"{item}Value"
+            range[key] = {
+                "id": f"{range['id']}_Min",
+                "value": range[key],
+                "unit": Convert._convert_code_to_alias(range["unit"]),
+            }
+            range[key]["unit"]["id"] = f"{range['unit']['id']}_Min"
+        range.pop("unit")
+        return range
+
+    @staticmethod
+    def _convert_code_to_alias(code: dict) -> dict:
+        return {
+            "id": f"{code['id']}_AliasCode",
+            "standardCode": code,
+            "standardAliasCode": [],
+            "instanceType": "AliasCode",
+        }
 
     @staticmethod
     def _move(data: dict, from_key: str, to_key: str) -> None:
