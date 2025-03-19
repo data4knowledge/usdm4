@@ -4,10 +4,10 @@ from .api_base_model import ApiBaseModelWithIdNameLabelAndDesc
 from .schedule_timeline_exit import ScheduleTimelineExit
 from .scheduled_instance import ScheduledActivityInstance, ScheduledDecisionInstance
 from .timing import Timing
-from .study_design import StudyDesign
 
 
 class ScheduleTimeline(ApiBaseModelWithIdNameLabelAndDesc):
+
     mainTimeline: bool
     entryCondition: str
     entryId: str
@@ -30,7 +30,8 @@ class ScheduleTimeline(ApiBaseModelWithIdNameLabelAndDesc):
             (x for x in self.timings if x.relativeFromScheduledInstanceId == id), None
         )
 
-    def soa(self, study_design: StudyDesign) -> list:
+    # @todo Nice to get StudyDesign type hint included but circular ...
+    def soa(self, study_design) -> list:
         # Activities
         activity_order = study_design.activity_list()
 
