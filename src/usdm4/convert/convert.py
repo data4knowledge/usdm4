@@ -133,13 +133,25 @@ class Convert:
             # Move the main collections
             interventions = []
             dictionaries = []
+            conditions = []
+            bcs = []
+            bc_cat = []
+            bc_surrogates = []
             for study_design in version["studyDesigns"]:
                 interventions += study_design["studyInterventions"]
                 dictionaries += study_design["dictionaries"]
+                conditions += study_design["conditions"]
+                bcs += study_design["biomedicalConcepts"]
+                bc_cat += study_design["bcCategories"]
+                bc_surrogates += study_design["bcSurrogates"]
                 study_design["studyInterventions"] = [x["id"] for x in study_design["studyInterventions"]]
                 study_design.pop("dictionaries")
             version["studyInterventions"] = interventions
             version["dictionaries"] = dictionaries
+            version["conditions"] = conditions
+            version["biomedicalConcepts"] = bcs
+            version["bcCategories"] = bc_cat
+            version["bcSurrogates"] = bc_surrogates
         return Wrapper.model_validate(wrapper)
 
     @staticmethod
