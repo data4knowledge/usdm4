@@ -24,6 +24,7 @@ setuptools.setup(
         "usdm4": [
             "ct/cdisc/library_cache/library_cache.yaml",
             "ct/cdisc/config/ct_config.yaml",
+            "rules/library/schema/usdm_v3-6.json"
         ]
     },
     tests_require=["pytest", "pytest-cov", "pytest-mock", "python-dotenv"],
