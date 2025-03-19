@@ -23,5 +23,8 @@ class USDM4:
     def minimum(self, study_name: str, sponsor_id: str, version: str) -> Wrapper:
         return Minimum.minimum(study_name, sponsor_id, version)
 
+    def from_json(self, data: dict) -> Wrapper:
+        return Wrapper.model_validate(data)
+
     def _root_path(self) -> str:
         return pathlib.Path(__file__).parent.resolve()
