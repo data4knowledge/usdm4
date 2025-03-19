@@ -1,8 +1,13 @@
+from datetime import date
 from typing import List, Literal, Union
 from .api_base_model import ApiBaseModelWithId
 from .code import Code
 from .identifier import StudyIdentifier, ReferenceIdentifier
-from .study_design import InterventionalStudyDesign, ObservationalStudyDesign
+from .study_design import (
+    StudyDesign,
+    InterventionalStudyDesign,
+    ObservationalStudyDesign,
+)
 from .governance_date import GovernanceDate
 from .study_amendment import StudyAmendment
 from .study_title import StudyTitle
@@ -21,6 +26,7 @@ from .biomedical_concept_category import BiomedicalConceptCategory
 from .biomedical_concept_surrogate import BiomedicalConceptSurrogate
 from .syntax_template_dictionary import SyntaxTemplateDictionary
 from .condition import Condition
+from .eligibility_criterion import EligibilityCriterion
 
 
 class StudyVersion(ApiBaseModelWithId):
@@ -64,9 +70,110 @@ class StudyVersion(ApiBaseModelWithId):
                 return identifier
         return None
 
-    #  Now in StudyDesign
-    #  def phase(self):
-    #    return self.studyPhase.standardCode
-
     def organization(self, id: str) -> Organization:
         return next((x for x in self.organizations if x.id == id), None)
+
+    def official_title_text(self) -> str:
+        for x in self.titles:
+            if x.is_official():
+                return x.text
+        return ""
+
+    def short_title_text(self) -> str:
+        for x in self.titles:
+            if x.is_short():
+                return x.text
+        return ""
+
+    def acronym_text(self) -> str:
+        for x in self.titles:
+            if x.is_acronym():
+                return x.text
+        return ""
+
+    def official_title(self) -> StudyIdentifier:
+        for x in self.titles:
+            if x.is_official():
+                return x
+        return None
+
+    def short_title(self) -> StudyIdentifier:
+        for x in self.titles:
+            if x.is_short():
+                return x
+        return None
+
+    def acronym(self) -> StudyIdentifier:
+        for x in self.titles:
+            if x.is_acronym():
+                return x
+        return None
+
+    def sponsor(self) -> Organization:
+        map = self.organization_map()
+        for x in self.studyIdentifiers:
+            if x.is_sponsor(map):
+                return map[x.scopeId]
+        return None
+
+    # Note: Method sponsor_identifier in base USDM class
+
+    def sponsor_identifier_text(self) -> StudyIdentifier:
+        for x in self.studyIdentifiers:
+            if x.is_sponsor(self.organization_map()):
+                return x.text
+        return ""
+
+    def sponsor_name(self) -> str:
+        map = self.organization_map()
+        for x in self.studyIdentifiers:
+            if x.is_sponsor(map):
+                return map[x.scopeId].name
+        return ""
+
+    def sponsor_address(self) -> str:
+        map = self.organization_map()
+        for x in self.studyIdentifiers:
+            if x.is_sponsor(map):
+                return map[x.scopeId].legalAddress.text
+        return ""
+
+    def nct_identifier(self) -> StudyIdentifier:
+        map = self.organization_map()
+        for x in self.studyIdentifiers:
+            if map[x.scopeId].name == "ClinicalTrials.gov":
+                return x.text
+        return ""
+
+    def protocol_date(self) -> GovernanceDate:
+        for x in self.dateValues:
+            if x.type.decode == "Protocol Effective Date":
+                return x
+        return ""
+
+    def approval_date(self) -> GovernanceDate:
+        for x in self.dateValues:
+            if x.type.decode == "Sponsor Approval Date":
+                return x
+        return ""
+
+    def protocol_date_value(self) -> date:
+        for x in self.dateValues:
+            if x.type.decode == "Protocol Effective Date":
+                return x.dateValue
+        return ""
+
+    def approval_date_value(self) -> date:
+        for x in self.dateValues:
+            if x.type.decode == "Sponsor Approval Date":
+                return x.dateValue
+        return ""
+
+    def organization_map(self) -> Organization:
+        return {x.id: x for x in self.organizations}
+
+    def criterion_map(self) -> EligibilityCriterion:
+        return {x.id: x for x in self.criteria}
+
+    def find_study_design(self, id: str) -> StudyDesign:
+        return next((x for x in self.studyDesigns if x.id == id), None)

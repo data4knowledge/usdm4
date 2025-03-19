@@ -52,6 +52,39 @@ class StudyDesign(ApiBaseModelWithIdNameLabelAndDesc):
     def phase(self) -> Code:
         return self.studyPhase.standardCode
 
+    def soa(self, timeline_name: str) -> list:
+        timeline = next(
+            (x for x in self.scheduleTimelines if x.name == timeline_name), None
+        )
+        return timeline.soa() if timeline else None
+
+    def main_soa(self) -> list:
+        timeline = next((x for x in self.scheduleTimelines if x.mainTimeline), None)
+        return timeline.soa() if timeline else None
+
+    def first_activity(self) -> Activity:
+        return next((x for x in self.activities if not x.previousId and x.nextId), None)
+
+    def find_activity(self, id: str) -> Activity:
+        return next((x for x in self.activities if x.id == id), None)
+
+    def activity_list(self) -> list:
+        items = []
+        item = self.first_activity()
+        while item:
+            items.append(item)
+            item = self.find_activity(item.nextId)
+        return items
+
+    def find_epoch(self, id: str) -> StudyEpoch:
+        return next((x for x in self.epochs if x.id == id), None)
+
+    def find_encounter(self, id: str) -> Encounter:
+        return next((x for x in self.encounters if x.id == id), None)
+
+    def find_timeline(self, id: str) -> ScheduleTimeline:
+        return next((x for x in self.scheduleTimelines if x.id == id), None)
+
 
 class InterventionalStudyDesign(StudyDesign):
     subTypes: List[Code] = []

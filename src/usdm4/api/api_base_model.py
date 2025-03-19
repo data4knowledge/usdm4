@@ -63,6 +63,9 @@ class ApiBaseModelWithIdAndName(ApiBaseModelWithId):
 class ApiBaseModelWithIdNameAndLabel(ApiBaseModelWithIdAndName):
     label: Union[str, None] = None
 
+    def label_name(self) -> str:
+        return self.label if self.label else self.name
+
 
 class ApiBaseModelWithIdNameLabelAndDesc(ApiBaseModelWithIdNameAndLabel):
     description: Union[str, None] = None
