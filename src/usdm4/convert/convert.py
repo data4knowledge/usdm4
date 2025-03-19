@@ -100,6 +100,7 @@ class Convert:
                             cohort = Convert._convert_population(cohort, criteria)
             version["criteria"] = criteria
 
+            # Update for study designs
             for study_design in version["studyDesigns"]:
                 # if "blindingSchema" in study_design:
                 #    study_design["blindingSchema"] = Convert._convert_code_to_alias(study_design["blindingSchema"])
@@ -128,6 +129,13 @@ class Convert:
                         "instanceType": "GeographicScope",
                     }
                 ]
+
+            # Move the main collections
+            interventions = []
+            for study_design in version["studyDesigns"]:
+                interventions += study_design["studyInterventions"]
+                study_design["studyInterventions"] = [x["id"] for x in study_design["studyInterventions"]]
+            version["studyInterventions"] = interventions
         return Wrapper.model_validate(wrapper)
 
     @staticmethod
