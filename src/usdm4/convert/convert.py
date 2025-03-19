@@ -94,28 +94,22 @@ class Convert:
             for study_design in version["studyDesigns"]:
                 if "population" in study_design:
                     population = study_design["population"]
-                    if "plannedAge" in population:
-                        population["plannedAge"] = Convert._convert_range(
-                            population["plannedAge"]
-                        )
-                    if population and "criteria" in population:
-                        criteria += population["criteria"]
-                        population["criterionIds"] = [
-                            x["id"] for x in population["criteria"]
-                        ]
-                        population.pop("criteria")
-                        if "cohorts" in population:
-                            for cohort in population["cohorts"]:
-                                if "plannedAge" in cohort:
-                                    cohort["plannedAge"] = Convert._convert_range(
-                                        cohort["plannedAge"]
-                                    )
-                                criteria += cohort["criteria"]
-                                cohort["criterionIds"] = [
-                                    x["id"] for x in cohort["criteria"]
-                                ]
-                                cohort.pop("criteria")
+                    population = Convert._convert_population(population, criteria)
+                    if "cohorts" in population:
+                        for cohort in population["cohorts"]:
+                            cohort = Convert._convert_population(cohort, criteria)
             version["criteria"] = criteria
+
+            for study_design in version["studyDesigns"]:
+                # if "blindingSchema" in study_design:
+                #    study_design["blindingSchema"] = Convert._convert_code_to_alias(study_design["blindingSchema"])
+                Convert._move(study_design, "trialIntentTypes", "intentTypes")
+                Convert._move(study_design, "trialTypes", "subTypes")
+                Convert._move(study_design, "interventionModel", "model")
+                study_design["studyPhase"] = version["studyPhase"]
+                version.pop("studyPhase")
+                study_design["studyType"] = version["studyType"]
+                version.pop("studyType")
 
             # Process the amendments
             for amendment in version["amendments"]:
@@ -135,6 +129,28 @@ class Convert:
                     }
                 ]
         return Wrapper.model_validate(wrapper)
+
+    @staticmethod
+    def _convert_population(population: dict, criteria: list) -> dict:
+        if "plannedAge" in population:
+            population["plannedAge"] = Convert._convert_range(
+                population["plannedAge"]
+            )
+        if "plannedCompletionNumber" in population:
+            population["plannedCompletionNumberRange"] = Convert._convert_range(
+                population["plannedCompletionNumber"]
+            )
+            population.pop("plannedCompletionNumber")
+        if "plannedEnrollmentNumber" in population:
+            population["plannedEnrollmentNumberRange"] = Convert._convert_range(
+                population["plannedEnrollmentNumber"]
+            )
+            population.pop("plannedEnrollmentNumber")
+        if "criteria" in population:
+            criteria += population["criteria"]
+            population["criterionIds"] = [x["id"] for x in criteria]
+            population.pop("criteria")
+        return population
 
     @staticmethod
     def _convert_subject_enrollment(collection: list) -> list:
@@ -163,19 +179,26 @@ class Convert:
 
     @staticmethod
     def _convert_range(range: dict) -> dict:
+        print(f"RANGE: {range}")
         for item in ["min", "max"]:
             key = f"{item}Value"
+            if range["unit"]:
+                unit = Convert._convert_code_to_alias(range["unit"])
+                unit["id"] = f"{range['unit']['id']}_Unit"
+            else:
+                unit = None
             range[key] = {
                 "id": f"{range['id']}_Min",
                 "value": range[key],
-                "unit": Convert._convert_code_to_alias(range["unit"]),
+                "unit": unit,
+                "instanceType": "Quantity",
             }
-            range[key]["unit"]["id"] = f"{range['unit']['id']}_Min"
         range.pop("unit")
         return range
 
     @staticmethod
     def _convert_code_to_alias(code: dict) -> dict:
+        print(f"ALIAS CODE: {code}")
         return {
             "id": f"{code['id']}_AliasCode",
             "standardCode": code,
