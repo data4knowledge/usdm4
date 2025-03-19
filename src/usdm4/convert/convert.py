@@ -132,10 +132,14 @@ class Convert:
 
             # Move the main collections
             interventions = []
+            dictionaries = []
             for study_design in version["studyDesigns"]:
                 interventions += study_design["studyInterventions"]
+                dictionaries += study_design["dictionaries"]
                 study_design["studyInterventions"] = [x["id"] for x in study_design["studyInterventions"]]
+                study_design.pop("dictionaries")
             version["studyInterventions"] = interventions
+            version["dictionaries"] = dictionaries
         return Wrapper.model_validate(wrapper)
 
     @staticmethod
