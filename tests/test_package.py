@@ -43,5 +43,3 @@ def test_minimum():
         write_json_file(None, "test_minimum_expected.json", result.to_json())
     expected = read_json_file(None, "test_minimum_expected.json")
     assert result.to_json() == expected
-
-
