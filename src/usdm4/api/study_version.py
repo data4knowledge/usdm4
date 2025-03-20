@@ -73,6 +73,12 @@ class StudyVersion(ApiBaseModelWithId):
     def organization(self, id: str) -> Organization:
         return next((x for x in self.organizations if x.id == id), None)
 
+    def criterion_item(self, id: str) -> EligibilityCriterionItem:
+        return next((x for x in self.eligibilityCriterionItems if x.id == id), None)
+
+    def intervention(self, id: str) -> StudyIntervention:
+        return next((x for x in self.studyInterventions if x.id == id), None)
+    
     def official_title_text(self) -> str:
         for x in self.titles:
             if x.is_official():
@@ -171,9 +177,6 @@ class StudyVersion(ApiBaseModelWithId):
 
     def organization_map(self) -> Organization:
         return {x.id: x for x in self.organizations}
-
-    def criterion_map(self) -> EligibilityCriterion:
-        return {x.id: x for x in self.criteria}
 
     def find_study_design(self, id: str) -> StudyDesign:
         return next((x for x in self.studyDesigns if x.id == id), None)
