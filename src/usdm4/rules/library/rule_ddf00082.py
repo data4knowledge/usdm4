@@ -24,4 +24,4 @@ class RuleDDF00082(V3Rule):
 
     def _schema_path(self) -> str:
         root = pathlib.Path(__file__).parent.resolve()
-        return os.path.join(root, "schema/usdm_v3-6.json")
+        return os.path.join(root, "schema/usdm_v3-12.json")

@@ -1,12 +1,1 @@
-- attribute: ''
-  exception: null
-  klass: ''
-  level: Error
-  message: 'Message: ''criteria'' is a required property
-
-    Context: []'
-  path: $.study.versions[0]
-  rule: ''
-  rule_id: DDF00082
-  rule_text: ''
-  status: Failure
+[]

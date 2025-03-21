@@ -1,4 +1,3 @@
-import json
 from src.usdm4 import USDM4
 from tests.helpers.files import write_json_file, read_json_file
 

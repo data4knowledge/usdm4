@@ -206,7 +206,7 @@
     ],
     "instanceType": "Study"
   },
-  "usdmVersion": "3.12.0",
+  "usdmVersion": "3.11.0",
   "systemName": "Python USDM4 Package",
   "systemVersion": "0.4.0"
 }

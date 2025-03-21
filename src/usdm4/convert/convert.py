@@ -109,10 +109,12 @@ class Convert:
                             if "cohorts" in study_design["population"]:
                                 new_cohorts = []
                                 for cohort in study_design["population"]["cohorts"]:
-                                    cohort = Convert._convert_population(cohort, criteria)
+                                    cohort = Convert._convert_population(
+                                        cohort, criteria
+                                    )
                                     new_cohorts.append(cohort)
                                 study_design["population"]["cohorts"] = new_cohorts
-                
+
                 # print(f"POPULATION: {study_design['population']}")
                 ec, ec_items = Convert._split_criteria(criteria)
                 version_ec_items += ec_items

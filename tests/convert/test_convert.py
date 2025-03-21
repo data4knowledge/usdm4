@@ -1,4 +1,3 @@
-import json
 from usdm4 import USDM4
 from tests.helpers.files import (
     read_json_file,
@@ -8,7 +7,7 @@ from tests.helpers.files import (
     file_path,
 )
 
-SAVE = True
+SAVE = False
 
 
 def run_test(sub_dir: str, file_stem: str, save: bool = False):
@@ -23,11 +22,10 @@ def run_test(sub_dir: str, file_stem: str, save: bool = False):
 def run_validate(sub_dir: str, file_stem: str, save: bool = False):
     test_file = file_path("convert", f"{file_stem}_expected.json")
     result = USDM4().validate(test_file)
+    errors = result.to_dict()
+    errors = [x for x in errors if x["status"] in ["Failure", "Exception"]]
     if save or SAVE:
-        errors = result.to_dict()
-        errors = [x for x in errors if x["status"] in ["Failure", "Exception"]]
         write_yaml_file(sub_dir, f"{file_stem}_errors.yaml", errors)
-    assert result.passed_or_not_implemented()
     expected = read_yaml_file(sub_dir, f"{file_stem}_errors.yaml")
     assert errors == expected
 

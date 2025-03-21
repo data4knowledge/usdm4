@@ -26,7 +26,6 @@ from .biomedical_concept_category import BiomedicalConceptCategory
 from .biomedical_concept_surrogate import BiomedicalConceptSurrogate
 from .syntax_template_dictionary import SyntaxTemplateDictionary
 from .condition import Condition
-from .eligibility_criterion import EligibilityCriterion
 
 
 class StudyVersion(ApiBaseModelWithId):
@@ -78,6 +77,9 @@ class StudyVersion(ApiBaseModelWithId):
 
     def intervention(self, id: str) -> StudyIntervention:
         return next((x for x in self.studyInterventions if x.id == id), None)
+
+    def phases(self) -> str:
+        return ", ".join([sd.phase_as_text() for sd in self.studyDesigns])
 
     def official_title_text(self) -> str:
         for x in self.titles:

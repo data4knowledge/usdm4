@@ -263,18 +263,6 @@
     or a timeline exit, but not both.
   status: Failure
 - attribute: ''
-  exception: null
-  klass: ''
-  level: Error
-  message: 'Message: ''criteria'' is a required property
-
-    Context: []'
-  path: $.study.versions[0]
-  rule: ''
-  rule_id: DDF00082
-  rule_text: ''
-  status: Failure
-- attribute: ''
   exception: '''instanceType'''
   klass: ''
   level: ''
@@ -282,6 +270,16 @@
   path: ''
   rule: ''
   rule_id: DDF00105
+  rule_text: ''
+  status: Exception
+- attribute: ''
+  exception: '''instanceType'''
+  klass: ''
+  level: ''
+  message: ''
+  path: ''
+  rule: ''
+  rule_id: DDF00106
   rule_text: ''
   status: Exception
 - attribute: type

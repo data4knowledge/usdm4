@@ -50,7 +50,14 @@ class StudyDesign(ApiBaseModelWithIdNameLabelAndDesc):
         )
 
     def phase(self) -> Code:
-        return self.studyPhase.standardCode
+        try:
+            return self.studyPhase.standardCode
+        except Exception:
+            return None
+
+    def phase_as_text(self) -> str:
+        code = self.phase()
+        return code.decode if code else ""
 
     def soa(self, timeline_name: str) -> list:
         timeline = next(

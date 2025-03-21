@@ -1,4 +1,3 @@
-from usdm3.rules.library.rule_template import RuleTemplate
 from usdm3.rules.library.rule_ddfsdw001 import RuleDDFSDW001 as V3Rule
 from usdm4.__version__ import __model_version__ as model_version
 
