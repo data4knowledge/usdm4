@@ -1,0 +1,34 @@
+- attribute: ''
+  exception: null
+  klass: ''
+  level: Error
+  message: 'Message: ''criteria'' is a required property
+
+    Context: []'
+  path: $.study.versions[0]
+  rule: ''
+  rule_id: DDF00082
+  rule_text: ''
+  status: Failure
+- attribute: ''
+  exception: '''instanceType'''
+  klass: ''
+  level: ''
+  message: ''
+  path: ''
+  rule: ''
+  rule_id: DDF00106
+  rule_text: ''
+  status: Exception
+- attribute: type
+  exception: null
+  klass: StudyTitle
+  level: Error
+  message: Invalid code and decode 'C98388' and 'Interventional Study', neither the
+    code and decode are in the codelist
+  path: $.Study.StudyVersion[0].StudyTitle[0]
+  rule: DDF00146
+  rule_id: DDF00146
+  rule_text: A study title type must be specified using the study title type (C207419)
+    DDF codelist.
+  status: Failure

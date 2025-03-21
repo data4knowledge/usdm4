@@ -45,6 +45,8 @@ class Convert:
                 Convert._move(versions, "protocolStatus", "status")
                 Convert._move(versions, "protocolVersion", "version")
             study["documentedBy"] = [study["documentedBy"]]
+        else:
+            study["documentedBy"] = []
 
         for version in study["versions"]:
             doc_id = version["documentVersionId"]
@@ -94,11 +96,24 @@ class Convert:
             criteria = []
             for study_design in version["studyDesigns"]:
                 if "population" in study_design:
-                    population = study_design["population"]
-                    population = Convert._convert_population(population, criteria)
-                    if "cohorts" in population:
-                        for cohort in population["cohorts"]:
-                            cohort = Convert._convert_population(cohort, criteria)
+                    study_design["population"] = Convert._convert_population(
+                        study_design["population"], criteria
+                    )
+                    if study_design["population"] is not None:
+                        if "cohorts" in study_design["population"]:
+                            new_cohorts = []
+                            for cohort in study_design["population"]["cohorts"]:
+                                cohort = Convert._convert_population(cohort, criteria)
+                                new_cohorts.append(cohort)
+                            study_design["population"]["cohorts"] = new_cohorts
+            if not study_design["population"]:
+                study_design["population"] = {
+                    "id": "Population_Empty",
+                    "name": "EMPTY_POPULATION",
+                    "includesHealthySubjects": True,
+                    "instanceType": "PopulationDefinition",
+                }
+            # print(f"POPULATION: {study_design['population']}")
             version["criteria"] = criteria
 
             # Update for study designs
@@ -112,6 +127,7 @@ class Convert:
                 version.pop("studyPhase")
                 study_design["studyType"] = version["studyType"]
                 version.pop("studyType")
+                study_design["instanceType"] = "InterventionalStudyDesign"
 
             # Process the amendments
             for amendment in version["amendments"]:
@@ -160,6 +176,8 @@ class Convert:
     @staticmethod
     def _convert_population(population: dict, criteria: list) -> dict:
         # print(f"POPULATION: {population}")
+        if population is None:
+            return None
         if "plannedAge" in population:
             population["plannedAge"] = Convert._convert_range(population["plannedAge"])
         if "plannedCompletionNumber" in population:
@@ -181,7 +199,6 @@ class Convert:
     @staticmethod
     def _convert_subject_enrollment(collection: list) -> list:
         for item in collection:
-            print(f"ITEM: {item}")
             scope = {
                 "id": f"{item['id']}_GeoScope",
                 "type": item["type"],
@@ -199,6 +216,9 @@ class Convert:
 
     @staticmethod
     def _get_document(study: dict, doc_id: str):
+        # print(f"DOCUMENT BY: {study['documentedBy']}")
+        if len(study["documentedBy"]) == 0:
+            return None
         if study["documentedBy"]:
             for doc in study["documentedBy"][0]["versions"]:
                 if doc["id"] == doc_id:
@@ -229,7 +249,6 @@ class Convert:
     def _convert_code_to_alias(code: dict) -> dict:
         if not code:
             return None
-        print(f"ALIAS CODE: {code}")
         return {
             "id": f"{code['id']}_AliasCode",
             "standardCode": code,

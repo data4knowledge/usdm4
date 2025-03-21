@@ -1,0 +1,505 @@
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[0]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[1]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[2]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[3]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[4]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[5]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[6]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[7]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[8]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[9]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[10]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[11]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[12]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[13]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[14]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[1].ScheduledActivityInstance[0]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[1].ScheduledActivityInstance[1]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[1].ScheduledActivityInstance[2]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[1].ScheduledActivityInstance[3]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[1].ScheduledActivityInstance[4]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[2].ScheduledActivityInstance[0]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[2].ScheduledActivityInstance[1]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[2].ScheduledActivityInstance[2]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[2].ScheduledActivityInstance[3]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[2].ScheduledActivityInstance[4]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[2].ScheduledActivityInstance[5]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[2].ScheduledActivityInstance[6]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[2].ScheduledActivityInstance[7]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[2].ScheduledActivityInstance[8]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[2].ScheduledActivityInstance[9]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[2].ScheduledActivityInstance[10]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[2].ScheduledActivityInstance[11]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[2].ScheduledActivityInstance[12]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[2].ScheduledActivityInstance[13]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: timelineExitId and defaultConditionId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Timeline exit and default condition both exist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[2].ScheduledActivityInstance[14]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+- attribute: ''
+  exception: null
+  klass: ''
+  level: Error
+  message: 'Message: ''criteria'' is a required property
+
+    Context: []'
+  path: $.study.versions[0]
+  rule: ''
+  rule_id: DDF00082
+  rule_text: ''
+  status: Failure
+- attribute: ''
+  exception: '''instanceType'''
+  klass: ''
+  level: ''
+  message: ''
+  path: ''
+  rule: ''
+  rule_id: DDF00105
+  rule_text: ''
+  status: Exception
+- attribute: ''
+  exception: '''instanceType'''
+  klass: ''
+  level: ''
+  message: ''
+  path: ''
+  rule: ''
+  rule_id: DDF00106
+  rule_text: ''
+  status: Exception
+- attribute: type
+  exception: null
+  klass: StudyTitle
+  level: Error
+  message: Invalid code 'C99905x1', the code is not in the codelist
+  path: $.Study.StudyVersion[0].StudyTitle[0]
+  rule: DDF00146
+  rule_id: DDF00146
+  rule_text: A study title type must be specified using the study title type (C207419)
+    DDF codelist.
+  status: Failure
+- attribute: type
+  exception: null
+  klass: StudyTitle
+  level: Error
+  message: Invalid code 'C99905x2', the code is not in the codelist
+  path: $.Study.StudyVersion[0].StudyTitle[1]
+  rule: DDF00146
+  rule_id: DDF00146
+  rule_text: A study title type must be specified using the study title type (C207419)
+    DDF codelist.
+  status: Failure
+- attribute: level
+  exception: null
+  klass: Objective
+  level: Error
+  message: Invalid decode 'Primary Objective', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Objective[0]
+  rule: DDF00147
+  rule_id: DDF00147
+  rule_text: An objective level must be specified using the objective level (C188725)
+    DDF codelist.
+  status: Failure
+- attribute: level
+  exception: null
+  klass: Objective
+  level: Error
+  message: Invalid decode 'Secondary Objective', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Objective[1]
+  rule: DDF00147
+  rule_id: DDF00147
+  rule_text: An objective level must be specified using the objective level (C188725)
+    DDF codelist.
+  status: Failure
+- attribute: level
+  exception: null
+  klass: Objective
+  level: Error
+  message: Invalid decode 'Secondary Objective', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Objective[2]
+  rule: DDF00147
+  rule_id: DDF00147
+  rule_text: An objective level must be specified using the objective level (C188725)
+    DDF codelist.
+  status: Failure
+- attribute: level
+  exception: null
+  klass: Objective
+  level: Error
+  message: Invalid decode 'Secondary Objective', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Objective[3]
+  rule: DDF00147
+  rule_id: DDF00147
+  rule_text: An objective level must be specified using the objective level (C188725)
+    DDF codelist.
+  status: Failure
+- attribute: level
+  exception: null
+  klass: Objective
+  level: Error
+  message: Invalid decode 'Exploratory Objective', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Objective[4]
+  rule: DDF00147
+  rule_id: DDF00147
+  rule_text: An objective level must be specified using the objective level (C188725)
+    DDF codelist.
+  status: Failure
+- attribute: level
+  exception: null
+  klass: Objective
+  level: Error
+  message: Invalid decode 'Exploratory Objective', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Objective[5]
+  rule: DDF00147
+  rule_id: DDF00147
+  rule_text: An objective level must be specified using the objective level (C188725)
+    DDF codelist.
+  status: Failure

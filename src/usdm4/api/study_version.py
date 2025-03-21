@@ -78,7 +78,7 @@ class StudyVersion(ApiBaseModelWithId):
 
     def intervention(self, id: str) -> StudyIntervention:
         return next((x for x in self.studyInterventions if x.id == id), None)
-    
+
     def official_title_text(self) -> str:
         for x in self.titles:
             if x.is_official():

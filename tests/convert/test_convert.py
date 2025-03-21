@@ -1,5 +1,12 @@
+import json
 from usdm4 import USDM4
-from tests.helpers.files import read_json_file, write_json_file, file_path
+from tests.helpers.files import (
+    read_json_file,
+    write_json_file,
+    read_yaml_file,
+    write_yaml_file,
+    file_path,
+)
 
 SAVE = True
 
@@ -13,10 +20,16 @@ def run_test(sub_dir: str, file_stem: str, save: bool = False):
     assert result.to_json() == expected
 
 
-def run_validate(file_stem: str):
-    test_file = file_path("convert", f"{file_stem}.json")
+def run_validate(sub_dir: str, file_stem: str, save: bool = False):
+    test_file = file_path("convert", f"{file_stem}_expected.json")
     result = USDM4().validate(test_file)
-    assert not result.passed_or_not_implemented()
+    if save or SAVE:
+        errors = result.to_dict()
+        errors = [x for x in errors if x["status"] in ["Failure", "Exception"]]
+        write_yaml_file(sub_dir, f"{file_stem}_errors.yaml", errors)
+    assert result.passed_or_not_implemented()
+    expected = read_yaml_file(sub_dir, f"{file_stem}_errors.yaml")
+    assert errors == expected
 
 
 def test_usdm_1():
@@ -27,9 +40,25 @@ def test_usdm_2():
     run_test("convert", "example_2")
 
 
+def test_usdm_3():
+    run_test("convert", "example_3")
+
+
+def test_usdm_4():
+    run_test("convert", "example_4")
+
+
 def test_usdm_1_validate():
-    run_validate("example_1")
+    run_validate("convert", "example_1")
 
 
 def test_usdm_2_validate():
-    run_validate("example_2")
+    run_validate("convert", "example_2")
+
+
+def test_usdm_3_validate():
+    run_validate("convert", "example_3")
+
+
+def test_usdm_4_validate():
+    run_validate("convert", "example_4")

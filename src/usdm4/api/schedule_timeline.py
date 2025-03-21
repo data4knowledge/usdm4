@@ -7,7 +7,6 @@ from .timing import Timing
 
 
 class ScheduleTimeline(ApiBaseModelWithIdNameLabelAndDesc):
-
     mainTimeline: bool
     entryCondition: str
     entryId: str

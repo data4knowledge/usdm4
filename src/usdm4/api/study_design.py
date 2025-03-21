@@ -87,9 +87,10 @@ class StudyDesign(ApiBaseModelWithIdNameLabelAndDesc):
 
     def find_analysis_population(self, id: str) -> AnalysisPopulation:
         return next((x for x in self.analysisPopulations if x.id == id), None)
-    
+
     def criterion_map(self) -> dict[EligibilityCriterion]:
         return {x.id: x for x in self.eligibilityCriteria}
+
 
 class InterventionalStudyDesign(StudyDesign):
     subTypes: List[Code] = []
