@@ -78,9 +78,6 @@ class Convert:
             version["administrableProducts"] = []
             version["notes"] = []
 
-            # Need to be populated
-            version["criteria"] = []
-
             # Move the organization to a StudyVersion collection
             organizations = []
             for identifier in version["studyIdentifiers"]:
@@ -93,28 +90,34 @@ class Convert:
             version["organizations"] = organizations
 
             # Move the criteria to a StudyVersion collection
-            criteria = []
-            for study_design in version["studyDesigns"]:
+            version_ec_items = []
+            for index, study_design in enumerate(version["studyDesigns"]):
+                criteria = []
                 if "population" in study_design:
-                    study_design["population"] = Convert._convert_population(
-                        study_design["population"], criteria
-                    )
-                    if study_design["population"] is not None:
-                        if "cohorts" in study_design["population"]:
-                            new_cohorts = []
-                            for cohort in study_design["population"]["cohorts"]:
-                                cohort = Convert._convert_population(cohort, criteria)
-                                new_cohorts.append(cohort)
-                            study_design["population"]["cohorts"] = new_cohorts
-            if not study_design["population"]:
-                study_design["population"] = {
-                    "id": "Population_Empty",
-                    "name": "EMPTY_POPULATION",
-                    "includesHealthySubjects": True,
-                    "instanceType": "PopulationDefinition",
-                }
-            # print(f"POPULATION: {study_design['population']}")
-            version["criteria"] = criteria
+                    if not study_design["population"]:
+                        study_design["population"] = {
+                            "id": "Population_Empty",
+                            "name": "EMPTY_POPULATION",
+                            "includesHealthySubjects": True,
+                            "instanceType": "PopulationDefinition",
+                        }
+                    else:
+                        study_design["population"] = Convert._convert_population(
+                            study_design["population"], criteria
+                        )
+                        if study_design["population"] is not None:
+                            if "cohorts" in study_design["population"]:
+                                new_cohorts = []
+                                for cohort in study_design["population"]["cohorts"]:
+                                    cohort = Convert._convert_population(cohort, criteria)
+                                    new_cohorts.append(cohort)
+                                study_design["population"]["cohorts"] = new_cohorts
+                
+                # print(f"POPULATION: {study_design['population']}")
+                ec, ec_items = Convert._split_criteria(criteria)
+                version_ec_items += ec_items
+                study_design["eligibilityCriteria"] = ec
+            version["eligibilityCriterionItems"] = ec_items
 
             # Update for study designs
             for study_design in version["studyDesigns"]:
@@ -213,6 +216,25 @@ class Convert:
             item.pop("type")
             item.pop("code")
         return collection
+
+    @staticmethod
+    def _split_criteria(criteria: list):
+        ecis = []
+        for criterion in criteria:
+            eci = {
+                "id": f"{criterion['id']}_item",
+                "name": criterion["name"],
+                "label": criterion["label"],
+                "description": criterion["description"],
+                "text": criterion["text"],
+                "dictionaryId": criterion["dictionaryId"],
+                "instanceType": "EligibilityCriterionItem",
+            }
+            criterion.pop("text")
+            criterion.pop("dictionaryId")
+            criterion["criterionItemId"] = eci["id"]
+            ecis.append(eci)
+        return criteria, ecis
 
     @staticmethod
     def _get_document(study: dict, doc_id: str):

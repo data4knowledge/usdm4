@@ -900,10 +900,10 @@
             "text": "Test study",
             "type": {
               "id": "Code_1",
-              "code": "C98388",
+              "code": "C207616",
               "codeSystem": "cdisc.org",
               "codeSystemVersion": "2023-12-15",
-              "decode": "Interventional Study",
+              "decode": "Official Study Title",
               "instanceType": "Code"
             },
             "instanceType": "StudyTitle"

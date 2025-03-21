@@ -405,16 +405,6 @@
   rule_id: DDF00105
   rule_text: ''
   status: Exception
-- attribute: ''
-  exception: '''instanceType'''
-  klass: ''
-  level: ''
-  message: ''
-  path: ''
-  rule: ''
-  rule_id: DDF00106
-  rule_text: ''
-  status: Exception
 - attribute: type
   exception: null
   klass: StudyTitle
