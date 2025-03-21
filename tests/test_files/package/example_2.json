@@ -90,78 +90,7 @@
             "instanceType": "GovernanceDate"
           }
         ],
-        "amendments": [
-          {
-            "id": "StudyAmendment_1",
-            "number": "1",
-            "summary": "<td  colspan=\"3\">\n<ul>\n<li>Synopsis (Exclusion criteria) and chapter 9.3: Precision of exclusion criterion 3, adaption of exclusion criterion 12, addition of exclusion criteria 13 and 14, renumbering of the following exclusion criteria, precision of exclusion criteria 17 to 20 </li>\n<li>Synopsis (Statistical Rationale) and chapter 14.2.3: Addition of description of primary endpoint for sample size rationale </li>\n<li>Chapters 2.1, 2.3.1, 9.5.1, 9.5.2, 11.2 and 11.2.1: Deletion of prescreening visit </li>\n<li>Chapter 9.3, 9.5.3 and 18.8: Deletion of all text passages about legal representatives, authorized agents, children and parents </li>\n<li>Chapters 10.15.1, 10.15.3, 10.15.4 and 10.15.5: Amendment of wordings and more precise description for time points of concomitant therapy and medication </li>\n<li>Chapter 21.1: Addition of Figure 3 (Levels of activity of known corticosteroids for topical application) Chapter 22: Addition of reference for Stepien et al. 2022.</li>\n</ul>\n</td>",
-            "substantialImpact": false,
-            "primaryReason": {
-              "id": "StudyAmendmentReason_1",
-              "code": {
-                "id": "Code_7",
-                "code": "C17649",
-                "codeSystem": "http://www.cdisc.org",
-                "codeSystemVersion": "2023-12-15",
-                "decode": "Other",
-                "instanceType": "Code"
-              },
-              "otherReason": "See",
-              "instanceType": "StudyAmendmentReason"
-            },
-            "secondaryReasons": [
-              {
-                "id": "StudyAmendmentReason_2",
-                "code": {
-                  "id": "Code_8",
-                  "code": "C17649",
-                  "codeSystem": "http://www.cdisc.org",
-                  "codeSystemVersion": "2023-12-15",
-                  "decode": "Other",
-                  "instanceType": "Code"
-                },
-                "otherReason": "See",
-                "instanceType": "StudyAmendmentReason"
-              }
-            ],
-            "enrollments": [
-              {
-                "id": "SubjectEnrollment_2",
-                "type": {
-                  "id": "Code_5",
-                  "code": "C68846",
-                  "codeSystem": "http://www.cdisc.org",
-                  "codeSystemVersion": "2023-12-15",
-                  "decode": "Global",
-                  "instanceType": "Code"
-                },
-                "code": null,
-                "instanceType": "SubjectEnrollment",
-                "quantity": {
-                  "id": "Quantity_2",
-                  "value": 0.0,
-                  "unit": {
-                    "id": "AliasCode_2",
-                    "standardCode": {
-                      "id": "Code_6",
-                      "code": "C25613",
-                      "codeSystem": "http://www.cdisc.org",
-                      "codeSystemVersion": "2023-12-15",
-                      "decode": "Percentage",
-                      "instanceType": "Code"
-                    },
-                    "standardCodeAliases": [],
-                    "instanceType": "AliasCode"
-                  },
-                  "instanceType": "Quantity"
-                },
-                "appliesTo": null
-              }
-            ],
-            "previousId": null,
-            "instanceType": "StudyAmendment"
-          }
-        ],
+        "amendments": [],
         "businessTherapeuticAreas": [],
         "studyIdentifiers": [
           {
@@ -182,7 +111,7 @@
             "trialTypes": [],
             "therapeuticAreas": [],
             "characteristics": [],
-            "interventionModel": {
+            "model": {
               "id": "Code_16",
               "code": "C82639",
               "codeSystem": "http://www.cdisc.org",
@@ -225,7 +154,7 @@
             "dictionaries": [],
             "conditions": [],
             "notes": [],
-            "instanceType": "StudyDesign"
+            "instanceType": "InterventionalStudyDesign"
           }
         ],
         "titles": [
@@ -4497,7 +4426,7 @@
     ],
     "instanceType": "Study"
   },
-  "usdmVersion": "3.12.0",
+  "usdmVersion": "3.11.0",
   "systemName": "d4k Study Definitions Workbench",
   "systemVersion": "0.31.0"
 }
