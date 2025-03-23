@@ -4,7 +4,7 @@ from usdm4.rules.rules_validation import RulesValidation4
 from usdm3.rules.rules_validation_results import RulesValidationResults
 from usdm4.api.wrapper import Wrapper
 from usdm4.convert.convert import Convert
-from usdm4.minimum.minimum import Minimum
+from usdm4.builder.builder import Builder
 
 
 class USDM4:
@@ -21,7 +21,7 @@ class USDM4:
         return Convert.convert(data)
 
     def minimum(self, study_name: str, sponsor_id: str, version: str) -> Wrapper:
-        return Minimum.minimum(study_name, sponsor_id, version)
+        return Builder().minimum(study_name, sponsor_id, version)
 
     def from_json(self, data: dict) -> Wrapper:
         return Wrapper.model_validate(data)
