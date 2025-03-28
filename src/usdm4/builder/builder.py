@@ -158,7 +158,7 @@ class Builder:
                 "rationale": "To be provided",
                 "titles": [study_title],
                 "studyDesigns": [],
-                "documentVersionId": study_definition_document_version.id,
+                "documentVersionIds": [study_definition_document_version.id],
                 "studyIdentifiers": [study_identifier],
                 "studyPhase": None,
                 "dateValues": [approval_date],
