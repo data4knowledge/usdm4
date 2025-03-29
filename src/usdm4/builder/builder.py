@@ -251,3 +251,17 @@ class Builder:
                 #                "legalAddress": address,
             },
         )
+
+    def double_link(self, items, prev_attribute, next_attribute):
+        for idx, item in enumerate(items):
+            if idx == 0:
+                setattr(item, prev_attribute, None)
+            else:
+                the_id = getattr(items[idx - 1], "id")
+                setattr(item, prev_attribute, the_id)
+            if idx == len(items) - 1:
+                setattr(item, next_attribute, None)
+            else:
+                the_id = getattr(items[idx + 1], "id")
+                setattr(item, next_attribute, the_id)
+    
