@@ -264,4 +264,3 @@ class Builder:
             else:
                 the_id = getattr(items[idx + 1], "id")
                 setattr(item, next_attribute, the_id)
-    

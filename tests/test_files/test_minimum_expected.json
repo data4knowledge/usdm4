@@ -10,7 +10,9 @@
         "extensionAttributes": [],
         "versionIdentifier": "1",
         "rationale": "To be provided",
-        "documentVersionIds": [],
+        "documentVersionIds": [
+          "StudyDefinitionDocumentVersion_1"
+        ],
         "dateValues": [
           {
             "id": "GovernanceDate_1",

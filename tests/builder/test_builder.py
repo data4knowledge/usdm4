@@ -1,7 +1,4 @@
 from src.usdm4.builder.builder import Builder
-from src.usdm4.api.alias_code import AliasCode
-from src.usdm4.api.code import Code
-from src.usdm4.api.organization import Organization
 from tests.helpers.files import write_json_file, read_json_file
 
 SAVE = False
@@ -70,7 +67,7 @@ def test_decode_phase_phase_3b():
     builder = Builder()
     result = builder.decode_phase("3B")
 
-    #assert isinstance(result, AliasCode)
+    # assert isinstance(result, AliasCode)
     assert result.standardCode.code == "C49689"
     assert result.standardCode.decode == "Phase IIIb Trial"
 
@@ -79,7 +76,7 @@ def test_decode_phase_pre_clinical():
     builder = Builder()
     result = builder.decode_phase("PRE-CLINICAL")
 
-    #assert isinstance(result, AliasCode)
+    # assert isinstance(result, AliasCode)
     assert result.standardCode.code == "C54721"
     assert result.standardCode.decode == "Phase 0 Trial"
 
@@ -88,7 +85,7 @@ def test_decode_phase_unknown():
     builder = Builder()
     result = builder.decode_phase("UNKNOWN")
 
-    #assert isinstance(result, AliasCode)
+    # assert isinstance(result, AliasCode)
     assert result.standardCode.code == "C48660"
     assert result.standardCode.decode == "[Trial Phase] Not Applicable"
 
@@ -97,7 +94,7 @@ def test_decode_phase_empty():
     builder = Builder()
     result = builder.decode_phase("")
 
-    #assert isinstance(result, AliasCode)
+    # assert isinstance(result, AliasCode)
     assert result.standardCode.code == "C48660"
     assert result.standardCode.decode == "[Trial Phase] Not Applicable"
 
@@ -106,7 +103,7 @@ def test_cdisc_code_basic():
     builder = Builder()
     result = builder.cdisc_code("C12345", "Test Code")
 
-    #assert isinstance(result, Code)
+    # assert isinstance(result, Code)
     assert result.code == "C12345"
     assert result.decode == "Test Code"
     assert result.codeSystem == builder._cdisc_code_system
@@ -117,7 +114,7 @@ def test_cdisc_code_empty_values():
     builder = Builder()
     result = builder.cdisc_code("", "")
 
-    #assert isinstance(result, Code)
+    # assert isinstance(result, Code)
     assert result.code == ""
     assert result.decode == ""
     assert result.codeSystem == builder._cdisc_code_system
@@ -128,7 +125,7 @@ def test_cdisc_code_special_characters():
     builder = Builder()
     result = builder.cdisc_code("C99999", "Special & Characters: 123!@#")
 
-    #assert isinstance(result, Code)
+    # assert isinstance(result, Code)
     assert result.code == "C99999"
     assert result.decode == "Special & Characters: 123!@#"
     assert result.codeSystem == builder._cdisc_code_system
@@ -147,7 +144,7 @@ def test_cdisc_code_system_values():
 
     result = builder.cdisc_code("C54321", "Test with custom system")
 
-    #assert isinstance(result, Code)
+    # assert isinstance(result, Code)
     assert result.code == "C54321"
     assert result.decode == "Test with custom system"
     assert result.codeSystem == "test.system"
@@ -163,7 +160,7 @@ def test_alias_code_basic():
     sc = builder.cdisc_code("C12345", "Test Code")
     result = builder.alias_code(sc)
 
-    #assert isinstance(result, AliasCode)
+    # assert isinstance(result, AliasCode)
     assert result.standardCode.code == "C12345"
     assert result.standardCode.decode == "Test Code"
     assert result.standardCode.codeSystem == builder._cdisc_code_system
@@ -175,7 +172,7 @@ def test_sponsor_basic():
     builder = Builder()
     result = builder.sponsor("ACME Pharma")
 
-    #assert isinstance(result, Organization)
+    # assert isinstance(result, Organization)
     assert result.type.code == "C70793"
     assert result.type.decode == "Clinical Study Sponsor"
     assert result.name == "ACME Pharma"
