@@ -7,7 +7,7 @@ from tests.helpers.files import (
     file_path,
 )
 
-SAVE = True
+SAVE = False
 
 
 def run_test(sub_dir: str, file_stem: str, save: bool = False):

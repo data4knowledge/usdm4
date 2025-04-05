@@ -1,7 +1,7 @@
 from src.usdm4.builder.builder import Builder
 from tests.helpers.files import write_json_file, read_json_file
 
-SAVE = True
+SAVE = False
 
 
 def test_minimum():
