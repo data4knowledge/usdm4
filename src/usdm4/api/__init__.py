@@ -15,7 +15,8 @@ from .biomedical_concept import BiomedicalConcept
 from .characteristic import Characteristic
 from .code import Code
 from .condition import Condition
-from .eligibility_criterion import EligibilityCriterion
+from .document_content_reference import DocumentContentReference
+from .eligibility_criterion import EligibilityCriterion, EligibilityCriterionItem
 from .encounter import Encounter
 from .endpoint import Endpoint
 from .estimand import Estimand
@@ -46,13 +47,14 @@ from .study_amendment_reason import StudyAmendmentReason
 from .study_arm import StudyArm
 from .study_cell import StudyCell
 from .study_design import (
-    StudyDesign,
     InterventionalStudyDesign,
     ObservationalStudyDesign,
+    StudyDesign,
 )
 from .study_element import StudyElement
 from .study_epoch import StudyEpoch
 from .identifier import (
+    StudyIdentifier,
     StudyIdentifier,
     AdministrableProductIdentifier,
     ReferenceIdentifier,
@@ -67,16 +69,11 @@ from .study_version import StudyVersion
 from .study_role import StudyRole
 from .study import Study
 from .syntax_template import SyntaxTemplate
-from .syntax_template_dictionary import SyntaxTemplateDictionary
+from .syntax_template_dictionary import SyntaxTemplateDictionary, ParameterMap
 from .subject_enrollment import SubjectEnrollment
 from .timing import Timing
 from .transition_rule import TransitionRule
 from .wrapper import Wrapper
-
-Quantity.model_rebuild()
-Range.model_rebuild()
-Code.model_rebuild()
-AliasCode.model_rebuild()
 
 __all__ = [
     "Abbreviation",
@@ -96,7 +93,9 @@ __all__ = [
     "Characteristic",
     "Code",
     "Condition",
+    "DocumentContentReference",
     "EligibilityCriterion",
+    "EligibilityCriterionItem",
     "Encounter",
     "Endpoint",
     "Estimand",
@@ -105,10 +104,12 @@ __all__ = [
     "Indication",
     "Ingredient",
     "IntercurrentEvent",
+    "InterventionalStudyDesign",
     "Masking",
     "NarrativeContent",
     "NarrativeContentItem",
     "Objective",
+    "ObservationalStudyDesign",
     "Organization",
     "Procedure",
     "Quantity",
@@ -128,8 +129,6 @@ __all__ = [
     "StudyCohort",
     "StudyDesignPopulation",
     "StudyDesign",
-    "InterventionalStudyDesign",
-    "ObservationalStudyDesign",
     "StudyElement",
     "StudyEpoch",
     "StudyIdentifier",
@@ -147,6 +146,7 @@ __all__ = [
     "SubjectEnrollment",
     "SyntaxTemplate",
     "SyntaxTemplateDictionary",
+    "ParameterMap",
     "Timing",
     "TransitionRule",
     "Wrapper",
