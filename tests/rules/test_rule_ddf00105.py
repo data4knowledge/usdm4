@@ -107,4 +107,3 @@ def test_validate_epoch_in_same_study_design(rule):
     config = {"data": data_store}
     assert rule.validate(config) is True
     assert rule._errors.count() == 0
-
