@@ -61,8 +61,8 @@ class StudyDefinitionDocumentVersion(ApiBaseModelWithId):
     #     else:
     #         result = None
 
-    # def _first_narrative_content(self) -> NarrativeContent:
-    #     return next((x for x in self.contents if not x.previousId and x.nextId), None)
+    def _first_narrative_content(self) -> NarrativeContent:
+        return next((x for x in self.contents if not x.previousId and x.nextId), None)
 
     # def _section_is_permitted(self, content: NarrativeContent):
     #     result = True if content: NarrativeContent not in self._data.keys() else False

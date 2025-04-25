@@ -180,5 +180,8 @@ class StudyVersion(ApiBaseModelWithId):
     def organization_map(self) -> Organization:
         return {x.id: x for x in self.organizations}
 
+    def narrative_content_item_map(self) -> NarrativeContentItem:
+        return {x.id: x for x in self.narrativeContentItems}
+
     def find_study_design(self, id: str) -> StudyDesign:
         return next((x for x in self.studyDesigns if x.id == id), None)
