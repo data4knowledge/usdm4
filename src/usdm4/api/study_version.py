@@ -182,3 +182,7 @@ class StudyVersion(ApiBaseModelWithId):
 
     def find_study_design(self, id: str) -> StudyDesign:
         return next((x for x in self.studyDesigns if x.id == id), None)
+
+
+    def narrative_content_item_map(self) -> NarrativeContentItem:
+        return {x.id: x for x in self.narrativeContentItems}

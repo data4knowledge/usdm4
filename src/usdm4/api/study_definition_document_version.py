@@ -25,5 +25,15 @@ class StudyDefinitionDocumentVersion(ApiBaseModelWithId):
             )
         return sections
 
+    def find_narrative_content(self, id: str) -> NarrativeContent:
+        try:
+            map = self.narraitve_content_map
+            return map[id]
+        except:
+            return None
+
+    def narraitve_content_map(self) -> dict:
+        return {x.id: x for x in self.contents}
+
     def _first_narrative_content(self) -> NarrativeContent:
         return next((x for x in self.contents if not x.previousId and x.nextId), None)
