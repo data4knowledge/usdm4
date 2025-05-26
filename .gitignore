@@ -174,3 +174,4 @@ cython_debug/
 .DS_Store
 
 .development_env
+.test_env
