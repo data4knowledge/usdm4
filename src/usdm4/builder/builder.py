@@ -19,7 +19,7 @@ from usdm3.ct.cdisc.library import Library
 
 
 class Builder:
-    def __init__(self, root_path):
+    def __init__(self, root_path: str):
         self._id_manager: IdManager = IdManager(v4_classes)
         self.api_instance: APIInstance = APIInstance(self._id_manager)
         self.ct_library = Library(root_path)
