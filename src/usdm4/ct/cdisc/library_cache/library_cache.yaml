@@ -4,6 +4,9 @@ C123650:
   extensible: 'true'
   name: Tumor or Lesion Identification Test Results
   preferredTerm: CDISC SDTM Tumor and Lesion Identification Test Result Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: TUIDRS
   synonyms:
   - Tumor or Lesion Identification Test Results
@@ -34,6 +37,11 @@ C123650:
       to a point of origin.
     preferredTerm: Distant
     submissionValue: DISTANT
+  - conceptId: C214749
+    definition: A localized pathological or traumatic structural change, damage, deformity,
+      or discontinuity situated outside the medulla.
+    preferredTerm: Extramedullary Lesion
+    submissionValue: EXTRAMEDULLARY LESION
   - conceptId: C67263
     definition: Of or belonging to a restricted area on the body in relation to a
       point of origin.
@@ -179,6 +187,9 @@ C124309:
   extensible: 'true'
   name: Tumor or Lesion Properties Test Result
   preferredTerm: CDISC SDTM Tumor or Lesion Properties Test Result Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: TRPROPRS
   synonyms:
   - Tumor or Lesion Properties Test Result
@@ -291,6 +302,9 @@ C127262:
   extensible: 'true'
   name: Environmental Setting
   preferredTerm: CDISC SDTM Environmental Setting Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: SETTING
   synonyms:
   - Environmental Setting
@@ -299,7 +313,7 @@ C127262:
     definition: An establishment that provides care for infants and children.
     preferredTerm: Childcare Center
     submissionValue: CHILD CARE CENTER
-  - conceptId: C51282
+  - conceptId: C211570
     definition: A health care facility where subjects or patients may receive assessments,
       procedures, or treatments that are provided by physicians and other healthcare
       providers.
@@ -384,6 +398,9 @@ C171445:
   extensible: 'true'
   name: Mode of Subject Contact
   preferredTerm: CDISC SDTM Mode of Subject Contact Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: CNTMODE
   synonyms:
   - Mode of Subject Contact
@@ -441,6 +458,9 @@ C174222:
   extensible: 'true'
   name: Study Arm Type Value Set Terminology
   preferredTerm: CDISC Protocol Study Arm Type Value Set Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: protocolct
   submissionValue: Study Arm Type Value Set Terminology
   synonyms:
   - Study Arm Type Value Set Terminology
@@ -489,6 +509,9 @@ C188723:
   extensible: 'false'
   name: Protocol Status Value Set Terminology
   preferredTerm: CDISC DDF Protocol Status Value Set Terminology
+  source:
+    effective_date: '2024-09-27'
+    package: ddfct
   submissionValue: Protocol Status Value Set Terminology
   synonyms:
   - Protocol Status Value Set Terminology
@@ -523,6 +546,9 @@ C188724:
   extensible: 'true'
   name: Organization Type Value Set Terminology
   preferredTerm: CDISC DDF Organization Type Value Set Terminology
+  source:
+    effective_date: '2024-09-27'
+    package: ddfct
   submissionValue: Organization Type Value Set Terminology
   synonyms:
   - Organization Type Value Set Terminology
@@ -557,6 +583,9 @@ C188725:
   extensible: 'false'
   name: Objective Level Value Set Terminology
   preferredTerm: CDISC DDF Objective Level Value Set Terminology
+  source:
+    effective_date: '2024-09-27'
+    package: ddfct
   submissionValue: Objective Level Value Set Terminology
   synonyms:
   - Objective Level Value Set Terminology
@@ -591,6 +620,9 @@ C188726:
   extensible: 'false'
   name: Endpoint Level Value Set Terminology
   preferredTerm: CDISC DDF Endpoint Level Value Set Terminology
+  source:
+    effective_date: '2024-09-27'
+    package: ddfct
   submissionValue: Endpoint Level Value Set Terminology
   synonyms:
   - Endpoint Level Value Set Terminology
@@ -620,6 +652,9 @@ C188727:
   extensible: 'true'
   name: Study Arm Data Origin Type Value Set Terminology
   preferredTerm: CDISC DDF Study Arm Data Origin Type Value Set Terminology
+  source:
+    effective_date: '2024-09-27'
+    package: ddfct
   submissionValue: Study Arm Data Origin Type Value Set Terminology
   synonyms:
   - Study Arm Data Origin Type Value Set Terminology
@@ -662,6 +697,9 @@ C188728:
   extensible: 'true'
   name: Encounter Type Value Set Terminology
   preferredTerm: CDISC DDF Encounter Type Value Set Terminology
+  source:
+    effective_date: '2024-09-27'
+    package: ddfct
   submissionValue: Encounter Type Value Set Terminology
   synonyms:
   - Encounter Type Value Set Terminology
@@ -677,6 +715,9 @@ C201265:
   extensible: 'false'
   name: Timing Relative To From Value Set Terminology
   preferredTerm: CDISC DDF Timing Relative To From Value Set Terminology
+  source:
+    effective_date: '2024-09-27'
+    package: ddfct
   submissionValue: Timing Relative To From Value Set Terminology
   synonyms:
   - Timing Relative To From Value Set Terminology
@@ -707,6 +748,9 @@ C207419:
   extensible: 'false'
   name: Study Title Type Value Set Terminology
   preferredTerm: CDISC DDF Study Title Type Value Set Terminology
+  source:
+    effective_date: '2024-09-27'
+    package: ddfct
   submissionValue: Study Title Type Value Set Terminology
   synonyms:
   - Study Title Type Value Set Terminology
@@ -745,6 +789,9 @@ C66726:
   extensible: 'true'
   name: Dosage Form
   preferredTerm: CDISC SDTM Dosage Form Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: FRM
   synonyms:
   - Dosage Form
@@ -1408,6 +1455,13 @@ C66726:
       or antiseptic effect. (NCI)
     preferredTerm: Mouthwash Dosage Form
     submissionValue: MOUTHWASH
+  - conceptId: C214665
+    definition: A dosage form that contains nano-sized solid particles dispersed in
+      a liquid vehicle.
+    preferredTerm: Nanosuspension Dosage Form
+    submissionValue: NANOSUSPENSION
+    synonyms:
+    - Nanoparticle Suspension
   - conceptId: C48624
     definition: The use of a dosage form term is not relevant or appropriate. (NCI)
     preferredTerm: Dosage Form Not Applicable
@@ -1674,9 +1728,8 @@ C66726:
     preferredTerm: Extended Release Suppository Dosage Form
     submissionValue: SUPPOSITORY, EXTENDED RELEASE
   - conceptId: C42994
-    definition: 'A liquid dosage form that contains solid particles dispersed in a
-      liquid vehicle. Note: A liquid is pourable; it flows and conforms to its container
-      at room temperature. It displays Newtonian or pseudoplastic flow behavior.'
+    definition: A dosage form that contains solid particles dispersed in a liquid
+      vehicle.
     preferredTerm: Suspension Dosage Form
     submissionValue: SUSPENSION
     synonyms:
@@ -1805,6 +1858,14 @@ C66726:
       referred to as a Dispersible Tablet).
     preferredTerm: Tablet for Suspension Dosage Form
     submissionValue: TABLET, FOR SUSPENSION
+  - conceptId: C214660
+    definition: A solid dosage form containing medicinal substances with or without
+      suitable diluents, which is designed to remain in the stomach for a prolonged
+      period of time.
+    preferredTerm: Gastroretentive Tablet Dosage Form
+    submissionValue: TABLET, GASTRORETENTIVE
+    synonyms:
+    - TABLET, GASTRO-RETENTIVE
   - conceptId: C142248
     definition: A solid dosage form containing medicinal substances with or without
       suitable diluents, which is designed to release its active and/or inert ingredient(s)
@@ -1822,11 +1883,44 @@ C66726:
       of active and/or inert ingredient(s).
     preferredTerm: Modified Release Tablet Dosage Form
     submissionValue: TABLET, MODIFIED RELEASE
+  - conceptId: C214664
+    definition: A solid dosage form containing medicinal substances that have been
+      compressed to form a two-layered tablet with a 1:1 ratio of immediate release
+      and modified release components and exhibiting an altered inherent rate of release
+      of active and/or inert ingredient(s).
+    preferredTerm: Modified Release Bilayer Tablet 1:1 Dosage Form
+    submissionValue: TABLET, MODIFIED RELEASE, BILAYER (1:1)
+  - conceptId: C214663
+    definition: A solid dosage form containing medicinal substances that have been
+      compressed to form a two-layered tablet with a 1:2 ratio of immediate release
+      and modified release components and exhibiting an altered inherent rate of release
+      of active and/or inert ingredient(s).
+    preferredTerm: Modified Release Bilayer Tablet 1:2 Dosage Form
+    submissionValue: TABLET, MODIFIED RELEASE, BILAYER (1:2)
+  - conceptId: C214529
+    definition: A solid dosage form containing medicinal substances that have been
+      compressed to form a two-layered tablet of immediate release and modified release
+      components and exhibiting an altered inherent rate of release of active and/or
+      inert ingredient(s).
+    preferredTerm: Modified Release Bilayer Tablet Dosage Form
+    submissionValue: TABLET, MODIFIED RELEASE, BILAYER
+  - conceptId: C214662
+    definition: A solid dosage form exhibiting an altered inherent rate of release
+      of active and/or inert ingredient(s) from an extrudable core system.
+    preferredTerm: Modified Release Extrudable Core System Tablet Dosage Form
+    submissionValue: TABLET, MODIFIED RELEASE, EXTRUDABLE CORE SYSTEM
+    synonyms:
+    - Tablet, Modified Release, ECS
   - conceptId: C170573
     definition: A solid dosage form exhibiting an altered inherent rate of release
       of active and/or inert ingredient(s) that is classified as long.
     preferredTerm: Long Modified Release Tablet Dosage Form
     submissionValue: TABLET, MODIFIED RELEASE, LONG DURATION
+  - conceptId: C214661
+    definition: A solid dosage form exhibiting an altered inherent rate of release
+      of active and/or inert ingredient(s) from a polymer matrix system.
+    preferredTerm: Modified Release Matrix Tablet Dosage Form
+    submissionValue: TABLET, MODIFIED RELEASE, MATRIX
   - conceptId: C170574
     definition: A solid dosage form exhibiting an altered inherent rate of release
       of active and/or inert ingredient(s) that is classified as short.
@@ -1915,6 +2009,9 @@ C66728:
   extensible: 'false'
   name: Relation to Reference Period
   preferredTerm: CDISC SDTM Relation to Reference Period Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: STENRF
   synonyms:
   - Relation to Reference Period
@@ -1966,6 +2063,9 @@ C66729:
   extensible: 'true'
   name: Route of Administration Response
   preferredTerm: CDISC SDTM Route of Administration Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: ROUTE
   synonyms:
   - Route of Administration Response
@@ -2178,7 +2278,7 @@ C66729:
     preferredTerm: Intraesophageal Route of Administration
     submissionValue: INTRAESOPHAGEAL
   - conceptId: C38246
-    definition: Administration within the stomach. (FDA)
+    definition: Administration directly into the stomach, usually by means of a tube.
     preferredTerm: Intragastric Route of Administration
     submissionValue: INTRAGASTRIC
   - conceptId: C38247
@@ -2425,8 +2525,8 @@ C66729:
     preferredTerm: Ophthalmic Route of Administration
     submissionValue: OPHTHALMIC
   - conceptId: C78374
-    definition: Administration through the mouth and into the stomach, usually by
-      means of a tube. (NCI)
+    definition: For nonclinical studies, administration through the mouth and into
+      the stomach, usually by means of an oral gavage tube.
     preferredTerm: Oral Gavage Route of Administration
     submissionValue: ORAL GAVAGE
   - conceptId: C38288
@@ -2599,6 +2699,9 @@ C66732:
   extensible: 'false'
   name: Sex of Participants Response
   preferredTerm: CDISC SDTM Sex of Study Group Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: SEXPOP
   synonyms:
   - Sex of Participants Response
@@ -2629,6 +2732,9 @@ C66733:
   extensible: 'true'
   name: Size Response
   preferredTerm: CDISC SDTM Size Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: SIZE
   synonyms:
   - Size Response
@@ -2655,6 +2761,9 @@ C66735:
   extensible: 'true'
   name: Trial Blinding Schema Response
   preferredTerm: CDISC SDTM Trial Blinding Schema Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: TBLIND
   synonyms:
   - Trial Blinding Schema Response
@@ -2700,6 +2809,9 @@ C66736:
   extensible: 'true'
   name: Trial Intent Type Response
   preferredTerm: CDISC SDTM Trial Indication Type Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: TINDTP
   synonyms:
   - Trial Intent Type Response
@@ -2780,6 +2892,9 @@ C66737:
   extensible: 'true'
   name: Trial Phase Response
   preferredTerm: CDISC SDTM Trial Phase Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: TPHASE
   synonyms:
   - Trial Phase Response
@@ -2971,6 +3086,9 @@ C66739:
   extensible: 'true'
   name: Trial Type Response
   preferredTerm: CDISC SDTM Trial Type Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: TTYPE
   synonyms:
   - Trial Type Response
@@ -3159,6 +3277,9 @@ C66742:
   extensible: 'false'
   name: No Yes Response
   preferredTerm: CDISC SDTM Yes No Unknown or Not Applicable Response Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: NY
   synonyms:
   - No Yes Response
@@ -3197,6 +3318,9 @@ C66770:
   extensible: 'true'
   name: Units for Vital Signs Results
   preferredTerm: CDISC SDTM Unit for Vital Sign Result Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: VSRESU
   synonyms:
   - Units for Vital Signs Results
@@ -3430,6 +3554,9 @@ C66797:
   extensible: 'false'
   name: Category of Inclusion/Exclusion
   preferredTerm: CDISC SDTM Category for Inclusion And Or Exclusion Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: IECAT
   synonyms:
   - Category of Inclusion/Exclusion
@@ -3450,6 +3577,9 @@ C71113:
   extensible: 'true'
   name: Frequency
   preferredTerm: CDISC SDTM Frequency Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: FREQ
   synonyms:
   - Frequency
@@ -4068,6 +4198,9 @@ C71148:
   extensible: 'true'
   name: Position
   preferredTerm: CDISC SDTM Body Position Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: POSITION
   synonyms:
   - Position
@@ -4190,6 +4323,9 @@ C71620:
   extensible: 'true'
   name: Unit
   preferredTerm: CDISC SDTM Unit of Measure Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: UNIT
   synonyms:
   - Unit
@@ -4523,6 +4659,11 @@ C71620:
     submissionValue: /s
     synonyms:
     - /sec
+  - conceptId: C214759
+    definition: A unit equal to one square micrometer used as a denominator to build
+      a derived unit expressed as a ratio.
+    preferredTerm: per Square Micrometer
+    submissionValue: /um2
   - conceptId: C105516
     definition: A unit of measure equal to the instances of an entity per visual field
       of a microscope. (NCI)
@@ -4530,6 +4671,15 @@ C71620:
     submissionValue: /VF
     synonyms:
     - Per Visual Field
+  - conceptId: C214758
+    definition: A unit of measure equal to the instances of an entity per culture
+      plate well.
+    preferredTerm: Per Culture Plate Well
+    submissionValue: /WELL
+    synonyms:
+    - /Well
+    - Per Culture Plate Well
+    - Per Well
   - conceptId: C67069
     definition: Every week. (NCI)
     preferredTerm: Weekly
@@ -5231,6 +5381,13 @@ C71620:
     - 10^15/L
     - 10^3/pL
     - 10^6/nL
+  - conceptId: C214761
+    definition: A unit of measure for the number of target molecules per cell as determined
+      by actual binding of a labeled antibody to a target.
+    preferredTerm: Antibody Binding Capacity Unit
+    submissionValue: ABC
+    synonyms:
+    - Antibody Binding Capacity Unit
   - conceptId: C73686
     definition: A unit of optical density expressed as a logarithm of absorbance of
       light transmitted through a partially absorbing substance.
@@ -7088,6 +7245,12 @@ C71620:
     submissionValue: INHALATION
     synonyms:
     - Inhalation Dosing Unit
+  - conceptId: C122632
+    definition: A dosing measurement based on the injection unit.
+    preferredTerm: Injection Dosing Unit
+    submissionValue: INJECTION
+    synonyms:
+    - Injection Dosing Unit
   - conceptId: C48579
     definition: The unitage assigned by the WHO (World Health Organization) to International
       Biological Standards - substances, classed as biological according to the criteria
@@ -8582,6 +8745,12 @@ C71620:
       of heartbeats measured per minute unit of time.
     preferredTerm: Millimeters of Mercury times Beats per Minute
     submissionValue: mmHg*beats/min
+  - conceptId: C214756
+    definition: A unit of resistance equal to the number of millimeters of mercury
+      times meters squared, per unit of volume equal to one liter per unit of time
+      equal to one minute.
+    preferredTerm: Millimeter Mercury times Square Meter per Liter per Minute
+    submissionValue: mmHg*m2/L/min
   - conceptId: C150900
     definition: A unit of resistance equal to the number of millimeters of mercury
       times minutes, per unit of volume equal to one liter.
@@ -8635,6 +8804,11 @@ C71620:
     submissionValue: mmol/kg
     synonyms:
     - Millimole per Kilogram
+  - conceptId: C214760
+    definition: A dose calculation unit expressed in millimole(s) per kilogram per
+      period of time equal to one second.
+    preferredTerm: Millimole per Kilogram per Second
+    submissionValue: mmol/kg/s
   - conceptId: C64387
     definition: A unit of concentration (molarity unit) equal to one millimole of
       solute per liter of solution.
@@ -9020,8 +9194,8 @@ C71620:
     synonyms:
     - Nanogram Equivalent
   - conceptId: C166082
-    definition: Nanogram equivalents of a radiolabeled substance per gram of matrix
-      or tissue.
+    definition: Nanogram equivalents of a substance per gram of matrix or tissue (e.g.,
+      radiolabeled dose).
     preferredTerm: Nanogram Equivalents Per Gram
     submissionValue: ngEq/g
   - conceptId: C130192
@@ -9818,6 +9992,15 @@ C71620:
     synonyms:
     - SFU/2x10^5 PBMC
     - Spots/2x10^5 PBMC
+  - conceptId: C214757
+    definition: A unit of activity of cell-mediated immunity expressed as a quantity
+      of spot forming cells per one culture plate well.
+    preferredTerm: Spot Forming Cells per Well
+    submissionValue: SFC/WELL
+    synonyms:
+    - SFU/Well
+    - Spot Forming Cells/Well
+    - Spots/Well
   - conceptId: C112433
     definition: A dosing measurement based on the shock wave unit.
     preferredTerm: Shockwave Dosing Unit
@@ -10836,6 +11019,9 @@ C74456:
   extensible: 'true'
   name: Anatomical Location
   preferredTerm: CDISC SDTM Anatomical Location Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: LOC
   synonyms:
   - Anatomical Location
@@ -10858,7 +11044,7 @@ C74456:
     - Abdomen
   - conceptId: C12360
     definition: Any lymph node within the abdomen.
-    preferredTerm: Intra-Abdominal Lymph Node
+    preferredTerm: Abdominal Lymph Node
     submissionValue: ABDOMINAL LYMPH NODE
   - conceptId: C151399
     definition: The left lower quadrant of the abdomen.
@@ -11445,6 +11631,12 @@ C74456:
       elbow joint and, in some species, also functions in supination of the antebrachium.
     preferredTerm: Biceps Brachii
     submissionValue: BICEPS BRACHII MUSCLE
+  - conceptId: C214698
+    definition: The tendons that attach the biceps brachii muscle superiorly to the
+      caricoid process and glenoid fossa of the scapula, and inferiorly to the radius
+      bones.
+    preferredTerm: Biceps Brachii Tendon
+    submissionValue: BICEPS BRACHII TENDONS
   - conceptId: C53147
     definition: A muscle in the thigh, in general extending from the ischial tuberosity
       and posterior femur to the fibula; primary function is to extend the femorotibial
@@ -12671,6 +12863,11 @@ C74456:
       elbow joint.
     preferredTerm: Elbow Flexors
     submissionValue: ELBOW FLEXOR MUSCLES
+  - conceptId: C214697
+    definition: The tendons that connect the muscles of the forearm and upper arm
+      to the bones of the elbow joint.
+    preferredTerm: Elbow Joint Tendon
+    submissionValue: ELBOW JOINT TENDONS
   - conceptId: C32497
     definition: A joint involving the humerus, radius and ulna bones.
     preferredTerm: Elbow Joint
@@ -12724,7 +12921,7 @@ C74456:
   - conceptId: C41449
     definition: The body space between the dura mater and the walls of the vertebral
       canal.
-    preferredTerm: Epidural Spinal Canal Space
+    preferredTerm: Epidural Spinal Space
     submissionValue: EPIDURAL SPACE
   - conceptId: C139195
     definition: A parietal lymph node located along the inferior epigastric vessels.
@@ -14443,6 +14640,10 @@ C74456:
     submissionValue: INTRAHEPATIC LARGE BILE DUCT
     synonyms:
     - Perihilar Bile Duct
+  - conceptId: C214699
+    definition: The potential space within the retinal layers.
+    preferredTerm: Intraretinal Space
+    submissionValue: INTRARETINAL SPACE
   - conceptId: C12359
     definition: Any lymph node within the thoracic cavity.
     preferredTerm: Intrathoracic Lymph Node
@@ -16682,6 +16883,14 @@ C74456:
     submissionValue: PORTAL VEIN
     synonyms:
     - Hepatic Portal Vein
+  - conceptId: C214695
+    definition: The left branch of the main portal vein within the liver.
+    preferredTerm: Left Portal Vein
+    submissionValue: PORTAL VEIN, LEFT BRANCH
+  - conceptId: C214696
+    definition: The right branch of the main portal vein in the liver.
+    preferredTerm: Right Portal Vein
+    submissionValue: PORTAL VEIN, RIGHT BRANCH
   - conceptId: C33346
     definition: A ridge on the parietal lobe of the brain, located between the central
       and postcentral sulci, that corresponds to the primary somatic sensory cortex
@@ -17698,7 +17907,7 @@ C74456:
     submissionValue: SKIN FOLD
   - conceptId: C116164
     definition: The integument that covers the underarm.
-    preferredTerm: Skin Of The Axilla
+    preferredTerm: Skin of the Axilla
     submissionValue: SKIN OF THE AXILLA
   - conceptId: C142318
     definition: The integument that covers the back.
@@ -18083,6 +18292,11 @@ C74456:
       and posteriorly by the hyoid bone.
     preferredTerm: Submental Region
     submissionValue: SUBMENTAL REGION
+  - conceptId: C214700
+    definition: The space between the neurosensory retina and retinal pigmented epithelial
+      layer.
+    preferredTerm: Subretinal Space
+    submissionValue: SUBRETINAL SPACE
   - conceptId: C33651
     definition: A muscle in the shoulder, in general extending from the subscapular
       fossa to the lesser tubercle of the humerus; primary function is to medially
@@ -19140,6 +19354,9 @@ C78734:
   extensible: 'true'
   name: Specimen Type
   preferredTerm: CDISC SDTM Specimen Type Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: SPECTYPE
   synonyms:
   - Specimen Type
@@ -19916,6 +20133,9 @@ C78735:
   extensible: 'true'
   name: Evaluator
   preferredTerm: CDISC SDTM Evaluator Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: EVAL
   synonyms:
   - Evaluator
@@ -20254,6 +20474,9 @@ C85492:
   extensible: 'true'
   name: Method
   preferredTerm: CDISC SDTM Method Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: METHOD
   synonyms:
   - Method
@@ -21779,7 +22002,7 @@ C85492:
       light.
     preferredTerm: Infrared Spectrometry
     submissionValue: INFRARED SPECTROMETRY
-  - conceptId: C202405
+  - conceptId: C128363
     definition: A blood test that exposes a person's T-lymphocytes ex vivo to specific
       microbial antigen(s) to stimulate the production and release of interferon gamma,
       which provides an indication that the person has been exposed to a specific
@@ -21863,6 +22086,18 @@ C85492:
       activity.
     preferredTerm: Isothermal Amplification
     submissionValue: ISOTHERMAL AMPLIFICATION
+  - conceptId: C214705
+    definition: An assay that is used to quantify cytotoxic effector cell activity
+      (e.g., cytotoxic T cell (CTL) or natural killer (NK) cell) by measuring target
+      cell lysis. The process involves bathing and labeling the target cells with
+      a radioactive isotope (e.g. Chromium 51 or Indium-111) or fluorescent molecule.
+      The target cells are then mixed with the effector cells (CTL or NK). The killing
+      of the labeled target cells leads to the release of the radioactive isotope
+      into the supernatant after cell lysis. Accumulation of the radioactive isotope
+      is quantified and measured in the supernatant which indicates effector cell-mediated
+      cytolysis.
+    preferredTerm: Isotope-release Cytotoxicity Assay
+    submissionValue: ISOTOPE-RELEASE CYTOTOXICITY ASSAY
   - conceptId: C122167
     definition: A method for assessing bleeding time in which the individual wears
       a blood pressure cuff inflated to 40mmHg, a controlled incision (10mm long x
@@ -22547,9 +22782,6 @@ C85492:
     definition: Observing a subject or material to gain information.
     preferredTerm: Observation
     submissionValue: OBSERVATION
-    synonyms:
-    - Inspection
-    - Visual Inspection
   - conceptId: C116156
     definition: A molecular cytogenetic method combining chromosomal comparative genomic
       hybridization technique and microarray to detect chromosomal aberrations and
@@ -23093,6 +23325,16 @@ C85492:
       assessment of cells in a biological specimen.
     preferredTerm: Romanowsky Stain
     submissionValue: ROMANOWSKY STAIN
+  - conceptId: C214704
+    definition: A method to evaluate clotting dynamics and physical properties in
+      which the amplitude of movement of an oscillating pin within a static blood
+      sample is measured over time and analyzed using an optical detection system.
+    preferredTerm: Rotational Thromboelastography
+    submissionValue: ROTATIONAL THROMBOELASTOMETRY
+    synonyms:
+    - Rotational Thromboelastography
+    - ROTEG
+    - ROTEM
   - conceptId: C179765
     definition: A standardized method of color vision testing that is a shortened
       version of the Farnsworth-Munsell 100-Hue test (FM100), using every third of
@@ -23304,7 +23546,7 @@ C85492:
   - conceptId: C209652
     definition: A technique to assess puffing behavior in smokers, using a smoking
       topography (ST) device.
-    preferredTerm: Smoking Topography
+    preferredTerm: Smoking Topography Research
     submissionValue: SMOKING TOPOGRAPHY
   - conceptId: C123467
     definition: A diagrammatic method to test visual acuity, which uses a chart containing
@@ -23486,7 +23728,8 @@ C85492:
       amplitude of movement of a pin suspended in the center of an oscillating blood
       sample, or the vertical movement of the meniscus of a vibrating blood sample,
       is measured over time and analyzed to assess the dynamics and physical properties
-      of blood clot formation in a low shear environment.
+      of blood clot formation in a low shear environment, using an electromagnetic
+      detection system.
     preferredTerm: Thromboelastography
     submissionValue: THROMBOELASTOGRAPHY
   - conceptId: C181463
@@ -23686,6 +23929,14 @@ C85492:
     submissionValue: VISUAL ANALOG SCALE
     synonyms:
     - VAS
+  - conceptId: C214703
+    definition: Human evaluation of an attribute of a subject or material using visual
+      discernment.
+    preferredTerm: Visual Inspection
+    submissionValue: VISUAL INSPECTION
+    synonyms:
+    - Inspection
+    - Manual Visual Inspection
   - conceptId: C198352
     definition: A type of conditioned audiometry to detect sound, where a delayed
       visual presentation is used to support a child's reflexive orientation response
@@ -23804,6 +24055,9 @@ C96785:
   extensible: 'true'
   name: Oncology Response Assessment Result
   preferredTerm: CDISC SDTM Tumor Response Result Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: ONCRSR
   synonyms:
   - Oncology Response Assessment Result
@@ -24478,6 +24732,9 @@ C99073:
   extensible: 'true'
   name: Laterality
   preferredTerm: CDISC SDTM Laterality Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: LAT
   synonyms:
   - Laterality
@@ -24521,6 +24778,9 @@ C99074:
   extensible: 'true'
   name: Directionality
   preferredTerm: CDISC SDTM Directionality Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: DIR
   synonyms:
   - Directionality
@@ -24775,6 +25035,9 @@ C99076:
   extensible: 'true'
   name: Intervention Model Response
   preferredTerm: CDISC SDTM Intervention Model Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: INTMODEL
   synonyms:
   - Intervention Model Response
@@ -24817,6 +25080,9 @@ C99077:
   extensible: 'false'
   name: Study Type Response
   preferredTerm: CDISC SDTM Study Type Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: STYPE
   synonyms:
   - Study Type Response
@@ -24862,6 +25128,9 @@ C99078:
   extensible: 'false'
   name: Intervention Type Response
   preferredTerm: CDISC SDTM Intervention Type Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: INTTYPE
   synonyms:
   - Intervention Type Response
@@ -24920,12 +25189,6 @@ C99078:
     submissionValue: GENETIC
     synonyms:
     - Gene Therapy
-  - conceptId: C17649
-    definition: Different than the one(s) previously specified or mentioned. (NCI)
-    preferredTerm: Other
-    submissionValue: OTHER
-    synonyms:
-    - Other
   - conceptId: C98769
     definition: Any activity performed by manual and/or instrumental means for the
       purpose of diagnosis, assessment, therapy, prevention, or palliative care.
@@ -24946,6 +25209,9 @@ C99079:
   extensible: 'true'
   name: Epoch
   preferredTerm: CDISC SDTM Epoch Terminology
+  source:
+    effective_date: '2025-03-28'
+    package: sdtmct
   submissionValue: EPOCH
   synonyms:
   - Epoch

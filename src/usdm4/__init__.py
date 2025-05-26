@@ -10,7 +10,7 @@ from usdm4.builder.builder import Builder
 class USDM4:
     def __init__(self):
         self.root = self._root_path()
-        self.validator = RulesValidation4(self.root, "usdm4.rules.library")
+        self.validator = RulesValidation4(self.root)
 
     def validate(self, file_path: str) -> RulesValidationResults:
         return self.validator.validate(file_path)
@@ -20,8 +20,11 @@ class USDM4:
             data = json.load(file)
         return Convert.convert(data)
 
+    def builder(self) -> Builder:
+        return Builder(self.root)
+
     def minimum(self, study_name: str, sponsor_id: str, version: str) -> Wrapper:
-        return Builder().minimum(study_name, sponsor_id, version)
+        return Builder(self.root).minimum(study_name, sponsor_id, version)
 
     def from_json(self, data: dict) -> Wrapper:
         return Wrapper.model_validate(data)

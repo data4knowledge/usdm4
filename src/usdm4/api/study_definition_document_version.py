@@ -29,7 +29,7 @@ class StudyDefinitionDocumentVersion(ApiBaseModelWithId):
         try:
             map = self.narraitve_content_map
             return map[id]
-        except:
+        except Exception:
             return None
 
     def narraitve_content_map(self) -> dict:

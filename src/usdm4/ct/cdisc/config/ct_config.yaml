@@ -51,7 +51,7 @@ klass_attribute_mapping:
   StudyTitle:
     type: C207419
   StudyDefinitionDocument:
-    type: C207420
+    type: C99915x
   StudyDefinitionDocumentVersion:
     status: C188723
   Organization:

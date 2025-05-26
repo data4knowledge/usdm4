@@ -15,12 +15,15 @@ from usdm4.api import __all__ as v4_classes
 from usdm4.__version__ import __model_version__, __package_version__
 from usdm3.base.id_manager import IdManager
 from usdm3.base.api_instance import APIInstance
+from usdm3.ct.cdisc.library import Library
 
 
 class Builder:
-    def __init__(self):
+    def __init__(self, root_path):
         self._id_manager: IdManager = IdManager(v4_classes)
         self.api_instance: APIInstance = APIInstance(self._id_manager)
+        self.ct_library = Library(root_path)
+        self.ct_library.load()
         self._cdisc_code_system = "cdisc.org"
         self._cdisc_code_system_version = "2023-12-15"
 
@@ -39,61 +42,13 @@ class Builder:
                 "decode": "English",
             },
         )
-        title_type = self.api_instance.create(
-            Code,
-            {
-                "code": "C207616",
-                "codeSystem": self._cdisc_code_system,
-                "codeSystemVersion": self._cdisc_code_system_version,
-                "decode": "Official Study Title",
-            },
-        )
-        organization_type_code = self.api_instance.create(
-            Code,
-            {
-                "code": "C70793",
-                "codeSystem": self._cdisc_code_system,
-                "codeSystemVersion": self._cdisc_code_system_version,
-                "decode": "Clinical Study Sponsor",
-            },
-        )
-        doc_status_code = self.api_instance.create(
-            Code,
-            {
-                "code": "C25425",
-                "codeSystem": self._cdisc_code_system,
-                "codeSystemVersion": self._cdisc_code_system_version,
-                "decode": "Approved",
-            },
-        )
-        protocol_code = self.api_instance.create(
-            Code,
-            {
-                "code": "C70817",
-                "codeSystem": self._cdisc_code_system,
-                "codeSystemVersion": self._cdisc_code_system_version,
-                "decode": "Protocol",
-            },
-        )
-        global_code = self.api_instance.create(
-            Code,
-            {
-                "code": "C68846",
-                "codeSystem": self._cdisc_code_system,
-                "codeSystemVersion": self._cdisc_code_system_version,
-                "decode": "Global",
-            },
-        )
+        title_type = self.cdisc_code("C207616", "Official Study Title")
+        organization_type_code = self.cdisc_code("C70793", "Clinical Study Sponsor")
+        doc_status_code = self.cdisc_code("C25425", "Approved")
+        protocol_code = self.cdisc_code("C70817", "Protocol")
+        global_code = self.cdisc_code("C68846", "Global")
         global_scope = self.api_instance.create(GeographicScope, {"type": global_code})
-        approval_date_code = self.api_instance.create(
-            Code,
-            {
-                "code": "C132352",
-                "codeSystem": self._cdisc_code_system,
-                "codeSystemVersion": self._cdisc_code_system_version,
-                "decode": "Sponsor Approval Date",
-            },
-        )
+        approval_date_code = self.cdisc_code("C132352", "Sponsor Approval Date")
 
         # Study Title
         study_title = self.api_instance.create(
@@ -112,7 +67,6 @@ class Builder:
                 "geographicScopes": [global_scope],
             },
         )
-
         # Define the organization and the study identifier
         organization = self.api_instance.create(
             Organization,
@@ -132,11 +86,7 @@ class Builder:
         # Documenta
         study_definition_document_version = self.api_instance.create(
             StudyDefinitionDocumentVersion,
-            {
-                "version": "1",
-                "status": doc_status_code,
-                "dateValues": [approval_date],
-            },
+            {"version": "1", "status": doc_status_code, "dateValues": [approval_date]},
         )
         study_definition_document = self.api_instance.create(
             StudyDefinitionDocument,
@@ -225,12 +175,14 @@ class Builder:
         return self.alias_code(cdisc_phase_code)
 
     def cdisc_code(self, code: str, decode: str) -> Code:
+        cl = self.ct_library.cl_by_term(code)
+        version = cl["source"]["effective_date"] if cl else "unknown"
         return self.api_instance.create(
             Code,
             {
                 "code": code,
                 "codeSystem": self._cdisc_code_system,
-                "codeSystemVersion": self._cdisc_code_system_version,
+                "codeSystemVersion": version,
                 "decode": decode,
             },
         )
@@ -248,7 +200,7 @@ class Builder:
                 "type": sponsor_code,
                 "identifier": "---------",
                 "identifierScheme": "DUNS",
-                #                "legalAddress": address,
+                # "legalAddress": address
             },
         )
 
