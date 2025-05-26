@@ -174,6 +174,9 @@ class Builder:
         )
         return self.alias_code(cdisc_phase_code)
 
+    def klass_and_attribute(self, klass: str, attribute: str) -> Code:
+        return self.ct_library.klass_and_attribute(klass, attribute)
+
     def cdisc_code(self, code: str, decode: str) -> Code:
         cl = self.ct_library.cl_by_term(code)
         version = cl["source"]["effective_date"] if cl else "unknown"
@@ -187,6 +190,9 @@ class Builder:
             },
         )
 
+    def cdisc_unit_code(self, unit: str) -> Code:
+        return self.ct_library.unit(unit)
+        
     def alias_code(self, standard_code: Code) -> AliasCode:
         return self.api_instance.create(AliasCode, {"standardCode": standard_code})
 
