@@ -16,16 +16,23 @@ from usdm4.__version__ import __model_version__, __package_version__
 from usdm3.base.id_manager import IdManager
 from usdm3.base.api_instance import APIInstance
 from usdm3.ct.cdisc.library import Library
-
+from usdm4.builder.cross_reference import CrossReference
 
 class Builder:
     def __init__(self, root_path: str):
         self._id_manager: IdManager = IdManager(v4_classes)
         self.api_instance: APIInstance = APIInstance(self._id_manager)
         self.ct_library = Library(root_path)
+        self.cross_reference = CrossReference()
         self.ct_library.load()
         self._cdisc_code_system = "cdisc.org"
         self._cdisc_code_system_version = "2023-12-15"
+
+    def create(self, klass, params, name=None):
+        object = self.api_instance.create(klass, params)
+        if object and name:
+            self.cross_reference.add(name, object)
+        return object
 
     def minimum(self, title: str, identifier: str, version: str) -> "Wrapper":
         """
