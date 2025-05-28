@@ -191,7 +191,18 @@ class Builder:
         )
 
     def cdisc_unit_code(self, unit: str) -> Code:
-        return self.ct_library.unit(unit)
+        unit = self.ct_library.unit(unit)
+        unit_cl = self.ct_library.unit_code_list()
+        print(f"UNIT: {unit}")
+        return self.api_instance.create(
+            Code,
+            {
+                "code": unit["conceptId"],
+                "codeSystem": self._cdisc_code_system,
+                "codeSystemVersion": unit_cl["source"]["effective_date"],
+                "decode": unit["preferredTerm"],
+            },
+        ) if unit else None
         
     def alias_code(self, standard_code: Code) -> AliasCode:
         return self.api_instance.create(AliasCode, {"standardCode": standard_code})
