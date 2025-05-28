@@ -51,7 +51,7 @@ def test_add():
     cross_references.clear()
     assert len(cross_references._by_name.keys()) == 0
     assert len(cross_references._by_id.keys()) == 0
-    cross_references.add("name", item)
+    cross_references.add(item)
     assert len(cross_references._by_name.keys()) == 1
     assert cross_references._by_name["CRTest.name"] == item
     assert len(cross_references._by_id.keys()) == 1
@@ -87,9 +87,9 @@ def test_get_by_path():
     cross_references.clear()
     assert len(cross_references._by_name.keys()) == 0
     assert len(cross_references._by_id.keys()) == 0
-    cross_references.add("name1", item1)
-    cross_references.add("name2", item2)
-    cross_references.add("name3", item3)
+    cross_references.add(item1)
+    cross_references.add(item2)
+    cross_references.add(item3)
     instance, attribute = cross_references.get_by_path(
         "CRTest3", "name3", "child/CRTest2/@child/CRTest/@value"
     )
@@ -110,9 +110,9 @@ def test_get_by_path_errors():
     cross_references.clear()
     assert len(cross_references._by_name.keys()) == 0
     assert len(cross_references._by_id.keys()) == 0
-    cross_references.add("name1", item1)
-    cross_references.add("name2", item2)
-    cross_references.add("name3", item3)
+    cross_references.add(item1)
+    cross_references.add(item2)
+    cross_references.add(item3)
     with pytest.raises(CRPathError) as ex_info:
         instance, attribute = cross_references.get_by_path(
             "CRTest4", "name3", "child/CRTest2/@child/CRTest/@value"

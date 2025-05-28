@@ -33,20 +33,19 @@ class CrossReference:
                     f"Duplicate cross reference detected, klass='{self._klass_name(klass)}', key='{key_text}'"
                 )
                     
-    def get_by_name(self, klass, name) -> ApiBaseModelWithId:
-        key, id_key = self._key(klass, name, "")
-        if key in self._by_name:
-            return self._by_name[key]
+    def get_by_name(self, klass, name: str) -> ApiBaseModelWithId:
+        return self._get(klass, name, self._by_name)
+
+    def get_by_id(self, klass, id: str) -> ApiBaseModelWithId:
+        return self._get(klass, id, self._by_id)
+
+    def _get(self, klass, key_text: str, collection: dict) -> ApiBaseModelWithId:
+        key = self._key(klass, key_text)
+        if key in collection:
+            return collection[key]
         else:
             return None
-
-    def get_by_id(self, klass, id) -> ApiBaseModelWithId:
-        key, id_key = self._key(klass, "", id)
-        if id_key in self._by_id:
-            return self._by_id[id_key]
-        else:
-            return None
-
+        
     def get_by_path(self, klass, name, path):
         instance = self.get_by_name(klass, name)
         if instance:

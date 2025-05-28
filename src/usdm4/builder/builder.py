@@ -30,8 +30,8 @@ class Builder:
 
     def create(self, klass, params, name=None):
         object = self.api_instance.create(klass, params)
-        if object and name:
-            self.cross_reference.add(name, object)
+        if object:
+            self.cross_reference.add(object)
         return object
 
     def minimum(self, title: str, identifier: str, version: str) -> "Wrapper":
@@ -40,7 +40,7 @@ class Builder:
         """
 
         # Define the codes to be used in the study
-        english_code = self.api_instance.create(
+        english_code = self.create(
             Code,
             {
                 "code": "en",
@@ -54,16 +54,16 @@ class Builder:
         doc_status_code = self.cdisc_code("C25425", "Approved")
         protocol_code = self.cdisc_code("C70817", "Protocol")
         global_code = self.cdisc_code("C68846", "Global")
-        global_scope = self.api_instance.create(GeographicScope, {"type": global_code})
+        global_scope = self.create(GeographicScope, {"type": global_code})
         approval_date_code = self.cdisc_code("C132352", "Sponsor Approval Date")
 
         # Study Title
-        study_title = self.api_instance.create(
+        study_title = self.create(
             StudyTitle, {"text": title, "type": title_type}
         )
 
         # Governance dates
-        approval_date = self.api_instance.create(
+        approval_date = self.create(
             GovernanceDate,
             {
                 "name": "D_APPROVE",
@@ -75,7 +75,7 @@ class Builder:
             },
         )
         # Define the organization and the study identifier
-        organization = self.api_instance.create(
+        organization = self.create(
             Organization,
             {
                 "name": "Sponsor",
@@ -85,17 +85,17 @@ class Builder:
                 "legalAddress": None,
             },
         )
-        study_identifier = self.api_instance.create(
+        study_identifier = self.create(
             StudyIdentifier,
             {"text": identifier, "scopeId": organization.id},
         )
 
         # Documenta
-        study_definition_document_version = self.api_instance.create(
+        study_definition_document_version = self.create(
             StudyDefinitionDocumentVersion,
             {"version": "1", "status": doc_status_code, "dateValues": [approval_date]},
         )
-        study_definition_document = self.api_instance.create(
+        study_definition_document = self.create(
             StudyDefinitionDocument,
             {
                 "name": "PROTOCOL DOCUMENT",
@@ -108,7 +108,7 @@ class Builder:
             },
         )
 
-        study_version = self.api_instance.create(
+        study_version = self.create(
             StudyVersion,
             {
                 "versionIdentifier": "1",
@@ -123,7 +123,7 @@ class Builder:
                 "organizations": [organization],
             },
         )
-        study = self.api_instance.create(
+        study = self.create(
             Study,
             {
                 "id": str(uuid4()),
@@ -187,7 +187,7 @@ class Builder:
     def cdisc_code(self, code: str, decode: str) -> Code:
         cl = self.ct_library.cl_by_term(code)
         version = cl["source"]["effective_date"] if cl else "unknown"
-        return self.api_instance.create(
+        return self.create(
             Code,
             {
                 "code": code,
@@ -202,7 +202,7 @@ class Builder:
         unit_cl = self.ct_library.unit_code_list()
         print(f"UNIT: {unit}")
         return (
-            self.api_instance.create(
+            self.create(
                 Code,
                 {
                     "code": unit["conceptId"],
@@ -216,11 +216,11 @@ class Builder:
         )
 
     def alias_code(self, standard_code: Code) -> AliasCode:
-        return self.api_instance.create(AliasCode, {"standardCode": standard_code})
+        return self.create(AliasCode, {"standardCode": standard_code})
 
     def sponsor(self, sponsor_name: str) -> Organization:
         sponsor_code = self.cdisc_code("C70793", "Clinical Study Sponsor")
-        return self.api_instance.create(
+        return self.create(
             Organization,
             {
                 "name": sponsor_name,
