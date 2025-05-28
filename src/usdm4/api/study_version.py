@@ -3,11 +3,7 @@ from typing import List, Literal, Union
 from .api_base_model import ApiBaseModelWithId
 from .code import Code
 from .identifier import StudyIdentifier, ReferenceIdentifier
-from .study_design import (
-    StudyDesign,
-    InterventionalStudyDesign,
-    ObservationalStudyDesign,
-)
+from .study_design import InterventionalStudyDesign, ObservationalStudyDesign
 from .governance_date import GovernanceDate
 from .study_amendment import StudyAmendment
 from .study_title import StudyTitle

@@ -4,6 +4,7 @@ from .api_base_model import ApiBaseModelWithIdNameLabelAndDesc
 from .schedule_timeline_exit import ScheduleTimelineExit
 from .scheduled_instance import ScheduledActivityInstance, ScheduledDecisionInstance
 from .timing import Timing
+from .duration import Duration
 
 
 class ScheduleTimeline(ApiBaseModelWithIdNameLabelAndDesc):
@@ -13,6 +14,7 @@ class ScheduleTimeline(ApiBaseModelWithIdNameLabelAndDesc):
     exits: List[ScheduleTimelineExit] = []
     timings: List[Timing] = []
     instances: List[Union[ScheduledActivityInstance, ScheduledDecisionInstance]] = []
+    plannedDuration: Union[Duration, None] = None
     instanceType: Literal["ScheduleTimeline"]
 
     def first_timepoint(self) -> ScheduledActivityInstance:
