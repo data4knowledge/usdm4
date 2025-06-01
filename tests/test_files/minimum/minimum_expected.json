@@ -197,18 +197,18 @@
               }
             ],
             "contents": [],
-            "childIds": [],
             "notes": [],
             "instanceType": "StudyDefinitionDocumentVersion"
           }
         ],
+        "childIds": [],
         "notes": [],
         "instanceType": "StudyDefinitionDocument"
       }
     ],
     "instanceType": "Study"
   },
-  "usdmVersion": "3.11.0",
+  "usdmVersion": "4.0.0",
   "systemName": "Python USDM4 Package",
   "systemVersion": "0.7.0"
 }
