@@ -135,7 +135,8 @@ class Convert:
                 study_design["instanceType"] = "InterventionalStudyDesign"
 
             # Process the amendments
-            for amendment in version["amendments"]:
+            for index, amendment in enumerate(version["amendments"]):
+                amendment["name"] = f"AMENDMENT {index + 1}"
                 Convert._convert_subject_enrollment(amendment["enrollments"])
                 amendment["geographicScopes"] = [
                     {
@@ -170,6 +171,10 @@ class Convert:
                     x["id"] for x in study_design["studyInterventions"]
                 ]
                 study_design.pop("dictionaries")
+            for bc in bcs:
+                for property in bc["properties"]:
+                    for index, code in enumerate(property["responseCodes"]):
+                        code["name"] = f"PROPERTY_{index + 1}"
             version["studyInterventions"] = interventions
             version["dictionaries"] = dictionaries
             version["conditions"] = conditions

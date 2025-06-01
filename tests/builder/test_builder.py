@@ -11,9 +11,11 @@ def root_path():
     base = pathlib.Path(__file__).parent.parent.parent.resolve()
     return os.path.join(base, "src/usdm4")
 
+
 @pytest.fixture(scope="module")
 def builder():
     return Builder(root_path())
+
 
 def test_minimum(builder):
     instance = builder.minimum("Test Study", "SPONSOR-1234", "1.0.0")

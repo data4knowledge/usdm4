@@ -18,6 +18,7 @@ from usdm3.base.api_instance import APIInstance
 from usdm3.ct.cdisc.library import Library
 from usdm4.builder.cross_reference import CrossReference
 
+
 class Builder:
     def __init__(self, root_path: str):
         self._id_manager: IdManager = IdManager(v4_classes)
@@ -58,9 +59,7 @@ class Builder:
         approval_date_code = self.cdisc_code("C132352", "Sponsor Approval Date")
 
         # Study Title
-        study_title = self.create(
-            StudyTitle, {"text": title, "type": title_type}
-        )
+        study_title = self.create(StudyTitle, {"text": title, "type": title_type})
 
         # Governance dates
         approval_date = self.create(
@@ -244,3 +243,19 @@ class Builder:
             else:
                 the_id = getattr(items[idx + 1], "id")
                 setattr(item, next_attribute, the_id)
+
+    def load(self, data: dict):
+        self._decompose(data, None, "")
+
+    def _decompose(self, data) -> None:
+        if isinstance(data, dict):
+            self._max_id(data)
+            for key, value in data.items():
+                if isinstance(value, dict):
+                    self._decompose(value, data)
+                elif isinstance(value, list):
+                    for index, item in enumerate(value):
+                        self._decompose(item, data)
+
+    def _max_id(self, data: dict):
+        self._id_manager.existing_id(data["instanceType"], data["id"])

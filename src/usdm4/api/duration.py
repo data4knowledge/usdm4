@@ -4,8 +4,8 @@ from .quantity_range import Quantity, Range
 
 
 class Duration(ApiBaseModelWithId):
-  text: Union[str, None] = None
-  quantity:	Union[Quantity, Range, None] = None
-  durationWillVary: bool
-  reasonDurationWillVary:	Union[str, None] = None
-  instanceType: Literal['Duration']
+    text: Union[str, None] = None
+    quantity: Union[Quantity, Range, None] = None
+    durationWillVary: bool
+    reasonDurationWillVary: Union[str, None] = None
+    instanceType: Literal["Duration"]

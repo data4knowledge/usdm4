@@ -615,10 +615,8 @@
               "label": null,
               "description": null,
               "includesHealthySubjects": true,
-              "plannedEnrollmentNumberRange": null,
-              "plannedEnrollmentNumberQuantity": null,
-              "plannedCompletionNumberRange": null,
-              "plannedCompletionNumberQuantity": null,
+              "plannedEnrollmentNumber": null,
+              "plannedCompletionNumber": null,
               "plannedSex": [],
               "criterionIds": [],
               "plannedAge": null,
@@ -991,6 +989,7 @@
                     "encounterId": null
                   }
                 ],
+                "plannedDuration": null,
                 "instanceType": "ScheduleTimeline"
               }
             ],
@@ -1112,18 +1111,18 @@
             },
             "dateValues": [],
             "contents": [],
-            "childIds": [],
             "notes": [],
             "instanceType": "StudyDefinitionDocumentVersion"
           }
         ],
+        "childIds": [],
         "notes": [],
         "instanceType": "StudyDefinitionDocument"
       }
     ],
     "instanceType": "Study"
   },
-  "usdmVersion": "3.11.0",
+  "usdmVersion": "4.0.0",
   "systemName": "Python USDM4 Package",
   "systemVersion": "0.7.0"
 }

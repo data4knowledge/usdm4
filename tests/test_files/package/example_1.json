@@ -4497,7 +4497,7 @@
     ],
     "instanceType": "Study"
   },
-  "usdmVersion": "3.6.0",
+  "usdmVersion": "4.0.0",
   "systemName": "d4k Study Definitions Workbench",
   "systemVersion": "0.31.0"
 }

@@ -1,13 +1,15 @@
 from usdm4.api.api_base_model import ApiBaseModelWithId
 
+
 class PathError(Exception):
     pass
+
 
 class DuplicateError(Exception):
     pass
 
-class CrossReference:
 
+class CrossReference:
     def __init__(self):
         self._by_name = {}
         self._by_id = {}
@@ -20,7 +22,7 @@ class CrossReference:
         name = object.name if hasattr(object, "name") else None
         if name:
             self._add_to_collection(name, self._by_name, object)
-        self._add_to_collection(object.id, self._by_id, object) 
+        self._add_to_collection(object.id, self._by_id, object)
 
     def _add_to_collection(self, key_text: str, collection: dict, object):
         if key_text:
@@ -32,7 +34,7 @@ class CrossReference:
                 raise self.DuplicateError(
                     f"Duplicate cross reference detected, klass='{self._klass_name(klass)}', key='{key_text}'"
                 )
-                    
+
     def get_by_name(self, klass, name: str) -> ApiBaseModelWithId:
         return self._get(klass, name, self._by_name)
 
@@ -45,7 +47,7 @@ class CrossReference:
             return collection[key]
         else:
             return None
-        
+
     def get_by_path(self, klass, name, path):
         instance = self.get_by_name(klass, name)
         if instance:
