@@ -173,5 +173,9 @@ cython_debug/
 # MacOS
 .DS_Store
 
+# Environment files
 .development_env
 .test_env
+
+# Python test programs
+xxx_*.*
