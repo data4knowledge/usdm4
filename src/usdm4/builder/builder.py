@@ -249,7 +249,7 @@ class Builder:
 
     def _decompose(self, data) -> None:
         if isinstance(data, dict):
-            self._max_id(data)
+            self._add_id(data)
             for key, value in data.items():
                 if isinstance(value, dict):
                     self._decompose(value, data)
@@ -257,5 +257,5 @@ class Builder:
                     for index, item in enumerate(value):
                         self._decompose(item, data)
 
-    def _max_id(self, data: dict):
-        self._id_manager.existing_id(data["instanceType"], data["id"])
+    def _add_id(self, data: dict):
+        self._id_manager.add_id(data["instanceType"], data["id"])
