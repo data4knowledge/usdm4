@@ -24,6 +24,7 @@ setuptools.setup(
         "usdm4": [
             "ct/cdisc/library_cache/library_cache.yaml",
             "ct/cdisc/config/ct_config.yaml",
+            "ct/cdisc/missing/missing_ct.yaml",
             "rules/library/schema/usdm_v4-0-0.json",
         ]
     },
