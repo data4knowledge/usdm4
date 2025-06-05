@@ -9,6 +9,8 @@
   rule_text: A study title type must be specified using the study title type (C207419)
     DDF codelist.
   status: Failure
+  timestamp: '2025-06-05 16:50:12.358011'
+  type: DDF00146
 - attribute: type
   exception: null
   klass: StudyTitle
@@ -20,6 +22,8 @@
   rule_text: A study title type must be specified using the study title type (C207419)
     DDF codelist.
   status: Failure
+  timestamp: '2025-06-05 16:50:12.358015'
+  type: DDF00146
 - attribute: level
   exception: null
   klass: Objective
@@ -31,6 +35,8 @@
   rule_text: An objective level must be specified using the objective level (C188725)
     DDF codelist.
   status: Failure
+  timestamp: '2025-06-05 16:50:12.357798'
+  type: DDF00147
 - attribute: level
   exception: null
   klass: Objective
@@ -42,6 +48,8 @@
   rule_text: An objective level must be specified using the objective level (C188725)
     DDF codelist.
   status: Failure
+  timestamp: '2025-06-05 16:50:12.357808'
+  type: DDF00147
 - attribute: level
   exception: null
   klass: Objective
@@ -53,6 +61,8 @@
   rule_text: An objective level must be specified using the objective level (C188725)
     DDF codelist.
   status: Failure
+  timestamp: '2025-06-05 16:50:12.357811'
+  type: DDF00147
 - attribute: level
   exception: null
   klass: Objective
@@ -64,6 +74,8 @@
   rule_text: An objective level must be specified using the objective level (C188725)
     DDF codelist.
   status: Failure
+  timestamp: '2025-06-05 16:50:12.357815'
+  type: DDF00147
 - attribute: level
   exception: null
   klass: Objective
@@ -75,6 +87,8 @@
   rule_text: An objective level must be specified using the objective level (C188725)
     DDF codelist.
   status: Failure
+  timestamp: '2025-06-05 16:50:12.357819'
+  type: DDF00147
 - attribute: level
   exception: null
   klass: Objective
@@ -86,3 +100,5 @@
   rule_text: An objective level must be specified using the objective level (C188725)
     DDF codelist.
   status: Failure
+  timestamp: '2025-06-05 16:50:12.357822'
+  type: DDF00147
