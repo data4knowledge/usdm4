@@ -27,89 +27,89 @@ def test_minimum(builder):
     assert instance.to_json() == expected
 
 
-def test_decode_phase_phase_0(builder):
-    result = builder.decode_phase("0")
+# def test_decode_phase_phase_0(builder):
+#     result = builder.decode_phase("0")
 
-    assert result.standardCode.code == "C54721"
-    assert result.standardCode.decode == "Phase 0 Trial"
-    assert result.standardCode.codeSystem == builder._cdisc_code_system
-    assert result.standardCode.codeSystemVersion == "2025-03-28"
-
-
-def test_decode_phase_phase_1(builder):
-    ## builder = Builder(root_path())
-    result = builder.decode_phase("1")
-
-    assert result.standardCode.code == "C15600"
-    assert result.standardCode.decode == "Phase I Trial"
+#     assert result.standardCode.code == "C54721"
+#     assert result.standardCode.decode == "Phase 0 Trial"
+#     assert result.standardCode.codeSystem == builder._cdisc_code_system
+#     assert result.standardCode.codeSystemVersion == "2025-03-28"
 
 
-def test_decode_phase_phase_I(builder):
-    # builder = Builder(root_path())
-    result = builder.decode_phase("I")
+# def test_decode_phase_phase_1(builder):
+#     ## builder = Builder(root_path())
+#     result = builder.decode_phase("1")
 
-    assert result.standardCode.code == "C15600"
-    assert result.standardCode.decode == "Phase I Trial"
-
-
-def test_decode_phase_phase_1_2(builder):
-    # builder = Builder(root_path())
-    result = builder.decode_phase("1-2")
-
-    assert result.standardCode.code == "C15693"
-    assert result.standardCode.decode == "Phase I/II Trial"
+#     assert result.standardCode.code == "C15600"
+#     assert result.standardCode.decode == "Phase I Trial"
 
 
-def test_decode_phase_phase_1_slash_2(builder):
-    # builder = Builder(root_path())
-    result = builder.decode_phase("1/2")
+# def test_decode_phase_phase_I(builder):
+#     # builder = Builder(root_path())
+#     result = builder.decode_phase("I")
 
-    assert result.standardCode.code == "C15693"
-    assert result.standardCode.decode == "Phase I/II Trial"
-
-
-def test_decode_phase_phase_2a(builder):
-    # builder = Builder(root_path())
-    result = builder.decode_phase("2A")
-
-    assert result.standardCode.code == "C49686"
-    assert result.standardCode.decode == "Phase IIa Trial"
+#     assert result.standardCode.code == "C15600"
+#     assert result.standardCode.decode == "Phase I Trial"
 
 
-def test_decode_phase_phase_3b(builder):
-    # builder = Builder(root_path())
-    result = builder.decode_phase("3B")
+# def test_decode_phase_phase_1_2(builder):
+#     # builder = Builder(root_path())
+#     result = builder.decode_phase("1-2")
 
-    # assert isinstance(result, AliasCode)
-    assert result.standardCode.code == "C49689"
-    assert result.standardCode.decode == "Phase IIIb Trial"
-
-
-def test_decode_phase_pre_clinical(builder):
-    # builder = Builder(root_path())
-    result = builder.decode_phase("PRE-CLINICAL")
-
-    # assert isinstance(result, AliasCode)
-    assert result.standardCode.code == "C54721"
-    assert result.standardCode.decode == "Phase 0 Trial"
+#     assert result.standardCode.code == "C15693"
+#     assert result.standardCode.decode == "Phase I/II Trial"
 
 
-def test_decode_phase_unknown(builder):
-    # builder = Builder(root_path())
-    result = builder.decode_phase("UNKNOWN")
+# def test_decode_phase_phase_1_slash_2(builder):
+#     # builder = Builder(root_path())
+#     result = builder.decode_phase("1/2")
 
-    # assert isinstance(result, AliasCode)
-    assert result.standardCode.code == "C48660"
-    assert result.standardCode.decode == "[Trial Phase] Not Applicable"
+#     assert result.standardCode.code == "C15693"
+#     assert result.standardCode.decode == "Phase I/II Trial"
 
 
-def test_decode_phase_empty(builder):
-    # builder = Builder(root_path())
-    result = builder.decode_phase("")
+# def test_decode_phase_phase_2a(builder):
+#     # builder = Builder(root_path())
+#     result = builder.decode_phase("2A")
 
-    # assert isinstance(result, AliasCode)
-    assert result.standardCode.code == "C48660"
-    assert result.standardCode.decode == "[Trial Phase] Not Applicable"
+#     assert result.standardCode.code == "C49686"
+#     assert result.standardCode.decode == "Phase IIa Trial"
+
+
+# def test_decode_phase_phase_3b(builder):
+#     # builder = Builder(root_path())
+#     result = builder.decode_phase("3B")
+
+#     # assert isinstance(result, AliasCode)
+#     assert result.standardCode.code == "C49689"
+#     assert result.standardCode.decode == "Phase IIIb Trial"
+
+
+# def test_decode_phase_pre_clinical(builder):
+#     # builder = Builder(root_path())
+#     result = builder.decode_phase("PRE-CLINICAL")
+
+#     # assert isinstance(result, AliasCode)
+#     assert result.standardCode.code == "C54721"
+#     assert result.standardCode.decode == "Phase 0 Trial"
+
+
+# def test_decode_phase_unknown(builder):
+#     # builder = Builder(root_path())
+#     result = builder.decode_phase("UNKNOWN")
+
+#     # assert isinstance(result, AliasCode)
+#     assert result.standardCode.code == "C48660"
+#     assert result.standardCode.decode == "[Trial Phase] Not Applicable"
+
+
+# def test_decode_phase_empty(builder):
+#     # builder = Builder(root_path())
+#     result = builder.decode_phase("")
+
+#     # assert isinstance(result, AliasCode)
+#     assert result.standardCode.code == "C48660"
+#     assert result.standardCode.decode == "[Trial Phase] Not Applicable"
 
 
 def test_cdisc_code_basic(builder):

@@ -31,7 +31,7 @@ class CrossReference:
             if key not in collection:
                 collection[key] = object
             else:
-                raise self.DuplicateError(
+                raise DuplicateError(
                     f"Duplicate cross reference detected, klass='{self._klass_name(klass)}', key='{key_text}'"
                 )
 

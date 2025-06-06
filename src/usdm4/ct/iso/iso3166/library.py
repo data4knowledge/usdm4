@@ -13,7 +13,7 @@ class Library:
 
     def load(self) -> None:
         f = open(self.filepath)
-        self._db = json.load(f)
+        self.db = json.load(f)
 
     def decode(self, code: str) -> tuple[str | None, str | None]:
         return self._get_decode(code)

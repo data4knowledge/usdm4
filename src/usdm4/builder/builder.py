@@ -1,4 +1,6 @@
 from uuid import uuid4
+from simple_error_log.errors import Errors
+from simple_error_log.error_location import KlassMethodLocation
 from usdm4.api.wrapper import Wrapper
 from usdm4.api.code import Code
 from usdm4.api.alias_code import AliasCode
@@ -24,6 +26,7 @@ from usdm4.builder.cross_reference import CrossReference
 class Builder:
     def __init__(self, root_path: str):
         self._id_manager: IdManager = IdManager(v4_classes)
+        self.errors = Errors()
         self.api_instance: APIInstance = APIInstance(self._id_manager)
         self.cdisc_library = CdiscLibrary(root_path)
         self.iso3166_library = Iso3166Library(root_path)
@@ -32,19 +35,26 @@ class Builder:
         self.cdisc_library.load()
         self.iso3166_library.load()
         self.iso639_library.load()
-        self._cdisc_code_system = "cdisc.org"
-        self._cdisc_code_system_version = "2023-12-15"
+        self._cdisc_code_system = self.cdisc_library.system
+        self._cdisc_code_system_version = self.cdisc_library.version
 
-    def create(self, klass, params, name=None):
-        object = self.api_instance.create(klass, params)
-        if object:
-            self.cross_reference.add(object)
-        return object
-
+    def create(self, klass, params):
+        try:
+            object = self.api_instance.create(klass, params)
+            if object:
+                self.cross_reference.add(object)
+            return object
+        except Exception as e:
+            location = KlassMethodLocation("Builder", "create")
+            self.errors.exception(f"Failed to create instance of klass '{klass}' with params {params}", e, location)
+            return None
+        
     def minimum(self, title: str, identifier: str, version: str) -> "Wrapper":
         """
         Create a minimum study with the given title, identifier, and version.
         """
+        # Clear errors
+        self.errors.clear()
 
         # Define the codes to be used in the study
         english_code = self.iso639_code("en")
@@ -144,39 +154,39 @@ class Builder:
         )
         return result
 
-    def decode_phase(self, text) -> AliasCode:
-        phase_map = [
-            (
-                ["0", "PRE-CLINICAL", "PRE CLINICAL"],
-                {"code": "C54721", "decode": "Phase 0 Trial"},
-            ),
-            (["1", "I"], {"code": "C15600", "decode": "Phase I Trial"}),
-            (["1-2"], {"code": "C15693", "decode": "Phase I/II Trial"}),
-            (["1/2"], {"code": "C15693", "decode": "Phase I/II Trial"}),
-            (["1/2/3"], {"code": "C198366", "decode": "Phase I/II/III Trial"}),
-            (["1/3"], {"code": "C198367", "decode": "Phase I/III Trial"}),
-            (["1A", "IA"], {"code": "C199990", "decode": "Phase Ia Trial"}),
-            (["1B", "IB"], {"code": "C199989", "decode": "Phase Ib Trial"}),
-            (["2", "II"], {"code": "C15601", "decode": "Phase II Trial"}),
-            (["2-3", "II-III"], {"code": "C15694", "decode": "Phase II/III Trial"}),
-            (["2A", "IIA"], {"code": "C49686", "decode": "Phase IIa Trial"}),
-            (["2B", "IIB"], {"code": "C49688", "decode": "Phase IIb Trial"}),
-            (["3", "III"], {"code": "C15602", "decode": "Phase III Trial"}),
-            (["3A", "IIIA"], {"code": "C49687", "decode": "Phase IIIa Trial"}),
-            (["3B", "IIIB"], {"code": "C49689", "decode": "Phase IIIb Trial"}),
-            (["4", "IV"], {"code": "C15603", "decode": "Phase IV Trial"}),
-            (["5", "V"], {"code": "C47865", "decode": "Phase V Trial"}),
-        ]
-        for tuple in phase_map:
-            if text in tuple[0]:
-                entry = tuple[1]
-                cdisc_phase_code = self.cdisc_code(entry["code"], entry["decode"])
-                return self.alias_code(cdisc_phase_code)
-        cdisc_phase_code = self.cdisc_code(
-            "C48660",
-            "[Trial Phase] Not Applicable",
-        )
-        return self.alias_code(cdisc_phase_code)
+    # def decode_phase(self, text) -> AliasCode:
+    #     phase_map = [
+    #         (
+    #             ["0", "PRE-CLINICAL", "PRE CLINICAL"],
+    #             {"code": "C54721", "decode": "Phase 0 Trial"},
+    #         ),
+    #         (["1", "I"], {"code": "C15600", "decode": "Phase I Trial"}),
+    #         (["1-2"], {"code": "C15693", "decode": "Phase I/II Trial"}),
+    #         (["1/2"], {"code": "C15693", "decode": "Phase I/II Trial"}),
+    #         (["1/2/3"], {"code": "C198366", "decode": "Phase I/II/III Trial"}),
+    #         (["1/3"], {"code": "C198367", "decode": "Phase I/III Trial"}),
+    #         (["1A", "IA"], {"code": "C199990", "decode": "Phase Ia Trial"}),
+    #         (["1B", "IB"], {"code": "C199989", "decode": "Phase Ib Trial"}),
+    #         (["2", "II"], {"code": "C15601", "decode": "Phase II Trial"}),
+    #         (["2-3", "II-III"], {"code": "C15694", "decode": "Phase II/III Trial"}),
+    #         (["2A", "IIA"], {"code": "C49686", "decode": "Phase IIa Trial"}),
+    #         (["2B", "IIB"], {"code": "C49688", "decode": "Phase IIb Trial"}),
+    #         (["3", "III"], {"code": "C15602", "decode": "Phase III Trial"}),
+    #         (["3A", "IIIA"], {"code": "C49687", "decode": "Phase IIIa Trial"}),
+    #         (["3B", "IIIB"], {"code": "C49689", "decode": "Phase IIIb Trial"}),
+    #         (["4", "IV"], {"code": "C15603", "decode": "Phase IV Trial"}),
+    #         (["5", "V"], {"code": "C47865", "decode": "Phase V Trial"}),
+    #     ]
+    #     for tuple in phase_map:
+    #         if text in tuple[0]:
+    #             entry = tuple[1]
+    #             cdisc_phase_code = self.cdisc_code(entry["code"], entry["decode"])
+    #             return self.alias_code(cdisc_phase_code)
+    #     cdisc_phase_code = self.cdisc_code(
+    #         "C48660",
+    #         "[Trial Phase] Not Applicable",
+    #     )
+    #     return self.alias_code(cdisc_phase_code)
 
     def klass_and_attribute(self, klass: str, attribute: str) -> Code:
         return self.cdisc_library.klass_and_attribute(klass, attribute)
@@ -197,7 +207,6 @@ class Builder:
     def cdisc_unit_code(self, unit: str) -> Code:
         unit = self.cdisc_library.unit(unit)
         unit_cl = self.cdisc_library.unit_code_list()
-        print(f"UNIT: {unit}")
         return (
             self.create(
                 Code,

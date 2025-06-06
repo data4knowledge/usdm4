@@ -24,7 +24,7 @@
               "id": "Code_7",
               "extensionAttributes": [],
               "code": "C132352",
-              "codeSystem": "cdisc.org",
+              "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2025-03-28",
               "decode": "Sponsor Approval Date",
               "instanceType": "Code"
@@ -38,7 +38,7 @@
                   "id": "Code_6",
                   "extensionAttributes": [],
                   "code": "C68846",
-                  "codeSystem": "cdisc.org",
+                  "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2025-03-28",
                   "decode": "Global",
                   "instanceType": "Code"
@@ -72,7 +72,7 @@
               "id": "Code_2",
               "extensionAttributes": [],
               "code": "C207616",
-              "codeSystem": "cdisc.org",
+              "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2024-09-27",
               "decode": "Official Study Title",
               "instanceType": "Code"
@@ -94,7 +94,7 @@
               "id": "Code_3",
               "extensionAttributes": [],
               "code": "C70793",
-              "codeSystem": "cdisc.org",
+              "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2024-09-27",
               "decode": "Clinical Study Sponsor",
               "instanceType": "Code"
@@ -139,7 +139,7 @@
           "id": "Code_5",
           "extensionAttributes": [],
           "code": "C70817",
-          "codeSystem": "cdisc.org",
+          "codeSystem": "http://www.cdisc.org",
           "codeSystemVersion": "2025-03-28",
           "decode": "Protocol",
           "instanceType": "Code"
@@ -154,7 +154,7 @@
               "id": "Code_4",
               "extensionAttributes": [],
               "code": "C25425",
-              "codeSystem": "cdisc.org",
+              "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2024-09-27",
               "decode": "Approved",
               "instanceType": "Code"
@@ -170,7 +170,7 @@
                   "id": "Code_7",
                   "extensionAttributes": [],
                   "code": "C132352",
-                  "codeSystem": "cdisc.org",
+                  "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2025-03-28",
                   "decode": "Sponsor Approval Date",
                   "instanceType": "Code"
@@ -184,7 +184,7 @@
                       "id": "Code_6",
                       "extensionAttributes": [],
                       "code": "C68846",
-                      "codeSystem": "cdisc.org",
+                      "codeSystem": "http://www.cdisc.org",
                       "codeSystemVersion": "2025-03-28",
                       "decode": "Global",
                       "instanceType": "Code"
