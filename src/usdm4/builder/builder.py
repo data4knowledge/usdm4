@@ -15,7 +15,9 @@ from usdm4.api import __all__ as v4_classes
 from usdm4.__version__ import __model_version__, __package_version__
 from usdm3.base.id_manager import IdManager
 from usdm3.base.api_instance import APIInstance
-from usdm3.ct.cdisc.library import Library
+from usdm3.ct.cdisc.library import Library as CdiscLibrary
+from usdm4.ct.iso.iso3166.library import Library as Iso3166Library
+from usdm4.ct.iso.iso639.library import Library as Iso639Library
 from usdm4.builder.cross_reference import CrossReference
 
 
@@ -23,9 +25,13 @@ class Builder:
     def __init__(self, root_path: str):
         self._id_manager: IdManager = IdManager(v4_classes)
         self.api_instance: APIInstance = APIInstance(self._id_manager)
-        self.ct_library = Library(root_path)
+        self.cdisc_library = CdiscLibrary(root_path)
+        self.iso3166_library = Iso3166Library(root_path)
+        self.iso639_library = Iso639Library(root_path)
         self.cross_reference = CrossReference()
-        self.ct_library.load()
+        self.cdisc_library.load()
+        self.iso3166_library.load()
+        self.iso639_library.load()
         self._cdisc_code_system = "cdisc.org"
         self._cdisc_code_system_version = "2023-12-15"
 
@@ -41,15 +47,7 @@ class Builder:
         """
 
         # Define the codes to be used in the study
-        english_code = self.create(
-            Code,
-            {
-                "code": "en",
-                "codeSystem": "ISO 639-1",
-                "codeSystemVersion": "2007",
-                "decode": "English",
-            },
-        )
+        english_code = self.iso639_code("en")
         title_type = self.cdisc_code("C207616", "Official Study Title")
         organization_type_code = self.cdisc_code("C70793", "Clinical Study Sponsor")
         doc_status_code = self.cdisc_code("C25425", "Approved")
@@ -181,10 +179,10 @@ class Builder:
         return self.alias_code(cdisc_phase_code)
 
     def klass_and_attribute(self, klass: str, attribute: str) -> Code:
-        return self.ct_library.klass_and_attribute(klass, attribute)
+        return self.cdisc_library.klass_and_attribute(klass, attribute)
 
     def cdisc_code(self, code: str, decode: str) -> Code:
-        cl = self.ct_library.cl_by_term(code)
+        cl = self.cdisc_library.cl_by_term(code)
         version = cl["source"]["effective_date"] if cl else "unknown"
         return self.create(
             Code,
@@ -197,8 +195,8 @@ class Builder:
         )
 
     def cdisc_unit_code(self, unit: str) -> Code:
-        unit = self.ct_library.unit(unit)
-        unit_cl = self.ct_library.unit_code_list()
+        unit = self.cdisc_library.unit(unit)
+        unit_cl = self.cdisc_library.unit_code_list()
         print(f"UNIT: {unit}")
         return (
             self.create(
@@ -216,6 +214,28 @@ class Builder:
 
     def alias_code(self, standard_code: Code) -> AliasCode:
         return self.create(AliasCode, {"standardCode": standard_code})
+
+    def iso3166_code(self, code: str) -> Code:
+        return self.create(
+            Code,
+            {
+                "code": code,
+                "codeSystem": self.iso3166_library.system,
+                "codeSystemVersion": self.iso3166_library.version,
+                "decode": self.iso3166_library.decode(code),
+            },
+        )
+
+    def iso639_code(self, code: str) -> Code:
+        return self.create(
+            Code,
+            {
+                "code": code,
+                "codeSystem": self.iso639_library.system,
+                "codeSystemVersion": self.iso639_library.version,
+                "decode": self.iso639_library.decode(code),
+            },
+        )
 
     def sponsor(self, sponsor_name: str) -> Organization:
         sponsor_code = self.cdisc_code("C70793", "Clinical Study Sponsor")
