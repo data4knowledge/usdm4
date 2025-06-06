@@ -22,7 +22,7 @@ def library():
             "sub-region": "Northern America",
             "sub-region-code": "021",
             "intermediate-region": "",
-            "intermediate-region-code": ""
+            "intermediate-region-code": "",
         },
         {
             "alpha-2": "GB",
@@ -33,7 +33,7 @@ def library():
             "sub-region": "Northern Europe",
             "sub-region-code": "154",
             "intermediate-region": "",
-            "intermediate-region-code": ""
+            "intermediate-region-code": "",
         },
         {
             "alpha-2": "DK",
@@ -44,8 +44,8 @@ def library():
             "sub-region": "Northern Europe",
             "sub-region-code": "154",
             "intermediate-region": "",
-            "intermediate-region-code": ""
-        }
+            "intermediate-region-code": "",
+        },
     ]
     return lib
 

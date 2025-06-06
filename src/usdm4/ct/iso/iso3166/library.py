@@ -28,7 +28,7 @@ class Library:
         else:
             field = "alpha-3"
         entry = next((item for item in self.db if item[field] == code), None)
-        if entry == None:
+        if entry is None:
             return None, None
         else:
             return entry["alpha-3"], entry["name"]

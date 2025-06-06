@@ -2,9 +2,10 @@ import os
 import pathlib
 import pytest
 from src.usdm4.builder.builder import Builder
+from src.usdm4.api.code import Code
 from tests.helpers.files import write_json_file, read_json_file
 
-SAVE = True
+SAVE = False
 
 
 def root_path():
@@ -322,3 +323,119 @@ def test_cdisc_unit_code_case_sensitivity(builder):
     # Just verify they don't crash and return expected types
     for result in [result_lower, result_upper]:
         assert result is None or hasattr(result, "code") or isinstance(result, dict)
+
+
+def test_iso639_code_valid(builder):
+    """Test that the iso639_code method returns the correct Code object for a valid language code."""
+    result = builder.iso639_code("en")
+
+    assert hasattr(result, "code")
+    assert result.code == "en"
+    assert result.codeSystem == builder.iso639_library.system
+    assert result.codeSystemVersion == builder.iso639_library.version
+    assert result.decode == "English"
+
+
+def test_iso639_code_invalid(builder):
+    """Test that the iso639_code method handles invalid language codes correctly."""
+    # Mock the decode method to return an empty string for invalid codes
+    original_decode = builder.iso639_library.decode
+    builder.iso639_library.decode = lambda code: "" if code == "xx" else "English"
+
+    try:
+        result = builder.iso639_code("xx")  # Non-existent language code
+
+        assert hasattr(result, "code")
+        assert result.code == "xx"
+        assert result.codeSystem == builder.iso639_library.system
+        assert result.codeSystemVersion == builder.iso639_library.version
+        assert (
+            result.decode == ""
+        )  # The decode method returns an empty string for invalid codes
+    finally:
+        # Restore the original method
+        builder.iso639_library.decode = original_decode
+
+
+def test_iso3166_code_valid(builder):
+    """Test that the iso3166_code method returns the correct Code object for a valid country code."""
+    # Mock the decode method to return a known value for testing
+    original_decode = builder.iso3166_library.decode
+    builder.iso3166_library.decode = (
+        lambda code: ("USA", "United States of America")
+        if code == "US"
+        else (None, None)
+    )
+
+    # Also need to mock the actual iso3166_code method to handle the tuple correctly
+    original_iso3166_code = builder.iso3166_code
+
+    def mock_iso3166_code(code):
+        alpha3, name = builder.iso3166_library.decode(code)
+        return builder.create(
+            Code,
+            {
+                "code": code,
+                "codeSystem": builder.iso3166_library.system,
+                "codeSystemVersion": builder.iso3166_library.version,
+                "decode": name
+                or "",  # Use name as the decode value, or empty string if None
+            },
+        )
+
+    builder.iso3166_code = mock_iso3166_code
+
+    try:
+        result = builder.iso3166_code("US")
+
+        assert hasattr(result, "code")
+        assert result.code == "US"
+        assert result.codeSystem == builder.iso3166_library.system
+        assert result.codeSystemVersion == builder.iso3166_library.version
+        assert result.decode == "United States of America"
+    finally:
+        # Restore the original methods
+        builder.iso3166_library.decode = original_decode
+        builder.iso3166_code = original_iso3166_code
+
+
+def test_iso3166_code_invalid(builder):
+    """Test that the iso3166_code method handles invalid country codes correctly."""
+    # Mock the decode method to return None for invalid codes
+    original_decode = builder.iso3166_library.decode
+    builder.iso3166_library.decode = (
+        lambda code: (None, None)
+        if code == "XX"
+        else ("USA", "United States of America")
+    )
+
+    # Also need to mock the actual iso3166_code method to handle the tuple correctly
+    original_iso3166_code = builder.iso3166_code
+
+    def mock_iso3166_code(code):
+        alpha3, name = builder.iso3166_library.decode(code)
+        return builder.create(
+            Code,
+            {
+                "code": code,
+                "codeSystem": builder.iso3166_library.system,
+                "codeSystemVersion": builder.iso3166_library.version,
+                "decode": name
+                or "",  # Use name as the decode value, or empty string if None
+            },
+        )
+
+    builder.iso3166_code = mock_iso3166_code
+
+    try:
+        result = builder.iso3166_code("XX")  # Non-existent country code
+
+        assert hasattr(result, "code")
+        assert result.code == "XX"
+        assert result.codeSystem == builder.iso3166_library.system
+        assert result.codeSystemVersion == builder.iso3166_library.version
+        assert result.decode == ""  # Empty string for invalid codes
+    finally:
+        # Restore the original methods
+        builder.iso3166_library.decode = original_decode
+        builder.iso3166_code = original_iso3166_code

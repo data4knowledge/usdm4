@@ -28,7 +28,7 @@ class CrossReference:
         if key_text:
             klass = object.__class__
             key = self._key(klass, key_text)
-            if not key in collection:
+            if key not in collection:
                 collection[key] = object
             else:
                 raise self.DuplicateError(
@@ -59,7 +59,7 @@ class CrossReference:
                 for index in range(1, len(parts), 2):
                     try:
                         instance = getattr(instance, attribute)
-                    except AttributeError as e:
+                    except AttributeError:
                         raise PathError(
                             f"Failed to translate reference path '{path}', attribute '{attribute}' was not found"
                         )

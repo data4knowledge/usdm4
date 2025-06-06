@@ -8,7 +8,6 @@ def error_timestamp(errors: Errors, index=0) -> dict:
 
 
 def dict_timestamp(data: dict) -> dict:
-    print(f"DATA: {data}")
     return _fix_timestamp(data)
 
 
