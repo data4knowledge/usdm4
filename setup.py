@@ -25,7 +25,7 @@ setuptools.setup(
             "ct/cdisc/library_cache/library_cache.yaml",
             "ct/cdisc/config/ct_config.yaml",
             "ct/cdisc/missing/missing_ct.yaml",
-            "ct/iso/iso3166/iso_3166.json",
+            "ct/iso/iso3166/iso3166.json",
             "rules/library/schema/usdm_v4-0-0.json",
         ]
     },
