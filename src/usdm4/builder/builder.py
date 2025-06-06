@@ -46,9 +46,13 @@ class Builder:
             return object
         except Exception as e:
             location = KlassMethodLocation("Builder", "create")
-            self.errors.exception(f"Failed to create instance of klass '{klass}' with params {params}", e, location)
+            self.errors.exception(
+                f"Failed to create instance of klass '{klass}' with params {params}",
+                e,
+                location,
+            )
             return None
-        
+
     def minimum(self, title: str, identifier: str, version: str) -> "Wrapper":
         """
         Create a minimum study with the given title, identifier, and version.

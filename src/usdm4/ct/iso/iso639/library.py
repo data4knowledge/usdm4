@@ -1,5 +1,3 @@
-
-
 class Library:
     def __init__(self, root_path: str):
         self.system = "ISO 639-1"
