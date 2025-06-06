@@ -9,7 +9,7 @@
   rule_text: A study title type must be specified using the study title type (C207419)
     DDF codelist.
   status: Failure
-  timestamp: '2025-06-05 16:50:12.358011'
+  timestamp: '2025-06-06 07:53:13.176861'
   type: DDF00146
 - attribute: type
   exception: null
@@ -22,7 +22,7 @@
   rule_text: A study title type must be specified using the study title type (C207419)
     DDF codelist.
   status: Failure
-  timestamp: '2025-06-05 16:50:12.358015'
+  timestamp: '2025-06-06 07:53:13.176864'
   type: DDF00146
 - attribute: level
   exception: null
@@ -35,7 +35,7 @@
   rule_text: An objective level must be specified using the objective level (C188725)
     DDF codelist.
   status: Failure
-  timestamp: '2025-06-05 16:50:12.357798'
+  timestamp: '2025-06-06 07:53:13.176699'
   type: DDF00147
 - attribute: level
   exception: null
@@ -48,7 +48,7 @@
   rule_text: An objective level must be specified using the objective level (C188725)
     DDF codelist.
   status: Failure
-  timestamp: '2025-06-05 16:50:12.357808'
+  timestamp: '2025-06-06 07:53:13.176707'
   type: DDF00147
 - attribute: level
   exception: null
@@ -61,7 +61,7 @@
   rule_text: An objective level must be specified using the objective level (C188725)
     DDF codelist.
   status: Failure
-  timestamp: '2025-06-05 16:50:12.357811'
+  timestamp: '2025-06-06 07:53:13.176710'
   type: DDF00147
 - attribute: level
   exception: null
@@ -74,7 +74,7 @@
   rule_text: An objective level must be specified using the objective level (C188725)
     DDF codelist.
   status: Failure
-  timestamp: '2025-06-05 16:50:12.357815'
+  timestamp: '2025-06-06 07:53:13.176712'
   type: DDF00147
 - attribute: level
   exception: null
@@ -87,7 +87,7 @@
   rule_text: An objective level must be specified using the objective level (C188725)
     DDF codelist.
   status: Failure
-  timestamp: '2025-06-05 16:50:12.357819'
+  timestamp: '2025-06-06 07:53:13.176714'
   type: DDF00147
 - attribute: level
   exception: null
@@ -100,5 +100,5 @@
   rule_text: An objective level must be specified using the objective level (C188725)
     DDF codelist.
   status: Failure
-  timestamp: '2025-06-05 16:50:12.357822'
+  timestamp: '2025-06-06 07:53:13.176717'
   type: DDF00147

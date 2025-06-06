@@ -110,8 +110,6 @@ def test_load_method(library):
     """Test that the load method exists and can be called."""
     # Mock the open function to avoid actual file operations
     try:
-        # We're not actually testing the load functionality here,
-        # just that the method exists and can be called
-        pass
+        Library(root_path()).load()
     except Exception as e:
         pytest.fail(f"load() method raised {e} unexpectedly!")

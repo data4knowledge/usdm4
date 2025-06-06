@@ -7,7 +7,7 @@ class Library:
         self.system = "ISO 639-1"
         self.version = "2007"
 
-    def load() -> None:
+    def load(self) -> None:
         pass
 
     def decode(self, code: str) -> str | None:

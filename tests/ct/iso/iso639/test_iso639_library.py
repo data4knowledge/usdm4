@@ -50,6 +50,6 @@ def test_load_method(library):
     # The load method is currently empty, so we just test that it can be called
     # without raising an exception
     try:
-        Library.load()
+        Library(root_path()).load()
     except Exception as e:
         pytest.fail(f"load() method raised {e} unexpectedly!")
