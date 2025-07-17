@@ -202,7 +202,6 @@ class Builder:
         if self.cdisc_bc_library.exists(name):
             bc_params = self.cdisc_bc_library.usdm(name)
             self._set_ids(bc_params)
-            print(f"BC PARAMS: {bc_params}")
             return self.create(BiomedicalConcept, bc_params)
         else:
             return None
