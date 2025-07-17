@@ -13,11 +13,13 @@ from usdm4.api.study_definition_document_version import StudyDefinitionDocumentV
 from usdm4.api.identifier import StudyIdentifier
 from usdm4.api.study_title import StudyTitle
 from usdm4.api.study_version import StudyVersion
+from usdm4.api.biomedical_concept import BiomedicalConcept
 from usdm4.api import __all__ as v4_classes
 from usdm4.__version__ import __model_version__, __package_version__
 from usdm3.base.id_manager import IdManager
 from usdm3.base.api_instance import APIInstance
-from usdm3.ct.cdisc.library import Library as CdiscLibrary
+from usdm3.ct.cdisc.library import Library as CdiscCTLibrary
+from usdm3.bc.cdisc.library import Library as CdiscBCLibrary
 from usdm4.ct.iso.iso3166.library import Library as Iso3166Library
 from usdm4.ct.iso.iso639.library import Library as Iso639Library
 from usdm4.builder.cross_reference import CrossReference
@@ -28,15 +30,17 @@ class Builder:
         self._id_manager: IdManager = IdManager(v4_classes)
         self.errors = Errors()
         self.api_instance: APIInstance = APIInstance(self._id_manager)
-        self.cdisc_library = CdiscLibrary(root_path)
+        self.cdisc_ct_library = CdiscCTLibrary(root_path)
+        self.cdisc_bc_library = CdiscBCLibrary(root_path, self.cdisc_ct_library)
         self.iso3166_library = Iso3166Library(root_path)
         self.iso639_library = Iso639Library(root_path)
         self.cross_reference = CrossReference()
-        self.cdisc_library.load()
+        self.cdisc_ct_library.load()
+        self.cdisc_bc_library.load()
         self.iso3166_library.load()
         self.iso639_library.load()
-        self._cdisc_code_system = self.cdisc_library.system
-        self._cdisc_code_system_version = self.cdisc_library.version
+        self._cdisc_code_system = self.cdisc_ct_library.system
+        self._cdisc_code_system_version = self.cdisc_ct_library.version
 
     def create(self, klass, params):
         try:
@@ -158,45 +162,11 @@ class Builder:
         )
         return result
 
-    # def decode_phase(self, text) -> AliasCode:
-    #     phase_map = [
-    #         (
-    #             ["0", "PRE-CLINICAL", "PRE CLINICAL"],
-    #             {"code": "C54721", "decode": "Phase 0 Trial"},
-    #         ),
-    #         (["1", "I"], {"code": "C15600", "decode": "Phase I Trial"}),
-    #         (["1-2"], {"code": "C15693", "decode": "Phase I/II Trial"}),
-    #         (["1/2"], {"code": "C15693", "decode": "Phase I/II Trial"}),
-    #         (["1/2/3"], {"code": "C198366", "decode": "Phase I/II/III Trial"}),
-    #         (["1/3"], {"code": "C198367", "decode": "Phase I/III Trial"}),
-    #         (["1A", "IA"], {"code": "C199990", "decode": "Phase Ia Trial"}),
-    #         (["1B", "IB"], {"code": "C199989", "decode": "Phase Ib Trial"}),
-    #         (["2", "II"], {"code": "C15601", "decode": "Phase II Trial"}),
-    #         (["2-3", "II-III"], {"code": "C15694", "decode": "Phase II/III Trial"}),
-    #         (["2A", "IIA"], {"code": "C49686", "decode": "Phase IIa Trial"}),
-    #         (["2B", "IIB"], {"code": "C49688", "decode": "Phase IIb Trial"}),
-    #         (["3", "III"], {"code": "C15602", "decode": "Phase III Trial"}),
-    #         (["3A", "IIIA"], {"code": "C49687", "decode": "Phase IIIa Trial"}),
-    #         (["3B", "IIIB"], {"code": "C49689", "decode": "Phase IIIb Trial"}),
-    #         (["4", "IV"], {"code": "C15603", "decode": "Phase IV Trial"}),
-    #         (["5", "V"], {"code": "C47865", "decode": "Phase V Trial"}),
-    #     ]
-    #     for tuple in phase_map:
-    #         if text in tuple[0]:
-    #             entry = tuple[1]
-    #             cdisc_phase_code = self.cdisc_code(entry["code"], entry["decode"])
-    #             return self.alias_code(cdisc_phase_code)
-    #     cdisc_phase_code = self.cdisc_code(
-    #         "C48660",
-    #         "[Trial Phase] Not Applicable",
-    #     )
-    #     return self.alias_code(cdisc_phase_code)
-
     def klass_and_attribute(self, klass: str, attribute: str) -> Code:
-        return self.cdisc_library.klass_and_attribute(klass, attribute)
+        return self.cdisc_ct_library.klass_and_attribute(klass, attribute)
 
     def cdisc_code(self, code: str, decode: str) -> Code:
-        cl = self.cdisc_library.cl_by_term(code)
+        cl = self.cdisc_ct_library.cl_by_term(code)
         version = cl["source"]["effective_date"] if cl else "unknown"
         return self.create(
             Code,
@@ -209,8 +179,8 @@ class Builder:
         )
 
     def cdisc_unit_code(self, unit: str) -> Code:
-        unit = self.cdisc_library.unit(unit)
-        unit_cl = self.cdisc_library.unit_code_list()
+        unit = self.cdisc_ct_library.unit(unit)
+        unit_cl = self.cdisc_ct_library.unit_code_list()
         return (
             self.create(
                 Code,
@@ -227,6 +197,14 @@ class Builder:
 
     def alias_code(self, standard_code: Code) -> AliasCode:
         return self.create(AliasCode, {"standardCode": standard_code})
+
+    def bc(self, name) -> BiomedicalConcept | None:
+        if self.cdisc_bc_library.exists(name):
+            data = self.cdisc_bc_library.usdm(name)
+            print(f"DATA: {data}")
+            return self.create(BiomedicalConcept, data)
+        else:
+            return None
 
     def iso3166_code(self, code: str) -> Code:
         return self.create(

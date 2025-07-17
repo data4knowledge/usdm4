@@ -26,6 +26,9 @@ def test_minimum(builder):
     expected = read_json_file("minimum", "minimum_expected.json")
     assert instance.to_json() == expected
 
+def test_bc(builder):
+    bc = builder.bc("Sex")
+    print(f"BC: {bc}")
 
 # def test_decode_phase_phase_0(builder):
 #     result = builder.decode_phase("0")
