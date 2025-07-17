@@ -200,9 +200,10 @@ class Builder:
 
     def bc(self, name) -> BiomedicalConcept | None:
         if self.cdisc_bc_library.exists(name):
-            data = self.cdisc_bc_library.usdm(name)
-            print(f"DATA: {data}")
-            return self.create(BiomedicalConcept, data)
+            bc_params = self.cdisc_bc_library.usdm(name)
+            self._set_ids(bc_params)
+            print(f"BC PARAMS: {bc_params}")
+            return self.create(BiomedicalConcept, bc_params)
         else:
             return None
 
@@ -270,3 +271,14 @@ class Builder:
 
     def _add_id(self, data: dict):
         self._id_manager.add_id(data["instanceType"], data["id"])
+
+    def _set_ids(self, parent):
+        if isinstance(parent, str) or isinstance(parent, bool) or (parent is None):
+            return
+        parent["id"] = self._id_manager.build_id(parent["instanceType"])
+        for _, value in parent.items():
+            if isinstance(value, list):
+                for child in value:
+                    self._set_ids(child)
+            else:
+                self._set_ids(value)
