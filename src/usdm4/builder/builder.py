@@ -20,6 +20,7 @@ from usdm3.base.id_manager import IdManager
 from usdm3.base.api_instance import APIInstance
 from usdm3.ct.cdisc.library import Library as CdiscCTLibrary
 from usdm3.bc.cdisc.library import Library as CdiscBCLibrary
+from usdm3.data_store.data_store import DataStore
 from usdm4.ct.iso.iso3166.library import Library as Iso3166Library
 from usdm4.ct.iso.iso639.library import Library as Iso639Library
 from usdm4.builder.cross_reference import CrossReference
@@ -41,6 +42,14 @@ class Builder:
         self.iso639_library.load()
         self._cdisc_code_system = self.cdisc_ct_library.system
         self._cdisc_code_system_version = self.cdisc_ct_library.version
+
+    def seed(self, file_path: str):
+        data_store = DataStore(file_path)
+        data_store.decompose()
+        for klass in v4_classes:
+            for instance in data_store.instances_by_klass(klass):
+                if "id" in instance:
+                    self._id_manager.add_id(klass, instance["id"])
 
     def create(self, klass, params):
         try:
