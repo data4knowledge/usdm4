@@ -1,4 +1,4 @@
-from src.usdm4.__info__ import __model_version__, __package_version__
+from usdm4.__info__ import __model_version__, __package_version__
 from usdm4.api.wrapper import Wrapper
 
 
