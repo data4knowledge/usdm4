@@ -161,7 +161,7 @@ class StudyVersion(ApiBaseModelWithId):
 
     def approval_date(self) -> GovernanceDate:
         for x in self.dateValues:
-            if x.type.decode == "Sponsor Approval Date":
+            if x.type.decode == "Protocol Approval by Sponsor Date":
                 return x
         return ""
 
@@ -173,7 +173,7 @@ class StudyVersion(ApiBaseModelWithId):
 
     def approval_date_value(self) -> date:
         for x in self.dateValues:
-            if x.type.decode == "Sponsor Approval Date":
+            if x.type.decode == "Protocol Approval by Sponsor Date":
                 return x.dateValue
         return ""
 

@@ -42,7 +42,7 @@
               "code": "C132352",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2023-12-15",
-              "decode": "Sponsor Approval Date",
+              "decode": "Protocol Approval by Sponsor Date",
               "instanceType": "Code"
             },
             "dateValue": "2017-12-05",
@@ -74,7 +74,7 @@
               "id": "StudyAmendmentReason_1",
               "code": {
                 "id": "Code_81",
-                "code": "C99904x4",
+                "code": "C207609",
                 "codeSystem": "http://www.cdisc.org",
                 "codeSystemVersion": "2023-12-15",
                 "decode": "New Safety Information Available",
@@ -88,10 +88,10 @@
                 "id": "StudyAmendmentReason_2",
                 "code": {
                   "id": "Code_82",
-                  "code": "C99904x12",
+                  "code": "C207603",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Inconsistency And/Or Error In The Protocol",
+                  "decode": "Inconsistency and/or Error In The Protocol",
                   "instanceType": "Code"
                 },
                 "otherReason": null,
@@ -8713,7 +8713,7 @@
                   "code": "C85826",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Primary Objective",
+                  "decode": "Trial Primary Objective",
                   "instanceType": "Code"
                 },
                 "endpoints": [
@@ -8750,7 +8750,7 @@
                   "code": "C85827",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Secondary Objective",
+                  "decode": "Trial Secondary Objective",
                   "instanceType": "Code"
                 },
                 "endpoints": [
@@ -8787,7 +8787,7 @@
                   "code": "C85827",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Secondary Objective",
+                  "decode": "Trial Secondary Objective",
                   "instanceType": "Code"
                 },
                 "endpoints": [
@@ -8824,7 +8824,7 @@
                   "code": "C85827",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Secondary Objective",
+                  "decode": "Trial Secondary Objective",
                   "instanceType": "Code"
                 },
                 "endpoints": [
@@ -8861,7 +8861,7 @@
                   "code": "C163559",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Exploratory Objective",
+                  "decode": "Trial Exploratory Objective",
                   "instanceType": "Code"
                 },
                 "endpoints": [
@@ -8898,7 +8898,7 @@
                   "code": "C163559",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Exploratory Objective",
+                  "decode": "Trial Exploratory Objective",
                   "instanceType": "Code"
                 },
                 "endpoints": [
@@ -11849,7 +11849,7 @@
             "text": "A Study of Nasal Glucagon (LY900018) in Japanese Participants With Diabetes Mellitus",
             "type": {
               "id": "Code_3",
-              "code": "C99905x1",
+              "code": "C207615",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2023-12-15",
               "decode": "Brief Study Title",
@@ -11862,7 +11862,7 @@
             "text": "A Phase 3 Study of Nasal Glucagon (LY900018) Compared to Intramuscular Glucagon for Treatment of Insulin-induced Hypoglycemia in Japanese Patients with Diabetes Mellitus",
             "type": {
               "id": "Code_4",
-              "code": "C99905x2",
+              "code": "C207616",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2023-12-15",
               "decode": "Official Study Title",

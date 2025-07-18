@@ -5,7 +5,7 @@ from src.usdm4.builder.builder import Builder
 from src.usdm4.api.code import Code
 from tests.helpers.files import write_json_file, read_json_file
 
-SAVE = False
+SAVE = True
 
 
 def root_path():
@@ -81,7 +81,7 @@ def test_sponsor_basic(builder):
 
 def test_klass_and_attribute_basic(builder):
     # builder = Builder(root_path())
-    result = builder.klass_and_attribute("Study", "studyPhase")
+    result = builder.klass_and_attribute("StudyDesign", "studyPhase")
 
     # The method returns a dictionary-like object from ct_library
     assert isinstance(result, dict)
@@ -103,7 +103,7 @@ def test_klass_and_attribute_with_valid_class_and_attribute(builder):
 
 def test_klass_and_attribute_returns_dict_object(builder):
     # builder = Builder(root_path())
-    result = builder.klass_and_attribute("Study", "studyType")
+    result = builder.klass_and_attribute("StudyDesign", "studyType")
 
     # Verify it returns a dictionary with expected keys
     assert isinstance(result, dict)
@@ -122,7 +122,7 @@ def test_klass_and_attribute_different_parameters(builder):
 
     # Test with different class/attribute combinations
     result1 = builder.klass_and_attribute("StudyArm", "type")
-    result2 = builder.klass_and_attribute("Study", "studyPhase")
+    result2 = builder.klass_and_attribute("StudyDesign", "studyPhase")
 
     # Both should return dictionary objects (using known valid combinations)
     assert isinstance(result1, dict)
@@ -149,7 +149,7 @@ def test_klass_and_attribute_method_delegation(builder):
     # builder = Builder(root_path())
 
     # Test that the method properly delegates to ct_library
-    result = builder.klass_and_attribute("Study", "studyPhase")
+    result = builder.klass_and_attribute("StudyDesign", "studyPhase")
 
     # Verify it's a valid response from the ct_library
     assert isinstance(result, dict)

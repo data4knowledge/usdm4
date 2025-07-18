@@ -57,7 +57,7 @@
                   "code": "C132352",
                   "codeSystem": "cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Sponsor Approval Date",
+                  "decode": "Protocol Approval by Sponsor Date",
                   "id": "Code_7",
                   "instanceType": "Code"
                 }
@@ -117,7 +117,7 @@
               "code": "C132352",
               "codeSystem": "cdisc.org",
               "codeSystemVersion": "2023-12-15",
-              "decode": "Sponsor Approval Date",
+              "decode": "Protocol Approval by Sponsor Date",
               "id": "Code_7",
               "instanceType": "Code"
             }

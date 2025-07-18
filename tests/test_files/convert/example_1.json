@@ -42,7 +42,7 @@
               "code": "C132352",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2023-12-15",
-              "decode": "Sponsor Approval Date",
+              "decode": "Protocol Approval by Sponsor Date",
               "instanceType": "Code"
             },
             "dateValue": "2006-06-01",
@@ -74,7 +74,7 @@
               "id": "StudyAmendmentReason_1",
               "code": {
                 "id": "Code_72",
-                "code": "C99904x3",
+                "code": "C207605",
                 "codeSystem": "http://www.cdisc.org",
                 "codeSystemVersion": "2023-12-15",
                 "decode": "IRB/IEC Feedback",
@@ -9353,7 +9353,7 @@
                   "code": "C85826",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Primary Objective",
+                  "decode": "Trial Primary Objective",
                   "instanceType": "Code"
                 },
                 "endpoints": [
@@ -9408,7 +9408,7 @@
                   "code": "C85826",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Primary Objective",
+                  "decode": "Trial Primary Objective",
                   "instanceType": "Code"
                 },
                 "endpoints": [
@@ -9481,7 +9481,7 @@
                   "code": "C85827",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Secondary Objective",
+                  "decode": "Trial Secondary Objective",
                   "instanceType": "Code"
                 },
                 "endpoints": [
@@ -9554,7 +9554,7 @@
                   "code": "C85827",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Secondary Objective",
+                  "decode": "Trial Secondary Objective",
                   "instanceType": "Code"
                 },
                 "endpoints": [
@@ -9591,7 +9591,7 @@
                   "code": "C85827",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Secondary Objective",
+                  "decode": "Trial Secondary Objective",
                   "instanceType": "Code"
                 },
                 "endpoints": [
@@ -9628,7 +9628,7 @@
                   "code": "C85827",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Secondary Objective",
+                  "decode": "Trial Secondary Objective",
                   "instanceType": "Code"
                 },
                 "endpoints": [
@@ -11779,7 +11779,7 @@
             "text": "LZZT",
             "type": {
               "id": "Code_3",
-              "code": "C94108",
+              "code": "C207646",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2023-12-15",
               "decode": "Study Acronym",
@@ -11792,7 +11792,7 @@
             "text": "Xanomeline (LY246708)",
             "type": {
               "id": "Code_5",
-              "code": "C99905x1",
+              "code": "C207615",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2023-12-15",
               "decode": "Brief Study Title",
@@ -11805,7 +11805,7 @@
             "text": "Safety and Efficacy of the Xanomeline Transdermal Therapeutic System (TTS) in Patients with Mild to Moderate Alzheimer's Disease",
             "type": {
               "id": "Code_6",
-              "code": "C99905x2",
+              "code": "C207616",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2023-12-15",
               "decode": "Official Study Title",
@@ -11818,7 +11818,7 @@
             "text": "Safety and Efficacy of the Xanomeline Transdermal Therapeutic System (TTS) in Patients with Mild to Moderate Alzheimer's Disease",
             "type": {
               "id": "Code_7",
-              "code": "C99905x3",
+              "code": "C207617",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2023-12-15",
               "decode": "Public Study Title",
@@ -11855,7 +11855,7 @@
               "description": "Protocol document approval date",
               "type": {
                 "id": "Code_11",
-                "code": "C99903x1",
+                "code": "C207598",
                 "codeSystem": "http://www.cdisc.org",
                 "codeSystemVersion": "2023-12-15",
                 "decode": "Protocol Effective Date",

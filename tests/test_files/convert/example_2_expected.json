@@ -26,7 +26,7 @@
               "code": "C132352",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2023-12-15",
-              "decode": "Sponsor Approval Date",
+              "decode": "Protocol Approval by Sponsor Date",
               "instanceType": "Code"
             },
             "dateValue": "2017-12-05",
@@ -65,7 +65,7 @@
               "code": {
                 "id": "Code_81",
                 "extensionAttributes": [],
-                "code": "C99904x4",
+                "code": "C207609",
                 "codeSystem": "http://www.cdisc.org",
                 "codeSystemVersion": "2023-12-15",
                 "decode": "New Safety Information Available",
@@ -81,10 +81,10 @@
                 "code": {
                   "id": "Code_82",
                   "extensionAttributes": [],
-                  "code": "C99904x12",
+                  "code": "C207603",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Inconsistency And/Or Error In The Protocol",
+                  "decode": "Inconsistency and/or Error In The Protocol",
                   "instanceType": "Code"
                 },
                 "otherReason": null,
@@ -1732,7 +1732,7 @@
                   "code": "C85826",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Primary Objective",
+                  "decode": "Trial Primary Objective",
                   "instanceType": "Code"
                 },
                 "endpoints": [
@@ -1775,7 +1775,7 @@
                   "code": "C85827",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Secondary Objective",
+                  "decode": "Trial Secondary Objective",
                   "instanceType": "Code"
                 },
                 "endpoints": [
@@ -1818,7 +1818,7 @@
                   "code": "C85827",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Secondary Objective",
+                  "decode": "Trial Secondary Objective",
                   "instanceType": "Code"
                 },
                 "endpoints": [
@@ -1861,7 +1861,7 @@
                   "code": "C85827",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Secondary Objective",
+                  "decode": "Trial Secondary Objective",
                   "instanceType": "Code"
                 },
                 "endpoints": [
@@ -1904,7 +1904,7 @@
                   "code": "C163559",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Exploratory Objective",
+                  "decode": "Trial Exploratory Objective",
                   "instanceType": "Code"
                 },
                 "endpoints": [
@@ -1947,7 +1947,7 @@
                   "code": "C163559",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Exploratory Objective",
+                  "decode": "Trial Exploratory Objective",
                   "instanceType": "Code"
                 },
                 "endpoints": [
@@ -4975,7 +4975,7 @@
             "type": {
               "id": "Code_3",
               "extensionAttributes": [],
-              "code": "C99905x1",
+              "code": "C207615",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2023-12-15",
               "decode": "Brief Study Title",
@@ -4990,7 +4990,7 @@
             "type": {
               "id": "Code_4",
               "extensionAttributes": [],
-              "code": "C99905x2",
+              "code": "C207616",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2023-12-15",
               "decode": "Official Study Title",

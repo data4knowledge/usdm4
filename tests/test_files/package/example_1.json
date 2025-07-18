@@ -37,7 +37,7 @@
               "code": "C132352",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2023-12-15",
-              "decode": "Sponsor Approval Date",
+              "decode": "Protocol Approval by Sponsor Date",
               "instanceType": "Code"
             },
             "dateValue": "2023-11-07",
@@ -65,7 +65,7 @@
             "description": null,
             "type": {
               "id": "Code_10",
-              "code": "C99903x1",
+              "code": "C207598",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2023-12-15",
               "decode": "Protocol Effective Date",
@@ -234,7 +234,7 @@
             "text": "Proof of concept study (multicenter, phase II) on the efficacy of the selective TYK2 inhibitor Deucravacitinib in Lichen planus patients (DEUCRALIP)",
             "type": {
               "id": "Code_12",
-              "code": "C99905x2",
+              "code": "C207616",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2023-12-15",
               "decode": "Official Study Title",
@@ -247,7 +247,7 @@
             "text": "DEUCRALIP",
             "type": {
               "id": "Code_14",
-              "code": "C94108",
+              "code": "C207646",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2023-12-15",
               "decode": "Study Acronym",
@@ -260,7 +260,7 @@
             "text": "DEUCRALIP",
             "type": {
               "id": "Code_13",
-              "code": "C99905x1",
+              "code": "C207615",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2023-12-15",
               "decode": "Brief Study Title",
