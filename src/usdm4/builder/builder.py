@@ -15,7 +15,7 @@ from usdm4.api.study_title import StudyTitle
 from usdm4.api.study_version import StudyVersion
 from usdm4.api.biomedical_concept import BiomedicalConcept
 from usdm4.api import __all__ as v4_classes
-from usdm4.__version__ import __model_version__, __package_version__
+from src.usdm4.__info__ import __model_version__, __package_version__
 from usdm3.base.id_manager import IdManager
 from usdm3.base.api_instance import APIInstance
 from usdm3.ct.cdisc.library import Library as CdiscCTLibrary

@@ -1,5 +1,5 @@
 from usdm3.rules.library.rule_ddfsdw001 import RuleDDFSDW001 as V3Rule
-from usdm4.__version__ import __model_version__ as model_version
+from src.usdm4.__info__ import __model_version__ as model_version
 
 
 class RuleDDFSDW001(V3Rule):
