@@ -1,59 +1,65 @@
 ---
 packages: 
-- ddf
-- sdtm
-- protocol
+- ddfct
+- sdtmct
+- protocolct
 code_lists:
-- C71620
-- C99077 
-- C66737
+- C66726
+- C66770
+- C66728
+- C66729
+- C66732
+- C66733
+- C66735
 - C66736 
+- C66737
 - C66739
+- C66742
+- C66797
+- C71113
+- C71148
+- C71620
+- C74456
+- C78734
+- C78735
+- C85492
+- C96785
+- C99073
+- C99074
+- C99077 
 - C99076
-- C174222
-- C188727
+- C99078
 - C99079
+- C123650
+- C124309
+- C127260
+- C127261
 - C127262
 - C171445
-- C188728
-- C188726 
+- C174222
 - C188723
 - C188724
-- C66728
-- C66735
-- C66732
-- C174222
-- C201265
-- C66797
-- C66729
-- C71113
-- C99078
-- C66742
-- C78735
-- C71148
-- C74456
-- C99073
-- C66733
-- C66770
-- C78734
-- C96785
-- C85492
-- C124309
-- C123650
-- C99074
-- C66726
 - C188725
+- C188726 
+- C188727
+- C188728
+- C201265
+- C207412
+- C207413
+- C207415
+- C207416
+- C207417
+- C207418
 - C207419
+- C215478
+- C215480
+- C215481
+- C215483
+- C215485
 klass_attribute_mapping:
-  Study:
-    studyType: C99077
-    studyPhase: C66737
-  StudyTitle:
-    type: C207419
-  StudyDefinitionDocument:
-    type: C99915x
-  StudyDefinitionDocumentVersion:
-    status: C188723
+  Study: {}
+  StudyProtocolVersion:
+    protocolStatus: C188723
   Organization:
     type: C188724
   Objective:
@@ -71,27 +77,36 @@ klass_attribute_mapping:
     contactModes: C171445
   StudyDesign:
     interventionModel: C99076
-    studyDesignBlindingScheme: C66735
-    trialIntentType: C66736
-    trialType: C66739
-    characteristics: C99907x
-  Masking:
-    role: C99906x
+    characteristics: C207416
+    studyType: C99077
+    studyPhase: C66737
+  InterventionalStudyDesign:
+    subTypes: C66739
+    model: C99076
+    intentTypes: C66736
+    blindingSchema: C66735
+  ObservationalStudyDesign:
+    subTypes: C215486
+    model: C127259
+    timePerspective: C127261
+    samplingMethod: C127260
+  # Masking:
+  #   role: C99906x
   StudyDesignPopulation:
     plannedSex: C66732
   StudyCohort:
     plannedSex: C66732
   Timing:
-    timingType: C201264
+    type: C201264
     relativeToFrom: C201265
   GeographicScope:
-    type: C99902x
+    type: C207412
   GovernanceDate:
-    type: C99903x
+    type: C207413
   StudyAmendmentReason:
-    code: C99904x
+    code: C207415x # C207415
   StudyAmendmentImpact:
-    type: C99912x
+    type: C99912x # C215481
   EligibilityCriteria:
     category: C66797
   Administration:
@@ -99,14 +114,18 @@ klass_attribute_mapping:
     frequency: C71113
   StudyIntervention:
     type: C99078
-    role: C99908x
-  StudyVersion:
-    titles: C99905x
+    role: C207417
+  StudyTitle:
+    type: C207419 # C99905x
   ReferenceIdentifier:
-    type: C99910x
+    type: C99910x # C215478
   AdministrableProduct:
     administrableDoseForm: C66726
-    productDesignation: C99909x
-    sourcing: C99914x 
+    productDesignation: C207418
+    sourcing: C99914x # C215483
   StudyRole:
-    code: C99911x
+    code: C99911x # C215480
+  MedicalDevice:
+    sourcing: C99914x # C215483
+  ProductOrganizationRole:
+    code: C99915x # C215485
