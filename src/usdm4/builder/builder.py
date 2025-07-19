@@ -24,6 +24,8 @@ from usdm3.data_store.data_store import DataStore
 from usdm4.ct.iso.iso3166.library import Library as Iso3166Library
 from usdm4.ct.iso.iso639.library import Library as Iso639Library
 from usdm4.builder.cross_reference import CrossReference
+from usdm4.api.api_base_model import ApiBaseModelWithId
+from usdm4.builder.other_ct_version_manager import OtherCTVersionManager
 
 
 class Builder:
@@ -36,6 +38,7 @@ class Builder:
         self.iso3166_library = Iso3166Library(root_path)
         self.iso639_library = Iso639Library(root_path)
         self.cross_reference = CrossReference()
+        self.other_ct_version_manager = OtherCTVersionManager()
         self.cdisc_ct_library.load()
         self.cdisc_bc_library.load()
         self.iso3166_library.load()
@@ -51,11 +54,12 @@ class Builder:
                 if "id" in instance:
                     self._id_manager.add_id(klass, instance["id"])
 
-    def create(self, klass, params):
+    def create(self, klass: str, params: dict) -> ApiBaseModelWithId | None:
         try:
-            object = self.api_instance.create(klass, params)
+            object: ApiBaseModelWithId = self.api_instance.create(klass, params)
             if object:
-                self.cross_reference.add(object)
+                name = self._set_name(object, params)
+                self.cross_reference.add(object, name)
             return object
         except Exception as e:
             location = KlassMethodLocation("Builder", "create")
@@ -65,6 +69,13 @@ class Builder:
                 location,
             )
             return None
+
+    def _set_name(self, object, params: dict) -> str | None:
+        if hasattr(object, "name"):
+            return object.name 
+        elif "name" in params:
+            return params["name"]
+        return None
 
     def minimum(self, title: str, identifier: str, version: str) -> "Wrapper":
         """
@@ -234,6 +245,17 @@ class Builder:
                 "codeSystem": self.iso639_library.system,
                 "codeSystemVersion": self.iso639_library.version,
                 "decode": self.iso639_library.decode(code),
+            },
+        )
+    
+    def other_code(self, code: str, system: str, version: str, decode: str) -> Code:
+        return self.create(
+            Code,
+            {
+                "code": code,
+                "codeSystem": system,
+                "codeSystemVersion": version,
+                "decode": decode,
             },
         )
 
