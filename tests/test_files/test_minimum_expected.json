@@ -25,7 +25,7 @@
               "extensionAttributes": [],
               "code": "C132352",
               "codeSystem": "http://www.cdisc.org",
-              "codeSystemVersion": "2025-03-28",
+              "codeSystemVersion": "2024-09-27",
               "decode": "Protocol Approval by Sponsor Date",
               "instanceType": "Code"
             },
@@ -95,7 +95,7 @@
               "extensionAttributes": [],
               "code": "C70793",
               "codeSystem": "http://www.cdisc.org",
-              "codeSystemVersion": "2025-03-28",
+              "codeSystemVersion": "2024-09-27",
               "decode": "Clinical Study Sponsor",
               "instanceType": "Code"
             },
@@ -140,7 +140,7 @@
           "extensionAttributes": [],
           "code": "C70817",
           "codeSystem": "http://www.cdisc.org",
-          "codeSystemVersion": "2025-03-28",
+          "codeSystemVersion": "unknown",
           "decode": "Protocol",
           "instanceType": "Code"
         },
@@ -171,7 +171,7 @@
                   "extensionAttributes": [],
                   "code": "C132352",
                   "codeSystem": "http://www.cdisc.org",
-                  "codeSystemVersion": "2025-03-28",
+                  "codeSystemVersion": "2024-09-27",
                   "decode": "Protocol Approval by Sponsor Date",
                   "instanceType": "Code"
                 },
