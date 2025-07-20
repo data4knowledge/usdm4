@@ -22,10 +22,12 @@ setuptools.setup(
     package_dir={"": "src"},
     package_data={
         "usdm4": [
-            "ct/cdisc/library_cache/library_cache.yaml",
+            "ct/cdisc/library_cache/library_cache_all.yaml",
+            "ct/cdisc/library_cache/library_cache_usdm.yaml",
             "ct/cdisc/config/ct_config.yaml",
             "ct/cdisc/missing/missing_ct.yaml",
             "ct/iso/iso3166/iso3166.json",
+            "bc/cdisc/library_cache/library_cache.yaml",
             "rules/library/schema/usdm_v4-0-0.json",
         ]
     },
