@@ -51,6 +51,7 @@ code_lists:
 - C207417
 - C207418
 - C207419
+# - C215477
 # - C215478
 # - C215480
 # - C215481
@@ -60,6 +61,8 @@ klass_attribute_mapping:
   Study: {}
   StudyProtocolVersion:
     protocolStatus: C188723
+  StudyDefinitionDocument:
+    type: C99916x # C215477
   Organization:
     type: C188724
   Objective:

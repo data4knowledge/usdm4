@@ -156,6 +156,9 @@
   submissionValue: Study Amendment Reason Code Value Set Terminology
   synonyms:
   - Study Amendment Reason Code Value Set Terminology
+  source:
+    effective_date: 'unknown'
+    package: ddfct
   terms:
   - conceptId: C207600
     definition: A change in the standard of care necessitates a change(s) to, or formal
@@ -424,6 +427,9 @@
   preferredTerm: 'Reference Identifier Type'
   submissionValue: ''
   synonyms: []
+  source:
+    effective_date: 'unknown'
+    package: ddfct
   terms:
   - conceptId: C215674
     preferredTerm: Pediatric Investigation Plan    
@@ -444,6 +450,9 @@
   preferredTerm: 'Study Role'
   submissionValue: ''
   synonyms: []
+  source:
+    effective_date: 'unknown'
+    package: ddfct
   terms:
   - conceptId: C17445
     preferredTerm: Care Provider
@@ -566,6 +575,9 @@
   preferredTerm: 'Study Amendment Impact'
   submissionValue: ''
   synonyms: []
+  source:
+    effective_date: 'unknown'
+    package: ddfct
   terms:
   - conceptId: C215665
     preferredTerm: Study Subject Safety
@@ -594,6 +606,9 @@
   preferredTerm: 'Adminstrable Product Sourcing'
   submissionValue: ''
   synonyms: []
+  source:
+    effective_date: 'unknown'
+    package: ddfct
   terms:
   - conceptId: C215659
     preferredTerm: Centrally Sourced
@@ -612,6 +627,9 @@
   preferredTerm: 'Product Organization Role'
   submissionValue: ''
   synonyms: []
+  source:
+    effective_date: 'unknown'
+    package: ddfct
   terms:
   - conceptId: C25392
     preferredTerm: Manufacturer
@@ -623,5 +641,19 @@
     submissionValue: ''
     synonyms: []
     definition: An individual or organization whose business is to supply a particular service or commodity.
-
-
+- conceptId: C99916x
+  definition: ''
+  extensible: true
+  name: ''
+  preferredTerm: 'Study Definition Document Type'
+  submissionValue: ''
+  synonyms: []
+  source:
+    effective_date: 'unknown'
+    package: ddfct
+  terms:
+  - conceptId: C70817
+    preferredTerm: Protocol
+    submissionValue: ''
+    synonyms: []
+    definition: ''
