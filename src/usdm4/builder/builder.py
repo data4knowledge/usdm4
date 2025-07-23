@@ -43,17 +43,18 @@ class Builder:
         self.cdisc_bc_library.load()
         self.iso3166_library.load()
         self.iso639_library.load()
+        self._data_store = None
         self._cdisc_code_system = self.cdisc_ct_library.system
         self._cdisc_code_system_version = self.cdisc_ct_library.version
 
     def seed(self, file_path: str):
-        data_store = DataStore(file_path)
-        data_store.decompose()
+        self._data_store = DataStore(file_path)
+        self._data_store.decompose()
         for klass in v4_classes:
-            for instance in data_store.instances_by_klass(klass):
+            for instance in self._data_store.instances_by_klass(klass):
                 if "id" in instance:
                     self._id_manager.add_id(klass, instance["id"])
-
+    
     def create(self, klass: str, params: dict) -> ApiBaseModelWithId | None:
         try:
             object: ApiBaseModelWithId = self.api_instance.create(klass, params)
