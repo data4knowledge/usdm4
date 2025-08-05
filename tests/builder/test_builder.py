@@ -5,7 +5,7 @@ from src.usdm4.builder.builder import Builder
 from src.usdm4.api.code import Code
 from tests.helpers.files import write_json_file, read_json_file
 
-SAVE = True
+SAVE = False
 
 
 def root_path():
@@ -26,13 +26,16 @@ def test_minimum(builder):
     expected = read_json_file("minimum", "minimum_expected.json")
     assert instance.to_json() == expected
 
+
 def test_bc(builder):
     bc = builder.bc("Sex")
     print(f"BC: {bc}")
 
+
 def test_seed(builder):
     builder.seed("tests/test_files/builder/seed_1.json")
     print(f"SEED: {builder._id_manager._id_index}")
+
 
 def test_cdisc_code_basic(builder):
     # builder = Builder(root_path())
@@ -367,21 +370,25 @@ def test_create_exception_handling(builder):
     """Test that the create method handles exceptions properly."""
     # Mock the api_instance.create to raise an exception
     original_create = builder.api_instance.create
-    
+
     def mock_create_exception(klass, params):
         raise ValueError("Test exception")
-    
+
     builder.api_instance.create = mock_create_exception
-    
+
     try:
         result = builder.create("Code", {"code": "test"})
-        
+
         # Should return None when exception occurs
         assert result is None
-        
+
         # Should have logged an error - check if errors exist
-        assert hasattr(builder.errors, 'error_list') or hasattr(builder.errors, '_errors') or len(str(builder.errors)) > 0
-        
+        assert (
+            hasattr(builder.errors, "error_list")
+            or hasattr(builder.errors, "_errors")
+            or len(str(builder.errors)) > 0
+        )
+
     finally:
         # Restore original method
         builder.api_instance.create = original_create
@@ -389,40 +396,43 @@ def test_create_exception_handling(builder):
 
 def test_set_name_with_name_attribute(builder):
     """Test _set_name method when object has name attribute."""
+
     # Create a mock object with name attribute
     class MockObject:
         def __init__(self):
             self.name = "test_name"
-    
+
     mock_obj = MockObject()
     params = {"other_param": "value"}
-    
+
     result = builder._set_name(mock_obj, params)
     assert result == "test_name"
 
 
 def test_set_name_with_name_in_params(builder):
     """Test _set_name method when name is in params but object has no name attribute."""
+
     # Create a mock object without name attribute
     class MockObject:
         pass
-    
+
     mock_obj = MockObject()
     params = {"name": "param_name", "other_param": "value"}
-    
+
     result = builder._set_name(mock_obj, params)
     assert result == "param_name"
 
 
 def test_set_name_no_name(builder):
     """Test _set_name method when neither object has name nor params contain name."""
+
     # Create a mock object without name attribute
     class MockObject:
         pass
-    
+
     mock_obj = MockObject()
     params = {"other_param": "value"}
-    
+
     result = builder._set_name(mock_obj, params)
     assert result is None
 
@@ -432,7 +442,7 @@ def test_bc_not_exists(builder):
     # Mock the exists method to return False
     original_exists = builder.cdisc_bc_library.exists
     builder.cdisc_bc_library.exists = lambda name: False
-    
+
     try:
         result = builder.bc("NonExistentBC")
         assert result is None
@@ -446,7 +456,7 @@ def test_cdisc_unit_code_none_unit(builder):
     # Mock the unit method to return None
     original_unit = builder.cdisc_ct_library.unit
     builder.cdisc_ct_library.unit = lambda unit: None
-    
+
     try:
         result = builder.cdisc_unit_code("nonexistent")
         assert result is None
@@ -458,7 +468,7 @@ def test_cdisc_unit_code_none_unit(builder):
 def test_other_code(builder):
     """Test other_code method."""
     result = builder.other_code("TEST123", "TestSystem", "1.0", "Test Decode")
-    
+
     assert result.code == "TEST123"
     assert result.codeSystem == "TestSystem"
     assert result.codeSystemVersion == "1.0"
@@ -467,40 +477,42 @@ def test_other_code(builder):
 
 def test_double_link_single_item(builder):
     """Test double_link method with single item."""
+
     class MockItem:
         def __init__(self):
             self.id = "test_id"
-    
+
     item = MockItem()
     items = [item]
-    
+
     builder.double_link(items, "prev_id", "next_id")
-    
+
     assert getattr(item, "prev_id") is None
     assert getattr(item, "next_id") is None
 
 
 def test_double_link_multiple_items(builder):
     """Test double_link method with multiple items."""
+
     class MockItem:
         def __init__(self, item_id):
             self.id = item_id
-    
+
     item1 = MockItem("id1")
     item2 = MockItem("id2")
     item3 = MockItem("id3")
     items = [item1, item2, item3]
-    
+
     builder.double_link(items, "prev_id", "next_id")
-    
+
     # First item
     assert getattr(item1, "prev_id") is None
     assert getattr(item1, "next_id") == "id2"
-    
+
     # Middle item
     assert getattr(item2, "prev_id") == "id1"
     assert getattr(item2, "next_id") == "id3"
-    
+
     # Last item
     assert getattr(item3, "prev_id") == "id2"
     assert getattr(item3, "next_id") is None
@@ -510,16 +522,16 @@ def test_load_method_exception_handling(builder):
     """Test load method with exception handling."""
     # Mock the _decompose method to raise an exception
     original_decompose = builder._decompose
-    
+
     def mock_decompose_exception(data):
         raise ValueError("Test exception in decompose")
-    
+
     builder._decompose = mock_decompose_exception
-    
+
     try:
         # This should not crash even if _decompose raises an exception
         builder.load({"instanceType": "Study", "id": "test_id"})
-        
+
     except Exception:
         # If an exception is raised, that's expected behavior
         pass
@@ -533,38 +545,30 @@ def test_decompose_bug_with_recursive_calls(builder):
     test_data = {
         "instanceType": "Study",
         "id": "test_id_123",
-        "nested": {
-            "instanceType": "StudyVersion",
-            "id": "nested_id_456"
-        },
-        "list_items": [
-            {
-                "instanceType": "StudyDesign",
-                "id": "list_id_789"
-            }
-        ]
+        "nested": {"instanceType": "StudyVersion", "id": "nested_id_456"},
+        "list_items": [{"instanceType": "StudyDesign", "id": "list_id_789"}],
     }
-    
+
     # Mock the _id_manager.add_id method to track calls
     added_ids = []
     original_add_id = builder._id_manager.add_id
-    
+
     def mock_add_id(instance_type, item_id):
         added_ids.append((instance_type, item_id))
         # Don't call original to avoid KeyError
         return None
-    
+
     builder._id_manager.add_id = mock_add_id
-    
+
     try:
         # This will fail due to the bug in the _decompose method
         # where it calls itself with wrong number of arguments
         with pytest.raises(TypeError):
             builder._decompose(test_data)
-        
+
         # At least the top level ID should have been added before the error
         assert ("Study", "test_id_123") in added_ids
-        
+
     finally:
         # Restore original method
         builder._id_manager.add_id = original_add_id
@@ -572,31 +576,28 @@ def test_decompose_bug_with_recursive_calls(builder):
 
 def test_load_method_calls_decompose(builder):
     """Test that load method calls _decompose with correct arguments."""
-    test_data = {
-        "instanceType": "Study",
-        "id": "test_id_123"
-    }
-    
+    test_data = {"instanceType": "Study", "id": "test_id_123"}
+
     # Mock _decompose to track calls
     decompose_calls = []
     original_decompose = builder._decompose
-    
+
     def mock_decompose(*args):
         decompose_calls.append(args)
         # Don't call original to avoid the bug
         return None
-    
+
     builder._decompose = mock_decompose
-    
+
     try:
         builder.load(test_data)
-        
+
         # Verify that _decompose was called with wrong number of arguments
         # This demonstrates the bug in the load method
         assert len(decompose_calls) == 1
         # The load method incorrectly calls _decompose with 3 arguments
         assert len(decompose_calls[0]) == 3
-        
+
     finally:
         # Restore original method
         builder._decompose = original_decompose
@@ -604,28 +605,25 @@ def test_load_method_calls_decompose(builder):
 
 def test_add_id_method(builder):
     """Test _add_id method."""
-    test_data = {
-        "instanceType": "Study",
-        "id": "test_id_123"
-    }
-    
+    test_data = {"instanceType": "Study", "id": "test_id_123"}
+
     # Mock the _id_manager.add_id method to track calls
     added_ids = []
     original_add_id = builder._id_manager.add_id
-    
+
     def mock_add_id(instance_type, item_id):
         added_ids.append((instance_type, item_id))
         # Don't call original to avoid KeyError
         return None
-    
+
     builder._id_manager.add_id = mock_add_id
-    
+
     try:
         builder._add_id(test_data)
-        
+
         # Verify that ID was added
         assert ("Study", "test_id_123") in added_ids
-        
+
     finally:
         # Restore original method
         builder._id_manager.add_id = original_add_id
@@ -677,31 +675,31 @@ def test_set_ids_with_dict(builder):
             "instanceType": "NestedClass",
             "list_items": [
                 {"instanceType": "ListItem1"},
-                {"instanceType": "ListItem2"}
-            ]
-        }
+                {"instanceType": "ListItem2"},
+            ],
+        },
     }
-    
+
     # Mock build_id to return predictable IDs
     original_build_id = builder._id_manager.build_id
     id_counter = 0
-    
+
     def mock_build_id(instance_type):
         nonlocal id_counter
         id_counter += 1
         return f"mock_id_{id_counter}"
-    
+
     builder._id_manager.build_id = mock_build_id
-    
+
     try:
         builder._set_ids(test_data)
-        
+
         # Verify IDs were set
         assert test_data["id"] == "mock_id_1"
         assert test_data["nested"]["id"] == "mock_id_2"
         assert test_data["nested"]["list_items"][0]["id"] == "mock_id_3"
         assert test_data["nested"]["list_items"][1]["id"] == "mock_id_4"
-        
+
     finally:
         # Restore original method
         builder._id_manager.build_id = original_build_id

@@ -57,6 +57,33 @@ def test_init(library):
     assert library.filepath.endswith("ct/iso/iso3166/iso3166.json")
 
 
+def text_code_or_decode(library):
+    alpha3, name = library.code_or_decode("Denmark")
+    assert alpha3 == "DK"
+    assert name == "Denmark"
+    alpha3, name = library.code_or_decode("DK")
+    assert alpha3 == "DK"
+    assert name == "Denmark"
+
+
+def text_code_or_decode_nonexistant(library):
+    alpha3, name = library.code_or_decode("DenmarkX")
+    assert alpha3 is None
+    assert name is None
+
+
+def text_code(library):
+    alpha3, name = library.code("Denmark")
+    assert alpha3 == "DK"
+    assert name == "Denmark"
+
+
+def text_code_nonexistant(library):
+    alpha3, name = library.code("DenmarkX")
+    assert alpha3 is None
+    assert name is None
+
+
 def test_decode_alpha2(library):
     """Test that the decode method returns the correct tuple for alpha-2 codes."""
     alpha3, name = library.decode("US")

@@ -56,7 +56,7 @@ class Builder:
             for instance in self._data_store.instances_by_klass(klass):
                 if "id" in instance:
                     self._id_manager.add_id(klass, instance["id"])
-    
+
     def create(self, klass: str, params: dict) -> ApiBaseModelWithId | None:
         try:
             object: ApiBaseModelWithId = self.api_instance.create(klass, params)
@@ -69,13 +69,13 @@ class Builder:
             self.errors.exception(
                 f"Failed to create instance of klass '{klass}' with params {params}",
                 e,
-                location
+                location,
             )
             return None
 
     def _set_name(self, object, params: dict) -> str | None:
         if hasattr(object, "name"):
-            return object.name 
+            return object.name
         elif "name" in params:
             return params["name"]
         return None
@@ -95,7 +95,9 @@ class Builder:
         protocol_code = self.cdisc_code("C70817", "Protocol")
         global_code = self.cdisc_code("C68846", "Global")
         global_scope = self.create(GeographicScope, {"type": global_code})
-        approval_date_code = self.cdisc_code("C132352", "Protocol Approval by Sponsor Date")
+        approval_date_code = self.cdisc_code(
+            "C132352", "Protocol Approval by Sponsor Date"
+        )
 
         # Study Title
         study_title = self.create(StudyTitle, {"text": title, "type": title_type})
@@ -250,7 +252,7 @@ class Builder:
                 "decode": self.iso639_library.decode(code),
             },
         )
-    
+
     def other_code(self, code: str, system: str, version: str, decode: str) -> Code:
         return self.create(
             Code,

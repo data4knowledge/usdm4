@@ -15,6 +15,15 @@ class Library:
         f = open(self.filepath)
         self.db = json.load(f)
 
+    def code_or_decode(self, text: str) -> tuple[str | None, str | None]:
+        code, name = self._get_decode(text)
+        if not code:
+            code, name = self._get_code(text)
+        return code, name
+
+    def code(self, decode: str) -> tuple[str | None, str | None]:
+        return self._get_code(decode)
+
     def decode(self, code: str) -> tuple[str | None, str | None]:
         return self._get_decode(code)
 
@@ -23,15 +32,15 @@ class Library:
         return code, decode
 
     def _get_decode(self, code: str) -> tuple[str | None, str | None]:
-        if len(code) == 2:
-            field = "alpha-2"
-        else:
-            field = "alpha-3"
+        field = "alpha-2" if len(code) == 2 else "alpha-3"
         entry = next((item for item in self.db if item[field] == code), None)
-        if entry is None:
-            return None, None
-        else:
-            return entry["alpha-3"], entry["name"]
+        return (None, None) if entry is None else (entry["alpha-3"], entry["name"])
+
+    def _get_code(self, decode: str) -> tuple[str | None, str | None]:
+        entry = next(
+            (item for item in self.db if item["name"].upper() == decode.upper()), None
+        )
+        return (None, None) if entry is None else (entry["alpha-3"], entry["name"])
 
     def _get_region_decode(self, decode: str) -> tuple[str | None, str | None]:
         for scope in ["region", "sub-region", "intermediate-region"]:
