@@ -231,6 +231,21 @@ class Builder:
         else:
             return None
 
+    def iso3166_code_or_decode(self, text: str) -> Code:
+        code, decode = self.iso3166_library.code_or_decode(text)
+        if code:
+            return self.create(
+                Code,
+                {
+                    "code": code,
+                    "codeSystem": self.iso3166_library.system,
+                    "codeSystemVersion": self.iso3166_library.version,
+                    "decode": decode,
+                },
+            )
+        else:
+            return None
+        
     def iso3166_code(self, code: str) -> Code:
         return self.create(
             Code,
