@@ -29,6 +29,8 @@ from usdm4.builder.other_ct_version_manager import OtherCTVersionManager
 
 
 class Builder:
+    MODULE = "usdm4.builder.builder.Builder"
+
     def __init__(self, root_path: str):
         self._id_manager: IdManager = IdManager(v4_classes)
         self.errors = Errors()
@@ -63,11 +65,11 @@ class Builder:
                 self.cross_reference.add(object, name)
             return object
         except Exception as e:
-            location = KlassMethodLocation("Builder", "create")
+            location = KlassMethodLocation(self.MODULE, "create")
             self.errors.exception(
                 f"Failed to create instance of klass '{klass}' with params {params}",
                 e,
-                location,
+                location
             )
             return None
 
