@@ -157,7 +157,7 @@
   synonyms:
   - Study Amendment Reason Code Value Set Terminology
   source:
-    effective_date: 'unknown'
+    effective_date: "2025-03-28"
     package: ddfct
   terms:
   - conceptId: C207600
@@ -428,7 +428,7 @@
   submissionValue: ''
   synonyms: []
   source:
-    effective_date: 'unknown'
+    effective_date: "2025-03-28"
     package: ddfct
   terms:
   - conceptId: C215674
@@ -451,7 +451,7 @@
   submissionValue: ''
   synonyms: []
   source:
-    effective_date: 'unknown'
+    effective_date: "2025-03-28"
     package: ddfct
   terms:
   - conceptId: C17445
@@ -576,7 +576,7 @@
   submissionValue: ''
   synonyms: []
   source:
-    effective_date: 'unknown'
+    effective_date: "2025-03-28"
     package: ddfct
   terms:
   - conceptId: C215665
@@ -607,7 +607,7 @@
   submissionValue: ''
   synonyms: []
   source:
-    effective_date: 'unknown'
+    effective_date: "2025-03-28"
     package: ddfct
   terms:
   - conceptId: C215659
@@ -628,7 +628,7 @@
   submissionValue: ''
   synonyms: []
   source:
-    effective_date: 'unknown'
+    effective_date: "2025-03-28"
     package: ddfct
   terms:
   - conceptId: C25392
@@ -649,7 +649,7 @@
   submissionValue: ''
   synonyms: []
   source:
-    effective_date: 'unknown'
+    effective_date: "2025-03-28"
     package: ddfct
   terms:
   - conceptId: C70817
