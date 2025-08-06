@@ -140,7 +140,7 @@
           "extensionAttributes": [],
           "code": "C70817",
           "codeSystem": "http://www.cdisc.org",
-          "codeSystemVersion": "unknown",
+          "codeSystemVersion": "2025-03-28",
           "decode": "Protocol",
           "instanceType": "Code"
         },
