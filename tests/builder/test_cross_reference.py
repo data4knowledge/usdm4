@@ -226,6 +226,25 @@ def test_get_by_path_with_new_instance():
     assert cross_references.get_by_id(CRTest, "1234") is not None
 
 
+def test_get_by_path_bug_in_line_73():
+    """Test the bug in line 73 where add is called with wrong parameter order"""
+    cross_references = CrossReference()
+    item1 = CRTest(id="1234", name="name1")
+    item2 = CRTest2(id="1235", name="name2", instance=item1)
+    
+    # Only add item2, not item1
+    cross_references.add(item2, "name2")
+    
+    # This should trigger the bug on line 73 where it calls self.add(instance.id, instance)
+    # with wrong parameter order, causing an AttributeError
+    with pytest.raises(AttributeError) as ex_info:
+        cross_references.get_by_path(
+            "CRTest2", "name2", "child/CRTest/@value"
+        )
+    
+    assert "'str' object has no attribute 'id'" in str(ex_info.value)
+
+
 def test_get_by_path_none_instance_error():
     """Test PathError when instance becomes None during path traversal"""
     cross_references = CrossReference()
@@ -286,3 +305,32 @@ def test_get_by_path_none_attribute_error():
         )
     
     assert "Failed to translate reference path 'child/CRTestWithNoneChild/@', path was not found" in str(ex_info.value)
+
+
+def test_get_method_returns_none():
+    """Test that _get method returns None when key not found (line 57)"""
+    cross_references = CrossReference()
+    
+    # Test with completely empty cross reference
+    result = cross_references.get_by_name(CRTest, "nonexistent")
+    assert result is None
+    
+    result = cross_references.get_by_id(CRTest, "nonexistent")
+    assert result is None
+    
+    # Test with some data but looking for non-existent key
+    item = CRTest(id="1234", name="name")
+    cross_references.add(item, "name")
+    
+    result = cross_references.get_by_name(CRTest, "different_name")
+    assert result is None
+    
+    result = cross_references.get_by_id(CRTest, "different_id")
+    assert result is None
+    
+    # Test with different class
+    result = cross_references.get_by_name(CRTest2, "name")
+    assert result is None
+    
+    result = cross_references.get_by_id(CRTest2, "1234")
+    assert result is None
