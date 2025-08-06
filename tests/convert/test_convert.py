@@ -72,3 +72,108 @@ def test_usdm_3_validate():
 
 def test_usdm_4_validate():
     run_validate("convert", "example_4")
+
+
+def test_convert_static_methods():
+    """Test static methods to achieve 100% coverage."""
+    from usdm4.convert.convert import Convert
+    
+    # Test case for line 190: _convert_population with None population
+    result_none = Convert._convert_population(None, [])
+    assert result_none is None
+    
+    # Test case for line 250: _convert_range with falsy range (None)
+    result_range = Convert._convert_range(None)
+    assert result_range is None
+    
+    # Test case for line 250: _convert_range with falsy range (empty dict)
+    result_range_empty = Convert._convert_range({})
+    assert result_range_empty is None
+    
+    # Test case for line 250: _convert_range with falsy range (False)
+    result_range_false = Convert._convert_range(False)
+    assert result_range_false is None
+    
+    # Test case for line 255: _convert_range with range["unit"] being None
+    range_no_unit = {
+        "id": "test_range",
+        "minValue": 10,
+        "maxValue": 20,
+        "unit": None  # This will trigger the else branch on line 255
+    }
+    result_range_no_unit = Convert._convert_range(range_no_unit)
+    assert result_range_no_unit["minValue"]["unit"] is None
+    assert result_range_no_unit["maxValue"]["unit"] is None
+    
+    # Test case for line 255: _convert_range with range["unit"] being False
+    range_false_unit = {
+        "id": "test_range_2",
+        "minValue": 5,
+        "maxValue": 15,
+        "unit": False  # This will also trigger the else branch on line 255
+    }
+    result_range_false_unit = Convert._convert_range(range_false_unit)
+    assert result_range_false_unit["minValue"]["unit"] is None
+    assert result_range_false_unit["maxValue"]["unit"] is None
+    
+    # Test case for line 255: _convert_range with range["unit"] being empty string
+    range_empty_unit = {
+        "id": "test_range_3",
+        "minValue": 1,
+        "maxValue": 10,
+        "unit": ""  # This will also trigger the else branch on line 255
+    }
+    result_range_empty_unit = Convert._convert_range(range_empty_unit)
+    assert result_range_empty_unit["minValue"]["unit"] is None
+    assert result_range_empty_unit["maxValue"]["unit"] is None
+    
+    # Test case to ensure we cover both min and max iterations in the loop
+    range_with_valid_unit = {
+        "id": "test_range_4",
+        "minValue": 2,
+        "maxValue": 8,
+        "unit": {
+            "id": "unit_1",
+            "code": "kg",
+            "decode": "kilogram"
+        }
+    }
+    result_range_with_unit = Convert._convert_range(range_with_valid_unit)
+    assert result_range_with_unit["minValue"]["unit"]["id"] == "unit_1_Unit"
+    assert result_range_with_unit["maxValue"]["unit"]["id"] == "unit_1_Unit"
+    
+    # Test case for line 280: _convert_code_to_alias with falsy code
+    result_code = Convert._convert_code_to_alias(None)
+    assert result_code is None
+
+
+def test_convert_documented_by_edge_cases():
+    """Test convert method with different documentedBy values to cover line 49."""
+    from usdm4.convert.convert import Convert
+    
+    # Create minimal valid data structure
+    minimal_study_data = {
+        "study": {
+            "name": "Test Study",
+            "instanceType": "Study",
+            "versions": []
+        }
+    }
+    
+    # Test with None documentedBy (should trigger line 49)
+    test_data_none = minimal_study_data.copy()
+    test_data_none["study"]["documentedBy"] = None
+    result = Convert.convert(test_data_none)
+    assert result.study.documentedBy == []
+    
+    # Test with empty list documentedBy (should trigger line 49)
+    test_data_empty = minimal_study_data.copy()
+    test_data_empty["study"]["documentedBy"] = []
+    result = Convert.convert(test_data_empty)
+    assert result.study.documentedBy == []
+    
+    # Test with False documentedBy (should trigger line 49)
+    test_data_false = minimal_study_data.copy()
+    test_data_false["study"]["documentedBy"] = False
+    result = Convert.convert(test_data_false)
+    assert result.study.documentedBy == []

@@ -307,17 +307,17 @@ class Builder:
                 setattr(item, next_attribute, the_id)
 
     def load(self, data: dict):
-        self._decompose(data, None, "")
+        self._decompose(data)
 
     def _decompose(self, data) -> None:
         if isinstance(data, dict):
             self._add_id(data)
-            for key, value in data.items():
+            for _, value in data.items():
                 if isinstance(value, dict):
-                    self._decompose(value, data)
+                    self._decompose(value)
                 elif isinstance(value, list):
-                    for index, item in enumerate(value):
-                        self._decompose(item, data)
+                    for item in value:
+                        self._decompose(item)
 
     def _add_id(self, data: dict):
         self._id_manager.add_id(data["instanceType"], data["id"])
