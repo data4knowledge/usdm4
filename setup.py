@@ -15,7 +15,7 @@ setuptools.setup(
     description="A python package for using the CDISC TransCelerate USDM, version 4",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    install_requires=["usdm3==0.12.0", "simple_error_log>=0.5.0"],
+    install_requires=["usdm3==0.12.0", "simple_error_log>=0.5.0", "deprecated>=1.2.18"],
     packages=setuptools.find_packages(where="src"),
     package_dir={"": "src"},
     package_data={
