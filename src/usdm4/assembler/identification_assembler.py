@@ -107,6 +107,44 @@ class IdentificationAssembler(BaseAssembler):
         self._identifiers = []
 
     def execute(self, data: dict) -> None:
+
+
+# data spec
+      {
+         "titles": {
+            "brief": <string>,
+            "official": <string>,
+            "public": <string>,
+            "scientific": <string>,
+            "acronym": <string>,
+         },
+         "identifiers": {
+
+
+#     "identifier": : <string>,
+#     "scope": {
+#         "non_standard": {
+#             "type": <string>,
+#             "name": <string>,
+#             "description": "",
+#             "label": "",
+#             "identifier": "",
+#             "identifierScheme": "",
+#             "legalAddress": {
+#                 "lines": [],
+#                 "city": "",
+#                 "district": "",
+#                 "state": "",
+#                 "postalCode": "",
+#                 "country": ""
+#             }
+#         },
+#         "standard": ""
+#     }
+# }
+         }
+
+        
         # Titles
         for type, text in data["titles"].items():
             if type in self.TITLE_TYPES:
@@ -149,25 +187,3 @@ class IdentificationAssembler(BaseAssembler):
             self._identifiers.append(identifier)
 
 
-# {
-#     "identifier": "xxx",
-#     "scope": {
-#         "non_standard": {
-#             "type": "",
-#             "name": "",
-#             "description": "",
-#             "label": "",
-#             "identifier": "",
-#             "identifierScheme": "",
-#             "legalAddress": {
-#                 "lines": [],
-#                 "city": "",
-#                 "district": "",
-#                 "state": "",
-#                 "postalCode": "",
-#                 "country": ""
-#             }
-#         },
-#         "standard": ""
-#     }
-# }
