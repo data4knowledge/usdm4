@@ -6,7 +6,10 @@ from src.usdm4.api.study_title import StudyTitle
 from src.usdm4.api.organization import Organization
 from src.usdm4.api.identifier import StudyIdentifier
 from src.usdm4.api.governance_date import GovernanceDate
-from src.usdm4.api.study_design import InterventionalStudyDesign, ObservationalStudyDesign
+from src.usdm4.api.study_design import (
+    InterventionalStudyDesign,
+    ObservationalStudyDesign,
+)
 from src.usdm4.api.eligibility_criterion import EligibilityCriterionItem
 from src.usdm4.api.study_intervention import StudyIntervention
 from src.usdm4.api.narrative_content import NarrativeContentItem
@@ -15,7 +18,6 @@ from src.usdm4.api.population_definition import StudyDesignPopulation
 
 
 class TestStudyVersion:
-    
     def setup_method(self):
         """Set up test fixtures before each test method."""
         # Create test codes
@@ -25,72 +27,72 @@ class TestStudyVersion:
             codeSystem="CDISC",
             codeSystemVersion="1.0",
             decode="Official Study Title",
-            instanceType="Code"
+            instanceType="Code",
         )
-        
+
         self.short_title_code = Code(
             id="title_code_2",
             code="C99998",
             codeSystem="CDISC",
             codeSystemVersion="1.0",
             decode="Brief Study Title",
-            instanceType="Code"
+            instanceType="Code",
         )
-        
+
         self.acronym_code = Code(
             id="title_code_3",
             code="C99997",
             codeSystem="CDISC",
             codeSystemVersion="1.0",
             decode="Study Acronym",
-            instanceType="Code"
+            instanceType="Code",
         )
-        
+
         self.sponsor_code = Code(
             id="sponsor_code",
             code="C70793",
             codeSystem="CDISC",
             codeSystemVersion="1.0",
             decode="Sponsor",
-            instanceType="Code"
+            instanceType="Code",
         )
-        
+
         self.non_sponsor_code = Code(
             id="non_sponsor_code",
             code="C12345",
             codeSystem="CDISC",
             codeSystemVersion="1.0",
             decode="Other Organization",
-            instanceType="Code"
+            instanceType="Code",
         )
-        
+
         self.protocol_date_code = Code(
             id="protocol_date_code",
             code="C99996",
             codeSystem="CDISC",
             codeSystemVersion="1.0",
             decode="Protocol Effective Date",
-            instanceType="Code"
+            instanceType="Code",
         )
-        
+
         self.approval_date_code = Code(
             id="approval_date_code",
             code="C99995",
             codeSystem="CDISC",
             codeSystemVersion="1.0",
             decode="Protocol Approval by Sponsor Date",
-            instanceType="Code"
+            instanceType="Code",
         )
-        
+
         self.country_code = Code(
             id="country_code",
             code="US",
             codeSystem="ISO",
             codeSystemVersion="1.0",
             decode="United States",
-            instanceType="Code"
+            instanceType="Code",
         )
-        
+
         # Create test address
         self.test_address = Address(
             id="address_1",
@@ -100,10 +102,10 @@ class TestStudyVersion:
             state="NY",
             postalCode="10001",
             country=self.country_code,
-            instanceType="Address"
+            instanceType="Address",
         )
         self.test_address.set_text()
-        
+
         # Create test organizations
         self.sponsor_org = Organization(
             id="org_1",
@@ -113,9 +115,9 @@ class TestStudyVersion:
             identifierScheme="scheme1",
             identifier="id1",
             legalAddress=self.test_address,
-            instanceType="Organization"
+            instanceType="Organization",
         )
-        
+
         self.non_sponsor_org = Organization(
             id="org_2",
             name="ClinicalTrials.gov",
@@ -123,46 +125,46 @@ class TestStudyVersion:
             type=self.non_sponsor_code,
             identifierScheme="scheme2",
             identifier="id2",
-            instanceType="Organization"
+            instanceType="Organization",
         )
-        
+
         # Create test titles
         self.official_title = StudyTitle(
             id="title_1",
             text="Official Study Title Text",
             type=self.official_title_code,
-            instanceType="StudyTitle"
+            instanceType="StudyTitle",
         )
-        
+
         self.short_title = StudyTitle(
             id="title_2",
             text="Short Title Text",
             type=self.short_title_code,
-            instanceType="StudyTitle"
+            instanceType="StudyTitle",
         )
-        
+
         self.acronym_title = StudyTitle(
             id="title_3",
             text="ACRONYM",
             type=self.acronym_code,
-            instanceType="StudyTitle"
+            instanceType="StudyTitle",
         )
-        
+
         # Create test identifiers
         self.sponsor_identifier = StudyIdentifier(
             id="id_1",
             text="SPONSOR-123",
             scopeId="org_1",
-            instanceType="StudyIdentifier"
+            instanceType="StudyIdentifier",
         )
-        
+
         self.nct_identifier = StudyIdentifier(
             id="id_2",
             text="NCT12345678",
             scopeId="org_2",
-            instanceType="StudyIdentifier"
+            instanceType="StudyIdentifier",
         )
-        
+
         # Create test dates
         self.protocol_date = GovernanceDate(
             id="date_1",
@@ -172,9 +174,9 @@ class TestStudyVersion:
             type=self.protocol_date_code,
             dateValue=date(2024, 1, 15),
             geographicScopes=[],
-            instanceType="GovernanceDate"
+            instanceType="GovernanceDate",
         )
-        
+
         self.approval_date = GovernanceDate(
             id="date_2",
             name="Approval Date",
@@ -183,9 +185,9 @@ class TestStudyVersion:
             type=self.approval_date_code,
             dateValue=date(2024, 1, 10),
             geographicScopes=[],
-            instanceType="GovernanceDate"
+            instanceType="GovernanceDate",
         )
-        
+
         # Create test population
         self.test_population = StudyDesignPopulation(
             id="population_1",
@@ -193,9 +195,9 @@ class TestStudyVersion:
             label="Test Population",
             description="Test population description",
             includesHealthySubjects=True,
-            instanceType="StudyDesignPopulation"
+            instanceType="StudyDesignPopulation",
         )
-        
+
         # Create test study designs
         self.phase_code = Code(
             id="phase_code",
@@ -203,9 +205,9 @@ class TestStudyVersion:
             codeSystem="CDISC",
             codeSystemVersion="1.0",
             decode="Phase I",
-            instanceType="Code"
+            instanceType="Code",
         )
-        
+
         self.interventional_design = InterventionalStudyDesign(
             id="design_1",
             name="Interventional Design",
@@ -217,9 +219,9 @@ class TestStudyVersion:
             epochs=[],
             population=self.test_population,
             model=self.phase_code,
-            instanceType="InterventionalStudyDesign"
+            instanceType="InterventionalStudyDesign",
         )
-        
+
         self.observational_design = ObservationalStudyDesign(
             id="design_2",
             name="Observational Design",
@@ -232,9 +234,9 @@ class TestStudyVersion:
             population=self.test_population,
             model=self.phase_code,
             timePerspective=self.phase_code,
-            instanceType="ObservationalStudyDesign"
+            instanceType="ObservationalStudyDesign",
         )
-        
+
         # Create test eligibility criterion item
         self.criterion_item = EligibilityCriterionItem(
             id="criterion_1",
@@ -242,9 +244,9 @@ class TestStudyVersion:
             label="Test Criterion Label",
             description="Test criterion description",
             text="Test criterion text",
-            instanceType="EligibilityCriterionItem"
+            instanceType="EligibilityCriterionItem",
         )
-        
+
         # Create test study intervention
         self.study_intervention = StudyIntervention(
             id="intervention_1",
@@ -253,17 +255,17 @@ class TestStudyVersion:
             description="Test intervention description",
             role=self.sponsor_code,
             type=self.non_sponsor_code,
-            instanceType="StudyIntervention"
+            instanceType="StudyIntervention",
         )
-        
+
         # Create test narrative content item
         self.narrative_item = NarrativeContentItem(
             id="narrative_1",
             name="Test Narrative",
             text="Test narrative content",
-            instanceType="NarrativeContentItem"
+            instanceType="NarrativeContentItem",
         )
-        
+
         # Create main study version for testing
         self.study_version = StudyVersion(
             id="study_version_1",
@@ -277,7 +279,7 @@ class TestStudyVersion:
             eligibilityCriterionItems=[self.criterion_item],
             studyInterventions=[self.study_intervention],
             narrativeContentItems=[self.narrative_item],
-            instanceType="StudyVersion"
+            instanceType="StudyVersion",
         )
 
     def test_get_title_official(self):
@@ -313,7 +315,7 @@ class TestStudyVersion:
             studyIdentifiers=[self.nct_identifier],
             titles=[self.official_title],
             organizations=[self.non_sponsor_org],
-            instanceType="StudyVersion"
+            instanceType="StudyVersion",
         )
         identifier = study_version.sponsor_identifier()
         assert identifier is None
@@ -365,7 +367,7 @@ class TestStudyVersion:
             rationale="Test study version",
             studyIdentifiers=[self.sponsor_identifier],
             titles=[self.official_title],
-            instanceType="StudyVersion"
+            instanceType="StudyVersion",
         )
         phases = study_version.phases()
         assert phases == ""
@@ -383,7 +385,7 @@ class TestStudyVersion:
             rationale="Test study version",
             studyIdentifiers=[self.sponsor_identifier],
             titles=[self.short_title],  # Only short title, no official
-            instanceType="StudyVersion"
+            instanceType="StudyVersion",
         )
         text = study_version.official_title_text()
         assert text == ""
@@ -401,7 +403,7 @@ class TestStudyVersion:
             rationale="Test study version",
             studyIdentifiers=[self.sponsor_identifier],
             titles=[self.official_title],  # Only official title, no short
-            instanceType="StudyVersion"
+            instanceType="StudyVersion",
         )
         text = study_version.short_title_text()
         assert text == ""
@@ -419,7 +421,7 @@ class TestStudyVersion:
             rationale="Test study version",
             studyIdentifiers=[self.sponsor_identifier],
             titles=[self.official_title],  # Only official title, no acronym
-            instanceType="StudyVersion"
+            instanceType="StudyVersion",
         )
         text = study_version.acronym_text()
         assert text == ""
@@ -438,7 +440,7 @@ class TestStudyVersion:
             rationale="Test study version",
             studyIdentifiers=[self.sponsor_identifier],
             titles=[self.short_title],  # Only short title, no official
-            instanceType="StudyVersion"
+            instanceType="StudyVersion",
         )
         title = study_version.official_title()
         assert title is None
@@ -457,7 +459,7 @@ class TestStudyVersion:
             rationale="Test study version",
             studyIdentifiers=[self.sponsor_identifier],
             titles=[self.official_title],  # Only official title, no short
-            instanceType="StudyVersion"
+            instanceType="StudyVersion",
         )
         title = study_version.short_title()
         assert title is None
@@ -476,7 +478,7 @@ class TestStudyVersion:
             rationale="Test study version",
             studyIdentifiers=[self.sponsor_identifier],
             titles=[self.official_title],  # Only official title, no acronym
-            instanceType="StudyVersion"
+            instanceType="StudyVersion",
         )
         title = study_version.acronym()
         assert title is None
@@ -496,7 +498,7 @@ class TestStudyVersion:
             studyIdentifiers=[self.nct_identifier],  # Only NCT identifier
             titles=[self.official_title],
             organizations=[self.non_sponsor_org],  # Only non-sponsor org
-            instanceType="StudyVersion"
+            instanceType="StudyVersion",
         )
         sponsor = study_version.sponsor()
         assert sponsor is None
@@ -515,7 +517,7 @@ class TestStudyVersion:
             studyIdentifiers=[self.nct_identifier],  # Only NCT identifier
             titles=[self.official_title],
             organizations=[self.non_sponsor_org],  # Only non-sponsor org
-            instanceType="StudyVersion"
+            instanceType="StudyVersion",
         )
         text = study_version.sponsor_identifier_text()
         assert text == ""
@@ -534,7 +536,7 @@ class TestStudyVersion:
             studyIdentifiers=[self.nct_identifier],  # Only NCT identifier
             titles=[self.official_title],
             organizations=[self.non_sponsor_org],  # Only non-sponsor org
-            instanceType="StudyVersion"
+            instanceType="StudyVersion",
         )
         name = study_version.sponsor_name()
         assert name == ""
@@ -553,7 +555,7 @@ class TestStudyVersion:
             studyIdentifiers=[self.nct_identifier],  # Only NCT identifier
             titles=[self.official_title],
             organizations=[self.non_sponsor_org],  # Only non-sponsor org
-            instanceType="StudyVersion"
+            instanceType="StudyVersion",
         )
         address = study_version.sponsor_address()
         assert address == ""
@@ -572,7 +574,7 @@ class TestStudyVersion:
             studyIdentifiers=[self.sponsor_identifier],  # Only sponsor identifier
             titles=[self.official_title],
             organizations=[self.sponsor_org],  # Only sponsor org
-            instanceType="StudyVersion"
+            instanceType="StudyVersion",
         )
         nct = study_version.nct_identifier()
         assert nct == ""
@@ -592,7 +594,7 @@ class TestStudyVersion:
             studyIdentifiers=[self.sponsor_identifier],
             titles=[self.official_title],
             dateValues=[self.approval_date],  # Only approval date
-            instanceType="StudyVersion"
+            instanceType="StudyVersion",
         )
         date_obj = study_version.protocol_date()
         assert date_obj == ""
@@ -612,7 +614,7 @@ class TestStudyVersion:
             studyIdentifiers=[self.sponsor_identifier],
             titles=[self.official_title],
             dateValues=[self.protocol_date],  # Only protocol date
-            instanceType="StudyVersion"
+            instanceType="StudyVersion",
         )
         date_obj = study_version.approval_date()
         assert date_obj == ""
@@ -631,7 +633,7 @@ class TestStudyVersion:
             studyIdentifiers=[self.sponsor_identifier],
             titles=[self.official_title],
             dateValues=[self.approval_date],  # Only approval date
-            instanceType="StudyVersion"
+            instanceType="StudyVersion",
         )
         date_value = study_version.protocol_date_value()
         assert date_value == ""
@@ -650,7 +652,7 @@ class TestStudyVersion:
             studyIdentifiers=[self.sponsor_identifier],
             titles=[self.official_title],
             dateValues=[self.protocol_date],  # Only protocol date
-            instanceType="StudyVersion"
+            instanceType="StudyVersion",
         )
         date_value = study_version.approval_date_value()
         assert date_value == ""
@@ -690,9 +692,9 @@ class TestStudyVersion:
             rationale="Test study version",
             studyIdentifiers=[self.sponsor_identifier],
             titles=[self.official_title],
-            instanceType="StudyVersion"
+            instanceType="StudyVersion",
         )
-        
+
         # Test that default empty lists are properly initialized
         assert study_version.documentVersionIds == []
         assert study_version.dateValues == []

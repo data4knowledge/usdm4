@@ -31,9 +31,9 @@ from usdm4.builder.other_ct_version_manager import OtherCTVersionManager
 class Builder:
     MODULE = "usdm4.builder.builder.Builder"
 
-    def __init__(self, root_path: str, errors: Errors=None):
+    def __init__(self, root_path: str, errors: Errors):
         self._id_manager: IdManager = IdManager(v4_classes)
-        self.errors = errors if errors else Errors()
+        self.errors = errors
         self.api_instance: APIInstance = APIInstance(self._id_manager)
         self.cdisc_ct_library = CdiscCTLibrary(root_path)
         self.cdisc_bc_library = CdiscBCLibrary(root_path, self.cdisc_ct_library)
@@ -245,7 +245,7 @@ class Builder:
             )
         else:
             return None
-        
+
     def iso3166_code(self, code: str) -> Code:
         return self.create(
             Code,

@@ -158,18 +158,20 @@ def test_region_code_nonexistent(library):
 def test_region_code_intermediate_region(library):
     """Test region_code method with intermediate region (if available in test data)."""
     # Add test data with intermediate region
-    library.db.append({
-        "alpha-2": "FR",
-        "alpha-3": "FRA",
-        "name": "France",
-        "region": "Europe",
-        "region-code": "150",
-        "sub-region": "Western Europe",
-        "sub-region-code": "155",
-        "intermediate-region": "Western Europe Intermediate",
-        "intermediate-region-code": "999",
-    })
-    
+    library.db.append(
+        {
+            "alpha-2": "FR",
+            "alpha-3": "FRA",
+            "name": "France",
+            "region": "Europe",
+            "region-code": "150",
+            "sub-region": "Western Europe",
+            "sub-region-code": "155",
+            "intermediate-region": "Western Europe Intermediate",
+            "intermediate-region-code": "999",
+        }
+    )
+
     code, name = library.region_code("Western Europe Intermediate")
     assert code == "999"
     assert name == "Western Europe Intermediate"
@@ -179,7 +181,7 @@ def test_load_method_with_actual_file(library):
     """Test load method with actual file operations."""
     import tempfile
     import json
-    
+
     # Create a temporary JSON file
     test_data = [
         {
@@ -194,28 +196,29 @@ def test_load_method_with_actual_file(library):
             "intermediate-region-code": "",
         }
     ]
-    
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
         json.dump(test_data, f)
         temp_file = f.name
-    
+
     try:
         # Create a new library instance and set the filepath to our temp file
         test_lib = Library("/fake/path")
         test_lib.filepath = temp_file
         test_lib.load()
-        
+
         # Test that the data was loaded correctly
         assert test_lib.db == test_data
-        
+
         # Test that we can use the loaded data
         alpha3, name = test_lib.decode("XX")
         assert alpha3 == "XXX"
         assert name == "Test Country"
-        
+
     finally:
         # Clean up the temporary file
         import os
+
         os.unlink(temp_file)
 
 
@@ -225,7 +228,7 @@ def test_get_decode_with_different_code_lengths(library):
     alpha3, name = library.decode("US")
     assert alpha3 == "USA"
     assert name == "United States of America"
-    
+
     # Test with alpha-3 code
     alpha3, name = library.decode("USA")
     assert alpha3 == "USA"
@@ -238,12 +241,12 @@ def test_get_code_case_sensitivity(library):
     alpha3, name = library.code("United States of America")
     assert alpha3 == "USA"
     assert name == "United States of America"
-    
+
     # Test different case
     alpha3, name = library.code("united states of america")
     assert alpha3 == "USA"
     assert name == "United States of America"
-    
+
     # Test mixed case
     alpha3, name = library.code("United STATES of AMERICA")
     assert alpha3 == "USA"

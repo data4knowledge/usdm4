@@ -1,6 +1,10 @@
 import pytest
 from unittest.mock import patch
-from src.usdm4.api.study_design import StudyDesign, InterventionalStudyDesign, ObservationalStudyDesign
+from src.usdm4.api.study_design import (
+    StudyDesign,
+    InterventionalStudyDesign,
+    ObservationalStudyDesign,
+)
 from src.usdm4.api.code import Code
 from src.usdm4.api.alias_code import AliasCode
 from src.usdm4.api.activity import Activity
@@ -21,7 +25,6 @@ from src.usdm4.api.biospecimen_retention import BiospecimenRetention
 
 
 class TestStudyDesign:
-    
     def setup_method(self):
         """Set up test fixtures before each test method."""
         # Create test codes
@@ -31,85 +34,83 @@ class TestStudyDesign:
             codeSystem="CDISC",
             codeSystemVersion="1.0",
             decode="Phase I",
-            instanceType="Code"
+            instanceType="Code",
         )
-        
+
         self.study_type_code = Code(
             id="study_type_code",
             code="C98388",
             codeSystem="CDISC",
             codeSystemVersion="1.0",
             decode="Interventional Study",
-            instanceType="Code"
+            instanceType="Code",
         )
-        
+
         self.therapeutic_area_code = Code(
             id="therapeutic_area_code",
             code="C12345",
             codeSystem="CDISC",
             codeSystemVersion="1.0",
             decode="Oncology",
-            instanceType="Code"
+            instanceType="Code",
         )
-        
+
         self.characteristic_code = Code(
             id="characteristic_code",
             code="C67890",
             codeSystem="CDISC",
             codeSystemVersion="1.0",
             decode="Randomized",
-            instanceType="Code"
+            instanceType="Code",
         )
-        
+
         self.blinding_code = Code(
             id="blinding_code",
             code="C15228",
             codeSystem="CDISC",
             codeSystemVersion="1.0",
             decode="Double Blind",
-            instanceType="Code"
+            instanceType="Code",
         )
-        
+
         self.time_perspective_code = Code(
             id="time_perspective_code",
             code="C15234",
             codeSystem="CDISC",
             codeSystemVersion="1.0",
             decode="Prospective",
-            instanceType="Code"
+            instanceType="Code",
         )
-        
+
         self.sampling_method_code = Code(
             id="sampling_method_code",
             code="C15235",
             codeSystem="CDISC",
             codeSystemVersion="1.0",
             decode="Random Sampling",
-            instanceType="Code"
+            instanceType="Code",
         )
-        
+
         self.category_code = Code(
             id="category_code",
             code="C25337",
             codeSystem="CDISC",
             codeSystemVersion="1.0",
             decode="Inclusion Criteria",
-            instanceType="Code"
+            instanceType="Code",
         )
-        
+
         # Create alias codes
         self.study_phase_alias = AliasCode(
-            id="phase_alias",
-            standardCode=self.phase_code,
-            instanceType="AliasCode"
+            id="phase_alias", standardCode=self.phase_code, instanceType="AliasCode"
         )
-        
+
         self.blinding_alias = AliasCode(
             id="blinding_alias",
             standardCode=self.blinding_code,
-            instanceType="AliasCode"
+            instanceType="AliasCode",
         )
-        
+
         # Create test population
         self.test_population = StudyDesignPopulation(
             id="population_1",
@@ -117,9 +118,9 @@ class TestStudyDesign:
             label="Test Population",
             description="Test population description",
             includesHealthySubjects=True,
-            instanceType="StudyDesignPopulation"
+            instanceType="StudyDesignPopulation",
         )
-        
+
         # Create test activities
         self.activity1 = Activity(
             id="activity_1",
@@ -127,9 +128,9 @@ class TestStudyDesign:
             label="First Activity",
             description="First activity description",
             nextId="activity_2",
-            instanceType="Activity"
+            instanceType="Activity",
         )
-        
+
         self.activity2 = Activity(
             id="activity_2",
             name="Second Activity",
@@ -137,18 +138,18 @@ class TestStudyDesign:
             description="Second activity description",
             previousId="activity_1",
             nextId="activity_3",
-            instanceType="Activity"
+            instanceType="Activity",
         )
-        
+
         self.activity3 = Activity(
             id="activity_3",
             name="Third Activity",
             label="Third Activity",
             description="Third activity description",
             previousId="activity_2",
-            instanceType="Activity"
+            instanceType="Activity",
         )
-        
+
         # Create test encounters
         self.encounter1 = Encounter(
             id="encounter_1",
@@ -156,18 +157,18 @@ class TestStudyDesign:
             label="Screening Visit",
             description="Screening encounter",
             type=self.phase_code,
-            instanceType="Encounter"
+            instanceType="Encounter",
         )
-        
+
         self.encounter2 = Encounter(
             id="encounter_2",
             name="Baseline Visit",
             label="Baseline Visit",
             description="Baseline encounter",
             type=self.phase_code,
-            instanceType="Encounter"
+            instanceType="Encounter",
         )
-        
+
         # Create test epochs
         self.epoch1 = StudyEpoch(
             id="epoch_1",
@@ -175,18 +176,18 @@ class TestStudyDesign:
             label="Screening Epoch",
             description="Screening epoch",
             type=self.phase_code,
-            instanceType="StudyEpoch"
+            instanceType="StudyEpoch",
         )
-        
+
         self.epoch2 = StudyEpoch(
             id="epoch_2",
             name="Treatment",
             label="Treatment Epoch",
             description="Treatment epoch",
             type=self.phase_code,
-            instanceType="StudyEpoch"
+            instanceType="StudyEpoch",
         )
-        
+
         # Create test eligibility criteria
         self.eligibility_criterion = EligibilityCriterion(
             id="criterion_1",
@@ -196,9 +197,9 @@ class TestStudyDesign:
             category=self.category_code,
             identifier="IC001",
             criterionItemId="criterion_item_1",
-            instanceType="EligibilityCriterion"
+            instanceType="EligibilityCriterion",
         )
-        
+
         # Create test analysis population
         self.analysis_population = AnalysisPopulation(
             id="analysis_pop_1",
@@ -206,9 +207,9 @@ class TestStudyDesign:
             label="Intent-to-Treat Population",
             description="Intent-to-treat analysis population",
             text="Intent-to-treat analysis population text",
-            instanceType="AnalysisPopulation"
+            instanceType="AnalysisPopulation",
         )
-        
+
         # Create test schedule timelines
         self.main_timeline = ScheduleTimeline(
             id="timeline_1",
@@ -218,9 +219,9 @@ class TestStudyDesign:
             mainTimeline=True,
             entryCondition="Entry condition for main timeline",
             entryId="entry_1",
-            instanceType="ScheduleTimeline"
+            instanceType="ScheduleTimeline",
         )
-        
+
         self.secondary_timeline = ScheduleTimeline(
             id="timeline_2",
             name="Secondary Timeline",
@@ -229,9 +230,9 @@ class TestStudyDesign:
             mainTimeline=False,
             entryCondition="Entry condition for secondary timeline",
             entryId="entry_2",
-            instanceType="ScheduleTimeline"
+            instanceType="ScheduleTimeline",
         )
-        
+
         # Create basic study design
         self.study_design = StudyDesign(
             id="design_1",
@@ -252,9 +253,9 @@ class TestStudyDesign:
             scheduleTimelines=[self.main_timeline, self.secondary_timeline],
             eligibilityCriteria=[self.eligibility_criterion],
             analysisPopulations=[self.analysis_population],
-            instanceType="StudyDesign"
+            instanceType="StudyDesign",
         )
-        
+
         # Create interventional study design
         self.interventional_design = InterventionalStudyDesign(
             id="interventional_1",
@@ -268,9 +269,9 @@ class TestStudyDesign:
             population=self.test_population,
             model=self.phase_code,
             blindingSchema=self.blinding_alias,
-            instanceType="InterventionalStudyDesign"
+            instanceType="InterventionalStudyDesign",
         )
-        
+
         # Create observational study design
         self.observational_design = ObservationalStudyDesign(
             id="observational_1",
@@ -285,7 +286,7 @@ class TestStudyDesign:
             model=self.phase_code,
             timePerspective=self.time_perspective_code,
             samplingMethod=self.sampling_method_code,
-            instanceType="ObservationalStudyDesign"
+            instanceType="ObservationalStudyDesign",
         )
 
     def test_main_timeline(self):
@@ -308,7 +309,7 @@ class TestStudyDesign:
             epochs=[],
             population=self.test_population,
             scheduleTimelines=[self.secondary_timeline],  # Only non-main timeline
-            instanceType="StudyDesign"
+            instanceType="StudyDesign",
         )
         timeline = design.main_timeline()
         assert timeline is None
@@ -332,7 +333,7 @@ class TestStudyDesign:
             rationale="Test rationale",
             epochs=[],
             population=self.test_population,
-            instanceType="StudyDesign"
+            instanceType="StudyDesign",
         )
         phase = design.phase()
         assert phase is None
@@ -348,12 +349,10 @@ class TestStudyDesign:
             codeSystem="TEST",
             codeSystemVersion="1.0",
             decode="Bad Code",
-            instanceType="Code"
+            instanceType="Code",
         )
         bad_alias = AliasCode(
-            id="bad_alias",
-            standardCode=bad_code,
-            instanceType="AliasCode"
+            id="bad_alias", standardCode=bad_code, instanceType="AliasCode"
         )
         design = StudyDesign(
             id="design_4",
@@ -366,7 +365,7 @@ class TestStudyDesign:
             rationale="Test rationale",
             epochs=[],
             population=self.test_population,
-            instanceType="StudyDesign"
+            instanceType="StudyDesign",
         )
         phase = design.phase()
         assert phase is not None
@@ -389,12 +388,12 @@ class TestStudyDesign:
             rationale="Test rationale",
             epochs=[],
             population=self.test_population,
-            instanceType="StudyDesign"
+            instanceType="StudyDesign",
         )
         text = design.phase_as_text()
         assert text == ""
 
-    @patch.object(ScheduleTimeline, 'soa')
+    @patch.object(ScheduleTimeline, "soa")
     def test_soa_found(self, mock_soa):
         """Test getting SOA for existing timeline."""
         # Mock the soa method on the timeline
@@ -407,7 +406,7 @@ class TestStudyDesign:
         soa = self.study_design.soa("Non-existent Timeline")
         assert soa is None
 
-    @patch.object(ScheduleTimeline, 'soa')
+    @patch.object(ScheduleTimeline, "soa")
     def test_main_soa(self, mock_soa):
         """Test getting main SOA."""
         # Mock the soa method on the main timeline
@@ -428,7 +427,7 @@ class TestStudyDesign:
             epochs=[],
             population=self.test_population,
             scheduleTimelines=[self.secondary_timeline],  # Only non-main timeline
-            instanceType="StudyDesign"
+            instanceType="StudyDesign",
         )
         soa = design.main_soa()
         assert soa is None
@@ -453,7 +452,7 @@ class TestStudyDesign:
             epochs=[],
             population=self.test_population,
             activities=[],  # No activities
-            instanceType="StudyDesign"
+            instanceType="StudyDesign",
         )
         activity = design.first_activity()
         assert activity is None
@@ -491,7 +490,7 @@ class TestStudyDesign:
             epochs=[],
             population=self.test_population,
             activities=[],
-            instanceType="StudyDesign"
+            instanceType="StudyDesign",
         )
         activities = design.activity_list()
         assert activities == []
@@ -564,7 +563,7 @@ class TestStudyDesign:
             epochs=[],
             population=self.test_population,
             eligibilityCriteria=[],
-            instanceType="StudyDesign"
+            instanceType="StudyDesign",
         )
         criterion_map = design.criterion_map()
         assert criterion_map == {}
@@ -573,7 +572,10 @@ class TestStudyDesign:
         """Test InterventionalStudyDesign instance type."""
         assert self.interventional_design.instanceType == "InterventionalStudyDesign"
         assert self.interventional_design.model.decode == "Phase I"
-        assert self.interventional_design.blindingSchema.standardCode.decode == "Double Blind"
+        assert (
+            self.interventional_design.blindingSchema.standardCode.decode
+            == "Double Blind"
+        )
 
     def test_observational_study_design_instance_type(self):
         """Test ObservationalStudyDesign instance type."""
@@ -596,7 +598,7 @@ class TestStudyDesign:
             population=self.test_population,
             model=self.phase_code,
             timePerspective=self.time_perspective_code,
-            instanceType="ObservationalStudyDesign"
+            instanceType="ObservationalStudyDesign",
         )
         assert design.samplingMethod is None
 
@@ -613,7 +615,7 @@ class TestStudyDesign:
             epochs=[],
             population=self.test_population,
             model=self.phase_code,
-            instanceType="InterventionalStudyDesign"
+            instanceType="InterventionalStudyDesign",
         )
         assert design.blindingSchema is None
 
@@ -629,9 +631,9 @@ class TestStudyDesign:
             rationale="Test rationale",
             epochs=[],
             population=self.test_population,
-            instanceType="StudyDesign"
+            instanceType="StudyDesign",
         )
-        
+
         # Test that default empty lists are properly initialized
         assert design.therapeuticAreas == []
         assert design.characteristics == []
@@ -662,9 +664,9 @@ class TestStudyDesign:
             epochs=[],
             population=self.test_population,
             model=self.phase_code,
-            instanceType="InterventionalStudyDesign"
+            instanceType="InterventionalStudyDesign",
         )
-        
+
         assert design.subTypes == []
         assert design.intentTypes == []
 
@@ -682,9 +684,9 @@ class TestStudyDesign:
             population=self.test_population,
             model=self.phase_code,
             timePerspective=self.time_perspective_code,
-            instanceType="ObservationalStudyDesign"
+            instanceType="ObservationalStudyDesign",
         )
-        
+
         assert design.subTypes == []
 
     def test_study_design_instance_type(self):
@@ -700,9 +702,9 @@ class TestStudyDesign:
             label="Broken Activity",
             description="Activity with broken chain",
             nextId="non_existent_activity",
-            instanceType="Activity"
+            instanceType="Activity",
         )
-        
+
         design = StudyDesign(
             id="design_11",
             name="Broken Chain Design",
@@ -714,9 +716,9 @@ class TestStudyDesign:
             epochs=[],
             population=self.test_population,
             activities=[broken_activity],
-            instanceType="StudyDesign"
+            instanceType="StudyDesign",
         )
-        
+
         activities = design.activity_list()
         assert len(activities) == 1
         assert activities[0].id == "broken_activity"

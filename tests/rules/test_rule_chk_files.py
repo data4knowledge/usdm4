@@ -91,7 +91,7 @@ from src.usdm4.rules.library.rule_chk0276 import RuleCHK0276
 
 class TestRuleCHKFiles:
     """Test all rule_chk files that follow the pattern rule_chk followed by four digits."""
-    
+
     # List of all rule classes and their expected rule IDs
     RULE_CLASSES = [
         (RuleCHK0004, "CHK0004"),
@@ -186,18 +186,20 @@ class TestRuleCHKFiles:
         """Test that each rule class can be instantiated properly."""
         rule = rule_class()
         assert rule is not None
-        assert hasattr(rule, 'validate')
+        assert hasattr(rule, "validate")
         assert callable(rule.validate)
 
     @pytest.mark.parametrize("rule_class,expected_rule_id", RULE_CLASSES)
-    def test_rule_validate_raises_not_implemented_error(self, rule_class, expected_rule_id):
+    def test_rule_validate_raises_not_implemented_error(
+        self, rule_class, expected_rule_id
+    ):
         """Test that each rule's validate method raises NotImplementedError."""
         rule = rule_class()
         config = {"test": "config"}
-        
+
         with pytest.raises(NotImplementedError) as exc_info:
             rule.validate(config)
-        
+
         assert str(exc_info.value) == "rule is not implemented"
 
     @pytest.mark.parametrize("rule_class,expected_rule_id", RULE_CLASSES)
@@ -205,25 +207,27 @@ class TestRuleCHKFiles:
         """Test that each rule's validate method raises NotImplementedError even with empty config."""
         rule = rule_class()
         config = {}
-        
+
         with pytest.raises(NotImplementedError) as exc_info:
             rule.validate(config)
-        
+
         assert str(exc_info.value) == "rule is not implemented"
 
     @pytest.mark.parametrize("rule_class,expected_rule_id", RULE_CLASSES)
     def test_rule_validate_with_none_config(self, rule_class, expected_rule_id):
         """Test that each rule's validate method raises NotImplementedError even with None config."""
         rule = rule_class()
-        
+
         with pytest.raises(NotImplementedError) as exc_info:
             rule.validate(None)
-        
+
         assert str(exc_info.value) == "rule is not implemented"
 
     def test_all_rules_count(self):
         """Test that we have the expected number of rule classes."""
-        assert len(self.RULE_CLASSES) == 85, f"Expected 85 rule classes, but found {len(self.RULE_CLASSES)}"
+        assert len(self.RULE_CLASSES) == 85, (
+            f"Expected 85 rule classes, but found {len(self.RULE_CLASSES)}"
+        )
 
     def test_rule_ids_are_unique(self):
         """Test that all rule IDs are unique."""
@@ -233,51 +237,68 @@ class TestRuleCHKFiles:
     def test_rule_classes_are_unique(self):
         """Test that all rule classes are unique."""
         rule_classes = [rule_class for rule_class, _ in self.RULE_CLASSES]
-        assert len(rule_classes) == len(set(rule_classes)), "Rule classes should be unique"
+        assert len(rule_classes) == len(set(rule_classes)), (
+            "Rule classes should be unique"
+        )
 
     @pytest.mark.parametrize("rule_class,expected_rule_id", RULE_CLASSES)
-    def test_rule_class_name_matches_expected_pattern(self, rule_class, expected_rule_id):
+    def test_rule_class_name_matches_expected_pattern(
+        self, rule_class, expected_rule_id
+    ):
         """Test that each rule class name matches the expected pattern."""
         class_name = rule_class.__name__
         expected_class_name = f"Rule{expected_rule_id}"
-        assert class_name == expected_class_name, f"Expected class name {expected_class_name}, got {class_name}"
+        assert class_name == expected_class_name, (
+            f"Expected class name {expected_class_name}, got {class_name}"
+        )
 
     @pytest.mark.parametrize("rule_class,expected_rule_id", RULE_CLASSES)
     def test_rule_has_docstring(self, rule_class, expected_rule_id):
         """Test that each rule class has a docstring."""
-        assert rule_class.__doc__ is not None, f"Rule {expected_rule_id} should have a docstring"
-        assert len(rule_class.__doc__.strip()) > 0, f"Rule {expected_rule_id} docstring should not be empty"
+        assert rule_class.__doc__ is not None, (
+            f"Rule {expected_rule_id} should have a docstring"
+        )
+        assert len(rule_class.__doc__.strip()) > 0, (
+            f"Rule {expected_rule_id} docstring should not be empty"
+        )
 
     @pytest.mark.parametrize("rule_class,expected_rule_id", RULE_CLASSES)
     def test_rule_docstring_contains_rule_id(self, rule_class, expected_rule_id):
         """Test that each rule's docstring contains the rule ID."""
         docstring = rule_class.__doc__
-        assert expected_rule_id in docstring, f"Rule {expected_rule_id} docstring should contain the rule ID"
+        assert expected_rule_id in docstring, (
+            f"Rule {expected_rule_id} docstring should contain the rule ID"
+        )
 
     def test_rule_instantiation_performance(self):
         """Test that all rules can be instantiated quickly."""
         import time
+
         start_time = time.time()
-        
+
         for rule_class, _ in self.RULE_CLASSES:
             rule = rule_class()
             assert rule is not None
-        
+
         end_time = time.time()
         elapsed_time = end_time - start_time
-        
+
         # Should be able to instantiate all 85 rules in less than 1 second
-        assert elapsed_time < 1.0, f"Rule instantiation took too long: {elapsed_time:.3f} seconds"
+        assert elapsed_time < 1.0, (
+            f"Rule instantiation took too long: {elapsed_time:.3f} seconds"
+        )
 
     def test_rule_validate_method_signature(self):
         """Test that all rules have the correct validate method signature."""
         for rule_class, _ in self.RULE_CLASSES:
             rule = rule_class()
-            validate_method = getattr(rule, 'validate')
-            
+            validate_method = getattr(rule, "validate")
+
             # Check that the method exists and is callable
-            assert callable(validate_method), f"validate method should be callable for {rule_class.__name__}"
-            
+            assert callable(validate_method), (
+                f"validate method should be callable for {rule_class.__name__}"
+            )
+
             # Check method signature by trying to call it with a config parameter
             try:
                 validate_method({})
@@ -285,4 +306,6 @@ class TestRuleCHKFiles:
                 # This is expected
                 pass
             except TypeError as e:
-                pytest.fail(f"validate method signature is incorrect for {rule_class.__name__}: {e}")
+                pytest.fail(
+                    f"validate method signature is incorrect for {rule_class.__name__}: {e}"
+                )

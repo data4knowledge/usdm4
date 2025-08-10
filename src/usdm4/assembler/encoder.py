@@ -28,17 +28,13 @@ class Encoder:
         (["4", "IV"], {"code": "C15603", "decode": "Phase IV Trial"}),
         (["5", "V"], {"code": "C47865", "decode": "Phase V Trial"}),
     ]
-    
+
     def __init__(self, builder: Builder, errors: Errors):
         self._builder: Builder = builder
         self._errors: Errors = errors
-        
+
     def phase(self, text: str) -> AliasCode:
-        phase = (
-            text.upper().replace("PHASE", "").strip()
-            if text
-            else ""
-        )
+        phase = text.upper().replace("PHASE", "").strip() if text else ""
         for tuple in self.PHASE_MAP:
             if phase in tuple[0]:
                 entry = tuple[1]
@@ -60,4 +56,3 @@ class Encoder:
             location=KlassMethodLocation(self.MODULE, "_get_phase"),
         )
         return self._builder.alias_code(cdisc_phase_code)
-

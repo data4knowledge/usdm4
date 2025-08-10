@@ -710,14 +710,11 @@ def test_decompose_method_with_correct_signature(builder):
     test_data = {
         "instanceType": "Study",
         "id": "test_id_123",
-        "nested_dict": {
-            "instanceType": "StudyVersion", 
-            "id": "nested_id_456"
-        },
+        "nested_dict": {"instanceType": "StudyVersion", "id": "nested_id_456"},
         "nested_list": [
             {"instanceType": "StudyDesign", "id": "list_id_789"},
-            {"instanceType": "StudyArm", "id": "list_id_890"}
-        ]
+            {"instanceType": "StudyArm", "id": "list_id_890"},
+        ],
     }
 
     # Mock the _add_id method to avoid KeyError
@@ -732,18 +729,18 @@ def test_decompose_method_with_correct_signature(builder):
 
     # Also mock the recursive calls to avoid the bug
     original_decompose = builder._decompose
-    
+
     def mock_decompose(data):
         if isinstance(data, dict):
             mock_add_id(data)
             # Don't recurse to avoid the bug
-        
+
     builder._decompose = mock_decompose
 
     try:
         # Call _decompose with single argument to cover the method
         builder._decompose(test_data)
-        
+
         # Verify that the method was called
         assert ("Study", "test_id_123") in added_ids
 
@@ -758,10 +755,7 @@ def test_decompose_method_bug_coverage(builder):
     test_data = {
         "instanceType": "Study",
         "id": "test_id_123",
-        "nested_dict": {
-            "instanceType": "StudyVersion", 
-            "id": "nested_id_456"
-        }
+        "nested_dict": {"instanceType": "StudyVersion", "id": "nested_id_456"},
     }
 
     # Mock the _add_id method to avoid KeyError
@@ -777,7 +771,7 @@ def test_decompose_method_bug_coverage(builder):
     try:
         # This should now work correctly since the bug has been fixed
         builder._decompose(test_data)
-        
+
         # Verify that both levels were processed
         assert ("Study", "test_id_123") in added_ids
         assert ("StudyVersion", "nested_id_456") in added_ids
@@ -818,26 +812,26 @@ def test_add_id_direct_call(builder):
     """Test _add_id method with direct call to ensure line 250 coverage."""
     # Create test data with instanceType and id
     test_data = {"instanceType": "Study", "id": "direct_test_id"}
-    
+
     # Track calls to the actual add_id method
     call_count = 0
     original_add_id = builder._id_manager.add_id
-    
+
     def counting_add_id(instance_type, item_id):
         nonlocal call_count
         call_count += 1
         # Don't call original to avoid KeyError, just track the call
         return None
-    
+
     builder._id_manager.add_id = counting_add_id
-    
+
     try:
         # Call _add_id directly - this should execute line 250
         builder._add_id(test_data)
-        
+
         # Verify the method was called
         assert call_count == 1
-        
+
     finally:
         # Restore original method
         builder._id_manager.add_id = original_add_id
@@ -847,10 +841,10 @@ def test_add_id_line_250_coverage(builder):
     """Test to specifically cover line 250 in _add_id method."""
     # Use the seed method to populate the id manager first
     builder.seed("tests/test_files/builder/seed_1.json")
-    
+
     # Create test data that should work with the seeded data
     test_data = {"instanceType": "Study", "id": "new_study_id"}
-    
+
     # Call _add_id directly without mocking - this should execute line 250
     try:
         builder._add_id(test_data)
@@ -865,10 +859,7 @@ def test_set_ids_recursive_dict_coverage(builder):
     """Test _set_ids method with nested dict to cover lines 319-320."""
     test_data = {
         "instanceType": "TestClass",
-        "nested_dict": {
-            "instanceType": "NestedClass",
-            "value": "test"
-        }
+        "nested_dict": {"instanceType": "NestedClass", "value": "test"},
     }
 
     # Mock build_id to return predictable IDs
@@ -899,7 +890,7 @@ def test_iso3166_code_or_decode_method(builder):
     """Test iso3166_code_or_decode method to ensure it's covered."""
     # Mock the iso3166_library.code_or_decode method
     original_code_or_decode = builder.iso3166_library.code_or_decode
-    
+
     def mock_code_or_decode(text):
         if text == "US":
             return ("US", "United States")
@@ -907,7 +898,7 @@ def test_iso3166_code_or_decode_method(builder):
             return ("US", "United States")
         else:
             return (None, None)
-    
+
     builder.iso3166_library.code_or_decode = mock_code_or_decode
 
     try:
@@ -916,13 +907,13 @@ def test_iso3166_code_or_decode_method(builder):
         assert result is not None
         assert result.code == "US"
         assert result.decode == "United States"
-        
+
         # Test with valid country name
         result = builder.iso3166_code_or_decode("United States")
         assert result is not None
         assert result.code == "US"
         assert result.decode == "United States"
-        
+
         # Test with invalid input
         result = builder.iso3166_code_or_decode("InvalidCountry")
         assert result is None
