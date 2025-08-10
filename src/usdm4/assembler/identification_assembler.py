@@ -1,18 +1,10 @@
+import json
 from usdm4.assembler.base_assembler import BaseAssembler
 from usdm4.builder.builder import Builder
-from usdm4.api.code import Code
 from usdm4.api.address import Address
-from usdm4.api.alias_code import AliasCode
-from usdm4.api.geographic_scope import GeographicScope
-from usdm4.api.governance_date import GovernanceDate
 from usdm4.api.organization import Organization
-from usdm4.api.study import Study
-from usdm4.api.study_definition_document import StudyDefinitionDocument
-from usdm4.api.study_definition_document_version import StudyDefinitionDocumentVersion
 from usdm4.api.identifier import StudyIdentifier
 from usdm4.api.study_title import StudyTitle
-from usdm4.api.study_version import StudyVersion
-from usdm4.api.biomedical_concept import BiomedicalConcept
 
 
 from simple_error_log.errors import Errors
@@ -20,6 +12,20 @@ from simple_error_log.error_location import KlassMethodLocation
 
 
 class IdentificationAssembler(BaseAssembler):
+    """
+    Assembler for processing study identification information including titles, identifiers, and organizations.
+    
+    This assembler handles the creation of study titles, study identifiers, and associated organizations
+    based on input data. It supports both standard predefined organizations (like CT.GOV, EMA, FDA)
+    and custom non-standard organizations.
+    
+    Attributes:
+        MODULE (str): Module path for error reporting
+        TITLE_TYPES (list): Supported study title types
+        TITLE_CODES (dict): Mapping of title types to CDISC codes
+        ORG_CODES (dict): Mapping of organization types to CDISC codes
+        STANDARD_ORGS (dict): Predefined standard organizations with their details
+    """
     MODULE = "usdm4.assembler.base_assembler.BaseAssembler"
 
     TITLE_TYPES = [
@@ -101,89 +107,163 @@ class IdentificationAssembler(BaseAssembler):
     }
 
     def __init__(self, builder: Builder, errors: Errors):
+        """
+        Initialize the IdentificationAssembler.
+        
+        Args:
+            builder (Builder): The builder instance for creating USDM objects
+            errors (Errors): Error handling instance for logging issues
+        """
         super().__init__(builder, errors)
         self._titles = []
         self._organizations = []
         self._identifiers = []
 
     def execute(self, data: dict) -> None:
+        """
+        Process study identification data to create titles, identifiers, and organizations.
+        
+        This method processes the input data dictionary to create study titles, study identifiers,
+        and associated organizations. It handles both standard predefined organizations and
+        custom non-standard organizations.
+        
+        Args:
+            data (dict): A complex dictionary containing study identification information with the following structure:
+                {
+                    "titles": {
+                        "brief": str,           # Brief study title
+                        "official": str,        # Official study title  
+                        "public": str,          # Public study title
+                        "scientific": str,      # Scientific study title
+                        "acronym": str,         # Study acronym
+                    },
+                    "identifiers": [            # List of study identifiers
+                        {
+                            "identifier": str,  # The actual identifier value
+                            "scope": {          # Organization scope for the identifier
+                                # Either use a standard predefined organization:
+                                "standard": str,    # Key from STANDARD_ORGS (e.g., "ct.gov", "ema", "fda")
+                                
+                                # OR define a custom non-standard organization:
+                                "non_standard": {
+                                    "type": str,            # Organization type (must match ORG_CODES keys)
+                                    "name": str,            # Organization name
+                                    "description": str,     # Organization description
+                                    "label": str,           # Organization label/display name
+                                    "identifier": str,      # Organization identifier
+                                    "identifierScheme": str, # Scheme used for organization identifier
+                                    "legalAddress": {       # Organization's legal address
+                                        "lines": [str],     # Address lines (array of strings)
+                                        "city": str,        # City name
+                                        "district": str,    # District/region
+                                        "state": str,       # State/province
+                                        "postalCode": str,  # Postal/ZIP code
+                                        "country": str      # ISO 3166 country code
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+                
+        Note:
+            - Title types must be one of: "brief", "official", "public", "scientific", "acronym"
+            - Organization types for non_standard must match keys in ORG_CODES
+            - Standard organization keys must match keys in STANDARD_ORGS
+            - Country codes must be valid ISO 3166 codes
+            - Each identifier must have either "standard" OR "non_standard" in scope, not both
+        
+        Raises:
+            Various exceptions may be raised during object creation if data is invalid
+        """
 
-
-# data spec
-      {
-         "titles": {
-            "brief": <string>,
-            "official": <string>,
-            "public": <string>,
-            "scientific": <string>,
-            "acronym": <string>,
-         },
-         "identifiers": {
-
-
-#     "identifier": : <string>,
-#     "scope": {
-#         "non_standard": {
-#             "type": <string>,
-#             "name": <string>,
-#             "description": "",
-#             "label": "",
-#             "identifier": "",
-#             "identifierScheme": "",
-#             "legalAddress": {
-#                 "lines": [],
-#                 "city": "",
-#                 "district": "",
-#                 "state": "",
-#                 "postalCode": "",
-#                 "country": ""
-#             }
-#         },
-#         "standard": ""
-#     }
-# }
-         }
-
+        # Make sure data ok.
+        titles = data['titles'] if "titles" in data else {}
+        identifiers = data['identifiers'] if "identifiers" in data else []
         
         # Titles
-        for type, text in data["titles"].items():
-            if type in self.TITLE_TYPES:
-                title_type = self._builder.cdisc_code(
-                    self.TITLE_CODES[type]["code"], self.TITLE_CODES[type]["decode"]
-                )
-                self._titles.append(
-                    self._builder.create(StudyTitle, {"text": text, "type": title_type})
-                )
+        for type, text in titles.items():
+            try:
+                if type in self.TITLE_TYPES:
+                    title = self._create_title(type, text)
+                    if title:
+                        self._titles.append(title)
+                else:
+                    self._errors.warning(f"Title '{text}' of type '{type}' is not valid, ignored.")
+            except Exception as e:
+                location = KlassMethodLocation(self.MODULE, "execute")
+                self._errors.exception(f"Failed during creation of title '{text}' of type '{type}'", e, location)
 
         # Identifiers
         id_details: dict
-        for id_details in data["identifiers"]:
-            organization: dict = (
-                self.STANDARD_ORGS[id_details["standard"]]
-                if "standard" in id_details
-                else id_details["non_standard"]
-            )
+        for id_details in identifiers:
+            try:
+                organization: dict = (
+                    self.STANDARD_ORGS[id_details["standard"]]
+                    if "standard" in id_details
+                    else id_details["non_standard"]
+                )
 
-            # Address
-            organization["address"]["country"] = self._builder.iso3166_code(
-                organization["address"]["country"]
-            )
-            organization["legalAddress"] = self._builder.create(
-                Address, organization["legalAddress"]
-            )
+                # Address
+                if organization["legalAddress"]:
+                    organization["legalAddress"] = self._create_address(organization["legalAddress"])
+                
+                # Identifier and scoping Organization
+                org = self._create_organization(organization)
+                if org:
+                    identifier = self._create_identifier(identifier["identifier"], org)
+                    if identifier:
+                        self._organizations.append(org)
+                        self._identifiers.append(identifier)
+            except Exception as e:
+                location = KlassMethodLocation(self.MODULE, "execute")
+                formated_dict = json.dumps(id_details, indent=2)
+                self._errors.exception(f"Failed during creation of identifier {formated_dict}", e, location)
 
-            # Organization
-            org_type = organization["type"]
+    def _create_address(self, address: dict) -> Address | None:
+        try:
+            address["country"] = self._builder.iso3166_code(
+                address["country"]
+            )
+            return self._builder.create(
+                Address, address
+            )
+        except Exception as e:
+            location = KlassMethodLocation(self.MODULE, "_create_address")
+            formated_dict = json.dumps(address, indent=2)
+            self._errors.exception(f"Failed to create address object {formated_dict}", e, location)
+            return None
+
+    def _create_organization(self, organization: dict) -> Organization | None:
+        try:
+            org_type = organization["type"]  
             organization["type"] = self._builder.cdisc_code(
                 self.ORG_CODES[org_type]["code"], self.ORG_CODES[org_type]["decode"]
             )
-            org: Organization = self._builder.create(Organization, organization)
-            self._organizations.append(org)
+            return self._builder.create(Organization, organization)
+        except Exception as e:
+            location = KlassMethodLocation(self.MODULE, "_create_organization")
+            formated_dict = json.dumps(organization, indent=2)
+            self._errors.exception(f"Failed during creation of organization {formated_dict}", e, location)
+            return None
 
-            # Identifier
-            identifier = self.create(
-                StudyIdentifier, {"text": identifier["identifier"], "scopeId": org.id}
+    def _create_identifier(self, identifier: str, org: Organization) -> StudyIdentifier | None:
+        try:
+            identifier = self._builder.create(
+                StudyIdentifier, {"text": identifier, "scopeId": org.id}
             )
-            self._identifiers.append(identifier)
+        except Exception as e:
+            location = KlassMethodLocation(self.MODULE, "_create_identifier")
+            self._errors.exception(f"Failed during creation of identifier '{identifier}'", e, location)
+            return None
 
-
+    def _create_title(self, type: str, text: str) -> StudyTitle | None:
+        try:
+            title_type = self._builder.cdisc_code(
+                self.TITLE_CODES[type]["code"], self.TITLE_CODES[type]["decode"]
+            )
+            return self._builder.create(StudyTitle, {"text": text, "type": title_type})
+        except Exception as e:
+            location = KlassMethodLocation(self.MODULE, "_create_title")
+            self._errors.exception(f"Failed during creation of title '{text}'of type '{type}'", e, location)
+            return None
