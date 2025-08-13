@@ -3,6 +3,7 @@ from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.assembler.base_assembler import BaseAssembler
 from usdm4.assembler.population_assembler import PopulationAssembler
+from usdm4.assembler.encoder import Encoder
 from usdm4.builder.builder import Builder
 from usdm4.api.study_design import InterventionalStudyDesign
 
@@ -26,6 +27,7 @@ class StudyDesignAssembler(BaseAssembler):
             errors (Errors): Error handling instance for logging issues
         """
         super().__init__(builder, errors)
+        self._encoder = Encoder(builder, errors)
         self._study_design = None
 
     def execute(self, data: dict, population_assembler: PopulationAssembler) -> None:
@@ -80,20 +82,20 @@ class StudyDesignAssembler(BaseAssembler):
             self._study_design = self._builder.create(
                 InterventionalStudyDesign,
                 {
-                    "name": self._label_to_name(data["label"]),    # Convert label to internal name format
-                    "label": data["label"],                        # Human-readable display label
-                    "description": "A study design",               # Default description
-                    "rationale": data["rationale"],                # Design rationale from input
-                    "model": intervention_model_code,              # Default to parallel study model
-                    "arms": [],                                    # Empty arms list (future enhancement)
-                    "studyCells": [],                              # Empty cells list (future enhancement)
-                    "epochs": [],                                  # Empty epochs list (future enhancement)
-                    "population": population_assembler.population, # Reference to study population
-                    "objectives": [],                              # Empty objectives list (future enhancement)
-                    "estimands": [],                               # Empty estimands list (future enhancement)
-                    "studyInterventions": [],                      # Empty interventions list (future enhancement)
-                    "analysisPopulations": [],                     # Empty analysis populations list (future enhancement)
-                    "studyPhase": data["trial_phase"],             # Clinical trial phase from input
+                    "name": self._label_to_name(data["label"]),         # Convert label to internal name format
+                    "label": data["label"],                             # Human-readable display label
+                    "description": "A study design",                    # Default description
+                    "rationale": data["rationale"],                     # Design rationale from input
+                    "model": intervention_model_code,                   # Default to parallel study model
+                    "arms": [],                                         # Empty arms list (future enhancement)
+                    "studyCells": [],                                   # Empty cells list (future enhancement)
+                    "epochs": [],                                       # Empty epochs list (future enhancement)
+                    "population": population_assembler.population,      # Reference to study population
+                    "objectives": [],                                   # Empty objectives list (future enhancement)
+                    "estimands": [],                                    # Empty estimands list (future enhancement)
+                    "studyInterventions": [],                           # Empty interventions list (future enhancement)
+                    "analysisPopulations": [],                          # Empty analysis populations list (future enhancement)
+                    "studyPhase": self._encoder(data["trial_phase"]),   # Clinical trial phase from input
                 },
             )
         except Exception as e:

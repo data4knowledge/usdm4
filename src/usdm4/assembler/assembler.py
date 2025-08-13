@@ -8,6 +8,8 @@ from usdm4.assembler.document_assembler import DocumentAssembler
 from usdm4.assembler.study_design_assembler import StudyDesignAssembler
 from usdm4.assembler.study_assembler import StudyAssembler
 from usdm4.api.study import Study
+from usdm4.api.wrapper import Wrapper
+from usdm4.__info__ import __model_version__ as usdm_version
 
 
 class Assembler:
@@ -39,7 +41,7 @@ class Assembler:
         self._study_design_assembler = StudyDesignAssembler(self._builder, self._errors)
         self._study_assembler = StudyAssembler(self._builder, self._errors)
 
-    def execute(self, data: dict) -> Study | None:
+    def execute(self, data: dict) -> None:
         """
         Executes the assembly process to build a complete Study object from structured data.
         
@@ -74,7 +76,7 @@ class Assembler:
                           indications, interventions, and high-level study characteristics
                         
         Returns:
-            Study | None: A fully assembled Study object if successful, None if assembly fails
+            None
             
         Note:
             The assembly process is sequential and interdependent:
@@ -106,8 +108,26 @@ class Assembler:
                 self._study_design_assembler,
                 self._document_assembler,
             )
-            
+
+
             return self._study_assembler.study
+        except Exception as e:
+            location = KlassMethodLocation(self.MODULE, "execute")
+            self._errors.exception(f"Failed during assembler", e, location)
+
+    @property
+    def study(self) -> Study:
+        return self._study_assembler.study
+    
+    def wrapper(self, name: str, version: str) -> Wrapper:
+        try:
+            params = {
+                "study": self.study, 
+                "usdmVersion": usdm_version,
+                "systemVersion": version,
+                "systemName": name
+            }
+            self._builder.create(Wrapper, params)
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
             self._errors.exception(f"Failed during assembler", e, location)
