@@ -14,11 +14,11 @@ from simple_error_log.error_location import KlassMethodLocation
 class IdentificationAssembler(BaseAssembler):
     """
     Assembler for processing study identification information including titles, identifiers, and organizations.
-    
+
     This assembler handles the creation of study titles, study identifiers, and associated organizations
     based on input data. It supports both standard predefined organizations (like CT.GOV, EMA, FDA)
     and custom non-standard organizations.
-    
+
     Attributes:
         MODULE (str): Module path for error reporting
         TITLE_TYPES (list): Supported study title types
@@ -26,7 +26,8 @@ class IdentificationAssembler(BaseAssembler):
         ORG_CODES (dict): Mapping of organization types to CDISC codes
         STANDARD_ORGS (dict): Predefined standard organizations with their details
     """
-    MODULE = "usdm4.assembler.base_assembler.BaseAssembler"
+
+    MODULE = "usdm4.assembler.identification_assembler.IdentificationAssembler"
 
     TITLE_TYPES = [
         "brief",
@@ -109,7 +110,7 @@ class IdentificationAssembler(BaseAssembler):
     def __init__(self, builder: Builder, errors: Errors):
         """
         Initialize the IdentificationAssembler.
-        
+
         Args:
             builder (Builder): The builder instance for creating USDM objects
             errors (Errors): Error handling instance for logging issues
@@ -122,17 +123,17 @@ class IdentificationAssembler(BaseAssembler):
     def execute(self, data: dict) -> None:
         """
         Process study identification data to create titles, identifiers, and organizations.
-        
+
         This method processes the input data dictionary to create study titles, study identifiers,
         and associated organizations. It handles both standard predefined organizations and
         custom non-standard organizations.
-        
+
         Args:
             data (dict): A complex dictionary containing study identification information with the following structure:
                 {
                     "titles": {
                         "brief": str,           # Brief study title
-                        "official": str,        # Official study title  
+                        "official": str,        # Official study title
                         "public": str,          # Public study title
                         "scientific": str,      # Scientific study title
                         "acronym": str,         # Study acronym
@@ -143,7 +144,7 @@ class IdentificationAssembler(BaseAssembler):
                             "scope": {          # Organization scope for the identifier
                                 # Either use a standard predefined organization:
                                 "standard": str,    # Key from STANDARD_ORGS (e.g., "ct.gov", "ema", "fda")
-                                
+
                                 # OR define a custom non-standard organization:
                                 "non_standard": {
                                     "type": str,            # Organization type (must match ORG_CODES keys)
@@ -165,22 +166,23 @@ class IdentificationAssembler(BaseAssembler):
                         }
                     ]
                 }
-                
+
         Note:
             - Title types must be one of: "brief", "official", "public", "scientific", "acronym"
             - Organization types for non_standard must match keys in ORG_CODES
             - Standard organization keys must match keys in STANDARD_ORGS
             - Country codes must be valid ISO 3166 codes
             - Each identifier must have either "standard" OR "non_standard" in scope, not both
-        
+
         Raises:
             Various exceptions may be raised during object creation if data is invalid
         """
+        print(f"\n\nDATA; {data}\n\n")
 
         # Make sure data ok.
-        titles = data['titles'] if "titles" in data else {}
-        identifiers = data['identifiers'] if "identifiers" in data else []
-        
+        titles = data["titles"] if "titles" in data else {}
+        identifiers = data["identifiers"] if "identifiers" in data else []
+
         # Titles
         for type, text in titles.items():
             try:
@@ -189,25 +191,34 @@ class IdentificationAssembler(BaseAssembler):
                     if title:
                         self._titles.append(title)
                 else:
-                    self._errors.warning(f"Title '{text}' of type '{type}' is not valid, ignored.")
+                    self._errors.warning(
+                        f"Title '{text}' of type '{type}' is not valid, ignored."
+                    )
             except Exception as e:
                 location = KlassMethodLocation(self.MODULE, "execute")
-                self._errors.exception(f"Failed during creation of title '{text}' of type '{type}'", e, location)
+                self._errors.exception(
+                    f"Failed during creation of title '{text}' of type '{type}'",
+                    e,
+                    location,
+                )
 
         # Identifiers
         id_details: dict
         for id_details in identifiers:
             try:
+                scope = id_details["scope"]
                 organization: dict = (
-                    self.STANDARD_ORGS[id_details["standard"]]
-                    if "standard" in id_details
-                    else id_details["non_standard"]
+                    self.STANDARD_ORGS[scope["standard"]]
+                    if "standard" in scope
+                    else scope["non_standard"]
                 )
 
                 # Address
                 if organization["legalAddress"]:
-                    organization["legalAddress"] = self._create_address(organization["legalAddress"])
-                
+                    organization["legalAddress"] = self._create_address(
+                        organization["legalAddress"]
+                    )
+
                 # Identifier and scoping Organization
                 org = self._create_organization(organization)
                 if org:
@@ -218,25 +229,37 @@ class IdentificationAssembler(BaseAssembler):
             except Exception as e:
                 location = KlassMethodLocation(self.MODULE, "execute")
                 formated_dict = json.dumps(id_details, indent=2)
-                self._errors.exception(f"Failed during creation of identifier {formated_dict}", e, location)
+                self._errors.exception(
+                    f"Failed during creation of identifier {formated_dict}", e, location
+                )
+
+    @property
+    def titles(self):
+        return self._titles
+
+    @property
+    def organizations(self):
+        return self._organizations
+
+    @property
+    def identifiers(self):
+        return self._identifiers
 
     def _create_address(self, address: dict) -> Address | None:
         try:
-            address["country"] = self._builder.iso3166_code(
-                address["country"]
-            )
-            return self._builder.create(
-                Address, address
-            )
+            address["country"] = self._builder.iso3166_code(address["country"])
+            return self._builder.create(Address, address)
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "_create_address")
             formated_dict = json.dumps(address, indent=2)
-            self._errors.exception(f"Failed to create address object {formated_dict}", e, location)
+            self._errors.exception(
+                f"Failed to create address object {formated_dict}", e, location
+            )
             return None
 
     def _create_organization(self, organization: dict) -> Organization | None:
         try:
-            org_type = organization["type"]  
+            org_type = organization["type"]
             organization["type"] = self._builder.cdisc_code(
                 self.ORG_CODES[org_type]["code"], self.ORG_CODES[org_type]["decode"]
             )
@@ -244,17 +267,23 @@ class IdentificationAssembler(BaseAssembler):
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "_create_organization")
             formated_dict = json.dumps(organization, indent=2)
-            self._errors.exception(f"Failed during creation of organization {formated_dict}", e, location)
+            self._errors.exception(
+                f"Failed during creation of organization {formated_dict}", e, location
+            )
             return None
 
-    def _create_identifier(self, identifier: str, org: Organization) -> StudyIdentifier | None:
+    def _create_identifier(
+        self, identifier: str, org: Organization
+    ) -> StudyIdentifier | None:
         try:
             identifier = self._builder.create(
                 StudyIdentifier, {"text": identifier, "scopeId": org.id}
             )
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "_create_identifier")
-            self._errors.exception(f"Failed during creation of identifier '{identifier}'", e, location)
+            self._errors.exception(
+                f"Failed during creation of identifier '{identifier}'", e, location
+            )
             return None
 
     def _create_title(self, type: str, text: str) -> StudyTitle | None:
@@ -265,5 +294,7 @@ class IdentificationAssembler(BaseAssembler):
             return self._builder.create(StudyTitle, {"text": text, "type": title_type})
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "_create_title")
-            self._errors.exception(f"Failed during creation of title '{text}'of type '{type}'", e, location)
+            self._errors.exception(
+                f"Failed during creation of title '{text}'of type '{type}'", e, location
+            )
             return None

@@ -12,3 +12,6 @@ class BaseAssembler:
 
     def execute(self, data: dict) -> None:
         pass
+
+    def _label_to_name(self, text: str) -> str:
+        return text.upper().replace(" ", "-")
