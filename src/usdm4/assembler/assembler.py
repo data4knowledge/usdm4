@@ -1,3 +1,4 @@
+import json
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.builder.builder import Builder
@@ -14,5 +15,11 @@ class Assembler:
             self._builder, self._errors
         )
 
-    def execute(self, data: dict) -> None:
-        pass
+    def execute(self, data: dict) -> str:
+        self._identification_assembler.execute(data["identification"])
+        result: dict = {
+            "titles": self._identification_assembler._titles,
+            "identifiers": self._identification_assembler._identifiers,
+            "organizations": self._identification_assembler._organizations,
+        }
+        return json.dumps(result)
