@@ -177,7 +177,7 @@ class IdentificationAssembler(BaseAssembler):
         Raises:
             Various exceptions may be raised during object creation if data is invalid
         """
-        print(f"\n\nDATA; {data}\n\n")
+        #print(f"\n\nDATA; {data}\n\n")
 
         # Make sure data ok.
         titles = data["titles"] if "titles" in data else {}

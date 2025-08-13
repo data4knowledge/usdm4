@@ -14,11 +14,12 @@ class DocumentAssembler(BaseAssembler):
     """
     Assembler responsible for creating StudyDefinitionDocument and StudyDefinitionDocumentVersion objects
     from document data and structured content sections.
-    
+
     This assembler processes protocol documents, their versions, and hierarchical content sections,
     creating narrative content structures with proper cross-references and governance dates.
     It handles the conversion of structured document data into USDM-compliant document objects.
     """
+
     MODULE = "usdm4.assembler.document_assembler.DocumentAssembler"
     DIV_OPEN_NS = '<div xmlns="http://www.w3.org/1999/xhtml">'
     DIV_CLOSE = "</div>"
@@ -40,11 +41,11 @@ class DocumentAssembler(BaseAssembler):
     def execute(self, data: dict) -> None:
         """
         Creates StudyDefinitionDocument and StudyDefinitionDocumentVersion objects from document data.
-        
+
         Args:
             data (dict): A dictionary containing document and section information.
                         The data parameter must have the following structure:
-                        
+
                         {
                             "document": {               # Document metadata
                                 "label": str,           # Human-readable document label
@@ -62,25 +63,25 @@ class DocumentAssembler(BaseAssembler):
                                 # ... additional sections
                             ]
                         }
-                        
+
                         Required fields in "document":
                         - "label": Display name for the document
                         - "version": Version identifier (e.g., "1.0", "2.1")
                         - "status": Current status of the document
                         - "template": Template used for document generation
                         - "version_date": Date when this version was created (ISO format)
-                        
+
                         Required fields in each "sections" item:
                         - "section_number": Hierarchical section number (determines nesting level)
                         - "section_title": Title/heading for the section
                         - "text": Content of the section (can include HTML markup)
-                        
+
                         Note: Section hierarchy is determined by the depth of the section_number
                         (e.g., "1" = level 1, "1.1" = level 2, "1.1.1" = level 3)
-        
+
         Returns:
             None: Created objects are stored in instance properties
-            
+
         Note:
             This method creates both document metadata objects and processes hierarchical
             sections into NarrativeContent structures with proper parent-child relationships
@@ -90,45 +91,49 @@ class DocumentAssembler(BaseAssembler):
             # Extract document metadata and sections from input data
             document: dict = data["document"]
             sections: list[dict] = data["sections"]
-            
+
             # Create governance date from document version date
             self._create_date(document)
-            
+
             # Create document version object with version and status
             self._document_version = self._builder.create(
                 StudyDefinitionDocumentVersion,
                 {
-                    "version": document["version"],        # Version identifier from input
-                    "status": document["status"],          # Document status from input
+                    "version": document["version"],  # Version identifier from input
+                    "status": document["status"],  # Document status from input
                 },
             )
-            
+
             # Get standard codes for document properties
-            language = self._builder.iso639_code("en")              # Default to English
-            doc_type = self._builder.cdisc_code("C70817", "Protocol")  # CDISC code for Protocol
-            
+            language = self._builder.iso639_code("en")  # Default to English
+            doc_type = self._builder.cdisc_code(
+                "C70817", "Protocol"
+            )  # CDISC code for Protocol
+
             # Create the main document object
             self._document = self._builder.create(
                 StudyDefinitionDocument,
                 {
-                    "name": self._label_to_name(document["label"]),  # Convert label to internal name
-                    "label": document["label"],                      # Display label from input
-                    "description": "Protocol Document",             # Default description
-                    "language": language,                            # ISO language code
-                    "type": doc_type,                               # CDISC document type code
-                    "templateName": document["template"],            # Template name from input
-                    "versions": [self._document_version],           # Include the created version
+                    "name": self._label_to_name(
+                        document["label"]
+                    ),  # Convert label to internal name
+                    "label": document["label"],  # Display label from input
+                    "description": "Protocol Document",  # Default description
+                    "language": language,  # ISO language code
+                    "type": doc_type,  # CDISC document type code
+                    "templateName": document["template"],  # Template name from input
+                    "versions": [self._document_version],  # Include the created version
                 },
             )
-            
+
             # Process sections into hierarchical narrative content structure
             _ = self._section_to_narrative(None, sections, 0, 1)
-            
+
             # Create sequential links between narrative content items
             self._builder.double_link(
                 self._document_version.contents, "previousId", "nextId"
             )
-            
+
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
             self._errors.exception(f"Failed during creation of document", e, location)
@@ -209,11 +214,11 @@ class DocumentAssembler(BaseAssembler):
     def _create_date(self, data: dict) -> None:
         """
         Creates a governance date for the protocol effective date from document data.
-        
+
         Args:
             data (dict): A dictionary containing document date information.
                         Expected structure for date creation:
-                        
+
                         {
                             "version_date": str,       # ISO format date string (YYYY-MM-DD)
                             # Additional fields from document metadata:
@@ -222,14 +227,14 @@ class DocumentAssembler(BaseAssembler):
                             # "status": str,           # Document status
                             # "template": str,         # Template name
                         }
-                        
+
                         Required fields:
                         - "version_date": Date when the protocol version became effective
                           (must be in ISO date format)
-        
+
         Returns:
             None: Created date is stored in self._dates list
-            
+
         Note:
             This method creates a GovernanceDate object with CDISC-compliant codes for
             protocol effective date type and global geographic scope. The created date
@@ -241,26 +246,26 @@ class DocumentAssembler(BaseAssembler):
                 "C207598",
                 "Protocol Effective Date",
             )
-            
+
             # Get CDISC code for global geographic scope
             global_code = self._builder.cdisc_code("C68846", "Global")
             global_scope = self._builder.create(GeographicScope, {"type": global_code})
-            
+
             # Create the governance date object for protocol effective date
             protocol_date = self._builder.create(
                 GovernanceDate,
                 {
-                    "name": "PROTOCOL-DATE",                    # Internal name for the date
-                    "type": protocol_date_code,                 # CDISC code for date type
-                    "dateValue": data["version_date"],          # Actual date value from input
-                    "geographicScopes": [global_scope],         # Global scope application
+                    "name": "PROTOCOL-DATE",  # Internal name for the date
+                    "type": protocol_date_code,  # CDISC code for date type
+                    "dateValue": data["version_date"],  # Actual date value from input
+                    "geographicScopes": [global_scope],  # Global scope application
                 },
             )
-            
+
             # Add the created date to the internal dates list
             if protocol_date:
                 self._dates.append(protocol_date)
-                
+
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "_create_date")
             self._errors.exception(
