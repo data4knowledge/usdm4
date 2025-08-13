@@ -177,7 +177,7 @@ class IdentificationAssembler(BaseAssembler):
         Raises:
             Various exceptions may be raised during object creation if data is invalid
         """
-        #print(f"\n\nDATA; {data}\n\n")
+        # print(f"\n\nDATA; {data}\n\n")
 
         # Make sure data ok.
         titles = data["titles"] if "titles" in data else {}
@@ -222,7 +222,7 @@ class IdentificationAssembler(BaseAssembler):
                 # Identifier and scoping Organization
                 org = self._create_organization(organization)
                 if org:
-                    identifier = self._create_identifier(identifier["identifier"], org)
+                    identifier = self._create_identifier(id_details["identifier"], org)
                     if identifier:
                         self._organizations.append(org)
                         self._identifiers.append(identifier)
@@ -247,7 +247,9 @@ class IdentificationAssembler(BaseAssembler):
 
     def _create_address(self, address: dict) -> Address | None:
         try:
-            address["country"] = self._builder.iso3166_code(address["country"])
+            address["country"] = self._builder.iso3166_code_or_decode(
+                address["country"]
+            )
             return self._builder.create(Address, address)
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "_create_address")

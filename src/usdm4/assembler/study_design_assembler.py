@@ -98,7 +98,7 @@ class StudyDesignAssembler(BaseAssembler):
                     "estimands": [],  # Empty estimands list (future enhancement)
                     "studyInterventions": [],  # Empty interventions list (future enhancement)
                     "analysisPopulations": [],  # Empty analysis populations list (future enhancement)
-                    "studyPhase": self._encoder(
+                    "studyPhase": self._encoder.phase(
                         data["trial_phase"]
                     ),  # Clinical trial phase from input
                 },
