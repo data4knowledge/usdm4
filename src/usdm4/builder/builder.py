@@ -60,7 +60,7 @@ class Builder:
     def create(self, klass: str, params: dict) -> ApiBaseModelWithId | None:
         try:
             object: ApiBaseModelWithId = self.api_instance.create(klass, params)
-            if object:
+            if self._check_object(object):
                 name = self._set_name(object, params)
                 self.cross_reference.add(object, name)
             return object
@@ -72,6 +72,9 @@ class Builder:
                 location,
             )
             return None
+
+    def _check_object(self, object) -> bool:
+        return True if object and hasattr(object, "id") else False
 
     def _set_name(self, object, params: dict) -> str | None:
         if hasattr(object, "name"):

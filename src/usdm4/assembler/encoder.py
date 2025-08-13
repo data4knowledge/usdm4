@@ -2,6 +2,7 @@ from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.builder.builder import Builder
 from usdm4.api.alias_code import AliasCode
+from usdm4.api.code import Code
 
 
 class Encoder:
@@ -28,6 +29,16 @@ class Encoder:
         (["4", "IV"], {"code": "C15603", "decode": "Phase IV Trial"}),
         (["5", "V"], {"code": "C47865", "decode": "Phase V Trial"}),
     ]
+    STATUS_MAP = [
+        (["APPROVED"], {"code": "C25425", "decode": "Approved"}),
+        (["DRAFT", "DFT"], {"code": "C85255", "decode": "Draft"}),
+        (["FINAL"], {"code": "C25508", "decode": "Final"}),
+        (["OBSOLETE"], {"code": "C63553", "decode": "Obsolete"}),
+        (
+            ["PENDING", "PRENDING REVIEW"],
+            {"code": "C188862", "decode": "Pending Review"},
+        ),
+    ]
 
     def __init__(self, builder: Builder, errors: Errors):
         self._builder: Builder = builder
@@ -53,6 +64,27 @@ class Encoder:
         )
         self._errors.warning(
             f"Trial phase '{phase}' not decoded",
-            location=KlassMethodLocation(self.MODULE, "_get_phase"),
+            location=KlassMethodLocation(self.MODULE, "phase"),
         )
         return self._builder.alias_code(cdisc_phase_code)
+
+    def document_status(self, text) -> Code:
+        status = text.upper().strip() if text else ""
+        for tuple in self.STATUS_MAP:
+            if status in tuple[0]:
+                entry = tuple[1]
+                cdisc_code = self._builder.cdisc_code(
+                    entry["code"],
+                    entry["decode"],
+                )
+                self._errors.info(
+                    f"Document status '{status}' decoded as '{entry['code']}', '{entry['decode']}'",
+                    location=KlassMethodLocation(self.MODULE, "document_status"),
+                )
+                return cdisc_code
+        cdisc_code = self._builder.cdisc_code("C85255", "Draft")
+        self._errors.warning(
+            f"Document status '{status}' not decoded",
+            location=KlassMethodLocation(self.MODULE, "document_status"),
+        )
+        return cdisc_code

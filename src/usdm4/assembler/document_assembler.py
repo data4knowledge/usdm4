@@ -8,7 +8,7 @@ from usdm4.api.study_definition_document import StudyDefinitionDocument
 from usdm4.api.study_definition_document_version import StudyDefinitionDocumentVersion
 from usdm4.api.geographic_scope import GeographicScope
 from usdm4.api.governance_date import GovernanceDate
-
+from usdm4.assembler.encoder import Encoder
 
 class DocumentAssembler(BaseAssembler):
     """
@@ -33,6 +33,7 @@ class DocumentAssembler(BaseAssembler):
             errors (Errors): Error handling instance for logging issues
         """
         super().__init__(builder, errors)
+        self._encoder = Encoder(builder, errors)
         self._document: StudyDefinitionDocument = None
         self._document_version: StudyDefinitionDocumentVersion = None
         self._contents = []
@@ -95,12 +96,13 @@ class DocumentAssembler(BaseAssembler):
             # Create governance date from document version date
             self._create_date(document)
 
+            protocol_status_code = self._builder.cdisc_code("C85255", "Draft")
             # Create document version object with version and status
             self._document_version = self._builder.create(
                 StudyDefinitionDocumentVersion,
                 {
                     "version": document["version"],  # Version identifier from input
-                    "status": document["status"],  # Document status from input
+                    "status": self._encoder.document_status(document["status"]),  # Document status from input
                 },
             )
 
@@ -168,12 +170,12 @@ class DocumentAssembler(BaseAssembler):
                 nc_text = f"{self.DIV_OPEN_NS}{section['text']}{self.DIV_CLOSE}"
                 nci = self._builder.create(
                     NarrativeContentItem,
-                    {"name": f"NCI-{sn}", "text": nc_text},
+                    {"name": f"NCI-{local_index}", "text": nc_text},
                 )
                 nc = self._builder.create(
                     NarrativeContent,
                     {
-                        "name": f"NC-{sn}",
+                        "name": f"NC-{local_index}",
                         "sectionNumber": sn,
                         "displaySectionNumber": dsn,
                         "sectionTitle": st,

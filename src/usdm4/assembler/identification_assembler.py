@@ -119,6 +119,7 @@ class IdentificationAssembler(BaseAssembler):
         self._titles = []
         self._organizations = []
         self._identifiers = []
+        self._study_name = ""
 
     def execute(self, data: dict) -> None:
         """
