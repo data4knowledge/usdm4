@@ -149,6 +149,10 @@ class DocumentAssembler(BaseAssembler):
         return self._document_version
 
     @property
+    def contents(self) -> list[NarrativeContentItem]:
+        return self._contents
+
+    @property
     def dates(self) -> list[GovernanceDate]:
         return self._dates
 
