@@ -266,6 +266,7 @@ class IdentificationAssembler(BaseAssembler):
             organization["type"] = self._builder.cdisc_code(
                 self.ORG_CODES[org_type]["code"], self.ORG_CODES[org_type]["decode"]
             )
+            organization["name"] = self._label_to_name(organization["label"])
             return self._builder.create(Organization, organization)
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "_create_organization")
