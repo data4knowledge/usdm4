@@ -93,11 +93,9 @@ class Assembler:
             self._identification_assembler.execute(data["identification"])
 
             # Process document data - sets up protocol documents and amendments
-            print(f"\n\nDOC: {data['document']}\n\n")
             self._document_assembler.execute(data["document"])
 
             # Process population data - defines subject populations and analysis sets
-            print(f"\n\nPOP: {data['population']}\n\n")
             self._population_assembler.execute(data["population"])
 
             # Process study design data - requires population assembler for cross-references

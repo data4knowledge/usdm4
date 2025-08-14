@@ -106,14 +106,14 @@ class StudyAssembler(BaseAssembler):
             }
             study_version = self._builder.create(StudyVersion, params)
 
-            print(f"STUDY VERSION: {study_version is not None}")
+            #print(f"STUDY VERSION: {study_version is not None}")
 
             # Create the top-level Study container object
             self._study = self._builder.create(
                 Study,
                 {
                     "id": uuid4(),  # Generate unique study ID
-                    "name": data["name"],  # Internal study name
+                    "name": self._label_to_name(data["label"]),  # Internal study name
                     "label": data["label"],  # Display study label
                     "description": "The top-level study container",  # Default description
                     "versions": [study_version],  # Include the created version
@@ -123,7 +123,7 @@ class StudyAssembler(BaseAssembler):
                 },
             )
 
-            print(f"STUDY: {self._study is not None}")
+            #print(f"STUDY: {self._study is not None}")
 
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
@@ -193,3 +193,17 @@ class StudyAssembler(BaseAssembler):
             self._errors.exception(
                 f"Failed during creation of governance date", e, location
             )
+
+
+    # def _get_study_name(self):
+    #     items = [self.acronym, self.sponsor_protocol_identifier, self.compound_codes]
+    #     for item in items:
+    #         if item:
+    #             name = re.sub(r"[\W_]+", "", item.upper())
+    #             self._errors.info(
+    #                 f"Study name set to '{name}'",
+    #                 location=KlassMethodLocation(self.MODULE, "_get_study_name"),
+    #             )
+    #             return name
+    #     return ""
+

@@ -153,7 +153,7 @@ class DocumentAssembler(BaseAssembler):
 
     @property
     def contents(self) -> list[NarrativeContentItem]:
-        print(f"SECTION COUNT: {len(self._contents)}")
+        #print(f"SECTION COUNT: {len(self._contents)}")
         return self._contents
 
     @property
@@ -196,7 +196,7 @@ class DocumentAssembler(BaseAssembler):
                 )
                 self._document_version.contents.append(nc)
                 self._contents.append(nci)
-                print(f"SECTION ADD: {len(self._contents)}")
+                #print(f"SECTION ADD: {len(self._contents)}")
                 if parent:
                     parent.childIds.append(nc.id)
                 previous = nc
