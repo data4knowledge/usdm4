@@ -10,6 +10,7 @@ from usdm4.api.geographic_scope import GeographicScope
 from usdm4.api.governance_date import GovernanceDate
 from usdm4.assembler.encoder import Encoder
 
+
 class DocumentAssembler(BaseAssembler):
     """
     Assembler responsible for creating StudyDefinitionDocument and StudyDefinitionDocumentVersion objects
@@ -102,7 +103,9 @@ class DocumentAssembler(BaseAssembler):
                 StudyDefinitionDocumentVersion,
                 {
                     "version": document["version"],  # Version identifier from input
-                    "status": self._encoder.document_status(document["status"]),  # Document status from input
+                    "status": self._encoder.document_status(
+                        document["status"]
+                    ),  # Document status from input
                 },
             )
 
@@ -150,6 +153,7 @@ class DocumentAssembler(BaseAssembler):
 
     @property
     def contents(self) -> list[NarrativeContentItem]:
+        print(f"SECTION COUNT: {len(self._contents)}")
         return self._contents
 
     @property
@@ -192,6 +196,7 @@ class DocumentAssembler(BaseAssembler):
                 )
                 self._document_version.contents.append(nc)
                 self._contents.append(nci)
+                print(f"SECTION ADD: {len(self._contents)}")
                 if parent:
                     parent.childIds.append(nc.id)
                 previous = nc

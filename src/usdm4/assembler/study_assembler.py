@@ -102,7 +102,7 @@ class StudyAssembler(BaseAssembler):
                 "organizations": identification_assembler.organizations,  # Sponsor/organization info
                 "amendments": [],  # Empty amendments list (future use)
                 "eligibilityCriterionItems": [],  # Empty criteria list (future use)
-                "contents": document_assembler.contents
+                "contents": document_assembler.contents,
             }
 
             # Create the StudyVersion object with aggregated data
