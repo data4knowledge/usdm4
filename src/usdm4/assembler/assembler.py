@@ -89,20 +89,25 @@ class Assembler:
         """
         try:
             # Process identification data - establishes study identity and versioning
+            print(f"\n\nIDENT: {data['identification']}\n\n")
             self._identification_assembler.execute(data["identification"])
 
             # Process document data - sets up protocol documents and amendments
+            print(f"\n\nDOC: {data['document']}\n\n")
             self._document_assembler.execute(data["document"])
 
             # Process population data - defines subject populations and analysis sets
+            print(f"\n\nPOP: {data['population']}\n\n")
             self._population_assembler.execute(data["population"])
 
             # Process study design data - requires population assembler for cross-references
+            print(f"\n\nSTUDY DESIGN: {data['study_design']}\n\n")
             self._study_design_assembler.execute(
                 data["study_design"], self._population_assembler
             )
 
             # Process core study data - requires all other assemblers for final assembly
+            print(f"\n\nSTUDY: {data['study']}\n\n")
             self._study_assembler.execute(
                 data["study"],
                 self._identification_assembler,

@@ -102,10 +102,8 @@ class StudyAssembler(BaseAssembler):
                 "organizations": identification_assembler.organizations,  # Sponsor/organization info
                 "amendments": [],  # Empty amendments list (future use)
                 "eligibilityCriterionItems": [],  # Empty criteria list (future use)
-                "contents": document_assembler.contents,
+                "narrativeContentItems": document_assembler.contents,
             }
-
-            # Create the StudyVersion object with aggregated data
             study_version = self._builder.create(StudyVersion, params)
 
             print(f"STUDY VERSION: {study_version is not None}")
