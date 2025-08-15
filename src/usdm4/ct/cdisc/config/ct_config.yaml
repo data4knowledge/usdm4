@@ -64,7 +64,7 @@ klass_attribute_mapping:
   StudyDefinitionDocument:
     type: C99916x # C215477
   Organization:
-    type: C188724
+    type: C99917x # C188724
   Objective:
     level: C188725
   Endpoint:

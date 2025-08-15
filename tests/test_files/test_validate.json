@@ -139,10 +139,10 @@
             "managedSites": [],
             "name": "Sponsor",
             "type": {
-              "code": "C70793",
+              "code": "C54149",
               "codeSystem": "cdisc.org",
               "codeSystemVersion": "2023-12-15",
-              "decode": "Clinical Study Sponsor",
+              "decode": "Pharmaceutical Company",
               "id": "Code_3",
               "instanceType": "Code"
             }

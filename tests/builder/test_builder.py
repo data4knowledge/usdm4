@@ -1,6 +1,7 @@
 import os
 import pathlib
 import pytest
+from simple_error_log.errors import Errors
 from src.usdm4.builder.builder import Builder
 from src.usdm4.api.code import Code
 from tests.helpers.files import write_json_file, read_json_file
@@ -15,7 +16,7 @@ def root_path():
 
 @pytest.fixture(scope="module")
 def builder():
-    return Builder(root_path())
+    return Builder(root_path(), Errors())
 
 
 def test_minimum(builder):
@@ -77,8 +78,8 @@ def test_sponsor_basic(builder):
     result = builder.sponsor("ACME Pharma")
 
     # assert isinstance(result, Organization)
-    assert result.type.code == "C70793"
-    assert result.type.decode == "Clinical Study Sponsor"
+    assert result.type.code == "C54149"
+    assert result.type.decode == "Pharmaceutical Company"
     assert result.name == "ACME Pharma"
 
 

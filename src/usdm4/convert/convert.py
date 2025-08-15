@@ -85,6 +85,12 @@ class Convert:
                 org = identifier["studyIdentifierScope"]
                 organizations.append(org)
                 Convert._move(org, "organizationType", "type")
+                print(f"ORG: {org}")
+                if org["type"]["code"] == "C70793":
+                    org["type"]["code"] = "C54149"
+                    org["type"]["decode"] = "Pharmaceutical Company"
+                if org["type"]["code"] == "C93453":
+                    org["type"]["decode"] = "Clinical Study Registry"
                 identifier["scopeId"] = org["id"]
                 identifier.pop("studyIdentifierScope")
             version["organizations"] = organizations

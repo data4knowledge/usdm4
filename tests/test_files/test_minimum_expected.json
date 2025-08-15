@@ -93,10 +93,10 @@
             "type": {
               "id": "Code_3",
               "extensionAttributes": [],
-              "code": "C70793",
+              "code": "C54149",
               "codeSystem": "http://www.cdisc.org",
-              "codeSystemVersion": "2024-09-27",
-              "decode": "Clinical Study Sponsor",
+              "codeSystemVersion": "2025-03-28",
+              "decode": "Pharmaceutical Company",
               "instanceType": "Code"
             },
             "identifierScheme": "To be provided",

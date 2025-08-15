@@ -207,12 +207,15 @@ class IdentificationAssembler(BaseAssembler):
         id_details: dict
         for id_details in identifiers:
             try:
+                print(f"ID DETAILS: {id_details}")
                 scope = id_details["scope"]
+                print(f"SCOPE: {scope}")
                 organization: dict = (
                     self.STANDARD_ORGS[scope["standard"]]
                     if "standard" in scope
                     else scope["non_standard"]
                 )
+                print(f"ORG: {organization}")
 
                 # Address
                 if organization["legalAddress"]:
@@ -227,6 +230,17 @@ class IdentificationAssembler(BaseAssembler):
                     if identifier:
                         self._organizations.append(org)
                         self._identifiers.append(identifier)
+                    else:
+                        location = KlassMethodLocation(self.MODULE, "execute")
+                        self._errors.exception(
+                            f"Failed to create identifier {id_details['identifier']}",
+                            location,
+                        )
+                else:
+                    location = KlassMethodLocation(self.MODULE, "execute")
+                    self._errors.exception(
+                        f"Failed to create organization {organization}", location
+                    )
             except Exception as e:
                 location = KlassMethodLocation(self.MODULE, "execute")
                 formated_dict = json.dumps(id_details, indent=2)
@@ -244,6 +258,7 @@ class IdentificationAssembler(BaseAssembler):
 
     @property
     def identifiers(self):
+        print(f"IDENTIFIERS PROPERTY: {self._identifiers}")
         return self._identifiers
 
     def _create_address(self, address: dict) -> Address | None:
@@ -283,6 +298,7 @@ class IdentificationAssembler(BaseAssembler):
             identifier = self._builder.create(
                 StudyIdentifier, {"text": identifier, "scopeId": org.id}
             )
+            return identifier
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "_create_identifier")
             self._errors.exception(

@@ -1043,10 +1043,10 @@
             "type": {
               "id": "Code_2",
               "extensionAttributes": [],
-              "code": "C70793",
+              "code": "C54149",
               "codeSystem": "cdisc.org",
               "codeSystemVersion": "2023-12-15",
-              "decode": "Clinical Study Sponsor",
+              "decode": "Pharmaceutical Company",
               "instanceType": "Code"
             },
             "identifierScheme": "To be provided",

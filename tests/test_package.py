@@ -1,4 +1,5 @@
 from src.usdm4 import USDM4
+from simple_error_log.errors import Errors
 from tests.helpers.files import write_json_file, read_json_file
 
 SAVE = False
@@ -36,7 +37,8 @@ def test_example_2():
 
 
 def test_minimum():
-    result = USDM4().minimum("Test Study", "SPONSOR-1234", "1")
+    errors = Errors()
+    result = USDM4().minimum("Test Study", "SPONSOR-1234", "1", errors)
     result.study.id = "FAKE-UUID"
     if SAVE:
         write_json_file(None, "test_minimum_expected.json", result.to_json())

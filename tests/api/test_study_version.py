@@ -50,10 +50,10 @@ class TestStudyVersion:
 
         self.sponsor_code = Code(
             id="sponsor_code",
-            code="C70793",
+            code="C54149",
             codeSystem="CDISC",
             codeSystemVersion="1.0",
-            decode="Sponsor",
+            decode="Pharmaceutical Company",
             instanceType="Code",
         )
 

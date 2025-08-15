@@ -20,7 +20,7 @@ class StudyIdentifier(Identifier):
 
     def is_sponsor(self, organization_map: dict) -> bool:
         org = organization_map[self.scopeId]
-        return True if org.type.code == "C70793" else False
+        return True if org.type.code == "C54149" else False
 
     def scoped_by(self, organization_map: dict) -> Organization:
         return organization_map[self.scopeId]

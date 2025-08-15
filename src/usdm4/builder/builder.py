@@ -87,13 +87,10 @@ class Builder:
         """
         Create a minimum study with the given title, identifier, and version.
         """
-        # Clear errors
-        self.errors.clear()
-
         # Define the codes to be used in the study
         english_code = self.iso639_code("en")
         title_type = self.cdisc_code("C207616", "Official Study Title")
-        organization_type_code = self.cdisc_code("C70793", "Clinical Study Sponsor")
+        organization_type_code = self.cdisc_code("C54149", "Pharmaceutical Company")
         doc_status_code = self.cdisc_code("C25425", "Approved")
         protocol_code = self.cdisc_code("C70817", "Protocol")
         global_code = self.cdisc_code("C68846", "Global")
@@ -287,7 +284,7 @@ class Builder:
         )
 
     def sponsor(self, sponsor_name: str) -> Organization:
-        sponsor_code = self.cdisc_code("C70793", "Clinical Study Sponsor")
+        sponsor_code = self.cdisc_code("C54149", "Pharmaceutical Company")
         return self.create(
             Organization,
             {

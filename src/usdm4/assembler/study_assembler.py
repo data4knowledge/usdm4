@@ -106,7 +106,7 @@ class StudyAssembler(BaseAssembler):
             }
             study_version = self._builder.create(StudyVersion, params)
 
-            #print(f"STUDY VERSION: {study_version is not None}")
+            # print(f"STUDY VERSION: {study_version is not None}")
 
             # Create the top-level Study container object
             self._study = self._builder.create(
@@ -123,7 +123,7 @@ class StudyAssembler(BaseAssembler):
                 },
             )
 
-            #print(f"STUDY: {self._study is not None}")
+            # print(f"STUDY: {self._study is not None}")
 
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
@@ -194,7 +194,6 @@ class StudyAssembler(BaseAssembler):
                 f"Failed during creation of governance date", e, location
             )
 
-
     # def _get_study_name(self):
     #     items = [self.acronym, self.sponsor_protocol_identifier, self.compound_codes]
     #     for item in items:
@@ -206,4 +205,3 @@ class StudyAssembler(BaseAssembler):
     #             )
     #             return name
     #     return ""
-
