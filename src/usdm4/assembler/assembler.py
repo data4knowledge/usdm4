@@ -111,6 +111,7 @@ class Assembler:
                 self._identification_assembler,
                 self._study_design_assembler,
                 self._document_assembler,
+                self._population_assembler
             )
 
             return self._study_assembler.study

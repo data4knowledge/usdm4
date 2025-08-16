@@ -5,6 +5,7 @@ from usdm4.assembler.base_assembler import BaseAssembler
 from usdm4.assembler.identification_assembler import IdentificationAssembler
 from usdm4.assembler.study_design_assembler import StudyDesignAssembler
 from usdm4.assembler.document_assembler import DocumentAssembler
+from usdm4.assembler.population_assembler import PopulationAssembler
 from usdm4.builder.builder import Builder
 from usdm4.api.study import Study
 from usdm4.api.study_version import StudyVersion
@@ -41,6 +42,7 @@ class StudyAssembler(BaseAssembler):
         identification_assembler: IdentificationAssembler,
         study_design_assembler: StudyDesignAssembler,
         document_assembler: DocumentAssembler,
+        population_assembler: PopulationAssembler
     ) -> None:
         """
         Creates the top-level Study object and its associated StudyVersion from study data.
@@ -101,7 +103,7 @@ class StudyAssembler(BaseAssembler):
                 "studyIdentifiers": identification_assembler.identifiers,  # Study identifiers
                 "organizations": identification_assembler.organizations,  # Sponsor/organization info
                 "amendments": [],  # Empty amendments list (future use)
-                "eligibilityCriterionItems": [],  # Empty criteria list (future use)
+                "eligibilityCriterionItems": population_assembler.criteria_items,
                 "narrativeContentItems": document_assembler.contents,
             }
             study_version = self._builder.create(StudyVersion, params)

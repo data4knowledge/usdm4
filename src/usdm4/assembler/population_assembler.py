@@ -4,6 +4,10 @@ from simple_error_log.error_location import KlassMethodLocation
 from usdm4.assembler.base_assembler import BaseAssembler
 from usdm4.builder.builder import Builder
 from usdm4.api.population_definition import StudyDesignPopulation
+from usdm4.api.eligibility_criterion import (
+    EligibilityCriterion,
+    EligibilityCriterionItem,
+)
 
 
 class PopulationAssembler(BaseAssembler):
@@ -28,6 +32,8 @@ class PopulationAssembler(BaseAssembler):
         super().__init__(builder, errors)
         self._population = None
         self._cohorts = []
+        self._ec_items = []
+        self._eci_items = []
 
     def execute(self, data: dict) -> None:
         """
@@ -39,8 +45,11 @@ class PopulationAssembler(BaseAssembler):
 
                         {
                             "label": str,              # Human-readable label for the population
-                            # Additional optional fields may include:
-                            # "description": str,       # Detailed description of the population
+                            "inclusion_exclusion: {
+                                "inclusion": list[str],
+                                "exclusion": list[str],
+                            }
+                            # Additional optional fields may be includes in the future:
                             # "criteria": list,         # List of eligibility criteria
                             # "cohorts": list,          # List of population cohorts/subgroups
                             # "enrollment": dict,       # Subject enrollment information
@@ -66,6 +75,8 @@ class PopulationAssembler(BaseAssembler):
             Exception: If population creation fails, logged via error handler
         """
         try:
+            self._ie(data["inclusion_exclusion"])
+
             # Extract required label field and create population parameters
             # The label is used for both display purposes and name generation
             params = {
@@ -75,7 +86,7 @@ class PopulationAssembler(BaseAssembler):
                 "label": data["label"],  # Keep original label for display
                 "description": "The study population, currently blank",  # Default description
                 "includesHealthySubjects": True,  # Default assumption
-                "criteria": [],  # Empty criteria list for now
+                "criteria": self._ie_items,
             }
 
             # Create the StudyDesignPopulation object using the builder
@@ -86,5 +97,42 @@ class PopulationAssembler(BaseAssembler):
             self._errors.exception(f"Failed during creation of population", e, location)
 
     @property
-    def population(self):
+    def population(self) -> StudyDesignPopulation:
         return self._population
+
+    @property
+    def criteria_items(self) -> list[EligibilityCriterionItem]:
+        return self._eci_items
+
+    def _ie(self, criteria: dict) -> None:
+        self._collection(criteria["inclusion"], "C25532", "INCLUSION")
+        self._collection(criteria["exclusion"], "C25370", "EXCLUSION")
+
+    def _collection(self, criteria: list[str], code: str, decode: str) -> None:
+        for index, text in enumerate(criteria["inclusion"]):
+            try:
+                category = self._builder.cdisc_code(code, decode)
+                params = {
+                    "name": f"INC{index + 1}",
+                    "label": f"Inclusion {index + 1} ",
+                    "description": "",
+                    "text": text,
+                }
+                eci_item = self._builder.create(EligibilityCriterionItem, params)
+                self._eci_items.append(eci_item)
+                params = {
+                    "name": f"INC{index + 1}",
+                    "label": f"Inclusion {index + 1} ",
+                    "description": "",
+                    "criterionItemId": eci_item.id,
+                    "category": category,
+                    "identifier": f"{index + 1}",
+                }
+                self._ec_items.append(
+                    self._builder.create(EligibilityCriterion, params)
+                )
+            except Exception as e:
+                location = KlassMethodLocation(self.MODULE, "_collection")
+                self._errors.exception(
+                    f"Failed during creation of criterion '{text}", e, location
+                )

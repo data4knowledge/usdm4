@@ -28,7 +28,9 @@ class USDM4:
     def assembler(self, errors: Errors) -> Assembler:
         return Assembler(self.root, errors)
 
-    def minimum(self, study_name: str, sponsor_id: str, version: str, errors: Errors) -> Wrapper:
+    def minimum(
+        self, study_name: str, sponsor_id: str, version: str, errors: Errors
+    ) -> Wrapper:
         return Builder(self.root, errors).minimum(study_name, sponsor_id, version)
 
     def from_json(self, data: dict) -> Wrapper:
