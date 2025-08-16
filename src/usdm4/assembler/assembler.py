@@ -6,6 +6,7 @@ from usdm4.assembler.identification_assembler import IdentificationAssembler
 from usdm4.assembler.population_assembler import PopulationAssembler
 from usdm4.assembler.document_assembler import DocumentAssembler
 from usdm4.assembler.study_design_assembler import StudyDesignAssembler
+from usdm4.assembler.amendments_assembler import AmendmentsAssembler
 from usdm4.assembler.study_assembler import StudyAssembler
 from usdm4.api.study import Study
 from usdm4.api.wrapper import Wrapper
@@ -38,6 +39,7 @@ class Assembler:
             self._builder, self._errors
         )
         self._population_assembler = PopulationAssembler(self._builder, self._errors)
+        self._amendments_assembler = AmendmentsAssembler(self._builder, self._errors)
         self._document_assembler = DocumentAssembler(self._builder, self._errors)
         self._study_design_assembler = StudyDesignAssembler(self._builder, self._errors)
         self._study_assembler = StudyAssembler(self._builder, self._errors)
@@ -98,6 +100,9 @@ class Assembler:
             # Process population data - defines subject populations and analysis sets
             self._population_assembler.execute(data["population"])
 
+            # Process amendments data
+            self._amendments_assembler.execute(data["amendments"])
+
             # Process study design data - requires population assembler for cross-references
             print(f"\n\nSTUDY DESIGN: {data['study_design']}\n\n")
             self._study_design_assembler.execute(
@@ -111,7 +116,8 @@ class Assembler:
                 self._identification_assembler,
                 self._study_design_assembler,
                 self._document_assembler,
-                self._population_assembler
+                self._population_assembler,
+                self._amendments_assembler
             )
 
             return self._study_assembler.study

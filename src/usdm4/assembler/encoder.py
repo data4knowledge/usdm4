@@ -39,6 +39,29 @@ class Encoder:
             {"code": "C188862", "decode": "Pending Review"},
         ),
     ]
+    REASON_MAP = [
+        {"code": "C207612", "decode": "Regulatory Agency Request To Amend"},
+        {"code": "C207608", "decode": "New Regulatory Guidance"},
+        {"code": "C207605", "decode": "IRB/IEC Feedback"},
+        {"code": "C207609", "decode": "New Safety Information Available"},
+        {"code": "C207606", "decode": "Manufacturing Change"},
+        {"code": "C207602", "decode": "IMP Addition"},
+        {"code": "C207601", "decode": "Change In Strategy"},
+        {"code": "C207600", "decode": "Change In Standard Of Care"},
+        {
+            "code": "C207607",
+            "decode": "New Data Available (Other Than Safety Data)",
+        },
+        {"code": "C207604", "decode": "Investigator/Site Feedback"},
+        {"code": "C207611", "decode": "Recruitment Difficulty"},
+        {
+            "code": "C207603",
+            "decode": "Inconsistency And/Or Error In The Protocol",
+        },
+        {"code": "C207610", "decode": "Protocol Design Error"},
+        {"code": "C17649", "decode": "Other"},
+        {"code": "C48660", "decode": "Not Applicable"},
+    ]
 
     def __init__(self, builder: Builder, errors: Errors):
         self._builder: Builder = builder
@@ -68,7 +91,7 @@ class Encoder:
         )
         return self._builder.alias_code(cdisc_phase_code)
 
-    def document_status(self, text) -> Code:
+    def document_status(self, text: str) -> Code:
         status = text.upper().strip() if text else ""
         for tuple in self.STATUS_MAP:
             if status in tuple[0]:
@@ -88,3 +111,30 @@ class Encoder:
             location=KlassMethodLocation(self.MODULE, "document_status"),
         )
         return cdisc_code
+
+    def amendment_reason(self, reason_str: str):
+        if reason_str:
+            parts = reason_str.split(" ")
+            if len(parts) > 2:
+                reason_text = parts[1]
+                for reason in self.REASON_MAP:
+                    if reason_text in reason["decode"]:
+                        self._errors.info(
+                            f"Amednment reason '{reason_text}' decoded as '{reason['code']}', '{reason['decode']}'"
+                        )
+                        code = self._builder.cdisc_code(
+                            reason["code"], reason["decode"]
+                        )
+                        return {"code": code, "other_reason": ""}
+            self._errors.warning(
+                f"Unable to decode amendment reason '{reason}'",
+                location=KlassMethodLocation(self.MODULE, "amendment_reason"),
+            )
+            code = self._builder.cdisc_code("C17649", "Other")
+            return {"code": code, "other_reason": parts[1].strip()}
+        self._errors.warning(
+            f"Amendment reason not decoded, missing text",
+            location=KlassMethodLocation(self.MODULE, "amendment_reason"),
+        )
+        code = self._builder.cdisc_code("C17649", "Other")
+        return {"code": code, "other_reason": "No reason text found"}

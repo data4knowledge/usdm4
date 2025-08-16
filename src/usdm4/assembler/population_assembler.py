@@ -107,10 +107,16 @@ class PopulationAssembler(BaseAssembler):
 
     def _ie(self, criteria: dict) -> None:
         print(f"CRITERIA: {criteria}")
-        self._collection(criteria["inclusion"], "C25532", "INCLUSION","INC", "Inclusion")
-        self._collection(criteria["exclusion"], "C25370", "EXCLUSION", "EXC", "Exclusion")
+        self._collection(
+            criteria["inclusion"], "C25532", "INCLUSION", "INC", "Inclusion"
+        )
+        self._collection(
+            criteria["exclusion"], "C25370", "EXCLUSION", "EXC", "Exclusion"
+        )
 
-    def _collection(self, criteria: list[str], code: str, decode: str, prefix: str, label: str) -> None:
+    def _collection(
+        self, criteria: list[str], code: str, decode: str, prefix: str, label: str
+    ) -> None:
         for index, text in enumerate(criteria):
             try:
                 category = self._builder.cdisc_code(code, decode)
