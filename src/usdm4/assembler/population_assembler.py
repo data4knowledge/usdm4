@@ -74,6 +74,7 @@ class PopulationAssembler(BaseAssembler):
         Raises:
             Exception: If population creation fails, logged via error handler
         """
+        print(f"DATA: {data}")
         try:
             self._ie(data["inclusion_exclusion"])
 
@@ -86,7 +87,7 @@ class PopulationAssembler(BaseAssembler):
                 "label": data["label"],  # Keep original label for display
                 "description": "The study population, currently blank",  # Default description
                 "includesHealthySubjects": True,  # Default assumption
-                "criteria": self._ie_items,
+                "criteria": self._ec_items,
             }
 
             # Create the StudyDesignPopulation object using the builder
@@ -105,24 +106,25 @@ class PopulationAssembler(BaseAssembler):
         return self._eci_items
 
     def _ie(self, criteria: dict) -> None:
-        self._collection(criteria["inclusion"], "C25532", "INCLUSION")
-        self._collection(criteria["exclusion"], "C25370", "EXCLUSION")
+        print(f"CRITERIA: {criteria}")
+        self._collection(criteria["inclusion"], "C25532", "INCLUSION","INC", "Inclusion")
+        self._collection(criteria["exclusion"], "C25370", "EXCLUSION", "EXC", "Exclusion")
 
-    def _collection(self, criteria: list[str], code: str, decode: str) -> None:
-        for index, text in enumerate(criteria["inclusion"]):
+    def _collection(self, criteria: list[str], code: str, decode: str, prefix: str, label: str) -> None:
+        for index, text in enumerate(criteria):
             try:
                 category = self._builder.cdisc_code(code, decode)
                 params = {
-                    "name": f"INC{index + 1}",
-                    "label": f"Inclusion {index + 1} ",
+                    "name": f"{prefix}-I{index + 1}",
+                    "label": f"{label} item {index + 1} ",
                     "description": "",
                     "text": text,
                 }
                 eci_item = self._builder.create(EligibilityCriterionItem, params)
                 self._eci_items.append(eci_item)
                 params = {
-                    "name": f"INC{index + 1}",
-                    "label": f"Inclusion {index + 1} ",
+                    "name": f"{prefix}{index + 1}",
+                    "label": f"{label} criterion {index + 1} ",
                     "description": "",
                     "criterionItemId": eci_item.id,
                     "category": category,
