@@ -1,3 +1,4 @@
+import re
 from uuid import uuid4
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
@@ -111,12 +112,13 @@ class StudyAssembler(BaseAssembler):
             # print(f"STUDY VERSION: {study_version is not None}")
 
             # Create the top-level Study container object
+            study_name, study_label = self._get_study_name_label(data["name"])
             self._study = self._builder.create(
                 Study,
                 {
                     "id": uuid4(),  # Generate unique study ID
-                    "name": self._label_to_name(data["label"]),  # Internal study name
-                    "label": data["label"],  # Display study label
+                    "name": study_name,  # Internal study name
+                    "label": study_label,  # Display study label
                     "description": "The top-level study container",  # Default description
                     "versions": [study_version],  # Include the created version
                     "documentedBy": [
@@ -196,14 +198,14 @@ class StudyAssembler(BaseAssembler):
                 f"Failed during creation of governance date", e, location
             )
 
-    # def _get_study_name(self):
-    #     items = [self.acronym, self.sponsor_protocol_identifier, self.compound_codes]
-    #     for item in items:
-    #         if item:
-    #             name = re.sub(r"[\W_]+", "", item.upper())
-    #             self._errors.info(
-    #                 f"Study name set to '{name}'",
-    #                 location=KlassMethodLocation(self.MODULE, "_get_study_name"),
-    #             )
-    #             return name
-    #     return ""
+    def _get_study_name_label(self, options: dict) -> tuple[str, str]:
+        items = ["acronym", "identifier", "compound"]
+        for item in items:
+            if item in options and options[item]:
+                name = re.sub(r"[\W_]+", "", options[item].upper())
+                self._errors.info(
+                    f"Study name set to '{name}'",
+                    location=KlassMethodLocation(self.MODULE, "_get_study_name_label"),
+                )
+                return name, options[item]
+        return "", ""
