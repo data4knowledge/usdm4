@@ -119,8 +119,6 @@ class Assembler:
                 self._population_assembler,
                 self._amendments_assembler
             )
-
-            return self._study_assembler.study
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
             self._errors.exception(f"Failed during assembler", e, location)
