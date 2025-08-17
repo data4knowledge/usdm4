@@ -243,9 +243,8 @@ class IdentificationAssembler(BaseAssembler):
                     )
             except Exception as e:
                 location = KlassMethodLocation(self.MODULE, "execute")
-                formated_dict = json.dumps(id_details, indent=2)
                 self._errors.exception(
-                    f"Failed during creation of identifier {formated_dict}", e, location
+                    f"Failed during creation of identifier {id_details}", e, location
                 )
 
     @property
@@ -263,15 +262,21 @@ class IdentificationAssembler(BaseAssembler):
 
     def _create_address(self, address: dict) -> Address | None:
         try:
+            print(f"ADDRESS: {address}")
             address["country"] = self._builder.iso3166_code_or_decode(
                 address["country"]
             )
-            return self._builder.create(Address, address)
+            addr: Address = self._builder.create(Address, address)
+            addr.set_text()
+            self._errors.info(
+                f"Address set to {addr.text}", 
+                KlassMethodLocation(self.MODULE, "_create_address")
+            )
+            return addr
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "_create_address")
-            formated_dict = json.dumps(address, indent=2)
             self._errors.exception(
-                f"Failed to create address object {formated_dict}", e, location
+                f"Failed to create address object", e, location
             )
             return None
 
@@ -285,9 +290,8 @@ class IdentificationAssembler(BaseAssembler):
             return self._builder.create(Organization, organization)
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "_create_organization")
-            formated_dict = json.dumps(organization, indent=2)
             self._errors.exception(
-                f"Failed during creation of organization {formated_dict}", e, location
+                f"Failed during creation of organization", e, location
             )
             return None
 
