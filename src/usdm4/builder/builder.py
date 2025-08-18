@@ -187,8 +187,22 @@ class Builder:
         )
         return result
 
-    def klass_and_attribute(self, klass: str, attribute: str) -> Code:
+    def klass_and_attribute(self, klass: str, attribute: str) -> dict:
         return self.cdisc_ct_library.klass_and_attribute(klass, attribute)
+    
+    def klass_and_attribute_value(self, klass: str, attribute: str, value: str) -> Code:
+        print(f"K, A &V: {klass}, {attribute}, {value}")
+        code_item, version =  self.cdisc_ct_library.klass_and_attribute_value(klass, attribute, value)
+        print(f"CODE VERSION: {code_item}, {version}")
+        return self.create(
+            Code,
+            {
+                "code": code_item["conceptId"],
+                "codeSystem": self._cdisc_code_system,
+                "codeSystemVersion": version,
+                "decode": code_item["preferredTerm"],
+            },
+        )
 
     def cdisc_code(self, code: str, decode: str) -> Code:
         cl = self.cdisc_ct_library.cl_by_term(code)
