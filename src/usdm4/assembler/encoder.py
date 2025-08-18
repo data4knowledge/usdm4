@@ -133,7 +133,7 @@ class Encoder:
             code = self._builder.cdisc_code("C17649", "Other")
             return {"code": code, "other_reason": parts[1].strip()}
         self._errors.warning(
-            f"Amendment reason not decoded, missing text",
+            "Amendment reason not decoded, missing text",
             location=KlassMethodLocation(self.MODULE, "amendment_reason"),
         )
         code = self._builder.cdisc_code("C17649", "Other")

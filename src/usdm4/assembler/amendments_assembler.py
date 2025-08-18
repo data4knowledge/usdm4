@@ -1,4 +1,3 @@
-import json
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.assembler.base_assembler import BaseAssembler
@@ -26,14 +25,12 @@ class AmendmentsAssembler(BaseAssembler):
                 self._amendment = self._create_amendment(data)
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
-            self._errors.exception(
-                f"Failed during creation of amendments", e, location
-            )
+            self._errors.exception("Failed during creation of amendments", e, location)
 
     @property
     def amendment(self) -> StudyAmendment:
         return self._amendment
-    
+
     def _create_amendment(self, data: dict) -> StudyAmendment:
         try:
             reason = []
@@ -57,11 +54,9 @@ class AmendmentsAssembler(BaseAssembler):
             return self._builder.create(StudyAmendment, params)
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
-            self._errors.exception(
-                f"Failed during creation of amendments", e, location
-            )
+            self._errors.exception("Failed during creation of amendments", e, location)
             return None
-    
+
     def _create_enrollment(self, data: dict):
         try:
             global_code = self._builder.cdisc_code("C68846", "Global")
@@ -74,24 +69,26 @@ class AmendmentsAssembler(BaseAssembler):
                 unit_alias = None
                 if data["enrollment"]["unit"] == "%":
                     unit_code = self._builder.cdisc_code("C25613", "Percentage")
-                    unit_alias = self._builder.alias_code(unit_code) if unit_code else None
-                quantity = self._builder.create(Quantity, {"value": data["enrollment"]["value"], "unit": unit_alias})
+                    unit_alias = (
+                        self._builder.alias_code(unit_code) if unit_code else None
+                    )
+                quantity = self._builder.create(
+                    Quantity, {"value": data["enrollment"]["value"], "unit": unit_alias}
+                )
                 params = {
-                    "name": f"ENROLLMENT",
+                    "name": "ENROLLMENT",
                     "forGeographicScope": geo_scope,
                     "quantity": quantity,
                 }
             else:
                 quantity = self._builder.create(Quantity, {"value": 0, "unit": None})
                 params = {
-                    "name": f"ENROLLMENT",
+                    "name": "ENROLLMENT",
                     "forGeographicScope": geo_scope,
                     "quantity": quantity,
                 }
             return self._builder.create(SubjectEnrollment, params)
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
-            self._errors.exception(
-                f"Failed during creation of amendments", e, location
-            )
+            self._errors.exception("Failed during creation of amendments", e, location)
             return None

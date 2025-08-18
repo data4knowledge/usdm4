@@ -1,4 +1,3 @@
-import json
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.builder.builder import Builder
@@ -117,11 +116,11 @@ class Assembler:
                 self._study_design_assembler,
                 self._document_assembler,
                 self._population_assembler,
-                self._amendments_assembler
+                self._amendments_assembler,
             )
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
-            self._errors.exception(f"Failed during assembler", e, location)
+            self._errors.exception("Failed during assembler", e, location)
 
     @property
     def study(self) -> Study:
@@ -138,5 +137,5 @@ class Assembler:
             return self._builder.create(Wrapper, params)
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
-            self._errors.exception(f"Failed during assembler", e, location)
+            self._errors.exception("Failed during assembler", e, location)
             return None

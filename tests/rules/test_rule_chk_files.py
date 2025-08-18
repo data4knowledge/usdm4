@@ -1,5 +1,4 @@
 import pytest
-from unittest.mock import Mock
 
 # Import all rule_chk classes
 from src.usdm4.rules.library.rule_chk0004 import RuleCHK0004

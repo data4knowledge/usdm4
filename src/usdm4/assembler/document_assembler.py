@@ -1,4 +1,3 @@
-import json
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.assembler.base_assembler import BaseAssembler
@@ -141,7 +140,7 @@ class DocumentAssembler(BaseAssembler):
 
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
-            self._errors.exception(f"Failed during creation of document", e, location)
+            self._errors.exception("Failed during creation of document", e, location)
 
     @property
     def document(self) -> StudyDefinitionDocument:
@@ -280,5 +279,5 @@ class DocumentAssembler(BaseAssembler):
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "_create_date")
             self._errors.exception(
-                f"Failed during creation of governance date", e, location
+                "Failed during creation of governance date", e, location
             )

@@ -1,4 +1,3 @@
-import json
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.assembler.base_assembler import BaseAssembler
@@ -95,7 +94,7 @@ class PopulationAssembler(BaseAssembler):
 
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
-            self._errors.exception(f"Failed during creation of population", e, location)
+            self._errors.exception("Failed during creation of population", e, location)
 
     @property
     def population(self) -> StudyDesignPopulation:

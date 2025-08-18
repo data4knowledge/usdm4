@@ -1,4 +1,3 @@
-import pytest
 from unittest.mock import patch
 from src.usdm4.api.study_design import (
     StudyDesign,
@@ -9,19 +8,11 @@ from src.usdm4.api.code import Code
 from src.usdm4.api.alias_code import AliasCode
 from src.usdm4.api.activity import Activity
 from src.usdm4.api.encounter import Encounter
-from src.usdm4.api.study_cell import StudyCell
-from src.usdm4.api.study_arm import StudyArm
 from src.usdm4.api.study_epoch import StudyEpoch
-from src.usdm4.api.study_element import StudyElement
 from src.usdm4.api.population_definition import StudyDesignPopulation
 from src.usdm4.api.eligibility_criterion import EligibilityCriterion
 from src.usdm4.api.analysis_population import AnalysisPopulation
-from src.usdm4.api.objective import Objective
 from src.usdm4.api.schedule_timeline import ScheduleTimeline
-from src.usdm4.api.estimand import Estimand
-from src.usdm4.api.comment_annotation import CommentAnnotation
-from src.usdm4.api.indication import Indication
-from src.usdm4.api.biospecimen_retention import BiospecimenRetention
 
 
 class TestStudyDesign:

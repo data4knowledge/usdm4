@@ -1,4 +1,3 @@
-import pytest
 from datetime import date
 from src.usdm4.api.study_version import StudyVersion
 from src.usdm4.api.code import Code

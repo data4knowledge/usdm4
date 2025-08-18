@@ -1,4 +1,3 @@
-import json
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.assembler.base_assembler import BaseAssembler
@@ -106,7 +105,7 @@ class StudyDesignAssembler(BaseAssembler):
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
             self._errors.exception(
-                f"Failed during creation of study design", e, location
+                "Failed during creation of study design", e, location
             )
 
     @property

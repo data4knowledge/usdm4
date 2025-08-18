@@ -1,4 +1,3 @@
-import json
 from usdm4.assembler.base_assembler import BaseAssembler
 from usdm4.builder.builder import Builder
 from usdm4.api.address import Address
@@ -269,15 +268,13 @@ class IdentificationAssembler(BaseAssembler):
             addr: Address = self._builder.create(Address, address)
             addr.set_text()
             self._errors.info(
-                f"Address set to {addr.text}", 
-                KlassMethodLocation(self.MODULE, "_create_address")
+                f"Address set to {addr.text}",
+                KlassMethodLocation(self.MODULE, "_create_address"),
             )
             return addr
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "_create_address")
-            self._errors.exception(
-                f"Failed to create address object", e, location
-            )
+            self._errors.exception("Failed to create address object", e, location)
             return None
 
     def _create_organization(self, organization: dict) -> Organization | None:
@@ -291,7 +288,7 @@ class IdentificationAssembler(BaseAssembler):
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "_create_organization")
             self._errors.exception(
-                f"Failed during creation of organization", e, location
+                "Failed during creation of organization", e, location
             )
             return None
 

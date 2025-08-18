@@ -45,7 +45,7 @@ class StudyAssembler(BaseAssembler):
         study_design_assembler: StudyDesignAssembler,
         document_assembler: DocumentAssembler,
         population_assembler: PopulationAssembler,
-        amendments_assembler: AmendmentsAssembler
+        amendments_assembler: AmendmentsAssembler,
     ) -> None:
         """
         Creates the top-level Study object and its associated StudyVersion from study data.
@@ -108,7 +108,9 @@ class StudyAssembler(BaseAssembler):
                 "amendments": [],  # Empty amendments list (future use)
                 "eligibilityCriterionItems": population_assembler.criteria_items,
                 "narrativeContentItems": document_assembler.contents,
-                "amendments": [amendments_assembler.amendment] if amendments_assembler.amendment else []
+                "amendments": [amendments_assembler.amendment]
+                if amendments_assembler.amendment
+                else [],
             }
             study_version = self._builder.create(StudyVersion, params)
 
@@ -134,7 +136,7 @@ class StudyAssembler(BaseAssembler):
 
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
-            self._errors.exception(f"Failed during creation of study", e, location)
+            self._errors.exception("Failed during creation of study", e, location)
 
     @property
     def study(self) -> Study:
@@ -198,7 +200,7 @@ class StudyAssembler(BaseAssembler):
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "_create_dates")
             self._errors.exception(
-                f"Failed during creation of governance date", e, location
+                "Failed during creation of governance date", e, location
             )
 
     def _get_study_name_label(self, options: dict) -> tuple[str, str]:

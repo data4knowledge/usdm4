@@ -1,4 +1,3 @@
-import pytest
 from datetime import date
 from src.usdm4.api.study_definition_document_version import (
     StudyDefinitionDocumentVersion,

@@ -1,4 +1,3 @@
-import pytest
 from src.usdm4.builder.base_manager import BaseManager
 
 
