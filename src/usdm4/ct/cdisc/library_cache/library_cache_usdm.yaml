@@ -766,6 +766,34 @@ C188728:
       a short or long period but refers to a non-permanent arrangement.
     preferredTerm: Visit
     submissionValue: Visit
+C201264:
+  conceptId: C201264
+  definition: The terminology relevant to the timing type value set.
+  extensible: 'false'
+  name: Timing Type Value Set Terminology
+  preferredTerm: CDISC DDF Timing Type Value Set Terminology
+  source:
+    effective_date: '2024-09-27'
+    package: ddfct
+  submissionValue: Timing Type Value Set Terminology
+  synonyms:
+  - Timing Type Value Set Terminology
+  terms:
+  - conceptId: C201356
+    definition: A type of time point relationship that follows a point or period of
+      time within a timeline.
+    preferredTerm: After Timing Type
+    submissionValue: After
+  - conceptId: C201357
+    definition: A type of time point relationship that comes before a point or period
+      of time within a timeline.
+    preferredTerm: Before Timing Type
+    submissionValue: Before
+  - conceptId: C201358
+    definition: A type of time point relationship that is fixed with respect to a
+      timeline.
+    preferredTerm: Fixed Reference Timing Type
+    submissionValue: Fixed Reference
 C201265:
   conceptId: C201265
   definition: The terminology relevant to the timing relative to from value set.
