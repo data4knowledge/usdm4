@@ -65,12 +65,14 @@ class Builder:
                 self.cross_reference.add(object, name)
             return object
         except Exception as e:
+            print(f"EXCEPTION ON CREATE: {e}")
             location = KlassMethodLocation(self.MODULE, "create")
             self.errors.exception(
-                f"Failed to create instance of klass '{klass}' with params {params}",
+                f"Failed to create instance of klass '{klass}' with params {params}, reason: {e}",
                 e,
                 location,
             )
+            print(f"ERRORS: {self.errors}")
             return None
 
     def _check_object(self, object) -> bool:
@@ -276,6 +278,21 @@ class Builder:
                     "code": code,
                     "codeSystem": self.iso3166_library.system,
                     "codeSystemVersion": self.iso3166_library.version,
+                    "decode": decode,
+                },
+            )
+        else:
+            return None
+
+    def iso639_code_or_decode(self, text: str) -> Code:
+        code, decode = self.iso639_library.code_or_decode(text)
+        if code:
+            return self.create(
+                Code,
+                {
+                    "code": code,
+                    "codeSystem": self.iso639_library.system,
+                    "codeSystemVersion": self.iso639_library.version,
                     "decode": decode,
                 },
             )

@@ -21,7 +21,6 @@ class AmendmentsAssembler(BaseAssembler):
     def execute(self, data: dict) -> None:
         try:
             if data:
-                print(f"AMENDMENTS: {data}")
                 self._amendment = self._create_amendment(data)
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
