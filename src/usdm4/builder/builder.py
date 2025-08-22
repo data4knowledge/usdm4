@@ -256,6 +256,7 @@ class Builder:
 
     def iso3166_code_or_decode(self, text: str) -> Code:
         code, decode = self.iso3166_library.code_or_decode(text)
+        print(f"ISO3166: {text} = [{code} {decode}]")
         if code:
             return self.create(
                 Code,
@@ -286,6 +287,7 @@ class Builder:
 
     def iso639_code_or_decode(self, text: str) -> Code:
         code, decode = self.iso639_library.code_or_decode(text)
+        print(f"ISO639: {text} = [{code} {decode}]")
         if code:
             return self.create(
                 Code,
@@ -307,6 +309,18 @@ class Builder:
                 "codeSystem": self.iso639_library.system,
                 "codeSystemVersion": self.iso639_library.version,
                 "decode": self.iso639_library.decode(code),
+            },
+        )
+
+    def iso3166_region_code(self, code: str) -> Code:
+        code, decode = self.iso3166_library.region_code(code)
+        return self.create(
+            Code,
+            {
+                "code": code,
+                "codeSystem": self.iso3166_library.system,
+                "codeSystemVersion": self.iso3166_library.version,
+                "decode": decode,
             },
         )
 
