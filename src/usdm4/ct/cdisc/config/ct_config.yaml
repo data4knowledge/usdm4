@@ -74,10 +74,10 @@ klass_attribute_mapping:
     type: C174222
     dataOriginType: C188727
   StudyEpoch:
-    studyEpochType: C99079
+    type: C99079
   Encounter:
     type: C188728
-    environmentalSetting: C127262
+    environmentalSettings: C127262
     contactModes: C171445
   StudyDesign:
     interventionModel: C99076
