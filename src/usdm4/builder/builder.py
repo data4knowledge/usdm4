@@ -57,10 +57,10 @@ class Builder:
                 if "id" in instance:
                     self._id_manager.add_id(klass, instance["id"])
 
-    def create(self, klass: str, params: dict) -> ApiBaseModelWithId | None:
+    def create(self, klass: str, params: dict, cross_reference: bool=True) -> ApiBaseModelWithId | None:
         try:
             object: ApiBaseModelWithId = self.api_instance.create(klass, params)
-            if self._check_object(object):
+            if self._check_object(object) and cross_reference:
                 name = self._set_name(object, params)
                 self.cross_reference.add(object, name)
             return object
@@ -250,7 +250,7 @@ class Builder:
         if self.cdisc_bc_library.exists(name):
             bc_params = self.cdisc_bc_library.usdm(name)
             self._set_ids(bc_params)
-            return self.create(BiomedicalConcept, bc_params)
+            return self.create(BiomedicalConcept, bc_params, False) # No cross reference for BCs
         else:
             return None
 
