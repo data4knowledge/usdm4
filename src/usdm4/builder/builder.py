@@ -302,16 +302,20 @@ class Builder:
             return None
 
     def iso639_code(self, code: str) -> Code:
-        return self.create(
-            Code,
-            {
-                "code": code,
-                "codeSystem": self.iso639_library.system,
-                "codeSystemVersion": self.iso639_library.version,
-                "decode": self.iso639_library.decode(code),
-            },
-        )
-
+        new_code, decode = self.iso639_library.decode(code)
+        if new_code:
+            return self.create(
+                Code,
+                {
+                    "code": code,
+                    "codeSystem": self.iso639_library.system,
+                    "codeSystemVersion": self.iso639_library.version,
+                    "decode": decode,
+                },
+            )
+        else:
+            return None
+        
     def iso3166_region_code(self, code: str) -> Code:
         code, decode = self.iso3166_library.region_code(code)
         return self.create(
