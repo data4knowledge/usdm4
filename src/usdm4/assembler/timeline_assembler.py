@@ -46,7 +46,7 @@ class TimelineAssembler(BaseAssembler):
             label = item["text"]
             name = f"EPOCH-{label.upper()}"
             if name not in map:
-                epoch = self._builer.create(
+                epoch: StudyEpoch = self._builer.create(
                     StudyEpoch,
                     {
                         "name": name,
@@ -60,7 +60,7 @@ class TimelineAssembler(BaseAssembler):
                 results.append(epoch)
                 map[name] = epoch
             epoch = map[name]
-            instances[index]["encounter_id"] = epoch.id
+            instances[index]["epoch_instance"] = epoch
 
     def _add_encounters(self, data) -> list[Encounter]:
         results = []
@@ -69,7 +69,7 @@ class TimelineAssembler(BaseAssembler):
         items = table["grid_columns"]
         item: dict[str]
         for index, item in enumerate(items):
-            encounter = self._builder.create(
+            encounter: Encounter = self._builder.create(
                 Encounter,
                 {
                     "name": f"ENCOUNTER-{item['header_text'].upper()}",
@@ -94,14 +94,14 @@ class TimelineAssembler(BaseAssembler):
                 },
             )
             results.append(encounter)
-            instances[index]["encounter_id"] = encounter.id
+            instances[index]["encounter_instance"] = encounter
 
     def _add_activities(self, data) -> list[Activity]:
         results = []
         table = data["final"]["table-001"]
         items = table["activity_rows"]
         item: dict[str]
-        for item in items:
+        for key, item in items.items():
             params = {
                 "name": f"ACTIVITY-{item['activity_name'].to_upper()}",
                 "description": f"Activity {item['activity_name']}",
@@ -112,7 +112,9 @@ class TimelineAssembler(BaseAssembler):
                 "bcSurrogateIds": [],
                 "timelineId": None,
             }
-            results.append(self._builder.create(Activity, params))
+            activity = self._builder.create(Activity, params)
+            results.append(activity)
+            item["activity_instance"] = activity
         return results
 
     def _add_instances(self, data) -> list[ScheduledInstance]:
@@ -128,14 +130,14 @@ class TimelineAssembler(BaseAssembler):
                     "description": f"Scheduled activity instance {item['temporal_value']}",
                     "label": item["temporal_value"],
                     "timelineExitId": None,
-                    "encounterId": item["encounter_id"],
+                    "encounterId": item["encounter_instance"].id,
                     "scheduledInstanceTimelineId": None,
                     "defaultConditionId": None,
-                    "epochId": item["epoch_id"],
+                    "epochId": item["epoch_instance"].id,
                     "activityIds": [],
                 },
             )
-            item["sai_id"] = sai.id
+            item["sai_instance"] = sai
             results.append(sai)
         return results
 
@@ -147,7 +149,7 @@ class TimelineAssembler(BaseAssembler):
         anchor_id = items[anchor_index]["sai_id"]
         item: dict[str]
         for index, item in enumerate(items):
-            this_id = item["sai_id"]
+            this_id = item["sai_instance_id"]
             if index < anchor_index:
                 self._timing(self, index, item, "Before", this_id, anchor_id)
             elif index == anchor_index:
@@ -187,6 +189,19 @@ class TimelineAssembler(BaseAssembler):
             if item["temporal_dict"]["value"] == "1":
                 return index
         return 0
+
+    def link_timepoints_and_activities(self, data: dict, activities: dict) -> None:
+        table = data["final"]["table-001"]
+        items = table["scheduled_activities"]
+        item: dict[str]
+        activity_rows = table["activity_rows"]
+        sai_instances = table["schedule_columns_data"]
+        for key, item in items.items():
+            activity: Activity = activity_rows[item["activity_id"]]["activity_instance"]
+            sai_instance: ScheduledActivityInstance = sai_instances[item["col_id"]][
+                "sai_instance"
+            ]
+            sai_instance.activityIds.append(activity.id)
 
     def _add_timeline(
         self, data, instances: list[ScheduledInstance], timings: list[Timing]
