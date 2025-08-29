@@ -7,6 +7,7 @@ from usdm4.assembler.document_assembler import DocumentAssembler
 from usdm4.assembler.study_design_assembler import StudyDesignAssembler
 from usdm4.assembler.amendments_assembler import AmendmentsAssembler
 from usdm4.assembler.study_assembler import StudyAssembler
+from usdm4.assembler.timeline_assembler import TimelineAssembler
 from usdm4.api.study import Study
 from usdm4.api.wrapper import Wrapper
 from usdm4.__info__ import __model_version__ as usdm_version
@@ -42,6 +43,7 @@ class Assembler:
         self._document_assembler = DocumentAssembler(self._builder, self._errors)
         self._study_design_assembler = StudyDesignAssembler(self._builder, self._errors)
         self._study_assembler = StudyAssembler(self._builder, self._errors)
+        self._timeline_assembler = TimelineAssembler(self._builder, self._errors)
 
     def execute(self, data: dict) -> None:
         """
@@ -102,10 +104,15 @@ class Assembler:
             # Process amendments data
             self._amendments_assembler.execute(data["amendments"])
 
+            # Timelines data
+            self._timeline_assembler.execute(data["soa"])
+
             # Process study design data - requires population assembler for cross-references
             print(f"\n\nSTUDY DESIGN: {data['study_design']}\n\n")
             self._study_design_assembler.execute(
-                data["study_design"], self._population_assembler
+                data["study_design"],
+                self._population_assembler,
+                self._timeline_assembler,
             )
 
             # Process core study data - requires all other assemblers for final assembly

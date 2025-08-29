@@ -2,6 +2,7 @@ from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.assembler.base_assembler import BaseAssembler
 from usdm4.assembler.population_assembler import PopulationAssembler
+from usdm4.assembler.timeline_assembler import TimelineAssembler
 from usdm4.assembler.encoder import Encoder
 from usdm4.builder.builder import Builder
 from usdm4.api.study_design import InterventionalStudyDesign
@@ -30,7 +31,12 @@ class StudyDesignAssembler(BaseAssembler):
         self._encoder = Encoder(builder, errors)
         self._study_design = None
 
-    def execute(self, data: dict, population_assembler: PopulationAssembler) -> None:
+    def execute(
+        self,
+        data: dict,
+        population_assembler: PopulationAssembler,
+        timeline_assembler: TimelineAssembler,
+    ) -> None:
         """
         Creates an InterventionalStudyDesign object from study design data.
 
@@ -61,6 +67,7 @@ class StudyDesignAssembler(BaseAssembler):
 
             population_assembler (PopulationAssembler): Assembler containing the study population
                 definition that will be referenced by this study design
+            timeline_assembler (TimelineAssembler): Assembler containing the timelines
 
         Returns:
             None: The created study design is stored in self._study_design property
@@ -100,6 +107,7 @@ class StudyDesignAssembler(BaseAssembler):
                     "studyPhase": self._encoder.phase(
                         data["trial_phase"]
                     ),  # Clinical trial phase from input
+                    "scheduleTimelines": timeline_assembler.timelines,
                 },
             )
         except Exception as e:
