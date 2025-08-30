@@ -92,7 +92,6 @@ class Assembler:
         """
         try:
             # Process identification data - establishes study identity and versioning
-            print(f"\n\nIDENT: {data['identification']}\n\n")
             self._identification_assembler.execute(data["identification"])
 
             # Process document data - sets up protocol documents and amendments
@@ -105,10 +104,12 @@ class Assembler:
             self._amendments_assembler.execute(data["amendments"])
 
             # Timelines data
+            self._errors.debug(
+                f"SOA:\n{data['soa']}\n", KlassMethodLocation(self.MODULE, "execute")
+            )
             self._timeline_assembler.execute(data["soa"])
 
             # Process study design data - requires population assembler for cross-references
-            print(f"\n\nSTUDY DESIGN: {data['study_design']}\n\n")
             self._study_design_assembler.execute(
                 data["study_design"],
                 self._population_assembler,
@@ -116,7 +117,6 @@ class Assembler:
             )
 
             # Process core study data - requires all other assemblers for final assembly
-            print(f"\n\nSTUDY: {data['study']}\n\n")
             self._study_assembler.execute(
                 data["study"],
                 self._identification_assembler,
