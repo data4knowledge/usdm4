@@ -114,17 +114,19 @@ class TimelineAssembler(BaseAssembler):
             results = []
             table = data["final"]["table-001"]
             instances: dict = table["schedule_columns_data"]
-            # instance_keys = list(instances.keys())
+            instance_keys = list(instances.keys())
             items: dict = table["grid_columns"]
             print(f"ENCOUNTER ITEMS: {items}")
             item: dict[str]
             for key, item in items.items():
+                name = item['header_text'] if item['header_text'].strip() else instances[key]["timepoint_reference"]
+                print(f"ENCOUNTER NAME: {name}")
                 encounter: Encounter = self._builder.create(
                     Encounter,
                     {
-                        "name": f"ENCOUNTER-{item['header_text'].upper()}",
-                        "description": f"Encounter {item['header_text']}",
-                        "label": item["header_text"],
+                        "name": f"ENCOUNTER-{name.upper()}",
+                        "description": f"Encounter {name}",
+                        "label": name,
                         "type": self._builder.klass_and_attribute_value(
                             Encounter, "type", "visit"
                         ),
@@ -182,6 +184,7 @@ class TimelineAssembler(BaseAssembler):
                 f"Activities: {len(results)}",
                 KlassMethodLocation(self.MODULE, "_add_activities"),
             )
+            self._builder.double_link(results, "nextId", "previousId")
             return results
         except Exception as e:
             print(f"ACTIVITIES EXCEPTION: {e}, {traceback.format_exc()}")
@@ -233,19 +236,20 @@ class TimelineAssembler(BaseAssembler):
             results = []
             table = data["final"]["table-001"]
             items: dict = table["schedule_columns_data"]
-            anchor_index = self._find_anchor(data)
-            anchor_id = items[anchor_index]["sai_id"]
+            anchor_index, anchor_key = self._find_anchor(data)
+            anchor: ScheduledInstance = items[anchor_key]["sai_instance"]
             item: dict[str]
-            for index, item in enumerate(items.values()):
+            for key, item in items.items():
+                index = int(item["timepoint_reference"])
                 this_sai: ScheduledInstance = item["sai_instance"]
                 if index < anchor_index:
-                    self._timing(self, index, item, "Before", this_sai.id, anchor_id)
+                    self._timing(self, index, item, "Before", this_sai.id, anchor.id)
                 elif index == anchor_index:
                     self._timing(
                         self, index, item, "Fixed Reference", this_sai.id, this_sai.id
                     )
                 else:
-                    self._timing(self, index, item, "After", anchor_id, this_sai.id)
+                    self._timing(self, index, item, "After", anchor.id, this_sai.id)
             self._errors.info(
                 f"Timing: {len(results)}",
                 KlassMethodLocation(self.MODULE, "_add_timing"),
@@ -297,10 +301,10 @@ class TimelineAssembler(BaseAssembler):
         table = data["final"]["table-001"]
         items = table["schedule_columns_data"]
         item: dict[str]
-        for index, item in enumerate(items):
+        for key, item in items.items():
             if item["temporal_dict"]["value"] == "1":
-                return index
-        return 0
+                return int(item["timepoint_reference"]), key
+        return 0, list[items.keys()][0]
 
     def _link_timepoints_and_activities(self, data: dict) -> None:
         try:
