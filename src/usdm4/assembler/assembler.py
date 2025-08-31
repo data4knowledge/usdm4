@@ -104,10 +104,12 @@ class Assembler:
             self._amendments_assembler.execute(data["amendments"])
 
             # Timelines data
-            self._errors.debug(
-                f"SOA:\n{data['soa']}\n", KlassMethodLocation(self.MODULE, "execute")
-            )
-            self._timeline_assembler.execute(data["soa"])
+            if "soa" in data:
+                self._errors.debug(
+                    f"SOA:\n{data['soa']}\n",
+                    KlassMethodLocation(self.MODULE, "execute"),
+                )
+                self._timeline_assembler.execute(data["soa"])
 
             # Process study design data - requires population assembler for cross-references
             self._study_design_assembler.execute(

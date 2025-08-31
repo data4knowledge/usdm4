@@ -17,7 +17,10 @@ class TimelineAssembler(BaseAssembler):
 
     def __init__(self, builder: Builder, errors: Errors):
         super().__init__(builder, errors)
-        self._timelines: list = []
+        self._timelines: list[ScheduleTimeline] = []
+        self._epochs: list[StudyEpoch] = []
+        self._encounters: list[Encounter] = []
+        self._activities: list[Activity] = []
 
     def execute(self, data: dict) -> None:
         try:
@@ -39,6 +42,18 @@ class TimelineAssembler(BaseAssembler):
     @property
     def timelines(self) -> list[ScheduleTimeline]:
         return self._timelines
+
+    @property
+    def encounters(self) -> list[Encounter]:
+        return self._encounters
+
+    @property
+    def epochs(self) -> list[StudyEpoch]:
+        return self._epochs
+
+    @property
+    def activities(self) -> list[Activity]:
+        return self._activities
 
     def _add_epochs(self, data) -> list[ScheduledInstance]:
         try:

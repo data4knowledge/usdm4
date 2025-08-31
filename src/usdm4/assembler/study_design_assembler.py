@@ -89,24 +89,22 @@ class StudyDesignAssembler(BaseAssembler):
             self._study_design = self._builder.create(
                 InterventionalStudyDesign,
                 {
-                    "name": self._label_to_name(
-                        data["label"]
-                    ),  # Convert label to internal name format
-                    "label": data["label"],  # Human-readable display label
-                    "description": "A study design",  # Default description
-                    "rationale": data["rationale"],  # Design rationale from input
+                    "name": self._label_to_name(data["label"]),
+                    "label": data["label"],
+                    "description": "A study design",
+                    "rationale": data["rationale"],
                     "model": intervention_model_code,  # Default to parallel study model
                     "arms": [],  # Empty arms list (future enhancement)
                     "studyCells": [],  # Empty cells list (future enhancement)
-                    "epochs": [],  # Empty epochs list (future enhancement)
-                    "population": population_assembler.population,  # Reference to study population
+                    "epochs": timeline_assembler.epochs,
+                    "encounter": timeline_assembler.encounters,
+                    "activities": timeline_assembler.activities,
+                    "population": population_assembler.population,
                     "objectives": [],  # Empty objectives list (future enhancement)
                     "estimands": [],  # Empty estimands list (future enhancement)
                     "studyInterventions": [],  # Empty interventions list (future enhancement)
                     "analysisPopulations": [],  # Empty analysis populations list (future enhancement)
-                    "studyPhase": self._encoder.phase(
-                        data["trial_phase"]
-                    ),  # Clinical trial phase from input
+                    "studyPhase": self._encoder.phase(data["trial_phase"]),
                     "scheduleTimelines": timeline_assembler.timelines,
                 },
             )
