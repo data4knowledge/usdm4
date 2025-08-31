@@ -23,26 +23,26 @@ def test_init(library):
 def test_decode_en(library):
     """Test that the decode method returns 'English' for the code 'en'."""
     result = library.decode("en")
-    assert result == "English"
+    assert result == ("en", "English")
 
 
 def test_decode_other(library):
     """Test that the decode method returns None for codes other than 'en'."""
     result = library.decode("fr")
-    assert result is None
+    assert result == (None, None)
 
 
 def test_decode_empty(library):
     """Test that the decode method returns None for an empty string."""
     result = library.decode("")
-    assert result is None
+    assert result == (None, None)
 
 
 def test_decode_none(library):
     """Test that the decode method handles None gracefully."""
     # The method might handle None by returning None instead of raising an exception
     result = library.decode(None)
-    assert result is None
+    assert result == (None, None)
 
 
 def test_load_method(library):

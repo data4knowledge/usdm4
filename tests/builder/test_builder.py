@@ -52,12 +52,7 @@ def test_cdisc_code_basic(builder):
 def test_cdisc_code_missing(builder):
     # builder = Builder(root_path())
     result = builder.cdisc_code("C12", "Dummy")
-
-    # assert isinstance(result, Code)
-    assert result.code == "C12"
-    assert result.decode == "Dummy"
-    assert result.codeSystem == builder._cdisc_code_system
-    assert result.codeSystemVersion == "unknown"
+    assert result is None
 
 
 def test_alias_code_basic(builder):
@@ -264,23 +259,8 @@ def test_iso639_code_valid(builder):
 
 def test_iso639_code_invalid(builder):
     """Test that the iso639_code method handles invalid language codes correctly."""
-    # Mock the decode method to return an empty string for invalid codes
-    original_decode = builder.iso639_library.decode
-    builder.iso639_library.decode = lambda code: "" if code == "xx" else "English"
-
-    try:
-        result = builder.iso639_code("xx")  # Non-existent language code
-
-        assert hasattr(result, "code")
-        assert result.code == "xx"
-        assert result.codeSystem == builder.iso639_library.system
-        assert result.codeSystemVersion == builder.iso639_library.version
-        assert (
-            result.decode == ""
-        )  # The decode method returns an empty string for invalid codes
-    finally:
-        # Restore the original method
-        builder.iso639_library.decode = original_decode
+    code = builder.iso639_code("xx")  # Non-existent language code
+    assert code is None
 
 
 def test_iso3166_code_valid(builder):
