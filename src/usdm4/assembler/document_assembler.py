@@ -96,7 +96,6 @@ class DocumentAssembler(BaseAssembler):
             # Create governance date from document version date
             self._create_date(document)
 
-            protocol_status_code = self._builder.cdisc_code("C85255", "Draft")
             # Create document version object with version and status
             self._document_version = self._builder.create(
                 StudyDefinitionDocumentVersion,

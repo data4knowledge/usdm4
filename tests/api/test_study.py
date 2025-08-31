@@ -56,7 +56,7 @@ class TestStudy:
         from src.usdm4.api.identifier import StudyIdentifier
         from src.usdm4.api.study_title import StudyTitle
 
-        version_status = Code(
+        _ = Code(
             id="status1",
             code="ACTIVE",
             codeSystem="STATUS_SYSTEM",
@@ -108,7 +108,7 @@ class TestStudy:
         )
 
         # Create a study definition document
-        doc_status = Code(
+        _ = Code(
             id="doc_status1",
             code="FINAL",
             codeSystem="DOC_STATUS",
@@ -370,7 +370,7 @@ class TestStudy:
     def test_complex_scenario(self):
         """Test complex scenario with multiple versions and documents."""
         # Create multiple versions
-        version_status = Code(
+        _ = Code(
             id="status1",
             code="ACTIVE",
             codeSystem="STATUS_SYSTEM",

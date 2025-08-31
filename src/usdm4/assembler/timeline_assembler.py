@@ -78,7 +78,10 @@ class TimelineAssembler(BaseAssembler):
                     key = instance_keys[index]
                     instances[key]["epoch_instance"] = epoch
                 else:
-                    self._errors.warning(f"Cannot align Epoch with timepoint {index + 1}", KlassMethodLocation(self.MODULE, "_add_epochs"))
+                    self._errors.warning(
+                        f"Cannot align Epoch with timepoint {index + 1}",
+                        KlassMethodLocation(self.MODULE, "_add_epochs"),
+                    )
             self._errors.info(
                 f"Epochs: {len(results)}",
                 KlassMethodLocation(self.MODULE, "_add_epochs"),
@@ -86,7 +89,7 @@ class TimelineAssembler(BaseAssembler):
             return results
         except Exception as e:
             self._errors.exception(
-                f"Error creating Epochs",
+                "Error creating Epochs",
                 e,
                 KlassMethodLocation(self.MODULE, "_add_epochs"),
             )
@@ -96,7 +99,7 @@ class TimelineAssembler(BaseAssembler):
             results = []
             table = data["final"]["table-001"]
             instances: dict = table["schedule_columns_data"]
-            instance_keys = list(instances.keys())
+            # instance_keys = list(instances.keys())
             items: dict = table["grid_columns"]
             print(f"ENCOUNTER ITEMS: {items}")
             item: dict[str]
@@ -134,7 +137,7 @@ class TimelineAssembler(BaseAssembler):
             return results
         except Exception as e:
             self._errors.exception(
-                f"Error creating Encounters",
+                "Error creating Encounters",
                 e,
                 KlassMethodLocation(self.MODULE, "_add_encounters"),
             )
@@ -168,7 +171,7 @@ class TimelineAssembler(BaseAssembler):
         except Exception as e:
             print(f"ACTIVITIES EXCEPTION: {e}, {traceback.format_exc()}")
             self._errors.exception(
-                f"Error creating Activities",
+                "Error creating Activities",
                 e,
                 KlassMethodLocation(self.MODULE, "_add_activities"),
             )
@@ -204,7 +207,7 @@ class TimelineAssembler(BaseAssembler):
         except Exception as e:
             print(f"INSTANCES EXCEPTION: {e}, {traceback.format_exc()}")
             self._errors.exception(
-                f"Error creating Scheduled Activity Instances",
+                "Error creating Scheduled Activity Instances",
                 e,
                 KlassMethodLocation(self.MODULE, "_add_instances"),
             )
@@ -235,7 +238,7 @@ class TimelineAssembler(BaseAssembler):
             return results
         except Exception as e:
             self._errors.exception(
-                f"Error creating timings",
+                "Error creating timings",
                 e,
                 KlassMethodLocation(self.MODULE, "_add_timing"),
             )
@@ -269,7 +272,7 @@ class TimelineAssembler(BaseAssembler):
             return item
         except Exception as e:
             self._errors.exception(
-                f"Error creating individual timing",
+                "Error creating individual timing",
                 e,
                 KlassMethodLocation(self.MODULE, "_timing"),
             )
@@ -301,7 +304,7 @@ class TimelineAssembler(BaseAssembler):
                 sai_instance.activityIds.append(activity.id)
         except Exception as e:
             self._errors.exception(
-                f"Error linking timepoints and activities",
+                "Error linking timepoints and activities",
                 e,
                 KlassMethodLocation(self.MODULE, "_link_timepoints_and_activities"),
             )
@@ -348,7 +351,7 @@ class TimelineAssembler(BaseAssembler):
         except Exception as e:
             print(f"TIMELINE EXCEPTION: {e}, {traceback.format_exc()}")
             self._errors.exception(
-                f"Error creating timeline",
+                "Error creating timeline",
                 e,
                 KlassMethodLocation(self.MODULE, "_add_timeline"),
             )

@@ -105,7 +105,6 @@ class StudyAssembler(BaseAssembler):
                 ],  # Document references
                 "studyIdentifiers": identification_assembler.identifiers,  # Study identifiers
                 "organizations": identification_assembler.organizations,  # Sponsor/organization info
-                "amendments": [],  # Empty amendments list (future use)
                 "eligibilityCriterionItems": population_assembler.criteria_items,
                 "narrativeContentItems": document_assembler.contents,
                 "amendments": [amendments_assembler.amendment]
