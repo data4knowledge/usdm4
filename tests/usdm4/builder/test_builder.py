@@ -4,13 +4,13 @@ import pytest
 from simple_error_log.errors import Errors
 from src.usdm4.builder.builder import Builder
 from src.usdm4.api.code import Code
-from tests.helpers.files import write_json_file, read_json_file
+from tests.usdm4.helpers.files import write_json_file, read_json_file
 
 SAVE = False
 
 
 def root_path():
-    base = pathlib.Path(__file__).parent.parent.parent.resolve()
+    base = pathlib.Path(__file__).parent.parent.parent.parent.resolve()
     return os.path.join(base, "src/usdm4")
 
 
@@ -34,7 +34,7 @@ def test_bc(builder):
 
 
 def test_seed(builder):
-    builder.seed("tests/test_files/builder/seed_1.json")
+    builder.seed("tests/usdm4/test_files/builder/seed_1.json")
     print(f"SEED: {builder._id_manager._id_index}")
 
 
@@ -821,7 +821,7 @@ def test_add_id_direct_call(builder):
 def test_add_id_line_250_coverage(builder):
     """Test to specifically cover line 250 in _add_id method."""
     # Use the seed method to populate the id manager first
-    builder.seed("tests/test_files/builder/seed_1.json")
+    builder.seed("tests/usdm4/test_files/builder/seed_1.json")
 
     # Create test data that should work with the seeded data
     test_data = {"instanceType": "Study", "id": "new_study_id"}

@@ -5,7 +5,7 @@ from src.usdm4.ct.iso.iso3166.library import Library
 
 
 def root_path():
-    base = pathlib.Path(__file__).parent.parent.parent.parent.parent.resolve()
+    base = pathlib.Path(__file__).parent.parent.parent.parent.parent.parent.resolve()
     return os.path.join(base, "src/usdm4")
 
 

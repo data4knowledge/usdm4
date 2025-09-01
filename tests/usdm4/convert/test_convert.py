@@ -1,12 +1,12 @@
 from usdm4 import USDM4
-from tests.helpers.files import (
+from tests.usdm4.helpers.files import (
     read_json_file,
     write_json_file,
     read_yaml_file,
     write_yaml_file,
     file_path,
 )
-from tests.helpers.rule_error import fix_timestamp
+from tests.usdm4.helpers.rule_error import fix_timestamp
 
 
 SAVE = False

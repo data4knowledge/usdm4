@@ -4,9 +4,9 @@ import yaml
 
 def file_path(sub_dir: str, filename: str) -> str:
     return (
-        f"tests/test_files/{sub_dir}/{filename}"
+        f"tests/usdm4/test_files/{sub_dir}/{filename}"
         if sub_dir
-        else f"tests/test_files/{filename}"
+        else f"tests/usdm4/test_files/{filename}"
     )
 
 

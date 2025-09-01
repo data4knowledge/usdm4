@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import Mock
 from usdm4.rules.library.rule_ddf00105 import RuleDDF00105
 from usdm3.rules.library.rule_template import RuleTemplate
-from tests.helpers.rule_error import error_timestamp
+from tests.usdm4.helpers.rule_error import error_timestamp
 
 
 @pytest.fixture

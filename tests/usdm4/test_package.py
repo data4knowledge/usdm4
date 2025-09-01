@@ -1,6 +1,6 @@
 from src.usdm4 import USDM4
 from simple_error_log.errors import Errors
-from tests.helpers.files import write_json_file, read_json_file
+from tests.usdm4.helpers.files import write_json_file, read_json_file
 
 SAVE = False
 
@@ -12,25 +12,25 @@ def dump_validation_result(result):
 
 
 def test_validate(tmp_path):
-    result = USDM4().validate("tests/test_files/test_validate.json")
+    result = USDM4().validate("tests/usdm4/test_files/test_validate.json")
     dump_validation_result(result)
     assert result.passed_or_not_implemented()
 
 
 def test_validate_error():
-    result = USDM4().validate("tests/test_files/test_validate_error.json")
+    result = USDM4().validate("tests/usdm4/test_files/test_validate_error.json")
     dump_validation_result(result)
     assert not result.passed_or_not_implemented()
 
 
 def test_example_1():
-    test_file = "tests/test_files/package/example_1.json"
+    test_file = "tests/usdm4/test_files/package/example_1.json"
     result = USDM4().validate(test_file)
     assert not result.passed_or_not_implemented()
 
 
 def test_example_2():
-    test_file = "tests/test_files/package/example_2.json"
+    test_file = "tests/usdm4/test_files/package/example_2.json"
     result = USDM4().validate(test_file)
     dump_validation_result(result)
     assert result.passed_or_not_implemented()
