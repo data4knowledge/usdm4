@@ -36,7 +36,7 @@ class TestBaseAssemblerInitialization:
     def test_init_with_valid_parameters(self, builder, errors):
         """Test BaseAssembler initialization with valid parameters."""
         assembler = BaseAssembler(builder, errors)
-        
+
         assert assembler._builder is builder
         assert assembler._errors is errors
         assert assembler.MODULE == "usdm4.assembler.base_assembler.BaseAssembler"
@@ -44,24 +44,22 @@ class TestBaseAssemblerInitialization:
     def test_init_stores_builder_reference(self, builder, errors):
         """Test that BaseAssembler stores the builder reference correctly."""
         assembler = BaseAssembler(builder, errors)
-        
+
         # Verify the builder reference is stored and accessible
-        assert hasattr(assembler, '_builder')
+        assert hasattr(assembler, "_builder")
         assert assembler._builder is builder
         assert isinstance(assembler._builder, Builder)
 
     def test_init_stores_errors_reference(self, builder, errors):
         """Test that BaseAssembler stores the errors reference correctly."""
         assembler = BaseAssembler(builder, errors)
-        
+
         # Verify the errors reference is stored and accessible
-        assert hasattr(assembler, '_errors')
+        assert hasattr(assembler, "_errors")
         assert assembler._errors is errors
         assert isinstance(assembler._errors, Errors)
 
     def test_module_constant(self, base_assembler):
         """Test that the MODULE constant is set correctly."""
-        assert hasattr(BaseAssembler, 'MODULE')
+        assert hasattr(BaseAssembler, "MODULE")
         assert BaseAssembler.MODULE == "usdm4.assembler.base_assembler.BaseAssembler"
-
-

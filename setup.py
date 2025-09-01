@@ -16,7 +16,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=[
-        "usdm3==0.12.1", 
+        "usdm3==0.12.1",
         "simple_error_log>=0.6.0",
         "python-dateutil==2.9.0.post0",
     ],

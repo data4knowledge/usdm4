@@ -4,11 +4,9 @@ import pytest
 from simple_error_log.errors import Errors
 from src.usdm4.assembler.document_assembler import DocumentAssembler
 from src.usdm4.builder.builder import Builder
-from src.usdm4.api.study_definition_document import StudyDefinitionDocument
-from src.usdm4.api.study_definition_document_version import StudyDefinitionDocumentVersion
-from src.usdm4.api.narrative_content import NarrativeContent, NarrativeContentItem
-from src.usdm4.api.governance_date import GovernanceDate
-from src.usdm4.api.geographic_scope import GeographicScope
+from src.usdm4.api.study_definition_document_version import (
+    StudyDefinitionDocumentVersion,
+)
 
 
 def root_path():
@@ -43,11 +41,13 @@ class TestDocumentAssemblerInitialization:
     def test_init_with_valid_parameters(self, builder, errors):
         """Test DocumentAssembler initialization with valid parameters."""
         assembler = DocumentAssembler(builder, errors)
-        
+
         assert assembler._builder is builder
         assert assembler._errors is errors
-        assert assembler.MODULE == "usdm4.assembler.document_assembler.DocumentAssembler"
-        
+        assert (
+            assembler.MODULE == "usdm4.assembler.document_assembler.DocumentAssembler"
+        )
+
         # Test initial state
         assert assembler._document is None
         assert assembler._document_version is None
@@ -57,8 +57,14 @@ class TestDocumentAssemblerInitialization:
 
     def test_class_constants(self, document_assembler):
         """Test that class constants are properly defined."""
-        assert document_assembler.MODULE == "usdm4.assembler.document_assembler.DocumentAssembler"
-        assert document_assembler.DIV_OPEN_NS == '<div xmlns="http://www.w3.org/1999/xhtml">'
+        assert (
+            document_assembler.MODULE
+            == "usdm4.assembler.document_assembler.DocumentAssembler"
+        )
+        assert (
+            document_assembler.DIV_OPEN_NS
+            == '<div xmlns="http://www.w3.org/1999/xhtml">'
+        )
         assert document_assembler.DIV_CLOSE == "</div>"
 
     def test_properties_initial_state(self, document_assembler):
@@ -71,8 +77,8 @@ class TestDocumentAssemblerInitialization:
     def test_encoder_initialization(self, document_assembler):
         """Test that encoder is properly initialized."""
         assert document_assembler._encoder is not None
-        assert hasattr(document_assembler._encoder, '_builder')
-        assert hasattr(document_assembler._encoder, '_errors')
+        assert hasattr(document_assembler._encoder, "_builder")
+        assert hasattr(document_assembler._encoder, "_errors")
 
 
 class TestDocumentAssemblerValidData:
@@ -86,38 +92,38 @@ class TestDocumentAssemblerValidData:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Standard Protocol Template",
-                "version_date": "2024-01-15"
+                "version_date": "2024-01-15",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Introduction",
-                    "text": "This is the introduction section."
+                    "text": "This is the introduction section.",
                 }
-            ]
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Should have created document and document version
         assert document_assembler.document is not None
         assert document_assembler.document_version is not None
-        
+
         # Verify document properties
         document = document_assembler.document
         assert document.label == "Test Protocol Document"
         assert document.name == "TEST-PROTOCOL-DOCUMENT"  # _label_to_name conversion
         assert document.description == "Protocol Document"
         assert document.templateName == "Standard Protocol Template"
-        
+
         # Verify document version properties
         doc_version = document_assembler.document_version
         assert doc_version.version == "1.0"
-        
+
         # Should have created narrative content
         assert len(document_assembler.contents) == 1
         assert len(doc_version.contents) == 1
-        
+
         # Should have created governance date
         assert len(document_assembler.dates) == 1
 
@@ -129,33 +135,33 @@ class TestDocumentAssemblerValidData:
                 "version": "2.0",
                 "status": "Final",
                 "template": "Multi-Section Template",
-                "version_date": "2024-02-20"
+                "version_date": "2024-02-20",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Introduction",
-                    "text": "Introduction content."
+                    "text": "Introduction content.",
                 },
                 {
                     "section_number": "2",
                     "section_title": "Objectives",
-                    "text": "Objectives content."
+                    "text": "Objectives content.",
                 },
                 {
                     "section_number": "3",
                     "section_title": "Methods",
-                    "text": "Methods content."
-                }
-            ]
+                    "text": "Methods content.",
+                },
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Should have created all sections
         assert len(document_assembler.contents) == 3
         assert len(document_assembler.document_version.contents) == 3
-        
+
         # Verify section content
         content_items = document_assembler.contents
         assert any("Introduction content." in item.text for item in content_items)
@@ -170,52 +176,56 @@ class TestDocumentAssemblerValidData:
                 "version": "1.5",
                 "status": "Draft",
                 "template": "Hierarchical Template",
-                "version_date": "2024-03-10"
+                "version_date": "2024-03-10",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Introduction",
-                    "text": "Main introduction."
+                    "text": "Main introduction.",
                 },
                 {
                     "section_number": "1.1",
                     "section_title": "Background",
-                    "text": "Background information."
+                    "text": "Background information.",
                 },
                 {
                     "section_number": "1.2",
                     "section_title": "Rationale",
-                    "text": "Study rationale."
+                    "text": "Study rationale.",
                 },
                 {
                     "section_number": "2",
                     "section_title": "Objectives",
-                    "text": "Study objectives."
+                    "text": "Study objectives.",
                 },
                 {
                     "section_number": "2.1",
                     "section_title": "Primary Objectives",
-                    "text": "Primary objectives content."
-                }
-            ]
+                    "text": "Primary objectives content.",
+                },
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Should have created all sections
         assert len(document_assembler.contents) == 5
         assert len(document_assembler.document_version.contents) == 5
-        
+
         # Verify hierarchical structure exists
         narrative_contents = document_assembler.document_version.contents
-        
+
         # Find level 1 sections
-        level_1_sections = [nc for nc in narrative_contents if nc.sectionNumber in ["1", "2"]]
+        level_1_sections = [
+            nc for nc in narrative_contents if nc.sectionNumber in ["1", "2"]
+        ]
         assert len(level_1_sections) == 2
-        
+
         # Verify child relationships exist
-        intro_section = next((nc for nc in level_1_sections if nc.sectionNumber == "1"), None)
+        intro_section = next(
+            (nc for nc in level_1_sections if nc.sectionNumber == "1"), None
+        )
         assert intro_section is not None
         assert len(intro_section.childIds) == 2  # Should have 1.1 and 1.2 as children
 
@@ -227,22 +237,22 @@ class TestDocumentAssemblerValidData:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "HTML Template",
-                "version_date": "2024-04-05"
+                "version_date": "2024-04-05",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Introduction",
-                    "text": "<p>This is <strong>bold</strong> text with <em>emphasis</em>.</p><ul><li>Item 1</li><li>Item 2</li></ul>"
+                    "text": "<p>This is <strong>bold</strong> text with <em>emphasis</em>.</p><ul><li>Item 1</li><li>Item 2</li></ul>",
                 }
-            ]
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Should have wrapped HTML content in div with namespace
         content_item = document_assembler.contents[0]
-        expected_text = f'{document_assembler.DIV_OPEN_NS}<p>This is <strong>bold</strong> text with <em>emphasis</em>.</p><ul><li>Item 1</li><li>Item 2</li></ul>{document_assembler.DIV_CLOSE}'
+        expected_text = f"{document_assembler.DIV_OPEN_NS}<p>This is <strong>bold</strong> text with <em>emphasis</em>.</p><ul><li>Item 1</li><li>Item 2</li></ul>{document_assembler.DIV_CLOSE}"
         assert content_item.text == expected_text
 
     def test_execute_with_empty_section_fields(self, document_assembler):
@@ -253,35 +263,35 @@ class TestDocumentAssemblerValidData:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Empty Template",
-                "version_date": "2024-05-01"
+                "version_date": "2024-05-01",
             },
             "sections": [
                 {
                     "section_number": "",
                     "section_title": "",
-                    "text": "Content without section number or title."
+                    "text": "Content without section number or title.",
                 },
                 {
                     "section_number": "1",
                     "section_title": "Valid Section",
-                    "text": "Valid section content."
-                }
-            ]
+                    "text": "Valid section content.",
+                },
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Should handle empty fields
         assert len(document_assembler.contents) == 2
         narrative_contents = document_assembler.document_version.contents
-        
+
         # First section should have empty section number and title
         first_section = narrative_contents[0]
         assert first_section.sectionNumber == ""
         assert first_section.sectionTitle == ""
         assert first_section.displaySectionNumber is False
         assert first_section.displaySectionTitle is False
-        
+
         # Second section should have valid values
         second_section = narrative_contents[1]
         assert second_section.sectionNumber == "1"
@@ -297,69 +307,69 @@ class TestDocumentAssemblerValidData:
                 "version": "2.1",
                 "status": "Final",
                 "template": "Complex Template",
-                "version_date": "2024-06-15"
+                "version_date": "2024-06-15",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Introduction",
-                    "text": "Introduction content."
+                    "text": "Introduction content.",
                 },
                 {
                     "section_number": "1.1",
                     "section_title": "Background",
-                    "text": "Background content."
+                    "text": "Background content.",
                 },
                 {
                     "section_number": "1.1.1",
                     "section_title": "Disease Overview",
-                    "text": "Disease overview content."
+                    "text": "Disease overview content.",
                 },
                 {
                     "section_number": "1.1.2",
                     "section_title": "Current Treatments",
-                    "text": "Current treatments content."
+                    "text": "Current treatments content.",
                 },
                 {
                     "section_number": "1.2",
                     "section_title": "Rationale",
-                    "text": "Rationale content."
+                    "text": "Rationale content.",
                 },
                 {
                     "section_number": "2",
                     "section_title": "Objectives",
-                    "text": "Objectives content."
-                }
-            ]
+                    "text": "Objectives content.",
+                },
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Should have created all sections
         assert len(document_assembler.contents) == 6
-        
+
         # Verify complex hierarchy
         narrative_contents = document_assembler.document_version.contents
-        
+
         # Find sections by number
         sections_by_number = {nc.sectionNumber: nc for nc in narrative_contents}
-        
+
         # Verify level 1 sections
         assert "1" in sections_by_number
         assert "2" in sections_by_number
-        
+
         # Verify level 2 sections
         assert "1.1" in sections_by_number
         assert "1.2" in sections_by_number
-        
+
         # Verify level 3 sections
         assert "1.1.1" in sections_by_number
         assert "1.1.2" in sections_by_number
-        
+
         # Verify parent-child relationships
         intro_section = sections_by_number["1"]
         assert len(intro_section.childIds) == 2  # 1.1 and 1.2
-        
+
         background_section = sections_by_number["1.1"]
         assert len(background_section.childIds) == 2  # 1.1.1 and 1.1.2
 
@@ -370,14 +380,14 @@ class TestDocumentAssemblerInvalidData:
     def test_execute_with_empty_data(self, document_assembler):
         """Test execute with empty data dictionary."""
         data = {}
-        
+
         # Should handle empty data gracefully (may raise exception)
         try:
             document_assembler.execute(data)
         except KeyError:
             # Expected behavior - missing required keys
             pass
-        
+
         # Should not have created objects
         assert document_assembler.document is None
         assert document_assembler.document_version is None
@@ -389,11 +399,11 @@ class TestDocumentAssemblerInvalidData:
                 {
                     "section_number": "1",
                     "section_title": "Test Section",
-                    "text": "Test content."
+                    "text": "Test content.",
                 }
             ]
         }
-        
+
         # Should handle missing document key (may raise exception)
         try:
             document_assembler.execute(data)
@@ -409,10 +419,10 @@ class TestDocumentAssemblerInvalidData:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Test Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             }
         }
-        
+
         # Should handle missing sections key (may raise exception)
         try:
             document_assembler.execute(data)
@@ -427,9 +437,9 @@ class TestDocumentAssemblerInvalidData:
                 "label": "Test Protocol"
                 # Missing version, status, template, version_date
             },
-            "sections": []
+            "sections": [],
         }
-        
+
         # Should handle missing document fields (may raise exception)
         try:
             document_assembler.execute(data)
@@ -445,16 +455,16 @@ class TestDocumentAssemblerInvalidData:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Test Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
                 {
                     "section_number": "1"
                     # Missing section_title and text
                 }
-            ]
+            ],
         }
-        
+
         # Should handle missing section fields (may raise exception)
         try:
             document_assembler.execute(data)
@@ -470,19 +480,19 @@ class TestDocumentAssemblerInvalidData:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Test Template",
-                "version_date": "invalid-date-format"
+                "version_date": "invalid-date-format",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Test Section",
-                    "text": "Test content."
+                    "text": "Test content.",
                 }
-            ]
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Should handle invalid date format gracefully
         # Document and version should still be created
         assert document_assembler.document is not None
@@ -498,17 +508,13 @@ class TestDocumentAssemblerInvalidData:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Test Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
-                {
-                    "section_number": "1",
-                    "section_title": None,
-                    "text": "Test content."
-                }
-            ]
+                {"section_number": "1", "section_title": None, "text": "Test content."}
+            ],
         }
-        
+
         # Should handle None values (may raise exception or handle gracefully)
         try:
             document_assembler.execute(data)
@@ -524,13 +530,13 @@ class TestDocumentAssemblerInvalidData:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Test Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
-            "sections": []
+            "sections": [],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Should handle empty sections list
         assert document_assembler.document is not None
         assert document_assembler.document_version is not None
@@ -549,19 +555,19 @@ class TestDocumentAssemblerEdgeCases:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Unicode Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Introduction 介绍",
-                    "text": "Content with unicode: 测试内容 🧬💊 français español"
+                    "text": "Content with unicode: 测试内容 🧬💊 français español",
                 }
-            ]
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Should handle unicode content
         assert document_assembler.document.label == "Unicode Protocol 测试"
         content_item = document_assembler.contents[0]
@@ -576,25 +582,27 @@ class TestDocumentAssemblerEdgeCases:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Long Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Long Section",
-                    "text": long_text
+                    "text": long_text,
                 }
-            ]
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Should handle very long content
         assert document_assembler.document is not None
         content_item = document_assembler.contents[0]
         assert long_text in content_item.text
 
-    def test_execute_with_special_characters_in_section_numbers(self, document_assembler):
+    def test_execute_with_special_characters_in_section_numbers(
+        self, document_assembler
+    ):
         """Test execute with special characters in section numbers."""
         data = {
             "document": {
@@ -602,24 +610,24 @@ class TestDocumentAssemblerEdgeCases:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Special Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
                 {
                     "section_number": "1.1.a",
                     "section_title": "Subsection A",
-                    "text": "Subsection content."
+                    "text": "Subsection content.",
                 },
                 {
                     "section_number": "1.1.b",
                     "section_title": "Subsection B",
-                    "text": "Subsection content."
-                }
-            ]
+                    "text": "Subsection content.",
+                },
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Should handle special characters in section numbers
         # Note: These sections may not be processed if they don't match the expected hierarchy
         # The algorithm expects level 1 sections first, but these are level 3 sections
@@ -636,32 +644,40 @@ class TestDocumentAssemblerEdgeCases:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Dot Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
                 {
                     "section_number": "1.",
                     "section_title": "Section One",
-                    "text": "Section one content."
+                    "text": "Section one content.",
                 },
                 {
                     "section_number": "1.1.",
                     "section_title": "Subsection One One",
-                    "text": "Subsection content."
-                }
-            ]
+                    "text": "Subsection content.",
+                },
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Should handle section numbers with trailing dots
         assert len(document_assembler.contents) == 2
         narrative_contents = document_assembler.document_version.contents
-        
+
         # Verify hierarchy is calculated correctly (dots should be stripped for level calculation)
-        level_1_sections = [nc for nc in narrative_contents if len(nc.sectionNumber.rstrip('.').split('.')) == 1]
-        level_2_sections = [nc for nc in narrative_contents if len(nc.sectionNumber.rstrip('.').split('.')) == 2]
-        
+        level_1_sections = [
+            nc
+            for nc in narrative_contents
+            if len(nc.sectionNumber.rstrip(".").split(".")) == 1
+        ]
+        level_2_sections = [
+            nc
+            for nc in narrative_contents
+            if len(nc.sectionNumber.rstrip(".").split(".")) == 2
+        ]
+
         assert len(level_1_sections) == 1
         assert len(level_2_sections) == 1
 
@@ -673,43 +689,43 @@ class TestDocumentAssemblerEdgeCases:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Mixed Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Introduction",
-                    "text": "Introduction content."
+                    "text": "Introduction content.",
                 },
                 {
                     "section_number": "1.1",
                     "section_title": "Background",
-                    "text": "Background content."
+                    "text": "Background content.",
                 },
                 {
                     "section_number": "1.1.1",
                     "section_title": "History",
-                    "text": "History content."
+                    "text": "History content.",
                 },
                 {
                     "section_number": "2",
                     "section_title": "Methods",
-                    "text": "Methods content."
+                    "text": "Methods content.",
                 },
                 {
                     "section_number": "2.a",
                     "section_title": "Method A",
-                    "text": "Method A content."
-                }
-            ]
+                    "text": "Method A content.",
+                },
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Should handle mixed formats
         assert len(document_assembler.contents) == 5
         narrative_contents = document_assembler.document_version.contents
-        
+
         # Verify all sections were created
         section_numbers = [nc.sectionNumber for nc in narrative_contents]
         expected_numbers = ["1", "1.1", "1.1.1", "2", "2.a"]
@@ -724,34 +740,34 @@ class TestDocumentAssemblerEdgeCases:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Out of Order Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Introduction",
-                    "text": "Introduction content."
+                    "text": "Introduction content.",
                 },
                 {
                     "section_number": "1.2",
                     "section_title": "Rationale",
-                    "text": "Rationale content."
+                    "text": "Rationale content.",
                 },
                 {
                     "section_number": "1.1",
                     "section_title": "Background",
-                    "text": "Background content."
+                    "text": "Background content.",
                 },
                 {
                     "section_number": "2",
                     "section_title": "Methods",
-                    "text": "Methods content."
-                }
-            ]
+                    "text": "Methods content.",
+                },
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Should process sections in the order provided
         assert len(document_assembler.contents) == 4
         # The hierarchy building algorithm should handle out-of-order sections
@@ -767,41 +783,37 @@ class TestDocumentAssemblerPrivateMethods:
         assert document_assembler._section_level({"section_number": "1.1"}) == 2
         assert document_assembler._section_level({"section_number": "1.1.1"}) == 3
         assert document_assembler._section_level({"section_number": "1.1.1.1"}) == 4
-        
+
         # Test section numbers with trailing dots
         assert document_assembler._section_level({"section_number": "1."}) == 1
         assert document_assembler._section_level({"section_number": "1.1."}) == 2
         assert document_assembler._section_level({"section_number": "1.1.1."}) == 3
-        
+
         # Test section numbers with letters
         assert document_assembler._section_level({"section_number": "1.a"}) == 2
         assert document_assembler._section_level({"section_number": "1.1.a"}) == 3
 
     def test_create_date_with_valid_date(self, document_assembler):
         """Test _create_date with valid date."""
-        data = {
-            "version_date": "2024-01-15"
-        }
-        
+        data = {"version_date": "2024-01-15"}
+
         document_assembler._create_date(data)
-        
+
         # Should have created a governance date
         assert len(document_assembler.dates) == 1
         date = document_assembler.dates[0]
         assert date.name == "PROTOCOL-DATE"
-        assert hasattr(date, 'dateValue')
-        assert hasattr(date, 'type')
-        assert hasattr(date, 'geographicScopes')
+        assert hasattr(date, "dateValue")
+        assert hasattr(date, "type")
+        assert hasattr(date, "geographicScopes")
 
     def test_create_date_with_invalid_date(self, document_assembler, errors):
         """Test _create_date with invalid date format."""
-        data = {
-            "version_date": "invalid-date"
-        }
-        
+        data = {"version_date": "invalid-date"}
+
         initial_error_count = errors.error_count()
         document_assembler._create_date(data)
-        
+
         # Should have logged a warning and not created a date
         assert len(document_assembler.dates) == 0
         # Warning should have been logged (warnings don't increment error_count)
@@ -809,7 +821,7 @@ class TestDocumentAssemblerPrivateMethods:
     def test_create_date_with_missing_date(self, document_assembler, errors):
         """Test _create_date with missing version_date."""
         data = {}
-        
+
         # Should handle missing date gracefully (may raise exception)
         try:
             document_assembler._create_date(data)
@@ -822,29 +834,30 @@ class TestDocumentAssemblerPrivateMethods:
         # Set up document version first - use encoder to get proper status
         status_code = document_assembler._encoder.document_status("Draft")
         document_assembler._document_version = document_assembler._builder.create(
-            StudyDefinitionDocumentVersion,
-            {"version": "1.0", "status": status_code}
+            StudyDefinitionDocumentVersion, {"version": "1.0", "status": status_code}
         )
-        
+
         # Skip test if document version creation failed
         if document_assembler._document_version is None:
-            pytest.skip("Document version creation failed - likely due to Builder/API issues")
-        
+            pytest.skip(
+                "Document version creation failed - likely due to Builder/API issues"
+            )
+
         sections = [
             {
                 "section_number": "1",
                 "section_title": "Introduction",
-                "text": "Introduction content."
+                "text": "Introduction content.",
             },
             {
                 "section_number": "2",
                 "section_title": "Methods",
-                "text": "Methods content."
-            }
+                "text": "Methods content.",
+            },
         ]
-        
+
         result_index = document_assembler._section_to_narrative(None, sections, 0, 1)
-        
+
         # Should have processed all sections
         assert result_index == 2
         assert len(document_assembler.contents) == 2
@@ -855,42 +868,45 @@ class TestDocumentAssemblerPrivateMethods:
         # Set up document version first - use encoder to get proper status
         status_code = document_assembler._encoder.document_status("Draft")
         document_assembler._document_version = document_assembler._builder.create(
-            StudyDefinitionDocumentVersion,
-            {"version": "1.0", "status": status_code}
+            StudyDefinitionDocumentVersion, {"version": "1.0", "status": status_code}
         )
-        
+
         # Skip test if document version creation failed
         if document_assembler._document_version is None:
-            pytest.skip("Document version creation failed - likely due to Builder/API issues")
-        
+            pytest.skip(
+                "Document version creation failed - likely due to Builder/API issues"
+            )
+
         sections = [
             {
                 "section_number": "1",
                 "section_title": "Introduction",
-                "text": "Introduction content."
+                "text": "Introduction content.",
             },
             {
                 "section_number": "1.1",
                 "section_title": "Background",
-                "text": "Background content."
+                "text": "Background content.",
             },
             {
                 "section_number": "2",
                 "section_title": "Methods",
-                "text": "Methods content."
-            }
+                "text": "Methods content.",
+            },
         ]
-        
+
         result_index = document_assembler._section_to_narrative(None, sections, 0, 1)
-        
+
         # Should have processed all sections
         assert result_index == 3
         assert len(document_assembler.contents) == 3
         assert len(document_assembler._document_version.contents) == 3
-        
+
         # Verify hierarchical structure
         narrative_contents = document_assembler._document_version.contents
-        intro_section = next((nc for nc in narrative_contents if nc.sectionNumber == "1"), None)
+        intro_section = next(
+            (nc for nc in narrative_contents if nc.sectionNumber == "1"), None
+        )
         assert intro_section is not None
         assert len(intro_section.childIds) == 1  # Should have 1.1 as child
 
@@ -907,23 +923,23 @@ class TestDocumentAssemblerStateManagement:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "First Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "First Section",
-                    "text": "First content."
+                    "text": "First content.",
                 }
-            ]
+            ],
         }
         document_assembler.execute(data1)
         assert document_assembler.document.label == "First Protocol"
         assert len(document_assembler.contents) == 1
-        
+
         # Clear builder state to avoid cross-reference conflicts
         document_assembler._builder.clear()
-        
+
         # Second call should overwrite document but accumulate content
         data2 = {
             "document": {
@@ -931,15 +947,15 @@ class TestDocumentAssemblerStateManagement:
                 "version": "2.0",
                 "status": "Final",
                 "template": "Second Template",
-                "version_date": "2024-02-01"
+                "version_date": "2024-02-01",
             },
             "sections": [
                 {
                     "section_number": "2",  # Use different section number to avoid conflicts
                     "section_title": "Second Section",
-                    "text": "Second content."
+                    "text": "Second content.",
                 }
-            ]
+            ],
         }
         document_assembler.execute(data2)
         assert document_assembler.document.label == "Second Protocol"
@@ -954,28 +970,30 @@ class TestDocumentAssemblerStateManagement:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "State Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Test Section",
-                    "text": "Test content."
+                    "text": "Test content.",
                 }
-            ]
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Properties should reflect current state
         assert document_assembler.document is not None
         assert document_assembler.document_version is not None
         assert len(document_assembler.contents) == 1
         assert len(document_assembler.dates) == 1
-        
+
         # Properties should return the same objects
         assert document_assembler.document is document_assembler._document
-        assert document_assembler.document_version is document_assembler._document_version
+        assert (
+            document_assembler.document_version is document_assembler._document_version
+        )
         assert document_assembler.contents is document_assembler._contents
         assert document_assembler.dates is document_assembler._dates
 
@@ -991,26 +1009,26 @@ class TestDocumentAssemblerBuilderIntegration:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "CDISC Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Test Section",
-                    "text": "Test content."
+                    "text": "Test content.",
                 }
-            ]
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Should use Builder's cdisc_code method for document type and status
         document = document_assembler.document
-        assert hasattr(document, 'type')
-        assert hasattr(document, 'language')
-        
+        assert hasattr(document, "type")
+        assert hasattr(document, "language")
+
         doc_version = document_assembler.document_version
-        assert hasattr(doc_version, 'status')
+        assert hasattr(doc_version, "status")
 
     def test_builder_iso639_code_integration(self, document_assembler):
         """Test integration with Builder's ISO 639 language code functionality."""
@@ -1020,22 +1038,22 @@ class TestDocumentAssemblerBuilderIntegration:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Language Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Test Section",
-                    "text": "Test content."
+                    "text": "Test content.",
                 }
-            ]
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Should integrate with Builder's language code functionality
         document = document_assembler.document
-        assert hasattr(document, 'language')
+        assert hasattr(document, "language")
 
     def test_builder_create_method_integration(self, document_assembler):
         """Test integration with Builder's create method."""
@@ -1045,31 +1063,31 @@ class TestDocumentAssemblerBuilderIntegration:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Create Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Test Section",
-                    "text": "Test content."
+                    "text": "Test content.",
                 }
-            ]
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Should use Builder's create method to create objects
         document = document_assembler.document
-        assert hasattr(document, 'id')  # Objects created by Builder should have IDs
+        assert hasattr(document, "id")  # Objects created by Builder should have IDs
         assert document.label == "Create Test Protocol"
-        
+
         doc_version = document_assembler.document_version
-        assert hasattr(doc_version, 'id')
+        assert hasattr(doc_version, "id")
         assert doc_version.version == "1.0"
-        
+
         # Content items should also have IDs
         for content_item in document_assembler.contents:
-            assert hasattr(content_item, 'id')
+            assert hasattr(content_item, "id")
 
     def test_builder_double_link_integration(self, document_assembler):
         """Test integration with Builder's double_link method."""
@@ -1079,37 +1097,37 @@ class TestDocumentAssemblerBuilderIntegration:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Link Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "First Section",
-                    "text": "First content."
+                    "text": "First content.",
                 },
                 {
                     "section_number": "2",
                     "section_title": "Second Section",
-                    "text": "Second content."
+                    "text": "Second content.",
                 },
                 {
                     "section_number": "3",
                     "section_title": "Third Section",
-                    "text": "Third content."
-                }
-            ]
+                    "text": "Third content.",
+                },
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Should use Builder's double_link method to create sequential links
         narrative_contents = document_assembler.document_version.contents
         assert len(narrative_contents) == 3
-        
+
         # Verify sequential linking exists (previousId/nextId)
         for nc in narrative_contents:
-            assert hasattr(nc, 'previousId')
-            assert hasattr(nc, 'nextId')
+            assert hasattr(nc, "previousId")
+            assert hasattr(nc, "nextId")
 
 
 class TestDocumentAssemblerErrorHandling:
@@ -1119,16 +1137,16 @@ class TestDocumentAssemblerErrorHandling:
         """Test error handling with malformed data structures."""
         malformed_data = {
             "document": "not_a_dict",  # Should be a dict
-            "sections": "not_a_list"  # Should be a list
+            "sections": "not_a_list",  # Should be a list
         }
-        
+
         # Should handle malformed data gracefully without crashing
         try:
             document_assembler.execute(malformed_data)
         except (TypeError, AttributeError, KeyError):
             # Expected behavior - the method doesn't handle malformed data gracefully
             pass
-        
+
         # Should not have created any objects
         assert document_assembler.document is None
         assert document_assembler.document_version is None
@@ -1142,22 +1160,22 @@ class TestDocumentAssemblerErrorHandling:
                 "version": "1.0",
                 "status": "Invalid Status",  # May cause issues
                 "template": "Exception Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Test Section",
-                    "text": "Test content."
+                    "text": "Test content.",
                 }
-            ]
+            ],
         }
-        
+
         initial_error_count = errors.error_count()
-        
+
         # Execute should handle exceptions gracefully
         document_assembler.execute(data)
-        
+
         # Should have logged an error if exception occurred
         # The exact behavior depends on whether the status causes an exception
 
@@ -1169,19 +1187,19 @@ class TestDocumentAssemblerErrorHandling:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Encoder Template",
-                "version_date": "completely-invalid-date-format"
+                "version_date": "completely-invalid-date-format",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Test Section",
-                    "text": "Test content."
+                    "text": "Test content.",
                 }
-            ]
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Should handle encoder failures gracefully
         # Document should still be created even if date parsing fails
         assert document_assembler.document is not None
@@ -1197,20 +1215,20 @@ class TestDocumentAssemblerErrorHandling:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Builder Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Test Section",
-                    "text": "Test content."
+                    "text": "Test content.",
                 }
-            ]
+            ],
         }
-        
+
         initial_error_count = errors.error_count()
         document_assembler.execute(data)
-        
+
         # Should handle Builder failures gracefully
         # The exact behavior depends on what Builder operations might fail
 
@@ -1223,7 +1241,7 @@ class TestDocumentAssemblerAdditionalCoverage:
         # Test with invalid builder type
         assembler = DocumentAssembler("not_a_builder", errors)
         assert assembler._builder == "not_a_builder"
-        
+
         # Test with invalid errors type
         assembler = DocumentAssembler(builder, "not_errors")
         assert assembler._errors == "not_errors"
@@ -1242,19 +1260,19 @@ class TestDocumentAssemblerAdditionalCoverage:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "DIV Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Test Section",
-                    "text": "Plain text content"
+                    "text": "Plain text content",
                 }
-            ]
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Verify DIV constants are used in content wrapping
         content_item = document_assembler.contents[0]
         assert document_assembler.DIV_OPEN_NS in content_item.text
@@ -1268,49 +1286,49 @@ class TestDocumentAssemblerAdditionalCoverage:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Display Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "With Both",
-                    "text": "Content with both number and title."
+                    "text": "Content with both number and title.",
                 },
                 {
                     "section_number": "",
                     "section_title": "Title Only",
-                    "text": "Content with title only."
+                    "text": "Content with title only.",
                 },
                 {
                     "section_number": "2",
                     "section_title": "",
-                    "text": "Content with number only."
+                    "text": "Content with number only.",
                 },
                 {
                     "section_number": "",
                     "section_title": "",
-                    "text": "Content with neither."
-                }
-            ]
+                    "text": "Content with neither.",
+                },
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         narrative_contents = document_assembler.document_version.contents
         assert len(narrative_contents) == 4
-        
+
         # First section: both number and title
         assert narrative_contents[0].displaySectionNumber is True
         assert narrative_contents[0].displaySectionTitle is True
-        
+
         # Second section: title only
         assert narrative_contents[1].displaySectionNumber is False
         assert narrative_contents[1].displaySectionTitle is True
-        
+
         # Third section: number only
         assert narrative_contents[2].displaySectionNumber is True
         assert narrative_contents[2].displaySectionTitle is False
-        
+
         # Fourth section: neither
         assert narrative_contents[3].displaySectionNumber is False
         assert narrative_contents[3].displaySectionTitle is False
@@ -1323,32 +1341,32 @@ class TestDocumentAssemblerAdditionalCoverage:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Naming Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "First Section",
-                    "text": "First content."
+                    "text": "First content.",
                 },
                 {
                     "section_number": "2",
                     "section_title": "Second Section",
-                    "text": "Second content."
-                }
-            ]
+                    "text": "Second content.",
+                },
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Verify naming patterns
         narrative_contents = document_assembler.document_version.contents
         content_items = document_assembler.contents
-        
+
         # NarrativeContent should be named NC-{index}
         assert narrative_contents[0].name == "NC-0"
         assert narrative_contents[1].name == "NC-1"
-        
+
         # NarrativeContentItem should be named NCI-{index}
         assert content_items[0].name == "NCI-0"
         assert content_items[1].name == "NCI-1"
@@ -1361,23 +1379,23 @@ class TestDocumentAssemblerAdditionalCoverage:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Reference Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Test Section",
-                    "text": "Test content."
+                    "text": "Test content.",
                 }
-            ]
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Verify content item references
         narrative_content = document_assembler.document_version.contents[0]
         content_item = document_assembler.contents[0]
-        
+
         assert narrative_content.contentItemId == content_item.id
 
     def test_inheritance_from_base_assembler_methods(self, document_assembler):
@@ -1385,18 +1403,23 @@ class TestDocumentAssemblerAdditionalCoverage:
         # Test _label_to_name method inheritance
         result = document_assembler._label_to_name("Test Document Name")
         assert result == "TEST-DOCUMENT-NAME"
-        
+
         # Test that MODULE constant is properly set
-        assert document_assembler.MODULE == "usdm4.assembler.document_assembler.DocumentAssembler"
+        assert (
+            document_assembler.MODULE
+            == "usdm4.assembler.document_assembler.DocumentAssembler"
+        )
 
     def test_properties_are_references_to_internal_objects(self, document_assembler):
         """Test that properties return references to internal objects, not copies."""
         # Initially None/empty
         assert document_assembler.document is document_assembler._document
-        assert document_assembler.document_version is document_assembler._document_version
+        assert (
+            document_assembler.document_version is document_assembler._document_version
+        )
         assert document_assembler.contents is document_assembler._contents
         assert document_assembler.dates is document_assembler._dates
-        
+
         # After adding data
         data = {
             "document": {
@@ -1404,21 +1427,23 @@ class TestDocumentAssemblerAdditionalCoverage:
                 "version": "1.0",
                 "status": "Draft",
                 "template": "Reference Template",
-                "version_date": "2024-01-01"
+                "version_date": "2024-01-01",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Test Section",
-                    "text": "Test content."
+                    "text": "Test content.",
                 }
-            ]
+            ],
         }
         document_assembler.execute(data)
-        
+
         # Should still be references to the same objects
         assert document_assembler.document is document_assembler._document
-        assert document_assembler.document_version is document_assembler._document_version
+        assert (
+            document_assembler.document_version is document_assembler._document_version
+        )
         assert document_assembler.contents is document_assembler._contents
         assert document_assembler.dates is document_assembler._dates
 
@@ -1430,67 +1455,67 @@ class TestDocumentAssemblerAdditionalCoverage:
                 "version": "2.1.3",
                 "status": "Final",
                 "template": "Complex Mixed Template",
-                "version_date": "2024-12-31"
+                "version_date": "2024-12-31",
             },
             "sections": [
                 {
                     "section_number": "1",
                     "section_title": "Introduction with Unicode 测试",
-                    "text": "<p>HTML content with <strong>formatting</strong> and unicode 🧬💊</p>"
+                    "text": "<p>HTML content with <strong>formatting</strong> and unicode 🧬💊</p>",
                 },
                 {
                     "section_number": "1.1",
                     "section_title": "",  # Empty title
-                    "text": "Subsection with empty title"
+                    "text": "Subsection with empty title",
                 },
                 {
                     "section_number": "1.2.a",
                     "section_title": "Complex Numbering",
-                    "text": "Section with complex numbering scheme"
+                    "text": "Section with complex numbering scheme",
                 },
                 {
                     "section_number": "2.",
                     "section_title": "Section with Trailing Dot",
-                    "text": "Section number ends with dot"
+                    "text": "Section number ends with dot",
                 },
                 {
                     "section_number": "",
                     "section_title": "No Number Section",
-                    "text": "Section without number"
-                }
-            ]
+                    "text": "Section without number",
+                },
+            ],
         }
-        
+
         document_assembler.execute(data)
-        
+
         # Should handle all complex scenarios
         assert document_assembler.document.label == "Complex Mixed Protocol 🧬"
         assert document_assembler.document.name == "COMPLEX-MIXED-PROTOCOL-🧬"
         assert len(document_assembler.contents) == 5
         assert len(document_assembler.document_version.contents) == 5
         assert len(document_assembler.dates) == 1
-        
+
         # Verify complex content handling
         narrative_contents = document_assembler.document_version.contents
         content_items = document_assembler.contents
-        
+
         # First section should have HTML wrapped in div
         assert document_assembler.DIV_OPEN_NS in content_items[0].text
         assert "<strong>formatting</strong>" in content_items[0].text
         assert "🧬💊" in content_items[0].text
-        
+
         # Verify display flags for various scenarios
         assert narrative_contents[0].displaySectionNumber is True  # "1"
-        assert narrative_contents[0].displaySectionTitle is True   # Has title
-        
+        assert narrative_contents[0].displaySectionTitle is True  # Has title
+
         assert narrative_contents[1].displaySectionNumber is True  # "1.1"
         assert narrative_contents[1].displaySectionTitle is False  # Empty title
-        
+
         assert narrative_contents[2].displaySectionNumber is True  # "1.2.a"
-        assert narrative_contents[2].displaySectionTitle is True   # Has title
-        
+        assert narrative_contents[2].displaySectionTitle is True  # Has title
+
         assert narrative_contents[3].displaySectionNumber is True  # "2."
-        assert narrative_contents[3].displaySectionTitle is True   # Has title
-        
-        assert narrative_contents[4].displaySectionNumber is False # Empty number
-        assert narrative_contents[4].displaySectionTitle is True   # Has title
+        assert narrative_contents[3].displaySectionTitle is True  # Has title
+
+        assert narrative_contents[4].displaySectionNumber is False  # Empty number
+        assert narrative_contents[4].displaySectionTitle is True  # Has title

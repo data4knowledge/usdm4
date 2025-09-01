@@ -114,7 +114,7 @@ class TimelineAssembler(BaseAssembler):
             results = []
             table = data["final"]["table-001"]
             instances: dict = table["schedule_columns_data"]
-            #instance_keys = list(instances.keys())
+            # instance_keys = list(instances.keys())
             items: dict = table["grid_columns"]
             print(f"ENCOUNTER ITEMS: {items}")
             item: dict[str]

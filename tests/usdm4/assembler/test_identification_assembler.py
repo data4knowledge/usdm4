@@ -4,10 +4,6 @@ import pytest
 from simple_error_log.errors import Errors
 from src.usdm4.assembler.identification_assembler import IdentificationAssembler
 from src.usdm4.builder.builder import Builder
-from src.usdm4.api.address import Address
-from src.usdm4.api.organization import Organization
-from src.usdm4.api.identifier import StudyIdentifier
-from src.usdm4.api.study_title import StudyTitle
 
 
 def root_path():
@@ -42,11 +38,14 @@ class TestIdentificationAssemblerInitialization:
     def test_init_with_valid_parameters(self, builder, errors):
         """Test IdentificationAssembler initialization with valid parameters."""
         assembler = IdentificationAssembler(builder, errors)
-        
+
         assert assembler._builder is builder
         assert assembler._errors is errors
-        assert assembler.MODULE == "usdm4.assembler.identification_assembler.IdentificationAssembler"
-        
+        assert (
+            assembler.MODULE
+            == "usdm4.assembler.identification_assembler.IdentificationAssembler"
+        )
+
         # Test initial state
         assert assembler._titles == []
         assert assembler._organizations == []
@@ -58,22 +57,32 @@ class TestIdentificationAssemblerInitialization:
         # Test TITLE_TYPES
         expected_title_types = ["brief", "official", "public", "scientific", "acronym"]
         assert identification_assembler.TITLE_TYPES == expected_title_types
-        
+
         # Test TITLE_CODES structure
         assert isinstance(identification_assembler.TITLE_CODES, dict)
         for title_type in expected_title_types:
             assert title_type in identification_assembler.TITLE_CODES
             assert "code" in identification_assembler.TITLE_CODES[title_type]
             assert "decode" in identification_assembler.TITLE_CODES[title_type]
-        
+
         # Test ORG_CODES structure
         assert isinstance(identification_assembler.ORG_CODES, dict)
-        expected_org_types = ["registry", "regulator", "healthcare", "pharma", "lab", "cro", "gov", "academic", "medical_device"]
+        expected_org_types = [
+            "registry",
+            "regulator",
+            "healthcare",
+            "pharma",
+            "lab",
+            "cro",
+            "gov",
+            "academic",
+            "medical_device",
+        ]
         for org_type in expected_org_types:
             assert org_type in identification_assembler.ORG_CODES
             assert "code" in identification_assembler.ORG_CODES[org_type]
             assert "decode" in identification_assembler.ORG_CODES[org_type]
-        
+
         # Test STANDARD_ORGS structure
         assert isinstance(identification_assembler.STANDARD_ORGS, dict)
         expected_standard_orgs = ["ct.gov", "ema", "fda"]
@@ -106,15 +115,15 @@ class TestIdentificationAssemblerValidData:
                 "official": "Official Long Study Title",
                 "public": "Public Study Title for Participants",
                 "scientific": "Scientific Study Title with Technical Terms",
-                "acronym": "SST"
+                "acronym": "SST",
             }
         }
-        
+
         identification_assembler.execute(data)
-        
+
         # Should have created 5 titles
         assert len(identification_assembler.titles) == 5
-        
+
         # Verify each title was created correctly
         title_texts = [title.text for title in identification_assembler.titles]
         assert "Short Study Title" in title_texts
@@ -123,35 +132,34 @@ class TestIdentificationAssemblerValidData:
         assert "Scientific Study Title with Technical Terms" in title_texts
         assert "SST" in title_texts
 
-    def test_execute_with_standard_organization_identifier(self, identification_assembler):
+    def test_execute_with_standard_organization_identifier(
+        self, identification_assembler
+    ):
         """Test execute with standard organization identifier."""
         data = {
             "identifiers": [
-                {
-                    "identifier": "NCT12345678",
-                    "scope": {
-                        "standard": "ct.gov"
-                    }
-                }
+                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}}
             ]
         }
-        
+
         identification_assembler.execute(data)
-        
+
         # Should have created 1 identifier and 1 organization
         assert len(identification_assembler.identifiers) == 1
         assert len(identification_assembler.organizations) == 1
-        
+
         # Verify identifier
         identifier = identification_assembler.identifiers[0]
         assert identifier.text == "NCT12345678"
-        
+
         # Verify organization
         organization = identification_assembler.organizations[0]
         assert organization.name == "CLINICALTRIALS.GOV"  # _label_to_name conversion
         assert organization.label == "ClinicalTrials.gov"
 
-    def test_execute_with_non_standard_organization_identifier(self, identification_assembler):
+    def test_execute_with_non_standard_organization_identifier(
+        self, identification_assembler
+    ):
         """Test execute with non-standard organization identifier."""
         data = {
             "identifiers": [
@@ -171,27 +179,29 @@ class TestIdentificationAssemblerValidData:
                                 "district": "Manhattan",
                                 "state": "NY",
                                 "postalCode": "10001",
-                                "country": "USA"
-                            }
+                                "country": "USA",
+                            },
                         }
-                    }
+                    },
                 }
             ]
         }
-        
+
         identification_assembler.execute(data)
-        
+
         # Should have created 1 identifier and 1 organization
         assert len(identification_assembler.identifiers) == 1
         assert len(identification_assembler.organizations) == 1
-        
+
         # Verify identifier
         identifier = identification_assembler.identifiers[0]
         assert identifier.text == "CUSTOM-001"
-        
+
         # Verify organization
         organization = identification_assembler.organizations[0]
-        assert organization.name == "CUSTOM-PHARMACEUTICAL-COMPANY"  # _label_to_name conversion
+        assert (
+            organization.name == "CUSTOM-PHARMACEUTICAL-COMPANY"
+        )  # _label_to_name conversion
         assert organization.label == "Custom Pharmaceutical Company"
         # Note: Organization API model doesn't have description field
 
@@ -201,21 +211,11 @@ class TestIdentificationAssemblerValidData:
             "titles": {
                 "brief": "Test Study",
                 "official": "Official Test Study for Drug X",
-                "acronym": "TSX"
+                "acronym": "TSX",
             },
             "identifiers": [
-                {
-                    "identifier": "NCT98765432",
-                    "scope": {
-                        "standard": "ct.gov"
-                    }
-                },
-                {
-                    "identifier": "EMA-2024-001",
-                    "scope": {
-                        "standard": "ema"
-                    }
-                },
+                {"identifier": "NCT98765432", "scope": {"standard": "ct.gov"}},
+                {"identifier": "EMA-2024-001", "scope": {"standard": "ema"}},
                 {
                     "identifier": "SPONSOR-001",
                     "scope": {
@@ -232,70 +232,79 @@ class TestIdentificationAssemblerValidData:
                                 "district": "",
                                 "state": "MA",
                                 "postalCode": "02101",
-                                "country": "USA"
-                            }
+                                "country": "USA",
+                            },
                         }
-                    }
-                }
-            ]
+                    },
+                },
+            ],
         }
-        
+
         identification_assembler.execute(data)
-        
+
         # Should have created 3 titles and some identifiers/organizations (may be less due to errors)
         assert len(identification_assembler.titles) == 3
         # Some identifiers may fail due to cross-reference conflicts or other issues
         assert len(identification_assembler.identifiers) >= 1
         assert len(identification_assembler.organizations) >= 1
-        
+
         # Verify titles
         title_texts = [title.text for title in identification_assembler.titles]
         assert "Test Study" in title_texts
         assert "Official Test Study for Drug X" in title_texts
         assert "TSX" in title_texts
-        
+
         # Verify identifiers - check that we have the expected ones that were created
-        identifier_texts = [identifier.text for identifier in identification_assembler.identifiers]
+        identifier_texts = [
+            identifier.text for identifier in identification_assembler.identifiers
+        ]
         expected_identifiers = ["NCT98765432", "EMA-2024-001", "SPONSOR-001"]
-        found_identifiers = [id_text for id_text in expected_identifiers if id_text in identifier_texts]
-        assert len(found_identifiers) >= 2, f"Expected at least 2 identifiers, found: {identifier_texts}"
-        
+        found_identifiers = [
+            id_text for id_text in expected_identifiers if id_text in identifier_texts
+        ]
+        assert len(found_identifiers) >= 2, (
+            f"Expected at least 2 identifiers, found: {identifier_texts}"
+        )
+
         # Verify organizations - check that we have the expected ones that were created
         org_names = [org.name for org in identification_assembler.organizations]
-        expected_orgs = ["CLINICALTRIALS.GOV", "EUROPEAN-MEDICINES-AGENCY", "TEST-PHARMACEUTICAL-INC"]
+        expected_orgs = [
+            "CLINICALTRIALS.GOV",
+            "EUROPEAN-MEDICINES-AGENCY",
+            "TEST-PHARMACEUTICAL-INC",
+        ]
         found_orgs = [org_name for org_name in expected_orgs if org_name in org_names]
-        assert len(found_orgs) >= 2, f"Expected at least 2 organizations, found: {org_names}"
+        assert len(found_orgs) >= 2, (
+            f"Expected at least 2 organizations, found: {org_names}"
+        )
 
     def test_execute_with_all_standard_organizations(self, identification_assembler):
         """Test execute with all standard organizations."""
         data = {
             "identifiers": [
-                {
-                    "identifier": "NCT12345678",
-                    "scope": {"standard": "ct.gov"}
-                },
-                {
-                    "identifier": "EMA-2024-001",
-                    "scope": {"standard": "ema"}
-                },
-                {
-                    "identifier": "FDA-IND-123456",
-                    "scope": {"standard": "fda"}
-                }
+                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}},
+                {"identifier": "EMA-2024-001", "scope": {"standard": "ema"}},
+                {"identifier": "FDA-IND-123456", "scope": {"standard": "fda"}},
             ]
         }
-        
+
         identification_assembler.execute(data)
-        
+
         # Some identifiers may fail due to cross-reference conflicts or other issues
         assert len(identification_assembler.identifiers) >= 1
         assert len(identification_assembler.organizations) >= 1
-        
+
         # Verify standard organizations were created - check that we have the expected ones
         org_names = [org.name for org in identification_assembler.organizations]
-        expected_orgs = ["CLINICALTRIALS.GOV", "EUROPEAN-MEDICINES-AGENCY", "FOOD-AND-DRUG-ADMIONISTRATION"]
+        expected_orgs = [
+            "CLINICALTRIALS.GOV",
+            "EUROPEAN-MEDICINES-AGENCY",
+            "FOOD-AND-DRUG-ADMIONISTRATION",
+        ]
         found_orgs = [org_name for org_name in expected_orgs if org_name in org_names]
-        assert len(found_orgs) >= 1, f"Expected at least 1 standard organization, found: {org_names}"
+        assert len(found_orgs) >= 1, (
+            f"Expected at least 1 standard organization, found: {org_names}"
+        )
 
     def test_execute_with_all_title_types(self, identification_assembler):
         """Test execute with all supported title types."""
@@ -305,17 +314,23 @@ class TestIdentificationAssemblerValidData:
                 "official": "Official Title",
                 "public": "Public Title",
                 "scientific": "Scientific Title",
-                "acronym": "AT"
+                "acronym": "AT",
             }
         }
-        
+
         identification_assembler.execute(data)
-        
+
         assert len(identification_assembler.titles) == 5
-        
+
         # Verify all title types were processed
         title_texts = [title.text for title in identification_assembler.titles]
-        expected_texts = ["Brief Title", "Official Title", "Public Title", "Scientific Title", "AT"]
+        expected_texts = [
+            "Brief Title",
+            "Official Title",
+            "Public Title",
+            "Scientific Title",
+            "AT",
+        ]
         for expected_text in expected_texts:
             assert expected_text in title_texts
 
@@ -326,9 +341,9 @@ class TestIdentificationAssemblerInvalidData:
     def test_execute_with_empty_data(self, identification_assembler):
         """Test execute with empty data dictionary."""
         data = {}
-        
+
         identification_assembler.execute(data)
-        
+
         # Should handle empty data gracefully
         assert len(identification_assembler.titles) == 0
         assert len(identification_assembler.identifiers) == 0
@@ -340,12 +355,12 @@ class TestIdentificationAssemblerInvalidData:
             "titles": {
                 "brief": "Valid Brief Title",
                 "invalid_type": "Invalid Title Type",
-                "official": "Valid Official Title"
+                "official": "Valid Official Title",
             }
         }
-        
+
         identification_assembler.execute(data)
-        
+
         # Should create only valid titles and skip invalid ones
         assert len(identification_assembler.titles) == 2
         title_texts = [title.text for title in identification_assembler.titles]
@@ -357,17 +372,12 @@ class TestIdentificationAssemblerInvalidData:
         """Test execute with invalid standard organization key."""
         data = {
             "identifiers": [
-                {
-                    "identifier": "TEST-001",
-                    "scope": {
-                        "standard": "invalid_org"
-                    }
-                }
+                {"identifier": "TEST-001", "scope": {"standard": "invalid_org"}}
             ]
         }
-        
+
         identification_assembler.execute(data)
-        
+
         # Should handle invalid standard organization gracefully
         assert len(identification_assembler.identifiers) == 0
         assert len(identification_assembler.organizations) == 0
@@ -392,16 +402,16 @@ class TestIdentificationAssemblerInvalidData:
                                 "district": "",
                                 "state": "TS",
                                 "postalCode": "12345",
-                                "country": "USA"
-                            }
+                                "country": "USA",
+                            },
                         }
-                    }
+                    },
                 }
             ]
         }
-        
+
         identification_assembler.execute(data)
-        
+
         # Should handle invalid organization type gracefully
         assert len(identification_assembler.identifiers) == 0
         assert len(identification_assembler.organizations) == 0
@@ -416,14 +426,16 @@ class TestIdentificationAssemblerInvalidData:
                 }
             ]
         }
-        
+
         identification_assembler.execute(data)
-        
+
         # Should handle missing scope gracefully
         assert len(identification_assembler.identifiers) == 0
         assert len(identification_assembler.organizations) == 0
 
-    def test_execute_with_incomplete_non_standard_organization(self, identification_assembler):
+    def test_execute_with_incomplete_non_standard_organization(
+        self, identification_assembler
+    ):
         """Test execute with incomplete non_standard organization data."""
         data = {
             "identifiers": [
@@ -432,16 +444,16 @@ class TestIdentificationAssemblerInvalidData:
                     "scope": {
                         "non_standard": {
                             "type": "pharma",
-                            "name": "Test Org"
+                            "name": "Test Org",
                             # Missing required fields
                         }
-                    }
+                    },
                 }
             ]
         }
-        
+
         identification_assembler.execute(data)
-        
+
         # Should handle incomplete data gracefully
         assert len(identification_assembler.identifiers) == 0
         assert len(identification_assembler.organizations) == 0
@@ -466,16 +478,16 @@ class TestIdentificationAssemblerInvalidData:
                                 "district": "",
                                 "state": "TS",
                                 "postalCode": "12345",
-                                "country": "INVALID_COUNTRY"
-                            }
+                                "country": "INVALID_COUNTRY",
+                            },
                         }
-                    }
+                    },
                 }
             ]
         }
-        
+
         identification_assembler.execute(data)
-        
+
         # Should handle invalid country code - may still create objects but with null country
         # The exact behavior depends on the Builder's iso3166_code_or_decode implementation
 
@@ -485,15 +497,10 @@ class TestIdentificationAssemblerEdgeCases:
 
     def test_execute_with_empty_title_text(self, identification_assembler):
         """Test execute with empty title text."""
-        data = {
-            "titles": {
-                "brief": "",
-                "official": "Valid Title"
-            }
-        }
-        
+        data = {"titles": {"brief": "", "official": "Valid Title"}}
+
         identification_assembler.execute(data)
-        
+
         # Should handle empty title text
         assert len(identification_assembler.titles) >= 1  # At least the valid one
         title_texts = [title.text for title in identification_assembler.titles]
@@ -505,12 +512,12 @@ class TestIdentificationAssemblerEdgeCases:
             "titles": {
                 "brief": "Étude clinique avec caractères spéciaux",
                 "official": "Clinical Study with émojis 🧬💊",
-                "scientific": "研究标题中文测试"
+                "scientific": "研究标题中文测试",
             }
         }
-        
+
         identification_assembler.execute(data)
-        
+
         assert len(identification_assembler.titles) == 3
         title_texts = [title.text for title in identification_assembler.titles]
         assert "Étude clinique avec caractères spéciaux" in title_texts
@@ -520,34 +527,26 @@ class TestIdentificationAssemblerEdgeCases:
     def test_execute_with_very_long_titles(self, identification_assembler):
         """Test execute with very long title text."""
         long_title = "A" * 1000  # 1000 character title
-        data = {
-            "titles": {
-                "brief": long_title,
-                "official": "Normal Title"
-            }
-        }
-        
+        data = {"titles": {"brief": long_title, "official": "Normal Title"}}
+
         identification_assembler.execute(data)
-        
+
         assert len(identification_assembler.titles) >= 1
         title_texts = [title.text for title in identification_assembler.titles]
         assert "Normal Title" in title_texts
 
-    def test_execute_with_special_characters_in_identifiers(self, identification_assembler):
+    def test_execute_with_special_characters_in_identifiers(
+        self, identification_assembler
+    ):
         """Test execute with special characters in identifiers."""
         data = {
             "identifiers": [
-                {
-                    "identifier": "NCT-2024/001_TEST",
-                    "scope": {
-                        "standard": "ct.gov"
-                    }
-                }
+                {"identifier": "NCT-2024/001_TEST", "scope": {"standard": "ct.gov"}}
             ]
         }
-        
+
         identification_assembler.execute(data)
-        
+
         if len(identification_assembler.identifiers) > 0:
             identifier = identification_assembler.identifiers[0]
             assert identifier.text == "NCT-2024/001_TEST"
@@ -572,16 +571,16 @@ class TestIdentificationAssemblerEdgeCases:
                                 "district": None,
                                 "state": "",
                                 "postalCode": "12345",
-                                "country": "USA"
-                            }
+                                "country": "USA",
+                            },
                         }
-                    }
+                    },
                 }
             ]
         }
-        
+
         identification_assembler.execute(data)
-        
+
         # Should handle null/empty address fields gracefully
 
     def test_execute_with_mixed_valid_invalid_data(self, identification_assembler):
@@ -590,21 +589,11 @@ class TestIdentificationAssemblerEdgeCases:
             "titles": {
                 "brief": "Valid Brief Title",
                 "invalid_type": "Invalid Title",
-                "official": "Valid Official Title"
+                "official": "Valid Official Title",
             },
             "identifiers": [
-                {
-                    "identifier": "NCT12345678",
-                    "scope": {
-                        "standard": "ct.gov"
-                    }
-                },
-                {
-                    "identifier": "INVALID-001",
-                    "scope": {
-                        "standard": "invalid_org"
-                    }
-                },
+                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}},
+                {"identifier": "INVALID-001", "scope": {"standard": "invalid_org"}},
                 {
                     "identifier": "VALID-001",
                     "scope": {
@@ -621,21 +610,25 @@ class TestIdentificationAssemblerEdgeCases:
                                 "district": "",
                                 "state": "VC",
                                 "postalCode": "12345",
-                                "country": "USA"
-                            }
+                                "country": "USA",
+                            },
                         }
-                    }
-                }
-            ]
+                    },
+                },
+            ],
         }
-        
+
         identification_assembler.execute(data)
-        
+
         # Should process valid data and skip invalid data
         assert len(identification_assembler.titles) == 2  # Only valid titles
         # Some identifiers may fail due to various issues
-        assert len(identification_assembler.identifiers) >= 1  # At least some valid identifiers
-        assert len(identification_assembler.organizations) >= 1  # At least some valid organizations
+        assert (
+            len(identification_assembler.identifiers) >= 1
+        )  # At least some valid identifiers
+        assert (
+            len(identification_assembler.organizations) >= 1
+        )  # At least some valid organizations
 
 
 class TestIdentificationAssemblerPrivateMethods:
@@ -649,17 +642,17 @@ class TestIdentificationAssemblerPrivateMethods:
             "district": "Manhattan",
             "state": "NY",
             "postalCode": "10001",
-            "country": "USA"
+            "country": "USA",
         }
-        
+
         address = identification_assembler._create_address(address_data)
-        
+
         assert address is not None
         # Check that it's an Address-like object with expected attributes
-        assert hasattr(address, 'lines')
-        assert hasattr(address, 'city')
-        assert hasattr(address, 'state')
-        assert hasattr(address, 'postalCode')
+        assert hasattr(address, "lines")
+        assert hasattr(address, "city")
+        assert hasattr(address, "state")
+        assert hasattr(address, "postalCode")
         assert address.lines == ["123 Main St", "Suite 100"]
         assert address.city == "New York"
         assert address.state == "NY"
@@ -674,16 +667,18 @@ class TestIdentificationAssemblerPrivateMethods:
             "label": "Test Pharmaceutical Company",
             "identifier": "TEST-PHARMA-123",
             "identifierScheme": "DUNS",
-            "legalAddress": None
+            "legalAddress": None,
         }
-        
+
         organization = identification_assembler._create_organization(org_data)
-        
+
         assert organization is not None
         # Check that it's an Organization-like object with expected attributes
-        assert hasattr(organization, 'name')
-        assert hasattr(organization, 'label')
-        assert organization.name == "TEST-PHARMACEUTICAL-COMPANY"  # _label_to_name conversion
+        assert hasattr(organization, "name")
+        assert hasattr(organization, "label")
+        assert (
+            organization.name == "TEST-PHARMACEUTICAL-COMPANY"
+        )  # _label_to_name conversion
         assert organization.label == "Test Pharmaceutical Company"
         # Note: Organization API model doesn't have description field
 
@@ -697,19 +692,21 @@ class TestIdentificationAssemblerPrivateMethods:
             "label": "Test Organization",
             "identifier": "TEST-ORG-ID",
             "identifierScheme": "Test Scheme",
-            "legalAddress": None
+            "legalAddress": None,
         }
-        
+
         organization = identification_assembler._create_organization(org_data)
-        
+
         if organization is not None:
             # Now create identifier
-            identifier = identification_assembler._create_identifier("TEST-001", organization)
-            
+            identifier = identification_assembler._create_identifier(
+                "TEST-001", organization
+            )
+
             assert identifier is not None
             # Check that it's a StudyIdentifier-like object with expected attributes
-            assert hasattr(identifier, 'text')
-            assert hasattr(identifier, 'scopeId')
+            assert hasattr(identifier, "text")
+            assert hasattr(identifier, "scopeId")
             assert identifier.text == "TEST-001"
             assert identifier.scopeId == organization.id
         else:
@@ -720,10 +717,10 @@ class TestIdentificationAssemblerPrivateMethods:
     def test_create_title_with_valid_data(self, identification_assembler):
         """Test _create_title with valid data."""
         title = identification_assembler._create_title("brief", "Test Brief Title")
-        
+
         assert title is not None
         # Check that it's a StudyTitle-like object with expected attributes
-        assert hasattr(title, 'text')
+        assert hasattr(title, "text")
         assert title.text == "Test Brief Title"
 
 
@@ -733,23 +730,15 @@ class TestIdentificationAssemblerStateManagement:
     def test_multiple_execute_calls_accumulate_results(self, identification_assembler):
         """Test that multiple execute calls accumulate results."""
         # First call
-        data1 = {
-            "titles": {
-                "brief": "First Brief Title"
-            }
-        }
+        data1 = {"titles": {"brief": "First Brief Title"}}
         identification_assembler.execute(data1)
         assert len(identification_assembler.titles) == 1
-        
+
         # Second call
-        data2 = {
-            "titles": {
-                "official": "Second Official Title"
-            }
-        }
+        data2 = {"titles": {"official": "Second Official Title"}}
         identification_assembler.execute(data2)
         assert len(identification_assembler.titles) == 2
-        
+
         # Verify both titles are present
         title_texts = [title.text for title in identification_assembler.titles]
         assert "First Brief Title" in title_texts
@@ -758,31 +747,30 @@ class TestIdentificationAssemblerStateManagement:
     def test_properties_reflect_current_state(self, identification_assembler):
         """Test that properties reflect current state after operations."""
         data = {
-            "titles": {
-                "brief": "Test Title"
-            },
+            "titles": {"brief": "Test Title"},
             "identifiers": [
-                {
-                    "identifier": "TEST-001",
-                    "scope": {
-                        "standard": "ct.gov"
-                    }
-                }
-            ]
+                {"identifier": "TEST-001", "scope": {"standard": "ct.gov"}}
+            ],
         }
-        
+
         identification_assembler.execute(data)
-        
+
         # Properties should reflect current state
         assert len(identification_assembler.titles) == 1
         # Identifiers may fail due to cross-reference conflicts
         assert len(identification_assembler.identifiers) >= 0
         assert len(identification_assembler.organizations) >= 0
-        
+
         # Properties should return the same objects
         assert identification_assembler.titles is identification_assembler._titles
-        assert identification_assembler.identifiers is identification_assembler._identifiers
-        assert identification_assembler.organizations is identification_assembler._organizations
+        assert (
+            identification_assembler.identifiers
+            is identification_assembler._identifiers
+        )
+        assert (
+            identification_assembler.organizations
+            is identification_assembler._organizations
+        )
 
 
 class TestIdentificationAssemblerBuilderIntegration:
@@ -790,17 +778,13 @@ class TestIdentificationAssemblerBuilderIntegration:
 
     def test_builder_cdisc_code_integration(self, identification_assembler):
         """Test integration with Builder's cdisc_code method."""
-        data = {
-            "titles": {
-                "brief": "Test Title"
-            }
-        }
-        
+        data = {"titles": {"brief": "Test Title"}}
+
         identification_assembler.execute(data)
-        
+
         if len(identification_assembler.titles) > 0:
             title = identification_assembler.titles[0]
-            assert hasattr(title, 'type')
+            assert hasattr(title, "type")
             # The type should be a Code object created by Builder
 
     def test_builder_iso3166_code_integration(self, identification_assembler):
@@ -823,36 +807,32 @@ class TestIdentificationAssemblerBuilderIntegration:
                                 "district": "",
                                 "state": "TS",
                                 "postalCode": "12345",
-                                "country": "USA"
-                            }
+                                "country": "USA",
+                            },
                         }
-                    }
+                    },
                 }
             ]
         }
-        
+
         identification_assembler.execute(data)
-        
+
         # Should integrate with Builder's country code functionality
         if len(identification_assembler.organizations) > 0:
             org = identification_assembler.organizations[0]
-            if hasattr(org, 'legalAddress') and org.legalAddress:
-                assert hasattr(org.legalAddress, 'country')
+            if hasattr(org, "legalAddress") and org.legalAddress:
+                assert hasattr(org.legalAddress, "country")
 
     def test_builder_create_method_integration(self, identification_assembler):
         """Test integration with Builder's create method."""
-        data = {
-            "titles": {
-                "brief": "Integration Test Title"
-            }
-        }
-        
+        data = {"titles": {"brief": "Integration Test Title"}}
+
         identification_assembler.execute(data)
-        
+
         # Should use Builder's create method to create objects
         if len(identification_assembler.titles) > 0:
             title = identification_assembler.titles[0]
-            assert hasattr(title, 'id')  # Objects created by Builder should have IDs
+            assert hasattr(title, "id")  # Objects created by Builder should have IDs
             assert title.text == "Integration Test Title"
 
 
@@ -863,16 +843,16 @@ class TestIdentificationAssemblerErrorHandling:
         """Test error handling with malformed data structures."""
         malformed_data = {
             "titles": "not_a_dict",  # Should be a dict
-            "identifiers": "not_a_list"  # Should be a list
+            "identifiers": "not_a_list",  # Should be a list
         }
-        
+
         # Should handle malformed data gracefully without crashing
         try:
             identification_assembler.execute(malformed_data)
         except AttributeError:
             # Expected behavior - the method doesn't handle malformed data gracefully
             pass
-        
+
         # Should not have created any objects
         assert len(identification_assembler.titles) == 0
         assert len(identification_assembler.identifiers) == 0
@@ -881,49 +861,40 @@ class TestIdentificationAssemblerErrorHandling:
     def test_error_handling_with_none_values(self, identification_assembler):
         """Test error handling with None values in data."""
         data = {
-            "titles": {
-                "brief": None,
-                "official": "Valid Title"
-            },
-            "identifiers": [
-                {
-                    "identifier": None,
-                    "scope": {
-                        "standard": "ct.gov"
-                    }
-                }
-            ]
+            "titles": {"brief": None, "official": "Valid Title"},
+            "identifiers": [{"identifier": None, "scope": {"standard": "ct.gov"}}],
         }
-        
+
         # Should handle None values gracefully
         identification_assembler.execute(data)
-        
+
         # Should process valid data and skip None values
-        title_texts = [title.text for title in identification_assembler.titles if title.text]
+        title_texts = [
+            title.text for title in identification_assembler.titles if title.text
+        ]
         assert "Valid Title" in title_texts
 
-    def test_error_handling_with_missing_scope_keys(self, identification_assembler, errors):
+    def test_error_handling_with_missing_scope_keys(
+        self, identification_assembler, errors
+    ):
         """Test error handling when scope has neither standard nor non_standard keys."""
         data = {
             "identifiers": [
-                {
-                    "identifier": "TEST-001",
-                    "scope": {
-                        "invalid_key": "some_value"
-                    }
-                }
+                {"identifier": "TEST-001", "scope": {"invalid_key": "some_value"}}
             ]
         }
-        
+
         initial_error_count = errors.error_count()
         identification_assembler.execute(data)
-        
+
         # Should have logged an error
         assert errors.error_count() > initial_error_count
         assert len(identification_assembler.identifiers) == 0
         assert len(identification_assembler.organizations) == 0
 
-    def test_error_handling_with_both_standard_and_non_standard(self, identification_assembler, errors):
+    def test_error_handling_with_both_standard_and_non_standard(
+        self, identification_assembler, errors
+    ):
         """Test error handling when scope has both standard and non_standard keys."""
         data = {
             "identifiers": [
@@ -938,21 +909,23 @@ class TestIdentificationAssemblerErrorHandling:
                             "label": "Test Organization",
                             "identifier": "TEST-ORG-ID",
                             "identifierScheme": "Test Scheme",
-                            "legalAddress": None
-                        }
-                    }
+                            "legalAddress": None,
+                        },
+                    },
                 }
             ]
         }
-        
+
         # Should process one of them (standard takes precedence in the current implementation)
         identification_assembler.execute(data)
-        
+
         # Should create objects based on standard organization
         if len(identification_assembler.identifiers) > 0:
             assert identification_assembler.identifiers[0].text == "TEST-001"
 
-    def test_error_handling_with_missing_organization_fields(self, identification_assembler, errors):
+    def test_error_handling_with_missing_organization_fields(
+        self, identification_assembler, errors
+    ):
         """Test error handling with missing required organization fields."""
         data = {
             "identifiers": [
@@ -963,20 +936,22 @@ class TestIdentificationAssemblerErrorHandling:
                             "type": "pharma"
                             # Missing name, label, etc.
                         }
-                    }
+                    },
                 }
             ]
         }
-        
+
         initial_error_count = errors.error_count()
         identification_assembler.execute(data)
-        
+
         # Should have logged an error
         assert errors.error_count() > initial_error_count
         assert len(identification_assembler.identifiers) == 0
         assert len(identification_assembler.organizations) == 0
 
-    def test_error_handling_with_invalid_address_structure(self, identification_assembler, errors):
+    def test_error_handling_with_invalid_address_structure(
+        self, identification_assembler, errors
+    ):
         """Test error handling with invalid address structure."""
         data = {
             "identifiers": [
@@ -990,16 +965,16 @@ class TestIdentificationAssemblerErrorHandling:
                             "label": "Test Organization",
                             "identifier": "TEST-ORG-ID",
                             "identifierScheme": "Test Scheme",
-                            "legalAddress": "invalid_address_format"  # Should be dict
+                            "legalAddress": "invalid_address_format",  # Should be dict
                         }
-                    }
+                    },
                 }
             ]
         }
-        
+
         initial_error_count = errors.error_count()
         identification_assembler.execute(data)
-        
+
         # Should have logged an error
         assert errors.error_count() > initial_error_count
 
@@ -1012,7 +987,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
         # Test with invalid builder type
         assembler = IdentificationAssembler("not_a_builder", errors)
         assert assembler._builder == "not_a_builder"
-        
+
         # Test with invalid errors type
         assembler = IdentificationAssembler(builder, "not_errors")
         assert assembler._errors == "not_errors"
@@ -1028,10 +1003,10 @@ class TestIdentificationAssemblerAdditionalCoverage:
             "city": "New York",
             "district": "Manhattan",
             "state": "NY",
-            "postalCode": "10001"
+            "postalCode": "10001",
             # Missing country
         }
-        
+
         address = identification_assembler._create_address(address_data)
         # Should handle missing country gracefully (may return None or create with null country)
         # The exact behavior depends on the Builder implementation
@@ -1044,9 +1019,9 @@ class TestIdentificationAssemblerAdditionalCoverage:
             "district": "Manhattan",
             "state": "NY",
             "postalCode": "10001",
-            "country": "USA"
+            "country": "USA",
         }
-        
+
         address = identification_assembler._create_address(address_data)
         if address is not None:
             assert address.lines == []
@@ -1060,9 +1035,9 @@ class TestIdentificationAssemblerAdditionalCoverage:
             "district": None,
             "state": None,
             "postalCode": None,
-            "country": "USA"
+            "country": "USA",
         }
-        
+
         address = identification_assembler._create_address(address_data)
         # Should handle None values gracefully
 
@@ -1075,9 +1050,9 @@ class TestIdentificationAssemblerAdditionalCoverage:
             "label": "Test Organization",
             "identifier": "TEST-ORG-ID",
             "identifierScheme": "Test Scheme",
-            "legalAddress": None
+            "legalAddress": None,
         }
-        
+
         organization = identification_assembler._create_organization(org_data)
         # Should return None due to missing type
         assert organization is None
@@ -1091,17 +1066,27 @@ class TestIdentificationAssemblerAdditionalCoverage:
             "label": "Test Organization",
             "identifier": "TEST-ORG-ID",
             "identifierScheme": "Test Scheme",
-            "legalAddress": None
+            "legalAddress": None,
         }
-        
+
         organization = identification_assembler._create_organization(org_data)
         # Should return None due to invalid type
         assert organization is None
 
     def test_create_organization_with_all_org_types(self, identification_assembler):
         """Test _create_organization with all valid organization types."""
-        org_types = ["registry", "regulator", "healthcare", "pharma", "lab", "cro", "gov", "academic", "medical_device"]
-        
+        org_types = [
+            "registry",
+            "regulator",
+            "healthcare",
+            "pharma",
+            "lab",
+            "cro",
+            "gov",
+            "academic",
+            "medical_device",
+        ]
+
         for org_type in org_types:
             org_data = {
                 "type": org_type,
@@ -1110,12 +1095,14 @@ class TestIdentificationAssemblerAdditionalCoverage:
                 "label": f"Test {org_type.title()} Organization",
                 "identifier": f"TEST-{org_type.upper()}-ID",
                 "identifierScheme": "Test Scheme",
-                "legalAddress": None
+                "legalAddress": None,
             }
-            
+
             organization = identification_assembler._create_organization(org_data)
             if organization is not None:
-                assert organization.name == identification_assembler._label_to_name(org_data["label"])
+                assert organization.name == identification_assembler._label_to_name(
+                    org_data["label"]
+                )
                 assert organization.label == org_data["label"]
 
     def test_create_identifier_with_none_organization(self, identification_assembler):
@@ -1146,41 +1133,43 @@ class TestIdentificationAssemblerAdditionalCoverage:
         for title_type in identification_assembler.TITLE_TYPES:
             # Clear previous titles
             identification_assembler._titles = []
-            
-            data = {
-                "titles": {
-                    title_type: f"Test {title_type.title()} Title"
-                }
-            }
-            
-            identification_assembler.execute(data)
-            
-            assert len(identification_assembler.titles) == 1
-            assert identification_assembler.titles[0].text == f"Test {title_type.title()} Title"
 
-    def test_execute_with_identifiers_only_all_standard_orgs(self, identification_assembler):
+            data = {"titles": {title_type: f"Test {title_type.title()} Title"}}
+
+            identification_assembler.execute(data)
+
+            assert len(identification_assembler.titles) == 1
+            assert (
+                identification_assembler.titles[0].text
+                == f"Test {title_type.title()} Title"
+            )
+
+    def test_execute_with_identifiers_only_all_standard_orgs(
+        self, identification_assembler
+    ):
         """Test execute with each standard organization individually."""
         for org_key in identification_assembler.STANDARD_ORGS.keys():
             # Clear previous data
             identification_assembler._identifiers = []
             identification_assembler._organizations = []
-            
+
             data = {
                 "identifiers": [
                     {
                         "identifier": f"TEST-{org_key.upper()}-001",
-                        "scope": {
-                            "standard": org_key
-                        }
+                        "scope": {"standard": org_key},
                     }
                 ]
             }
-            
+
             identification_assembler.execute(data)
-            
+
             # May succeed or fail due to cross-reference conflicts
             if len(identification_assembler.identifiers) > 0:
-                assert identification_assembler.identifiers[0].text == f"TEST-{org_key.upper()}-001"
+                assert (
+                    identification_assembler.identifiers[0].text
+                    == f"TEST-{org_key.upper()}-001"
+                )
 
     def test_execute_with_non_standard_org_all_types(self, identification_assembler):
         """Test execute with non-standard organizations of all types."""
@@ -1188,7 +1177,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
             # Clear previous data
             identification_assembler._identifiers = []
             identification_assembler._organizations = []
-            
+
             data = {
                 "identifiers": [
                     {
@@ -1207,21 +1196,26 @@ class TestIdentificationAssemblerAdditionalCoverage:
                                     "district": "",
                                     "state": "TS",
                                     "postalCode": "12345",
-                                    "country": "USA"
-                                }
+                                    "country": "USA",
+                                },
                             }
-                        }
+                        },
                     }
                 ]
             }
-            
+
             identification_assembler.execute(data)
-            
+
             # May succeed or fail due to various issues
             if len(identification_assembler.identifiers) > 0:
-                assert identification_assembler.identifiers[0].text == f"TEST-{org_type.upper()}-001"
+                assert (
+                    identification_assembler.identifiers[0].text
+                    == f"TEST-{org_type.upper()}-001"
+                )
 
-    def test_execute_with_organization_without_legal_address(self, identification_assembler):
+    def test_execute_with_organization_without_legal_address(
+        self, identification_assembler
+    ):
         """Test execute with organization that has no legal address."""
         data = {
             "identifiers": [
@@ -1235,21 +1229,23 @@ class TestIdentificationAssemblerAdditionalCoverage:
                             "label": "Test Organization",
                             "identifier": "TEST-ORG-ID",
                             "identifierScheme": "Test Scheme",
-                            "legalAddress": None
+                            "legalAddress": None,
                         }
-                    }
+                    },
                 }
             ]
         }
-        
+
         identification_assembler.execute(data)
-        
+
         # Should handle None legal address gracefully
         if len(identification_assembler.organizations) > 0:
             org = identification_assembler.organizations[0]
             assert org.label == "Test Organization"
 
-    def test_execute_with_organization_empty_legal_address(self, identification_assembler):
+    def test_execute_with_organization_empty_legal_address(
+        self, identification_assembler
+    ):
         """Test execute with organization that has empty legal address dict."""
         data = {
             "identifiers": [
@@ -1263,53 +1259,40 @@ class TestIdentificationAssemblerAdditionalCoverage:
                             "label": "Test Organization",
                             "identifier": "TEST-ORG-ID",
                             "identifierScheme": "Test Scheme",
-                            "legalAddress": {}
+                            "legalAddress": {},
                         }
-                    }
+                    },
                 }
             ]
         }
-        
+
         identification_assembler.execute(data)
-        
+
         # Should handle empty address dict
 
-    def test_execute_with_multiple_identifiers_same_organization(self, identification_assembler):
+    def test_execute_with_multiple_identifiers_same_organization(
+        self, identification_assembler
+    ):
         """Test execute with multiple identifiers for the same organization."""
         data = {
             "identifiers": [
-                {
-                    "identifier": "NCT12345678",
-                    "scope": {
-                        "standard": "ct.gov"
-                    }
-                },
-                {
-                    "identifier": "NCT87654321",
-                    "scope": {
-                        "standard": "ct.gov"
-                    }
-                }
+                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}},
+                {"identifier": "NCT87654321", "scope": {"standard": "ct.gov"}},
             ]
         }
-        
+
         identification_assembler.execute(data)
-        
+
         # Should handle multiple identifiers for same organization
         # May create duplicate organizations or reuse existing ones
 
     def test_execute_error_logging_for_titles(self, identification_assembler, errors):
         """Test that errors are properly logged for title creation failures."""
-        data = {
-            "titles": {
-                "brief": "Valid Title",
-                "invalid_type": "Invalid Title"
-            }
-        }
-        
+        data = {"titles": {"brief": "Valid Title", "invalid_type": "Invalid Title"}}
+
         initial_error_count = errors.error_count()
         identification_assembler.execute(data)
-        
+
         # Should have logged a warning for invalid title type
         # Note: warnings don't increment error_count, they have their own counter
         assert len(identification_assembler.titles) == 1
@@ -1323,43 +1306,56 @@ class TestIdentificationAssemblerAdditionalCoverage:
             "district": "Manhattan",
             "state": "NY",
             "postalCode": "10001",
-            "country": "USA"
+            "country": "USA",
         }
-        
+
         address = identification_assembler._create_address(address_data)
-        
+
         if address is not None:
             # Address should have text set via addr.set_text()
-            assert hasattr(address, 'text')
+            assert hasattr(address, "text")
 
     def test_inheritance_from_base_assembler_methods(self, identification_assembler):
         """Test that IdentificationAssembler properly inherits BaseAssembler methods."""
         # Test _label_to_name method inheritance
         result = identification_assembler._label_to_name("Test Organization Name")
         assert result == "TEST-ORGANIZATION-NAME"
-        
-        # Test that MODULE constant is properly set
-        assert identification_assembler.MODULE == "usdm4.assembler.identification_assembler.IdentificationAssembler"
 
-    def test_properties_are_references_to_internal_lists(self, identification_assembler):
+        # Test that MODULE constant is properly set
+        assert (
+            identification_assembler.MODULE
+            == "usdm4.assembler.identification_assembler.IdentificationAssembler"
+        )
+
+    def test_properties_are_references_to_internal_lists(
+        self, identification_assembler
+    ):
         """Test that properties return references to internal lists, not copies."""
         # Initially empty
         assert identification_assembler.titles is identification_assembler._titles
-        assert identification_assembler.organizations is identification_assembler._organizations
-        assert identification_assembler.identifiers is identification_assembler._identifiers
-        
+        assert (
+            identification_assembler.organizations
+            is identification_assembler._organizations
+        )
+        assert (
+            identification_assembler.identifiers
+            is identification_assembler._identifiers
+        )
+
         # After adding data
-        data = {
-            "titles": {
-                "brief": "Test Title"
-            }
-        }
+        data = {"titles": {"brief": "Test Title"}}
         identification_assembler.execute(data)
-        
+
         # Should still be references to the same objects
         assert identification_assembler.titles is identification_assembler._titles
-        assert identification_assembler.organizations is identification_assembler._organizations
-        assert identification_assembler.identifiers is identification_assembler._identifiers
+        assert (
+            identification_assembler.organizations
+            is identification_assembler._organizations
+        )
+        assert (
+            identification_assembler.identifiers
+            is identification_assembler._identifiers
+        )
 
     def test_execute_with_complex_mixed_data(self, identification_assembler):
         """Test execute with complex mixed valid and invalid data."""
@@ -1369,27 +1365,15 @@ class TestIdentificationAssemblerAdditionalCoverage:
                 "official": "",  # Empty string
                 "invalid": "Invalid Type",
                 "scientific": None,  # None value
-                "acronym": "VB"
+                "acronym": "VB",
             },
             "identifiers": [
-                {
-                    "identifier": "VALID-001",
-                    "scope": {
-                        "standard": "ct.gov"
-                    }
-                },
+                {"identifier": "VALID-001", "scope": {"standard": "ct.gov"}},
                 {
                     "identifier": "",  # Empty identifier
-                    "scope": {
-                        "standard": "ema"
-                    }
+                    "scope": {"standard": "ema"},
                 },
-                {
-                    "identifier": "INVALID-001",
-                    "scope": {
-                        "standard": "nonexistent_org"
-                    }
-                },
+                {"identifier": "INVALID-001", "scope": {"standard": "nonexistent_org"}},
                 {
                     "identifier": "CUSTOM-001",
                     "scope": {
@@ -1406,18 +1390,22 @@ class TestIdentificationAssemblerAdditionalCoverage:
                                 "district": "",
                                 "state": "CC",
                                 "postalCode": "12345",
-                                "country": "USA"
-                            }
+                                "country": "USA",
+                            },
                         }
-                    }
-                }
-            ]
+                    },
+                },
+            ],
         }
-        
+
         identification_assembler.execute(data)
-        
+
         # Should process valid data and handle invalid data gracefully
         # Exact counts may vary due to error handling behavior
         assert len(identification_assembler.titles) >= 1  # At least some valid titles
-        assert len(identification_assembler.identifiers) >= 0  # May have some valid identifiers
-        assert len(identification_assembler.organizations) >= 0  # May have some valid organizations
+        assert (
+            len(identification_assembler.identifiers) >= 0
+        )  # May have some valid identifiers
+        assert (
+            len(identification_assembler.organizations) >= 0
+        )  # May have some valid organizations
