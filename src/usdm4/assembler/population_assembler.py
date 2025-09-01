@@ -104,7 +104,6 @@ class PopulationAssembler(BaseAssembler):
         return self._eci_items
 
     def _ie(self, criteria: dict) -> None:
-        print(f"CRITERIA: {criteria}")
         self._collection(
             criteria["inclusion"], "C25532", "INCLUSION", "INC", "Inclusion"
         )

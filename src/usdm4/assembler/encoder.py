@@ -146,7 +146,6 @@ class Encoder:
     def to_date(self, text: str) -> datetime.datetime | None:
         try:
             input_text = text.strip()
-            print(f"DATE TEXT: {input_text}")
             if input_text:
                 return parser.parse(input_text)
             else:

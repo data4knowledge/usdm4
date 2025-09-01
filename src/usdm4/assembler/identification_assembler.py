@@ -253,7 +253,6 @@ class IdentificationAssembler(BaseAssembler):
 
     @property
     def identifiers(self):
-        print(f"IDENTIFIERS PROPERTY: {self._identifiers}")
         return self._identifiers
 
     def _create_address(self, address: dict) -> Address | None:
