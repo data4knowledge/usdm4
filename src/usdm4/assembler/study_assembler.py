@@ -92,6 +92,9 @@ class StudyAssembler(BaseAssembler):
             object serves as the root container.
         """
         try:
+            # Create the dates
+            self._create_date(data)
+
             # Create StudyVersion parameters by combining data from all assemblers
             params = {
                 "versionIdentifier": data["version"],  # Version ID from input data
