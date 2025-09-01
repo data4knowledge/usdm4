@@ -1,7 +1,6 @@
 import os
 import pathlib
 import pytest
-from datetime import datetime
 from simple_error_log.errors import Errors
 from src.usdm4.assembler.study_assembler import StudyAssembler
 from src.usdm4.assembler.identification_assembler import IdentificationAssembler
@@ -88,9 +87,7 @@ def prepared_assemblers(
     # Prepare identification assembler with basic data
     identification_data = {
         "titles": {"brief": "Test Study", "official": "Official Test Study"},
-        "identifiers": [
-            {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}}
-        ],
+        "identifiers": [{"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}}],
     }
     identification_assembler.execute(identification_data)
 
@@ -100,13 +97,10 @@ def prepared_assemblers(
         "inclusion_exclusion": {
             "inclusion": [
                 "Age >= 18 years",
-                "Participants must be able to provide informed consent"
+                "Participants must be able to provide informed consent",
             ],
-            "exclusion": [
-                "Not pregnant",
-                "No serious medical conditions"
-            ]
-        }
+            "exclusion": ["Not pregnant", "No serious medical conditions"],
+        },
     }
     population_assembler.execute(population_data)
 
@@ -125,9 +119,11 @@ def prepared_assemblers(
     study_design_data = {
         "label": "Test Study Design Label",
         "rationale": "Test study design rationale",
-        "trial_phase": "phase-1"
+        "trial_phase": "phase-1",
     }
-    study_design_assembler.execute(study_design_data, population_assembler, timeline_assembler)
+    study_design_assembler.execute(
+        study_design_data, population_assembler, timeline_assembler
+    )
 
     # Verify study design was created successfully
     if study_design_assembler.study_design is None:
@@ -140,33 +136,24 @@ def prepared_assemblers(
             "version": "1.0",
             "status": "final",
             "template": "Protocol Template",
-            "version_date": "2024-01-01"
+            "version_date": "2024-01-01",
         },
         "sections": [
             {
                 "section_number": "1",
                 "section_title": "Introduction",
-                "text": "This is the introduction section."
+                "text": "This is the introduction section.",
             }
-        ]
+        ],
     }
     document_assembler.execute(document_data)
 
     # Prepare amendments assembler with minimal data
     amendments_data = {
         "summary": "First amendment to the protocol",
-        "reasons": {
-            "primary": "Safety update",
-            "secondary": "Protocol clarification"
-        },
-        "impact": {
-            "safety": True,
-            "reliability": False
-        },
-        "enrollment": {
-            "value": 100,
-            "unit": "subjects"
-        }
+        "reasons": {"primary": "Safety update", "secondary": "Protocol clarification"},
+        "impact": {"safety": True, "reliability": False},
+        "enrollment": {"value": 100, "unit": "subjects"},
     }
     amendments_assembler.execute(amendments_data)
 
@@ -206,13 +193,17 @@ class TestStudyAssemblerInitialization:
         assert result == "TEST-STUDY-NAME"
 
         # Test that MODULE constant is properly set
-        assert study_assembler.MODULE == "usdm4.assembler.study_assembler.StudyAssembler"
+        assert (
+            study_assembler.MODULE == "usdm4.assembler.study_assembler.StudyAssembler"
+        )
 
 
 class TestStudyAssemblerValidData:
     """Test StudyAssembler with valid data."""
 
-    def test_execute_with_minimal_valid_data(self, study_assembler, prepared_assemblers):
+    def test_execute_with_minimal_valid_data(
+        self, study_assembler, prepared_assemblers
+    ):
         """Test execute with minimal valid data."""
         data = {
             "name": {"acronym": "TST"},
@@ -242,7 +233,9 @@ class TestStudyAssemblerValidData:
         assert study_version.versionIdentifier == "1.0"
         assert study_version.rationale == "Initial version of the test study"
 
-    def test_execute_with_complete_valid_data(self, study_assembler, prepared_assemblers):
+    def test_execute_with_complete_valid_data(
+        self, study_assembler, prepared_assemblers
+    ):
         """Test execute with complete valid data including sponsor approval date."""
         data = {
             "name": {"identifier": "STUDY-001"},
@@ -341,7 +334,9 @@ class TestStudyAssemblerValidData:
         assert study_assembler.study.name == "STUDYID001"
         assert study_assembler.study.label == "STUDY_ID_001"
 
-    def test_execute_with_valid_sponsor_approval_date(self, study_assembler, prepared_assemblers):
+    def test_execute_with_valid_sponsor_approval_date(
+        self, study_assembler, prepared_assemblers
+    ):
         """Test execute with valid sponsor approval date."""
         data = {
             "name": {"acronym": "TST"},
@@ -362,14 +357,15 @@ class TestStudyAssemblerValidData:
 
         assert study_assembler.study is not None
         study_version = study_assembler.study.versions[0]
-        
+
         # Should have at least one governance date (sponsor approval)
         assert len(study_version.dateValues) >= 1
-        
+
         # Check if sponsor approval date was created
         sponsor_dates = [
-            date for date in study_version.dateValues 
-            if hasattr(date, 'name') and date.name == "SPONSOR-APPORVAL-DATE"
+            date
+            for date in study_version.dateValues
+            if hasattr(date, "name") and date.name == "SPONSOR-APPORVAL-DATE"
         ]
         assert len(sponsor_dates) >= 0  # May be 0 if date creation failed
 
@@ -398,7 +394,9 @@ class TestStudyAssemblerInvalidData:
         # Study should not be created with empty data
         assert study_assembler.study is None
 
-    def test_execute_with_missing_required_fields(self, study_assembler, prepared_assemblers):
+    def test_execute_with_missing_required_fields(
+        self, study_assembler, prepared_assemblers
+    ):
         """Test execute with missing required fields."""
         data = {
             "name": {"acronym": "TST"},
@@ -421,7 +419,9 @@ class TestStudyAssemblerInvalidData:
         # Study should not be created with missing required fields
         assert study_assembler.study is None
 
-    def test_execute_with_invalid_sponsor_approval_date(self, study_assembler, prepared_assemblers):
+    def test_execute_with_invalid_sponsor_approval_date(
+        self, study_assembler, prepared_assemblers
+    ):
         """Test execute with invalid sponsor approval date format."""
         data = {
             "name": {"acronym": "TST"},
@@ -443,11 +443,12 @@ class TestStudyAssemblerInvalidData:
         # Should create study but without sponsor approval date
         assert study_assembler.study is not None
         study_version = study_assembler.study.versions[0]
-        
+
         # Should not have created sponsor approval date due to invalid format
         sponsor_dates = [
-            date for date in study_version.dateValues 
-            if hasattr(date, 'name') and date.name == "SPONSOR-APPORVAL-DATE"
+            date
+            for date in study_version.dateValues
+            if hasattr(date, "name") and date.name == "SPONSOR-APPORVAL-DATE"
         ]
         assert len(sponsor_dates) == 0
 
@@ -494,7 +495,9 @@ class TestStudyAssemblerInvalidData:
         # Should fail to create study due to empty name validation
         assert study_assembler.study is None
 
-    def test_execute_with_invalid_name_structure(self, study_assembler, prepared_assemblers):
+    def test_execute_with_invalid_name_structure(
+        self, study_assembler, prepared_assemblers
+    ):
         """Test execute with invalid name structure."""
         data = {
             "name": "not_a_dict",  # Should be a dict
@@ -523,7 +526,9 @@ class TestStudyAssemblerInvalidData:
 class TestStudyAssemblerEdgeCases:
     """Test StudyAssembler edge cases."""
 
-    def test_execute_with_special_characters_in_name(self, study_assembler, prepared_assemblers):
+    def test_execute_with_special_characters_in_name(
+        self, study_assembler, prepared_assemblers
+    ):
         """Test execute with special characters in name fields."""
         data = {
             "name": {"acronym": "TST-123_@#$"},
@@ -546,7 +551,9 @@ class TestStudyAssemblerEdgeCases:
         assert study_assembler.study.name == "TST123"
         assert study_assembler.study.label == "TST-123_@#$"
 
-    def test_execute_with_unicode_characters(self, study_assembler, prepared_assemblers):
+    def test_execute_with_unicode_characters(
+        self, study_assembler, prepared_assemblers
+    ):
         """Test execute with unicode characters in data."""
         data = {
             "name": {"acronym": "ÉTUDE"},
@@ -591,7 +598,9 @@ class TestStudyAssemblerEdgeCases:
         assert study_assembler.study.name == long_string
         assert study_assembler.study.label == long_string
 
-    def test_execute_with_multiple_name_options(self, study_assembler, prepared_assemblers):
+    def test_execute_with_multiple_name_options(
+        self, study_assembler, prepared_assemblers
+    ):
         """Test execute with multiple name options (should use first available)."""
         data = {
             "name": {
@@ -618,7 +627,9 @@ class TestStudyAssemblerEdgeCases:
         assert study_assembler.study.name == "ACR"
         assert study_assembler.study.label == "ACR"
 
-    def test_execute_with_empty_string_values(self, study_assembler, prepared_assemblers):
+    def test_execute_with_empty_string_values(
+        self, study_assembler, prepared_assemblers
+    ):
         """Test execute with empty string values."""
         data = {
             "name": {"acronym": ""},
@@ -647,75 +658,75 @@ class TestStudyAssemblerPrivateMethods:
     def test_create_date_with_valid_date(self, study_assembler):
         """Test _create_date with valid sponsor approval date."""
         data = {"sponsor_approval_date": "2024-01-15"}
-        
+
         initial_dates_count = len(study_assembler._dates)
         study_assembler._create_date(data)
-        
+
         # Should have added a governance date
         assert len(study_assembler._dates) >= initial_dates_count
 
     def test_create_date_with_invalid_date(self, study_assembler):
         """Test _create_date with invalid date format."""
         data = {"sponsor_approval_date": "invalid-date"}
-        
+
         initial_dates_count = len(study_assembler._dates)
         study_assembler._create_date(data)
-        
+
         # Should not have added any dates due to invalid format
         assert len(study_assembler._dates) == initial_dates_count
 
     def test_create_date_with_missing_date(self, study_assembler):
         """Test _create_date with missing sponsor approval date."""
         data = {}
-        
+
         initial_dates_count = len(study_assembler._dates)
         study_assembler._create_date(data)
-        
+
         # Should not have added any dates
         assert len(study_assembler._dates) == initial_dates_count
 
     def test_get_study_name_label_with_acronym(self, study_assembler):
         """Test _get_study_name_label with acronym."""
         options = {"acronym": "TEST-STUDY"}
-        
+
         name, label = study_assembler._get_study_name_label(options)
-        
+
         assert name == "TESTSTUDY"
         assert label == "TEST-STUDY"
 
     def test_get_study_name_label_with_identifier(self, study_assembler):
         """Test _get_study_name_label with identifier."""
         options = {"identifier": "STUDY_001"}
-        
+
         name, label = study_assembler._get_study_name_label(options)
-        
+
         assert name == "STUDY001"
         assert label == "STUDY_001"
 
     def test_get_study_name_label_with_compound(self, study_assembler):
         """Test _get_study_name_label with compound."""
         options = {"compound": "Compound-X"}
-        
+
         name, label = study_assembler._get_study_name_label(options)
-        
+
         assert name == "COMPOUNDX"
         assert label == "Compound-X"
 
     def test_get_study_name_label_with_empty_options(self, study_assembler):
         """Test _get_study_name_label with empty options."""
         options = {}
-        
+
         name, label = study_assembler._get_study_name_label(options)
-        
+
         assert name == ""
         assert label == ""
 
     def test_get_study_name_label_with_none_values(self, study_assembler):
         """Test _get_study_name_label with None values."""
         options = {"acronym": None, "identifier": "VALID-ID"}
-        
+
         name, label = study_assembler._get_study_name_label(options)
-        
+
         # Should skip None acronym and use identifier
         assert name == "VALIDID"
         assert label == "VALID-ID"
@@ -723,9 +734,9 @@ class TestStudyAssemblerPrivateMethods:
     def test_get_study_name_label_with_empty_string_values(self, study_assembler):
         """Test _get_study_name_label with empty string values."""
         options = {"acronym": "", "identifier": "VALID-ID"}
-        
+
         name, label = study_assembler._get_study_name_label(options)
-        
+
         # Should skip empty acronym and use identifier
         assert name == "VALIDID"
         assert label == "VALID-ID"
@@ -734,12 +745,12 @@ class TestStudyAssemblerPrivateMethods:
         """Test _get_study_name_label priority order (acronym > identifier > compound)."""
         options = {
             "compound": "COMPOUND",
-            "identifier": "IDENTIFIER", 
-            "acronym": "ACRONYM"
+            "identifier": "IDENTIFIER",
+            "acronym": "ACRONYM",
         }
-        
+
         name, label = study_assembler._get_study_name_label(options)
-        
+
         # Should use acronym (highest priority)
         assert name == "ACRONYM"
         assert label == "ACRONYM"
@@ -748,7 +759,9 @@ class TestStudyAssemblerPrivateMethods:
 class TestStudyAssemblerStateManagement:
     """Test StudyAssembler state management."""
 
-    def test_study_property_after_successful_execution(self, study_assembler, prepared_assemblers):
+    def test_study_property_after_successful_execution(
+        self, study_assembler, prepared_assemblers
+    ):
         """Test that study property returns created study after successful execution."""
         data = {
             "name": {"acronym": "TST"},
@@ -794,13 +807,15 @@ class TestStudyAssemblerStateManagement:
     def test_encoder_initialization(self, study_assembler):
         """Test that encoder is properly initialized."""
         assert study_assembler._encoder is not None
-        assert hasattr(study_assembler._encoder, 'to_date')
+        assert hasattr(study_assembler._encoder, "to_date")
 
 
 class TestStudyAssemblerBuilderIntegration:
     """Test StudyAssembler integration with Builder (without mocking)."""
 
-    def test_builder_create_study_integration(self, study_assembler, prepared_assemblers):
+    def test_builder_create_study_integration(
+        self, study_assembler, prepared_assemblers
+    ):
         """Test integration with Builder's create method for Study objects."""
         data = {
             "name": {"acronym": "TST"},
@@ -820,12 +835,16 @@ class TestStudyAssemblerBuilderIntegration:
 
         # Should use Builder's create method to create Study object
         if study_assembler.study is not None:
-            assert hasattr(study_assembler.study, 'id')  # Objects created by Builder should have IDs
-            assert hasattr(study_assembler.study, 'name')
-            assert hasattr(study_assembler.study, 'label')
-            assert hasattr(study_assembler.study, 'versions')
+            assert hasattr(
+                study_assembler.study, "id"
+            )  # Objects created by Builder should have IDs
+            assert hasattr(study_assembler.study, "name")
+            assert hasattr(study_assembler.study, "label")
+            assert hasattr(study_assembler.study, "versions")
 
-    def test_builder_create_study_version_integration(self, study_assembler, prepared_assemblers):
+    def test_builder_create_study_version_integration(
+        self, study_assembler, prepared_assemblers
+    ):
         """Test integration with Builder's create method for StudyVersion objects."""
         data = {
             "name": {"acronym": "TST"},
@@ -843,42 +862,51 @@ class TestStudyAssemblerBuilderIntegration:
             prepared_assemblers["amendments"],
         )
 
-        if study_assembler.study is not None and len(study_assembler.study.versions) > 0:
+        if (
+            study_assembler.study is not None
+            and len(study_assembler.study.versions) > 0
+        ):
             study_version = study_assembler.study.versions[0]
-            assert hasattr(study_version, 'id')  # Objects created by Builder should have IDs
-            assert hasattr(study_version, 'versionIdentifier')
-            assert hasattr(study_version, 'rationale')
+            assert hasattr(
+                study_version, "id"
+            )  # Objects created by Builder should have IDs
+            assert hasattr(study_version, "versionIdentifier")
+            assert hasattr(study_version, "rationale")
 
     def test_builder_cdisc_code_integration(self, study_assembler):
         """Test integration with Builder's cdisc_code method."""
         data = {"sponsor_approval_date": "2024-01-15"}
-        
+
         study_assembler._create_date(data)
-        
+
         # Should integrate with Builder's CDISC code functionality
         if len(study_assembler._dates) > 0:
             governance_date = study_assembler._dates[0]
-            assert hasattr(governance_date, 'type')
+            assert hasattr(governance_date, "type")
             # The type should be a Code object created by Builder
 
     def test_builder_create_governance_date_integration(self, study_assembler):
         """Test integration with Builder's create method for GovernanceDate objects."""
         data = {"sponsor_approval_date": "2024-01-15"}
-        
+
         study_assembler._create_date(data)
-        
+
         if len(study_assembler._dates) > 0:
             governance_date = study_assembler._dates[0]
-            assert hasattr(governance_date, 'id')  # Objects created by Builder should have IDs
-            assert hasattr(governance_date, 'name')
-            assert hasattr(governance_date, 'type')
-            assert hasattr(governance_date, 'dateValue')
+            assert hasattr(
+                governance_date, "id"
+            )  # Objects created by Builder should have IDs
+            assert hasattr(governance_date, "name")
+            assert hasattr(governance_date, "type")
+            assert hasattr(governance_date, "dateValue")
 
 
 class TestStudyAssemblerErrorHandling:
     """Test StudyAssembler error handling (without mocking Errors)."""
 
-    def test_error_handling_with_malformed_data(self, study_assembler, prepared_assemblers, errors):
+    def test_error_handling_with_malformed_data(
+        self, study_assembler, prepared_assemblers, errors
+    ):
         """Test error handling with malformed data structures."""
         malformed_data = {
             "name": "not_a_dict",  # Should be a dict
@@ -887,7 +915,6 @@ class TestStudyAssemblerErrorHandling:
         }
 
         initial_error_count = errors.error_count()
-        
         try:
             study_assembler.execute(
                 malformed_data,
@@ -917,7 +944,7 @@ class TestStudyAssemblerErrorHandling:
 
         # Pass None assemblers to trigger exceptions
         initial_error_count = errors.error_count()
-        
+
         try:
             study_assembler.execute(data, None, None, None, None, None)
         except (AttributeError, TypeError):
@@ -932,15 +959,16 @@ class TestStudyAssemblerErrorHandling:
     def test_error_handling_with_invalid_date_creation(self, study_assembler, errors):
         """Test error handling during date creation."""
         data = {"sponsor_approval_date": "completely-invalid-date-format"}
-        
-        initial_error_count = errors.error_count()
+
         study_assembler._create_date(data)
-        
+
         # Should handle invalid date gracefully (may log warning, not error)
         # No dates should be created
         assert len(study_assembler._dates) == 0
 
-    def test_error_handling_with_builder_failures(self, study_assembler, prepared_assemblers, errors):
+    def test_error_handling_with_builder_failures(
+        self, study_assembler, prepared_assemblers, errors
+    ):
         """Test error handling when Builder operations fail."""
         data = {
             "name": {"acronym": "TST"},
@@ -949,8 +977,6 @@ class TestStudyAssemblerErrorHandling:
             "rationale": "Test rationale",
         }
 
-        initial_error_count = errors.error_count()
-        
         # Execute with valid data - Builder failures are internal and handled
         study_assembler.execute(
             data,
@@ -978,7 +1004,9 @@ class TestStudyAssemblerAdditionalCoverage:
         assembler = StudyAssembler(builder, "not_errors")
         assert assembler._errors == "not_errors"
 
-    def test_execute_with_all_name_options_empty(self, study_assembler, prepared_assemblers):
+    def test_execute_with_all_name_options_empty(
+        self, study_assembler, prepared_assemblers
+    ):
         """Test execute when all name options are empty or None."""
         data = {
             "name": {
@@ -1003,7 +1031,9 @@ class TestStudyAssemblerAdditionalCoverage:
         # Should fail to create study due to empty name validation
         assert study_assembler.study is None
 
-    def test_execute_with_whitespace_only_values(self, study_assembler, prepared_assemblers):
+    def test_execute_with_whitespace_only_values(
+        self, study_assembler, prepared_assemblers
+    ):
         """Test execute with whitespace-only values."""
         data = {
             "name": {"acronym": "   "},
@@ -1027,33 +1057,35 @@ class TestStudyAssemblerAdditionalCoverage:
     def test_create_date_with_none_sponsor_approval_date(self, study_assembler):
         """Test _create_date with None sponsor_approval_date."""
         data = {"sponsor_approval_date": None}
-        
+
         initial_dates_count = len(study_assembler._dates)
         study_assembler._create_date(data)
-        
+
         # Should not add any dates
         assert len(study_assembler._dates) == initial_dates_count
 
     def test_create_date_with_empty_string_sponsor_approval_date(self, study_assembler):
         """Test _create_date with empty string sponsor_approval_date."""
         data = {"sponsor_approval_date": ""}
-        
+
         initial_dates_count = len(study_assembler._dates)
         study_assembler._create_date(data)
-        
+
         # Should not add any dates
         assert len(study_assembler._dates) == initial_dates_count
 
-    def test_get_study_name_label_with_special_characters_in_all_fields(self, study_assembler):
+    def test_get_study_name_label_with_special_characters_in_all_fields(
+        self, study_assembler
+    ):
         """Test _get_study_name_label with special characters in all name fields."""
         options = {
             "acronym": "A@C#R$",
             "identifier": "I%D^E&N*T",
             "compound": "C(O)M+P=O{U}N[D]",
         }
-        
+
         name, label = study_assembler._get_study_name_label(options)
-        
+
         # Should use acronym and clean special characters
         # The regex r"[\W_]+" removes all non-word characters (including underscores)
         # "A@C#R$" becomes "ACR" (not "ACRS" as the @ # $ are removed, not replaced with S)

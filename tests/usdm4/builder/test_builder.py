@@ -908,20 +908,20 @@ def test_clear_method(builder):
     """Test clear method to cover lines 53-56."""
     # First populate some data
     builder.seed("tests/usdm4/test_files/builder/seed_1.json")
-    
+
     # Add some cross references
-    mock_object = type('MockObject', (), {'id': 'test_id'})()
+    mock_object = type("MockObject", (), {"id": "test_id"})()
     builder.cross_reference.add(mock_object, "test_name")
-    
+
     # Add some errors
     builder.errors.error("Test error", None)
-    
+
     # Set data store
     builder._data_store = "test_data_store"
-    
+
     # Now clear everything
     builder.clear()
-    
+
     # Verify everything was cleared
     assert builder._data_store is None
     # The other assertions would depend on the internal structure of the objects
@@ -929,23 +929,24 @@ def test_clear_method(builder):
 
 def test_check_object_method(builder):
     """Test _check_object method to cover lines 204-207."""
+
     # Test with object that has id attribute
     class MockObjectWithId:
         def __init__(self):
             self.id = "test_id"
-    
+
     mock_obj_with_id = MockObjectWithId()
     result = builder._check_object(mock_obj_with_id)
     assert result is True
-    
+
     # Test with object that doesn't have id attribute
     class MockObjectWithoutId:
         pass
-    
+
     mock_obj_without_id = MockObjectWithoutId()
     result = builder._check_object(mock_obj_without_id)
     assert result is False
-    
+
     # Test with None object
     result = builder._check_object(None)
     assert result is False
@@ -954,44 +955,59 @@ def test_check_object_method(builder):
 def test_klass_and_attribute_value_method(builder):
     """Test klass_and_attribute_value method to cover lines 283-295."""
     # Check if the method exists, if not skip this test
-    if not hasattr(builder.cdisc_ct_library, 'klass_and_attribute_value'):
+    if not hasattr(builder.cdisc_ct_library, "klass_and_attribute_value"):
         # Create a mock method for testing
         def mock_klass_and_attribute_value(klass, attribute, value):
-            if klass == "StudyDesign" and attribute == "studyPhase" and value == "Phase I":
-                return ({"conceptId": "C15600", "preferredTerm": "Phase I Trial"}, "2025-03-28")
+            if (
+                klass == "StudyDesign"
+                and attribute == "studyPhase"
+                and value == "Phase I"
+            ):
+                return (
+                    {"conceptId": "C15600", "preferredTerm": "Phase I Trial"},
+                    "2025-03-28",
+                )
             else:
                 return (None, None)
-        
-        builder.cdisc_ct_library.klass_and_attribute_value = mock_klass_and_attribute_value
-        
+
+        builder.cdisc_ct_library.klass_and_attribute_value = (
+            mock_klass_and_attribute_value
+        )
+
         try:
             # Test with valid parameters
-            result = builder.klass_and_attribute_value("StudyDesign", "studyPhase", "Phase I")
+            result = builder.klass_and_attribute_value(
+                "StudyDesign", "studyPhase", "Phase I"
+            )
             assert result is not None
             assert result.code == "C15600"
             assert result.decode == "Phase I Trial"
             assert result.codeSystem == builder._cdisc_code_system
             assert result.codeSystemVersion == "2025-03-28"
-            
+
             # Test with invalid parameters that return None
-            result = builder.klass_and_attribute_value("InvalidClass", "invalidAttribute", "invalidValue")
+            result = builder.klass_and_attribute_value(
+                "InvalidClass", "invalidAttribute", "invalidValue"
+            )
             assert result is None
-            
+
         finally:
             # Remove the mock method
-            delattr(builder.cdisc_ct_library, 'klass_and_attribute_value')
+            delattr(builder.cdisc_ct_library, "klass_and_attribute_value")
     else:
         # If method exists, test it normally
-        result = builder.klass_and_attribute_value("StudyDesign", "studyPhase", "Phase I")
+        result = builder.klass_and_attribute_value(
+            "StudyDesign", "studyPhase", "Phase I"
+        )
         # Just verify it doesn't crash and returns something reasonable
-        assert result is None or hasattr(result, 'code')
+        assert result is None or hasattr(result, "code")
 
 
 def test_iso639_code_or_decode_method(builder):
     """Test iso639_code_or_decode method to cover lines 298-311."""
     # Mock the iso639_library.code_or_decode method
     original_code_or_decode = builder.iso639_library.code_or_decode
-    
+
     def mock_code_or_decode(text):
         if text == "en" or text == "English":
             return ("en", "English")
@@ -999,9 +1015,9 @@ def test_iso639_code_or_decode_method(builder):
             return ("fr", "French")
         else:
             return (None, None)
-    
+
     builder.iso639_library.code_or_decode = mock_code_or_decode
-    
+
     try:
         # Test with valid language code
         result = builder.iso639_code_or_decode("en")
@@ -1010,17 +1026,17 @@ def test_iso639_code_or_decode_method(builder):
         assert result.decode == "English"
         assert result.codeSystem == builder.iso639_library.system
         assert result.codeSystemVersion == builder.iso639_library.version
-        
+
         # Test with valid language name
         result = builder.iso639_code_or_decode("French")
         assert result is not None
         assert result.code == "fr"
         assert result.decode == "French"
-        
+
         # Test with invalid input
         result = builder.iso639_code_or_decode("InvalidLanguage")
         assert result is None
-        
+
     finally:
         # Restore original method
         builder.iso639_library.code_or_decode = original_code_or_decode
@@ -1030,7 +1046,7 @@ def test_iso3166_region_code_method(builder):
     """Test iso3166_region_code method to cover lines 329-330."""
     # Mock the iso3166_library.region_code method
     original_region_code = builder.iso3166_library.region_code
-    
+
     def mock_region_code(code):
         if code == "150":
             return ("150", "Europe")
@@ -1038,9 +1054,9 @@ def test_iso3166_region_code_method(builder):
             return ("019", "Americas")
         else:
             return (code, f"Region {code}")
-    
+
     builder.iso3166_library.region_code = mock_region_code
-    
+
     try:
         # Test with valid region code
         result = builder.iso3166_region_code("150")
@@ -1049,19 +1065,19 @@ def test_iso3166_region_code_method(builder):
         assert result.decode == "Europe"
         assert result.codeSystem == builder.iso3166_library.system
         assert result.codeSystemVersion == builder.iso3166_library.version
-        
+
         # Test with another region code
         result = builder.iso3166_region_code("019")
         assert result is not None
         assert result.code == "019"
         assert result.decode == "Americas"
-        
+
         # Test with unknown region code
         result = builder.iso3166_region_code("999")
         assert result is not None
         assert result.code == "999"
         assert result.decode == "Region 999"
-        
+
     finally:
         # Restore original method
         builder.iso3166_library.region_code = original_region_code
@@ -1073,10 +1089,10 @@ def test_bc_method_with_existing_concept(builder):
     original_exists = builder.cdisc_bc_library.exists
     original_usdm = builder.cdisc_bc_library.usdm
     original_set_ids = builder._set_ids
-    
+
     def mock_exists(name):
         return name == "ExistingBC"
-    
+
     def mock_usdm(name):
         return {
             "instanceType": "BiomedicalConcept",
@@ -1084,27 +1100,27 @@ def test_bc_method_with_existing_concept(builder):
             "label": f"Label for {name}",
             "description": f"Description for {name}",
             "reference": {"id": "mock_ref_id"},  # Add required reference field
-            "code": {"code": "C123", "decode": "Test Code"}  # Add required code field
+            "code": {"code": "C123", "decode": "Test Code"},  # Add required code field
         }
-    
+
     def mock_set_ids(params):
         if isinstance(params, dict) and "instanceType" in params:
             params["id"] = f"mock_id_for_{params['instanceType']}"
-    
+
     builder.cdisc_bc_library.exists = mock_exists
     builder.cdisc_bc_library.usdm = mock_usdm
     builder._set_ids = mock_set_ids
-    
+
     try:
         # Test with existing biomedical concept
         result = builder.bc("ExistingBC")
         # The result might be None due to validation errors, which is acceptable for coverage
         # The important thing is that the code path is executed
-        
+
         # Test with non-existing biomedical concept
         result = builder.bc("NonExistingBC")
         assert result is None
-        
+
     finally:
         # Restore original methods
         builder.cdisc_bc_library.exists = original_exists
@@ -1116,22 +1132,26 @@ def test_create_method_with_cross_reference_false(builder):
     """Test create method with cross_reference=False."""
     # Test creating an object without cross referencing using a working example
     result = builder.other_code("TEST123", "TestSystem", "1.0", "Test Code")
-    
+
     # Verify the object was created successfully
     assert result is not None
     assert result.code == "TEST123"
     assert result.decode == "Test Code"
-    
+
     # Now test the create method with cross_reference=False using the same pattern
     # but with a simpler approach that should work
     try:
-        result2 = builder.create("Code", {
-            "code": "TEST456",
-            "codeSystem": "TestSystem2", 
-            "codeSystemVersion": "2.0",
-            "decode": "Test Code 2"
-        }, cross_reference=False)
-        
+        result2 = builder.create(
+            "Code",
+            {
+                "code": "TEST456",
+                "codeSystem": "TestSystem2",
+                "codeSystemVersion": "2.0",
+                "decode": "Test Code 2",
+            },
+            cross_reference=False,
+        )
+
         # If it works, great! If not, that's also fine for coverage purposes
         # The important thing is that the code path is executed
         if result2 is not None:
@@ -1146,18 +1166,18 @@ def test_create_method_with_object_without_id(builder):
     """Test create method when created object doesn't have id."""
     # Mock api_instance.create to return object without id
     original_create = builder.api_instance.create
-    
+
     def mock_create_no_id(klass, params):
         # Return a mock object without id attribute
-        return type('MockObject', (), params)()
-    
+        return type("MockObject", (), params)()
+
     builder.api_instance.create = mock_create_no_id
-    
+
     try:
         result = builder.create("TestClass", {"name": "test"})
         # Should still return the object even without id
         assert result is not None
-        
+
     finally:
         # Restore original method
         builder.api_instance.create = original_create
