@@ -114,24 +114,26 @@ class Encoder:
 
     def amendment_reason(self, reason_str: str):
         if reason_str:
-            parts = reason_str.split(" ")
-            if len(parts) > 2:
+            parts = reason_str.split(":")
+            #print(f"PARTS: {parts}")
+            if len(parts) >= 2:
                 reason_text = parts[1]
+                #print(f"REASON: {reason_text}")
                 for reason in self.REASON_MAP:
                     if reason_text in reason["decode"]:
                         self._errors.info(
-                            f"Amednment reason '{reason_text}' decoded as '{reason['code']}', '{reason['decode']}'"
+                            f"Amendment reason '{reason_text}' decoded as '{reason['code']}', '{reason['decode']}'"
                         )
                         code = self._builder.cdisc_code(
                             reason["code"], reason["decode"]
                         )
                         return {"code": code, "other_reason": ""}
             self._errors.warning(
-                f"Unable to decode amendment reason '{reason}'",
+                f"Unable to decode amendment reason '{reason_str}'",
                 location=KlassMethodLocation(self.MODULE, "amendment_reason"),
             )
             code = self._builder.cdisc_code("C17649", "Other")
-            return {"code": code, "other_reason": parts[1].strip()}
+            return {"code": code, "other_reason": parts[-1].strip()}
         self._errors.warning(
             "Amendment reason not decoded, missing text",
             location=KlassMethodLocation(self.MODULE, "amendment_reason"),

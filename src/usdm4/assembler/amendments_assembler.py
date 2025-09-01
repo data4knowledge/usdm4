@@ -32,12 +32,15 @@ class AmendmentsAssembler(BaseAssembler):
 
     def _create_amendment(self, data: dict) -> StudyAmendment:
         try:
-            reason = []
+            # print(f"DATA: {data}")
+            reason = {}
             global_code = self._builder.cdisc_code("C68846", "Global")
             global_scope = self._builder.create(GeographicScope, {"type": global_code})
-            for item in data["reasons"]:
-                params = {"code": item["code"], "otherReason": item["other_reason"]}
-                reason.append(self._builder.create(StudyAmendmentReason, params))
+            for k, item in data["reasons"].items():
+                # print(f"REASON_CODE: {k} = {item}")
+                reason[k] = self._builder.create(
+                    StudyAmendmentReason, self._encoder.amendment_reason(item)
+                )
             impact = data["impact"]["safety"] or data["impact"]["reliability"]
             # print(f"IMPACT: {impact}")
             params = {
@@ -45,8 +48,8 @@ class AmendmentsAssembler(BaseAssembler):
                 "number": "1",
                 "summary": data["summary"],
                 "substantialImpact": impact,
-                "primaryReason": reason[0],
-                "secondaryReasons": [reason[1]],
+                "primaryReason": reason["primary"],
+                "secondaryReasons": [reason["secondary"]],
                 "enrollments": [self._create_enrollment(data)],
                 "geographicScopes": [global_scope],
             }
@@ -89,5 +92,5 @@ class AmendmentsAssembler(BaseAssembler):
             return self._builder.create(SubjectEnrollment, params)
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
-            self._errors.exception("Failed during creation of amendments", e, location)
+            self._errors.exception("Failed during creation of enrollments", e, location)
             return None

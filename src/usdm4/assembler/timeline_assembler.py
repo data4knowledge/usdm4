@@ -119,7 +119,11 @@ class TimelineAssembler(BaseAssembler):
             print(f"ENCOUNTER ITEMS: {items}")
             item: dict[str]
             for key, item in items.items():
-                name = item['header_text'] if item['header_text'].strip() else instances[key]["timepoint_reference"]
+                name = (
+                    item["header_text"]
+                    if item["header_text"].strip()
+                    else instances[key]["timepoint_reference"]
+                )
                 print(f"ENCOUNTER NAME: {name}")
                 encounter: Encounter = self._builder.create(
                     Encounter,
