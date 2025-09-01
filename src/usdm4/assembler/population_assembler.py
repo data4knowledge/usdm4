@@ -73,7 +73,6 @@ class PopulationAssembler(BaseAssembler):
         Raises:
             Exception: If population creation fails, logged via error handler
         """
-        print(f"DATA: {data}")
         try:
             self._ie(data["inclusion_exclusion"])
 

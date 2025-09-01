@@ -260,7 +260,6 @@ class Builder:
 
     def iso3166_code_or_decode(self, text: str) -> Code:
         code, decode = self.iso3166_library.code_or_decode(text)
-        print(f"ISO3166: {text} = [{code} {decode}]")
         if code:
             return self.create(
                 Code,

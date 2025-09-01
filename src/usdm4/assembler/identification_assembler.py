@@ -206,15 +206,12 @@ class IdentificationAssembler(BaseAssembler):
         id_details: dict
         for id_details in identifiers:
             try:
-                print(f"ID DETAILS: {id_details}")
                 scope = id_details["scope"]
-                print(f"SCOPE: {scope}")
                 organization: dict = (
                     self.STANDARD_ORGS[scope["standard"]]
                     if "standard" in scope
                     else scope["non_standard"]
                 )
-                print(f"ORG: {organization}")
 
                 # Address
                 if organization["legalAddress"]:
@@ -261,7 +258,6 @@ class IdentificationAssembler(BaseAssembler):
 
     def _create_address(self, address: dict) -> Address | None:
         try:
-            print(f"ADDRESS: {address}")
             address["country"] = self._builder.iso3166_code_or_decode(
                 address["country"]
             )
