@@ -810,8 +810,6 @@ class TestDocumentAssemblerPrivateMethods:
     def test_create_date_with_invalid_date(self, document_assembler, errors):
         """Test _create_date with invalid date format."""
         data = {"version_date": "invalid-date"}
-
-        initial_error_count = errors.error_count()
         document_assembler._create_date(data)
 
         # Should have logged a warning and not created a date
@@ -1171,8 +1169,6 @@ class TestDocumentAssemblerErrorHandling:
             ],
         }
 
-        initial_error_count = errors.error_count()
-
         # Execute should handle exceptions gracefully
         document_assembler.execute(data)
 
@@ -1226,7 +1222,6 @@ class TestDocumentAssemblerErrorHandling:
             ],
         }
 
-        initial_error_count = errors.error_count()
         document_assembler.execute(data)
 
         # Should handle Builder failures gracefully

@@ -257,9 +257,12 @@ class IdentificationAssembler(BaseAssembler):
 
     def _create_address(self, address: dict) -> Address | None:
         try:
-            address["country"] = self._builder.iso3166_code_or_decode(
-                address["country"]
-            )
+            if ("country" in address) and address["country"]:
+                address["country"] = self._builder.iso3166_code_or_decode(
+                    address["country"]
+                )
+            else:
+                address["country"] = None
             addr: Address = self._builder.create(Address, address)
             addr.set_text()
             self._errors.info(

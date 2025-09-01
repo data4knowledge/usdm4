@@ -142,7 +142,7 @@ class TestAmendmentsAssemblerValidData:
         amendments_assembler.execute(data)
 
         assert amendments_assembler.amendment is not None
-        amendment = amendments_assembler.amendment
+        _ = amendments_assembler.amendment
         # Test that amendment was created successfully
 
     def test_execute_with_reliability_impact_true(self, amendments_assembler):
@@ -160,7 +160,7 @@ class TestAmendmentsAssemblerValidData:
         amendments_assembler.execute(data)
 
         assert amendments_assembler.amendment is not None
-        amendment = amendments_assembler.amendment
+        _ = amendments_assembler.amendment
         # Test that amendment was created successfully
 
     def test_execute_with_both_impacts_false(self, amendments_assembler):
@@ -178,7 +178,7 @@ class TestAmendmentsAssemblerValidData:
         amendments_assembler.execute(data)
 
         assert amendments_assembler.amendment is not None
-        amendment = amendments_assembler.amendment
+        _ = amendments_assembler.amendment
         # Test that amendment was created successfully
 
     def test_execute_with_both_impacts_true(self, amendments_assembler):
@@ -196,7 +196,7 @@ class TestAmendmentsAssemblerValidData:
         amendments_assembler.execute(data)
 
         assert amendments_assembler.amendment is not None
-        amendment = amendments_assembler.amendment
+        _ = amendments_assembler.amendment
         # Test that amendment was created successfully
 
     def test_execute_with_different_enrollment_units(self, amendments_assembler):
@@ -760,7 +760,6 @@ class TestAmendmentsAssemblerErrorHandling:
             },
         }
 
-        initial_error_count = errors.error_count()
         amendments_assembler.execute(data)
 
         # May have logged an error depending on where the exception occurs
@@ -778,7 +777,6 @@ class TestAmendmentsAssemblerErrorHandling:
             "impact": {"safety": True, "reliability": False},
         }
 
-        initial_error_count = errors.error_count()
         amendments_assembler.execute(data)
 
         # The encoder should handle invalid reason codes gracefully

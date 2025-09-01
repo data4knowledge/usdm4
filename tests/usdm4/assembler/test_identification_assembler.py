@@ -1008,8 +1008,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
         }
 
         address = identification_assembler._create_address(address_data)
-        # Should handle missing country gracefully (may return None or create with null country)
-        # The exact behavior depends on the Builder implementation
+        assert address.lines == ["123 Main St"]
 
     def test_create_address_with_empty_lines(self, identification_assembler):
         """Test _create_address with empty address lines."""
@@ -1039,7 +1038,8 @@ class TestIdentificationAssemblerAdditionalCoverage:
         }
 
         address = identification_assembler._create_address(address_data)
-        # Should handle None values gracefully
+        if address is not None:
+            assert address.lines == ["123 Main St"]
 
     def test_create_organization_with_missing_type(self, identification_assembler):
         """Test _create_organization with missing type field."""
@@ -1125,7 +1125,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
 
     def test_create_title_with_none_text(self, identification_assembler):
         """Test _create_title with None text."""
-        title = identification_assembler._create_title("brief", None)
+        _ = identification_assembler._create_title("brief", None)
         # Should handle None text gracefully (may return None or create with null text)
 
     def test_execute_with_titles_only_all_types(self, identification_assembler):
@@ -1290,7 +1290,6 @@ class TestIdentificationAssemblerAdditionalCoverage:
         """Test that errors are properly logged for title creation failures."""
         data = {"titles": {"brief": "Valid Title", "invalid_type": "Invalid Title"}}
 
-        initial_error_count = errors.error_count()
         identification_assembler.execute(data)
 
         # Should have logged a warning for invalid title type
