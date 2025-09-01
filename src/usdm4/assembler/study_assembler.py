@@ -3,6 +3,7 @@ from uuid import uuid4
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.assembler.base_assembler import BaseAssembler
+from usdm4.assembler.encoder import Encoder
 from usdm4.assembler.identification_assembler import IdentificationAssembler
 from usdm4.assembler.study_design_assembler import StudyDesignAssembler
 from usdm4.assembler.document_assembler import DocumentAssembler
@@ -36,6 +37,7 @@ class StudyAssembler(BaseAssembler):
         """
         super().__init__(builder, errors)
         self._study = None
+        self._encoder = Encoder(builder, errors)
         self._dates = []
 
     def execute(
@@ -141,65 +143,37 @@ class StudyAssembler(BaseAssembler):
     def study(self) -> Study:
         return self._study
 
-    def _create_dates(self, data: dict) -> None:
-        """
-        Creates governance dates from study data, specifically sponsor approval dates.
-
-        Args:
-            data (dict): A dictionary containing date information.
-                        Expected structure for date creation:
-
-                        {
-                            "sponsor_approval_date": str,  # ISO format date string (YYYY-MM-DD)
-                            # Additional date fields may include:
-                            # "protocol_effective_date": str,
-                            # "study_start_date": str,
-                            # "study_completion_date": str,
-                        }
-
-                        Required fields:
-                        - "sponsor_approval_date": Date when the sponsor approved the protocol
-                          (must be in ISO date format)
-
-        Returns:
-            None: Created dates are stored in self._dates list
-
-        Note:
-            This method creates GovernanceDate objects with CDISC-compliant codes and
-            global geographic scope. The created dates are later combined with document
-            dates in the execute method.
-        """
+    def _create_date(self, data: dict) -> None:
         try:
-            # Get CDISC code for sponsor approval date type
-            sponsor_approval_date_code = self._builder.cdisc_code(
-                "C132352", "Protocol Approval by Sponsor Date"
-            )
-
-            # Get CDISC code for global geographic scope
-            global_code = self._builder.cdisc_code("C68846", "Global")
-            global_scope = self._builder.create(GeographicScope, {"type": global_code})
-
-            # Create the governance date object for sponsor approval
-            approval_date = self._builder.create(
-                GovernanceDate,
-                {
-                    "name": "SPONSOR-APPORVAL-DATE",  # Human-readable name
-                    "type": sponsor_approval_date_code,  # CDISC code for date type
-                    "dateValue": data[
-                        "sponsor_approval_date"
-                    ],  # Actual date value from input
-                    "geographicScopes": [global_scope],  # Global scope application
-                },
-            )
-
-            # Add the created date to the internal dates list
-            if approval_date:
-                self._dates.append(approval_date)
-
+            if actual_date := self._encoder.to_date(data["sponsor_approval_date"]):
+                sponsor_approval_date_code = self._builder.cdisc_code(
+                    "C132352", "Protocol Approval by Sponsor Date"
+                )
+                global_code = self._builder.cdisc_code("C68846", "Global")
+                global_scope = self._builder.create(
+                    GeographicScope, {"type": global_code}
+                )
+                approval_date = self._builder.create(
+                    GovernanceDate,
+                    {
+                        "name": "SPONSOR-APPORVAL-DATE",  # Human-readable name
+                        "type": sponsor_approval_date_code,  # CDISC code for date type
+                        "dateValue": actual_date,
+                        "geographicScopes": [global_scope],  # Global scope application
+                    },
+                )
+                if approval_date:
+                    self._dates.append(approval_date)
+            else:
+                self._errors.warning(
+                    "No sponsor approval date detected",
+                    KlassMethodLocation(self.MODULE, "_create_date"),
+                )
         except Exception as e:
-            location = KlassMethodLocation(self.MODULE, "_create_dates")
             self._errors.exception(
-                "Failed during creation of governance date", e, location
+                "Failed during creation of governance date",
+                e,
+                KlassMethodLocation(self.MODULE, "_create_date"),
             )
 
     def _get_study_name_label(self, options: dict) -> tuple[str, str]:

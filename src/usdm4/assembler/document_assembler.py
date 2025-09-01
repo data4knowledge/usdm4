@@ -250,33 +250,34 @@ class DocumentAssembler(BaseAssembler):
             is later combined with other dates in the study assembler.
         """
         try:
-            # Get CDISC code for protocol effective date type
-            protocol_date_code = self._builder.cdisc_code(
-                "C207598",
-                "Protocol Effective Date",
-            )
-
-            # Get CDISC code for global geographic scope
-            global_code = self._builder.cdisc_code("C68846", "Global")
-            global_scope = self._builder.create(GeographicScope, {"type": global_code})
-
-            # Create the governance date object for protocol effective date
-            protocol_date = self._builder.create(
-                GovernanceDate,
-                {
-                    "name": "PROTOCOL-DATE",  # Internal name for the date
-                    "type": protocol_date_code,  # CDISC code for date type
-                    "dateValue": data["version_date"],  # Actual date value from input
-                    "geographicScopes": [global_scope],  # Global scope application
-                },
-            )
-
-            # Add the created date to the internal dates list
-            if protocol_date:
-                self._dates.append(protocol_date)
-
+            if actual_date := self._encoder.to_date(data["version_date"]):
+                protocol_date_code = self._builder.cdisc_code(
+                    "C207598",
+                    "Protocol Effective Date",
+                )
+                global_code = self._builder.cdisc_code("C68846", "Global")
+                global_scope = self._builder.create(
+                    GeographicScope, {"type": global_code}
+                )
+                protocol_date = self._builder.create(
+                    GovernanceDate,
+                    {
+                        "name": "PROTOCOL-DATE",  # Internal name for the date
+                        "type": protocol_date_code,  # CDISC code for date type
+                        "dateValue": actual_date,
+                        "geographicScopes": [global_scope],  # Global scope application
+                    },
+                )
+                if protocol_date:
+                    self._dates.append(protocol_date)
+            else:
+                self._errors.warning(
+                    "No sponsor approval date detected",
+                    KlassMethodLocation(self.MODULE, "_create_date"),
+                )
         except Exception as e:
-            location = KlassMethodLocation(self.MODULE, "_create_date")
             self._errors.exception(
-                "Failed during creation of governance date", e, location
+                "Failed during creation of governance date",
+                e,
+                KlassMethodLocation(self.MODULE, "_create_date"),
             )

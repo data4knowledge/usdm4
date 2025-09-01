@@ -1,3 +1,5 @@
+import datetime
+import dateutil.parser as parser
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.builder.builder import Builder
@@ -115,10 +117,10 @@ class Encoder:
     def amendment_reason(self, reason_str: str):
         if reason_str:
             parts = reason_str.split(":")
-            #print(f"PARTS: {parts}")
+            # print(f"PARTS: {parts}")
             if len(parts) >= 2:
                 reason_text = parts[1]
-                #print(f"REASON: {reason_text}")
+                # print(f"REASON: {reason_text}")
                 for reason in self.REASON_MAP:
                     if reason_text in reason["decode"]:
                         self._errors.info(
@@ -140,3 +142,19 @@ class Encoder:
         )
         code = self._builder.cdisc_code("C17649", "Other")
         return {"code": code, "other_reason": "No reason text found"}
+
+    def to_date(self, text: str) -> datetime.datetime | None:
+        try:
+            input_text = text.strip()
+            print(f"DATE TEXT: {input_text}")
+            if input_text:
+                return parser.parse(input_text)
+            else:
+                return None
+        except Exception as e:
+            self._errors.exception(
+                f"Failed to decode date text '{text}'",
+                e,
+                location=KlassMethodLocation(self.MODULE, "to_date"),
+            )
+            return None
