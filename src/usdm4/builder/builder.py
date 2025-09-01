@@ -49,6 +49,12 @@ class Builder:
         self._cdisc_code_system = self.cdisc_ct_library.system
         self._cdisc_code_system_version = self.cdisc_ct_library.version
 
+    def clear(self):
+        self._id_manager.clear()
+        self.errors.clear()
+        self.cross_reference.clear()
+        self._data_store = None
+
     def seed(self, file_path: str):
         self._data_store = DataStore(file_path)
         self._data_store.decompose()
