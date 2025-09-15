@@ -134,9 +134,18 @@ class StudyVersion(ApiBaseModelWithId):
 
     def sponsor_name(self) -> str:
         map = self.organization_map()
+        x: StudyIdentifier
         for x in self.studyIdentifiers:
             if x.is_sponsor(map):
                 return map[x.scopeId].name
+        return ""
+
+    def sponsor_label(self) -> str:
+        map: dict[Organization] = self.organization_map()
+        x: StudyIdentifier
+        for x in self.studyIdentifiers:
+            if x.is_sponsor(map):
+                return map[x.scopeId].label
         return ""
 
     def sponsor_address(self) -> str:
