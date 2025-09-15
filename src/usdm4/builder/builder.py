@@ -73,14 +73,13 @@ class Builder:
                 self.cross_reference.add(object, name)
             return object
         except Exception as e:
-            print(f"EXCEPTION ON CREATE: {e}")
+            #print(f"EXCEPTION ON CREATE: {e}")
             location = KlassMethodLocation(self.MODULE, "create")
             self.errors.exception(
                 f"Failed to create instance of klass '{klass}' with params {params}, reason: {e}",
                 e,
                 location,
             )
-            print(f"ERRORS: {self.errors}")
             return None
 
     def _check_object(self, object) -> bool:
