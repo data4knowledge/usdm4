@@ -62,12 +62,28 @@ class StudyVersion(ApiBaseModelWithId):
                 return title
         return None
 
-    def sponsor_identifier(self):
+    def sponsor_identifier(self) -> StudyIdentifier | None:
         for identifier in self.studyIdentifiers:
             org = self.organization(identifier.scopeId)
             if org and org.type.code == "C54149":
                 return identifier
         return None
+    
+    def regulatory_identifiers(self) -> list[StudyIdentifier]:
+        results = []
+        for identifier in self.studyIdentifiers:
+            org = self.organization(identifier.scopeId)
+            if org and org.type.code == "C188863":
+                results.append(identifier)
+        return results
+    
+    def registry_identifiers(self) -> list[StudyIdentifier]:
+        results = []
+        for identifier in self.studyIdentifiers:
+            org = self.organization(identifier.scopeId)
+            if org and org.type.code == "C93453":
+                results.append(identifier)
+        return results
 
     def organization(self, id: str) -> Organization:
         return next((x for x in self.organizations if x.id == id), None)
