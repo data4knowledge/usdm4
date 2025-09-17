@@ -107,7 +107,7 @@ class StudyAssembler(BaseAssembler):
                 ],  # Study design structure
                 "documentVersionIds": [
                     document_assembler.document_version.id
-                ],  # Document references
+                ] if document_assembler.document_version else [],  # Document references
                 "studyIdentifiers": identification_assembler.identifiers,  # Study identifiers
                 "organizations": identification_assembler.organizations,  # Sponsor/organization info
                 "eligibilityCriterionItems": population_assembler.criteria_items,
@@ -132,7 +132,7 @@ class StudyAssembler(BaseAssembler):
                     "versions": [study_version],  # Include the created version
                     "documentedBy": [
                         document_assembler.document
-                    ],  # Reference to protocol document
+                    ] if document_assembler.document else [],  # Reference to protocol document
                 },
             )
 

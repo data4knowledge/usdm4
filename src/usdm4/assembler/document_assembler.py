@@ -89,57 +89,58 @@ class DocumentAssembler(BaseAssembler):
             and sequential linking (previousId/nextId).
         """
         try:
-            # Extract document metadata and sections from input data
-            document: dict = data["document"]
-            sections: list[dict] = data["sections"]
+            if data:
+                # Extract document metadata and sections from input data
+                document: dict = data["document"]
+                sections: list[dict] = data["sections"]
 
-            # Create governance date from document version date
-            self._create_date(document)
+                # Create governance date from document version date
+                self._create_date(document)
 
-            # Create document version object with version and status
-            self._document_version = self._builder.create(
-                StudyDefinitionDocumentVersion,
-                {
-                    "version": document["version"],  # Version identifier from input
-                    "status": self._encoder.document_status(
-                        document["status"]
-                    ),  # Document status from input
-                },
-            )
+                # Create document version object with version and status
+                self._document_version = self._builder.create(
+                    StudyDefinitionDocumentVersion,
+                    {
+                        "version": document["version"],  # Version identifier from input
+                        "status": self._encoder.document_status(
+                            document["status"]
+                        ),  # Document status from input
+                    },
+                )
 
-            # Get standard codes for document properties
-            language = self._builder.iso639_code("en")  # Default to English
-            doc_type = self._builder.cdisc_code(
-                "C70817", "Protocol"
-            )  # CDISC code for Protocol
+                # Get standard codes for document properties
+                language = self._builder.iso639_code("en")  # Default to English
+                doc_type = self._builder.cdisc_code(
+                    "C70817", "Protocol"
+                )  # CDISC code for Protocol
 
-            # Create the main document object
-            self._document = self._builder.create(
-                StudyDefinitionDocument,
-                {
-                    "name": self._label_to_name(
-                        document["label"]
-                    ),  # Convert label to internal name
-                    "label": document["label"],  # Display label from input
-                    "description": "Protocol Document",  # Default description
-                    "language": language,  # ISO language code
-                    "type": doc_type,  # CDISC document type code
-                    "templateName": document["template"],  # Template name from input
-                    "versions": [self._document_version],  # Include the created version
-                },
-            )
+                # Create the main document object
+                self._document = self._builder.create(
+                    StudyDefinitionDocument,
+                    {
+                        "name": self._label_to_name(
+                            document["label"]
+                        ),  # Convert label to internal name
+                        "label": document["label"],  # Display label from input
+                        "description": "Protocol Document",  # Default description
+                        "language": language,  # ISO language code
+                        "type": doc_type,  # CDISC document type code
+                        "templateName": document["template"],  # Template name from input
+                        "versions": [self._document_version],  # Include the created version
+                    },
+                )
 
-            # Process sections into hierarchical narrative content structure
-            _ = self._section_to_narrative(None, sections, 0, 1)
+                # Process sections into hierarchical narrative content structure
+                _ = self._section_to_narrative(None, sections, 0, 1)
 
-            # Create sequential links between narrative content items
-            self._builder.double_link(
-                self._document_version.contents, "previousId", "nextId"
-            )
-
+                # Create sequential links between narrative content items
+                self._builder.double_link(
+                    self._document_version.contents, "previousId", "nextId"
+                )
+            else:
+                self._errors.info("No document to build, no data", KlassMethodLocation(self.MODULE, "execute"))
         except Exception as e:
-            location = KlassMethodLocation(self.MODULE, "execute")
-            self._errors.exception("Failed during creation of document", e, location)
+            self._errors.exception("Failed during creation of document", e, KlassMethodLocation(self.MODULE, "execute"))
 
     @property
     def document(self) -> StudyDefinitionDocument:

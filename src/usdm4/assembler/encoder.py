@@ -70,7 +70,9 @@ class Encoder:
         self._errors: Errors = errors
 
     def phase(self, text: str) -> AliasCode:
-        phase = text.upper().replace("PHASE", "").strip() if text else ""
+        phase = text
+        for word in ["PHASE", "TRIAL"]:
+            phase = phase.upper().replace(word, "").strip() if phase else ""
         for tuple in self.PHASE_MAP:
             if phase in tuple[0]:
                 entry = tuple[1]

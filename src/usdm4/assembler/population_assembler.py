@@ -74,26 +74,27 @@ class PopulationAssembler(BaseAssembler):
             Exception: If population creation fails, logged via error handler
         """
         try:
-            self._ie(data["inclusion_exclusion"])
+            if data:    
+                self._ie(data["inclusion_exclusion"])
 
-            # Extract required label field and create population parameters
-            # The label is used for both display purposes and name generation
-            params = {
-                "name": data["label"]
-                .upper()
-                .replace(" ", "-"),  # Convert label to internal name format
-                "label": data["label"],  # Keep original label for display
-                "description": "The study population, currently blank",  # Default description
-                "includesHealthySubjects": True,  # Default assumption
-                "criteria": self._ec_items,
-            }
+                # Extract required label field and create population parameters
+                # The label is used for both display purposes and name generation
+                params = {
+                    "name": data["label"]
+                    .upper()
+                    .replace(" ", "-"),  # Convert label to internal name format
+                    "label": data["label"],  # Keep original label for display
+                    "description": "The study population, currently blank",  # Default description
+                    "includesHealthySubjects": True,  # Default assumption
+                    "criteria": self._ec_items,
+                }
 
-            # Create the StudyDesignPopulation object using the builder
-            self._population = self._builder.create(StudyDesignPopulation, params)
-
+                # Create the StudyDesignPopulation object using the builder
+                self._population = self._builder.create(StudyDesignPopulation, params)
+            else:
+                self._errors.info("No population to build, no data", KlassMethodLocation(self.MODULE, "execute"))
         except Exception as e:
-            location = KlassMethodLocation(self.MODULE, "execute")
-            self._errors.exception("Failed during creation of population", e, location)
+            self._errors.exception("Failed during creation of population", e, KlassMethodLocation(self.MODULE, "execute"))
 
     @property
     def population(self) -> StudyDesignPopulation:
