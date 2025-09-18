@@ -68,7 +68,7 @@ class StudyVersion(ApiBaseModelWithId):
             if org and org.type.code == "C54149":
                 return identifier
         return None
-    
+
     def regulatory_identifiers(self) -> list[StudyIdentifier]:
         results = []
         for identifier in self.studyIdentifiers:
@@ -76,7 +76,7 @@ class StudyVersion(ApiBaseModelWithId):
             if org and org.type.code == "C188863":
                 results.append(identifier)
         return results
-    
+
     def registry_identifiers(self) -> list[StudyIdentifier]:
         results = []
         for identifier in self.studyIdentifiers:
@@ -168,7 +168,11 @@ class StudyVersion(ApiBaseModelWithId):
         map = self.organization_map()
         for x in self.studyIdentifiers:
             if x.is_sponsor(map):
-                return map[x.scopeId].legalAddress.text if map[x.scopeId].legalAddress else ""
+                return (
+                    map[x.scopeId].legalAddress.text
+                    if map[x.scopeId].legalAddress
+                    else ""
+                )
         return ""
 
     def nct_identifier(self) -> StudyIdentifier:

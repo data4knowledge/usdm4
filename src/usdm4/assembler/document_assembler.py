@@ -125,8 +125,12 @@ class DocumentAssembler(BaseAssembler):
                         "description": "Protocol Document",  # Default description
                         "language": language,  # ISO language code
                         "type": doc_type,  # CDISC document type code
-                        "templateName": document["template"],  # Template name from input
-                        "versions": [self._document_version],  # Include the created version
+                        "templateName": document[
+                            "template"
+                        ],  # Template name from input
+                        "versions": [
+                            self._document_version
+                        ],  # Include the created version
                     },
                 )
 
@@ -138,9 +142,16 @@ class DocumentAssembler(BaseAssembler):
                     self._document_version.contents, "previousId", "nextId"
                 )
             else:
-                self._errors.info("No document to build, no data", KlassMethodLocation(self.MODULE, "execute"))
+                self._errors.info(
+                    "No document to build, no data",
+                    KlassMethodLocation(self.MODULE, "execute"),
+                )
         except Exception as e:
-            self._errors.exception("Failed during creation of document", e, KlassMethodLocation(self.MODULE, "execute"))
+            self._errors.exception(
+                "Failed during creation of document",
+                e,
+                KlassMethodLocation(self.MODULE, "execute"),
+            )
 
     @property
     def document(self) -> StudyDefinitionDocument:

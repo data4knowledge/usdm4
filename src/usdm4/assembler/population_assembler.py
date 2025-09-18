@@ -74,7 +74,7 @@ class PopulationAssembler(BaseAssembler):
             Exception: If population creation fails, logged via error handler
         """
         try:
-            if data:    
+            if data:
                 self._ie(data["inclusion_exclusion"])
 
                 # Extract required label field and create population parameters
@@ -92,9 +92,16 @@ class PopulationAssembler(BaseAssembler):
                 # Create the StudyDesignPopulation object using the builder
                 self._population = self._builder.create(StudyDesignPopulation, params)
             else:
-                self._errors.info("No population to build, no data", KlassMethodLocation(self.MODULE, "execute"))
+                self._errors.info(
+                    "No population to build, no data",
+                    KlassMethodLocation(self.MODULE, "execute"),
+                )
         except Exception as e:
-            self._errors.exception("Failed during creation of population", e, KlassMethodLocation(self.MODULE, "execute"))
+            self._errors.exception(
+                "Failed during creation of population",
+                e,
+                KlassMethodLocation(self.MODULE, "execute"),
+            )
 
     @property
     def population(self) -> StudyDesignPopulation:

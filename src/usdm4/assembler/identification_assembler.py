@@ -195,11 +195,10 @@ class IdentificationAssembler(BaseAssembler):
                         f"Title '{text}' of type '{type}' is not valid, ignored."
                     )
             except Exception as e:
-                location = KlassMethodLocation(self.MODULE, "execute")
                 self._errors.exception(
                     f"Failed during creation of title '{text}' of type '{type}'",
                     e,
-                    location,
+                    KlassMethodLocation(self.MODULE, "execute"),
                 )
 
         # Identifiers
@@ -227,20 +226,20 @@ class IdentificationAssembler(BaseAssembler):
                         self._organizations.append(org)
                         self._identifiers.append(identifier)
                     else:
-                        location = KlassMethodLocation(self.MODULE, "execute")
                         self._errors.exception(
                             f"Failed to create identifier {id_details['identifier']}",
-                            location,
+                            KlassMethodLocation(self.MODULE, "execute"),
                         )
                 else:
-                    location = KlassMethodLocation(self.MODULE, "execute")
                     self._errors.exception(
-                        f"Failed to create organization {organization}", location
+                        f"Failed to create organization {organization}",
+                        KlassMethodLocation(self.MODULE, "execute"),
                     )
             except Exception as e:
-                location = KlassMethodLocation(self.MODULE, "execute")
                 self._errors.exception(
-                    f"Failed during creation of identifier {id_details}", e, location
+                    f"Failed during creation of identifier {id_details}",
+                    e,
+                    KlassMethodLocation(self.MODULE, "execute"),
                 )
 
     @property
@@ -257,6 +256,10 @@ class IdentificationAssembler(BaseAssembler):
 
     def _create_address(self, address: dict) -> Address | None:
         try:
+            self._errors.debug(
+                f"Creating address, source data: {address}",
+                KlassMethodLocation(self.MODULE, "_create_address"),
+            )
             if ("country" in address) and address["country"]:
                 address["country"] = self._builder.iso3166_code_or_decode(
                     address["country"]
@@ -271,8 +274,11 @@ class IdentificationAssembler(BaseAssembler):
             )
             return addr
         except Exception as e:
-            location = KlassMethodLocation(self.MODULE, "_create_address")
-            self._errors.exception("Failed to create address object", e, location)
+            self._errors.exception(
+                "Failed to create address object",
+                e,
+                KlassMethodLocation(self.MODULE, "_create_address"),
+            )
             return None
 
     def _create_organization(self, organization: dict) -> Organization | None:
@@ -284,9 +290,10 @@ class IdentificationAssembler(BaseAssembler):
             organization["name"] = self._label_to_name(organization["label"])
             return self._builder.create(Organization, organization)
         except Exception as e:
-            location = KlassMethodLocation(self.MODULE, "_create_organization")
             self._errors.exception(
-                "Failed during creation of organization", e, location
+                "Failed during creation of organization",
+                e,
+                KlassMethodLocation(self.MODULE, "_create_organization"),
             )
             return None
 
@@ -299,9 +306,10 @@ class IdentificationAssembler(BaseAssembler):
             )
             return identifier
         except Exception as e:
-            location = KlassMethodLocation(self.MODULE, "_create_identifier")
             self._errors.exception(
-                f"Failed during creation of identifier '{identifier}'", e, location
+                f"Failed during creation of identifier '{identifier}'",
+                e,
+                KlassMethodLocation(self.MODULE, "_create_identifier"),
             )
             return None
 
@@ -312,8 +320,9 @@ class IdentificationAssembler(BaseAssembler):
             )
             return self._builder.create(StudyTitle, {"text": text, "type": title_type})
         except Exception as e:
-            location = KlassMethodLocation(self.MODULE, "_create_title")
             self._errors.exception(
-                f"Failed during creation of title '{text}'of type '{type}'", e, location
+                f"Failed during creation of title '{text}'of type '{type}'",
+                e,
+                KlassMethodLocation(self.MODULE, "_create_title"),
             )
             return None

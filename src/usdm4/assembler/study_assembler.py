@@ -105,9 +105,9 @@ class StudyAssembler(BaseAssembler):
                 "studyDesigns": [
                     study_design_assembler.study_design
                 ],  # Study design structure
-                "documentVersionIds": [
-                    document_assembler.document_version.id
-                ] if document_assembler.document_version else [],  # Document references
+                "documentVersionIds": [document_assembler.document_version.id]
+                if document_assembler.document_version
+                else [],  # Document references
                 "studyIdentifiers": identification_assembler.identifiers,  # Study identifiers
                 "organizations": identification_assembler.organizations,  # Sponsor/organization info
                 "eligibilityCriterionItems": population_assembler.criteria_items,
@@ -130,9 +130,9 @@ class StudyAssembler(BaseAssembler):
                     "label": study_label,  # Display study label
                     "description": "The top-level study container",  # Default description
                     "versions": [study_version],  # Include the created version
-                    "documentedBy": [
-                        document_assembler.document
-                    ] if document_assembler.document else [],  # Reference to protocol document
+                    "documentedBy": [document_assembler.document]
+                    if document_assembler.document
+                    else [],  # Reference to protocol document
                 },
             )
 
