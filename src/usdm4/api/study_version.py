@@ -168,7 +168,7 @@ class StudyVersion(ApiBaseModelWithId):
         map = self.organization_map()
         for x in self.studyIdentifiers:
             if x.is_sponsor(map):
-                return map[x.scopeId].legalAddress.text
+                return map[x.scopeId].legalAddress.text if map[x.scopeId].legalAddress else ""
         return ""
 
     def nct_identifier(self) -> StudyIdentifier:

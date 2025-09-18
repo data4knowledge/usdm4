@@ -295,7 +295,7 @@ class Builder:
 
     def iso639_code_or_decode(self, text: str) -> Code:
         code, decode = self.iso639_library.code_or_decode(text)
-        print(f"ISO639: {text} = [{code} {decode}]")
+        # print(f"ISO639: {text} = [{code} {decode}]")
         if code:
             return self.create(
                 Code,
