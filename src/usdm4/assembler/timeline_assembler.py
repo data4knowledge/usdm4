@@ -168,7 +168,7 @@ class TimelineAssembler(BaseAssembler):
             results = []
             table = data["final"]["table-001"]
             items: dict = table["activity_rows"]
-            print(f"ACTIVITY ITEMS: {items}")
+            # print(f"ACTIVITY ITEMS: {items}")
             item: dict[str]
             for key, item in items.items():
                 params = {
@@ -200,11 +200,13 @@ class TimelineAssembler(BaseAssembler):
 
     def _add_instances(self, data) -> list[ScheduledInstance]:
         try:
+            # print(f"INSTANCE DATA: {data}")
             results = []
             table = data["final"]["table-001"]
             items: dict = table["schedule_columns_data"]
             item: dict[str]
             for key, item in items.items():
+                # print(f"ADD INSTANCE: {item}")
                 sai = self._builder.create(
                     ScheduledActivityInstance,
                     {
@@ -212,7 +214,7 @@ class TimelineAssembler(BaseAssembler):
                         "description": f"Scheduled activity instance {item['temporal_value']}",
                         "label": item["temporal_value"],
                         "timelineExitId": None,
-                        "encounterId": item["encounter_instance"].id,
+                        "encounterId": item["encounter_instance"].id if item["encounter_instance"] else None,
                         "scheduledInstanceTimelineId": None,
                         "defaultConditionId": None,
                         "epochId": item["epoch_instance"].id,
@@ -338,9 +340,10 @@ class TimelineAssembler(BaseAssembler):
     ):
         try:
             self._errors.debug(
-                f"Istances: {len(instances)}, Timings: {len(timings)}",
+                f"Instances: {len(instances)}, Timings: {len(timings)}",
                 KlassMethodLocation(self.MODULE, "_add_timeline"),
             )
+            # print(f"INSTANCES: {len(instances)}, Timings: {len(timings)}",)
             exit = self._builder.create(ScheduleTimelineExit, {})
             # duration = (
             #     self._builder.create(
