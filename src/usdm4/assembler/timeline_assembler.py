@@ -63,7 +63,7 @@ class TimelineAssembler(BaseAssembler):
                 f"EPOCHS:\n{data['raw']}\n",
                 KlassMethodLocation(self.MODULE, "_add_epochs"),
             )
-            items = data["raw"]["epochs"]["period_columns"]
+            items = data["raw"]["epochs"]["items"]
             table = data["final"]["table-001"]
             instances: dict = table["schedule_columns_data"]
             self._errors.debug(
