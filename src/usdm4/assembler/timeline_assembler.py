@@ -24,13 +24,13 @@ class TimelineAssembler(BaseAssembler):
 
     def execute(self, data: dict) -> None:
         try:
-            self._epochs = self._add_epochs(data)
-            self._encounters = self._add_encounters(data)
-            self._activities = self._add_activities(data)
-            instances = self._add_instances(data)
-            timings = self._add_timing(data)
-            self._link_timepoints_and_activities(data)
-            tl = self._add_timeline(data, instances, timings)
+            self._epochs = self._add_epochs(data["raw"])
+            self._encounters = self._add_encounters(data["raw"])
+            self._activities = self._add_activities(data["raw"])
+            timepoints = self._add_timepoints(data["raw"])
+            timings = self._add_timing(data["raw"])
+            self._link_timepoints_and_activities(data["raw"])
+            tl = self._add_timeline(data["raw"], timepoints, timings)
             self._timelines.append(tl)
         except Exception as e:
             self._errors.exception(
@@ -60,17 +60,11 @@ class TimelineAssembler(BaseAssembler):
             results = []
             map = {}
             self._errors.debug(
-                f"EPOCHS:\n{data['raw']}\n",
+                f"EPOCHS:\n{data['epochs']}\n",
                 KlassMethodLocation(self.MODULE, "_add_epochs"),
             )
-            items = data["raw"]["epochs"]["items"]
-            table = data["final"]["table-001"]
-            instances: dict = table["schedule_columns_data"]
-            self._errors.debug(
-                f"INSTANCES:\n{instances}\n",
-                KlassMethodLocation(self.MODULE, "_add_epochs"),
-            )
-            instance_keys = list(instances.keys())
+            items = data["epochs"]["items"]
+            timepoints = data["timepoints"]["items"]
             for index, item in enumerate(items):
                 label = item["text"]
                 name = f"EPOCH-{label.upper()}"
@@ -89,14 +83,7 @@ class TimelineAssembler(BaseAssembler):
                     results.append(epoch)
                     map[name] = epoch
                 epoch = map[name]
-                if index < len(instance_keys):
-                    key = instance_keys[index]
-                    instances[key]["epoch_instance"] = epoch
-                else:
-                    self._errors.warning(
-                        f"Cannot align Epoch with timepoint {index + 1}",
-                        KlassMethodLocation(self.MODULE, "_add_epochs"),
-                    )
+                timepoints[index]["epoch_instance"] = epoch
             self._errors.info(
                 f"Epochs: {len(results)}",
                 KlassMethodLocation(self.MODULE, "_add_epochs"),
@@ -112,18 +99,10 @@ class TimelineAssembler(BaseAssembler):
     def _add_encounters(self, data) -> list[Encounter]:
         try:
             results = []
-            table = data["final"]["table-001"]
-            instances: dict = table["schedule_columns_data"]
-            # instance_keys = list(instances.keys())
-            items: dict = table["grid_columns"]
-            print(f"ENCOUNTER ITEMS: {items}")
-            item: dict[str]
-            for key, item in items.items():
-                name = (
-                    item["header_text"]
-                    if item["header_text"].strip()
-                    else instances[key]["timepoint_reference"]
-                )
+            items = data["visits"]["items"]
+            timepoints: dict = data["timepoints"]["items"]
+            for index, item in enumerate(items):
+                name = item["text"]
                 print(f"ENCOUNTER NAME: {name}")
                 encounter: Encounter = self._builder.create(
                     Encounter,
@@ -150,7 +129,7 @@ class TimelineAssembler(BaseAssembler):
                     },
                 )
                 results.append(encounter)
-                instances[key]["encounter_instance"] = encounter
+                timepoints[index]["encounter_instance"] = encounter
             self._errors.info(
                 f"Encounters: {len(results)}",
                 KlassMethodLocation(self.MODULE, "_add_encounters"),
@@ -166,15 +145,12 @@ class TimelineAssembler(BaseAssembler):
     def _add_activities(self, data) -> list[Activity]:
         try:
             results = []
-            table = data["final"]["table-001"]
-            items: dict = table["activity_rows"]
-            # print(f"ACTIVITY ITEMS: {items}")
-            item: dict[str]
-            for key, item in items.items():
+            items = data["activities"]["items"]
+            for index, item in enumerate(items):
                 params = {
-                    "name": f"ACTIVITY-{item['activity_name'].upper()}",
-                    "description": f"Activity {item['activity_name']}",
-                    "label": item["activity_name"],
+                    "name": f"ACTIVITY-{item['name'].upper()}",
+                    "description": f"Activity {item['name']}",
+                    "label": item["name"],
                     "definedProcedures": [],
                     "biomedicalConceptIds": [],
                     "bcCategoryIds": [],
@@ -191,28 +167,25 @@ class TimelineAssembler(BaseAssembler):
             self._builder.double_link(results, "nextId", "previousId")
             return results
         except Exception as e:
-            print(f"ACTIVITIES EXCEPTION: {e}, {traceback.format_exc()}")
             self._errors.exception(
                 "Error creating Activities",
                 e,
                 KlassMethodLocation(self.MODULE, "_add_activities"),
             )
 
-    def _add_instances(self, data) -> list[ScheduledInstance]:
+    def _add_timepoints(self, data) -> list[ScheduledInstance]:
         try:
-            # print(f"INSTANCE DATA: {data}")
             results = []
-            table = data["final"]["table-001"]
-            items: dict = table["schedule_columns_data"]
-            item: dict[str]
-            for key, item in items.items():
-                # print(f"ADD INSTANCE: {item}")
+            timepoints: list = data["timepoints"]["items"]
+            epochs: list = data["epochs"]["items"]
+            encounters: list = data["visits"]["items"]
+            for index, item in enumerate(timepoints):
                 sai = self._builder.create(
                     ScheduledActivityInstance,
                     {
-                        "name": f"SAI-{item['timepoint_reference'].upper()}",
-                        "description": f"Scheduled activity instance {item['temporal_value']}",
-                        "label": item["temporal_value"],
+                        "name": f"SAI-{index+1}",
+                        "description": f"Scheduled activity instance {index+1}",
+                        "label": item["text"],
                         "timelineExitId": None,
                         "encounterId": item["encounter_instance"].id if item["encounter_instance"] else None,
                         "scheduledInstanceTimelineId": None,
@@ -225,23 +198,21 @@ class TimelineAssembler(BaseAssembler):
                 results.append(sai)
             self._errors.info(
                 f"SAI: {len(results)}",
-                KlassMethodLocation(self.MODULE, "_add_instances"),
+                KlassMethodLocation(self.MODULE, "_add_timepoints"),
             )
             return results
         except Exception as e:
-            print(f"INSTANCES EXCEPTION: {e}, {traceback.format_exc()}")
             self._errors.exception(
-                "Error creating Scheduled Activity Instances",
+                "Error creating Scheduled Activity timepoints",
                 e,
-                KlassMethodLocation(self.MODULE, "_add_instances"),
+                KlassMethodLocation(self.MODULE, "_add_timepoints"),
             )
             return []
 
     def _add_timing(self, data) -> list[ScheduledInstance]:
         try:
             results = []
-            table = data["final"]["table-001"]
-            items: dict = table["schedule_columns_data"]
+            timepoints: list = data["timepoints"]["items"]
             anchor_index, anchor_key = self._find_anchor(data)
             anchor: ScheduledInstance = items[anchor_key]["sai_instance"]
             item: dict[str]
@@ -304,29 +275,26 @@ class TimelineAssembler(BaseAssembler):
             return None
 
     def _find_anchor(self, data) -> int:
-        table = data["final"]["table-001"]
-        items = table["schedule_columns_data"]
+        items = data["timepoints"]["items"]
         item: dict[str]
-        for key, item in items.items():
-            if item["temporal_dict"]["value"] == "1":
-                return int(item["timepoint_reference"]), key
-        return 0, list[items.keys()][0]
+        for item in enumerate(items):
+            if item["value"] == "1":
+                return int(item["timepoint_reference"])
+        return 0
 
     def _link_timepoints_and_activities(self, data: dict) -> None:
         try:
-            table = data["final"]["table-001"]
-            items = table["scheduled_activities"]
-            item: dict[str]
-            activity_rows = table["activity_rows"]
-            sai_instances = table["schedule_columns_data"]
-            for key, item in items.items():
-                activity: Activity = activity_rows[item["activity_id"]][
-                    "activity_instance"
-                ]
-                sai_instance: ScheduledActivityInstance = sai_instances[item["col_id"]][
+            activities = data["activities"]["items"]
+            timepoints = data["timepoints"]["items"]
+            for t_index, timepoint in enumerate(timepoints):
+                sai_instance: ScheduledActivityInstance = timepoint[t_index][
                     "sai_instance"
                 ]
-                sai_instance.activityIds.append(activity.id)
+                for a_index, activity in enumerate(activities):
+                    activity: Activity = activities[a_index][
+                        "activity_instance"
+                    ]
+                    sai_instance.activityIds.append(activity.id)
         except Exception as e:
             self._errors.exception(
                 "Error linking timepoints and activities",
