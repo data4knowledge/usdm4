@@ -103,7 +103,6 @@ class TimelineAssembler(BaseAssembler):
             timepoints: dict = data["timepoints"]["items"]
             for index, item in enumerate(items):
                 name = item["text"]
-                print(f"ENCOUNTER NAME: {name}")
                 encounter: Encounter = self._builder.create(
                     Encounter,
                     {
@@ -160,6 +159,21 @@ class TimelineAssembler(BaseAssembler):
                 activity = self._builder.create(Activity, params)
                 results.append(activity)
                 item["activity_instance"] = activity
+                if "children" in item:
+                    for child in item["children"]:
+                        params = {
+                            "name": f"ACTIVITY-{child['name'].upper()}",
+                            "description": f"Activity {child['name']}",
+                            "label": child["name"],
+                            "definedProcedures": [],
+                            "biomedicalConceptIds": [],
+                            "bcCategoryIds": [],
+                            "bcSurrogateIds": [],
+                            "timelineId": None,
+                        }
+                        activity = self._builder.create(Activity, params)
+                        results.append(activity)
+                        item["activity_instance"] = activity
             self._errors.info(
                 f"Activities: {len(results)}",
                 KlassMethodLocation(self.MODULE, "_add_activities"),
@@ -286,15 +300,27 @@ class TimelineAssembler(BaseAssembler):
         try:
             activities = data["activities"]["items"]
             timepoints = data["timepoints"]["items"]
-            for t_index, timepoint in enumerate(timepoints):
-                sai_instance: ScheduledActivityInstance = timepoint[t_index][
-                    "sai_instance"
-                ]
-                for a_index, activity in enumerate(activities):
-                    activity: Activity = activities[a_index][
-                        "activity_instance"
-                    ]
-                    sai_instance.activityIds.append(activity.id)
+            print(f"ACTIVITIES: {activities}")
+            for a_index, activity in enumerate(activities):
+                if "children" in activity:
+                    for child in activity["children"]:
+                        activity_instance: Activity = child["activity_instance"]
+                        print(f"ACTIVITY: {child}")
+                        for visit in child["visits"]:
+                            print(f"VISIT: {visit}")
+                            sai_instance: ScheduledActivityInstance = timepoints[visit][
+                                "sai_instance"
+                            ]    
+                            sai_instance.activityIds.append(activity_instance.id)
+                else:
+                    activity_instance: Activity = activity["activity_instance"]
+                    print(f"ACTIVITY: {activity}")
+                    for visit in activity["visits"]:
+                        print(f"VISIT: {visit}")
+                        sai_instance: ScheduledActivityInstance = timepoints[visit][
+                            "sai_instance"
+                        ]    
+                        sai_instance.activityIds.append(activity_instance.id)
         except Exception as e:
             self._errors.exception(
                 "Error linking timepoints and activities",
