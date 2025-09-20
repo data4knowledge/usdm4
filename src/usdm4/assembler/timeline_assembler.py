@@ -180,7 +180,7 @@ class TimelineAssembler(BaseAssembler):
                 f"Activities: {len(results)}",
                 KlassMethodLocation(self.MODULE, "_add_activities"),
             )
-            self._builder.double_link(results, "nextId", "previousId")
+            self._builder.double_link(results, "previousId", "nextId")
             return results
         except Exception as e:
             self._errors.exception(
