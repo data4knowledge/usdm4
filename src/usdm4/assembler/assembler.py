@@ -105,10 +105,6 @@ class Assembler:
 
             # Timelines data
             if "soa" in data:
-                self._errors.debug(
-                    f"SOA:\n{data['soa']}\n",
-                    KlassMethodLocation(self.MODULE, "execute"),
-                )
                 self._timeline_assembler.execute(data["soa"])
 
             # Process study design data - requires population assembler for cross-references

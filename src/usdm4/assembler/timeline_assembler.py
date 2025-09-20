@@ -24,13 +24,13 @@ class TimelineAssembler(BaseAssembler):
 
     def execute(self, data: dict) -> None:
         try:
-            self._epochs = self._add_epochs(data["raw"])
-            self._encounters = self._add_encounters(data["raw"])
-            self._activities = self._add_activities(data["raw"])
-            timepoints = self._add_timepoints(data["raw"])
-            timings = self._add_timing(data["raw"])
-            self._link_timepoints_and_activities(data["raw"])
-            tl = self._add_timeline(data["raw"], timepoints, timings)
+            self._epochs = self._add_epochs(data)
+            self._encounters = self._add_encounters(data)
+            self._activities = self._add_activities(data)
+            timepoints = self._add_timepoints(data)
+            timings = self._add_timing(data)
+            self._link_timepoints_and_activities(data)
+            tl = self._add_timeline(data, timepoints, timings)
             self._timelines.append(tl)
         except Exception as e:
             self._errors.exception(
@@ -173,7 +173,7 @@ class TimelineAssembler(BaseAssembler):
                         }
                         activity = self._builder.create(Activity, params)
                         results.append(activity)
-                        item["activity_instance"] = activity
+                        child["activity_instance"] = activity
             self._errors.info(
                 f"Activities: {len(results)}",
                 KlassMethodLocation(self.MODULE, "_add_activities"),
@@ -227,20 +227,20 @@ class TimelineAssembler(BaseAssembler):
         try:
             results = []
             timepoints: list = data["timepoints"]["items"]
-            anchor_index, anchor_key = self._find_anchor(data)
-            anchor: ScheduledInstance = items[anchor_key]["sai_instance"]
+            anchor_index = self._find_anchor(data)
+            anchor: ScheduledInstance = timepoints[anchor_index]["sai_instance"]
             item: dict[str]
-            for key, item in items.items():
-                index = int(item["timepoint_reference"])
+            for index, item in enumerate(timepoints):
                 this_sai: ScheduledInstance = item["sai_instance"]
                 if index < anchor_index:
-                    self._timing(self, index, item, "Before", this_sai.id, anchor.id)
+                    if timing := self._timing(data, index, "Before", this_sai.id, anchor.id):
+                        results.append(timing)
                 elif index == anchor_index:
-                    self._timing(
-                        self, index, item, "Fixed Reference", this_sai.id, this_sai.id
-                    )
+                    if timing := self._timing(data, index, "Fixed Reference", this_sai.id, this_sai.id):
+                        results.append(timing)
                 else:
-                    self._timing(self, index, item, "After", anchor.id, this_sai.id)
+                    if timing := self._timing(data, index, "After", anchor.id, this_sai.id):
+                        results.append(timing)
             self._errors.info(
                 f"Timing: {len(results)}",
                 KlassMethodLocation(self.MODULE, "_add_timing"),
@@ -255,9 +255,12 @@ class TimelineAssembler(BaseAssembler):
             return []
 
     def _timing(
-        self, data: dict, index, int, type: str, from_id: str, to_id: str
+        self, data: dict, index: int, type: str, from_id: str, to_id: str
     ) -> Timing:
         try:
+            windows: list = data["windows"]["items"]
+            timepoints: list = data["timepoints"]["items"]
+            timepoint = timepoints[index]
             item: Timing = self._builder.create(
                 Timing,
                 {
@@ -265,14 +268,14 @@ class TimelineAssembler(BaseAssembler):
                         Timing, "type", type
                     ),
                     "value": "ENCODE ???",  # @todo
-                    "valueLabel": "???",  # @todo
+                    "valueLabel": timepoint["value"],
                     "name": f"TIMING-{index}",
                     "description": f"Timing {index + 1}",
                     "label": "",
                     "relativeToFrom": self._builder.klass_and_attribute_value(
                         Timing, "relativeToFrom", "start to start"
                     ),
-                    "windowLabel": "",  # @todo
+                    "windowLabel": self._window_label(windows, index),
                     "windowLower": "",  # @todo
                     "windowUpper": "",  # @todo
                     "relativeFromScheduledInstanceId": from_id,
@@ -288,12 +291,21 @@ class TimelineAssembler(BaseAssembler):
             )
             return None
 
+    def _window_label(self, windows: list[dict], index: int) -> str:
+        if index >= len(windows):
+            return "???"
+        window = windows[index]
+        if window["before"] == 0 and window["after"] == 0:
+            return ""
+        return f"-{window["before"]}..+{window["after"]} {window["unit"]}"
+
     def _find_anchor(self, data) -> int:
         items = data["timepoints"]["items"]
-        item: dict[str]
-        for item in enumerate(items):
+        item: dict
+        for item in items:
             if item["value"] == "1":
-                return int(item["timepoint_reference"])
+                item["sai_instance"]
+                return int(item["index"])
         return 0
 
     def _link_timepoints_and_activities(self, data: dict) -> None:
