@@ -97,7 +97,7 @@ class StudyDesignAssembler(BaseAssembler):
                     "arms": [],  # Empty arms list (future enhancement)
                     "studyCells": [],  # Empty cells list (future enhancement)
                     "epochs": timeline_assembler.epochs,
-                    "encounter": timeline_assembler.encounters,
+                    "encounters": timeline_assembler.encounters,
                     "activities": timeline_assembler.activities,
                     "population": population_assembler.population,
                     "objectives": [],  # Empty objectives list (future enhancement)

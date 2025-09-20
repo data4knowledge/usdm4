@@ -46,6 +46,7 @@ class ScheduleTimeline(ApiBaseModelWithIdNameLabelAndDesc):
             # print(f"TPT: {timepoint}")
             # print(f"ENCOUNTER: {encounter}")
             # print(f"EPOCH: {epoch}")
+            # print(f"TIMING: {timing}")
             entry = {
                 "instance": timepoint,
                 "timing": timing,

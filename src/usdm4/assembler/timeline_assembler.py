@@ -95,6 +95,7 @@ class TimelineAssembler(BaseAssembler):
                 e,
                 KlassMethodLocation(self.MODULE, "_add_epochs"),
             )
+            return results
 
     def _add_encounters(self, data) -> list[Encounter]:
         try:
@@ -140,6 +141,7 @@ class TimelineAssembler(BaseAssembler):
                 e,
                 KlassMethodLocation(self.MODULE, "_add_encounters"),
             )
+            return results
 
     def _add_activities(self, data) -> list[Activity]:
         try:
@@ -186,6 +188,7 @@ class TimelineAssembler(BaseAssembler):
                 e,
                 KlassMethodLocation(self.MODULE, "_add_activities"),
             )
+            return results
 
     def _add_timepoints(self, data) -> list[ScheduledInstance]:
         try:
@@ -221,7 +224,7 @@ class TimelineAssembler(BaseAssembler):
                 e,
                 KlassMethodLocation(self.MODULE, "_add_timepoints"),
             )
-            return []
+            return results
 
     def _add_timing(self, data) -> list[ScheduledInstance]:
         try:
@@ -239,7 +242,7 @@ class TimelineAssembler(BaseAssembler):
                     if timing := self._timing(data, index, "Fixed Reference", this_sai.id, this_sai.id):
                         results.append(timing)
                 else:
-                    if timing := self._timing(data, index, "After", anchor.id, this_sai.id):
+                    if timing := self._timing(data, index, "After", this_sai.id, anchor.id):
                         results.append(timing)
             self._errors.info(
                 f"Timing: {len(results)}",
@@ -252,7 +255,7 @@ class TimelineAssembler(BaseAssembler):
                 e,
                 KlassMethodLocation(self.MODULE, "_add_timing"),
             )
-            return []
+            return results
 
     def _timing(
         self, data: dict, index: int, type: str, from_id: str, to_id: str
