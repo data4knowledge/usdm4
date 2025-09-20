@@ -312,23 +312,18 @@ class TimelineAssembler(BaseAssembler):
         try:
             activities = data["activities"]["items"]
             timepoints = data["timepoints"]["items"]
-            print(f"ACTIVITIES: {activities}")
-            for a_index, activity in enumerate(activities):
+            for _, activity in enumerate(activities):
                 if "children" in activity:
                     for child in activity["children"]:
                         activity_instance: Activity = child["activity_instance"]
-                        print(f"ACTIVITY: {child}")
                         for visit in child["visits"]:
-                            print(f"VISIT: {visit}")
                             sai_instance: ScheduledActivityInstance = timepoints[visit][
                                 "sai_instance"
                             ]    
                             sai_instance.activityIds.append(activity_instance.id)
                 else:
                     activity_instance: Activity = activity["activity_instance"]
-                    print(f"ACTIVITY: {activity}")
                     for visit in activity["visits"]:
-                        print(f"VISIT: {visit}")
                         sai_instance: ScheduledActivityInstance = timepoints[visit][
                             "sai_instance"
                         ]    
