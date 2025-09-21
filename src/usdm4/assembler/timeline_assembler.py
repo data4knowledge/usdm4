@@ -194,17 +194,19 @@ class TimelineAssembler(BaseAssembler):
         try:
             results = []
             timepoints: list = data["timepoints"]["items"]
-            epochs: list = data["epochs"]["items"]
-            encounters: list = data["visits"]["items"]
+            # epochs: list = data["epochs"]["items"]
+            # encounters: list = data["visits"]["items"]
             for index, item in enumerate(timepoints):
                 sai = self._builder.create(
                     ScheduledActivityInstance,
                     {
-                        "name": f"SAI-{index+1}",
-                        "description": f"Scheduled activity instance {index+1}",
+                        "name": f"SAI-{index + 1}",
+                        "description": f"Scheduled activity instance {index + 1}",
                         "label": item["text"],
                         "timelineExitId": None,
-                        "encounterId": item["encounter_instance"].id if item["encounter_instance"] else None,
+                        "encounterId": item["encounter_instance"].id
+                        if item["encounter_instance"]
+                        else None,
                         "scheduledInstanceTimelineId": None,
                         "defaultConditionId": None,
                         "epochId": item["epoch_instance"].id,
@@ -236,13 +238,19 @@ class TimelineAssembler(BaseAssembler):
             for index, item in enumerate(timepoints):
                 this_sai: ScheduledInstance = item["sai_instance"]
                 if index < anchor_index:
-                    if timing := self._timing(data, index, "Before", this_sai.id, anchor.id):
+                    if timing := self._timing(
+                        data, index, "Before", this_sai.id, anchor.id
+                    ):
                         results.append(timing)
                 elif index == anchor_index:
-                    if timing := self._timing(data, index, "Fixed Reference", this_sai.id, this_sai.id):
+                    if timing := self._timing(
+                        data, index, "Fixed Reference", this_sai.id, this_sai.id
+                    ):
                         results.append(timing)
                 else:
-                    if timing := self._timing(data, index, "After", this_sai.id, anchor.id):
+                    if timing := self._timing(
+                        data, index, "After", this_sai.id, anchor.id
+                    ):
                         results.append(timing)
             self._errors.info(
                 f"Timing: {len(results)}",
@@ -300,7 +308,7 @@ class TimelineAssembler(BaseAssembler):
         window = windows[index]
         if window["before"] == 0 and window["after"] == 0:
             return ""
-        return f"-{window["before"]}..+{window["after"]} {window["unit"]}"
+        return f"-{window['before']}..+{window['after']} {window['unit']}"
 
     def _find_anchor(self, data) -> int:
         items = data["timepoints"]["items"]
@@ -322,14 +330,14 @@ class TimelineAssembler(BaseAssembler):
                         for visit in child["visits"]:
                             sai_instance: ScheduledActivityInstance = timepoints[visit][
                                 "sai_instance"
-                            ]    
+                            ]
                             sai_instance.activityIds.append(activity_instance.id)
                 else:
                     activity_instance: Activity = activity["activity_instance"]
                     for visit in activity["visits"]:
                         sai_instance: ScheduledActivityInstance = timepoints[visit][
                             "sai_instance"
-                        ]    
+                        ]
                         sai_instance.activityIds.append(activity_instance.id)
         except Exception as e:
             self._errors.exception(
