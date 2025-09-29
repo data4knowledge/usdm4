@@ -9,6 +9,9 @@ from usdm4.api.code import Code
 
 class Encoder:
     MODULE = "usdm4.encoder.encoder.Encoder"
+
+    ZERO_DURATION = "PT0M"
+
     PHASE_MAP = [
         (
             ["0", "PRE-CLINICAL", "PRE CLINICAL"],
@@ -159,3 +162,32 @@ class Encoder:
                 location=KlassMethodLocation(self.MODULE, "to_date"),
             )
             return None
+
+    def iso8601_duration(self, value: int, unit: str) -> str:
+        try:
+            unit_text: str = unit.strip()
+            if unit_text.upper() in ["Y", "YRS", "YR", "YEARS", "YEAR"]:
+                return f"P{value}Y"
+            if unit_text.upper() in ["MTHS", "MTH", "MONTHS", "MONTH"]:
+                return f"P{value}M"
+            if unit_text.upper() in ["W", "WKS", "WK", "WEEKS", "WEEK"]:
+                return f"P{value}W"
+            if unit_text.upper() in ["D", "DYS", "DY", "DAYS", "DAY"]:
+                return f"P{value}D"
+            if unit_text.upper() in ["H", "HRS", "HR", "HOURS", "HOUR"]:
+                return f"PT{value}H"
+            if unit_text.upper() in ["M", "MINS", "MIN", "MINUTES", "MINUTE"]:
+                return f"PT{value}M"
+            if unit_text.upper() in ["S", "SECS", "SEC", "SECONDS", "SECOND"]:
+                return f"PT{value}S"
+            self._errors.warning(
+                f"Failed to encode ISO8601 duration of '{value}, {unit}'"
+            )
+            return self.ZERO_DURATION
+        except Exception as e:
+            self._errors.exception(
+                f"Failed to encode ISO8601 duration of '{value}, {unit}'",
+                e,
+                location=KlassMethodLocation(self.MODULE, "iso8601_duration"),
+            )
+            return self.ZERO_DURATION
