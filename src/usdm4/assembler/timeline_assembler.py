@@ -1,8 +1,8 @@
-import traceback
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.assembler.base_assembler import BaseAssembler
 from usdm4.builder.builder import Builder
+from usdm4.assembler.encoder import Encoder
 from usdm4.api.schedule_timeline import ScheduleTimeline
 from usdm4.api.schedule_timeline_exit import ScheduleTimelineExit
 from usdm4.api.scheduled_instance import ScheduledInstance, ScheduledActivityInstance
@@ -17,6 +17,7 @@ class TimelineAssembler(BaseAssembler):
 
     def __init__(self, builder: Builder, errors: Errors):
         super().__init__(builder, errors)
+        self._encoder = Encoder(builder, errors)
         self._timelines: list[ScheduleTimeline] = []
         self._epochs: list[StudyEpoch] = []
         self._encounters: list[Encounter] = []
@@ -272,27 +273,39 @@ class TimelineAssembler(BaseAssembler):
             windows: list = data["windows"]["items"]
             timepoints: list = data["timepoints"]["items"]
             timepoint = timepoints[index]
+            window = windows[index]
             item: Timing = self._builder.create(
                 Timing,
                 {
                     "type": self._builder.klass_and_attribute_value(
                         Timing, "type", type
                     ),
-                    "value": "ENCODE ???",  # @todo
-                    "valueLabel": timepoint["value"],
+                    "value": self._encoder.iso8601_duration(
+                        timepoint["value"], timepoint["unit"]
+                    ),
+                    "valueLabel": self._timing_value_label(timepoints, index),
                     "name": f"TIMING-{index}",
                     "description": f"Timing {index + 1}",
-                    "label": "",
+                    "label": self._timing_value_label(timepoints, index),
                     "relativeToFrom": self._builder.klass_and_attribute_value(
                         Timing, "relativeToFrom", "start to start"
                     ),
                     "windowLabel": self._window_label(windows, index),
-                    "windowLower": "",  # @todo
-                    "windowUpper": "",  # @todo
+                    "windowLower": self._encoder.iso8601_duration(
+                        window["before"], window["unit"]
+                    )
+                    if window["before"]
+                    else "",
+                    "windowUpper": self._encoder.iso8601_duration(
+                        window["after"], window["unit"]
+                    )
+                    if window["after"]
+                    else "",
                     "relativeFromScheduledInstanceId": from_id,
                     "relativeToScheduledInstanceId": to_id,
                 },
             )
+            # print(f"WINDOW: {window} -> {item.windowLabel}, [{item.windowLower}, {item.windowUpper}]")
             return item
         except Exception as e:
             self._errors.exception(
@@ -309,6 +322,11 @@ class TimelineAssembler(BaseAssembler):
         if window["before"] == 0 and window["after"] == 0:
             return ""
         return f"-{window['before']}..+{window['after']} {window['unit']}"
+
+    def _timing_value_label(self, timepoints: list[dict], index: int) -> str:
+        if index >= len(timepoints):
+            return "???"
+        return f"{timepoints[index]['text']}" if timepoints[index]["text"] else "???"
 
     def _find_anchor(self, data) -> int:
         items = data["timepoints"]["items"]
@@ -387,7 +405,6 @@ class TimelineAssembler(BaseAssembler):
                 },
             )
         except Exception as e:
-            print(f"TIMELINE EXCEPTION: {e}, {traceback.format_exc()}")
             self._errors.exception(
                 "Error creating timeline",
                 e,
