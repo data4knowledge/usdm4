@@ -73,7 +73,7 @@ class TimelineAssembler(BaseAssembler):
                     epoch: StudyEpoch = self._builder.create(
                         StudyEpoch,
                         {
-                            "name": name,
+                            "name": f"EPOCH-{index + 1}",
                             "description": f"EPOCH-{name}",
                             "label": label,
                             "type": self._builder.klass_and_attribute_value(
@@ -108,7 +108,7 @@ class TimelineAssembler(BaseAssembler):
                 encounter: Encounter = self._builder.create(
                     Encounter,
                     {
-                        "name": f"ENCOUNTER-{name.upper()}",
+                        "name": f"ENCOUNTER-{index + 1}",
                         "description": f"Encounter {name}",
                         "label": name,
                         "type": self._builder.klass_and_attribute_value(
@@ -150,7 +150,7 @@ class TimelineAssembler(BaseAssembler):
             items = data["activities"]["items"]
             for index, item in enumerate(items):
                 params = {
-                    "name": f"ACTIVITY-{item['name'].upper()}",
+                    "name": f"ACTIVITY-{index + 1}",
                     "description": f"Activity {item['name']}",
                     "label": item["name"],
                     "definedProcedures": [],
@@ -393,7 +393,7 @@ class TimelineAssembler(BaseAssembler):
                 ScheduleTimeline,
                 {
                     "mainTimeline": True,
-                    "name": "MAIN-TIMELINE",
+                    "name": "TIMELINE-1",
                     "description": "The main timeline",
                     "label": "Main timeline",
                     "entryCondition": "Paricipant identified",
