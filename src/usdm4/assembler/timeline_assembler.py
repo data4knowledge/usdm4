@@ -346,14 +346,16 @@ class TimelineAssembler(BaseAssembler):
                     for child in activity["children"]:
                         activity_instance: Activity = child["activity_instance"]
                         for visit in child["visits"]:
-                            sai_instance: ScheduledActivityInstance = timepoints[visit][
+                            index = visit["index"]
+                            sai_instance: ScheduledActivityInstance = timepoints[index][
                                 "sai_instance"
                             ]
                             sai_instance.activityIds.append(activity_instance.id)
                 else:
                     activity_instance: Activity = activity["activity_instance"]
                     for visit in activity["visits"]:
-                        sai_instance: ScheduledActivityInstance = timepoints[visit][
+                        index = visit["index"]
+                        sai_instance: ScheduledActivityInstance = timepoints[index][
                             "sai_instance"
                         ]
                         sai_instance.activityIds.append(activity_instance.id)
@@ -373,21 +375,7 @@ class TimelineAssembler(BaseAssembler):
                 f"Instances: {len(instances)}, Timings: {len(timings)}",
                 KlassMethodLocation(self.MODULE, "_add_timeline"),
             )
-            # print(f"INSTANCES: {len(instances)}, Timings: {len(timings)}",)
             exit = self._builder.create(ScheduleTimelineExit, {})
-            # duration = (
-            #     self._builder.create(
-            #         Duration,
-            #         {
-            #             "text": self.duration_text,
-            #             "quantity": self.duration,
-            #             "durationWillVary": False,
-            #             "reasonDurationWillVary": "",
-            #         },
-            #     )
-            #     if self.duration
-            #     else None
-            # )
             duration = None
             return self._builder.create(
                 ScheduleTimeline,
