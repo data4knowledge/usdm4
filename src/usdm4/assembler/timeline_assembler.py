@@ -203,12 +203,14 @@ class TimelineAssembler(BaseAssembler):
                             "bcSurrogateIds": [],
                             "timelineId": None,
                         }
-                        activity: Activity = self._builder.create(Activity, params)
-                        results.append(activity)
+                        child_activity: Activity = self._builder.create(Activity, params)
+                        results.append(child_activity)
                         if "references" in child:
                             for ref in child["references"]:
-                                self._condition_activity_id(ref, activity.id)
-                        child["activity_instance"] = activity
+                                self._condition_activity_id(ref, child_activity.id)
+                        child["activity_instance"] = child_activity
+                        activity.childIds.append(child_activity.id)
+            print(f"ACIVITIES: {[x.label for x in results]}")
             self._errors.info(
                 f"Activities: {len(results)}",
                 KlassMethodLocation(self.MODULE, "_add_activities"),
