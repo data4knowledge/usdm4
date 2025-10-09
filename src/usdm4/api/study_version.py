@@ -94,6 +94,9 @@ class StudyVersion(ApiBaseModelWithId):
     def intervention(self, id: str) -> StudyIntervention:
         return next((x for x in self.studyInterventions if x.id == id), None)
 
+    def condition(self, id: str) -> Condition:
+        return next((x for x in self.conditions if x.id == id), None)
+
     def phases(self) -> str:
         return ", ".join([sd.phase_as_text() for sd in self.studyDesigns])
 
