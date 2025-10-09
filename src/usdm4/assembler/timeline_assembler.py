@@ -210,7 +210,6 @@ class TimelineAssembler(BaseAssembler):
                                 self._condition_activity_id(ref, child_activity.id)
                         child["activity_instance"] = child_activity
                         activity.childIds.append(child_activity.id)
-            print(f"ACIVITIES: {[x.label for x in results]}")
             self._errors.info(
                 f"Activities: {len(results)}",
                 KlassMethodLocation(self.MODULE, "_add_activities"),
