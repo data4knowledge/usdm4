@@ -20,7 +20,7 @@ class TimelineAssembler(BaseAssembler):
         super().__init__(builder, errors)
         self._encoder = Encoder(builder, errors)
         self.clear()
-        
+
     def clear(self):
         self._timelines: list[ScheduleTimeline] = []
         self._epochs: list[StudyEpoch] = []
@@ -159,17 +159,29 @@ class TimelineAssembler(BaseAssembler):
 
     def _condition_timepoint_index(self, ref: str, index: int) -> None:
         if ref not in self._condition_links:
-            self._condition_links[ref] = {"reference": ref, "timepoint_index": [], "activity_id": []}
+            self._condition_links[ref] = {
+                "reference": ref,
+                "timepoint_index": [],
+                "activity_id": [],
+            }
         self._condition_links[ref]["timepoint_index"].append(index)
 
     def _condition_activity_id(self, ref: str, id: str) -> None:
         if ref not in self._condition_links:
-            self._condition_links[ref] = {"reference": ref, "timepoint_index": [], "activity_id": []}
+            self._condition_links[ref] = {
+                "reference": ref,
+                "timepoint_index": [],
+                "activity_id": [],
+            }
         self._condition_links[ref]["activity_id"].append(id)
 
     def _condition_combined(self, ref, sai_index: int, activity_id: str) -> None:
         if ref not in self._condition_links:
-            self._condition_links[ref] = {"reference": ref, "timepoint_index": [], "activity_id": []}
+            self._condition_links[ref] = {
+                "reference": ref,
+                "timepoint_index": [],
+                "activity_id": [],
+            }
         self._condition_links[ref]["activity_id"].append(activity_id)
         self._condition_links[ref]["timepoint_index"].append(sai_index)
 
@@ -209,7 +221,9 @@ class TimelineAssembler(BaseAssembler):
                             "bcSurrogateIds": [],
                             "timelineId": None,
                         }
-                        child_activity: Activity = self._builder.create(Activity, params)
+                        child_activity: Activity = self._builder.create(
+                            Activity, params
+                        )
                         results.append(child_activity)
                         if "references" in child:
                             for ref in child["references"]:
@@ -281,7 +295,10 @@ class TimelineAssembler(BaseAssembler):
                     if ref in self._condition_links:
                         # print(f"COND REF 1: {ref}")
                         links = self._condition_links[ref]
-                        timepoint_ids = [timepoints[x]["sai_instance"].id for x in links["timepoint_index"]]
+                        timepoint_ids = [
+                            timepoints[x]["sai_instance"].id
+                            for x in links["timepoint_index"]
+                        ]
                         activity_ids = [x for x in links["activity_id"]]
                         condition = self._builder.create(
                             Condition,
@@ -291,16 +308,21 @@ class TimelineAssembler(BaseAssembler):
                                 "description": f"Extracted footnote / condition {index + 1}",
                                 "text": item["text"],
                                 "dictionaryId": None,
-                                "contextIds": timepoint_ids if timepoint_ids else activity_ids,
-                                "appliesToIds": activity_ids if timepoint_ids else []
-                            }
+                                "contextIds": timepoint_ids
+                                if timepoint_ids
+                                else activity_ids,
+                                "appliesToIds": activity_ids if timepoint_ids else [],
+                            },
                         )
                         if condition:
                             # print(f"COND REF 2: {condition}")
                             results.append(condition)
                     else:
                         # print(f"COND LINKS: {self._condition_links:}")
-                        self._errors.warning(f"Failed to align condition {item}, not created.", KlassMethodLocation(self.MODULE, "_add_conditions"))
+                        self._errors.warning(
+                            f"Failed to align condition {item}, not created.",
+                            KlassMethodLocation(self.MODULE, "_add_conditions"),
+                        )
             return results
         except Exception as e:
             self._errors.exception(
@@ -308,7 +330,7 @@ class TimelineAssembler(BaseAssembler):
                 e,
                 KlassMethodLocation(self.MODULE, "_add_conditions"),
             )
-            return results        
+            return results
 
     def _add_timing(self, data) -> list[ScheduledInstance]:
         try:
@@ -425,7 +447,7 @@ class TimelineAssembler(BaseAssembler):
             for a_index, activity in enumerate(activities):
                 if "children" in activity:
                     for child in activity["children"]:
-                        sai_index = child["index"]
+                        # sai_index = child["index"]
                         activity_instance: Activity = child["activity_instance"]
                         for visit in child["visits"]:
                             index = visit["index"]
@@ -434,7 +456,9 @@ class TimelineAssembler(BaseAssembler):
                             ]
                             sai_instance.activityIds.append(activity_instance.id)
                             for ref in visit["references"]:
-                                self._condition_combined(ref, index, activity_instance.id)
+                                self._condition_combined(
+                                    ref, index, activity_instance.id
+                                )
                 else:
                     activity_instance: Activity = activity["activity_instance"]
                     for visit in activity["visits"]:

@@ -170,7 +170,7 @@ class StudyVersion(ApiBaseModelWithId):
     def sponsor_label_name(self) -> str:
         label = self.sponsor_label()
         return label if label else self.sponsor_name()
-    
+
     def sponsor_address(self) -> str:
         map = self.organization_map()
         for x in self.studyIdentifiers:

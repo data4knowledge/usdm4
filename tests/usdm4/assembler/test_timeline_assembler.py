@@ -71,9 +71,7 @@ def minimal_timeline_data():
                 },
             ]
         },
-        "conditions": {
-            "items": []
-        },
+        "conditions": {"items": []},
     }
 
 
@@ -86,7 +84,9 @@ class TestTimelineAssemblerInitialization:
 
         assert assembler._builder is builder
         assert assembler._errors is errors
-        assert assembler.MODULE == "usdm4.assembler.timeline_assembler.TimelineAssembler"
+        assert (
+            assembler.MODULE == "usdm4.assembler.timeline_assembler.TimelineAssembler"
+        )
 
         # Test initial state
         assert assembler._timelines == []
@@ -109,7 +109,9 @@ class TestTimelineAssemblerInitialization:
 class TestTimelineAssemblerExecution:
     """Test TimelineAssembler execute method."""
 
-    def test_execute_with_minimal_valid_data(self, timeline_assembler, minimal_timeline_data):
+    def test_execute_with_minimal_valid_data(
+        self, timeline_assembler, minimal_timeline_data
+    ):
         """Test execute with minimal valid data."""
         timeline_assembler.execute(minimal_timeline_data)
 
@@ -131,7 +133,7 @@ class TestTimelineAssemblerExecution:
     def test_execute_with_empty_data_fails_gracefully(self, timeline_assembler, errors):
         """Test execute with empty data fails gracefully."""
         initial_error_count = errors.error_count()
-        
+
         try:
             timeline_assembler.execute({})
         except Exception:
@@ -143,12 +145,12 @@ class TestTimelineAssemblerExecution:
     def test_execute_with_malformed_data(self, timeline_assembler, errors):
         """Test execute with malformed data."""
         initial_error_count = errors.error_count()
-        
+
         malformed_data = {
             "epochs": "not a dict",
             "visits": None,
         }
-        
+
         try:
             timeline_assembler.execute(malformed_data)
         except Exception:
@@ -161,7 +163,9 @@ class TestTimelineAssemblerExecution:
 class TestTimelineAssemblerEpochs:
     """Test TimelineAssembler epoch creation."""
 
-    def test_add_epochs_creates_correct_number(self, timeline_assembler, minimal_timeline_data):
+    def test_add_epochs_creates_correct_number(
+        self, timeline_assembler, minimal_timeline_data
+    ):
         """Test that epochs are created correctly."""
         epochs = timeline_assembler._add_epochs(minimal_timeline_data)
 
@@ -178,28 +182,26 @@ class TestTimelineAssemblerEpochs:
                     {"text": "Treatment"},
                 ]
             },
-            "timepoints": {
-                "items": [{}, {}]
-            }
+            "timepoints": {"items": [{}, {}]},
         }
-        
+
         epochs = timeline_assembler._add_epochs(data)
-        
+
         # Should only create one unique epoch
         assert len(epochs) == 1
 
     def test_add_epochs_with_exception(self, timeline_assembler, errors):
         """Test epoch creation with exception."""
         initial_error_count = errors.error_count()
-        
+
         data = {
             "epochs": {
                 "items": None  # Will cause exception
             }
         }
-        
+
         epochs = timeline_assembler._add_epochs(data)
-        
+
         assert len(epochs) == 0
         assert errors.error_count() > initial_error_count
 
@@ -207,7 +209,9 @@ class TestTimelineAssemblerEpochs:
 class TestTimelineAssemblerEncounters:
     """Test TimelineAssembler encounter creation."""
 
-    def test_add_encounters_creates_correct_number(self, timeline_assembler, minimal_timeline_data):
+    def test_add_encounters_creates_correct_number(
+        self, timeline_assembler, minimal_timeline_data
+    ):
         """Test that encounters are created correctly."""
         encounters = timeline_assembler._add_encounters(minimal_timeline_data)
 
@@ -223,13 +227,11 @@ class TestTimelineAssemblerEncounters:
                     {"text": "Visit 1", "references": ["ref1", "ref2"]},
                 ]
             },
-            "timepoints": {
-                "items": [{}]
-            }
+            "timepoints": {"items": [{}]},
         }
-        
+
         encounters = timeline_assembler._add_encounters(data)
-        
+
         assert len(encounters) == 1
         # Check that references were tracked
         assert "ref1" in timeline_assembler._condition_links
@@ -238,15 +240,15 @@ class TestTimelineAssemblerEncounters:
     def test_add_encounters_with_exception(self, timeline_assembler, errors):
         """Test encounter creation with exception."""
         initial_error_count = errors.error_count()
-        
+
         data = {
             "visits": {
                 "items": None  # Will cause exception
             }
         }
-        
+
         encounters = timeline_assembler._add_encounters(data)
-        
+
         assert len(encounters) == 0
         assert errors.error_count() > initial_error_count
 
@@ -254,7 +256,9 @@ class TestTimelineAssemblerEncounters:
 class TestTimelineAssemblerActivities:
     """Test TimelineAssembler activity creation."""
 
-    def test_add_activities_creates_correct_number(self, timeline_assembler, minimal_timeline_data):
+    def test_add_activities_creates_correct_number(
+        self, timeline_assembler, minimal_timeline_data
+    ):
         """Test that activities are created correctly."""
         activities = timeline_assembler._add_activities(minimal_timeline_data)
 
@@ -277,9 +281,9 @@ class TestTimelineAssemblerActivities:
                 ]
             }
         }
-        
+
         activities = timeline_assembler._add_activities(data)
-        
+
         # Should create parent and child
         assert len(activities) == 2
         # Parent should have child ID in childIds
@@ -288,15 +292,15 @@ class TestTimelineAssemblerActivities:
     def test_add_activities_with_exception(self, timeline_assembler, errors):
         """Test activity creation with exception."""
         initial_error_count = errors.error_count()
-        
+
         data = {
             "activities": {
                 "items": None  # Will cause exception
             }
         }
-        
+
         activities = timeline_assembler._add_activities(data)
-        
+
         assert len(activities) == 0
         assert errors.error_count() > initial_error_count
 
@@ -308,17 +312,13 @@ class TestTimelineAssemblerTimepoints:
         """Test that timepoints (SAIs) are created correctly."""
         # First need to create epochs and encounters
         data = {
-            "epochs": {
-                "items": [{"text": "Screening"}]
-            },
-            "visits": {
-                "items": [{"text": "Visit 1", "references": []}]
-            },
+            "epochs": {"items": [{"text": "Screening"}]},
+            "visits": {"items": [{"text": "Visit 1", "references": []}]},
             "timepoints": {
                 "items": [{"index": "0", "text": "Day 1", "value": "1", "unit": "days"}]
-            }
+            },
         }
-        
+
         timeline_assembler._add_epochs(data)
         timeline_assembler._add_encounters(data)
         timepoints = timeline_assembler._add_timepoints(data)
@@ -329,15 +329,15 @@ class TestTimelineAssemblerTimepoints:
     def test_add_timepoints_with_exception(self, timeline_assembler, errors):
         """Test timepoint creation with exception."""
         initial_error_count = errors.error_count()
-        
+
         data = {
             "timepoints": {
                 "items": None  # Will cause exception
             }
         }
-        
+
         timepoints = timeline_assembler._add_timepoints(data)
-        
+
         assert len(timepoints) == 0
         assert errors.error_count() > initial_error_count
 
@@ -353,15 +353,19 @@ class TestTimelineAssemblerConditions:
             "timepoint_index": [0],
             "activity_id": ["act1"],
         }
-        
+
         # Create timepoints first
         data = {
             "epochs": {"items": [{"text": "Screening"}]},
             "visits": {"items": [{"text": "Visit 1", "references": []}]},
-            "timepoints": {"items": [{"index": "0", "text": "Day 1", "value": "1", "unit": "days"}]},
-            "conditions": {"items": [{"reference": "ref1", "text": "If patient consents"}]},
+            "timepoints": {
+                "items": [{"index": "0", "text": "Day 1", "value": "1", "unit": "days"}]
+            },
+            "conditions": {
+                "items": [{"reference": "ref1", "text": "If patient consents"}]
+            },
         }
-        
+
         timeline_assembler._add_epochs(data)
         timeline_assembler._add_encounters(data)
         timeline_assembler._add_timepoints(data)
@@ -373,26 +377,28 @@ class TestTimelineAssemblerConditions:
     def test_add_conditions_with_invalid_reference(self, timeline_assembler, errors):
         """Test condition creation with invalid reference."""
         data = {
-            "conditions": {"items": [{"reference": "invalid_ref", "text": "Some condition"}]},
+            "conditions": {
+                "items": [{"reference": "invalid_ref", "text": "Some condition"}]
+            },
             "timepoints": {"items": []},
         }
-        
+
         conditions = timeline_assembler._add_conditions(data)
-        
+
         # Should not create condition with invalid reference
         assert len(conditions) == 0
 
     def test_add_conditions_with_exception(self, timeline_assembler, errors):
         """Test condition creation with exception."""
         initial_error_count = errors.error_count()
-        
+
         data = {
             "conditions": {"items": None},  # Will cause exception
             "timepoints": {"items": []},
         }
-        
+
         conditions = timeline_assembler._add_conditions(data)
-        
+
         assert len(conditions) == 0
         assert errors.error_count() > initial_error_count
 
@@ -404,7 +410,12 @@ class TestTimelineAssemblerTiming:
         """Test timing creation."""
         data = {
             "epochs": {"items": [{"text": "Screening"}, {"text": "Screening"}]},
-            "visits": {"items": [{"text": "Visit 1", "references": []}, {"text": "Visit 2", "references": []}]},
+            "visits": {
+                "items": [
+                    {"text": "Visit 1", "references": []},
+                    {"text": "Visit 2", "references": []},
+                ]
+            },
             "timepoints": {
                 "items": [
                     {"index": "0", "text": "Day 1", "value": "1", "unit": "days"},
@@ -418,7 +429,7 @@ class TestTimelineAssemblerTiming:
                 ]
             },
         }
-        
+
         timeline_assembler._add_epochs(data)
         timeline_assembler._add_encounters(data)
         timeline_assembler._add_timepoints(data)
@@ -433,14 +444,18 @@ class TestTimelineAssemblerTiming:
             "timepoints": {
                 "items": [
                     {"index": "0", "value": "0", "sai_instance": None},
-                    {"index": "1", "value": "1", "sai_instance": None},  # This should be the anchor
+                    {
+                        "index": "1",
+                        "value": "1",
+                        "sai_instance": None,
+                    },  # This should be the anchor
                     {"index": "2", "value": "7", "sai_instance": None},
                 ]
             }
         }
-        
+
         anchor_index = timeline_assembler._find_anchor(data)
-        
+
         assert anchor_index == 1
 
     def test_find_anchor_defaults_to_zero(self, timeline_assembler):
@@ -453,9 +468,9 @@ class TestTimelineAssemblerTiming:
                 ]
             }
         }
-        
+
         anchor_index = timeline_assembler._find_anchor(data)
-        
+
         assert anchor_index == 0
 
     def test_window_label_formats_correctly(self, timeline_assembler):
@@ -464,19 +479,19 @@ class TestTimelineAssemblerTiming:
             {"before": 1, "after": 2, "unit": "days"},
             {"before": 0, "after": 0, "unit": "days"},
         ]
-        
+
         label1 = timeline_assembler._window_label(windows, 0)
         label2 = timeline_assembler._window_label(windows, 1)
-        
+
         assert label1 == "-1..+2 days"
         assert label2 == ""  # Empty when both before and after are 0
 
     def test_window_label_out_of_range(self, timeline_assembler):
         """Test window label with out of range index."""
         windows = []
-        
+
         label = timeline_assembler._window_label(windows, 0)
-        
+
         assert label == "???"
 
     def test_timing_value_label(self, timeline_assembler):
@@ -485,19 +500,19 @@ class TestTimelineAssemblerTiming:
             {"text": "Day 1"},
             {"text": ""},
         ]
-        
+
         label1 = timeline_assembler._timing_value_label(timepoints, 0)
         label2 = timeline_assembler._timing_value_label(timepoints, 1)
-        
+
         assert label1 == "Day 1"
         assert label2 == "???"
 
     def test_timing_value_label_out_of_range(self, timeline_assembler):
         """Test timing value label with out of range index."""
         timepoints = []
-        
+
         label = timeline_assembler._timing_value_label(timepoints, 0)
-        
+
         assert label == "???"
 
 
@@ -507,21 +522,21 @@ class TestTimelineAssemblerConditionLinks:
     def test_condition_timepoint_index_creates_link(self, timeline_assembler):
         """Test condition timepoint index linking."""
         timeline_assembler._condition_timepoint_index("ref1", 0)
-        
+
         assert "ref1" in timeline_assembler._condition_links
         assert 0 in timeline_assembler._condition_links["ref1"]["timepoint_index"]
 
     def test_condition_activity_id_creates_link(self, timeline_assembler):
         """Test condition activity ID linking."""
         timeline_assembler._condition_activity_id("ref1", "act1")
-        
+
         assert "ref1" in timeline_assembler._condition_links
         assert "act1" in timeline_assembler._condition_links["ref1"]["activity_id"]
 
     def test_condition_combined_creates_link(self, timeline_assembler):
         """Test combined condition linking."""
         timeline_assembler._condition_combined("ref1", 0, "act1")
-        
+
         assert "ref1" in timeline_assembler._condition_links
         assert 0 in timeline_assembler._condition_links["ref1"]["timepoint_index"]
         assert "act1" in timeline_assembler._condition_links["ref1"]["activity_id"]
@@ -532,7 +547,7 @@ class TestTimelineAssemblerConditionLinks:
         timeline_assembler._condition_timepoint_index("ref1", 1)
         timeline_assembler._condition_activity_id("ref1", "act1")
         timeline_assembler._condition_activity_id("ref1", "act2")
-        
+
         assert len(timeline_assembler._condition_links["ref1"]["timepoint_index"]) == 2
         assert len(timeline_assembler._condition_links["ref1"]["activity_id"]) == 2
 
@@ -558,13 +573,13 @@ class TestTimelineAssemblerLinkingTimepoints:
                 ]
             },
         }
-        
+
         timeline_assembler._add_epochs(data)
         timeline_assembler._add_encounters(data)
         timeline_assembler._add_activities(data)
         timeline_assembler._add_timepoints(data)
         timeline_assembler._link_timepoints_and_activities(data)
-        
+
         # Verify linking occurred
         timepoint = data["timepoints"]["items"][0]["sai_instance"]
         assert len(timepoint.activityIds) == 1
@@ -592,13 +607,13 @@ class TestTimelineAssemblerLinkingTimepoints:
                 ]
             },
         }
-        
+
         timeline_assembler._add_epochs(data)
         timeline_assembler._add_encounters(data)
         timeline_assembler._add_activities(data)
         timeline_assembler._add_timepoints(data)
         timeline_assembler._link_timepoints_and_activities(data)
-        
+
         # Verify child activity was linked
         timepoint = data["timepoints"]["items"][0]["sai_instance"]
         assert len(timepoint.activityIds) == 1
@@ -617,13 +632,13 @@ class TestTimelineAssemblerTimeline:
             },
             "windows": {"items": [{"before": 0, "after": 0, "unit": "days"}]},
         }
-        
+
         timeline_assembler._add_epochs(data)
         timeline_assembler._add_encounters(data)
         timepoints = timeline_assembler._add_timepoints(data)
         timings = timeline_assembler._add_timing(data)
         timeline = timeline_assembler._add_timeline(data, timepoints, timings)
-        
+
         assert timeline is not None
         assert timeline.mainTimeline is True
         assert timeline.name == "TIMELINE-1"
@@ -637,13 +652,13 @@ class TestTimelineAssemblerIntegration:
     def test_full_execution_workflow(self, timeline_assembler, minimal_timeline_data):
         """Test full execution workflow."""
         timeline_assembler.execute(minimal_timeline_data)
-        
+
         # Verify all components were created
         assert len(timeline_assembler.timelines) == 1
         assert len(timeline_assembler.epochs) > 0
         assert len(timeline_assembler.encounters) > 0
         assert len(timeline_assembler.activities) > 0
-        
+
         # Verify timeline structure
         timeline = timeline_assembler.timelines[0]
         assert timeline.mainTimeline is True
@@ -653,9 +668,7 @@ class TestTimelineAssemblerIntegration:
     def test_complex_timeline_with_conditions(self, timeline_assembler):
         """Test complex timeline with conditions."""
         data = {
-            "epochs": {
-                "items": [{"text": "Screening"}, {"text": "Treatment"}]
-            },
+            "epochs": {"items": [{"text": "Screening"}, {"text": "Treatment"}]},
             "visits": {
                 "items": [
                     {"text": "Visit 1", "references": ["c1"]},
@@ -688,14 +701,12 @@ class TestTimelineAssemblerIntegration:
                 ]
             },
             "conditions": {
-                "items": [
-                    {"reference": "c1", "text": "If patient consents"}
-                ]
+                "items": [{"reference": "c1", "text": "If patient consents"}]
             },
         }
-        
+
         timeline_assembler.execute(data)
-        
+
         # Verify conditions were created
         assert len(timeline_assembler.conditions) == 1
         assert timeline_assembler.conditions[0].text == "If patient consents"
@@ -706,33 +717,29 @@ class TestTimelineAssemblerEdgeCases:
 
     def test_empty_activities_list(self, timeline_assembler):
         """Test with empty activities list."""
-        data = {
-            "activities": {"items": []}
-        }
-        
+        data = {"activities": {"items": []}}
+
         activities = timeline_assembler._add_activities(data)
-        
+
         assert len(activities) == 0
 
     def test_empty_timepoints_list(self, timeline_assembler):
         """Test with empty timepoints list."""
-        data = {
-            "timepoints": {"items": []}
-        }
-        
+        data = {"timepoints": {"items": []}}
+
         timepoints = timeline_assembler._add_timepoints(data)
-        
+
         assert len(timepoints) == 0
 
     def test_missing_keys_in_data(self, timeline_assembler, errors):
         """Test with missing keys in data."""
         initial_error_count = errors.error_count()
-        
+
         data = {}  # Missing all required keys
-        
+
         try:
             timeline_assembler.execute(data)
         except Exception:
             pass
-        
+
         assert errors.error_count() > initial_error_count

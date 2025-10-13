@@ -1,4 +1,3 @@
-from unittest.mock import patch
 from src.usdm4.api.study_design import (
     StudyDesign,
     InterventionalStudyDesign,

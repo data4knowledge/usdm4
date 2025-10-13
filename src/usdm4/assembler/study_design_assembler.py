@@ -30,7 +30,7 @@ class StudyDesignAssembler(BaseAssembler):
         super().__init__(builder, errors)
         self._encoder = Encoder(builder, errors)
         self.clear()
-        
+
     def clear(self):
         self._study_design = None
 

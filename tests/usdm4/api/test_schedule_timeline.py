@@ -1,4 +1,3 @@
-from unittest.mock import Mock
 from src.usdm4.api.schedule_timeline import ScheduleTimeline
 from src.usdm4.api.scheduled_instance import (
     ScheduledActivityInstance,

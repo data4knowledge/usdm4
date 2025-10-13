@@ -52,7 +52,7 @@ class StudyAssembler(BaseAssembler):
         document_assembler: DocumentAssembler,
         population_assembler: PopulationAssembler,
         amendments_assembler: AmendmentsAssembler,
-        timeline_assembler: TimelineAssembler
+        timeline_assembler: TimelineAssembler,
     ) -> None:
         """
         Creates the top-level Study object and its associated StudyVersion from study data.
@@ -120,7 +120,7 @@ class StudyAssembler(BaseAssembler):
                 "amendments": [amendments_assembler.amendment]
                 if amendments_assembler.amendment
                 else [],
-                "conditions": timeline_assembler.conditions
+                "conditions": timeline_assembler.conditions,
             }
             study_version = self._builder.create(StudyVersion, params)
 

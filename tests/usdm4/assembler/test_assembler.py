@@ -5,17 +5,21 @@ from simple_error_log.errors import Errors
 from src.usdm4.assembler.assembler import Assembler
 from src.usdm4.__info__ import __model_version__ as usdm_version
 
+
 def root_path():
     """Get the root path for the usdm4 package."""
     base = pathlib.Path(__file__).parent.parent.parent.parent.resolve()
     return os.path.join(base, "src/usdm4")
 
+
 global_errors = Errors()
 global_assembler = Assembler(root_path(), global_errors)
+
 
 def get_global_assembler():
     global_assembler.clear()
     return global_assembler
+
 
 @pytest.fixture
 def minimal_study_data():
@@ -23,7 +27,9 @@ def minimal_study_data():
     return {
         "identification": {
             "titles": {"brief": "Test Study", "official": "Official Test Study"},
-            "identifiers": [{"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}}],
+            "identifiers": [
+                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}}
+            ],
         },
         "document": {
             "document": {
@@ -109,9 +115,7 @@ def complete_study_data_with_soa(minimal_study_data):
                 },
             ]
         },
-        "conditions": {
-            "items": []
-        },
+        "conditions": {"items": []},
     }
     return data
 
@@ -140,7 +144,7 @@ class TestAssemblerInitialization:
     def test_init_creates_builder_with_correct_path(self):
         """Test that builder is created with correct root path."""
         assembler = global_assembler
-        
+
         # Verify builder exists and has been initialized
         assert assembler._builder is not None
 
@@ -164,7 +168,9 @@ class TestAssemblerExecution:
         assert assembler.study.label == "TST"
         assert len(assembler.study.versions) == 1
 
-    def test_execute_with_complete_data_including_soa(self, complete_study_data_with_soa):
+    def test_execute_with_complete_data_including_soa(
+        self, complete_study_data_with_soa
+    ):
         """Test execute with complete data including SOA/timeline."""
         assembler = get_global_assembler()
         assembler.execute(complete_study_data_with_soa)
@@ -172,7 +178,7 @@ class TestAssemblerExecution:
         # Verify study was created
         assert assembler.study is not None
         assert assembler.study.name == "TST"
-        
+
         # Verify timeline data was processed
         assert assembler._timeline_assembler.timelines is not None
 
@@ -190,7 +196,7 @@ class TestAssemblerExecution:
         """Test execute with empty data fails gracefully."""
         assembler = get_global_assembler()
         initial_error_count = global_errors.error_count()
-        
+
         try:
             assembler.execute({})
         except Exception:
@@ -203,12 +209,12 @@ class TestAssemblerExecution:
         """Test execute with missing required keys."""
         assembler = get_global_assembler()
         initial_error_count = global_errors.error_count()
-        
+
         incomplete_data = {
             "identification": {"titles": {"brief": "Test"}},
             # Missing other required keys
         }
-        
+
         try:
             assembler.execute(incomplete_data)
         except Exception:
@@ -221,7 +227,7 @@ class TestAssemblerExecution:
         """Test execute with malformed data."""
         assembler = get_global_assembler()
         initial_error_count = global_errors.error_count()
-        
+
         malformed_data = {
             "identification": "not a dict",
             "document": None,
@@ -230,7 +236,7 @@ class TestAssemblerExecution:
             "study_design": "invalid",
             "study": {"name": "missing structure"},
         }
-        
+
         try:
             assembler.execute(malformed_data)
         except Exception:
@@ -243,7 +249,7 @@ class TestAssemblerExecution:
         """Test execute with None values in data."""
         assembler = get_global_assembler()
         initial_error_count = global_errors.error_count()
-        
+
         data_with_nones = {
             "identification": None,
             "document": None,
@@ -252,7 +258,7 @@ class TestAssemblerExecution:
             "study_design": None,
             "study": None,
         }
-        
+
         try:
             assembler.execute(data_with_nones)
         except Exception:
@@ -279,12 +285,13 @@ class TestAssemblerStudyProperty:
         """Test that study property returns correct type."""
         assembler = get_global_assembler()
         assembler.execute(minimal_study_data)
-        
+
         study = assembler.study
         assert study is not None
         assert hasattr(study, "name")
         assert hasattr(study, "label")
         assert hasattr(study, "versions")
+
 
 class TestAssemblerWrapperMethod:
     """Test Assembler wrapper method."""
@@ -318,9 +325,9 @@ class TestAssemblerWrapperMethod:
         """Test wrapper with empty system name."""
         assembler = get_global_assembler()
         assembler.execute(minimal_study_data)
-        
+
         wrapper = assembler.wrapper("", "1.0.0")
-        
+
         # Should still create wrapper with empty name
         assert wrapper is not None
         assert wrapper.systemName == ""
@@ -329,9 +336,9 @@ class TestAssemblerWrapperMethod:
         """Test wrapper with empty version."""
         assembler = get_global_assembler()
         assembler.execute(minimal_study_data)
-        
+
         wrapper = assembler.wrapper("TestSystem", "")
-        
+
         # Should still create wrapper with empty version
         assert wrapper is not None
         assert wrapper.systemVersion == ""
@@ -340,9 +347,9 @@ class TestAssemblerWrapperMethod:
         """Test that wrapper usdmVersion matches the package version."""
         assembler = get_global_assembler()
         assembler.execute(minimal_study_data)
-        
+
         wrapper = assembler.wrapper("TestSystem", "1.0.0")
-        
+
         assert wrapper is not None
         assert wrapper.usdmVersion == usdm_version
 
@@ -350,9 +357,9 @@ class TestAssemblerWrapperMethod:
         """Test that wrapper contains a reference to the study."""
         assembler = get_global_assembler()
         assembler.execute(minimal_study_data)
-        
+
         wrapper = assembler.wrapper("TestSystem", "1.0.0")
-        
+
         assert wrapper is not None
         assert wrapper.study is not None
         assert wrapper.study == assembler.study
@@ -370,16 +377,16 @@ class TestAssemblerSequencing:
         # Verify that all assemblers have been executed by checking their results
         # Identification should have processed titles
         assert assembler._identification_assembler is not None
-        
+
         # Document should have been created
         assert assembler._document_assembler is not None
-        
+
         # Population should have been created
         assert assembler._population_assembler.population is not None
-        
+
         # Study design should have been created
         assert assembler._study_design_assembler.study_design is not None
-        
+
         # Study should have been created last
         assert assembler._study_assembler.study is not None
 
@@ -415,7 +422,7 @@ class TestAssemblerIntegration:
         assert study is not None
         assert study.name == "TST"
         assert len(study.versions) == 1
-        
+
         # Verify study version has all components
         version = study.versions[0]
         assert version.versionIdentifier == "1.0"
@@ -442,35 +449,87 @@ class TestAssemblerIntegration:
         """Test multiple executions on the same assembler instance."""
         errors1 = Errors()
         assembler1 = Assembler(root_path(), errors1)
-        
+
         data1 = {
             "identification": {"titles": {"brief": "Study 1"}},
-            "document": {"document": {"label": "Doc1", "version": "1.0", "status": "final", "template": "T", "version_date": "2024-01-01"}, "sections": []},
-            "population": {"label": "Pop1", "inclusion_exclusion": {"inclusion": ["Age >= 18"], "exclusion": []}},
-            "amendments": {"summary": "V1", "reasons": {"primary": "R1"}, "impact": {"safety": False, "reliability": False}, "enrollment": {"value": 100, "unit": "subjects"}},
-            "study_design": {"label": "Design1", "rationale": "Rat1", "trial_phase": "phase-1"},
-            "study": {"name": {"acronym": "S1"}, "label": "Study1", "version": "1.0", "rationale": "R1"},
+            "document": {
+                "document": {
+                    "label": "Doc1",
+                    "version": "1.0",
+                    "status": "final",
+                    "template": "T",
+                    "version_date": "2024-01-01",
+                },
+                "sections": [],
+            },
+            "population": {
+                "label": "Pop1",
+                "inclusion_exclusion": {"inclusion": ["Age >= 18"], "exclusion": []},
+            },
+            "amendments": {
+                "summary": "V1",
+                "reasons": {"primary": "R1"},
+                "impact": {"safety": False, "reliability": False},
+                "enrollment": {"value": 100, "unit": "subjects"},
+            },
+            "study_design": {
+                "label": "Design1",
+                "rationale": "Rat1",
+                "trial_phase": "phase-1",
+            },
+            "study": {
+                "name": {"acronym": "S1"},
+                "label": "Study1",
+                "version": "1.0",
+                "rationale": "R1",
+            },
         }
-        
+
         assembler1.execute(data1)
         study1 = assembler1.study
-        
+
         # Create new assembler for second execution
         errors2 = Errors()
         assembler2 = Assembler(root_path(), errors2)
-        
+
         data2 = {
             "identification": {"titles": {"brief": "Study 2"}},
-            "document": {"document": {"label": "Doc2", "version": "2.0", "status": "final", "template": "T", "version_date": "2024-01-01"}, "sections": []},
-            "population": {"label": "Pop2", "inclusion_exclusion": {"inclusion": ["Age >= 21"], "exclusion": []}},
-            "amendments": {"summary": "V2", "reasons": {"primary": "R2"}, "impact": {"safety": False, "reliability": False}, "enrollment": {"value": 200, "unit": "subjects"}},
-            "study_design": {"label": "Design2", "rationale": "Rat2", "trial_phase": "phase-2"},
-            "study": {"name": {"acronym": "S2"}, "label": "Study2", "version": "2.0", "rationale": "R2"},
+            "document": {
+                "document": {
+                    "label": "Doc2",
+                    "version": "2.0",
+                    "status": "final",
+                    "template": "T",
+                    "version_date": "2024-01-01",
+                },
+                "sections": [],
+            },
+            "population": {
+                "label": "Pop2",
+                "inclusion_exclusion": {"inclusion": ["Age >= 21"], "exclusion": []},
+            },
+            "amendments": {
+                "summary": "V2",
+                "reasons": {"primary": "R2"},
+                "impact": {"safety": False, "reliability": False},
+                "enrollment": {"value": 200, "unit": "subjects"},
+            },
+            "study_design": {
+                "label": "Design2",
+                "rationale": "Rat2",
+                "trial_phase": "phase-2",
+            },
+            "study": {
+                "name": {"acronym": "S2"},
+                "label": "Study2",
+                "version": "2.0",
+                "rationale": "R2",
+            },
         }
-        
+
         assembler2.execute(data2)
         study2 = assembler2.study
-        
+
         # Verify both studies are different
         assert study1 is not None
         assert study2 is not None
@@ -496,9 +555,9 @@ class TestAssemblerEdgeCases:
         """Test wrapper with special characters in system name and version."""
         assembler = get_global_assembler()
         assembler.execute(minimal_study_data)
-        
+
         wrapper = assembler.wrapper("Test-System_v2.0", "1.0.0-beta+001")
-        
+
         assert wrapper is not None
         assert wrapper.systemName == "Test-System_v2.0"
         assert wrapper.systemVersion == "1.0.0-beta+001"
@@ -507,9 +566,9 @@ class TestAssemblerEdgeCases:
         """Test wrapper with unicode characters."""
         assembler = get_global_assembler()
         assembler.execute(minimal_study_data)
-        
+
         wrapper = assembler.wrapper("Système de Test", "1.0.0")
-        
+
         assert wrapper is not None
         assert wrapper.systemName == "Système de Test"
 
@@ -517,7 +576,7 @@ class TestAssemblerEdgeCases:
         """Test execute with nested None values."""
         assembler = get_global_assembler()
         initial_error_count = global_errors.error_count()
-        
+
         data = {
             "identification": {"titles": None},
             "document": {"document": None, "sections": None},
@@ -526,7 +585,7 @@ class TestAssemblerEdgeCases:
             "study_design": {"label": None},
             "study": {"name": None},
         }
-        
+
         try:
             assembler.execute(data)
         except Exception:
@@ -543,7 +602,7 @@ class TestAssemblerErrorHandling:
         """Test that exceptions are properly logged."""
         assembler = get_global_assembler()
         initial_error_count = global_errors.error_count()
-        
+
         # Cause an exception by passing invalid data
         try:
             assembler.execute(None)
@@ -558,7 +617,7 @@ class TestAssemblerErrorHandling:
         # Try to create wrapper without executing first (study will be None)
         assembler = get_global_assembler()
         wrapper = assembler.wrapper("TestSystem", "1.0.0")
-        
+
         # Should handle gracefully and return None or valid wrapper
         # Exact behavior depends on builder implementation
         assert wrapper is None or wrapper is not None
@@ -567,19 +626,27 @@ class TestAssemblerErrorHandling:
         """Test execution with only some required data present."""
         assembler = get_global_assembler()
         initial_error_count = global_errors.error_count()
-        
+
         partial_data = {
             "identification": {
                 "titles": {"brief": "Test Study"},
-                "identifiers": [{"identifier": "TEST001", "scope": {"standard": "internal"}}],
+                "identifiers": [
+                    {"identifier": "TEST001", "scope": {"standard": "internal"}}
+                ],
             },
             "document": {
-                "document": {"label": "Doc", "version": "1.0", "status": "final", "template": "T", "version_date": "2024-01-01"},
+                "document": {
+                    "label": "Doc",
+                    "version": "1.0",
+                    "status": "final",
+                    "template": "T",
+                    "version_date": "2024-01-01",
+                },
                 "sections": [],
             },
             # Missing other required sections
         }
-        
+
         try:
             assembler.execute(partial_data)
         except Exception:

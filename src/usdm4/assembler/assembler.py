@@ -133,7 +133,7 @@ class Assembler:
                 self._document_assembler,
                 self._population_assembler,
                 self._amendments_assembler,
-                self._timeline_assembler
+                self._timeline_assembler,
             )
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
