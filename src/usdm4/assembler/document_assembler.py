@@ -34,6 +34,9 @@ class DocumentAssembler(BaseAssembler):
         """
         super().__init__(builder, errors)
         self._encoder = Encoder(builder, errors)
+        self.clear()
+
+    def clear(self):
         self._document: StudyDefinitionDocument = None
         self._document_version: StudyDefinitionDocumentVersion = None
         self._contents = []

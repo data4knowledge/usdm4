@@ -37,8 +37,11 @@ class StudyAssembler(BaseAssembler):
             errors (Errors): Error handling instance for logging issues
         """
         super().__init__(builder, errors)
-        self._study = None
         self._encoder = Encoder(builder, errors)
+        self.clear()
+
+    def clear(self):
+        self._study = None
         self._dates = []
 
     def execute(

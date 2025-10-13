@@ -29,6 +29,9 @@ class PopulationAssembler(BaseAssembler):
             errors (Errors): Error handling instance for logging issues
         """
         super().__init__(builder, errors)
+        self.clear()
+
+    def clear(self):
         self._population = None
         self._cohorts = []
         self._ec_items = []

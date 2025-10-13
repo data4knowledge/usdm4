@@ -16,6 +16,9 @@ class AmendmentsAssembler(BaseAssembler):
     def __init__(self, builder: Builder, errors: Errors):
         super().__init__(builder, errors)
         self._encoder = Encoder(builder, errors)
+        self.clear()
+
+    def clear(self):
         self._amendment = None
 
     def execute(self, data: dict) -> None:

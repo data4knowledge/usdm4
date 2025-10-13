@@ -115,6 +115,9 @@ class IdentificationAssembler(BaseAssembler):
             errors (Errors): Error handling instance for logging issues
         """
         super().__init__(builder, errors)
+        self.clear()
+
+    def clear(self):
         self._titles = []
         self._organizations = []
         self._identifiers = []

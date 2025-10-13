@@ -45,6 +45,17 @@ class Assembler:
         self._study_assembler = StudyAssembler(self._builder, self._errors)
         self._timeline_assembler = TimelineAssembler(self._builder, self._errors)
 
+    def clear(self):
+        self._errors.clear()
+        self._builder.clear()
+        self._identification_assembler.clear()
+        self._population_assembler.clear()
+        self._amendments_assembler.clear()
+        self._document_assembler.clear()
+        self._study_design_assembler.clear()
+        self._study_assembler.clear()
+        self._timeline_assembler.clear()
+
     def execute(self, data: dict) -> None:
         """
         Executes the assembly process to build a complete Study object from structured data.
