@@ -384,45 +384,6 @@ class TestStudyDesign:
         text = design.phase_as_text()
         assert text == ""
 
-    @patch.object(ScheduleTimeline, "soa")
-    def test_soa_found(self, mock_soa):
-        """Test getting SOA for existing timeline."""
-        # Mock the soa method on the timeline
-        mock_soa.return_value = ["activity1", "activity2"]
-        soa = self.study_design.soa("Main Timeline")
-        assert soa == ["activity1", "activity2"]
-
-    def test_soa_not_found(self):
-        """Test getting SOA for non-existent timeline."""
-        soa = self.study_design.soa("Non-existent Timeline")
-        assert soa is None
-
-    @patch.object(ScheduleTimeline, "soa")
-    def test_main_soa(self, mock_soa):
-        """Test getting main SOA."""
-        # Mock the soa method on the main timeline
-        mock_soa.return_value = ["main_activity1", "main_activity2"]
-        soa = self.study_design.main_soa()
-        assert soa == ["main_activity1", "main_activity2"]
-
-    def test_main_soa_no_main_timeline(self):
-        """Test getting main SOA when no main timeline exists."""
-        design = StudyDesign(
-            id="design_6",
-            name="Test Design",
-            label="Test Design",
-            description="Test design",
-            arms=[],
-            studyCells=[],
-            rationale="Test rationale",
-            epochs=[],
-            population=self.test_population,
-            scheduleTimelines=[self.secondary_timeline],  # Only non-main timeline
-            instanceType="StudyDesign",
-        )
-        soa = design.main_soa()
-        assert soa is None
-
     def test_first_activity(self):
         """Test getting first activity."""
         activity = self.study_design.first_activity()

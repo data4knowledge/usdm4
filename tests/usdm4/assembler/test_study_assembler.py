@@ -114,6 +114,7 @@ def prepared_assemblers(
     timeline_assembler._epochs = []
     timeline_assembler._encounters = []
     timeline_assembler._activities = []
+    timeline_assembler._conditions = []
 
     # Prepare study design assembler with minimal data
     study_design_data = {
@@ -163,6 +164,7 @@ def prepared_assemblers(
         "document": document_assembler,
         "population": population_assembler,
         "amendments": amendments_assembler,
+        "timeline": timeline_assembler,
     }
 
 
@@ -219,6 +221,7 @@ class TestStudyAssemblerValidData:
             prepared_assemblers["document"],
             prepared_assemblers["population"],
             prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
         )
 
         # Should have created a study
@@ -252,6 +255,7 @@ class TestStudyAssemblerValidData:
             prepared_assemblers["document"],
             prepared_assemblers["population"],
             prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
         )
 
         # Should have created a study with governance date
@@ -284,6 +288,7 @@ class TestStudyAssemblerValidData:
             prepared_assemblers["document"],
             prepared_assemblers["population"],
             prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
         )
 
         assert study_assembler.study is not None
@@ -306,6 +311,7 @@ class TestStudyAssemblerValidData:
             prepared_assemblers["document"],
             prepared_assemblers["population"],
             prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
         )
 
         assert study_assembler.study is not None
@@ -328,6 +334,7 @@ class TestStudyAssemblerValidData:
             prepared_assemblers["document"],
             prepared_assemblers["population"],
             prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
         )
 
         assert study_assembler.study is not None
@@ -353,6 +360,7 @@ class TestStudyAssemblerValidData:
             prepared_assemblers["document"],
             prepared_assemblers["population"],
             prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
         )
 
         assert study_assembler.study is not None
@@ -386,6 +394,7 @@ class TestStudyAssemblerInvalidData:
                 prepared_assemblers["document"],
                 prepared_assemblers["population"],
                 prepared_assemblers["amendments"],
+                prepared_assemblers["timeline"],
             )
         except KeyError:
             # Expected behavior - missing required fields
@@ -411,6 +420,7 @@ class TestStudyAssemblerInvalidData:
                 prepared_assemblers["document"],
                 prepared_assemblers["population"],
                 prepared_assemblers["amendments"],
+                prepared_assemblers["timeline"],
             )
         except KeyError:
             # Expected behavior - missing required fields
@@ -438,6 +448,7 @@ class TestStudyAssemblerInvalidData:
             prepared_assemblers["document"],
             prepared_assemblers["population"],
             prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
         )
 
         # Should create study but without sponsor approval date
@@ -468,6 +479,7 @@ class TestStudyAssemblerInvalidData:
             prepared_assemblers["document"],
             prepared_assemblers["population"],
             prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
         )
 
         # Should fail to create study due to empty name validation
@@ -490,6 +502,7 @@ class TestStudyAssemblerInvalidData:
             prepared_assemblers["document"],
             prepared_assemblers["population"],
             prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
         )
 
         # Should fail to create study due to empty name validation
@@ -514,6 +527,7 @@ class TestStudyAssemblerInvalidData:
                 prepared_assemblers["document"],
                 prepared_assemblers["population"],
                 prepared_assemblers["amendments"],
+                prepared_assemblers["timeline"],
             )
         except (TypeError, AttributeError):
             # Expected behavior - invalid name structure
@@ -544,6 +558,7 @@ class TestStudyAssemblerEdgeCases:
             prepared_assemblers["document"],
             prepared_assemblers["population"],
             prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
         )
 
         assert study_assembler.study is not None
@@ -569,6 +584,7 @@ class TestStudyAssemblerEdgeCases:
             prepared_assemblers["document"],
             prepared_assemblers["population"],
             prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
         )
 
         assert study_assembler.study is not None
@@ -592,6 +608,7 @@ class TestStudyAssemblerEdgeCases:
             prepared_assemblers["document"],
             prepared_assemblers["population"],
             prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
         )
 
         assert study_assembler.study is not None
@@ -620,6 +637,7 @@ class TestStudyAssemblerEdgeCases:
             prepared_assemblers["document"],
             prepared_assemblers["population"],
             prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
         )
 
         assert study_assembler.study is not None
@@ -646,6 +664,7 @@ class TestStudyAssemblerEdgeCases:
             prepared_assemblers["document"],
             prepared_assemblers["population"],
             prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
         )
 
         # Should fail to create study due to empty name validation
@@ -780,6 +799,7 @@ class TestStudyAssemblerStateManagement:
             prepared_assemblers["document"],
             prepared_assemblers["population"],
             prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
         )
 
         # Should now return the created study
@@ -831,6 +851,7 @@ class TestStudyAssemblerBuilderIntegration:
             prepared_assemblers["document"],
             prepared_assemblers["population"],
             prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
         )
 
         # Should use Builder's create method to create Study object
@@ -860,6 +881,7 @@ class TestStudyAssemblerBuilderIntegration:
             prepared_assemblers["document"],
             prepared_assemblers["population"],
             prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
         )
 
         if (
@@ -923,6 +945,7 @@ class TestStudyAssemblerErrorHandling:
                 prepared_assemblers["document"],
                 prepared_assemblers["population"],
                 prepared_assemblers["amendments"],
+                prepared_assemblers["timeline"],
             )
         except (TypeError, AttributeError, KeyError):
             # Expected behavior - malformed data should cause errors
@@ -946,7 +969,7 @@ class TestStudyAssemblerErrorHandling:
         initial_error_count = errors.error_count()
 
         try:
-            study_assembler.execute(data, None, None, None, None, None)
+            study_assembler.execute(data, None, None, None, None, None, None)
         except (AttributeError, TypeError):
             # Expected behavior - None assemblers should cause errors
             pass
@@ -985,6 +1008,7 @@ class TestStudyAssemblerErrorHandling:
             prepared_assemblers["document"],
             prepared_assemblers["population"],
             prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
         )
 
         # Should handle Builder failures gracefully
@@ -1026,6 +1050,7 @@ class TestStudyAssemblerAdditionalCoverage:
             prepared_assemblers["document"],
             prepared_assemblers["population"],
             prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
         )
 
         # Should fail to create study due to empty name validation
@@ -1049,6 +1074,7 @@ class TestStudyAssemblerAdditionalCoverage:
             prepared_assemblers["document"],
             prepared_assemblers["population"],
             prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
         )
 
         # Should fail to create study due to empty name validation (whitespace gets cleaned to empty)
