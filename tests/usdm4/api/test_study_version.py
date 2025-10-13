@@ -732,7 +732,7 @@ class TestStudyVersion:
             decode="Regulatory Authority",
             instanceType="Code",
         )
-        
+
         regulatory_org = Organization(
             id="org_regulatory",
             name="FDA",
@@ -742,14 +742,14 @@ class TestStudyVersion:
             identifier="id",
             instanceType="Organization",
         )
-        
+
         regulatory_id = StudyIdentifier(
             id="id_regulatory",
             text="IND-123456",
             scopeId="org_regulatory",
             instanceType="StudyIdentifier",
         )
-        
+
         study_version = StudyVersion(
             id="sv1",
             versionIdentifier="v1.0",
@@ -759,7 +759,7 @@ class TestStudyVersion:
             organizations=[self.sponsor_org, regulatory_org],
             instanceType="StudyVersion",
         )
-        
+
         regulatory_ids = study_version.regulatory_identifiers()
         assert len(regulatory_ids) == 1
         assert regulatory_ids[0].text == "IND-123456"
@@ -780,7 +780,7 @@ class TestStudyVersion:
             decode="Clinical Trial Registry",
             instanceType="Code",
         )
-        
+
         registry_org = Organization(
             id="org_registry",
             name="ClinicalTrials.gov",
@@ -790,14 +790,14 @@ class TestStudyVersion:
             identifier="id",
             instanceType="Organization",
         )
-        
+
         registry_id = StudyIdentifier(
             id="id_registry",
             text="NCT12345678",
             scopeId="org_registry",
             instanceType="StudyIdentifier",
         )
-        
+
         study_version = StudyVersion(
             id="sv2",
             versionIdentifier="v1.0",
@@ -807,7 +807,7 @@ class TestStudyVersion:
             organizations=[self.sponsor_org, registry_org],
             instanceType="StudyVersion",
         )
-        
+
         registry_ids = study_version.registry_identifiers()
         assert len(registry_ids) == 1
         assert registry_ids[0].text == "NCT12345678"
@@ -820,7 +820,7 @@ class TestStudyVersion:
     def test_condition_method_found(self):
         """Test condition method returns correct condition."""
         from src.usdm4.api.condition import Condition
-        
+
         condition = Condition(
             id="cond1",
             name="Test Condition",
@@ -829,7 +829,7 @@ class TestStudyVersion:
             text="Condition text",
             instanceType="Condition",
         )
-        
+
         study_version = StudyVersion(
             id="sv3",
             versionIdentifier="v1.0",
@@ -839,7 +839,7 @@ class TestStudyVersion:
             conditions=[condition],
             instanceType="StudyVersion",
         )
-        
+
         found = study_version.condition("cond1")
         assert found is not None
         assert found.id == "cond1"
@@ -867,7 +867,7 @@ class TestStudyVersion:
             organizations=[self.non_sponsor_org],
             instanceType="StudyVersion",
         )
-        
+
         label = study_version.sponsor_label()
         assert label == ""
 
@@ -888,14 +888,14 @@ class TestStudyVersion:
             identifier="id",
             instanceType="Organization",
         )
-        
+
         sponsor_id = StudyIdentifier(
             id="id_no_label",
             text="SPONSOR-001",
             scopeId="org_no_label",
             instanceType="StudyIdentifier",
         )
-        
+
         study_version = StudyVersion(
             id="sv5",
             versionIdentifier="v1.0",
@@ -905,6 +905,6 @@ class TestStudyVersion:
             organizations=[org_no_label],
             instanceType="StudyVersion",
         )
-        
+
         label_name = study_version.sponsor_label_name()
         assert label_name == "Sponsor Company"
