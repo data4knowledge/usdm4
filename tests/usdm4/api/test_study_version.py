@@ -720,3 +720,191 @@ class TestStudyVersion:
     def test_instance_type(self):
         """Test that instance type is correctly set."""
         assert self.study_version.instanceType == "StudyVersion"
+
+    def test_regulatory_identifiers_with_regulatory_org(self):
+        """Test regulatory_identifiers returns correct identifiers."""
+        # Create regulatory organization code
+        regulatory_code = Code(
+            id="regulatory_code",
+            code="C188863",  # Regulatory Authority code
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Regulatory Authority",
+            instanceType="Code",
+        )
+        
+        regulatory_org = Organization(
+            id="org_regulatory",
+            name="FDA",
+            label="FDA",
+            type=regulatory_code,
+            identifierScheme="scheme",
+            identifier="id",
+            instanceType="Organization",
+        )
+        
+        regulatory_id = StudyIdentifier(
+            id="id_regulatory",
+            text="IND-123456",
+            scopeId="org_regulatory",
+            instanceType="StudyIdentifier",
+        )
+        
+        study_version = StudyVersion(
+            id="sv1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier, regulatory_id],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org, regulatory_org],
+            instanceType="StudyVersion",
+        )
+        
+        regulatory_ids = study_version.regulatory_identifiers()
+        assert len(regulatory_ids) == 1
+        assert regulatory_ids[0].text == "IND-123456"
+
+    def test_regulatory_identifiers_empty(self):
+        """Test regulatory_identifiers returns empty list when none exist."""
+        regulatory_ids = self.study_version.regulatory_identifiers()
+        assert len(regulatory_ids) == 0
+
+    def test_registry_identifiers_with_registry_org(self):
+        """Test registry_identifiers returns correct identifiers."""
+        # Create registry organization code
+        registry_code = Code(
+            id="registry_code",
+            code="C93453",  # Clinical Trial Registry code
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Clinical Trial Registry",
+            instanceType="Code",
+        )
+        
+        registry_org = Organization(
+            id="org_registry",
+            name="ClinicalTrials.gov",
+            label="CT.gov",
+            type=registry_code,
+            identifierScheme="scheme",
+            identifier="id",
+            instanceType="Organization",
+        )
+        
+        registry_id = StudyIdentifier(
+            id="id_registry",
+            text="NCT12345678",
+            scopeId="org_registry",
+            instanceType="StudyIdentifier",
+        )
+        
+        study_version = StudyVersion(
+            id="sv2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier, registry_id],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org, registry_org],
+            instanceType="StudyVersion",
+        )
+        
+        registry_ids = study_version.registry_identifiers()
+        assert len(registry_ids) == 1
+        assert registry_ids[0].text == "NCT12345678"
+
+    def test_registry_identifiers_empty(self):
+        """Test registry_identifiers returns empty list when none exist."""
+        registry_ids = self.study_version.registry_identifiers()
+        assert len(registry_ids) == 0
+
+    def test_condition_method_found(self):
+        """Test condition method returns correct condition."""
+        from src.usdm4.api.condition import Condition
+        
+        condition = Condition(
+            id="cond1",
+            name="Test Condition",
+            label="Test Label",
+            description="Test Description",
+            text="Condition text",
+            instanceType="Condition",
+        )
+        
+        study_version = StudyVersion(
+            id="sv3",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            conditions=[condition],
+            instanceType="StudyVersion",
+        )
+        
+        found = study_version.condition("cond1")
+        assert found is not None
+        assert found.id == "cond1"
+        assert found.text == "Condition text"
+
+    def test_condition_method_not_found(self):
+        """Test condition method returns None when not found."""
+        found = self.study_version.condition("nonexistent")
+        assert found is None
+
+    def test_sponsor_label_with_label(self):
+        """Test sponsor_label returns label when it exists."""
+        label = self.study_version.sponsor_label()
+        assert label == "Test Sponsor Label"
+
+    def test_sponsor_label_empty_when_no_sponsor(self):
+        """Test sponsor_label returns empty string when no sponsor."""
+        # Create study version without sponsor
+        study_version = StudyVersion(
+            id="sv4",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.nct_identifier],
+            titles=[self.official_title],
+            organizations=[self.non_sponsor_org],
+            instanceType="StudyVersion",
+        )
+        
+        label = study_version.sponsor_label()
+        assert label == ""
+
+    def test_sponsor_label_name_returns_label(self):
+        """Test sponsor_label_name returns label when it exists."""
+        label_name = self.study_version.sponsor_label_name()
+        assert label_name == "Test Sponsor Label"
+
+    def test_sponsor_label_name_fallback_to_name(self):
+        """Test sponsor_label_name falls back to name when label is empty."""
+        # Create organization with empty label
+        org_no_label = Organization(
+            id="org_no_label",
+            name="Sponsor Company",
+            label="",
+            type=self.sponsor_code,
+            identifierScheme="scheme",
+            identifier="id",
+            instanceType="Organization",
+        )
+        
+        sponsor_id = StudyIdentifier(
+            id="id_no_label",
+            text="SPONSOR-001",
+            scopeId="org_no_label",
+            instanceType="StudyIdentifier",
+        )
+        
+        study_version = StudyVersion(
+            id="sv5",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id],
+            titles=[self.official_title],
+            organizations=[org_no_label],
+            instanceType="StudyVersion",
+        )
+        
+        label_name = study_version.sponsor_label_name()
+        assert label_name == "Sponsor Company"
