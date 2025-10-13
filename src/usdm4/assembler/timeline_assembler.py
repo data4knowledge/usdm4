@@ -175,6 +175,7 @@ class TimelineAssembler(BaseAssembler):
             results = []
             items = data["activities"]["items"]
             for index, item in enumerate(items):
+                # print(f"ADDING ACTIVITY: {index}, {item}")
                 params = {
                     "name": f"ACTIVITY-{index + 1}",
                     "description": f"Activity {item['name']}",
@@ -189,10 +190,12 @@ class TimelineAssembler(BaseAssembler):
                 results.append(activity)
                 if "references" in item:
                     for ref in item["references"]:
+                        # print(f"ADDING ACTIVITY REF: {item["name"]} -> {ref}")
                         self._condition_activity_id(ref, activity.id)
                 item["activity_instance"] = activity
                 if "children" in item:
                     for child in item["children"]:
+                        # print(f"ADDING ACTIVITY: _, {child}")
                         params = {
                             "name": f"ACTIVITY-{child['name'].upper()}",
                             "description": f"Activity {child['name']}",
@@ -207,6 +210,7 @@ class TimelineAssembler(BaseAssembler):
                         results.append(child_activity)
                         if "references" in child:
                             for ref in child["references"]:
+                                # print(f"ADDING ACTIVITY REF: {item["name"]} -> {ref}")
                                 self._condition_activity_id(ref, child_activity.id)
                         child["activity_instance"] = child_activity
                         activity.childIds.append(child_activity.id)
@@ -266,10 +270,13 @@ class TimelineAssembler(BaseAssembler):
         results = []
         conditions: list = data["conditions"]["items"]
         timepoints: list = data["timepoints"]["items"]
+        # print(f"COND LINKS: {self._condition_links:}")
         try:
             for index, item in enumerate(conditions):
+                # print(f"COND: {item}")
                 if ref := item["reference"]:
                     if ref in self._condition_links:
+                        # print(f"COND REF 1: {ref}")
                         links = self._condition_links[ref]
                         timepoint_ids = [timepoints[x]["sai_instance"].id for x in links["timepoint_index"]]
                         activity_ids = [x for x in links["activity_id"]]
@@ -286,8 +293,10 @@ class TimelineAssembler(BaseAssembler):
                             }
                         )
                         if condition:
+                            # print(f"COND REF 2: {condition}")
                             results.append(condition)
                     else:
+                        # print(f"COND LINKS: {self._condition_links:}")
                         self._errors.warning(f"Failed to align condition {item}, not created.", KlassMethodLocation(self.MODULE, "_add_conditions"))
             return results
         except Exception as e:
@@ -422,7 +431,7 @@ class TimelineAssembler(BaseAssembler):
                             ]
                             sai_instance.activityIds.append(activity_instance.id)
                             for ref in visit["references"]:
-                                self._condition_combined(ref, sai_index, activity_instance.id)
+                                self._condition_combined(ref, index, activity_instance.id)
                 else:
                     activity_instance: Activity = activity["activity_instance"]
                     for visit in activity["visits"]:
@@ -432,7 +441,7 @@ class TimelineAssembler(BaseAssembler):
                         ]
                         sai_instance.activityIds.append(activity_instance.id)
                         for ref in visit["references"]:
-                            self._condition_combined(ref, a_index, activity_instance.id)
+                            self._condition_combined(ref, index, activity_instance.id)
         except Exception as e:
             self._errors.exception(
                 "Error linking timepoints and activities",
