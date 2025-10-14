@@ -50,12 +50,16 @@ class ApiBaseModelWithIdOnly(ApiBaseModel):
     def label_name(self) -> str:
         return ""
 
+
 class ApiBaseModelWithId(ApiBaseModelWithIdOnly):
     extensionAttributes: List[ExtensionAttribute] = []
 
     def get_extension(self, url: str) -> ExtensionAttribute:
-        return next((x for x in self.extensionAttributes if x.url.upper() == url.upper()), None)
-    
+        return next(
+            (x for x in self.extensionAttributes if x.url.upper() == url.upper()), None
+        )
+
+
 class ApiBaseModelWithIdAndDesc(ApiBaseModelWithId):
     description: Union[str, None] = None
 

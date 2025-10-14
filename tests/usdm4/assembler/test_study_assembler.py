@@ -377,6 +377,43 @@ class TestStudyAssemblerValidData:
         ]
         assert len(sponsor_dates) >= 0  # May be 0 if date creation failed
 
+    def test_execute_with_confidentiality(self, study_assembler, prepared_assemblers):
+        """Test execute with complete valid data including sponsor approval date."""
+        data = {
+            "name": {"identifier": "STUDY-001"},
+            "label": "Complete Test Study",
+            "version": "2.1",
+            "rationale": "Updated version with new endpoints",
+            "sponsor_approval_date": "2024-01-15",
+            "confidentiality": "Top Secret",
+        }
+
+        study_assembler.execute(
+            data,
+            prepared_assemblers["identification"],
+            prepared_assemblers["study_design"],
+            prepared_assemblers["document"],
+            prepared_assemblers["population"],
+            prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
+        )
+        print(f"ERRORS: {study_assembler._errors.dump(0)}")
+
+        # Should have created a study with governance date
+        assert study_assembler.study is not None
+        assert study_assembler.study.name == "STUDY001"
+        assert study_assembler.study.label == "STUDY-001"
+        assert len(study_assembler.study.versions) == 1
+
+        # Verify study version
+        study_version = study_assembler.study.versions[0]
+        assert study_version.versionIdentifier == "2.1"
+        assert study_version.rationale == "Updated version with new endpoints"
+        assert study_version.extensionAttributes[0].valueString == "Top Secret"
+
+        # Should have created governance dates (sponsor approval date + document dates)
+        assert len(study_version.dateValues) >= 1
+
 
 class TestStudyAssemblerInvalidData:
     """Test StudyAssembler with invalid data."""

@@ -15,6 +15,7 @@ from usdm4.api.study import Study
 from usdm4.api.study_version import StudyVersion
 from usdm4.api.geographic_scope import GeographicScope
 from usdm4.api.governance_date import GovernanceDate
+from usdm4.api.extension import ExtensionAttribute
 
 
 class StudyAssembler(BaseAssembler):
@@ -100,6 +101,21 @@ class StudyAssembler(BaseAssembler):
             # Create the dates
             self._create_date(data)
 
+            # Create confidentiality extension
+            extensions = (
+                [
+                    self._builder.create(
+                        ExtensionAttribute,
+                        {
+                            "url": "www.d4k.dk/usdm/extensions/001",
+                            "valueString": data["confidentiality"],
+                        },
+                    )
+                ]
+                if "confidentiality" in data
+                else []
+            )
+
             # Create StudyVersion parameters by combining data from all assemblers
             params = {
                 "versionIdentifier": data["version"],  # Version ID from input data
@@ -121,6 +137,7 @@ class StudyAssembler(BaseAssembler):
                 if amendments_assembler.amendment
                 else [],
                 "conditions": timeline_assembler.conditions,
+                "extensionAttributes": extensions,
             }
             study_version = self._builder.create(StudyVersion, params)
 

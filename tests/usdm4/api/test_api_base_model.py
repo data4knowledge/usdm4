@@ -27,6 +27,7 @@ class TestObject:
         self.name = name
         self.value = value
 
+
 class TestApiBaseModel:
     def test_serialize_as_json_enum(self):
         """Test _serialize_as_json with enum."""
@@ -268,16 +269,33 @@ class TestApiBaseModel:
         assert parsed_with_type["id"] == "test_id"
         assert parsed_with_type["_type"] == "ApiBaseModelWithIdNameLabelAndDesc"
 
+
 class TestApiBaseModelWithIdOnly:
     def test_label_name(self):
         item = ApiBaseModelWithIdOnly(id="1")
         assert item.label_name() == ""
 
+
 class TestApiBaseModelWithId:
     def test_find_extension(self):
-        ext_1 = ExtensionAttribute(id="1", url="http://www.example.com/ext-001", valueString="001", instanceType="ExtensionAttribute")
-        ext_2 = ExtensionAttribute(id="1", url="http://www.example.com/ext-002", valueString="002", instanceType="ExtensionAttribute")
-        ext_3 = ExtensionAttribute(id="1", url="http://www.example.com/ext-003", valueString="003", instanceType="ExtensionAttribute")
+        ext_1 = ExtensionAttribute(
+            id="1",
+            url="http://www.example.com/ext-001",
+            valueString="001",
+            instanceType="ExtensionAttribute",
+        )
+        ext_2 = ExtensionAttribute(
+            id="1",
+            url="http://www.example.com/ext-002",
+            valueString="002",
+            instanceType="ExtensionAttribute",
+        )
+        ext_3 = ExtensionAttribute(
+            id="1",
+            url="http://www.example.com/ext-003",
+            valueString="003",
+            instanceType="ExtensionAttribute",
+        )
         item = ApiBaseModelWithId(id="2", extensionAttributes=[ext_1, ext_2, ext_3])
         ext = item.get_extension("http://www.example.com/ext-003")
         assert ext is ext_3
@@ -288,10 +306,12 @@ class TestApiBaseModelWithId:
         ext = item.get_extension("http://www.example.com/ext-004")
         assert ext is None
 
+
 class TestApiBaseModelWithIdAndName:
     def test_label_name(self):
         item = ApiBaseModelWithIdAndName(id="2", name="xxx")
         assert item.label_name() == "xxx"
+
 
 class TestApiBaseModelWithIdNameAndLabel:
     def test_label_name_name(self):
