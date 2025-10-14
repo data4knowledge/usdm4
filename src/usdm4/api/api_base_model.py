@@ -47,17 +47,24 @@ class ApiBaseModel(BaseModel):
 class ApiBaseModelWithIdOnly(ApiBaseModel):
     id: str = Field(min_length=1)
 
+    def label_name(self) -> str:
+        return ""
 
 class ApiBaseModelWithId(ApiBaseModelWithIdOnly):
     extensionAttributes: List[ExtensionAttribute] = []
 
-
+    def get_extension(self, url: str) -> ExtensionAttribute:
+        return next((x for x in self.extensionAttributes if x.url.upper() == url.upper()), None)
+    
 class ApiBaseModelWithIdAndDesc(ApiBaseModelWithId):
     description: Union[str, None] = None
 
 
 class ApiBaseModelWithIdAndName(ApiBaseModelWithId):
     name: str = Field(min_length=1)
+
+    def label_name(self) -> str:
+        return self.name
 
 
 class ApiBaseModelWithIdNameAndLabel(ApiBaseModelWithIdAndName):
