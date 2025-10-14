@@ -2,6 +2,7 @@ import json
 import enum
 import datetime
 from uuid import UUID
+from src.usdm4.api.serialize import serialize_as_json
 from src.usdm4.api.api_base_model import (
     ApiBaseModel,
     ApiBaseModelWithIdOnly,
@@ -11,8 +12,7 @@ from src.usdm4.api.api_base_model import (
     ApiBaseModelWithIdNameAndLabel,
     ApiBaseModelWithIdNameLabelAndDesc,
     ApiBaseModelWithIdNameAndDesc,
-    _serialize_as_json,
-    _serialize_as_json_with_type,
+    serialize_as_json,
 )
 from src.usdm4.api.extension import ExtensionAttribute
 
@@ -29,54 +29,29 @@ class TestObject:
 
 
 class TestApiBaseModel:
-    def test_serialize_as_json_enum(self):
-        """Test _serialize_as_json with enum."""
+    def testserialize_as_json_enum(self):
+        """Test serialize_as_json with enum."""
         test_enum = TestEnum.VALUE1
-        result = _serialize_as_json(test_enum)
+        result = serialize_as_json(test_enum)
         assert result == "value1"
 
-    def test_serialize_as_json_date(self):
-        """Test _serialize_as_json with date."""
+    def testserialize_as_json_date(self):
+        """Test serialize_as_json with date."""
         test_date = datetime.date(2023, 12, 25)
-        result = _serialize_as_json(test_date)
+        result = serialize_as_json(test_date)
         assert result == "2023-12-25"
 
-    def test_serialize_as_json_uuid(self):
-        """Test _serialize_as_json with UUID."""
+    def testserialize_as_json_uuid(self):
+        """Test serialize_as_json with UUID."""
         test_uuid = UUID("12345678-1234-5678-1234-567812345678")
-        result = _serialize_as_json(test_uuid)
+        result = serialize_as_json(test_uuid)
         assert result == "12345678-1234-5678-1234-567812345678"
 
-    def test_serialize_as_json_object(self):
-        """Test _serialize_as_json with regular object."""
+    def testserialize_as_json_object(self):
+        """Test serialize_as_json with regular object."""
         test_obj = TestObject("test", 42)
-        result = _serialize_as_json(test_obj)
+        result = serialize_as_json(test_obj)
         expected = {"name": "test", "value": 42}
-        assert result == expected
-
-    def test_serialize_as_json_with_type_enum(self):
-        """Test _serialize_as_json_with_type with enum."""
-        test_enum = TestEnum.VALUE2
-        result = _serialize_as_json_with_type(test_enum)
-        assert result == "value2"
-
-    def test_serialize_as_json_with_type_date(self):
-        """Test _serialize_as_json_with_type with date."""
-        test_date = datetime.date(2024, 1, 1)
-        result = _serialize_as_json_with_type(test_date)
-        assert result == "2024-01-01"
-
-    def test_serialize_as_json_with_type_uuid(self):
-        """Test _serialize_as_json_with_type with UUID."""
-        test_uuid = UUID("87654321-4321-8765-4321-876543218765")
-        result = _serialize_as_json_with_type(test_uuid)
-        assert result == "87654321-4321-8765-4321-876543218765"
-
-    def test_serialize_as_json_with_type_object(self):
-        """Test _serialize_as_json_with_type with regular object."""
-        test_obj = TestObject("test_with_type", 123)
-        result = _serialize_as_json_with_type(test_obj)
-        expected = {"name": "test_with_type", "value": 123, "_type": "TestObject"}
         assert result == expected
 
     def test_api_base_model_init(self):
@@ -86,7 +61,6 @@ class TestApiBaseModel:
         assert isinstance(model, ApiBaseModel)
         # Test that the model has the expected methods
         assert hasattr(model, "to_json")
-        assert hasattr(model, "to_json_with_type")
 
     def test_api_base_model_to_json(self):
         """Test ApiBaseModel to_json method."""
@@ -95,14 +69,6 @@ class TestApiBaseModel:
         parsed = json.loads(json_str)
         # The model should serialize to an empty dict by default
         assert isinstance(parsed, dict)
-
-    def test_api_base_model_to_json_with_type(self):
-        """Test ApiBaseModel to_json_with_type method."""
-        model = ApiBaseModel()
-        json_str = model.to_json_with_type()
-        parsed = json.loads(json_str)
-        # Should include _type in the serialized output
-        assert parsed["_type"] == "ApiBaseModel"
 
     def test_api_base_model_with_id_only(self):
         """Test ApiBaseModelWithIdOnly."""
@@ -239,7 +205,6 @@ class TestApiBaseModel:
         for model in models:
             assert isinstance(model, ApiBaseModel)
             assert hasattr(model, "to_json")
-            assert hasattr(model, "to_json_with_type")
 
     def test_json_serialization_with_complex_data(self):
         """Test JSON serialization with complex data types."""
@@ -262,12 +227,6 @@ class TestApiBaseModel:
         parsed = json.loads(json_str)
         assert parsed["id"] == "test_id"
         assert parsed["name"] == "Test Name"
-
-        # Test JSON serialization with type
-        json_with_type_str = model.to_json_with_type()
-        parsed_with_type = json.loads(json_with_type_str)
-        assert parsed_with_type["id"] == "test_id"
-        assert parsed_with_type["_type"] == "ApiBaseModelWithIdNameLabelAndDesc"
 
 
 class TestApiBaseModelWithIdOnly:

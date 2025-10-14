@@ -1,14 +1,23 @@
+import json
 from typing import Union, List, Literal
 from pydantic import BaseModel, Field
+from .serialize import serialize_as_json
 
 
 class Extension(BaseModel):
     id: str = Field(min_length=1)
     url: str
 
+    def to_json(self):
+        return json.dumps(self, default=serialize_as_json)
 
-class BaseCode(BaseModel):
+class BaseDataType(BaseModel):
     id: str = Field(min_length=1)
+
+    def to_json(self):
+        return json.dumps(self, default=serialize_as_json)
+
+class BaseCode(BaseDataType):
     code: str
     codeSystem: str
     codeSystemVersion: str
@@ -17,24 +26,21 @@ class BaseCode(BaseModel):
     extensionAttributes: List["ExtensionAttribute"] = []
 
 
-class BaseAliasCode(BaseModel):
-    id: str = Field(min_length=1)
+class BaseAliasCode(BaseDataType):
     standardCode: BaseCode
     standardCodeAliases: List[BaseCode] = []
     instanceType: Literal["AliasCode"]
     extensionAttributes: List["ExtensionAttribute"] = []
 
 
-class BaseQuantity(BaseModel):
-    id: str = Field(min_length=1)
+class BaseQuantity(BaseDataType):
     value: float
     unit: Union[BaseAliasCode, None] = None
     instanceType: Literal["Quantity"]
     extensionAttributes: List["ExtensionAttribute"] = []
 
 
-class BaseRange(BaseModel):
-    id: str = Field(min_length=1)
+class BaseRange(BaseDataType):
     minValue: BaseQuantity
     maxValue: BaseQuantity
     isApproximate: bool

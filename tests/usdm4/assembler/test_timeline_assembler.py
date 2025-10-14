@@ -756,9 +756,7 @@ class TestTimelineAssemblerExceptionCoverage:
         # Use data that will fail during iteration
         data = {
             "timepoints": {
-                "items": [
-                    {"index": "0", "text": "Day 1", "value": "1", "unit": "days"}
-                ]
+                "items": [{"index": "0", "text": "Day 1", "value": "1", "unit": "days"}]
             },
             "windows": {
                 "items": [None]  # This None will cause an exception when accessed
