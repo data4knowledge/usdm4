@@ -743,3 +743,110 @@ class TestTimelineAssemblerEdgeCases:
             pass
 
         assert errors.error_count() > initial_error_count
+
+
+class TestTimelineAssemblerExceptionCoverage:
+    """Test exception handling paths in TimelineAssembler."""
+
+    def test_add_timing_with_exception(self, timeline_assembler, errors):
+        """Test _add_timing method exception handling."""
+        initial_error_count = errors.error_count()
+
+        # Create data that will cause exception in _add_timing
+        # Use data that will fail during iteration
+        data = {
+            "timepoints": {
+                "items": [
+                    {"index": "0", "text": "Day 1", "value": "1", "unit": "days"}
+                ]
+            },
+            "windows": {
+                "items": [None]  # This None will cause an exception when accessed
+            },
+        }
+
+        # Create minimal setup but missing sai_instance which will cause error
+        timings = timeline_assembler._add_timing(data)
+
+        # Should return empty list and log exception
+        assert isinstance(timings, list)
+        assert errors.error_count() > initial_error_count
+
+    def test_timing_method_with_exception(self, timeline_assembler, errors):
+        """Test _timing method exception handling."""
+        initial_error_count = errors.error_count()
+
+        # Create data that will cause exception in _timing
+        data = {
+            "windows": {
+                "items": None  # Will cause exception
+            },
+            "timepoints": {"items": []},
+        }
+
+        timing = timeline_assembler._timing(data, 0, "Fixed Reference", "id1", "id2")
+
+        # Should return None and log exception
+        assert timing is None
+        assert errors.error_count() > initial_error_count
+
+    def test_link_timepoints_and_activities_with_exception(
+        self, timeline_assembler, errors
+    ):
+        """Test _link_timepoints_and_activities exception handling."""
+        initial_error_count = errors.error_count()
+
+        # Create data that will cause exception during processing
+        data = {
+            "activities": {
+                "items": [
+                    {
+                        "name": "Activity",
+                        "visits": [{"index": 0, "references": []}],
+                        # Missing activity_instance which will cause AttributeError
+                    }
+                ]
+            },
+            "timepoints": {"items": [{}]},
+        }
+
+        result = timeline_assembler._link_timepoints_and_activities(data)
+
+        # Should return None and log exception
+        assert result is None
+        assert errors.error_count() > initial_error_count
+
+    def test_add_timeline_with_exception(self, timeline_assembler, errors):
+        """Test _add_timeline method exception handling."""
+        initial_error_count = errors.error_count()
+
+        # Create data that will cause exception
+        data = {}
+
+        # Pass None as instances to cause exception
+        timeline = timeline_assembler._add_timeline(data, None, [])
+
+        # Should return None and log exception
+        assert timeline is None
+        assert errors.error_count() > initial_error_count
+
+    def test_clear_method_resets_state(self, timeline_assembler):
+        """Test that clear method properly resets all internal state."""
+        # Add some data first
+        timeline_assembler._timelines.append("dummy")
+        timeline_assembler._epochs.append("dummy")
+        timeline_assembler._encounters.append("dummy")
+        timeline_assembler._activities.append("dummy")
+        timeline_assembler._conditions.append("dummy")
+        timeline_assembler._condition_links["test"] = "dummy"
+
+        # Clear the state
+        timeline_assembler.clear()
+
+        # Verify all lists and dicts are empty
+        assert timeline_assembler._timelines == []
+        assert timeline_assembler._epochs == []
+        assert timeline_assembler._encounters == []
+        assert timeline_assembler._activities == []
+        assert timeline_assembler._conditions == []
+        assert timeline_assembler._condition_links == {}
