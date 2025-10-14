@@ -20,6 +20,10 @@ from .eligibility_criterion import EligibilityCriterion, EligibilityCriterionIte
 from .encounter import Encounter
 from .endpoint import Endpoint
 from .estimand import Estimand
+from .extension import (
+    ExtensionAttribute, 
+    ExtensionClass
+)
 from .geographic_scope import GeographicScope
 from .governance_date import GovernanceDate
 from .indication import Indication
@@ -100,6 +104,8 @@ __all__ = [
     "Encounter",
     "Endpoint",
     "Estimand",
+    "ExtensionAttribute", 
+    "ExtensionClass",
     "GeographicScope",
     "GovernanceDate",
     "Indication",
