@@ -26,7 +26,10 @@ from .biomedical_concept_category import BiomedicalConceptCategory
 from .biomedical_concept_surrogate import BiomedicalConceptSurrogate
 from .syntax_template_dictionary import SyntaxTemplateDictionary
 from .condition import Condition
+from .extension import Extension
 
+
+CS_EXT_URL = "www.d4k.dk/usdm/extensions/001"
 
 class StudyVersion(ApiBaseModelWithId):
     versionIdentifier: str
@@ -55,6 +58,10 @@ class StudyVersion(ApiBaseModelWithId):
     conditions: List[Condition] = []
     notes: List[CommentAnnotation] = []
     instanceType: Literal["StudyVersion"]
+
+    def confidentiality_statement(self):
+        ext: Extension = self.get_extension(CS_EXT_URL)
+        return ext.valueString if ext else ""
 
     def get_title(self, title_type):
         for title in self.titles:

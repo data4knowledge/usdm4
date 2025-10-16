@@ -14,6 +14,7 @@ from src.usdm4.api.study_intervention import StudyIntervention
 from src.usdm4.api.narrative_content import NarrativeContentItem
 from src.usdm4.api.address import Address
 from src.usdm4.api.population_definition import StudyDesignPopulation
+from src.usdm4.api.extension import ExtensionAttribute
 
 
 class TestStudyVersion:
@@ -908,3 +909,169 @@ class TestStudyVersion:
 
         label_name = study_version.sponsor_label_name()
         assert label_name == "Sponsor Company"
+
+    def test_confidentiality_statement_with_extension(self):
+        """Test confidentiality_statement returns the value when extension exists."""
+        # Create extension with confidentiality statement
+        cs_extension = ExtensionAttribute(
+            id="ext_cs",
+            url="www.d4k.dk/usdm/extensions/001",
+            valueString="This is a confidential study protocol.",
+            instanceType="ExtensionAttribute",
+        )
+
+        study_version = StudyVersion(
+            id="sv_cs1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            extensionAttributes=[cs_extension],
+            instanceType="StudyVersion",
+        )
+
+        statement = study_version.confidentiality_statement()
+        assert statement == "This is a confidential study protocol."
+
+    def test_confidentiality_statement_no_extension(self):
+        """Test confidentiality_statement returns empty string when no extension exists."""
+        study_version = StudyVersion(
+            id="sv_cs2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            instanceType="StudyVersion",
+        )
+
+        statement = study_version.confidentiality_statement()
+        assert statement == ""
+
+    def test_confidentiality_statement_wrong_url(self):
+        """Test confidentiality_statement returns empty string when extension has wrong URL."""
+        # Create extension with different URL
+        other_extension = ExtensionAttribute(
+            id="ext_other",
+            url="www.example.com/different/url",
+            valueString="Some other value",
+            instanceType="ExtensionAttribute",
+        )
+
+        study_version = StudyVersion(
+            id="sv_cs3",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            extensionAttributes=[other_extension],
+            instanceType="StudyVersion",
+        )
+
+        statement = study_version.confidentiality_statement()
+        assert statement == ""
+
+    def test_confidentiality_statement_null_value(self):
+        """Test confidentiality_statement returns None when valueString is None."""
+        # Create extension with None valueString
+        cs_extension = ExtensionAttribute(
+            id="ext_cs_null",
+            url="www.d4k.dk/usdm/extensions/001",
+            valueString=None,
+            instanceType="ExtensionAttribute",
+        )
+
+        study_version = StudyVersion(
+            id="sv_cs4",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            extensionAttributes=[cs_extension],
+            instanceType="StudyVersion",
+        )
+
+        statement = study_version.confidentiality_statement()
+        assert statement is None
+
+    def test_confidentiality_statement_case_insensitive_url(self):
+        """Test confidentiality_statement matches URL case-insensitively."""
+        # Create extension with uppercase URL
+        cs_extension = ExtensionAttribute(
+            id="ext_cs_upper",
+            url="WWW.D4K.DK/USDM/EXTENSIONS/001",
+            valueString="Confidential statement with uppercase URL",
+            instanceType="ExtensionAttribute",
+        )
+
+        study_version = StudyVersion(
+            id="sv_cs5",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            extensionAttributes=[cs_extension],
+            instanceType="StudyVersion",
+        )
+
+        statement = study_version.confidentiality_statement()
+        assert statement == "Confidential statement with uppercase URL"
+
+    def test_confidentiality_statement_multiple_extensions(self):
+        """Test confidentiality_statement finds correct extension among multiple."""
+        # Create multiple extensions
+        other_extension1 = ExtensionAttribute(
+            id="ext_other1",
+            url="www.example.com/extension/001",
+            valueString="Other extension 1",
+            instanceType="ExtensionAttribute",
+        )
+
+        cs_extension = ExtensionAttribute(
+            id="ext_cs_multiple",
+            url="www.d4k.dk/usdm/extensions/001",
+            valueString="The confidentiality statement",
+            instanceType="ExtensionAttribute",
+        )
+
+        other_extension2 = ExtensionAttribute(
+            id="ext_other2",
+            url="www.example.com/extension/002",
+            valueString="Other extension 2",
+            instanceType="ExtensionAttribute",
+        )
+
+        study_version = StudyVersion(
+            id="sv_cs6",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            extensionAttributes=[other_extension1, cs_extension, other_extension2],
+            instanceType="StudyVersion",
+        )
+
+        statement = study_version.confidentiality_statement()
+        assert statement == "The confidentiality statement"
+
+    def test_confidentiality_statement_empty_string(self):
+        """Test confidentiality_statement returns empty string when valueString is empty."""
+        # Create extension with empty string valueString
+        cs_extension = ExtensionAttribute(
+            id="ext_cs_empty",
+            url="www.d4k.dk/usdm/extensions/001",
+            valueString="",
+            instanceType="ExtensionAttribute",
+        )
+
+        study_version = StudyVersion(
+            id="sv_cs7",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            extensionAttributes=[cs_extension],
+            instanceType="StudyVersion",
+        )
+
+        statement = study_version.confidentiality_statement()
+        assert statement == ""

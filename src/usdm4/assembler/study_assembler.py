@@ -12,7 +12,7 @@ from usdm4.assembler.amendments_assembler import AmendmentsAssembler
 from usdm4.assembler.timeline_assembler import TimelineAssembler
 from usdm4.builder.builder import Builder
 from usdm4.api.study import Study
-from usdm4.api.study_version import StudyVersion
+from usdm4.api.study_version import StudyVersion, CS_EXT_URL
 from usdm4.api.geographic_scope import GeographicScope
 from usdm4.api.governance_date import GovernanceDate
 from usdm4.api.extension import ExtensionAttribute
@@ -107,7 +107,7 @@ class StudyAssembler(BaseAssembler):
                     self._builder.create(
                         ExtensionAttribute,
                         {
-                            "url": "www.d4k.dk/usdm/extensions/001",
+                            "url": CS_EXT_URL,
                             "valueString": data["confidentiality"],
                         },
                     )
