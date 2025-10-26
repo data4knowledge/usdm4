@@ -29,7 +29,8 @@ from .condition import Condition
 from .extension import Extension
 
 
-CS_EXT_URL = "www.d4k.dk/usdm/extensions/001"
+CS_EXT_URL = "www.d4k.dk/usdm/extensions/001" # Confidentiality statement
+OV_EXT_URL = "www.d4k.dk/usdm/extensions/002" # Original protocol (original version)
 
 class StudyVersion(ApiBaseModelWithId):
     versionIdentifier: str
@@ -62,6 +63,10 @@ class StudyVersion(ApiBaseModelWithId):
     def confidentiality_statement(self):
         ext: Extension = self.get_extension(CS_EXT_URL)
         return ext.valueString if ext else ""
+
+    def original_version(self):
+        ext: Extension = self.get_extension(OV_EXT_URL)
+        return ext.valueBoolean if ext else False
 
     def get_title(self, title_type):
         for title in self.titles:
