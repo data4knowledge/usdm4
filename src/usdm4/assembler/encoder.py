@@ -68,6 +68,17 @@ class Encoder:
         {"code": "C48660", "decode": "Not Applicable"},
     ]
 
+    BOOLEAN_MAP = {
+        "true": True, 
+        "false": False, 
+        "1": True, 
+        "0": False, 
+        "yes": True, 
+        "no": False,
+        "y": True,
+        "n": False
+    }
+
     def __init__(self, builder: Builder, errors: Errors):
         self._builder: Builder = builder
         self._errors: Errors = errors
@@ -191,3 +202,6 @@ class Encoder:
                 location=KlassMethodLocation(self.MODULE, "iso8601_duration"),
             )
             return self.ZERO_DURATION
+
+    def to_boolean(self, text: str) -> bool:
+        return self.BOOLEAN_MAP.get(text.lower(), False)

@@ -12,7 +12,7 @@ from usdm4.assembler.amendments_assembler import AmendmentsAssembler
 from usdm4.assembler.timeline_assembler import TimelineAssembler
 from usdm4.builder.builder import Builder
 from usdm4.api.study import Study
-from usdm4.api.study_version import StudyVersion, CS_EXT_URL
+from usdm4.api.study_version import StudyVersion, CS_EXT_URL, OV_EXT_URL
 from usdm4.api.geographic_scope import GeographicScope
 from usdm4.api.governance_date import GovernanceDate
 from usdm4.api.extension import ExtensionAttribute
@@ -100,10 +100,12 @@ class StudyAssembler(BaseAssembler):
         try:
             # Create the dates
             self._create_date(data)
-
-            # Create confidentiality extension
-            extensions = (
-                [
+            
+            # Extensions
+            extensions = []
+            if "confidentiality" in data:
+                # Create confidentiality extension
+                extensions.append(
                     self._builder.create(
                         ExtensionAttribute,
                         {
@@ -111,10 +113,18 @@ class StudyAssembler(BaseAssembler):
                             "valueString": data["confidentiality"],
                         },
                     )
-                ]
-                if "confidentiality" in data
-                else []
-            )
+                )
+            if "original_protocol" in data:
+                # Create original protocol
+                extensions.append(
+                    self._builder.create(
+                        ExtensionAttribute,
+                        {
+                            "url": OV_EXT_URL,
+                            "valueBoolean": self._encoder.to_boolean(data["original_protocol"]),
+                        },
+                    )
+                )
 
             # Create StudyVersion parameters by combining data from all assemblers
             params = {
