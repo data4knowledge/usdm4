@@ -60,11 +60,11 @@ class StudyVersion(ApiBaseModelWithId):
     notes: List[CommentAnnotation] = []
     instanceType: Literal["StudyVersion"]
 
-    def confidentiality_statement(self):
+    def confidentiality_statement(self) -> str:
         ext: Extension = self.get_extension(CS_EXT_URL)
         return ext.valueString if ext else ""
 
-    def original_version(self):
+    def original_version(self) -> bool:
         ext: Extension = self.get_extension(OV_EXT_URL)
         return ext.valueBoolean if ext else False
 
