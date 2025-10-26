@@ -204,4 +204,4 @@ class Encoder:
             return self.ZERO_DURATION
 
     def to_boolean(self, text: str) -> bool:
-        return self.BOOLEAN_MAP.get(text.lower(), False)
+        return False if text is None else self.BOOLEAN_MAP.get(text.lower(), False)
