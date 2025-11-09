@@ -29,8 +29,9 @@ from .condition import Condition
 from .extension import Extension
 
 
-CS_EXT_URL = "www.d4k.dk/usdm/extensions/001" # Confidentiality statement
-OV_EXT_URL = "www.d4k.dk/usdm/extensions/002" # Original protocol (original version)
+CS_EXT_URL = "www.d4k.dk/usdm/extensions/001"  # Confidentiality statement
+OV_EXT_URL = "www.d4k.dk/usdm/extensions/002"  # Original protocol (original version)
+
 
 class StudyVersion(ApiBaseModelWithId):
     versionIdentifier: str

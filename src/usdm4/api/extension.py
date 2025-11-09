@@ -11,11 +11,13 @@ class Extension(BaseModel):
     def to_json(self):
         return json.dumps(self, default=serialize_as_json)
 
+
 class BaseDataType(BaseModel):
     id: str = Field(min_length=1)
 
     def to_json(self):
         return json.dumps(self, default=serialize_as_json)
+
 
 class BaseCode(BaseDataType):
     code: str

@@ -44,8 +44,12 @@ class USDM4:
     def loadd(self, data: dict, errors: Errors) -> Wrapper | None:
         try:
             return Wrapper.model_validate(data)
-        except Exception as e:    
-            errors.exception("Failed to load a dict into USDM", e, KlassMethodLocation(self.MODULE, "from_dict"))
+        except Exception as e:
+            errors.exception(
+                "Failed to load a dict into USDM",
+                e,
+                KlassMethodLocation(self.MODULE, "from_dict"),
+            )
             return None
 
     def load(self, filepath: str, errors: Errors) -> Wrapper | None:
@@ -55,8 +59,12 @@ class USDM4:
                 data = json.load(f)
                 f.close()
             return Wrapper.model_validate(data)
-        except Exception as e:    
-            errors.exception("Failed to load file '{filepath}' into USDM", e, KlassMethodLocation(self.MODULE, "load"))
+        except Exception as e:
+            errors.exception(
+                "Failed to load file '{filepath}' into USDM",
+                e,
+                KlassMethodLocation(self.MODULE, "load"),
+            )
             return None
 
     def _root_path(self) -> str:

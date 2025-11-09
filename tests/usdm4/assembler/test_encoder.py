@@ -822,8 +822,8 @@ class TestEncoderISO8601Duration:
         # This should trigger the exception handler if any error occurs
         try:
             # Pass None as unit to potentially trigger an exception
-            result = encoder.iso8601_duration(10, None)
-        except:
+            _ = encoder.iso8601_duration(10, None)
+        except Exception:
             pass
 
         # At minimum it should handle gracefully

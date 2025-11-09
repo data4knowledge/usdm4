@@ -69,14 +69,14 @@ class Encoder:
     ]
 
     BOOLEAN_MAP = {
-        "true": True, 
-        "false": False, 
-        "1": True, 
-        "0": False, 
-        "yes": True, 
+        "true": True,
+        "false": False,
+        "1": True,
+        "0": False,
+        "yes": True,
         "no": False,
         "y": True,
-        "n": False
+        "n": False,
     }
 
     def __init__(self, builder: Builder, errors: Errors):

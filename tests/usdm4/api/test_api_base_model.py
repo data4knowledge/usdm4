@@ -12,7 +12,6 @@ from src.usdm4.api.api_base_model import (
     ApiBaseModelWithIdNameAndLabel,
     ApiBaseModelWithIdNameLabelAndDesc,
     ApiBaseModelWithIdNameAndDesc,
-    serialize_as_json,
 )
 from src.usdm4.api.extension import ExtensionAttribute
 

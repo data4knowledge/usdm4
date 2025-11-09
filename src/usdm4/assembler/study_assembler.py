@@ -100,7 +100,7 @@ class StudyAssembler(BaseAssembler):
         try:
             # Create the dates
             self._create_date(data)
-            
+
             # Extensions
             extensions = []
             if "confidentiality" in data:
@@ -121,7 +121,9 @@ class StudyAssembler(BaseAssembler):
                         ExtensionAttribute,
                         {
                             "url": OV_EXT_URL,
-                            "valueBoolean": self._encoder.to_boolean(data["original_protocol"]),
+                            "valueBoolean": self._encoder.to_boolean(
+                                data["original_protocol"]
+                            ),
                         },
                     )
                 )

@@ -50,14 +50,15 @@ def test_minimum():
 def test_loadd_success():
     """Test loadd method with valid dictionary data."""
     import json
+
     errors = Errors()
-    
+
     # Read valid data from test file and parse as JSON
     with open("tests/usdm4/test_files/test_validate.json", "r") as f:
         data = json.load(f)
-    
+
     result = USDM4().loadd(data, errors)
-    
+
     # Check that either it succeeded or failed with errors logged
     if result is None:
         assert len(errors._items) > 0, "If loadd returns None, errors should be logged"
@@ -69,14 +70,12 @@ def test_loadd_success():
 def test_loadd_invalid_data():
     """Test loadd method with invalid dictionary data."""
     errors = Errors()
-    
+
     # Create invalid data (missing required fields)
-    invalid_data = {
-        "invalid": "data"
-    }
-    
+    invalid_data = {"invalid": "data"}
+
     result = USDM4().loadd(invalid_data, errors)
-    
+
     assert result is None
     assert len(errors._items) > 0
 
@@ -84,9 +83,9 @@ def test_loadd_invalid_data():
 def test_loadd_empty_dict():
     """Test loadd method with empty dictionary."""
     errors = Errors()
-    
+
     result = USDM4().loadd({}, errors)
-    
+
     assert result is None
     assert len(errors._items) > 0
 
@@ -94,10 +93,10 @@ def test_loadd_empty_dict():
 def test_load_success():
     """Test load method with valid JSON file."""
     errors = Errors()
-    
+
     result = USDM4().load("tests/usdm4/test_files/test_validate.json", errors)
-    
-    # Check that either it succeeded or failed with errors logged  
+
+    # Check that either it succeeded or failed with errors logged
     if result is None:
         assert len(errors._items) > 0, "If load returns None, errors should be logged"
     else:
@@ -108,9 +107,9 @@ def test_load_success():
 def test_load_file_not_found():
     """Test load method with non-existent file."""
     errors = Errors()
-    
+
     result = USDM4().load("tests/usdm4/test_files/nonexistent_file.json", errors)
-    
+
     assert result is None
     assert len(errors._items) > 0
 
@@ -119,17 +118,17 @@ def test_load_invalid_json():
     """Test load method with invalid JSON file."""
     import tempfile
     import os
-    
+
     errors = Errors()
-    
+
     # Create a temporary file with invalid JSON
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
         f.write("{ invalid json }")
         temp_file = f.name
-    
+
     try:
         result = USDM4().load(temp_file, errors)
-        
+
         assert result is None
         assert len(errors._items) > 0
     finally:
@@ -142,19 +141,19 @@ def test_load_invalid_wrapper_data():
     import tempfile
     import os
     import json
-    
+
     errors = Errors()
-    
+
     # Create a temporary file with valid JSON but invalid Wrapper structure
     invalid_data = {"wrong": "structure"}
-    
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
         json.dump(invalid_data, f)
         temp_file = f.name
-    
+
     try:
         result = USDM4().load(temp_file, errors)
-        
+
         assert result is None
         assert len(errors._items) > 0
     finally:
@@ -165,15 +164,15 @@ def test_load_invalid_wrapper_data():
 def test_loadd_with_complete_study():
     """Test loadd method with more complete study data using minimum."""
     errors = Errors()
-    
+
     # Use the minimum builder to create valid data
     wrapper = USDM4().minimum("Test Study", "SPONSOR-1234", "1", errors)
     data_dict = json.loads(wrapper.to_json())
-    
+
     # Now load it back
     errors2 = Errors()
     result = USDM4().loadd(data_dict, errors2)
-    
+
     assert result is not None
     assert result.study is not None
     assert len(errors2._items) == 0
