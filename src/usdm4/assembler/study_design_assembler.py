@@ -109,6 +109,7 @@ class StudyDesignAssembler(BaseAssembler):
                     "analysisPopulations": [],  # Empty analysis populations list (future enhancement)
                     "studyPhase": self._encoder.phase(data["trial_phase"]),
                     "scheduleTimelines": timeline_assembler.timelines,
+                    "eligibilityCriteria": population_assembler.criteria,
                 },
             )
         except Exception as e:

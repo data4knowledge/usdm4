@@ -89,7 +89,7 @@ class PopulationAssembler(BaseAssembler):
                     "label": data["label"],  # Keep original label for display
                     "description": "The study population, currently blank",  # Default description
                     "includesHealthySubjects": True,  # Default assumption
-                    "criteria": self._ec_items,
+                    "criterionIds": [x.id for x in self._ec_items],
                 }
 
                 # Create the StudyDesignPopulation object using the builder
@@ -109,6 +109,10 @@ class PopulationAssembler(BaseAssembler):
     @property
     def population(self) -> StudyDesignPopulation:
         return self._population
+
+    @property
+    def criteria(self) -> list[EligibilityCriterion]:
+        return self._ec_items
 
     @property
     def criteria_items(self) -> list[EligibilityCriterionItem]:
