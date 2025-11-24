@@ -224,14 +224,15 @@ class TimelineAssembler(BaseAssembler):
                 if "children" in item:
                     for child in item["children"]:
                         # print(f"ADDING ACTIVITY: _, {child}")
+                        bc_ids, sbc_ids = self._get_biomedical_concepts(child)
                         params = {
                             "name": f"ACTIVITY-{child['name'].upper()}",
                             "description": f"Activity {child['name']}",
                             "label": child["name"],
                             "definedProcedures": [],
-                            "biomedicalConceptIds": [],
+                            "biomedicalConceptIds": bc_ids,
                             "bcCategoryIds": [],
-                            "bcSurrogateIds": [],
+                            "bcSurrogateIds": sbc_ids,
                             "timelineId": None,
                         }
                         child_activity: Activity = self._builder.create(
@@ -535,6 +536,8 @@ class TimelineAssembler(BaseAssembler):
                     if bc:
                         self._biomedical_concepts.append(bc)
                         bc_ids.append(bc.id)
+                    else:
+                        self._errors.warning(f"Failed to create BC with name '{bc}'")
                 else:
                     params = {
                         "name": bc,
@@ -546,5 +549,7 @@ class TimelineAssembler(BaseAssembler):
                     if sbc:
                         self._biomedical_concept_surrogates.append(sbc)
                         sbc_ids.append(sbc.id)
+                    else:
+                        self._errors.warning(f"Failed to create surrogate BC with name '{bc}'")
         print(f"IDS: '{bc_ids}', '{sbc_ids}'")
         return bc_ids, sbc_ids
