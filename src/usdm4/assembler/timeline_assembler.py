@@ -11,6 +11,8 @@ from usdm4.api.study_epoch import StudyEpoch
 from usdm4.api.encounter import Encounter
 from usdm4.api.timing import Timing
 from usdm4.api.condition import Condition
+from usdm4.api.biomedical_concept import BiomedicalConcept
+from usdm4.api.biomedical_concept_surrogate import BiomedicalConceptSurrogate
 
 
 class TimelineAssembler(BaseAssembler):
@@ -27,7 +29,9 @@ class TimelineAssembler(BaseAssembler):
         self._encounters: list[Encounter] = []
         self._activities: list[Activity] = []
         self._condition_links: dict = {}
-        self._conditions = []
+        self._conditions: list[Condition] = []
+        self._biomedical_concepts: list[BiomedicalConcept] = []
+        self._biomedical_concept_surrogates: list[BiomedicalConceptSurrogate] = []
 
     def execute(self, data: dict) -> None:
         try:
@@ -66,6 +70,14 @@ class TimelineAssembler(BaseAssembler):
     @property
     def conditions(self) -> list[Condition]:
         return self._conditions
+
+    @property
+    def biomedical_concepts(self) -> list[BiomedicalConcept]:
+        return self._biomedical_concepts
+
+    @property
+    def biomedical_concept_surrogates(self) -> list[BiomedicalConceptSurrogate]:
+        return self._biomedical_concept_surrogates
 
     def _add_epochs(self, data) -> list[ScheduledInstance]:
         try:
@@ -190,15 +202,16 @@ class TimelineAssembler(BaseAssembler):
             results = []
             items = data["activities"]["items"]
             for index, item in enumerate(items):
+                bc_ids, sbc_ids = self._get_biomedical_concepts(item)
                 # print(f"ADDING ACTIVITY: {index}, {item}")
                 params = {
                     "name": f"ACTIVITY-{index + 1}",
                     "description": f"Activity {item['name']}",
                     "label": item["name"],
                     "definedProcedures": [],
-                    "biomedicalConceptIds": [],
+                    "biomedicalConceptIds": bc_ids,
                     "bcCategoryIds": [],
-                    "bcSurrogateIds": [],
+                    "bcSurrogateIds": sbc_ids,
                     "timelineId": None,
                 }
                 activity: Activity = self._builder.create(Activity, params)
@@ -509,3 +522,29 @@ class TimelineAssembler(BaseAssembler):
                 KlassMethodLocation(self.MODULE, "_add_timeline"),
             )
             return None
+
+    def _get_biomedical_concepts(self, activity: dict) -> tuple[list[str], list[str]]:
+        bc_ids = []
+        sbc_ids = []
+        print(f"ACTIVITY: {activity}")
+        if "actions" in activity:
+            for bc in activity["actions"]["bcs"]:
+                print(f"BC: {bc}")
+                if self._builder.cdisc_bc_library.exists(bc):
+                    bc: BiomedicalConcept = self._builder.bc(bc)
+                    if bc:
+                        self._biomedical_concepts.append(bc)
+                        bc_ids.append(bc.id)
+                else:
+                    params = {
+                        "name": bc,
+                        "description": bc,
+                        "label": bc,
+                        "reference": "None set",
+                    }
+                    sbc: BiomedicalConceptSurrogate = self._builder.create(BiomedicalConceptSurrogate, params)
+                    if sbc:
+                        self._biomedical_concept_surrogates.append(sbc)
+                        sbc_ids.append(sbc.id)
+        print(f"IDS: '{bc_ids}', '{sbc_ids}'")
+        return bc_ids, sbc_ids

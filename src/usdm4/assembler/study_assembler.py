@@ -149,6 +149,8 @@ class StudyAssembler(BaseAssembler):
                 if amendments_assembler.amendment
                 else [],
                 "conditions": timeline_assembler.conditions,
+                "biomedicalConcepts": timeline_assembler.biomedical_concepts,
+                "bcSurrogates": timeline_assembler.biomedical_concept_surrogates,
                 "extensionAttributes": extensions,
             }
             study_version = self._builder.create(StudyVersion, params)
