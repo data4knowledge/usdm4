@@ -13,6 +13,8 @@ from usdm4.api.timing import Timing
 from usdm4.api.condition import Condition
 from usdm4.api.biomedical_concept import BiomedicalConcept
 from usdm4.api.biomedical_concept_surrogate import BiomedicalConceptSurrogate
+from usdm4.api.procedure import Procedure
+from usdm4.api.code import Code
 
 
 class TimelineAssembler(BaseAssembler):
@@ -32,6 +34,7 @@ class TimelineAssembler(BaseAssembler):
         self._conditions: list[Condition] = []
         self._biomedical_concepts: list[BiomedicalConcept] = []
         self._biomedical_concept_surrogates: list[BiomedicalConceptSurrogate] = []
+        # self._procedures: list[Procedure] = []
 
     def execute(self, data: dict) -> None:
         try:
@@ -78,6 +81,10 @@ class TimelineAssembler(BaseAssembler):
     @property
     def biomedical_concept_surrogates(self) -> list[BiomedicalConceptSurrogate]:
         return self._biomedical_concept_surrogates
+
+    # @property
+    # def procedures(self) -> list[Procedure]:
+    #     return self._procedures
 
     def _add_epochs(self, data) -> list[ScheduledInstance]:
         try:
@@ -202,13 +209,13 @@ class TimelineAssembler(BaseAssembler):
             results = []
             items = data["activities"]["items"]
             for index, item in enumerate(items):
-                bc_ids, sbc_ids = self._get_biomedical_concepts(item)
+                bc_ids, sbc_ids, procedures = self._get_biomedical_concepts(item)
                 # print(f"ADDING ACTIVITY: {index}, {item}")
                 params = {
                     "name": f"ACTIVITY-{index + 1}",
                     "description": f"Activity {item['name']}",
                     "label": item["name"],
-                    "definedProcedures": [],
+                    "definedProcedures": procedures,
                     "biomedicalConceptIds": bc_ids,
                     "bcCategoryIds": [],
                     "bcSurrogateIds": sbc_ids,
@@ -224,12 +231,12 @@ class TimelineAssembler(BaseAssembler):
                 if "children" in item:
                     for child in item["children"]:
                         # print(f"ADDING ACTIVITY: _, {child}")
-                        bc_ids, sbc_ids = self._get_biomedical_concepts(child)
+                        bc_ids, sbc_ids, procedures  = self._get_biomedical_concepts(child)
                         params = {
                             "name": f"ACTIVITY-{child['name'].upper()}",
                             "description": f"Activity {child['name']}",
                             "label": child["name"],
-                            "definedProcedures": [],
+                            "definedProcedures": procedures,
                             "biomedicalConceptIds": bc_ids,
                             "bcCategoryIds": [],
                             "bcSurrogateIds": sbc_ids,
@@ -524,15 +531,16 @@ class TimelineAssembler(BaseAssembler):
             )
             return None
 
-    def _get_biomedical_concepts(self, activity: dict) -> tuple[list[str], list[str]]:
+    def _get_biomedical_concepts(self, activity: dict) -> tuple[list[str], list[str], list[Procedure]]:
         bc_ids = []
         sbc_ids = []
+        procedures = []
         print(f"ACTIVITY: {activity}")
         if "actions" in activity:
-            for bc in activity["actions"]["bcs"]:
-                print(f"BC: {bc}")
-                if self._builder.cdisc_bc_library.exists(bc):
-                    bc: BiomedicalConcept = self._builder.bc(bc)
+            for bc_name in activity["actions"]["bcs"]:
+                print(f"BC: {bc_name}")
+                if self._builder.cdisc_bc_library.exists(bc_name):
+                    bc: BiomedicalConcept = self._builder.bc(bc_name)
                     if bc:
                         self._biomedical_concepts.append(bc)
                         bc_ids.append(bc.id)
@@ -540,9 +548,9 @@ class TimelineAssembler(BaseAssembler):
                         self._errors.warning(f"Failed to create BC with name '{bc}'")
                 else:
                     params = {
-                        "name": bc,
-                        "description": bc,
-                        "label": bc,
+                        "name": bc_name,
+                        "description": bc_name,
+                        "label": bc_name,
                         "reference": "None set",
                     }
                     sbc: BiomedicalConceptSurrogate = self._builder.create(BiomedicalConceptSurrogate, params)
@@ -551,5 +559,19 @@ class TimelineAssembler(BaseAssembler):
                         sbc_ids.append(sbc.id)
                     else:
                         self._errors.warning(f"Failed to create surrogate BC with name '{bc}'")
-        print(f"IDS: '{bc_ids}', '{sbc_ids}'")
-        return bc_ids, sbc_ids
+                params = {
+                    "name": bc_name,
+                    "description": bc_name,
+                    "label": bc_name,
+                    "procedureType": activity["name"],
+                    "code": self._builder.create(Code, {"code": "12345", "codeSystem": "LOINC", "codeSystemVersion": "1", "decode": bc_name}),
+                    "reference": "Not applicable",
+                }
+                procedure = self._builder.create(Procedure, params)
+                if procedure:
+                    # self._procedures.append(procedure)
+                    procedures.append(procedure)
+                else:
+                    self._errors.warning(f"Failed to create procedure with name '{bc}'")
+        print(f"IDS: '{bc_ids}', '{sbc_ids}', '{procedures}'")
+        return bc_ids, sbc_ids, procedures
