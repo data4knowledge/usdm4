@@ -546,3 +546,269 @@ class TestStudy:
         # Test document search with whitespace
         result = self.study.document_by_template_name("   ")
         assert result is None
+
+    def test_document_templates_empty(self):
+        """Test document_templates with no documents."""
+        templates = self.study.document_templates()
+        assert isinstance(templates, list)
+        assert len(templates) == 0
+
+    def test_document_templates_single_document(self):
+        """Test document_templates with a single document."""
+        doc_language = Code(
+            id="lang1",
+            code="EN",
+            codeSystem="LANGUAGE",
+            codeSystemVersion="1.0",
+            decode="English",
+            instanceType="Code",
+        )
+
+        protocol_type = Code(
+            id="protocol_type1",
+            code="PROTOCOL",
+            codeSystem="DOC_TYPE",
+            codeSystemVersion="1.0",
+            decode="Protocol Document",
+            instanceType="Code",
+        )
+
+        protocol_doc = StudyDefinitionDocument(
+            id="doc1",
+            name="Protocol Document",
+            label="Protocol v1.0",
+            templateName="PROTOCOL",
+            language=doc_language,
+            type=protocol_type,
+            instanceType="StudyDefinitionDocument",
+        )
+
+        self.study.documentedBy = [protocol_doc]
+        templates = self.study.document_templates()
+
+        assert isinstance(templates, list)
+        assert len(templates) == 1
+        assert templates[0] == "PROTOCOL"
+
+    def test_document_templates_multiple_documents(self):
+        """Test document_templates with multiple documents."""
+        doc_language = Code(
+            id="lang1",
+            code="EN",
+            codeSystem="LANGUAGE",
+            codeSystemVersion="1.0",
+            decode="English",
+            instanceType="Code",
+        )
+
+        # Create multiple document types
+        template_names = ["PROTOCOL", "CSR", "SAP", "ICF"]
+        documents = []
+
+        for i, template in enumerate(template_names):
+            doc_type = Code(
+                id=f"doc_type{i + 1}",
+                code=template,
+                codeSystem="DOC_TYPE",
+                codeSystemVersion="1.0",
+                decode=f"{template} Document",
+                instanceType="Code",
+            )
+
+            doc = StudyDefinitionDocument(
+                id=f"doc{i + 1}",
+                name=f"{template} Document",
+                label=f"{template} v1.0",
+                templateName=template,
+                language=doc_language,
+                type=doc_type,
+                instanceType="StudyDefinitionDocument",
+            )
+            documents.append(doc)
+
+        self.study.documentedBy = documents
+        templates = self.study.document_templates()
+
+        assert isinstance(templates, list)
+        assert len(templates) == 4
+        assert templates == ["PROTOCOL", "CSR", "SAP", "ICF"]
+
+    def test_document_templates_preserves_order(self):
+        """Test that document_templates preserves the order of documents."""
+        doc_language = Code(
+            id="lang1",
+            code="EN",
+            codeSystem="LANGUAGE",
+            codeSystemVersion="1.0",
+            decode="English",
+            instanceType="Code",
+        )
+
+        # Create documents in a specific order
+        doc_type1 = Code(
+            id="type1",
+            code="CSR",
+            codeSystem="DOC_TYPE",
+            codeSystemVersion="1.0",
+            decode="CSR",
+            instanceType="Code",
+        )
+
+        doc_type2 = Code(
+            id="type2",
+            code="PROTOCOL",
+            codeSystem="DOC_TYPE",
+            codeSystemVersion="1.0",
+            decode="Protocol",
+            instanceType="Code",
+        )
+
+        doc_type3 = Code(
+            id="type3",
+            code="SAP",
+            codeSystem="DOC_TYPE",
+            codeSystemVersion="1.0",
+            decode="SAP",
+            instanceType="Code",
+        )
+
+        doc1 = StudyDefinitionDocument(
+            id="doc1",
+            name="CSR Document",
+            label="CSR v1.0",
+            templateName="CSR",
+            language=doc_language,
+            type=doc_type1,
+            instanceType="StudyDefinitionDocument",
+        )
+
+        doc2 = StudyDefinitionDocument(
+            id="doc2",
+            name="Protocol Document",
+            label="Protocol v1.0",
+            templateName="PROTOCOL",
+            language=doc_language,
+            type=doc_type2,
+            instanceType="StudyDefinitionDocument",
+        )
+
+        doc3 = StudyDefinitionDocument(
+            id="doc3",
+            name="SAP Document",
+            label="SAP v1.0",
+            templateName="SAP",
+            language=doc_language,
+            type=doc_type3,
+            instanceType="StudyDefinitionDocument",
+        )
+
+        # Add in specific order: CSR, PROTOCOL, SAP
+        self.study.documentedBy = [doc1, doc2, doc3]
+        templates = self.study.document_templates()
+
+        # Should preserve this exact order
+        assert templates == ["CSR", "PROTOCOL", "SAP"]
+
+    def test_document_templates_with_duplicate_names(self):
+        """Test document_templates when documents have duplicate template names."""
+        doc_language = Code(
+            id="lang1",
+            code="EN",
+            codeSystem="LANGUAGE",
+            codeSystemVersion="1.0",
+            decode="English",
+            instanceType="Code",
+        )
+
+        protocol_type = Code(
+            id="protocol_type1",
+            code="PROTOCOL",
+            codeSystem="DOC_TYPE",
+            codeSystemVersion="1.0",
+            decode="Protocol Document",
+            instanceType="Code",
+        )
+
+        # Create two documents with the same template name
+        doc1 = StudyDefinitionDocument(
+            id="doc1",
+            name="Protocol Document v1",
+            label="Protocol v1.0",
+            templateName="PROTOCOL",
+            language=doc_language,
+            type=protocol_type,
+            instanceType="StudyDefinitionDocument",
+        )
+
+        doc2 = StudyDefinitionDocument(
+            id="doc2",
+            name="Protocol Document v2",
+            label="Protocol v2.0",
+            templateName="PROTOCOL",
+            language=doc_language,
+            type=protocol_type,
+            instanceType="StudyDefinitionDocument",
+        )
+
+        self.study.documentedBy = [doc1, doc2]
+        templates = self.study.document_templates()
+
+        # Should return both, even if they're duplicates
+        assert len(templates) == 2
+        assert templates == ["PROTOCOL", "PROTOCOL"]
+
+    def test_document_templates_case_sensitivity(self):
+        """Test that document_templates preserves the case of template names."""
+        doc_language = Code(
+            id="lang1",
+            code="EN",
+            codeSystem="LANGUAGE",
+            codeSystemVersion="1.0",
+            decode="English",
+            instanceType="Code",
+        )
+
+        # Create documents with different case variations
+        doc_type1 = Code(
+            id="type1",
+            code="PROTOCOL",
+            codeSystem="DOC_TYPE",
+            codeSystemVersion="1.0",
+            decode="Protocol",
+            instanceType="Code",
+        )
+
+        doc_type2 = Code(
+            id="type2",
+            code="protocol",
+            codeSystem="DOC_TYPE",
+            codeSystemVersion="1.0",
+            decode="protocol",
+            instanceType="Code",
+        )
+
+        doc1 = StudyDefinitionDocument(
+            id="doc1",
+            name="Protocol Upper",
+            label="Protocol v1.0",
+            templateName="PROTOCOL",
+            language=doc_language,
+            type=doc_type1,
+            instanceType="StudyDefinitionDocument",
+        )
+
+        doc2 = StudyDefinitionDocument(
+            id="doc2",
+            name="Protocol Lower",
+            label="protocol v1.0",
+            templateName="protocol",
+            language=doc_language,
+            type=doc_type2,
+            instanceType="StudyDefinitionDocument",
+        )
+
+        self.study.documentedBy = [doc1, doc2]
+        templates = self.study.document_templates()
+
+        # Should preserve the original case
+        assert templates == ["PROTOCOL", "protocol"]

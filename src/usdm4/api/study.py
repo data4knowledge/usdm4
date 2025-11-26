@@ -21,6 +21,9 @@ class Study(ApiBaseModel):
             None,
         )
 
+    def document_templates(self) -> list[str]:
+        return [x.templateName for x in self.documentedBy]
+
     def first_version(self) -> StudyVersion | None:
         return self.versions[0] if len(self.versions) > 0 else None
         
