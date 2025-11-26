@@ -22,7 +22,5 @@ class Study(ApiBaseModel):
         )
 
     def first_version(self) -> StudyVersion | None:
-        try:
-            return self.versions[0]
-        except Exception:
-            return None
+        return self.versions[0] if len(self.versions) > 0 else None
+        

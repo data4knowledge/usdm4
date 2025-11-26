@@ -338,26 +338,61 @@ class TestStudy:
         result = self.study.first_version()
         assert result is None
 
-    def test_first_version_exception_handling(self):
-        """Test first_version exception handling."""
-        # This test ensures the exception handling works
-        # Even though accessing versions[0] on empty list would raise IndexError,
-        # the try/except should catch it and return None
-        self.study.versions = []
-        result = self.study.first_version()
-        assert result is None
+    def test_first_version_single_version(self):
+        """Test first_version returns the only version when there's just one."""
+        # Create required objects for StudyVersion
+        from src.usdm4.api.identifier import StudyIdentifier
+        from src.usdm4.api.study_title import StudyTitle
 
-        # Test with None versions (if somehow set to None)
-        # This would be unusual but tests the exception handling
-        try:
-            # Temporarily set versions to None to test exception handling
-            original_versions = self.study.versions
-            self.study.versions = None
-            result = self.study.first_version()
-            assert result is None
-        finally:
-            # Restore original versions
-            self.study.versions = original_versions
+        title_type = Code(
+            id="title_type1",
+            code="OFFICIAL",
+            codeSystem="TITLE_TYPE",
+            codeSystemVersion="1.0",
+            decode="Official Title",
+            instanceType="Code",
+        )
+
+        study_title = StudyTitle(
+            id="title1",
+            text="Test Study Title",
+            type=title_type,
+            instanceType="StudyTitle",
+        )
+
+        identifier_type = Code(
+            id="id_type1",
+            code="SPONSOR",
+            codeSystem="ID_TYPE",
+            codeSystemVersion="1.0",
+            decode="Sponsor Identifier",
+            instanceType="Code",
+        )
+
+        study_identifier = StudyIdentifier(
+            id="identifier1",
+            text="STUDY-001",
+            type=identifier_type,
+            scopeId="org1",
+            instanceType="StudyIdentifier",
+        )
+
+        version1 = StudyVersion(
+            id="version1",
+            versionIdentifier="v1.0",
+            rationale="Initial version",
+            studyIdentifiers=[study_identifier],
+            titles=[study_title],
+            instanceType="StudyVersion",
+        )
+
+        self.study.versions = [version1]
+
+        # Test that the single version is returned
+        result = self.study.first_version()
+        assert result is not None
+        assert result.versionIdentifier == "v1.0"
+        assert result.id == "version1"
 
     def test_uuid_field_types(self):
         """Test that id field accepts UUID objects."""
