@@ -3,7 +3,6 @@ from .api_base_model import ApiBaseModel
 from .study import Study
 from .study_version import StudyVersion
 from .study_design import StudyDesign
-from .study_definition_document_version import StudyDefinitionDocumentVersion
 
 
 class Wrapper(ApiBaseModel):

@@ -671,7 +671,9 @@ class TestWrapper:
             usdmVersion="3.0",
         )
 
-        study, version, design = wrapper.study_version_and_design("non_existent_design_id")
+        study, version, design = wrapper.study_version_and_design(
+            "non_existent_design_id"
+        )
 
         assert study is not None
         assert study == self.study

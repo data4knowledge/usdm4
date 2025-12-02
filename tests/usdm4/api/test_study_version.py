@@ -1065,10 +1065,14 @@ class TestStudyVersion:
         version2 = self._create_document_version("version2", "2.0")
         version3 = self._create_document_version("version3", "1.0")
 
-        doc1 = self._create_document_with_versions("doc1", "PROTOCOL", [version1, version2])
+        doc1 = self._create_document_with_versions(
+            "doc1", "PROTOCOL", [version1, version2]
+        )
         doc2 = self._create_document_with_versions("doc2", "CSR", [version3])
 
-        document_map = self._create_document_map([(doc1, [version1, version2]), (doc2, [version3])])
+        document_map = self._create_document_map(
+            [(doc1, [version1, version2]), (doc2, [version3])]
+        )
 
         study_version = StudyVersion(
             id="sv_docs3",
@@ -1103,8 +1107,12 @@ class TestStudyVersion:
         version2 = self._create_document_version("version2", "2.0")
         version3 = self._create_document_version("version3", "3.0")
 
-        doc1 = self._create_document_with_versions("doc1", "PROTOCOL", [version1, version2, version3])
-        document_map = self._create_document_map([(doc1, [version1, version2, version3])])
+        doc1 = self._create_document_with_versions(
+            "doc1", "PROTOCOL", [version1, version2, version3]
+        )
+        document_map = self._create_document_map(
+            [(doc1, [version1, version2, version3])]
+        )
 
         # Specify different order
         study_version = StudyVersion(
@@ -1159,11 +1167,9 @@ class TestStudyVersion:
         doc3 = self._create_document_with_versions("doc3", "SAP", [version3])
 
         # Full document_map with all versions
-        document_map = self._create_document_map([
-            (doc1, [version1]),
-            (doc2, [version2]),
-            (doc3, [version3])
-        ])
+        document_map = self._create_document_map(
+            [(doc1, [version1]), (doc2, [version2]), (doc3, [version3])]
+        )
 
         # But study_version only references some of them
         study_version = StudyVersion(
