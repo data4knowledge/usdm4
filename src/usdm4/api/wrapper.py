@@ -15,12 +15,12 @@ class Wrapper(ApiBaseModel):
     def first_version(self) -> StudyVersion | None:
         return self.study.first_version() if self.study else None
 
-    def version_and_study(
+    def study_version_and_design(
         self, id: str
-    ) -> tuple[StudyVersion | None, StudyDesign | None]:
+    ) -> tuple[Study | None, StudyVersion | None, StudyDesign | None]:
         study: Study = self.study
         if study:
             version: StudyVersion = study.first_version()
             if version:
-                return version, version.find_study_design(id)
-        return None, None
+                return study, version, version.find_study_design(id)
+        return None, None, None

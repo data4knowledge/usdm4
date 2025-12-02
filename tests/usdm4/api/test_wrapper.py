@@ -485,7 +485,7 @@ class TestWrapper:
         assert wrapper_dict["systemVersion"] == "1.0.0"
 
     # =====================================================
-    # Tests for version_and_study method
+    # Tests for study_version_and_design method
     # =====================================================
 
     def _create_study_version_with_design(self, version_id: str, design_id: str = None):
@@ -626,20 +626,21 @@ class TestWrapper:
             instanceType="InterventionalStudyDesign",
         )
 
-    def test_version_and_study_no_versions(self):
-        """Test version_and_study() when study has no versions."""
+    def test_study_version_and_design_no_versions(self):
+        """Test study_version_and_design() when study has no versions."""
         wrapper = Wrapper(
             study=self.study,
             usdmVersion="3.0",
         )
 
-        version, design = wrapper.version_and_study("some_design_id")
+        study, version, design = wrapper.study_version_and_design("some_design_id")
 
+        assert study is None
         assert version is None
         assert design is None
 
-    def test_version_and_study_version_without_designs(self):
-        """Test version_and_study() when study has version but no study designs."""
+    def test_study_version_and_design_version_without_designs(self):
+        """Test study_version_and_design() when study has version but no study designs."""
         study_version = self._create_study_version_with_design(
             "version1", design_id=None
         )
@@ -650,14 +651,16 @@ class TestWrapper:
             usdmVersion="3.0",
         )
 
-        version, design = wrapper.version_and_study("some_design_id")
+        study, version, design = wrapper.study_version_and_design("some_design_id")
 
+        assert study is not None
+        assert study == self.study
         assert version is not None
         assert version.id == "version1"
         assert design is None
 
-    def test_version_and_study_design_id_not_found(self):
-        """Test version_and_study() when design id doesn't match any study design."""
+    def test_study_version_and_design_design_id_not_found(self):
+        """Test study_version_and_design() when design id doesn't match any study design."""
         study_version = self._create_study_version_with_design(
             "version1", design_id="design1"
         )
@@ -668,14 +671,16 @@ class TestWrapper:
             usdmVersion="3.0",
         )
 
-        version, design = wrapper.version_and_study("non_existent_design_id")
+        study, version, design = wrapper.study_version_and_design("non_existent_design_id")
 
+        assert study is not None
+        assert study == self.study
         assert version is not None
         assert version.id == "version1"
         assert design is None
 
-    def test_version_and_study_design_found(self):
-        """Test version_and_study() when design id matches a study design."""
+    def test_study_version_and_design_design_found(self):
+        """Test study_version_and_design() when design id matches a study design."""
         study_version = self._create_study_version_with_design(
             "version1", design_id="design1"
         )
@@ -686,15 +691,17 @@ class TestWrapper:
             usdmVersion="3.0",
         )
 
-        version, design = wrapper.version_and_study("design1")
+        study, version, design = wrapper.study_version_and_design("design1")
 
+        assert study is not None
+        assert study == self.study
         assert version is not None
         assert version.id == "version1"
         assert design is not None
         assert design.id == "design1"
 
-    def test_version_and_study_multiple_designs_find_first(self):
-        """Test version_and_study() finds correct design from multiple designs."""
+    def test_study_version_and_design_multiple_designs_find_first(self):
+        """Test study_version_and_design() finds correct design from multiple designs."""
         title_type = Code(
             id="title_type1",
             code="OFFICIAL",
@@ -750,14 +757,15 @@ class TestWrapper:
         )
 
         # Find first design
-        version, design = wrapper.version_and_study("design1")
+        study, version, design = wrapper.study_version_and_design("design1")
+        assert study is not None
         assert version is not None
         assert design is not None
         assert design.id == "design1"
         assert design.name == "Design 1"
 
-    def test_version_and_study_multiple_designs_find_middle(self):
-        """Test version_and_study() finds correct design from the middle of multiple designs."""
+    def test_study_version_and_design_multiple_designs_find_middle(self):
+        """Test study_version_and_design() finds correct design from the middle of multiple designs."""
         title_type = Code(
             id="title_type1",
             code="OFFICIAL",
@@ -813,14 +821,15 @@ class TestWrapper:
         )
 
         # Find middle design
-        version, design = wrapper.version_and_study("design2")
+        study, version, design = wrapper.study_version_and_design("design2")
+        assert study is not None
         assert version is not None
         assert design is not None
         assert design.id == "design2"
         assert design.name == "Design 2"
 
-    def test_version_and_study_multiple_designs_find_last(self):
-        """Test version_and_study() finds correct design from the end of multiple designs."""
+    def test_study_version_and_design_multiple_designs_find_last(self):
+        """Test study_version_and_design() finds correct design from the end of multiple designs."""
         title_type = Code(
             id="title_type1",
             code="OFFICIAL",
@@ -876,14 +885,15 @@ class TestWrapper:
         )
 
         # Find last design
-        version, design = wrapper.version_and_study("design3")
+        study, version, design = wrapper.study_version_and_design("design3")
+        assert study is not None
         assert version is not None
         assert design is not None
         assert design.id == "design3"
         assert design.name == "Design 3"
 
-    def test_version_and_study_uses_first_version_only(self):
-        """Test version_and_study() only uses the first version even with multiple versions."""
+    def test_study_version_and_design_uses_first_version_only(self):
+        """Test study_version_and_design() only uses the first version even with multiple versions."""
         title_type = Code(
             id="title_type1",
             code="OFFICIAL",
@@ -954,20 +964,24 @@ class TestWrapper:
         )
 
         # Design from first version should be found
-        version, design = wrapper.version_and_study("design1")
+        study, version, design = wrapper.study_version_and_design("design1")
+        assert study is not None
+        assert study == self.study
         assert version is not None
         assert version.id == "version1"
         assert design is not None
         assert design.id == "design1"
 
         # Design from second version should NOT be found
-        version, design = wrapper.version_and_study("design2")
+        study, version, design = wrapper.study_version_and_design("design2")
+        assert study is not None
+        assert study == self.study
         assert version is not None
         assert version.id == "version1"  # Still returns first version
         assert design is None  # But design2 is not in first version
 
-    def test_version_and_study_empty_id(self):
-        """Test version_and_study() with empty string id."""
+    def test_study_version_and_design_empty_id(self):
+        """Test study_version_and_design() with empty string id."""
         study_version = self._create_study_version_with_design(
             "version1", design_id="design1"
         )
@@ -978,14 +992,16 @@ class TestWrapper:
             usdmVersion="3.0",
         )
 
-        version, design = wrapper.version_and_study("")
+        study, version, design = wrapper.study_version_and_design("")
 
+        assert study is not None
+        assert study == self.study
         assert version is not None
         assert version.id == "version1"
         assert design is None
 
-    def test_version_and_study_returns_correct_types(self):
-        """Test version_and_study() returns correct tuple types."""
+    def test_study_version_and_design_returns_correct_types(self):
+        """Test study_version_and_design() returns correct tuple types."""
         study_version = self._create_study_version_with_design(
             "version1", design_id="design1"
         )
@@ -996,9 +1012,10 @@ class TestWrapper:
             usdmVersion="3.0",
         )
 
-        result = wrapper.version_and_study("design1")
+        result = wrapper.study_version_and_design("design1")
 
         assert isinstance(result, tuple)
-        assert len(result) == 2
-        assert isinstance(result[0], StudyVersion)
-        assert isinstance(result[1], InterventionalStudyDesign)
+        assert len(result) == 3
+        assert isinstance(result[0], Study)
+        assert isinstance(result[1], StudyVersion)
+        assert isinstance(result[2], InterventionalStudyDesign)
