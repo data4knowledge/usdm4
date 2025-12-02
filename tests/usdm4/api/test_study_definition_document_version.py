@@ -606,9 +606,15 @@ class TestStudyDefinitionDocumentVersion:
         self.doc_version.contents = [content1]
 
         # Test various case combinations
-        result1 = self.doc_version.find_narrative_content_by_title("introduction section")
-        result2 = self.doc_version.find_narrative_content_by_title("INTRODUCTION SECTION")
-        result3 = self.doc_version.find_narrative_content_by_title("InTrOdUcTiOn SeCtiOn")
+        result1 = self.doc_version.find_narrative_content_by_title(
+            "introduction section"
+        )
+        result2 = self.doc_version.find_narrative_content_by_title(
+            "INTRODUCTION SECTION"
+        )
+        result3 = self.doc_version.find_narrative_content_by_title(
+            "InTrOdUcTiOn SeCtiOn"
+        )
 
         assert result1 is not None and result1.id == "content1"
         assert result2 is not None and result2.id == "content1"
@@ -639,7 +645,7 @@ class TestStudyDefinitionDocumentVersion:
 
     def test_find_narrative_content_by_title_none_section_title(self):
         """Test find_narrative_content_by_title when section_title is None.
-        
+
         Note: This test reveals a bug in the source code - it doesn't handle None values.
         The code will raise AttributeError when trying to call .upper() on None.
         """
@@ -654,7 +660,7 @@ class TestStudyDefinitionDocumentVersion:
         )
 
         self.doc_version.contents = [content1]
-        
+
         # The source code has a bug - it will raise AttributeError when sectionTitle is None
         with pytest.raises(AttributeError):
             self.doc_version.find_narrative_content_by_title("Introduction")
@@ -936,7 +942,9 @@ class TestStudyDefinitionDocumentVersion:
         assert found_by_num.id == "content2"
 
         # Test find_narrative_content_by_title
-        found_by_title = self.doc_version.find_narrative_content_by_title("methods and materials")
+        found_by_title = self.doc_version.find_narrative_content_by_title(
+            "methods and materials"
+        )
         assert found_by_title is not None
         assert found_by_title.id == "content2"
 

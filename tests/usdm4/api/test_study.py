@@ -3,6 +3,9 @@ from uuid import uuid4, UUID
 from src.usdm4.api.study import Study
 from src.usdm4.api.study_version import StudyVersion
 from src.usdm4.api.study_definition_document import StudyDefinitionDocument
+from src.usdm4.api.study_definition_document_version import (
+    StudyDefinitionDocumentVersion,
+)
 from src.usdm4.api.code import Code
 
 
@@ -812,3 +815,223 @@ class TestStudy:
 
         # Should preserve the original case
         assert templates == ["PROTOCOL", "protocol"]
+
+    # =====================================================
+    # Tests for document_map method
+    # =====================================================
+
+    def _create_document_version(
+        self, version_id: str, version_number: str = "1.0"
+    ) -> StudyDefinitionDocumentVersion:
+        """Helper method to create a StudyDefinitionDocumentVersion."""
+        status_code = Code(
+            id="status1",
+            code="FINAL",
+            codeSystem="DOC_STATUS",
+            codeSystemVersion="1.0",
+            decode="Final",
+            instanceType="Code",
+        )
+
+        return StudyDefinitionDocumentVersion(
+            id=version_id,
+            version=version_number,
+            status=status_code,
+            instanceType="StudyDefinitionDocumentVersion",
+        )
+
+    def _create_document_with_versions(
+        self, doc_id: str, template_name: str, versions: list
+    ) -> StudyDefinitionDocument:
+        """Helper method to create a StudyDefinitionDocument with versions."""
+        doc_language = Code(
+            id="lang1",
+            code="EN",
+            codeSystem="LANGUAGE",
+            codeSystemVersion="1.0",
+            decode="English",
+            instanceType="Code",
+        )
+
+        doc_type = Code(
+            id=f"doc_type_{doc_id}",
+            code=template_name,
+            codeSystem="DOC_TYPE",
+            codeSystemVersion="1.0",
+            decode=f"{template_name} Document",
+            instanceType="Code",
+        )
+
+        return StudyDefinitionDocument(
+            id=doc_id,
+            name=f"{template_name} Document",
+            label=f"{template_name} v1.0",
+            templateName=template_name,
+            language=doc_language,
+            type=doc_type,
+            versions=versions,
+            instanceType="StudyDefinitionDocument",
+        )
+
+    def test_document_map_empty_documents(self):
+        """Test document_map with no documents."""
+        self.study.documentedBy = []
+
+        result = self.study.document_map()
+
+        assert isinstance(result, dict)
+        assert len(result) == 0
+
+    def test_document_map_document_without_versions(self):
+        """Test document_map with a document that has no versions."""
+        doc = self._create_document_with_versions("doc1", "PROTOCOL", [])
+        self.study.documentedBy = [doc]
+
+        result = self.study.document_map()
+
+        assert isinstance(result, dict)
+        assert len(result) == 0
+
+    def test_document_map_single_document_single_version(self):
+        """Test document_map with a single document that has one version."""
+        version = self._create_document_version("version1", "1.0")
+        doc = self._create_document_with_versions("doc1", "PROTOCOL", [version])
+        self.study.documentedBy = [doc]
+
+        result = self.study.document_map()
+
+        assert isinstance(result, dict)
+        assert len(result) == 1
+        assert "version1" in result
+        assert result["version1"] == version
+        assert result["version1"].version == "1.0"
+
+    def test_document_map_single_document_multiple_versions(self):
+        """Test document_map with a single document that has multiple versions."""
+        version1 = self._create_document_version("version1", "1.0")
+        version2 = self._create_document_version("version2", "2.0")
+        version3 = self._create_document_version("version3", "3.0")
+        doc = self._create_document_with_versions(
+            "doc1", "PROTOCOL", [version1, version2, version3]
+        )
+        self.study.documentedBy = [doc]
+
+        result = self.study.document_map()
+
+        assert isinstance(result, dict)
+        assert len(result) == 3
+        assert "version1" in result
+        assert "version2" in result
+        assert "version3" in result
+        assert result["version1"].version == "1.0"
+        assert result["version2"].version == "2.0"
+        assert result["version3"].version == "3.0"
+
+    def test_document_map_multiple_documents_single_version_each(self):
+        """Test document_map with multiple documents, each having one version."""
+        version1 = self._create_document_version("protocol_v1", "1.0")
+        version2 = self._create_document_version("csr_v1", "1.0")
+        version3 = self._create_document_version("sap_v1", "1.0")
+
+        doc1 = self._create_document_with_versions("doc1", "PROTOCOL", [version1])
+        doc2 = self._create_document_with_versions("doc2", "CSR", [version2])
+        doc3 = self._create_document_with_versions("doc3", "SAP", [version3])
+
+        self.study.documentedBy = [doc1, doc2, doc3]
+
+        result = self.study.document_map()
+
+        assert isinstance(result, dict)
+        assert len(result) == 3
+        assert "protocol_v1" in result
+        assert "csr_v1" in result
+        assert "sap_v1" in result
+
+    def test_document_map_multiple_documents_multiple_versions(self):
+        """Test document_map with multiple documents, each having multiple versions."""
+        # Protocol document versions
+        protocol_v1 = self._create_document_version("protocol_v1", "1.0")
+        protocol_v2 = self._create_document_version("protocol_v2", "2.0")
+
+        # CSR document versions
+        csr_v1 = self._create_document_version("csr_v1", "1.0")
+        csr_v2 = self._create_document_version("csr_v2", "2.0")
+        csr_v3 = self._create_document_version("csr_v3", "3.0")
+
+        doc1 = self._create_document_with_versions(
+            "doc1", "PROTOCOL", [protocol_v1, protocol_v2]
+        )
+        doc2 = self._create_document_with_versions(
+            "doc2", "CSR", [csr_v1, csr_v2, csr_v3]
+        )
+
+        self.study.documentedBy = [doc1, doc2]
+
+        result = self.study.document_map()
+
+        assert isinstance(result, dict)
+        assert len(result) == 5
+        assert "protocol_v1" in result
+        assert "protocol_v2" in result
+        assert "csr_v1" in result
+        assert "csr_v2" in result
+        assert "csr_v3" in result
+
+    def test_document_map_returns_correct_version_objects(self):
+        """Test that document_map returns the actual version objects."""
+        version = self._create_document_version("version1", "1.0")
+        doc = self._create_document_with_versions("doc1", "PROTOCOL", [version])
+        self.study.documentedBy = [doc]
+
+        result = self.study.document_map()
+
+        # Verify it's the same object
+        assert result["version1"] is version
+        assert isinstance(result["version1"], StudyDefinitionDocumentVersion)
+
+    def test_document_map_with_mixed_empty_and_populated_documents(self):
+        """Test document_map with a mix of documents, some with versions and some without."""
+        version1 = self._create_document_version("version1", "1.0")
+        version2 = self._create_document_version("version2", "2.0")
+
+        # Doc1 has versions
+        doc1 = self._create_document_with_versions("doc1", "PROTOCOL", [version1])
+        # Doc2 has no versions
+        doc2 = self._create_document_with_versions("doc2", "CSR", [])
+        # Doc3 has versions
+        doc3 = self._create_document_with_versions("doc3", "SAP", [version2])
+
+        self.study.documentedBy = [doc1, doc2, doc3]
+
+        result = self.study.document_map()
+
+        assert len(result) == 2
+        assert "version1" in result
+        assert "version2" in result
+
+    def test_document_map_preserves_version_properties(self):
+        """Test that document_map preserves all version properties."""
+        status_code = Code(
+            id="status1",
+            code="DRAFT",
+            codeSystem="DOC_STATUS",
+            codeSystemVersion="1.0",
+            decode="Draft",
+            instanceType="Code",
+        )
+
+        version = StudyDefinitionDocumentVersion(
+            id="version1",
+            version="1.5.3",
+            status=status_code,
+            instanceType="StudyDefinitionDocumentVersion",
+        )
+
+        doc = self._create_document_with_versions("doc1", "PROTOCOL", [version])
+        self.study.documentedBy = [doc]
+
+        result = self.study.document_map()
+
+        assert result["version1"].version == "1.5.3"
+        assert result["version1"].status.code == "DRAFT"
+        assert result["version1"].status.decode == "Draft"

@@ -28,11 +28,24 @@ class StudyDefinitionDocumentVersion(ApiBaseModelWithId):
         map = self.narrative_content_map()
         return map[id] if id in map else None
 
-    def find_narrative_content_by_number(self, section_number: str) -> NarrativeContent | None:
-        return next((x for x in self.contents if x.sectionNumber == section_number), None)
+    def find_narrative_content_by_number(
+        self, section_number: str
+    ) -> NarrativeContent | None:
+        return next(
+            (x for x in self.contents if x.sectionNumber == section_number), None
+        )
 
-    def find_narrative_content_by_title(self, section_title: str) -> NarrativeContent | None:
-        return next((x for x in self.contents if x.sectionTitle.upper() == section_title.upper()), None)
+    def find_narrative_content_by_title(
+        self, section_title: str
+    ) -> NarrativeContent | None:
+        return next(
+            (
+                x
+                for x in self.contents
+                if x.sectionTitle.upper() == section_title.upper()
+            ),
+            None,
+        )
 
     def narrative_content_map(self) -> dict[NarrativeContent]:
         return {x.id: x for x in self.contents}

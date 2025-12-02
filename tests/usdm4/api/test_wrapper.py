@@ -3,9 +3,15 @@ from uuid import uuid4
 from src.usdm4.api.wrapper import Wrapper
 from src.usdm4.api.study import Study
 from src.usdm4.api.study_version import StudyVersion
+from src.usdm4.api.study_design import InterventionalStudyDesign
 from src.usdm4.api.code import Code
 from src.usdm4.api.study_title import StudyTitle
 from src.usdm4.api.identifier import StudyIdentifier
+from src.usdm4.api.study_arm import StudyArm
+from src.usdm4.api.study_cell import StudyCell
+from src.usdm4.api.study_epoch import StudyEpoch
+from src.usdm4.api.population_definition import StudyDesignPopulation
+
 
 class TestWrapper:
     def setup_method(self):
@@ -76,7 +82,7 @@ class TestWrapper:
     def test_usdm_version_formats(self):
         """Test various USDM version string formats."""
         versions = ["3.0", "3.0.0", "2.1", "4.0.1-beta"]
-        
+
         for version in versions:
             wrapper = Wrapper(
                 study=self.study,
@@ -277,10 +283,10 @@ class TestWrapper:
         )
 
         # Verify all properties are accessible
-        assert hasattr(wrapper, 'study')
-        assert hasattr(wrapper, 'usdmVersion')
-        assert hasattr(wrapper, 'systemName')
-        assert hasattr(wrapper, 'systemVersion')
+        assert hasattr(wrapper, "study")
+        assert hasattr(wrapper, "usdmVersion")
+        assert hasattr(wrapper, "systemName")
+        assert hasattr(wrapper, "systemVersion")
 
     def test_first_version_delegates_to_study(self):
         """Test that first_version() correctly delegates to study.first_version()."""
@@ -345,7 +351,7 @@ class TestWrapper:
     def test_complex_scenario(self):
         """Test a complex scenario with all components."""
         study_id = uuid4()
-        
+
         # Create required codes and objects
         title_type = Code(
             id="title_type1",
@@ -415,7 +421,7 @@ class TestWrapper:
         assert wrapper.usdmVersion == "3.0.1"
         assert wrapper.systemName == "ProductionSystem"
         assert wrapper.systemVersion == "2.5.0"
-        
+
         first_version = wrapper.first_version()
         assert first_version is not None
         assert first_version.versionIdentifier == "1.0"
@@ -437,7 +443,7 @@ class TestWrapper:
         # Both wrappers reference the same study
         assert wrapper1.study == wrapper2.study
         assert wrapper1.study.name == wrapper2.study.name
-        
+
         # But have different wrapper properties
         assert wrapper1.usdmVersion != wrapper2.usdmVersion
         assert wrapper1.systemName != wrapper2.systemName
@@ -468,12 +474,531 @@ class TestWrapper:
         )
 
         wrapper_dict = wrapper.model_dump()
-        
+
         assert "study" in wrapper_dict
         assert "usdmVersion" in wrapper_dict
         assert "systemName" in wrapper_dict
         assert "systemVersion" in wrapper_dict
-        
+
         assert wrapper_dict["usdmVersion"] == "3.0"
         assert wrapper_dict["systemName"] == "TestSystem"
         assert wrapper_dict["systemVersion"] == "1.0.0"
+
+    # =====================================================
+    # Tests for version_and_study method
+    # =====================================================
+
+    def _create_study_version_with_design(self, version_id: str, design_id: str = None):
+        """Helper method to create a StudyVersion with optional StudyDesign."""
+        title_type = Code(
+            id="title_type1",
+            code="OFFICIAL",
+            codeSystem="TITLE_TYPE",
+            codeSystemVersion="1.0",
+            decode="Official Title",
+            instanceType="Code",
+        )
+
+        study_title = StudyTitle(
+            id="title1",
+            text="Test Study Title",
+            type=title_type,
+            instanceType="StudyTitle",
+        )
+
+        identifier_type = Code(
+            id="id_type1",
+            code="SPONSOR",
+            codeSystem="ID_TYPE",
+            codeSystemVersion="1.0",
+            decode="Sponsor Identifier",
+            instanceType="Code",
+        )
+
+        study_identifier = StudyIdentifier(
+            id="identifier1",
+            text="STUDY-001",
+            type=identifier_type,
+            scopeId="org1",
+            instanceType="StudyIdentifier",
+        )
+
+        study_designs = []
+        if design_id:
+            study_designs.append(self._create_study_design(design_id))
+
+        return StudyVersion(
+            id=version_id,
+            versionIdentifier="1.0",
+            rationale="Test version",
+            studyIdentifiers=[study_identifier],
+            titles=[study_title],
+            studyDesigns=study_designs,
+            instanceType="StudyVersion",
+        )
+
+    def _create_study_design(self, design_id: str, name: str = "Test Design"):
+        """Helper method to create an InterventionalStudyDesign."""
+        model_code = Code(
+            id="model_code1",
+            code="C82639",
+            codeSystem="http://www.cdisc.org",
+            codeSystemVersion="2024-09-27",
+            decode="Parallel Study",
+            instanceType="Code",
+        )
+
+        arm_type = Code(
+            id="arm_type1",
+            code="C174265",
+            codeSystem="http://www.cdisc.org",
+            codeSystemVersion="2024-09-27",
+            decode="Treatment Arm",
+            instanceType="Code",
+        )
+
+        epoch_type = Code(
+            id="epoch_type1",
+            code="C98779",
+            codeSystem="http://www.cdisc.org",
+            codeSystemVersion="2024-09-27",
+            decode="Treatment Period",
+            instanceType="Code",
+        )
+
+        data_origin_type = Code(
+            id="data_origin_type1",
+            code="C25301",
+            codeSystem="http://www.cdisc.org",
+            codeSystemVersion="2024-09-27",
+            decode="Collected",
+            instanceType="Code",
+        )
+
+        study_arm = StudyArm(
+            id="arm1",
+            name="Treatment Arm",
+            description="Test treatment arm",
+            label="ARM-1",
+            type=arm_type,
+            dataOriginDescription="Data collected from test subjects",
+            dataOriginType=data_origin_type,
+            instanceType="StudyArm",
+        )
+
+        study_epoch = StudyEpoch(
+            id="epoch1",
+            name="Treatment Epoch",
+            description="Test epoch",
+            label="EPOCH-1",
+            type=epoch_type,
+            instanceType="StudyEpoch",
+        )
+
+        study_cell = StudyCell(
+            id="cell1",
+            armId="arm1",
+            epochId="epoch1",
+            elementIds=[],
+            instanceType="StudyCell",
+        )
+
+        population = StudyDesignPopulation(
+            id="pop1",
+            name="Test Population",
+            description="Test population description",
+            label="POP-1",
+            includesHealthySubjects=True,
+            instanceType="StudyDesignPopulation",
+        )
+
+        return InterventionalStudyDesign(
+            id=design_id,
+            name=name,
+            description="Test study design",
+            label="DESIGN-1",
+            rationale="Test rationale",
+            arms=[study_arm],
+            epochs=[study_epoch],
+            studyCells=[study_cell],
+            population=population,
+            model=model_code,
+            instanceType="InterventionalStudyDesign",
+        )
+
+    def test_version_and_study_no_versions(self):
+        """Test version_and_study() when study has no versions."""
+        wrapper = Wrapper(
+            study=self.study,
+            usdmVersion="3.0",
+        )
+
+        version, design = wrapper.version_and_study("some_design_id")
+
+        assert version is None
+        assert design is None
+
+    def test_version_and_study_version_without_designs(self):
+        """Test version_and_study() when study has version but no study designs."""
+        study_version = self._create_study_version_with_design(
+            "version1", design_id=None
+        )
+        self.study.versions = [study_version]
+
+        wrapper = Wrapper(
+            study=self.study,
+            usdmVersion="3.0",
+        )
+
+        version, design = wrapper.version_and_study("some_design_id")
+
+        assert version is not None
+        assert version.id == "version1"
+        assert design is None
+
+    def test_version_and_study_design_id_not_found(self):
+        """Test version_and_study() when design id doesn't match any study design."""
+        study_version = self._create_study_version_with_design(
+            "version1", design_id="design1"
+        )
+        self.study.versions = [study_version]
+
+        wrapper = Wrapper(
+            study=self.study,
+            usdmVersion="3.0",
+        )
+
+        version, design = wrapper.version_and_study("non_existent_design_id")
+
+        assert version is not None
+        assert version.id == "version1"
+        assert design is None
+
+    def test_version_and_study_design_found(self):
+        """Test version_and_study() when design id matches a study design."""
+        study_version = self._create_study_version_with_design(
+            "version1", design_id="design1"
+        )
+        self.study.versions = [study_version]
+
+        wrapper = Wrapper(
+            study=self.study,
+            usdmVersion="3.0",
+        )
+
+        version, design = wrapper.version_and_study("design1")
+
+        assert version is not None
+        assert version.id == "version1"
+        assert design is not None
+        assert design.id == "design1"
+
+    def test_version_and_study_multiple_designs_find_first(self):
+        """Test version_and_study() finds correct design from multiple designs."""
+        title_type = Code(
+            id="title_type1",
+            code="OFFICIAL",
+            codeSystem="TITLE_TYPE",
+            codeSystemVersion="1.0",
+            decode="Official Title",
+            instanceType="Code",
+        )
+
+        study_title = StudyTitle(
+            id="title1",
+            text="Test Study Title",
+            type=title_type,
+            instanceType="StudyTitle",
+        )
+
+        identifier_type = Code(
+            id="id_type1",
+            code="SPONSOR",
+            codeSystem="ID_TYPE",
+            codeSystemVersion="1.0",
+            decode="Sponsor Identifier",
+            instanceType="Code",
+        )
+
+        study_identifier = StudyIdentifier(
+            id="identifier1",
+            text="STUDY-001",
+            type=identifier_type,
+            scopeId="org1",
+            instanceType="StudyIdentifier",
+        )
+
+        design1 = self._create_study_design("design1", name="Design 1")
+        design2 = self._create_study_design("design2", name="Design 2")
+        design3 = self._create_study_design("design3", name="Design 3")
+
+        study_version = StudyVersion(
+            id="version1",
+            versionIdentifier="1.0",
+            rationale="Test version",
+            studyIdentifiers=[study_identifier],
+            titles=[study_title],
+            studyDesigns=[design1, design2, design3],
+            instanceType="StudyVersion",
+        )
+
+        self.study.versions = [study_version]
+
+        wrapper = Wrapper(
+            study=self.study,
+            usdmVersion="3.0",
+        )
+
+        # Find first design
+        version, design = wrapper.version_and_study("design1")
+        assert version is not None
+        assert design is not None
+        assert design.id == "design1"
+        assert design.name == "Design 1"
+
+    def test_version_and_study_multiple_designs_find_middle(self):
+        """Test version_and_study() finds correct design from the middle of multiple designs."""
+        title_type = Code(
+            id="title_type1",
+            code="OFFICIAL",
+            codeSystem="TITLE_TYPE",
+            codeSystemVersion="1.0",
+            decode="Official Title",
+            instanceType="Code",
+        )
+
+        study_title = StudyTitle(
+            id="title1",
+            text="Test Study Title",
+            type=title_type,
+            instanceType="StudyTitle",
+        )
+
+        identifier_type = Code(
+            id="id_type1",
+            code="SPONSOR",
+            codeSystem="ID_TYPE",
+            codeSystemVersion="1.0",
+            decode="Sponsor Identifier",
+            instanceType="Code",
+        )
+
+        study_identifier = StudyIdentifier(
+            id="identifier1",
+            text="STUDY-001",
+            type=identifier_type,
+            scopeId="org1",
+            instanceType="StudyIdentifier",
+        )
+
+        design1 = self._create_study_design("design1", name="Design 1")
+        design2 = self._create_study_design("design2", name="Design 2")
+        design3 = self._create_study_design("design3", name="Design 3")
+
+        study_version = StudyVersion(
+            id="version1",
+            versionIdentifier="1.0",
+            rationale="Test version",
+            studyIdentifiers=[study_identifier],
+            titles=[study_title],
+            studyDesigns=[design1, design2, design3],
+            instanceType="StudyVersion",
+        )
+
+        self.study.versions = [study_version]
+
+        wrapper = Wrapper(
+            study=self.study,
+            usdmVersion="3.0",
+        )
+
+        # Find middle design
+        version, design = wrapper.version_and_study("design2")
+        assert version is not None
+        assert design is not None
+        assert design.id == "design2"
+        assert design.name == "Design 2"
+
+    def test_version_and_study_multiple_designs_find_last(self):
+        """Test version_and_study() finds correct design from the end of multiple designs."""
+        title_type = Code(
+            id="title_type1",
+            code="OFFICIAL",
+            codeSystem="TITLE_TYPE",
+            codeSystemVersion="1.0",
+            decode="Official Title",
+            instanceType="Code",
+        )
+
+        study_title = StudyTitle(
+            id="title1",
+            text="Test Study Title",
+            type=title_type,
+            instanceType="StudyTitle",
+        )
+
+        identifier_type = Code(
+            id="id_type1",
+            code="SPONSOR",
+            codeSystem="ID_TYPE",
+            codeSystemVersion="1.0",
+            decode="Sponsor Identifier",
+            instanceType="Code",
+        )
+
+        study_identifier = StudyIdentifier(
+            id="identifier1",
+            text="STUDY-001",
+            type=identifier_type,
+            scopeId="org1",
+            instanceType="StudyIdentifier",
+        )
+
+        design1 = self._create_study_design("design1", name="Design 1")
+        design2 = self._create_study_design("design2", name="Design 2")
+        design3 = self._create_study_design("design3", name="Design 3")
+
+        study_version = StudyVersion(
+            id="version1",
+            versionIdentifier="1.0",
+            rationale="Test version",
+            studyIdentifiers=[study_identifier],
+            titles=[study_title],
+            studyDesigns=[design1, design2, design3],
+            instanceType="StudyVersion",
+        )
+
+        self.study.versions = [study_version]
+
+        wrapper = Wrapper(
+            study=self.study,
+            usdmVersion="3.0",
+        )
+
+        # Find last design
+        version, design = wrapper.version_and_study("design3")
+        assert version is not None
+        assert design is not None
+        assert design.id == "design3"
+        assert design.name == "Design 3"
+
+    def test_version_and_study_uses_first_version_only(self):
+        """Test version_and_study() only uses the first version even with multiple versions."""
+        title_type = Code(
+            id="title_type1",
+            code="OFFICIAL",
+            codeSystem="TITLE_TYPE",
+            codeSystemVersion="1.0",
+            decode="Official Title",
+            instanceType="Code",
+        )
+
+        identifier_type = Code(
+            id="id_type1",
+            code="SPONSOR",
+            codeSystem="ID_TYPE",
+            codeSystemVersion="1.0",
+            decode="Sponsor Identifier",
+            instanceType="Code",
+        )
+
+        study_identifier = StudyIdentifier(
+            id="identifier1",
+            text="STUDY-001",
+            type=identifier_type,
+            scopeId="org1",
+            instanceType="StudyIdentifier",
+        )
+
+        # First version has design1
+        design1 = self._create_study_design("design1", name="Design from V1")
+        study_title1 = StudyTitle(
+            id="title1",
+            text="Test Study Title V1",
+            type=title_type,
+            instanceType="StudyTitle",
+        )
+        version1 = StudyVersion(
+            id="version1",
+            versionIdentifier="1.0",
+            rationale="Version 1",
+            studyIdentifiers=[study_identifier],
+            titles=[study_title1],
+            studyDesigns=[design1],
+            instanceType="StudyVersion",
+        )
+
+        # Second version has design2 (which should NOT be findable)
+        design2 = self._create_study_design("design2", name="Design from V2")
+        study_title2 = StudyTitle(
+            id="title2",
+            text="Test Study Title V2",
+            type=title_type,
+            instanceType="StudyTitle",
+        )
+        version2 = StudyVersion(
+            id="version2",
+            versionIdentifier="2.0",
+            rationale="Version 2",
+            studyIdentifiers=[study_identifier],
+            titles=[study_title2],
+            studyDesigns=[design2],
+            instanceType="StudyVersion",
+        )
+
+        self.study.versions = [version1, version2]
+
+        wrapper = Wrapper(
+            study=self.study,
+            usdmVersion="3.0",
+        )
+
+        # Design from first version should be found
+        version, design = wrapper.version_and_study("design1")
+        assert version is not None
+        assert version.id == "version1"
+        assert design is not None
+        assert design.id == "design1"
+
+        # Design from second version should NOT be found
+        version, design = wrapper.version_and_study("design2")
+        assert version is not None
+        assert version.id == "version1"  # Still returns first version
+        assert design is None  # But design2 is not in first version
+
+    def test_version_and_study_empty_id(self):
+        """Test version_and_study() with empty string id."""
+        study_version = self._create_study_version_with_design(
+            "version1", design_id="design1"
+        )
+        self.study.versions = [study_version]
+
+        wrapper = Wrapper(
+            study=self.study,
+            usdmVersion="3.0",
+        )
+
+        version, design = wrapper.version_and_study("")
+
+        assert version is not None
+        assert version.id == "version1"
+        assert design is None
+
+    def test_version_and_study_returns_correct_types(self):
+        """Test version_and_study() returns correct tuple types."""
+        study_version = self._create_study_version_with_design(
+            "version1", design_id="design1"
+        )
+        self.study.versions = [study_version]
+
+        wrapper = Wrapper(
+            study=self.study,
+            usdmVersion="3.0",
+        )
+
+        result = wrapper.version_and_study("design1")
+
+        assert isinstance(result, tuple)
+        assert len(result) == 2
+        assert isinstance(result[0], StudyVersion)
+        assert isinstance(result[1], InterventionalStudyDesign)

@@ -231,7 +231,9 @@ class TimelineAssembler(BaseAssembler):
                 if "children" in item:
                     for child in item["children"]:
                         # print(f"ADDING ACTIVITY: _, {child}")
-                        bc_ids, sbc_ids, procedures  = self._get_biomedical_concepts(child)
+                        bc_ids, sbc_ids, procedures = self._get_biomedical_concepts(
+                            child
+                        )
                         params = {
                             "name": f"ACTIVITY-{child['name'].upper()}",
                             "description": f"Activity {child['name']}",
@@ -531,7 +533,9 @@ class TimelineAssembler(BaseAssembler):
             )
             return None
 
-    def _get_biomedical_concepts(self, activity: dict) -> tuple[list[str], list[str], list[Procedure]]:
+    def _get_biomedical_concepts(
+        self, activity: dict
+    ) -> tuple[list[str], list[str], list[Procedure]]:
         bc_ids = []
         sbc_ids = []
         procedures = []
@@ -553,18 +557,30 @@ class TimelineAssembler(BaseAssembler):
                         "label": bc_name,
                         "reference": "None set",
                     }
-                    sbc: BiomedicalConceptSurrogate = self._builder.create(BiomedicalConceptSurrogate, params)
+                    sbc: BiomedicalConceptSurrogate = self._builder.create(
+                        BiomedicalConceptSurrogate, params
+                    )
                     if sbc:
                         self._biomedical_concept_surrogates.append(sbc)
                         sbc_ids.append(sbc.id)
                     else:
-                        self._errors.warning(f"Failed to create surrogate BC with name '{bc}'")
+                        self._errors.warning(
+                            f"Failed to create surrogate BC with name '{bc}'"
+                        )
                 params = {
                     "name": bc_name,
                     "description": bc_name,
                     "label": bc_name,
                     "procedureType": activity["name"],
-                    "code": self._builder.create(Code, {"code": "12345", "codeSystem": "LOINC", "codeSystemVersion": "1", "decode": bc_name}),
+                    "code": self._builder.create(
+                        Code,
+                        {
+                            "code": "12345",
+                            "codeSystem": "LOINC",
+                            "codeSystemVersion": "1",
+                            "decode": bc_name,
+                        },
+                    ),
                     "reference": "Not applicable",
                 }
                 procedure = self._builder.create(Procedure, params)
