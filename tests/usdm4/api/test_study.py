@@ -903,8 +903,11 @@ class TestStudy:
         assert isinstance(result, dict)
         assert len(result) == 1
         assert "version1" in result
-        assert result["version1"] == version
-        assert result["version1"].version == "1.0"
+        assert "document" in result["version1"]
+        assert "version" in result["version1"]
+        assert result["version1"]["document"] == doc
+        assert result["version1"]["version"] == version
+        assert result["version1"]["version"].version == "1.0"
 
     def test_document_map_single_document_multiple_versions(self):
         """Test document_map with a single document that has multiple versions."""
@@ -923,9 +926,13 @@ class TestStudy:
         assert "version1" in result
         assert "version2" in result
         assert "version3" in result
-        assert result["version1"].version == "1.0"
-        assert result["version2"].version == "2.0"
-        assert result["version3"].version == "3.0"
+        assert result["version1"]["version"].version == "1.0"
+        assert result["version2"]["version"].version == "2.0"
+        assert result["version3"]["version"].version == "3.0"
+        # All versions should reference the same document
+        assert result["version1"]["document"] == doc
+        assert result["version2"]["document"] == doc
+        assert result["version3"]["document"] == doc
 
     def test_document_map_multiple_documents_single_version_each(self):
         """Test document_map with multiple documents, each having one version."""
@@ -946,6 +953,10 @@ class TestStudy:
         assert "protocol_v1" in result
         assert "csr_v1" in result
         assert "sap_v1" in result
+        # Each version should reference its own document
+        assert result["protocol_v1"]["document"] == doc1
+        assert result["csr_v1"]["document"] == doc2
+        assert result["sap_v1"]["document"] == doc3
 
     def test_document_map_multiple_documents_multiple_versions(self):
         """Test document_map with multiple documents, each having multiple versions."""
@@ -976,18 +987,27 @@ class TestStudy:
         assert "csr_v1" in result
         assert "csr_v2" in result
         assert "csr_v3" in result
+        # Protocol versions reference doc1
+        assert result["protocol_v1"]["document"] == doc1
+        assert result["protocol_v2"]["document"] == doc1
+        # CSR versions reference doc2
+        assert result["csr_v1"]["document"] == doc2
+        assert result["csr_v2"]["document"] == doc2
+        assert result["csr_v3"]["document"] == doc2
 
     def test_document_map_returns_correct_version_objects(self):
-        """Test that document_map returns the actual version objects."""
+        """Test that document_map returns the actual version and document objects."""
         version = self._create_document_version("version1", "1.0")
         doc = self._create_document_with_versions("doc1", "PROTOCOL", [version])
         self.study.documentedBy = [doc]
 
         result = self.study.document_map()
 
-        # Verify it's the same object
-        assert result["version1"] is version
-        assert isinstance(result["version1"], StudyDefinitionDocumentVersion)
+        # Verify it's the same objects
+        assert result["version1"]["version"] is version
+        assert result["version1"]["document"] is doc
+        assert isinstance(result["version1"]["version"], StudyDefinitionDocumentVersion)
+        assert isinstance(result["version1"]["document"], StudyDefinitionDocument)
 
     def test_document_map_with_mixed_empty_and_populated_documents(self):
         """Test document_map with a mix of documents, some with versions and some without."""
@@ -1008,9 +1028,12 @@ class TestStudy:
         assert len(result) == 2
         assert "version1" in result
         assert "version2" in result
+        # Verify correct document association
+        assert result["version1"]["document"] == doc1
+        assert result["version2"]["document"] == doc3
 
     def test_document_map_preserves_version_properties(self):
-        """Test that document_map preserves all version properties."""
+        """Test that document_map preserves all version and document properties."""
         status_code = Code(
             id="status1",
             code="DRAFT",
@@ -1032,6 +1055,10 @@ class TestStudy:
 
         result = self.study.document_map()
 
-        assert result["version1"].version == "1.5.3"
-        assert result["version1"].status.code == "DRAFT"
-        assert result["version1"].status.decode == "Draft"
+        # Verify version properties
+        assert result["version1"]["version"].version == "1.5.3"
+        assert result["version1"]["version"].status.code == "DRAFT"
+        assert result["version1"]["version"].status.decode == "Draft"
+        # Verify document properties
+        assert result["version1"]["document"].templateName == "PROTOCOL"
+        assert result["version1"]["document"].id == "doc1"

@@ -27,11 +27,11 @@ class Study(ApiBaseModel):
     def document_templates(self) -> list[str]:
         return [x.templateName for x in self.documentedBy]
 
-    def document_map(self) -> dict[str, StudyDefinitionDocumentVersion]:
+    def document_map(self) -> dict[str, dict[StudyDefinitionDocument, StudyDefinitionDocumentVersion]]:
         result = {}
         for doc in self.documentedBy:
             for version in doc.versions:
-                result[version.id] = version
+                result[version.id] = {"document": doc, "version": version}
         return result
 
     def first_version(self) -> StudyVersion | None:
