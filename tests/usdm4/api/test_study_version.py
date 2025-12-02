@@ -15,6 +15,10 @@ from src.usdm4.api.narrative_content import NarrativeContentItem
 from src.usdm4.api.address import Address
 from src.usdm4.api.population_definition import StudyDesignPopulation
 from src.usdm4.api.extension import ExtensionAttribute
+from src.usdm4.api.study_definition_document import StudyDefinitionDocument
+from src.usdm4.api.study_definition_document_version import (
+    StudyDefinitionDocumentVersion,
+)
 
 
 class TestStudyVersion:
@@ -946,6 +950,237 @@ class TestStudyVersion:
 
         statement = study_version.confidentiality_statement()
         assert statement == ""
+
+    # =====================================================
+    # Tests for documents method
+    # =====================================================
+
+    def _create_document_version(
+        self, version_id: str, version_number: str = "1.0"
+    ) -> StudyDefinitionDocumentVersion:
+        """Helper method to create a StudyDefinitionDocumentVersion."""
+        status_code = Code(
+            id="status1",
+            code="FINAL",
+            codeSystem="DOC_STATUS",
+            codeSystemVersion="1.0",
+            decode="Final",
+            instanceType="Code",
+        )
+
+        return StudyDefinitionDocumentVersion(
+            id=version_id,
+            version=version_number,
+            status=status_code,
+            instanceType="StudyDefinitionDocumentVersion",
+        )
+
+    def _create_document_with_versions(
+        self, doc_id: str, template_name: str, versions: list
+    ) -> StudyDefinitionDocument:
+        """Helper method to create a StudyDefinitionDocument with versions."""
+        doc_language = Code(
+            id="lang1",
+            code="EN",
+            codeSystem="LANGUAGE",
+            codeSystemVersion="1.0",
+            decode="English",
+            instanceType="Code",
+        )
+
+        doc_type = Code(
+            id=f"doc_type_{doc_id}",
+            code=template_name,
+            codeSystem="DOC_TYPE",
+            codeSystemVersion="1.0",
+            decode=f"{template_name} Document",
+            instanceType="Code",
+        )
+
+        return StudyDefinitionDocument(
+            id=doc_id,
+            name=f"{template_name} Document",
+            label=f"{template_name} v1.0",
+            templateName=template_name,
+            language=doc_language,
+            type=doc_type,
+            versions=versions,
+            instanceType="StudyDefinitionDocument",
+        )
+
+    def _create_document_map(self, docs_with_versions: list) -> dict:
+        """Helper to create a document_map similar to Study.document_map()."""
+        result = {}
+        for doc, versions in docs_with_versions:
+            for version in versions:
+                result[version.id] = {"document": doc, "version": version}
+        return result
+
+    def test_documents_empty_document_version_ids(self):
+        """Test documents() with empty documentVersionIds."""
+        study_version = StudyVersion(
+            id="sv_docs1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            documentVersionIds=[],
+            instanceType="StudyVersion",
+        )
+
+        document_map = {}
+        result = study_version.documents(document_map)
+
+        assert isinstance(result, list)
+        assert len(result) == 0
+
+    def test_documents_single_document_version(self):
+        """Test documents() with a single documentVersionId."""
+        version1 = self._create_document_version("version1", "1.0")
+        doc1 = self._create_document_with_versions("doc1", "PROTOCOL", [version1])
+        document_map = self._create_document_map([(doc1, [version1])])
+
+        study_version = StudyVersion(
+            id="sv_docs2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            documentVersionIds=["version1"],
+            instanceType="StudyVersion",
+        )
+
+        result = study_version.documents(document_map)
+
+        assert isinstance(result, list)
+        assert len(result) == 1
+        assert "document" in result[0]
+        assert "version" in result[0]
+        assert result[0]["document"] == doc1
+        assert result[0]["version"] == version1
+
+    def test_documents_multiple_document_versions(self):
+        """Test documents() with multiple documentVersionIds."""
+        version1 = self._create_document_version("version1", "1.0")
+        version2 = self._create_document_version("version2", "2.0")
+        version3 = self._create_document_version("version3", "1.0")
+
+        doc1 = self._create_document_with_versions("doc1", "PROTOCOL", [version1, version2])
+        doc2 = self._create_document_with_versions("doc2", "CSR", [version3])
+
+        document_map = self._create_document_map([(doc1, [version1, version2]), (doc2, [version3])])
+
+        study_version = StudyVersion(
+            id="sv_docs3",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            documentVersionIds=["version1", "version2", "version3"],
+            instanceType="StudyVersion",
+        )
+
+        result = study_version.documents(document_map)
+
+        assert isinstance(result, list)
+        assert len(result) == 3
+
+        # First entry
+        assert result[0]["document"] == doc1
+        assert result[0]["version"] == version1
+
+        # Second entry
+        assert result[1]["document"] == doc1
+        assert result[1]["version"] == version2
+
+        # Third entry
+        assert result[2]["document"] == doc2
+        assert result[2]["version"] == version3
+
+    def test_documents_preserves_order(self):
+        """Test documents() preserves the order of documentVersionIds."""
+        version1 = self._create_document_version("version1", "1.0")
+        version2 = self._create_document_version("version2", "2.0")
+        version3 = self._create_document_version("version3", "3.0")
+
+        doc1 = self._create_document_with_versions("doc1", "PROTOCOL", [version1, version2, version3])
+        document_map = self._create_document_map([(doc1, [version1, version2, version3])])
+
+        # Specify different order
+        study_version = StudyVersion(
+            id="sv_docs4",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            documentVersionIds=["version3", "version1", "version2"],
+            instanceType="StudyVersion",
+        )
+
+        result = study_version.documents(document_map)
+
+        assert len(result) == 3
+        assert result[0]["version"].id == "version3"
+        assert result[1]["version"].id == "version1"
+        assert result[2]["version"].id == "version2"
+
+    def test_documents_returns_dict_with_correct_keys(self):
+        """Test documents() returns list of dicts with 'document' and 'version' keys."""
+        version1 = self._create_document_version("version1", "1.0")
+        doc1 = self._create_document_with_versions("doc1", "PROTOCOL", [version1])
+        document_map = self._create_document_map([(doc1, [version1])])
+
+        study_version = StudyVersion(
+            id="sv_docs5",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            documentVersionIds=["version1"],
+            instanceType="StudyVersion",
+        )
+
+        result = study_version.documents(document_map)
+
+        assert len(result) == 1
+        assert isinstance(result[0], dict)
+        assert set(result[0].keys()) == {"document", "version"}
+        assert isinstance(result[0]["document"], StudyDefinitionDocument)
+        assert isinstance(result[0]["version"], StudyDefinitionDocumentVersion)
+
+    def test_documents_subset_of_map(self):
+        """Test documents() returns only documents matching documentVersionIds."""
+        version1 = self._create_document_version("version1", "1.0")
+        version2 = self._create_document_version("version2", "2.0")
+        version3 = self._create_document_version("version3", "3.0")
+
+        doc1 = self._create_document_with_versions("doc1", "PROTOCOL", [version1])
+        doc2 = self._create_document_with_versions("doc2", "CSR", [version2])
+        doc3 = self._create_document_with_versions("doc3", "SAP", [version3])
+
+        # Full document_map with all versions
+        document_map = self._create_document_map([
+            (doc1, [version1]),
+            (doc2, [version2]),
+            (doc3, [version3])
+        ])
+
+        # But study_version only references some of them
+        study_version = StudyVersion(
+            id="sv_docs6",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            documentVersionIds=["version1", "version3"],  # Only version1 and version3
+            instanceType="StudyVersion",
+        )
+
+        result = study_version.documents(document_map)
+
+        assert len(result) == 2
+        assert result[0]["version"].id == "version1"
+        assert result[1]["version"].id == "version3"
 
     def test_confidentiality_statement_wrong_url(self):
         """Test confidentiality_statement returns empty string when extension has wrong URL."""

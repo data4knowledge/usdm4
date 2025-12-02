@@ -25,7 +25,7 @@ from .biomedical_concept import BiomedicalConcept
 from .biomedical_concept_category import BiomedicalConceptCategory
 from .biomedical_concept_surrogate import BiomedicalConceptSurrogate
 from .syntax_template_dictionary import SyntaxTemplateDictionary
-from .study_definition_document import StudyDefinitionDocumentVersion
+from .study_definition_document import StudyDefinitionDocument, StudyDefinitionDocumentVersion
 from .condition import Condition
 from .extension import Extension
 
@@ -230,7 +230,7 @@ class StudyVersion(ApiBaseModelWithId):
     def find_study_design(self, id: str) -> StudyDesign:
         return next((x for x in self.studyDesigns if x.id == id), None)
 
-    def documents(self, document_map: dict) -> list[StudyDefinitionDocumentVersion]:
+    def documents(self, document_map: dict) -> list[dict[StudyDefinitionDocument, StudyDefinitionDocumentVersion]]:
         return [document_map[x] for x in self.documentVersionIds]
 
     def organization_map(self) -> dict[str, Organization]:
