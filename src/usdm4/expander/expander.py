@@ -1,7 +1,8 @@
+import re
 import json
 from usdm4.api.study_design import StudyDesign
 from usdm4.api.schedule_timeline import ScheduleTimeline
-from usdm4.api.scheduled_instance import ScheduledActivityInstance, ScheduledDecisionInstance, ScheduledInstance
+from usdm4.api.scheduled_instance import ScheduledActivityInstance, ScheduledDecisionInstance, ScheduledInstance, ConditionAssignment
 from usdm4.api.schedule_timeline_exit import ScheduleTimelineExit
 from simple_error_log import Errors
 from .path import Path
@@ -59,9 +60,37 @@ class Expander():
                 self._errors.error(f"Next instance error, {si}") 
             return tp
         elif isinstance(si, ScheduledDecisionInstance):
-            return previous
+            if len(si.conditionAssignments) == 1:
+                ca: ConditionAssignment = si.conditionAssignments[0]
+                dc_op, dc_value = self._days_condition(ca.condition)
+                if dc_op:
+                    if dc_op(previous.tick, dc_value):
+                        tp = self._process_si(timeline, timeline.find_timepoint(ca.conditionTargetId), tp, offset)
+                    else:
+                        tp = self._process_si(timeline, timeline.find_timepoint(si.defaultConditionId), tp, offset)
+                else:
+                    self._errors.error(f"No day condition encountered, being ignored.") 
+                    tp = self._process_si(timeline, timeline.find_timepoint(si.defaultConditionId), tp, offset)
+            else:
+                self._errors.error(f"Complex condition encountered, being ignored.") 
+                tp = self._process_si(timeline, timeline.find_timepoint(si.defaultConditionId), tp, offset)
+            return tp
         elif isinstance(si, ScheduleTimelineExit):
             return previous
         else:
             self._errors.error(f"Unknown instance type detected, {si}") 
             return previous
+
+    def _days_condition(self, text) -> tuple[object, int]:
+        operators = {
+            '>': operator.gt,
+            '>': operator.lt,
+            "=": operator.eq
+        }
+        pattern = r'days\s*([<>=])\s*(\d+)'
+        match = re.search(pattern, text)
+        if match:
+            operator = operators[match.group(1)]  # '>'
+            value = int(match.group(2))
+            return value, operator
+        return None, None
