@@ -41,25 +41,27 @@ class Expander():
                 # print(f"Timepoint timeline")
                 tp_timeline = self._study_design.find_timeline(si.timelineId)
                 entry: ScheduledInstance = tp_timeline.find_timepoint(tp_timeline.entryId)
-                self._process_si(tp_timeline, entry, tp, tp.tick)
+                tp = self._process_si(tp_timeline, entry, tp, tp.tick)
 
             # Activity timelines
             a_timelines = tp.activity_timelines()
             for a_timeline in a_timelines:
                 # print(f"ACTIVITY TIMELINE: {a_timeline.id}")
                 entry: ScheduledInstance = a_timeline.find_timepoint(a_timeline.entryId)
-                self._process_si(a_timeline, entry, tp, tp.tick)
+                tp = self._process_si(a_timeline, entry, tp, tp.tick)
 
             # Next 
             if si.defaultConditionId:
-                self._process_si(timeline, timeline.find_timepoint(si.defaultConditionId), tp, offset)
+                tp = self._process_si(timeline, timeline.find_timepoint(si.defaultConditionId), tp, offset)
             elif si.timelineExitId:
-                self._process_si(timeline, timeline.find_exit(si.timelineExitId), tp, offset)
+                tp = self._process_si(timeline, timeline.find_exit(si.timelineExitId), tp, offset)
             else:
                 self._errors.error(f"Next instance error, {si}") 
+            return tp
         elif isinstance(si, ScheduledDecisionInstance):
-            pass
+            return previous
         elif isinstance(si, ScheduleTimelineExit):
-            pass
+            return previous
         else:
             self._errors.error(f"Unknown instance type detected, {si}") 
+            return previous
