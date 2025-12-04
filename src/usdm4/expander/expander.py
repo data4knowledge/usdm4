@@ -29,8 +29,9 @@ class Expander():
         return json.dumps({"nodes": [x.to_dict() for x in self._nodes]}, indent=4)
     
     def _process_si(self, timeline: ScheduleTimeline, si: ScheduledActivityInstance | ScheduledDecisionInstance | ScheduleTimelineExit, previous: Timepoint, offset: int):
+        print(f"SI {type(si)}")
         if isinstance(si, ScheduledActivityInstance):
-            print(f"SAI with id {si.id}")
+            # print(f"SAI with id {si.id}")
             tp = Timepoint(self._study_design, timeline, si, self._errors, self._id, previous.tick if previous else 0)
             self._id += 1
             self._nodes.append(tp)
@@ -39,7 +40,7 @@ class Expander():
 
             # Timepoint timeline
             if si.timelineId:
-                # print(f"Timepoint timeline")
+                print(f"Timepoint timeline {si.timelineId}")
                 tp_timeline = self._study_design.find_timeline(si.timelineId)
                 entry: ScheduledInstance = tp_timeline.find_timepoint(tp_timeline.entryId)
                 tp = self._process_si(tp_timeline, entry, tp, tp.tick)
@@ -60,11 +61,12 @@ class Expander():
                 self._errors.error(f"Next instance error, {si}") 
             return tp
         elif isinstance(si, ScheduledDecisionInstance):
+            print(f"SDI with id {si.id}")
             if len(si.conditionAssignments) == 1:
                 ca: ConditionAssignment = si.conditionAssignments[0]
                 dc_op, dc_value = self._days_condition(ca.condition)
                 if dc_op:
-                    if dc_op(previous.tick, dc_value):
+                    if dc_op(previous.tick, dc_value * 24 * 60 * 60):
                         tp = self._process_si(timeline, timeline.find_timepoint(ca.conditionTargetId), tp, offset)
                     else:
                         tp = self._process_si(timeline, timeline.find_timepoint(si.defaultConditionId), tp, offset)
