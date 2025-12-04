@@ -1,3 +1,4 @@
+from usdm4.api.study_design import StudyDesign
 from usdm4.api.schedule_timeline import ScheduleTimeline
 from usdm4.api.scheduled_instance import ScheduledActivityInstance
 from usdm4.api.timing import Timing
@@ -6,13 +7,29 @@ from simple_error_log import Errors
 
 class Timepoint():
 
-    def __init__(self, timeline: ScheduleTimeline, sai: ScheduledActivityInstance, errors: Errors):
+    def __init__(self, study_design: StudyDesign, timeline: ScheduleTimeline, sai: ScheduledActivityInstance, errors: Errors):
         self._sai: ScheduledActivityInstance = sai
         self._tick: int = self._calculate_hop(timeline, sai)
         self._errors = errors
+        self._timeline = timeline
+        self._study_design = study_design
 
     def to_dict(self):
-        return {"tick": self._tick}
+        activities = [self._study_design.find_activity(x) for x in self._sai.activityIds]
+        return {
+            "tick": self._tick,
+            "label": self._sai.label,
+            "encounter": self._study_design.find_encounter(self._sai.encounterId).label if self._sai.encounterId else None,
+            "activities": {
+                "ordered": False,
+                "items": [
+                    {
+                        "label": x.label,
+                        "procedures": [p.label for p in x.definedProcedures],
+                    } for x in activities
+                ]
+            }
+        }
     
     def _calculate_hop(self, timeline: ScheduleTimeline, sai: ScheduledActivityInstance) -> int:
         return self._calculate_next_hop(timeline, sai, 0)

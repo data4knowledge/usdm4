@@ -59,16 +59,6 @@ class StudyDesign(ApiBaseModelWithIdNameLabelAndDesc):
         code = self.phase()
         return code.decode if code else ""
 
-    # def soa(self, timeline_name: str) -> list:
-    #     timeline = next(
-    #         (x for x in self.scheduleTimelines if x.name == timeline_name), None
-    #     )
-    #     return timeline.soa() if timeline else None
-
-    # def main_soa(self) -> list:
-    #     timeline = next((x for x in self.scheduleTimelines if x.mainTimeline), None)
-    #     return timeline.soa() if timeline else None
-
     def first_activity(self) -> Activity:
         return next((x for x in self.activities if not x.previousId and x.nextId), None)
 
