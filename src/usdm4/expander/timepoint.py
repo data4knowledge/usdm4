@@ -8,17 +8,26 @@ from simple_error_log import Errors
 
 class Timepoint():
 
-    def __init__(self, study_design: StudyDesign, timeline: ScheduleTimeline, sai: ScheduledActivityInstance, errors: Errors, offset: int):
+    def __init__(self, study_design: StudyDesign, timeline: ScheduleTimeline, sai: ScheduledActivityInstance, errors: Errors, id: int, offset: int):
         self._sai: ScheduledActivityInstance = sai
         self._errors = errors
         self._timeline = timeline
         self._study_design = study_design
         self._tick: int = self._calculate_hop(timeline, sai) + offset
+        self._id: str = f"TP_{id}"
+        self._edges: list[str] = []
 
     @property
     def tick(self) -> int:
         return self._tick
-    
+
+    @property
+    def id(self) -> str:
+        return self._id
+
+    def add_edge(self, next: 'Timepoint') -> None:
+        self._edges.append(next.id)
+
     def activity_timelines(self) -> list[ScheduleTimeline]:
         activities = [self._study_design.find_activity(x) for x in self._sai.activityIds]
         return [self._study_design.find_timeline(x.timelineId) for x in activities if x.timelineId]
@@ -27,6 +36,7 @@ class Timepoint():
         parents = self._study_design.activity_parent()
         activities = [self._study_design.find_activity(x) for x in self._sai.activityIds]
         return {
+            "id": self._id,
             "tick": self._tick,
             "time": str(Tick(value=self._tick)),
             "label": self._sai.label,
@@ -39,7 +49,8 @@ class Timepoint():
                         "procedures": [p.label for p in x.definedProcedures],
                     } for x in activities
                 ]
-            }
+            },
+            "edges": self._edges
         }
     
     def _calculate_hop(self, timeline: ScheduleTimeline, sai: ScheduledActivityInstance) -> int:
