@@ -8,13 +8,21 @@ from simple_error_log import Errors
 
 class Timepoint():
 
-    def __init__(self, study_design: StudyDesign, timeline: ScheduleTimeline, sai: ScheduledActivityInstance, errors: Errors):
+    def __init__(self, study_design: StudyDesign, timeline: ScheduleTimeline, sai: ScheduledActivityInstance, errors: Errors, offset: int):
         self._sai: ScheduledActivityInstance = sai
-        self._tick: int = self._calculate_hop(timeline, sai)
         self._errors = errors
         self._timeline = timeline
         self._study_design = study_design
+        self._tick: int = self._calculate_hop(timeline, sai) + offset
 
+    @property
+    def tick(self) -> int:
+        return self._tick
+    
+    def activity_timelines(self) -> list[ScheduleTimeline]:
+        activities = [self._study_design.find_activity(x) for x in self._sai.activityIds]
+        return [self._study_design.find_timeline(x.timelineId) for x in activities if x.timelineId]
+        
     def to_dict(self):
         activities = [self._study_design.find_activity(x) for x in self._sai.activityIds]
         return {
@@ -37,7 +45,9 @@ class Timepoint():
         return self._calculate_next_hop(timeline, sai, 0)
 
     def _calculate_next_hop(self, timeline: ScheduleTimeline, sai: ScheduledActivityInstance, tick: int) -> int:
+        # print(f"NEXT HOP: {timeline.id}, {sai.id}")
         timing: Timing = timeline.find_timing_from(sai.id)
+        # print(f"TIMING: {timing}")
         to_sai = timeline.find_timepoint(timing.relativeToScheduledInstanceId)
         before = timing.type.code == "C201357"
         to_timing: Timing = timeline.find_timing_from(to_sai.id)
@@ -49,7 +59,6 @@ class Timepoint():
             return self._calculate_next_hop(timeline, to_sai, new_tick)
 
     def _calculate_tick(self, timing: Timing) -> int:
-        # return self._duration_to_ticks(timing.value)
         try:
             return Tick(duration=timing.value).tick
         except Exception as e:

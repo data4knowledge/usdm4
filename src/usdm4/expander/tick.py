@@ -32,19 +32,23 @@ class Tick():
         return ', '.join(result)
 
     def _duration_to_ticks(self, duration: str) -> int:
-        if duration.endswith("Y"):
-            return int(duration[1:-1]) * 365 * 24 * 60 * 60
-        elif duration.endswith("M"):
-            return int(duration[1:-1]) * 30 * 24 * 60 * 60
-        elif duration.endswith("W"):
-            return int(duration[1:-1]) * 7 * 24 * 60 * 60
-        elif duration.endswith("D"):
-            return int(duration[1:-1]) * 24 * 60 * 60
-        elif duration.endswith("H"):
-            return int(duration[1:-1]) * 60 * 60
-        elif duration.endswith("M"):
-            return int(duration[1:-1]) * 60
-        elif duration.endswith("S"):
-            return int(duration[1:-1])
+        if duration.startswith("PT"):
+            if duration.endswith("H"):
+                return int(duration[2:-1]) * 60 * 60
+            elif duration.endswith("M"):
+                return int(duration[2:-1]) * 60
+            elif duration.endswith("S"):
+                return int(duration[2:-1])
+            else:
+                raise Exception(f"Failed to decode duration '{duration}")
         else:
-            raise Exception(f"Failed to decode duration '{duration}")
+            if duration.endswith("Y"):
+                return int(duration[1:-1]) * 365 * 24 * 60 * 60
+            elif duration.endswith("M"):
+                return int(duration[1:-1]) * 30 * 24 * 60 * 60
+            elif duration.endswith("W"):
+                return int(duration[1:-1]) * 7 * 24 * 60 * 60
+            elif duration.endswith("D"):
+                return int(duration[1:-1]) * 24 * 60 * 60
+            else:
+                raise Exception(f"Failed to decode duration '{duration}")

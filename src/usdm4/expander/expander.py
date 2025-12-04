@@ -16,24 +16,30 @@ class Expander():
         self._errors = errors
 
     def process(self):
-        self._process_timeline()
+        self._path = Path(self._errors)
+        entry: ScheduledInstance = self._timeline.find_timepoint(self._timeline.entryId)
+        self._process_si(self._timeline, entry)
 
     def to_json(self):
         return self._path.to_json()
     
-    def _process_timeline(self):
-        self._path = Path(self._errors)
-        entry: ScheduledInstance = self._timeline.find_timepoint(self._timeline.entryId)
-        self._process_si(entry)
-
-    def _process_si(self, si: ScheduledActivityInstance | ScheduledDecisionInstance | ScheduleTimelineExit):
+    def _process_si(self, timeline: ScheduleTimeline, si: ScheduledActivityInstance | ScheduledDecisionInstance | ScheduleTimelineExit, offset: int=0):
         if isinstance(si, ScheduledActivityInstance):
-            tp = Timepoint(self._study_design, self._timeline, si, self._errors)
+            tp = Timepoint(self._study_design, timeline, si, self._errors, offset)
             self._path.add(tp)
+
+            # Activity timelines
+            a_timelines = tp.activity_timelines()
+            for a_timeline in a_timelines:
+                # print(f"ACTIVITY TIMELINE: {a_timeline.id}")
+                entry: ScheduledInstance = a_timeline.find_timepoint(a_timeline.entryId)
+                self._process_si(a_timeline, entry, tp.tick)
+
+            # Next 
             if si.defaultConditionId:
-                self._process_si(self._timeline.find_timepoint(si.defaultConditionId))
+                self._process_si(timeline, timeline.find_timepoint(si.defaultConditionId), offset)
             elif si.timelineExitId:
-                self._process_si(self._timeline.find_exit(si.timelineExitId))
+                self._process_si(timeline, timeline.find_exit(si.timelineExitId), offset)
             else:
                 self._errors.error(f"Next instance error, {si}") 
         elif isinstance(si, ScheduledDecisionInstance):
@@ -42,4 +48,4 @@ class Expander():
             exit = Exit(si)
             self._path.add(exit)
         else:
-            self._errors.error(f"Unknown instance type detected, {si.instanceType}") 
+            self._errors.error(f"Unknown instance type detected, {si}") 
