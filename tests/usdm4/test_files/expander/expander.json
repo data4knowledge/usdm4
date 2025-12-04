@@ -1,0 +1,1904 @@
+{
+    "timepoints": [
+        {
+            "tick": -1209600,
+            "time": "-2 weeks",
+            "label": "Screen One",
+            "encounter": "Screening 1",
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Informed consent",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Inclusion and exclusion criteria",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Patient number assigned",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Demographics",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Hachinski Ischemic Scale",
+                        "procedures": []
+                    },
+                    {
+                        "label": "MMSE",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Physical examination",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Medical history",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Habits",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Chest X-ray",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Vital Signs and Temperature",
+                        "procedures": []
+                    },
+                    {
+                        "label": "ECG",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Placebo TTS test",
+                        "procedures": []
+                    },
+                    {
+                        "label": "CT scan",
+                        "procedures": [
+                            "CT Scan"
+                        ]
+                    },
+                    {
+                        "label": "Concomitant medications",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Hematology",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Chemistry",
+                        "procedures": [
+                            "Alanine Aminotransferase Measurement",
+                            "Albumin Measurement",
+                            "Alkaline Phosphatase Measurement",
+                            "Aspartate Aminotransferase Measurement",
+                            "Creatinine Measurement",
+                            "Potassium Measurement",
+                            "Sodium Measurement"
+                        ]
+                    },
+                    {
+                        "label": "Uninalysis",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Hemoglobin A1C",
+                        "procedures": []
+                    },
+                    {
+                        "label": "ADAS-Cog",
+                        "procedures": []
+                    },
+                    {
+                        "label": "CIBIC+",
+                        "procedures": []
+                    },
+                    {
+                        "label": "DAD",
+                        "procedures": []
+                    },
+                    {
+                        "label": "NPI-X",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": -1209600,
+            "time": "-2 weeks",
+            "label": "5 minute supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject supine",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": -1209300,
+            "time": "-2 weeks, 5 minutes",
+            "label": "Vital signs supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while supine",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": -1209300,
+            "time": "-2 weeks, 5 minutes",
+            "label": "1 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": -1209240,
+            "time": "-2 weeks, 6 minutes",
+            "label": "Vital signs after 1 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": -1209240,
+            "time": "-2 weeks, 6 minutes",
+            "label": "2 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": -1209120,
+            "time": "-2 weeks, 8 minutes",
+            "label": "Vital signs after 3 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": -172800,
+            "time": "-1 weeks, 5 days",
+            "label": "Screen Two",
+            "encounter": "Screening 2",
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital Signs and Temperature",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Ambulatory ECG placed",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": -172800,
+            "time": "-1 weeks, 5 days",
+            "label": "5 minute supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject supine",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": -172500,
+            "time": "-1 weeks, 5 days, 5 minutes",
+            "label": "Vital signs supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while supine",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": -172500,
+            "time": "-1 weeks, 5 days, 5 minutes",
+            "label": "1 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": -172440,
+            "time": "-1 weeks, 5 days, 6 minutes",
+            "label": "Vital signs after 1 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": -172440,
+            "time": "-1 weeks, 5 days, 6 minutes",
+            "label": "2 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": -172320,
+            "time": "-1 weeks, 5 days, 8 minutes",
+            "label": "Vital signs after 3 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 86400,
+            "time": "1 day",
+            "label": "Dose",
+            "encounter": "Baseline",
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Patient randomised",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Vital Signs and Temperature",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Ambulatory ECG removed",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Concomitant medications",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Plasma Specimen (Xanomeline)",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Study drug record , Medications dispensed, Medications returned",
+                        "procedures": []
+                    },
+                    {
+                        "label": "ADAS-Cog",
+                        "procedures": []
+                    },
+                    {
+                        "label": "CIBIC+",
+                        "procedures": []
+                    },
+                    {
+                        "label": "DAD",
+                        "procedures": []
+                    },
+                    {
+                        "label": "NPI-X",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 86400,
+            "time": "1 day",
+            "label": "5 minute supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject supine",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 86700,
+            "time": "1 day, 5 minutes",
+            "label": "Vital signs supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while supine",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 86700,
+            "time": "1 day, 5 minutes",
+            "label": "1 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 86760,
+            "time": "1 day, 6 minutes",
+            "label": "Vital signs after 1 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 86760,
+            "time": "1 day, 6 minutes",
+            "label": "2 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 86880,
+            "time": "1 day, 8 minutes",
+            "label": "Vital signs after 3 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 1209600,
+            "time": "2 weeks",
+            "label": "Week 2",
+            "encounter": "Week 2",
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Apo E genotyping",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Vital Signs and Temperature",
+                        "procedures": []
+                    },
+                    {
+                        "label": "ECG",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Concomitant medications",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Hematology",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Chemistry",
+                        "procedures": [
+                            "Alanine Aminotransferase Measurement",
+                            "Albumin Measurement",
+                            "Alkaline Phosphatase Measurement",
+                            "Aspartate Aminotransferase Measurement",
+                            "Creatinine Measurement",
+                            "Potassium Measurement",
+                            "Sodium Measurement"
+                        ]
+                    },
+                    {
+                        "label": "Uninalysis",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Plasma Specimen (Xanomeline)",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Study drug record , Medications dispensed, Medications returned",
+                        "procedures": []
+                    },
+                    {
+                        "label": "NPI-X",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 1209600,
+            "time": "2 weeks",
+            "label": "5 minute supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject supine",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 1209900,
+            "time": "2 weeks, 5 minutes",
+            "label": "Vital signs supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while supine",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 1209900,
+            "time": "2 weeks, 5 minutes",
+            "label": "1 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 1209960,
+            "time": "2 weeks, 6 minutes",
+            "label": "Vital signs after 1 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 1209960,
+            "time": "2 weeks, 6 minutes",
+            "label": "2 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 1210080,
+            "time": "2 weeks, 8 minutes",
+            "label": "Vital signs after 3 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 2419200,
+            "time": "4 weeks",
+            "label": "Week 4",
+            "encounter": "Week 4",
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital Signs and Temperature",
+                        "procedures": []
+                    },
+                    {
+                        "label": "ECG",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Concomitant medications",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Hematology",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Chemistry",
+                        "procedures": [
+                            "Alanine Aminotransferase Measurement",
+                            "Albumin Measurement",
+                            "Alkaline Phosphatase Measurement",
+                            "Aspartate Aminotransferase Measurement",
+                            "Creatinine Measurement",
+                            "Potassium Measurement",
+                            "Sodium Measurement"
+                        ]
+                    },
+                    {
+                        "label": "Plasma Specimen (Xanomeline)",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Study drug record , Medications dispensed, Medications returned",
+                        "procedures": []
+                    },
+                    {
+                        "label": "NPI-X",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 2419200,
+            "time": "4 weeks",
+            "label": "5 minute supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject supine",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 2419500,
+            "time": "4 weeks, 5 minutes",
+            "label": "Vital signs supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while supine",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 2419500,
+            "time": "4 weeks, 5 minutes",
+            "label": "1 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 2419560,
+            "time": "4 weeks, 6 minutes",
+            "label": "Vital signs after 1 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 2419560,
+            "time": "4 weeks, 6 minutes",
+            "label": "2 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 2419680,
+            "time": "4 weeks, 8 minutes",
+            "label": "Vital signs after 3 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 3628800,
+            "time": "6 weeks",
+            "label": "Week 6",
+            "encounter": "Week 6",
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital Signs and Temperature",
+                        "procedures": []
+                    },
+                    {
+                        "label": "ECG",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Concomitant medications",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Hematology",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Chemistry",
+                        "procedures": [
+                            "Alanine Aminotransferase Measurement",
+                            "Albumin Measurement",
+                            "Alkaline Phosphatase Measurement",
+                            "Aspartate Aminotransferase Measurement",
+                            "Creatinine Measurement",
+                            "Potassium Measurement",
+                            "Sodium Measurement"
+                        ]
+                    },
+                    {
+                        "label": "Plasma Specimen (Xanomeline)",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Study drug record , Medications dispensed, Medications returned",
+                        "procedures": []
+                    },
+                    {
+                        "label": "NPI-X",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 3628800,
+            "time": "6 weeks",
+            "label": "5 minute supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject supine",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 3629100,
+            "time": "6 weeks, 5 minutes",
+            "label": "Vital signs supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while supine",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 3629100,
+            "time": "6 weeks, 5 minutes",
+            "label": "1 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 3629160,
+            "time": "6 weeks, 6 minutes",
+            "label": "Vital signs after 1 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 3629160,
+            "time": "6 weeks, 6 minutes",
+            "label": "2 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 3629280,
+            "time": "6 weeks, 8 minutes",
+            "label": "Vital signs after 3 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 4838400,
+            "time": "8 weeks",
+            "label": "Week 8",
+            "encounter": "Week 8",
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital Signs and Temperature",
+                        "procedures": []
+                    },
+                    {
+                        "label": "ECG",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Concomitant medications",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Hematology",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Chemistry",
+                        "procedures": [
+                            "Alanine Aminotransferase Measurement",
+                            "Albumin Measurement",
+                            "Alkaline Phosphatase Measurement",
+                            "Aspartate Aminotransferase Measurement",
+                            "Creatinine Measurement",
+                            "Potassium Measurement",
+                            "Sodium Measurement"
+                        ]
+                    },
+                    {
+                        "label": "Study drug record , Medications dispensed, Medications returned",
+                        "procedures": []
+                    },
+                    {
+                        "label": "ADAS-Cog",
+                        "procedures": []
+                    },
+                    {
+                        "label": "CIBIC+",
+                        "procedures": []
+                    },
+                    {
+                        "label": "DAD",
+                        "procedures": []
+                    },
+                    {
+                        "label": "NPI-X",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 4838400,
+            "time": "8 weeks",
+            "label": "5 minute supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject supine",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 4838700,
+            "time": "8 weeks, 5 minutes",
+            "label": "Vital signs supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while supine",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 4838700,
+            "time": "8 weeks, 5 minutes",
+            "label": "1 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 4838760,
+            "time": "8 weeks, 6 minutes",
+            "label": "Vital signs after 1 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 4838760,
+            "time": "8 weeks, 6 minutes",
+            "label": "2 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 4838880,
+            "time": "8 weeks, 8 minutes",
+            "label": "Vital signs after 3 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 6048000,
+            "time": "10 weeks",
+            "label": "Week NPI",
+            "encounter": "Week 8",
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "NPI-X",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 7257600,
+            "time": "12 weeks",
+            "label": "Week 12",
+            "encounter": "Week 12",
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital Signs and Temperature",
+                        "procedures": []
+                    },
+                    {
+                        "label": "ECG",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Concomitant medications",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Hematology",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Chemistry",
+                        "procedures": [
+                            "Alanine Aminotransferase Measurement",
+                            "Albumin Measurement",
+                            "Alkaline Phosphatase Measurement",
+                            "Aspartate Aminotransferase Measurement",
+                            "Creatinine Measurement",
+                            "Potassium Measurement",
+                            "Sodium Measurement"
+                        ]
+                    },
+                    {
+                        "label": "Uninalysis",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Plasma Specimen (Xanomeline)",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Study drug record , Medications dispensed, Medications returned",
+                        "procedures": []
+                    },
+                    {
+                        "label": "NPI-X",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 7257600,
+            "time": "12 weeks",
+            "label": "5 minute supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject supine",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 7257900,
+            "time": "12 weeks, 5 minutes",
+            "label": "Vital signs supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while supine",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 7257900,
+            "time": "12 weeks, 5 minutes",
+            "label": "1 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 7257960,
+            "time": "12 weeks, 6 minutes",
+            "label": "Vital signs after 1 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 7257960,
+            "time": "12 weeks, 6 minutes",
+            "label": "2 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 7258080,
+            "time": "12 weeks, 8 minutes",
+            "label": "Vital signs after 3 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 8467200,
+            "time": "14 weeks",
+            "label": "Week 12 NPI",
+            "encounter": "Week 12",
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "NPI-X",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 9676800,
+            "time": "16 weeks",
+            "label": "Week 16",
+            "encounter": "Week 16",
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital Signs and Temperature",
+                        "procedures": []
+                    },
+                    {
+                        "label": "ECG",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Concomitant medications",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Hematology",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Chemistry",
+                        "procedures": [
+                            "Alanine Aminotransferase Measurement",
+                            "Albumin Measurement",
+                            "Alkaline Phosphatase Measurement",
+                            "Aspartate Aminotransferase Measurement",
+                            "Creatinine Measurement",
+                            "Potassium Measurement",
+                            "Sodium Measurement"
+                        ]
+                    },
+                    {
+                        "label": "Study drug record , Medications dispensed, Medications returned",
+                        "procedures": []
+                    },
+                    {
+                        "label": "ADAS-Cog",
+                        "procedures": []
+                    },
+                    {
+                        "label": "CIBIC+",
+                        "procedures": []
+                    },
+                    {
+                        "label": "DAD",
+                        "procedures": []
+                    },
+                    {
+                        "label": "NPI-X",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 9676800,
+            "time": "16 weeks",
+            "label": "5 minute supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject supine",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 9677100,
+            "time": "16 weeks, 5 minutes",
+            "label": "Vital signs supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while supine",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 9677100,
+            "time": "16 weeks, 5 minutes",
+            "label": "1 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 9677160,
+            "time": "16 weeks, 6 minutes",
+            "label": "Vital signs after 1 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 9677160,
+            "time": "16 weeks, 6 minutes",
+            "label": "2 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 9677280,
+            "time": "16 weeks, 8 minutes",
+            "label": "Vital signs after 3 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 10886400,
+            "time": "18 weeks",
+            "label": "Week 16 NPI",
+            "encounter": "Week 16",
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "NPI-X",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 12096000,
+            "time": "20 weeks",
+            "label": "Week 20",
+            "encounter": "Week 20",
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital Signs and Temperature",
+                        "procedures": []
+                    },
+                    {
+                        "label": "ECG",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Concomitant medications",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Hematology",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Chemistry",
+                        "procedures": [
+                            "Alanine Aminotransferase Measurement",
+                            "Albumin Measurement",
+                            "Alkaline Phosphatase Measurement",
+                            "Aspartate Aminotransferase Measurement",
+                            "Creatinine Measurement",
+                            "Potassium Measurement",
+                            "Sodium Measurement"
+                        ]
+                    },
+                    {
+                        "label": "Plasma Specimen (Xanomeline)",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Study drug record , Medications dispensed, Medications returned",
+                        "procedures": []
+                    },
+                    {
+                        "label": "NPI-X",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 12096000,
+            "time": "20 weeks",
+            "label": "5 minute supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject supine",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 12096300,
+            "time": "20 weeks, 5 minutes",
+            "label": "Vital signs supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while supine",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 12096300,
+            "time": "20 weeks, 5 minutes",
+            "label": "1 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 12096360,
+            "time": "20 weeks, 6 minutes",
+            "label": "Vital signs after 1 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 12096360,
+            "time": "20 weeks, 6 minutes",
+            "label": "2 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 12096480,
+            "time": "20 weeks, 8 minutes",
+            "label": "Vital signs after 3 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 13305600,
+            "time": "22 weeks",
+            "label": "Week 20 NPI",
+            "encounter": "Week 20",
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "NPI-X",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 14515200,
+            "time": "24 weeks",
+            "label": "Week 24",
+            "encounter": "Week 24",
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital Signs and Temperature",
+                        "procedures": []
+                    },
+                    {
+                        "label": "ECG",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Concomitant medications",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Hematology",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Chemistry",
+                        "procedures": [
+                            "Alanine Aminotransferase Measurement",
+                            "Albumin Measurement",
+                            "Alkaline Phosphatase Measurement",
+                            "Aspartate Aminotransferase Measurement",
+                            "Creatinine Measurement",
+                            "Potassium Measurement",
+                            "Sodium Measurement"
+                        ]
+                    },
+                    {
+                        "label": "Uninalysis",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Study drug record , Medications dispensed, Medications returned",
+                        "procedures": []
+                    },
+                    {
+                        "label": "ADAS-Cog",
+                        "procedures": []
+                    },
+                    {
+                        "label": "CIBIC+",
+                        "procedures": []
+                    },
+                    {
+                        "label": "DAD",
+                        "procedures": []
+                    },
+                    {
+                        "label": "NPI-X",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 14515200,
+            "time": "24 weeks",
+            "label": "5 minute supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject supine",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 14515500,
+            "time": "24 weeks, 5 minutes",
+            "label": "Vital signs supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while supine",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 14515500,
+            "time": "24 weeks, 5 minutes",
+            "label": "1 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 14515560,
+            "time": "24 weeks, 6 minutes",
+            "label": "Vital signs after 1 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 14515560,
+            "time": "24 weeks, 6 minutes",
+            "label": "2 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 14515680,
+            "time": "24 weeks, 8 minutes",
+            "label": "Vital signs after 3 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 15724800,
+            "time": "26 weeks",
+            "label": "Week 26",
+            "encounter": "Week 26",
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Physical examination",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Vital Signs and Temperature",
+                        "procedures": []
+                    },
+                    {
+                        "label": "ECG",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Concomitant medications",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Hematology",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Chemistry",
+                        "procedures": [
+                            "Alanine Aminotransferase Measurement",
+                            "Albumin Measurement",
+                            "Alkaline Phosphatase Measurement",
+                            "Aspartate Aminotransferase Measurement",
+                            "Creatinine Measurement",
+                            "Potassium Measurement",
+                            "Sodium Measurement"
+                        ]
+                    },
+                    {
+                        "label": "Study drug record , Medications dispensed, Medications returned",
+                        "procedures": []
+                    },
+                    {
+                        "label": "TTS Acceptability Survey",
+                        "procedures": []
+                    },
+                    {
+                        "label": "NPI-X",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 15724800,
+            "time": "26 weeks",
+            "label": "5 minute supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject supine",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 15725100,
+            "time": "26 weeks, 5 minutes",
+            "label": "Vital signs supine",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while supine",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 15725100,
+            "time": "26 weeks, 5 minutes",
+            "label": "1 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 15725160,
+            "time": "26 weeks, 6 minutes",
+            "label": "Vital signs after 1 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 15725160,
+            "time": "26 weeks, 6 minutes",
+            "label": "2 minute standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Subject Standing",
+                        "procedures": [
+                            ""
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 15725280,
+            "time": "26 weeks, 8 minutes",
+            "label": "Vital signs after 3 min standing",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "procedures": []
+                    }
+                ]
+            }
+        }
+    ],
+    "end_marker": {},
+    "decision": null
+}

@@ -28,6 +28,12 @@ class Expander():
             tp = Timepoint(self._study_design, timeline, si, self._errors, offset)
             self._path.add(tp)
 
+            # Timepoint timeline
+            if si.timelineId:
+                tp_timeline = self._study_design.find_timeline(si.timelineId)
+                entry: ScheduledInstance = tp_timeline.find_timepoint(tp_timeline.entryId)
+                self._process_si(tp_timeline, entry, tp.tick)
+
             # Activity timelines
             a_timelines = tp.activity_timelines()
             for a_timeline in a_timelines:
