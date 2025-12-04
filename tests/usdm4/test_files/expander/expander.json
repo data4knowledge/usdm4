@@ -10,72 +10,89 @@
                 "items": [
                     {
                         "label": "Informed consent",
+                        "parent": "Screening",
                         "procedures": []
                     },
                     {
                         "label": "Inclusion and exclusion criteria",
+                        "parent": "Screening",
                         "procedures": []
                     },
                     {
                         "label": "Patient number assigned",
+                        "parent": "Screening",
                         "procedures": []
                     },
                     {
                         "label": "Demographics",
+                        "parent": "Screening",
                         "procedures": []
                     },
                     {
                         "label": "Hachinski Ischemic Scale",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "MMSE",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Physical examination",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Medical history",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Habits",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Chest X-ray",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Vital Signs and Temperature",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "ECG",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Placebo TTS test",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "CT scan",
+                        "parent": "Safety",
                         "procedures": [
                             "CT Scan"
                         ]
                     },
                     {
                         "label": "Concomitant medications",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Hematology",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "Chemistry",
+                        "parent": "Laboratory",
                         "procedures": [
                             "Alanine Aminotransferase Measurement",
                             "Albumin Measurement",
@@ -88,26 +105,32 @@
                     },
                     {
                         "label": "Uninalysis",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "Hemoglobin A1C",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "ADAS-Cog",
+                        "parent": "Questionaires",
                         "procedures": []
                     },
                     {
                         "label": "CIBIC+",
+                        "parent": "Questionaires",
                         "procedures": []
                     },
                     {
                         "label": "DAD",
+                        "parent": "Questionaires",
                         "procedures": []
                     },
                     {
                         "label": "NPI-X",
+                        "parent": "Questionaires",
                         "procedures": []
                     }
                 ]
@@ -123,6 +146,7 @@
                 "items": [
                     {
                         "label": "Subject supine",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -140,6 +164,7 @@
                 "items": [
                     {
                         "label": "Vital signs while supine",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -155,6 +180,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -172,6 +198,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -187,6 +214,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -204,6 +232,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -219,10 +248,12 @@
                 "items": [
                     {
                         "label": "Vital Signs and Temperature",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Ambulatory ECG placed",
+                        "parent": "Safety",
                         "procedures": []
                     }
                 ]
@@ -238,6 +269,7 @@
                 "items": [
                     {
                         "label": "Subject supine",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -255,6 +287,7 @@
                 "items": [
                     {
                         "label": "Vital signs while supine",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -270,6 +303,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -287,6 +321,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -302,6 +337,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -319,6 +355,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -334,42 +371,52 @@
                 "items": [
                     {
                         "label": "Patient randomised",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Vital Signs and Temperature",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Ambulatory ECG removed",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Concomitant medications",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Plasma Specimen (Xanomeline)",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "Study drug record , Medications dispensed, Medications returned",
+                        "parent": "Exposure",
                         "procedures": []
                     },
                     {
                         "label": "ADAS-Cog",
+                        "parent": "Questionaires",
                         "procedures": []
                     },
                     {
                         "label": "CIBIC+",
+                        "parent": "Questionaires",
                         "procedures": []
                     },
                     {
                         "label": "DAD",
+                        "parent": "Questionaires",
                         "procedures": []
                     },
                     {
                         "label": "NPI-X",
+                        "parent": "Questionaires",
                         "procedures": []
                     }
                 ]
@@ -385,6 +432,7 @@
                 "items": [
                     {
                         "label": "Subject supine",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -402,6 +450,7 @@
                 "items": [
                     {
                         "label": "Vital signs while supine",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -417,6 +466,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -434,6 +484,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -449,6 +500,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -466,6 +518,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -481,26 +534,32 @@
                 "items": [
                     {
                         "label": "Apo E genotyping",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Vital Signs and Temperature",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "ECG",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Concomitant medications",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Hematology",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "Chemistry",
+                        "parent": "Laboratory",
                         "procedures": [
                             "Alanine Aminotransferase Measurement",
                             "Albumin Measurement",
@@ -513,18 +572,22 @@
                     },
                     {
                         "label": "Uninalysis",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "Plasma Specimen (Xanomeline)",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "Study drug record , Medications dispensed, Medications returned",
+                        "parent": "Exposure",
                         "procedures": []
                     },
                     {
                         "label": "NPI-X",
+                        "parent": "Questionaires",
                         "procedures": []
                     }
                 ]
@@ -540,6 +603,7 @@
                 "items": [
                     {
                         "label": "Subject supine",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -557,6 +621,7 @@
                 "items": [
                     {
                         "label": "Vital signs while supine",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -572,6 +637,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -589,6 +655,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -604,6 +671,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -621,6 +689,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -636,22 +705,27 @@
                 "items": [
                     {
                         "label": "Vital Signs and Temperature",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "ECG",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Concomitant medications",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Hematology",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "Chemistry",
+                        "parent": "Laboratory",
                         "procedures": [
                             "Alanine Aminotransferase Measurement",
                             "Albumin Measurement",
@@ -664,14 +738,17 @@
                     },
                     {
                         "label": "Plasma Specimen (Xanomeline)",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "Study drug record , Medications dispensed, Medications returned",
+                        "parent": "Exposure",
                         "procedures": []
                     },
                     {
                         "label": "NPI-X",
+                        "parent": "Questionaires",
                         "procedures": []
                     }
                 ]
@@ -687,6 +764,7 @@
                 "items": [
                     {
                         "label": "Vital signs while supine",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -702,6 +780,7 @@
                 "items": [
                     {
                         "label": "Vital signs while supine",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -717,6 +796,7 @@
                 "items": [
                     {
                         "label": "Vital signs while supine",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -732,6 +812,7 @@
                 "items": [
                     {
                         "label": "Subject supine",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -749,6 +830,7 @@
                 "items": [
                     {
                         "label": "Vital signs while supine",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -764,6 +846,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -781,6 +864,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -796,6 +880,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -813,6 +898,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -828,22 +914,27 @@
                 "items": [
                     {
                         "label": "Vital Signs and Temperature",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "ECG",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Concomitant medications",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Hematology",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "Chemistry",
+                        "parent": "Laboratory",
                         "procedures": [
                             "Alanine Aminotransferase Measurement",
                             "Albumin Measurement",
@@ -856,14 +947,17 @@
                     },
                     {
                         "label": "Plasma Specimen (Xanomeline)",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "Study drug record , Medications dispensed, Medications returned",
+                        "parent": "Exposure",
                         "procedures": []
                     },
                     {
                         "label": "NPI-X",
+                        "parent": "Questionaires",
                         "procedures": []
                     }
                 ]
@@ -879,6 +973,7 @@
                 "items": [
                     {
                         "label": "Subject supine",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -896,6 +991,7 @@
                 "items": [
                     {
                         "label": "Vital signs while supine",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -911,6 +1007,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -928,6 +1025,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -943,6 +1041,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -960,6 +1059,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -975,22 +1075,27 @@
                 "items": [
                     {
                         "label": "Vital Signs and Temperature",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "ECG",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Concomitant medications",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Hematology",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "Chemistry",
+                        "parent": "Laboratory",
                         "procedures": [
                             "Alanine Aminotransferase Measurement",
                             "Albumin Measurement",
@@ -1003,22 +1108,27 @@
                     },
                     {
                         "label": "Study drug record , Medications dispensed, Medications returned",
+                        "parent": "Exposure",
                         "procedures": []
                     },
                     {
                         "label": "ADAS-Cog",
+                        "parent": "Questionaires",
                         "procedures": []
                     },
                     {
                         "label": "CIBIC+",
+                        "parent": "Questionaires",
                         "procedures": []
                     },
                     {
                         "label": "DAD",
+                        "parent": "Questionaires",
                         "procedures": []
                     },
                     {
                         "label": "NPI-X",
+                        "parent": "Questionaires",
                         "procedures": []
                     }
                 ]
@@ -1034,6 +1144,7 @@
                 "items": [
                     {
                         "label": "Subject supine",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -1051,6 +1162,7 @@
                 "items": [
                     {
                         "label": "Vital signs while supine",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -1066,6 +1178,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -1083,6 +1196,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -1098,6 +1212,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -1115,6 +1230,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -1130,6 +1246,7 @@
                 "items": [
                     {
                         "label": "NPI-X",
+                        "parent": "Questionaires",
                         "procedures": []
                     }
                 ]
@@ -1145,22 +1262,27 @@
                 "items": [
                     {
                         "label": "Vital Signs and Temperature",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "ECG",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Concomitant medications",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Hematology",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "Chemistry",
+                        "parent": "Laboratory",
                         "procedures": [
                             "Alanine Aminotransferase Measurement",
                             "Albumin Measurement",
@@ -1173,18 +1295,22 @@
                     },
                     {
                         "label": "Uninalysis",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "Plasma Specimen (Xanomeline)",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "Study drug record , Medications dispensed, Medications returned",
+                        "parent": "Exposure",
                         "procedures": []
                     },
                     {
                         "label": "NPI-X",
+                        "parent": "Questionaires",
                         "procedures": []
                     }
                 ]
@@ -1200,6 +1326,7 @@
                 "items": [
                     {
                         "label": "Subject supine",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -1217,6 +1344,7 @@
                 "items": [
                     {
                         "label": "Vital signs while supine",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -1232,6 +1360,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -1249,6 +1378,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -1264,6 +1394,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -1281,6 +1412,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -1296,6 +1428,7 @@
                 "items": [
                     {
                         "label": "NPI-X",
+                        "parent": "Questionaires",
                         "procedures": []
                     }
                 ]
@@ -1311,22 +1444,27 @@
                 "items": [
                     {
                         "label": "Vital Signs and Temperature",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "ECG",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Concomitant medications",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Hematology",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "Chemistry",
+                        "parent": "Laboratory",
                         "procedures": [
                             "Alanine Aminotransferase Measurement",
                             "Albumin Measurement",
@@ -1339,22 +1477,27 @@
                     },
                     {
                         "label": "Study drug record , Medications dispensed, Medications returned",
+                        "parent": "Exposure",
                         "procedures": []
                     },
                     {
                         "label": "ADAS-Cog",
+                        "parent": "Questionaires",
                         "procedures": []
                     },
                     {
                         "label": "CIBIC+",
+                        "parent": "Questionaires",
                         "procedures": []
                     },
                     {
                         "label": "DAD",
+                        "parent": "Questionaires",
                         "procedures": []
                     },
                     {
                         "label": "NPI-X",
+                        "parent": "Questionaires",
                         "procedures": []
                     }
                 ]
@@ -1370,6 +1513,7 @@
                 "items": [
                     {
                         "label": "Subject supine",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -1387,6 +1531,7 @@
                 "items": [
                     {
                         "label": "Vital signs while supine",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -1402,6 +1547,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -1419,6 +1565,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -1434,6 +1581,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -1451,6 +1599,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -1466,6 +1615,7 @@
                 "items": [
                     {
                         "label": "NPI-X",
+                        "parent": "Questionaires",
                         "procedures": []
                     }
                 ]
@@ -1481,22 +1631,27 @@
                 "items": [
                     {
                         "label": "Vital Signs and Temperature",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "ECG",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Concomitant medications",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Hematology",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "Chemistry",
+                        "parent": "Laboratory",
                         "procedures": [
                             "Alanine Aminotransferase Measurement",
                             "Albumin Measurement",
@@ -1509,14 +1664,17 @@
                     },
                     {
                         "label": "Plasma Specimen (Xanomeline)",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "Study drug record , Medications dispensed, Medications returned",
+                        "parent": "Exposure",
                         "procedures": []
                     },
                     {
                         "label": "NPI-X",
+                        "parent": "Questionaires",
                         "procedures": []
                     }
                 ]
@@ -1532,6 +1690,7 @@
                 "items": [
                     {
                         "label": "Subject supine",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -1549,6 +1708,7 @@
                 "items": [
                     {
                         "label": "Vital signs while supine",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -1564,6 +1724,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -1581,6 +1742,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -1596,6 +1758,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -1613,6 +1776,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -1628,6 +1792,7 @@
                 "items": [
                     {
                         "label": "NPI-X",
+                        "parent": "Questionaires",
                         "procedures": []
                     }
                 ]
@@ -1643,22 +1808,27 @@
                 "items": [
                     {
                         "label": "Vital Signs and Temperature",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "ECG",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Concomitant medications",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Hematology",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "Chemistry",
+                        "parent": "Laboratory",
                         "procedures": [
                             "Alanine Aminotransferase Measurement",
                             "Albumin Measurement",
@@ -1671,26 +1841,32 @@
                     },
                     {
                         "label": "Uninalysis",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "Study drug record , Medications dispensed, Medications returned",
+                        "parent": "Exposure",
                         "procedures": []
                     },
                     {
                         "label": "ADAS-Cog",
+                        "parent": "Questionaires",
                         "procedures": []
                     },
                     {
                         "label": "CIBIC+",
+                        "parent": "Questionaires",
                         "procedures": []
                     },
                     {
                         "label": "DAD",
+                        "parent": "Questionaires",
                         "procedures": []
                     },
                     {
                         "label": "NPI-X",
+                        "parent": "Questionaires",
                         "procedures": []
                     }
                 ]
@@ -1706,6 +1882,7 @@
                 "items": [
                     {
                         "label": "Subject supine",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -1723,6 +1900,7 @@
                 "items": [
                     {
                         "label": "Vital signs while supine",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -1738,6 +1916,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -1755,6 +1934,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -1770,6 +1950,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -1787,6 +1968,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -1802,26 +1984,32 @@
                 "items": [
                     {
                         "label": "Physical examination",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Vital Signs and Temperature",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "ECG",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Concomitant medications",
+                        "parent": "Safety",
                         "procedures": []
                     },
                     {
                         "label": "Hematology",
+                        "parent": "Laboratory",
                         "procedures": []
                     },
                     {
                         "label": "Chemistry",
+                        "parent": "Laboratory",
                         "procedures": [
                             "Alanine Aminotransferase Measurement",
                             "Albumin Measurement",
@@ -1834,14 +2022,17 @@
                     },
                     {
                         "label": "Study drug record , Medications dispensed, Medications returned",
+                        "parent": "Exposure",
                         "procedures": []
                     },
                     {
                         "label": "TTS Acceptability Survey",
+                        "parent": "Questionaires",
                         "procedures": []
                     },
                     {
                         "label": "NPI-X",
+                        "parent": "Questionaires",
                         "procedures": []
                     }
                 ]
@@ -1857,6 +2048,7 @@
                 "items": [
                     {
                         "label": "Subject supine",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -1874,6 +2066,7 @@
                 "items": [
                     {
                         "label": "Vital signs while supine",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -1889,6 +2082,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -1906,6 +2100,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]
@@ -1921,6 +2116,7 @@
                 "items": [
                     {
                         "label": "Subject Standing",
+                        "parent": null,
                         "procedures": [
                             ""
                         ]
@@ -1938,6 +2134,7 @@
                 "items": [
                     {
                         "label": "Vital signs while standing",
+                        "parent": null,
                         "procedures": []
                     }
                 ]

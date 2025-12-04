@@ -73,6 +73,16 @@ class StudyDesign(ApiBaseModelWithIdNameLabelAndDesc):
             item = self.find_activity(item.nextId)
         return items
 
+    def activity_parent(self) -> dict:
+        items = {}
+        item: Activity = self.first_activity()
+        while item:
+            if item.childIds:
+                for child_id in item.childIds:
+                    items[child_id] = item.id
+            item = self.find_activity(item.nextId)
+        return items
+
     def find_epoch(self, id: str) -> StudyEpoch:
         return next((x for x in self.epochs if x.id == id), None)
 

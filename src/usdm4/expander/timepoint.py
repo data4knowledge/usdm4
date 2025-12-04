@@ -24,6 +24,7 @@ class Timepoint():
         return [self._study_design.find_timeline(x.timelineId) for x in activities if x.timelineId]
         
     def to_dict(self):
+        parents = self._study_design.activity_parent()
         activities = [self._study_design.find_activity(x) for x in self._sai.activityIds]
         return {
             "tick": self._tick,
@@ -35,6 +36,7 @@ class Timepoint():
                 "items": [
                     {
                         "label": x.label,
+                        "parent": self._study_design.find_activity(parents[x.id]).label if x.id in parents else None,
                         "procedures": [p.label for p in x.definedProcedures],
                     } for x in activities
                 ]
