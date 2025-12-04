@@ -2,6 +2,7 @@ from usdm4.api.study_design import StudyDesign
 from usdm4.api.schedule_timeline import ScheduleTimeline
 from usdm4.api.scheduled_instance import ScheduledActivityInstance
 from usdm4.api.timing import Timing
+from .tick import Tick
 from simple_error_log import Errors
 
 
@@ -18,6 +19,7 @@ class Timepoint():
         activities = [self._study_design.find_activity(x) for x in self._sai.activityIds]
         return {
             "tick": self._tick,
+            "time": str(Tick(value=self._tick)),
             "label": self._sai.label,
             "encounter": self._study_design.find_encounter(self._sai.encounterId).label if self._sai.encounterId else None,
             "activities": {
@@ -47,24 +49,10 @@ class Timepoint():
             return self._calculate_next_hop(timeline, to_sai, new_tick)
 
     def _calculate_tick(self, timing: Timing) -> int:
-        return self._duration_to_ticks(timing.value)
-
-    def _duration_to_ticks(self, duration: str) -> int:
-        if duration.endswith("Y"):
-            return int(duration[1:-1]) * 365 * 24 * 60 * 60
-        elif duration.endswith("M"):
-            return int(duration[1:-1]) * 30 * 24 * 60 * 60
-        elif duration.endswith("W"):
-            return int(duration[1:-1]) * 7 * 24 * 60 * 60
-        elif duration.endswith("D"):
-            return int(duration[1:-1]) * 24 * 60 * 60
-        elif duration.endswith("H"):
-            return int(duration[1:-1]) * 60 * 60
-        elif duration.endswith("M"):
-            return int(duration[1:-1]) * 60
-        elif duration.endswith("S"):
-            return int(duration[1:-1])
-        else:
-            self._errors.error(f"Failed to decode duration '{duration}")
+        # return self._duration_to_ticks(timing.value)
+        try:
+            return Tick(duration=timing.value).tick
+        except Exception as e:
+            self._errors.error(f"Failed to decode duration '{timing.value}', {e}")
             return 0
 

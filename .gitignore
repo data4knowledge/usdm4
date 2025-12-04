@@ -179,3 +179,4 @@ cython_debug/
 
 # Python test programs
 xxx*.*
+~$*.xlsx
