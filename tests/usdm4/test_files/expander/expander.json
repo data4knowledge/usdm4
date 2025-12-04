@@ -6,7 +6,6 @@
             "label": "Screen One",
             "encounter": "Screening 1",
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Informed consent",
@@ -142,7 +141,6 @@
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject supine",
@@ -160,7 +158,6 @@
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while supine",
@@ -176,7 +173,6 @@
             "label": "1 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -194,7 +190,6 @@
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -210,7 +205,6 @@
             "label": "2 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -228,7 +222,6 @@
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -244,7 +237,6 @@
             "label": "Screen Two",
             "encounter": "Screening 2",
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital Signs and Temperature",
@@ -265,7 +257,6 @@
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject supine",
@@ -283,7 +274,6 @@
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while supine",
@@ -299,7 +289,6 @@
             "label": "1 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -317,7 +306,6 @@
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -333,7 +321,6 @@
             "label": "2 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -351,7 +338,6 @@
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -367,7 +353,6 @@
             "label": "Dose",
             "encounter": "Baseline",
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Patient randomised",
@@ -428,7 +413,6 @@
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject supine",
@@ -446,7 +430,6 @@
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while supine",
@@ -462,7 +445,6 @@
             "label": "1 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -480,7 +462,6 @@
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -496,7 +477,6 @@
             "label": "2 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -514,7 +494,6 @@
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -530,7 +509,6 @@
             "label": "Week 2",
             "encounter": "Week 2",
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Apo E genotyping",
@@ -599,7 +577,6 @@
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject supine",
@@ -617,7 +594,6 @@
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while supine",
@@ -633,7 +609,6 @@
             "label": "1 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -651,7 +626,6 @@
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -667,7 +641,6 @@
             "label": "2 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -685,7 +658,6 @@
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -701,7 +673,6 @@
             "label": "Week 4",
             "encounter": "Week 4",
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital Signs and Temperature",
@@ -760,7 +731,6 @@
             "label": "Anchor",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while supine",
@@ -776,7 +746,6 @@
             "label": "1 Hour",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while supine",
@@ -792,7 +761,6 @@
             "label": "2 Hour",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while supine",
@@ -808,7 +776,6 @@
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject supine",
@@ -826,7 +793,6 @@
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while supine",
@@ -842,7 +808,6 @@
             "label": "1 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -860,7 +825,6 @@
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -876,7 +840,6 @@
             "label": "2 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -894,7 +857,6 @@
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -910,7 +872,6 @@
             "label": "Week 6",
             "encounter": "Week 6",
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital Signs and Temperature",
@@ -969,7 +930,6 @@
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject supine",
@@ -987,7 +947,6 @@
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while supine",
@@ -1003,7 +962,6 @@
             "label": "1 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -1021,7 +979,6 @@
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -1037,7 +994,6 @@
             "label": "2 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -1055,7 +1011,6 @@
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -1071,7 +1026,6 @@
             "label": "Week 8",
             "encounter": "Week 8",
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital Signs and Temperature",
@@ -1140,7 +1094,6 @@
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject supine",
@@ -1158,7 +1111,6 @@
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while supine",
@@ -1174,7 +1126,6 @@
             "label": "1 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -1192,7 +1143,6 @@
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -1208,7 +1158,6 @@
             "label": "2 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -1226,7 +1175,6 @@
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -1242,7 +1190,6 @@
             "label": "Week NPI",
             "encounter": "Week 8",
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "NPI-X",
@@ -1258,7 +1205,6 @@
             "label": "Week 12",
             "encounter": "Week 12",
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital Signs and Temperature",
@@ -1322,7 +1268,6 @@
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject supine",
@@ -1340,7 +1285,6 @@
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while supine",
@@ -1356,7 +1300,6 @@
             "label": "1 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -1374,7 +1317,6 @@
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -1390,7 +1332,6 @@
             "label": "2 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -1408,7 +1349,6 @@
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -1424,7 +1364,6 @@
             "label": "Week 12 NPI",
             "encounter": "Week 12",
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "NPI-X",
@@ -1440,7 +1379,6 @@
             "label": "Week 16",
             "encounter": "Week 16",
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital Signs and Temperature",
@@ -1509,7 +1447,6 @@
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject supine",
@@ -1527,7 +1464,6 @@
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while supine",
@@ -1543,7 +1479,6 @@
             "label": "1 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -1561,7 +1496,6 @@
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -1577,7 +1511,6 @@
             "label": "2 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -1595,7 +1528,6 @@
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -1611,7 +1543,6 @@
             "label": "Week 16 NPI",
             "encounter": "Week 16",
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "NPI-X",
@@ -1627,7 +1558,6 @@
             "label": "Week 20",
             "encounter": "Week 20",
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital Signs and Temperature",
@@ -1686,7 +1616,6 @@
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject supine",
@@ -1704,7 +1633,6 @@
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while supine",
@@ -1720,7 +1648,6 @@
             "label": "1 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -1738,7 +1665,6 @@
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -1754,7 +1680,6 @@
             "label": "2 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -1772,7 +1697,6 @@
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -1788,7 +1712,6 @@
             "label": "Week 20 NPI",
             "encounter": "Week 20",
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "NPI-X",
@@ -1804,7 +1727,6 @@
             "label": "Week 24",
             "encounter": "Week 24",
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital Signs and Temperature",
@@ -1878,7 +1800,6 @@
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject supine",
@@ -1896,7 +1817,6 @@
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while supine",
@@ -1912,7 +1832,6 @@
             "label": "1 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -1930,7 +1849,6 @@
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -1946,7 +1864,6 @@
             "label": "2 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -1964,7 +1881,6 @@
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -1980,7 +1896,6 @@
             "label": "Week 26",
             "encounter": "Week 26",
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Physical examination",
@@ -2044,7 +1959,6 @@
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject supine",
@@ -2062,7 +1976,6 @@
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while supine",
@@ -2078,7 +1991,6 @@
             "label": "1 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -2096,7 +2008,6 @@
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",
@@ -2112,7 +2023,6 @@
             "label": "2 minute standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Subject Standing",
@@ -2130,7 +2040,6 @@
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
-                "ordered": false,
                 "items": [
                     {
                         "label": "Vital signs while standing",

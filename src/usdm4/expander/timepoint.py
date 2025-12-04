@@ -32,7 +32,6 @@ class Timepoint():
             "label": self._sai.label,
             "encounter": self._study_design.find_encounter(self._sai.encounterId).label if self._sai.encounterId else None,
             "activities": {
-                "ordered": False,
                 "items": [
                     {
                         "label": x.label,
