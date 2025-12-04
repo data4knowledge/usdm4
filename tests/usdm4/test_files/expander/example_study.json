@@ -3665,7 +3665,7 @@
                     "defaultConditionId": "ScheduledActivityInstance_17",
                     "epochId": "StudyEpoch_3",
                     "instanceType": "ScheduledActivityInstance",
-                    "timelineId": null,
+                    "timelineId": "ScheduleTimeline_4",
                     "timelineExitId": null,
                     "activityIds": [
                       "Activity_13",

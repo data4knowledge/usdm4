@@ -25,11 +25,13 @@ class Expander():
     
     def _process_si(self, timeline: ScheduleTimeline, si: ScheduledActivityInstance | ScheduledDecisionInstance | ScheduleTimelineExit, offset: int=0):
         if isinstance(si, ScheduledActivityInstance):
+            print(f"SAI with id {si.id}")
             tp = Timepoint(self._study_design, timeline, si, self._errors, offset)
             self._path.add(tp)
 
             # Timepoint timeline
             if si.timelineId:
+                print(f"Timepoint timeline")
                 tp_timeline = self._study_design.find_timeline(si.timelineId)
                 entry: ScheduledInstance = tp_timeline.find_timepoint(tp_timeline.entryId)
                 self._process_si(tp_timeline, entry, tp.tick)

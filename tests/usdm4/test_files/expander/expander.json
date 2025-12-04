@@ -680,6 +680,51 @@
         {
             "tick": 2419200,
             "time": "4 weeks",
+            "label": "Anchor",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while supine",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 2422800,
+            "time": "4 weeks, 1 hour",
+            "label": "1 Hour",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while supine",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 2426400,
+            "time": "4 weeks, 2 hours",
+            "label": "2 Hour",
+            "encounter": null,
+            "activities": {
+                "ordered": false,
+                "items": [
+                    {
+                        "label": "Vital signs while supine",
+                        "procedures": []
+                    }
+                ]
+            }
+        },
+        {
+            "tick": 2419200,
+            "time": "4 weeks",
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
