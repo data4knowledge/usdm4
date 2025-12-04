@@ -5,9 +5,7 @@ from usdm4.api.schedule_timeline import ScheduleTimeline
 from usdm4.api.scheduled_instance import ScheduledActivityInstance, ScheduledDecisionInstance, ScheduledInstance, ConditionAssignment
 from usdm4.api.schedule_timeline_exit import ScheduleTimelineExit
 from simple_error_log import Errors
-from .path import Path
 from .timepoint import Timepoint
-from .exit import Exit
 
 class Expander():
 
@@ -20,7 +18,6 @@ class Expander():
         self._nodes: list[Timepoint] = []
 
     def process(self):
-        # self._path = Path(self._errors)
         entry: ScheduledInstance = self._timeline.find_timepoint(self._timeline.entryId)
         self._process_si(self._timeline, entry, None, 0)
 
@@ -29,7 +26,9 @@ class Expander():
         return json.dumps({"nodes": [x.to_dict() for x in self._nodes]}, indent=4)
     
     def _process_si(self, timeline: ScheduleTimeline, si: ScheduledActivityInstance | ScheduledDecisionInstance | ScheduleTimelineExit, previous: Timepoint, offset: int):
-        print(f"SI {type(si)}")
+        print(f"SI {si.id}, {si.instanceType}, {type(si)}")
+        if si.id == "ScheduledDecisionInstance_1":
+            print(f"SDI: {si}")
         if isinstance(si, ScheduledActivityInstance):
             # print(f"SAI with id {si.id}")
             tp = Timepoint(self._study_design, timeline, si, self._errors, self._id, previous.tick if previous else 0)

@@ -19,7 +19,7 @@ class ScheduleTimeline(ApiBaseModelWithIdNameLabelAndDesc):
     def first_timepoint(self) -> ScheduledActivityInstance:
         return self.instances[0] if self.instances else None
 
-    def find_timepoint(self, id: str) -> ScheduledActivityInstance:
+    def find_timepoint(self, id: str) -> ScheduledActivityInstance | ScheduledDecisionInstance:
         return next((x for x in self.instances if x.id == id), None)
 
     def find_exit(self, id: str) -> ScheduleTimelineExit:
