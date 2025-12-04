@@ -518,7 +518,7 @@
             "id": "TP_19",
             "tick": -1119600,
             "time": "-2 weeks, 1 day, 1 hour",
-            "label": "Decision",
+            "label": "Exit",
             "encounter": null,
             "activities": {
                 "items": []
@@ -529,21 +529,8 @@
         },
         {
             "id": "TP_20",
-            "tick": -1033200,
-            "time": "-2 weeks, 2 days, 1 hour",
-            "label": "Exit",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_21"
-            ]
-        },
-        {
-            "id": "TP_21",
-            "tick": 176400,
-            "time": "2 days, 1 hour",
+            "tick": 90000,
+            "time": "1 day, 1 hour",
             "label": "Week 2",
             "encounter": "Week 2",
             "activities": {
@@ -609,13 +596,13 @@
                 ]
             },
             "edges": [
-                "TP_22"
+                "TP_21"
             ]
         },
         {
-            "id": "TP_22",
-            "tick": 176400,
-            "time": "2 days, 1 hour",
+            "id": "TP_21",
+            "tick": 90000,
+            "time": "1 day, 1 hour",
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
@@ -630,13 +617,13 @@
                 ]
             },
             "edges": [
-                "TP_23"
+                "TP_22"
             ]
         },
         {
-            "id": "TP_23",
-            "tick": 176700,
-            "time": "2 days, 1 hour, 5 minutes",
+            "id": "TP_22",
+            "tick": 90300,
+            "time": "1 day, 1 hour, 5 minutes",
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
@@ -649,13 +636,13 @@
                 ]
             },
             "edges": [
-                "TP_24"
+                "TP_23"
             ]
         },
         {
-            "id": "TP_24",
-            "tick": 177000,
-            "time": "2 days, 1 hour, 10 minutes",
+            "id": "TP_23",
+            "tick": 90600,
+            "time": "1 day, 1 hour, 10 minutes",
             "label": "1 minute standing",
             "encounter": null,
             "activities": {
@@ -670,13 +657,13 @@
                 ]
             },
             "edges": [
-                "TP_25"
+                "TP_24"
             ]
         },
         {
-            "id": "TP_25",
-            "tick": 177360,
-            "time": "2 days, 1 hour, 16 minutes",
+            "id": "TP_24",
+            "tick": 90960,
+            "time": "1 day, 1 hour, 16 minutes",
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
@@ -689,13 +676,13 @@
                 ]
             },
             "edges": [
-                "TP_26"
+                "TP_25"
             ]
         },
         {
-            "id": "TP_26",
-            "tick": 177720,
-            "time": "2 days, 1 hour, 22 minutes",
+            "id": "TP_25",
+            "tick": 91320,
+            "time": "1 day, 1 hour, 22 minutes",
             "label": "2 minute standing",
             "encounter": null,
             "activities": {
@@ -710,13 +697,13 @@
                 ]
             },
             "edges": [
-                "TP_27"
+                "TP_26"
             ]
         },
         {
-            "id": "TP_27",
-            "tick": 178200,
-            "time": "2 days, 1 hour, 30 minutes",
+            "id": "TP_26",
+            "tick": 91800,
+            "time": "1 day, 1 hour, 30 minutes",
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
@@ -729,13 +716,13 @@
                 ]
             },
             "edges": [
-                "TP_28"
+                "TP_27"
             ]
         },
         {
-            "id": "TP_28",
-            "tick": 2597400,
-            "time": "4 weeks, 2 days, 1 hour, 30 minutes",
+            "id": "TP_27",
+            "tick": 2511000,
+            "time": "4 weeks, 1 day, 1 hour, 30 minutes",
             "label": "Week 4",
             "encounter": "Week 4",
             "activities": {
@@ -791,14 +778,33 @@
                 ]
             },
             "edges": [
+                "TP_28"
+            ]
+        },
+        {
+            "id": "TP_28",
+            "tick": 2511000,
+            "time": "4 weeks, 1 day, 1 hour, 30 minutes",
+            "label": "Anchor",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "Vital signs while supine",
+                        "parent": null,
+                        "procedures": []
+                    }
+                ]
+            },
+            "edges": [
                 "TP_29"
             ]
         },
         {
             "id": "TP_29",
-            "tick": 2597400,
-            "time": "4 weeks, 2 days, 1 hour, 30 minutes",
-            "label": "Anchor",
+            "tick": 2514600,
+            "time": "4 weeks, 1 day, 2 hours, 30 minutes",
+            "label": "1 Hour",
             "encounter": null,
             "activities": {
                 "items": [
@@ -815,9 +821,9 @@
         },
         {
             "id": "TP_30",
-            "tick": 2601000,
-            "time": "4 weeks, 2 days, 2 hours, 30 minutes",
-            "label": "1 Hour",
+            "tick": 2521800,
+            "time": "4 weeks, 1 day, 4 hours, 30 minutes",
+            "label": "2 Hour",
             "encounter": null,
             "activities": {
                 "items": [
@@ -834,27 +840,8 @@
         },
         {
             "id": "TP_31",
-            "tick": 2608200,
-            "time": "4 weeks, 2 days, 4 hours, 30 minutes",
-            "label": "2 Hour",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "Vital signs while supine",
-                        "parent": null,
-                        "procedures": []
-                    }
-                ]
-            },
-            "edges": [
-                "TP_32"
-            ]
-        },
-        {
-            "id": "TP_32",
-            "tick": 6237000,
-            "time": "10 weeks, 2 days, 4 hours, 30 minutes",
+            "tick": 6150600,
+            "time": "10 weeks, 1 day, 4 hours, 30 minutes",
             "label": "Week 6",
             "encounter": "Week 6",
             "activities": {
@@ -910,13 +897,13 @@
                 ]
             },
             "edges": [
-                "TP_33"
+                "TP_32"
             ]
         },
         {
-            "id": "TP_33",
-            "tick": 6237000,
-            "time": "10 weeks, 2 days, 4 hours, 30 minutes",
+            "id": "TP_32",
+            "tick": 6150600,
+            "time": "10 weeks, 1 day, 4 hours, 30 minutes",
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
@@ -931,13 +918,13 @@
                 ]
             },
             "edges": [
-                "TP_34"
+                "TP_33"
             ]
         },
         {
-            "id": "TP_34",
-            "tick": 6237300,
-            "time": "10 weeks, 2 days, 4 hours, 35 minutes",
+            "id": "TP_33",
+            "tick": 6150900,
+            "time": "10 weeks, 1 day, 4 hours, 35 minutes",
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
@@ -950,13 +937,13 @@
                 ]
             },
             "edges": [
-                "TP_35"
+                "TP_34"
             ]
         },
         {
-            "id": "TP_35",
-            "tick": 6237600,
-            "time": "10 weeks, 2 days, 4 hours, 40 minutes",
+            "id": "TP_34",
+            "tick": 6151200,
+            "time": "10 weeks, 1 day, 4 hours, 40 minutes",
             "label": "1 minute standing",
             "encounter": null,
             "activities": {
@@ -971,13 +958,13 @@
                 ]
             },
             "edges": [
-                "TP_36"
+                "TP_35"
             ]
         },
         {
-            "id": "TP_36",
-            "tick": 6237960,
-            "time": "10 weeks, 2 days, 4 hours, 46 minutes",
+            "id": "TP_35",
+            "tick": 6151560,
+            "time": "10 weeks, 1 day, 4 hours, 46 minutes",
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
@@ -990,13 +977,13 @@
                 ]
             },
             "edges": [
-                "TP_37"
+                "TP_36"
             ]
         },
         {
-            "id": "TP_37",
-            "tick": 6238320,
-            "time": "10 weeks, 2 days, 4 hours, 52 minutes",
+            "id": "TP_36",
+            "tick": 6151920,
+            "time": "10 weeks, 1 day, 4 hours, 52 minutes",
             "label": "2 minute standing",
             "encounter": null,
             "activities": {
@@ -1011,13 +998,13 @@
                 ]
             },
             "edges": [
-                "TP_38"
+                "TP_37"
             ]
         },
         {
-            "id": "TP_38",
-            "tick": 6238800,
-            "time": "10 weeks, 2 days, 5 hours",
+            "id": "TP_37",
+            "tick": 6152400,
+            "time": "10 weeks, 1 day, 5 hours",
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
@@ -1030,13 +1017,13 @@
                 ]
             },
             "edges": [
-                "TP_39"
+                "TP_38"
             ]
         },
         {
-            "id": "TP_39",
-            "tick": 11077200,
-            "time": "18 weeks, 2 days, 5 hours",
+            "id": "TP_38",
+            "tick": 10990800,
+            "time": "18 weeks, 1 day, 5 hours",
             "label": "Week 8",
             "encounter": "Week 8",
             "activities": {
@@ -1102,13 +1089,13 @@
                 ]
             },
             "edges": [
-                "TP_40"
+                "TP_39"
             ]
         },
         {
-            "id": "TP_40",
-            "tick": 11077200,
-            "time": "18 weeks, 2 days, 5 hours",
+            "id": "TP_39",
+            "tick": 10990800,
+            "time": "18 weeks, 1 day, 5 hours",
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
@@ -1123,13 +1110,13 @@
                 ]
             },
             "edges": [
-                "TP_41"
+                "TP_40"
             ]
         },
         {
-            "id": "TP_41",
-            "tick": 11077500,
-            "time": "18 weeks, 2 days, 5 hours, 5 minutes",
+            "id": "TP_40",
+            "tick": 10991100,
+            "time": "18 weeks, 1 day, 5 hours, 5 minutes",
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
@@ -1142,13 +1129,13 @@
                 ]
             },
             "edges": [
-                "TP_42"
+                "TP_41"
             ]
         },
         {
-            "id": "TP_42",
-            "tick": 11077800,
-            "time": "18 weeks, 2 days, 5 hours, 10 minutes",
+            "id": "TP_41",
+            "tick": 10991400,
+            "time": "18 weeks, 1 day, 5 hours, 10 minutes",
             "label": "1 minute standing",
             "encounter": null,
             "activities": {
@@ -1163,13 +1150,13 @@
                 ]
             },
             "edges": [
-                "TP_43"
+                "TP_42"
             ]
         },
         {
-            "id": "TP_43",
-            "tick": 11078160,
-            "time": "18 weeks, 2 days, 5 hours, 16 minutes",
+            "id": "TP_42",
+            "tick": 10991760,
+            "time": "18 weeks, 1 day, 5 hours, 16 minutes",
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
@@ -1182,13 +1169,13 @@
                 ]
             },
             "edges": [
-                "TP_44"
+                "TP_43"
             ]
         },
         {
-            "id": "TP_44",
-            "tick": 11078520,
-            "time": "18 weeks, 2 days, 5 hours, 22 minutes",
+            "id": "TP_43",
+            "tick": 10992120,
+            "time": "18 weeks, 1 day, 5 hours, 22 minutes",
             "label": "2 minute standing",
             "encounter": null,
             "activities": {
@@ -1203,13 +1190,13 @@
                 ]
             },
             "edges": [
-                "TP_45"
+                "TP_44"
             ]
         },
         {
-            "id": "TP_45",
-            "tick": 11079000,
-            "time": "18 weeks, 2 days, 5 hours, 30 minutes",
+            "id": "TP_44",
+            "tick": 10992600,
+            "time": "18 weeks, 1 day, 5 hours, 30 minutes",
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
@@ -1222,13 +1209,13 @@
                 ]
             },
             "edges": [
-                "TP_46"
+                "TP_45"
             ]
         },
         {
-            "id": "TP_46",
-            "tick": 17127000,
-            "time": "28 weeks, 2 days, 5 hours, 30 minutes",
+            "id": "TP_45",
+            "tick": 17040600,
+            "time": "28 weeks, 1 day, 5 hours, 30 minutes",
             "label": "Week NPI",
             "encounter": "Week 8",
             "activities": {
@@ -1241,13 +1228,13 @@
                 ]
             },
             "edges": [
-                "TP_47"
+                "TP_46"
             ]
         },
         {
-            "id": "TP_47",
-            "tick": 24384600,
-            "time": "40 weeks, 2 days, 5 hours, 30 minutes",
+            "id": "TP_46",
+            "tick": 24298200,
+            "time": "40 weeks, 1 day, 5 hours, 30 minutes",
             "label": "Week 12",
             "encounter": "Week 12",
             "activities": {
@@ -1308,13 +1295,13 @@
                 ]
             },
             "edges": [
-                "TP_48"
+                "TP_47"
             ]
         },
         {
-            "id": "TP_48",
-            "tick": 24384600,
-            "time": "40 weeks, 2 days, 5 hours, 30 minutes",
+            "id": "TP_47",
+            "tick": 24298200,
+            "time": "40 weeks, 1 day, 5 hours, 30 minutes",
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
@@ -1329,13 +1316,13 @@
                 ]
             },
             "edges": [
-                "TP_49"
+                "TP_48"
             ]
         },
         {
-            "id": "TP_49",
-            "tick": 24384900,
-            "time": "40 weeks, 2 days, 5 hours, 35 minutes",
+            "id": "TP_48",
+            "tick": 24298500,
+            "time": "40 weeks, 1 day, 5 hours, 35 minutes",
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
@@ -1348,13 +1335,13 @@
                 ]
             },
             "edges": [
-                "TP_50"
+                "TP_49"
             ]
         },
         {
-            "id": "TP_50",
-            "tick": 24385200,
-            "time": "40 weeks, 2 days, 5 hours, 40 minutes",
+            "id": "TP_49",
+            "tick": 24298800,
+            "time": "40 weeks, 1 day, 5 hours, 40 minutes",
             "label": "1 minute standing",
             "encounter": null,
             "activities": {
@@ -1369,13 +1356,13 @@
                 ]
             },
             "edges": [
-                "TP_51"
+                "TP_50"
             ]
         },
         {
-            "id": "TP_51",
-            "tick": 24385560,
-            "time": "40 weeks, 2 days, 5 hours, 46 minutes",
+            "id": "TP_50",
+            "tick": 24299160,
+            "time": "40 weeks, 1 day, 5 hours, 46 minutes",
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
@@ -1388,13 +1375,13 @@
                 ]
             },
             "edges": [
-                "TP_52"
+                "TP_51"
             ]
         },
         {
-            "id": "TP_52",
-            "tick": 24385920,
-            "time": "40 weeks, 2 days, 5 hours, 52 minutes",
+            "id": "TP_51",
+            "tick": 24299520,
+            "time": "40 weeks, 1 day, 5 hours, 52 minutes",
             "label": "2 minute standing",
             "encounter": null,
             "activities": {
@@ -1409,13 +1396,13 @@
                 ]
             },
             "edges": [
-                "TP_53"
+                "TP_52"
             ]
         },
         {
-            "id": "TP_53",
-            "tick": 24386400,
-            "time": "40 weeks, 2 days, 6 hours",
+            "id": "TP_52",
+            "tick": 24300000,
+            "time": "40 weeks, 1 day, 6 hours",
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
@@ -1428,13 +1415,13 @@
                 ]
             },
             "edges": [
-                "TP_54"
+                "TP_53"
             ]
         },
         {
-            "id": "TP_54",
-            "tick": 32853600,
-            "time": "54 weeks, 2 days, 6 hours",
+            "id": "TP_53",
+            "tick": 32767200,
+            "time": "54 weeks, 1 day, 6 hours",
             "label": "Week 12 NPI",
             "encounter": "Week 12",
             "activities": {
@@ -1447,13 +1434,13 @@
                 ]
             },
             "edges": [
-                "TP_55"
+                "TP_54"
             ]
         },
         {
-            "id": "TP_55",
-            "tick": 42530400,
-            "time": "70 weeks, 2 days, 6 hours",
+            "id": "TP_54",
+            "tick": 42444000,
+            "time": "70 weeks, 1 day, 6 hours",
             "label": "Week 16",
             "encounter": "Week 16",
             "activities": {
@@ -1519,13 +1506,13 @@
                 ]
             },
             "edges": [
-                "TP_56"
+                "TP_55"
             ]
         },
         {
-            "id": "TP_56",
-            "tick": 42530400,
-            "time": "70 weeks, 2 days, 6 hours",
+            "id": "TP_55",
+            "tick": 42444000,
+            "time": "70 weeks, 1 day, 6 hours",
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
@@ -1540,13 +1527,13 @@
                 ]
             },
             "edges": [
-                "TP_57"
+                "TP_56"
             ]
         },
         {
-            "id": "TP_57",
-            "tick": 42530700,
-            "time": "70 weeks, 2 days, 6 hours, 5 minutes",
+            "id": "TP_56",
+            "tick": 42444300,
+            "time": "70 weeks, 1 day, 6 hours, 5 minutes",
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
@@ -1559,13 +1546,13 @@
                 ]
             },
             "edges": [
-                "TP_58"
+                "TP_57"
             ]
         },
         {
-            "id": "TP_58",
-            "tick": 42531000,
-            "time": "70 weeks, 2 days, 6 hours, 10 minutes",
+            "id": "TP_57",
+            "tick": 42444600,
+            "time": "70 weeks, 1 day, 6 hours, 10 minutes",
             "label": "1 minute standing",
             "encounter": null,
             "activities": {
@@ -1580,13 +1567,13 @@
                 ]
             },
             "edges": [
-                "TP_59"
+                "TP_58"
             ]
         },
         {
-            "id": "TP_59",
-            "tick": 42531360,
-            "time": "70 weeks, 2 days, 6 hours, 16 minutes",
+            "id": "TP_58",
+            "tick": 42444960,
+            "time": "70 weeks, 1 day, 6 hours, 16 minutes",
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
@@ -1599,13 +1586,13 @@
                 ]
             },
             "edges": [
-                "TP_60"
+                "TP_59"
             ]
         },
         {
-            "id": "TP_60",
-            "tick": 42531720,
-            "time": "70 weeks, 2 days, 6 hours, 22 minutes",
+            "id": "TP_59",
+            "tick": 42445320,
+            "time": "70 weeks, 1 day, 6 hours, 22 minutes",
             "label": "2 minute standing",
             "encounter": null,
             "activities": {
@@ -1620,13 +1607,13 @@
                 ]
             },
             "edges": [
-                "TP_61"
+                "TP_60"
             ]
         },
         {
-            "id": "TP_61",
-            "tick": 42532200,
-            "time": "70 weeks, 2 days, 6 hours, 30 minutes",
+            "id": "TP_60",
+            "tick": 42445800,
+            "time": "70 weeks, 1 day, 6 hours, 30 minutes",
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
@@ -1639,13 +1626,13 @@
                 ]
             },
             "edges": [
-                "TP_62"
+                "TP_61"
             ]
         },
         {
-            "id": "TP_62",
-            "tick": 53418600,
-            "time": "88 weeks, 2 days, 6 hours, 30 minutes",
+            "id": "TP_61",
+            "tick": 53332200,
+            "time": "88 weeks, 1 day, 6 hours, 30 minutes",
             "label": "Week 16 NPI",
             "encounter": "Week 16",
             "activities": {
@@ -1658,13 +1645,13 @@
                 ]
             },
             "edges": [
-                "TP_63"
+                "TP_62"
             ]
         },
         {
-            "id": "TP_63",
-            "tick": 65514600,
-            "time": "108 weeks, 2 days, 6 hours, 30 minutes",
+            "id": "TP_62",
+            "tick": 65428200,
+            "time": "108 weeks, 1 day, 6 hours, 30 minutes",
             "label": "Week 20",
             "encounter": "Week 20",
             "activities": {
@@ -1720,13 +1707,13 @@
                 ]
             },
             "edges": [
-                "TP_64"
+                "TP_63"
             ]
         },
         {
-            "id": "TP_64",
-            "tick": 65514600,
-            "time": "108 weeks, 2 days, 6 hours, 30 minutes",
+            "id": "TP_63",
+            "tick": 65428200,
+            "time": "108 weeks, 1 day, 6 hours, 30 minutes",
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
@@ -1741,13 +1728,13 @@
                 ]
             },
             "edges": [
-                "TP_65"
+                "TP_64"
             ]
         },
         {
-            "id": "TP_65",
-            "tick": 65514900,
-            "time": "108 weeks, 2 days, 6 hours, 35 minutes",
+            "id": "TP_64",
+            "tick": 65428500,
+            "time": "108 weeks, 1 day, 6 hours, 35 minutes",
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
@@ -1760,13 +1747,13 @@
                 ]
             },
             "edges": [
-                "TP_66"
+                "TP_65"
             ]
         },
         {
-            "id": "TP_66",
-            "tick": 65515200,
-            "time": "108 weeks, 2 days, 6 hours, 40 minutes",
+            "id": "TP_65",
+            "tick": 65428800,
+            "time": "108 weeks, 1 day, 6 hours, 40 minutes",
             "label": "1 minute standing",
             "encounter": null,
             "activities": {
@@ -1781,13 +1768,13 @@
                 ]
             },
             "edges": [
-                "TP_67"
+                "TP_66"
             ]
         },
         {
-            "id": "TP_67",
-            "tick": 65515560,
-            "time": "108 weeks, 2 days, 6 hours, 46 minutes",
+            "id": "TP_66",
+            "tick": 65429160,
+            "time": "108 weeks, 1 day, 6 hours, 46 minutes",
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
@@ -1800,13 +1787,13 @@
                 ]
             },
             "edges": [
-                "TP_68"
+                "TP_67"
             ]
         },
         {
-            "id": "TP_68",
-            "tick": 65515920,
-            "time": "108 weeks, 2 days, 6 hours, 52 minutes",
+            "id": "TP_67",
+            "tick": 65429520,
+            "time": "108 weeks, 1 day, 6 hours, 52 minutes",
             "label": "2 minute standing",
             "encounter": null,
             "activities": {
@@ -1821,13 +1808,13 @@
                 ]
             },
             "edges": [
-                "TP_69"
+                "TP_68"
             ]
         },
         {
-            "id": "TP_69",
-            "tick": 65516400,
-            "time": "108 weeks, 2 days, 7 hours",
+            "id": "TP_68",
+            "tick": 65430000,
+            "time": "108 weeks, 1 day, 7 hours",
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
@@ -1840,13 +1827,13 @@
                 ]
             },
             "edges": [
-                "TP_70"
+                "TP_69"
             ]
         },
         {
-            "id": "TP_70",
-            "tick": 78822000,
-            "time": "130 weeks, 2 days, 7 hours",
+            "id": "TP_69",
+            "tick": 78735600,
+            "time": "130 weeks, 1 day, 7 hours",
             "label": "Week 20 NPI",
             "encounter": "Week 20",
             "activities": {
@@ -1859,13 +1846,13 @@
                 ]
             },
             "edges": [
-                "TP_71"
+                "TP_70"
             ]
         },
         {
-            "id": "TP_71",
-            "tick": 93337200,
-            "time": "154 weeks, 2 days, 7 hours",
+            "id": "TP_70",
+            "tick": 93250800,
+            "time": "154 weeks, 1 day, 7 hours",
             "label": "Week 24",
             "encounter": "Week 24",
             "activities": {
@@ -1936,13 +1923,13 @@
                 ]
             },
             "edges": [
-                "TP_72"
+                "TP_71"
             ]
         },
         {
-            "id": "TP_72",
-            "tick": 93337200,
-            "time": "154 weeks, 2 days, 7 hours",
+            "id": "TP_71",
+            "tick": 93250800,
+            "time": "154 weeks, 1 day, 7 hours",
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
@@ -1957,13 +1944,13 @@
                 ]
             },
             "edges": [
-                "TP_73"
+                "TP_72"
             ]
         },
         {
-            "id": "TP_73",
-            "tick": 93337500,
-            "time": "154 weeks, 2 days, 7 hours, 5 minutes",
+            "id": "TP_72",
+            "tick": 93251100,
+            "time": "154 weeks, 1 day, 7 hours, 5 minutes",
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
@@ -1976,13 +1963,13 @@
                 ]
             },
             "edges": [
-                "TP_74"
+                "TP_73"
             ]
         },
         {
-            "id": "TP_74",
-            "tick": 93337800,
-            "time": "154 weeks, 2 days, 7 hours, 10 minutes",
+            "id": "TP_73",
+            "tick": 93251400,
+            "time": "154 weeks, 1 day, 7 hours, 10 minutes",
             "label": "1 minute standing",
             "encounter": null,
             "activities": {
@@ -1997,13 +1984,13 @@
                 ]
             },
             "edges": [
-                "TP_75"
+                "TP_74"
             ]
         },
         {
-            "id": "TP_75",
-            "tick": 93338160,
-            "time": "154 weeks, 2 days, 7 hours, 16 minutes",
+            "id": "TP_74",
+            "tick": 93251760,
+            "time": "154 weeks, 1 day, 7 hours, 16 minutes",
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
@@ -2016,13 +2003,13 @@
                 ]
             },
             "edges": [
-                "TP_76"
+                "TP_75"
             ]
         },
         {
-            "id": "TP_76",
-            "tick": 93338520,
-            "time": "154 weeks, 2 days, 7 hours, 22 minutes",
+            "id": "TP_75",
+            "tick": 93252120,
+            "time": "154 weeks, 1 day, 7 hours, 22 minutes",
             "label": "2 minute standing",
             "encounter": null,
             "activities": {
@@ -2037,13 +2024,13 @@
                 ]
             },
             "edges": [
-                "TP_77"
+                "TP_76"
             ]
         },
         {
-            "id": "TP_77",
-            "tick": 93339000,
-            "time": "154 weeks, 2 days, 7 hours, 30 minutes",
+            "id": "TP_76",
+            "tick": 93252600,
+            "time": "154 weeks, 1 day, 7 hours, 30 minutes",
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
@@ -2056,13 +2043,13 @@
                 ]
             },
             "edges": [
-                "TP_78"
+                "TP_77"
             ]
         },
         {
-            "id": "TP_78",
-            "tick": 109063800,
-            "time": "180 weeks, 2 days, 7 hours, 30 minutes",
+            "id": "TP_77",
+            "tick": 108977400,
+            "time": "180 weeks, 1 day, 7 hours, 30 minutes",
             "label": "Week 26",
             "encounter": "Week 26",
             "activities": {
@@ -2123,13 +2110,13 @@
                 ]
             },
             "edges": [
-                "TP_79"
+                "TP_78"
             ]
         },
         {
-            "id": "TP_79",
-            "tick": 109063800,
-            "time": "180 weeks, 2 days, 7 hours, 30 minutes",
+            "id": "TP_78",
+            "tick": 108977400,
+            "time": "180 weeks, 1 day, 7 hours, 30 minutes",
             "label": "5 minute supine",
             "encounter": null,
             "activities": {
@@ -2144,13 +2131,13 @@
                 ]
             },
             "edges": [
-                "TP_80"
+                "TP_79"
             ]
         },
         {
-            "id": "TP_80",
-            "tick": 109064100,
-            "time": "180 weeks, 2 days, 7 hours, 35 minutes",
+            "id": "TP_79",
+            "tick": 108977700,
+            "time": "180 weeks, 1 day, 7 hours, 35 minutes",
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
@@ -2163,13 +2150,13 @@
                 ]
             },
             "edges": [
-                "TP_81"
+                "TP_80"
             ]
         },
         {
-            "id": "TP_81",
-            "tick": 109064400,
-            "time": "180 weeks, 2 days, 7 hours, 40 minutes",
+            "id": "TP_80",
+            "tick": 108978000,
+            "time": "180 weeks, 1 day, 7 hours, 40 minutes",
             "label": "1 minute standing",
             "encounter": null,
             "activities": {
@@ -2184,13 +2171,13 @@
                 ]
             },
             "edges": [
-                "TP_82"
+                "TP_81"
             ]
         },
         {
-            "id": "TP_82",
-            "tick": 109064760,
-            "time": "180 weeks, 2 days, 7 hours, 46 minutes",
+            "id": "TP_81",
+            "tick": 108978360,
+            "time": "180 weeks, 1 day, 7 hours, 46 minutes",
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
@@ -2203,13 +2190,13 @@
                 ]
             },
             "edges": [
-                "TP_83"
+                "TP_82"
             ]
         },
         {
-            "id": "TP_83",
-            "tick": 109065120,
-            "time": "180 weeks, 2 days, 7 hours, 52 minutes",
+            "id": "TP_82",
+            "tick": 108978720,
+            "time": "180 weeks, 1 day, 7 hours, 52 minutes",
             "label": "2 minute standing",
             "encounter": null,
             "activities": {
@@ -2224,13 +2211,13 @@
                 ]
             },
             "edges": [
-                "TP_84"
+                "TP_83"
             ]
         },
         {
-            "id": "TP_84",
-            "tick": 109065600,
-            "time": "180 weeks, 2 days, 8 hours",
+            "id": "TP_83",
+            "tick": 108979200,
+            "time": "180 weeks, 1 day, 8 hours",
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {

@@ -12,7 +12,7 @@ class ScheduleTimeline(ApiBaseModelWithIdNameLabelAndDesc):
     entryId: str
     exits: List[ScheduleTimelineExit] = []
     timings: List[Timing] = []
-    instances: List[Union[ScheduledActivityInstance, ScheduledDecisionInstance]] = []
+    instances: List[Union[ScheduledDecisionInstance, ScheduledActivityInstance]] = []
     plannedDuration: Union[Duration, None] = None
     instanceType: Literal["ScheduleTimeline"]
 

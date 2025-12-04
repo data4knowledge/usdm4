@@ -1,5 +1,6 @@
 import re
 import json
+import operator
 from usdm4.api.study_design import StudyDesign
 from usdm4.api.schedule_timeline import ScheduleTimeline
 from usdm4.api.scheduled_instance import ScheduledActivityInstance, ScheduledDecisionInstance, ScheduledInstance, ConditionAssignment
@@ -66,15 +67,15 @@ class Expander():
                 dc_op, dc_value = self._days_condition(ca.condition)
                 if dc_op:
                     if dc_op(previous.tick, dc_value * 24 * 60 * 60):
-                        tp = self._process_si(timeline, timeline.find_timepoint(ca.conditionTargetId), tp, offset)
+                        tp = self._process_si(timeline, timeline.find_timepoint(ca.conditionTargetId), previous, offset)
                     else:
-                        tp = self._process_si(timeline, timeline.find_timepoint(si.defaultConditionId), tp, offset)
+                        tp = self._process_si(timeline, timeline.find_timepoint(si.defaultConditionId), previous, offset)
                 else:
                     self._errors.error(f"No day condition encountered, being ignored.") 
-                    tp = self._process_si(timeline, timeline.find_timepoint(si.defaultConditionId), tp, offset)
+                    tp = self._process_si(timeline, timeline.find_timepoint(si.defaultConditionId), previous, offset)
             else:
                 self._errors.error(f"Complex condition encountered, being ignored.") 
-                tp = self._process_si(timeline, timeline.find_timepoint(si.defaultConditionId), tp, offset)
+                tp = self._process_si(timeline, timeline.find_timepoint(si.defaultConditionId), previous, offset)
             return tp
         elif isinstance(si, ScheduleTimelineExit):
             return previous
@@ -91,7 +92,7 @@ class Expander():
         pattern = r'days\s*([<>=])\s*(\d+)'
         match = re.search(pattern, text)
         if match:
-            operator = operators[match.group(1)]  # '>'
+            op = operators[match.group(1)]  # '>'
             value = int(match.group(2))
-            return value, operator
+            return value, op
         return None, None
