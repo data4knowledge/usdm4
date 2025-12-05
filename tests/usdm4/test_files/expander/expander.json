@@ -140,19 +140,6 @@
             ]
         },
         {
-            "id": "TP_2",
-            "tick": -1209600,
-            "time": "-2 weeks",
-            "label": "5 minute supine",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_3"
-            ]
-        },
-        {
             "id": "TP_3",
             "tick": -1209300,
             "time": "-2 weeks, 5 minutes",
@@ -169,19 +156,6 @@
             },
             "edges": [
                 "TP_4"
-            ]
-        },
-        {
-            "id": "TP_4",
-            "tick": -1209000,
-            "time": "-2 weeks, 10 minutes",
-            "label": "1 minute standing",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_5"
             ]
         },
         {
@@ -205,19 +179,6 @@
             },
             "edges": [
                 "TP_6"
-            ]
-        },
-        {
-            "id": "TP_6",
-            "tick": -1208280,
-            "time": "-2 weeks, 22 minutes",
-            "label": "2 minute standing",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_7"
             ]
         },
         {
@@ -268,19 +229,6 @@
             ]
         },
         {
-            "id": "TP_9",
-            "tick": -1380600,
-            "time": "-3 weeks, 5 days, 30 minutes",
-            "label": "5 minute supine",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_10"
-            ]
-        },
-        {
             "id": "TP_10",
             "tick": -1380300,
             "time": "-3 weeks, 5 days, 35 minutes",
@@ -297,19 +245,6 @@
             },
             "edges": [
                 "TP_11"
-            ]
-        },
-        {
-            "id": "TP_11",
-            "tick": -1380000,
-            "time": "-3 weeks, 5 days, 40 minutes",
-            "label": "1 minute standing",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_12"
             ]
         },
         {
@@ -333,19 +268,6 @@
             },
             "edges": [
                 "TP_13"
-            ]
-        },
-        {
-            "id": "TP_13",
-            "tick": -1379280,
-            "time": "-3 weeks, 5 days, 52 minutes",
-            "label": "2 minute standing",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_14"
             ]
         },
         {
@@ -436,19 +358,6 @@
             ]
         },
         {
-            "id": "TP_16",
-            "tick": -1292400,
-            "time": "-3 weeks, 6 days, 1 hour",
-            "label": "Anchor",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_17"
-            ]
-        },
-        {
             "id": "TP_17",
             "tick": -1292400,
             "time": "-3 weeks, 6 days, 1 hour",
@@ -467,19 +376,6 @@
             },
             "edges": [
                 "TP_18"
-            ]
-        },
-        {
-            "id": "TP_18",
-            "tick": -1206000,
-            "time": "-2 weeks, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_19"
             ]
         },
         {
@@ -504,19 +400,6 @@
             ]
         },
         {
-            "id": "TP_20",
-            "tick": -1119600,
-            "time": "-2 weeks, 1 day, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_21"
-            ]
-        },
-        {
             "id": "TP_21",
             "tick": -1119600,
             "time": "-2 weeks, 1 day, 1 hour",
@@ -535,19 +418,6 @@
             },
             "edges": [
                 "TP_22"
-            ]
-        },
-        {
-            "id": "TP_22",
-            "tick": -1033200,
-            "time": "-2 weeks, 2 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_23"
             ]
         },
         {
@@ -572,19 +442,6 @@
             ]
         },
         {
-            "id": "TP_24",
-            "tick": -946800,
-            "time": "-2 weeks, 3 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_25"
-            ]
-        },
-        {
             "id": "TP_25",
             "tick": -946800,
             "time": "-2 weeks, 3 days, 1 hour",
@@ -603,19 +460,6 @@
             },
             "edges": [
                 "TP_26"
-            ]
-        },
-        {
-            "id": "TP_26",
-            "tick": -860400,
-            "time": "-2 weeks, 4 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_27"
             ]
         },
         {
@@ -640,19 +484,6 @@
             ]
         },
         {
-            "id": "TP_28",
-            "tick": -774000,
-            "time": "-2 weeks, 5 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_29"
-            ]
-        },
-        {
             "id": "TP_29",
             "tick": -774000,
             "time": "-2 weeks, 5 days, 1 hour",
@@ -671,19 +502,6 @@
             },
             "edges": [
                 "TP_30"
-            ]
-        },
-        {
-            "id": "TP_30",
-            "tick": -687600,
-            "time": "-2 weeks, 6 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_31"
             ]
         },
         {
@@ -708,19 +526,6 @@
             ]
         },
         {
-            "id": "TP_32",
-            "tick": -601200,
-            "time": "-1 weeks, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_33"
-            ]
-        },
-        {
             "id": "TP_33",
             "tick": -601200,
             "time": "-1 weeks, 1 hour",
@@ -739,19 +544,6 @@
             },
             "edges": [
                 "TP_34"
-            ]
-        },
-        {
-            "id": "TP_34",
-            "tick": -514800,
-            "time": "-1 weeks, 1 day, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_35"
             ]
         },
         {
@@ -776,19 +568,6 @@
             ]
         },
         {
-            "id": "TP_36",
-            "tick": -428400,
-            "time": "-1 weeks, 2 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_37"
-            ]
-        },
-        {
             "id": "TP_37",
             "tick": -428400,
             "time": "-1 weeks, 2 days, 1 hour",
@@ -807,19 +586,6 @@
             },
             "edges": [
                 "TP_38"
-            ]
-        },
-        {
-            "id": "TP_38",
-            "tick": -342000,
-            "time": "-1 weeks, 3 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_39"
             ]
         },
         {
@@ -844,19 +610,6 @@
             ]
         },
         {
-            "id": "TP_40",
-            "tick": -255600,
-            "time": "-1 weeks, 4 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_41"
-            ]
-        },
-        {
             "id": "TP_41",
             "tick": -255600,
             "time": "-1 weeks, 4 days, 1 hour",
@@ -875,19 +628,6 @@
             },
             "edges": [
                 "TP_42"
-            ]
-        },
-        {
-            "id": "TP_42",
-            "tick": -169200,
-            "time": "-1 weeks, 5 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_43"
             ]
         },
         {
@@ -912,19 +652,6 @@
             ]
         },
         {
-            "id": "TP_44",
-            "tick": -82800,
-            "time": "-1 weeks, 6 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_45"
-            ]
-        },
-        {
             "id": "TP_45",
             "tick": -82800,
             "time": "-1 weeks, 6 days, 1 hour",
@@ -943,19 +670,6 @@
             },
             "edges": [
                 "TP_46"
-            ]
-        },
-        {
-            "id": "TP_46",
-            "tick": 3600,
-            "time": "1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_47"
             ]
         },
         {
@@ -980,19 +694,6 @@
             ]
         },
         {
-            "id": "TP_48",
-            "tick": 90000,
-            "time": "1 day, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_49"
-            ]
-        },
-        {
             "id": "TP_49",
             "tick": 90000,
             "time": "1 day, 1 hour",
@@ -1011,19 +712,6 @@
             },
             "edges": [
                 "TP_50"
-            ]
-        },
-        {
-            "id": "TP_50",
-            "tick": 176400,
-            "time": "2 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_51"
             ]
         },
         {
@@ -1048,19 +736,6 @@
             ]
         },
         {
-            "id": "TP_52",
-            "tick": 262800,
-            "time": "3 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_53"
-            ]
-        },
-        {
             "id": "TP_53",
             "tick": 262800,
             "time": "3 days, 1 hour",
@@ -1079,19 +754,6 @@
             },
             "edges": [
                 "TP_54"
-            ]
-        },
-        {
-            "id": "TP_54",
-            "tick": 349200,
-            "time": "4 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_55"
             ]
         },
         {
@@ -1116,19 +778,6 @@
             ]
         },
         {
-            "id": "TP_56",
-            "tick": 435600,
-            "time": "5 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_57"
-            ]
-        },
-        {
             "id": "TP_57",
             "tick": 435600,
             "time": "5 days, 1 hour",
@@ -1147,19 +796,6 @@
             },
             "edges": [
                 "TP_58"
-            ]
-        },
-        {
-            "id": "TP_58",
-            "tick": 522000,
-            "time": "6 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_59"
             ]
         },
         {
@@ -1184,19 +820,6 @@
             ]
         },
         {
-            "id": "TP_60",
-            "tick": 608400,
-            "time": "1 week, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_61"
-            ]
-        },
-        {
             "id": "TP_61",
             "tick": 608400,
             "time": "1 week, 1 hour",
@@ -1215,19 +838,6 @@
             },
             "edges": [
                 "TP_62"
-            ]
-        },
-        {
-            "id": "TP_62",
-            "tick": 694800,
-            "time": "1 week, 1 day, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_63"
             ]
         },
         {
@@ -1252,19 +862,6 @@
             ]
         },
         {
-            "id": "TP_64",
-            "tick": 781200,
-            "time": "1 week, 2 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_65"
-            ]
-        },
-        {
             "id": "TP_65",
             "tick": 781200,
             "time": "1 week, 2 days, 1 hour",
@@ -1283,19 +880,6 @@
             },
             "edges": [
                 "TP_66"
-            ]
-        },
-        {
-            "id": "TP_66",
-            "tick": 867600,
-            "time": "1 week, 3 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_67"
             ]
         },
         {
@@ -1320,19 +904,6 @@
             ]
         },
         {
-            "id": "TP_68",
-            "tick": 954000,
-            "time": "1 week, 4 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_69"
-            ]
-        },
-        {
             "id": "TP_69",
             "tick": 954000,
             "time": "1 week, 4 days, 1 hour",
@@ -1351,19 +922,6 @@
             },
             "edges": [
                 "TP_70"
-            ]
-        },
-        {
-            "id": "TP_70",
-            "tick": 1040400,
-            "time": "1 week, 5 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_71"
             ]
         },
         {
@@ -1388,19 +946,6 @@
             ]
         },
         {
-            "id": "TP_72",
-            "tick": 1126800,
-            "time": "1 week, 6 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_73"
-            ]
-        },
-        {
             "id": "TP_73",
             "tick": 1126800,
             "time": "1 week, 6 days, 1 hour",
@@ -1419,19 +964,6 @@
             },
             "edges": [
                 "TP_74"
-            ]
-        },
-        {
-            "id": "TP_74",
-            "tick": 1213200,
-            "time": "2 weeks, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_75"
             ]
         },
         {
@@ -1456,19 +988,6 @@
             ]
         },
         {
-            "id": "TP_76",
-            "tick": 1299600,
-            "time": "2 weeks, 1 day, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_77"
-            ]
-        },
-        {
             "id": "TP_77",
             "tick": 1299600,
             "time": "2 weeks, 1 day, 1 hour",
@@ -1487,19 +1006,6 @@
             },
             "edges": [
                 "TP_78"
-            ]
-        },
-        {
-            "id": "TP_78",
-            "tick": 1386000,
-            "time": "2 weeks, 2 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_79"
             ]
         },
         {
@@ -1524,19 +1030,6 @@
             ]
         },
         {
-            "id": "TP_80",
-            "tick": 1472400,
-            "time": "2 weeks, 3 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_81"
-            ]
-        },
-        {
             "id": "TP_81",
             "tick": 1472400,
             "time": "2 weeks, 3 days, 1 hour",
@@ -1555,19 +1048,6 @@
             },
             "edges": [
                 "TP_82"
-            ]
-        },
-        {
-            "id": "TP_82",
-            "tick": 1558800,
-            "time": "2 weeks, 4 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_83"
             ]
         },
         {
@@ -1592,19 +1072,6 @@
             ]
         },
         {
-            "id": "TP_84",
-            "tick": 1645200,
-            "time": "2 weeks, 5 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_85"
-            ]
-        },
-        {
             "id": "TP_85",
             "tick": 1645200,
             "time": "2 weeks, 5 days, 1 hour",
@@ -1623,19 +1090,6 @@
             },
             "edges": [
                 "TP_86"
-            ]
-        },
-        {
-            "id": "TP_86",
-            "tick": 1731600,
-            "time": "2 weeks, 6 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_87"
             ]
         },
         {
@@ -1660,19 +1114,6 @@
             ]
         },
         {
-            "id": "TP_88",
-            "tick": 1818000,
-            "time": "3 weeks, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_89"
-            ]
-        },
-        {
             "id": "TP_89",
             "tick": 1818000,
             "time": "3 weeks, 1 hour",
@@ -1691,19 +1132,6 @@
             },
             "edges": [
                 "TP_90"
-            ]
-        },
-        {
-            "id": "TP_90",
-            "tick": 1904400,
-            "time": "3 weeks, 1 day, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_91"
             ]
         },
         {
@@ -1728,19 +1156,6 @@
             ]
         },
         {
-            "id": "TP_92",
-            "tick": 1990800,
-            "time": "3 weeks, 2 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_93"
-            ]
-        },
-        {
             "id": "TP_93",
             "tick": 1990800,
             "time": "3 weeks, 2 days, 1 hour",
@@ -1759,19 +1174,6 @@
             },
             "edges": [
                 "TP_94"
-            ]
-        },
-        {
-            "id": "TP_94",
-            "tick": 2077200,
-            "time": "3 weeks, 3 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_95"
             ]
         },
         {
@@ -1796,19 +1198,6 @@
             ]
         },
         {
-            "id": "TP_96",
-            "tick": 2163600,
-            "time": "3 weeks, 4 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_97"
-            ]
-        },
-        {
             "id": "TP_97",
             "tick": 2163600,
             "time": "3 weeks, 4 days, 1 hour",
@@ -1827,19 +1216,6 @@
             },
             "edges": [
                 "TP_98"
-            ]
-        },
-        {
-            "id": "TP_98",
-            "tick": 2250000,
-            "time": "3 weeks, 5 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_99"
             ]
         },
         {
@@ -1864,19 +1240,6 @@
             ]
         },
         {
-            "id": "TP_100",
-            "tick": 2336400,
-            "time": "3 weeks, 6 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_101"
-            ]
-        },
-        {
             "id": "TP_101",
             "tick": 2336400,
             "time": "3 weeks, 6 days, 1 hour",
@@ -1895,19 +1258,6 @@
             },
             "edges": [
                 "TP_102"
-            ]
-        },
-        {
-            "id": "TP_102",
-            "tick": 2422800,
-            "time": "4 weeks, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_103"
             ]
         },
         {
@@ -1932,19 +1282,6 @@
             ]
         },
         {
-            "id": "TP_104",
-            "tick": 2509200,
-            "time": "4 weeks, 1 day, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_105"
-            ]
-        },
-        {
             "id": "TP_105",
             "tick": 2509200,
             "time": "4 weeks, 1 day, 1 hour",
@@ -1963,19 +1300,6 @@
             },
             "edges": [
                 "TP_106"
-            ]
-        },
-        {
-            "id": "TP_106",
-            "tick": 2595600,
-            "time": "4 weeks, 2 days, 1 hour",
-            "label": "Wait a day",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_107"
             ]
         },
         {
@@ -2064,19 +1388,6 @@
             ]
         },
         {
-            "id": "TP_109",
-            "tick": 3891600,
-            "time": "6 weeks, 3 days, 1 hour",
-            "label": "5 minute supine",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_110"
-            ]
-        },
-        {
             "id": "TP_110",
             "tick": 3891900,
             "time": "6 weeks, 3 days, 1 hour, 5 minutes",
@@ -2093,19 +1404,6 @@
             },
             "edges": [
                 "TP_111"
-            ]
-        },
-        {
-            "id": "TP_111",
-            "tick": 3892200,
-            "time": "6 weeks, 3 days, 1 hour, 10 minutes",
-            "label": "1 minute standing",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_112"
             ]
         },
         {
@@ -2129,19 +1427,6 @@
             },
             "edges": [
                 "TP_113"
-            ]
-        },
-        {
-            "id": "TP_113",
-            "tick": 3892920,
-            "time": "6 weeks, 3 days, 1 hour, 22 minutes",
-            "label": "2 minute standing",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_114"
             ]
         },
         {
@@ -2349,19 +1634,6 @@
             ]
         },
         {
-            "id": "TP_120",
-            "tick": 9952200,
-            "time": "16 weeks, 3 days, 4 hours, 30 minutes",
-            "label": "5 minute supine",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_121"
-            ]
-        },
-        {
             "id": "TP_121",
             "tick": 9952500,
             "time": "16 weeks, 3 days, 4 hours, 35 minutes",
@@ -2378,19 +1650,6 @@
             },
             "edges": [
                 "TP_122"
-            ]
-        },
-        {
-            "id": "TP_122",
-            "tick": 9952800,
-            "time": "16 weeks, 3 days, 4 hours, 40 minutes",
-            "label": "1 minute standing",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_123"
             ]
         },
         {
@@ -2414,19 +1673,6 @@
             },
             "edges": [
                 "TP_124"
-            ]
-        },
-        {
-            "id": "TP_124",
-            "tick": 9953520,
-            "time": "16 weeks, 3 days, 4 hours, 52 minutes",
-            "label": "2 minute standing",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_125"
             ]
         },
         {
@@ -2525,19 +1771,6 @@
             ]
         },
         {
-            "id": "TP_127",
-            "tick": 14792400,
-            "time": "24 weeks, 3 days, 5 hours",
-            "label": "5 minute supine",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_128"
-            ]
-        },
-        {
             "id": "TP_128",
             "tick": 14792700,
             "time": "24 weeks, 3 days, 5 hours, 5 minutes",
@@ -2554,19 +1787,6 @@
             },
             "edges": [
                 "TP_129"
-            ]
-        },
-        {
-            "id": "TP_129",
-            "tick": 14793000,
-            "time": "24 weeks, 3 days, 5 hours, 10 minutes",
-            "label": "1 minute standing",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_130"
             ]
         },
         {
@@ -2590,19 +1810,6 @@
             },
             "edges": [
                 "TP_131"
-            ]
-        },
-        {
-            "id": "TP_131",
-            "tick": 14793720,
-            "time": "24 weeks, 3 days, 5 hours, 22 minutes",
-            "label": "2 minute standing",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_132"
             ]
         },
         {
@@ -2715,19 +1922,6 @@
             ]
         },
         {
-            "id": "TP_135",
-            "tick": 28099800,
-            "time": "46 weeks, 3 days, 5 hours, 30 minutes",
-            "label": "5 minute supine",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_136"
-            ]
-        },
-        {
             "id": "TP_136",
             "tick": 28100100,
             "time": "46 weeks, 3 days, 5 hours, 35 minutes",
@@ -2744,19 +1938,6 @@
             },
             "edges": [
                 "TP_137"
-            ]
-        },
-        {
-            "id": "TP_137",
-            "tick": 28100400,
-            "time": "46 weeks, 3 days, 5 hours, 40 minutes",
-            "label": "1 minute standing",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_138"
             ]
         },
         {
@@ -2780,19 +1961,6 @@
             },
             "edges": [
                 "TP_139"
-            ]
-        },
-        {
-            "id": "TP_139",
-            "tick": 28101120,
-            "time": "46 weeks, 3 days, 5 hours, 52 minutes",
-            "label": "2 minute standing",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_140"
             ]
         },
         {
@@ -2910,19 +2078,6 @@
             ]
         },
         {
-            "id": "TP_143",
-            "tick": 46245600,
-            "time": "76 weeks, 3 days, 6 hours",
-            "label": "5 minute supine",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_144"
-            ]
-        },
-        {
             "id": "TP_144",
             "tick": 46245900,
             "time": "76 weeks, 3 days, 6 hours, 5 minutes",
@@ -2939,19 +2094,6 @@
             },
             "edges": [
                 "TP_145"
-            ]
-        },
-        {
-            "id": "TP_145",
-            "tick": 46246200,
-            "time": "76 weeks, 3 days, 6 hours, 10 minutes",
-            "label": "1 minute standing",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_146"
             ]
         },
         {
@@ -2975,19 +2117,6 @@
             },
             "edges": [
                 "TP_147"
-            ]
-        },
-        {
-            "id": "TP_147",
-            "tick": 46246920,
-            "time": "76 weeks, 3 days, 6 hours, 22 minutes",
-            "label": "2 minute standing",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_148"
             ]
         },
         {
@@ -3095,19 +2224,6 @@
             ]
         },
         {
-            "id": "TP_151",
-            "tick": 69229800,
-            "time": "114 weeks, 3 days, 6 hours, 30 minutes",
-            "label": "5 minute supine",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_152"
-            ]
-        },
-        {
             "id": "TP_152",
             "tick": 69230100,
             "time": "114 weeks, 3 days, 6 hours, 35 minutes",
@@ -3124,19 +2240,6 @@
             },
             "edges": [
                 "TP_153"
-            ]
-        },
-        {
-            "id": "TP_153",
-            "tick": 69230400,
-            "time": "114 weeks, 3 days, 6 hours, 40 minutes",
-            "label": "1 minute standing",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_154"
             ]
         },
         {
@@ -3160,19 +2263,6 @@
             },
             "edges": [
                 "TP_155"
-            ]
-        },
-        {
-            "id": "TP_155",
-            "tick": 69231120,
-            "time": "114 weeks, 3 days, 6 hours, 52 minutes",
-            "label": "2 minute standing",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_156"
             ]
         },
         {
@@ -3295,19 +2385,6 @@
             ]
         },
         {
-            "id": "TP_159",
-            "tick": 97052400,
-            "time": "160 weeks, 3 days, 7 hours",
-            "label": "5 minute supine",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_160"
-            ]
-        },
-        {
             "id": "TP_160",
             "tick": 97052700,
             "time": "160 weeks, 3 days, 7 hours, 5 minutes",
@@ -3324,19 +2401,6 @@
             },
             "edges": [
                 "TP_161"
-            ]
-        },
-        {
-            "id": "TP_161",
-            "tick": 97053000,
-            "time": "160 weeks, 3 days, 7 hours, 10 minutes",
-            "label": "1 minute standing",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_162"
             ]
         },
         {
@@ -3360,19 +2424,6 @@
             },
             "edges": [
                 "TP_163"
-            ]
-        },
-        {
-            "id": "TP_163",
-            "tick": 97053720,
-            "time": "160 weeks, 3 days, 7 hours, 22 minutes",
-            "label": "2 minute standing",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_164"
             ]
         },
         {
@@ -3466,19 +2517,6 @@
             ]
         },
         {
-            "id": "TP_166",
-            "tick": 112779000,
-            "time": "186 weeks, 3 days, 7 hours, 30 minutes",
-            "label": "5 minute supine",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_167"
-            ]
-        },
-        {
             "id": "TP_167",
             "tick": 112779300,
             "time": "186 weeks, 3 days, 7 hours, 35 minutes",
@@ -3495,19 +2533,6 @@
             },
             "edges": [
                 "TP_168"
-            ]
-        },
-        {
-            "id": "TP_168",
-            "tick": 112779600,
-            "time": "186 weeks, 3 days, 7 hours, 40 minutes",
-            "label": "1 minute standing",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_169"
             ]
         },
         {
@@ -3531,19 +2556,6 @@
             },
             "edges": [
                 "TP_170"
-            ]
-        },
-        {
-            "id": "TP_170",
-            "tick": 112780320,
-            "time": "186 weeks, 3 days, 7 hours, 52 minutes",
-            "label": "2 minute standing",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_171"
             ]
         },
         {
