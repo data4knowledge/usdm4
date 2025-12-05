@@ -17,8 +17,7 @@ from .objective import Objective
 from .schedule_timeline import ScheduleTimeline
 from .estimand import Estimand
 from .comment_annotation import CommentAnnotation
-from usdm4.expander.expander import Expander
-from simple_error_log.errors import Errors
+
 
 class StudyDesign(ApiBaseModelWithIdNameLabelAndDesc):
     studyType: Union[Code, None] = None
@@ -98,10 +97,6 @@ class StudyDesign(ApiBaseModelWithIdNameLabelAndDesc):
 
     def criterion_map(self) -> dict[EligibilityCriterion]:
         return {x.id: x for x in self.eligibilityCriteria}
-
-    def expand(self, errors: Errors) -> dict:
-        expander = Expander(self, self.main_timeline(), errors)
-        return expander.process()
 
 class InterventionalStudyDesign(StudyDesign):
     subTypes: List[Code] = []
