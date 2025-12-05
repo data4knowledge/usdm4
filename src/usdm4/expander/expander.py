@@ -31,10 +31,14 @@ class Expander:
     def process(self):
         entry: ScheduledInstance = self._timeline.find_timepoint(self._timeline.entryId)
         self._process_si(self._timeline, entry, None, 0)
+        node: Timepoint
+        for node in self._nodes:
+             if not node.activities:
+                self._nodes.remove(node)
         sorted(self._nodes, key=lambda x: x.tick)
 
     def to_json(self) -> str:
-        print(f"NODES: {len(self._nodes)}")
+        # print(f"NODES: {len(self._nodes)}")
         return json.dumps({"nodes": [x.to_dict() for x in self._nodes]}, indent=4)
 
     def _process_si(
@@ -46,9 +50,7 @@ class Expander:
         previous: Timepoint,
         offset: int,
     ):
-        print(f"SI {si.id}, {si.instanceType}, {type(si)}")
-        if si.id == "ScheduledDecisionInstance_1":
-            print(f"SDI: {si}")
+        # print(f"SI {si.id}, {si.instanceType}, {type(si)}")
         if isinstance(si, ScheduledActivityInstance):
             # print(f"SAI with id {si.id}")
             tp = Timepoint(
@@ -66,7 +68,7 @@ class Expander:
 
             # Timepoint timeline
             if si.timelineId:
-                print(f"Timepoint timeline {si.timelineId}")
+                # print(f"Timepoint timeline {si.timelineId}")
                 tp_timeline = self._study_design.find_timeline(si.timelineId)
                 entry: ScheduledInstance = tp_timeline.find_timepoint(
                     tp_timeline.entryId
@@ -96,7 +98,7 @@ class Expander:
                 )
             return tp
         elif isinstance(si, ScheduledDecisionInstance):
-            print(f"SDI with id {si.id}")
+            # print(f"SDI with id {si.id}")
             if len(si.conditionAssignments) == 1:
                 ca: ConditionAssignment = si.conditionAssignments[0]
                 dc_op, dc_value = self._days_condition(ca.condition)
