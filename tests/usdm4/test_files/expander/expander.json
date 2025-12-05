@@ -1,6 +1,180 @@
 {
     "nodes": [
         {
+            "id": "TP_8",
+            "tick": -1380600,
+            "time": "-3 weeks, 5 days, 30 minutes",
+            "label": "Screen Two",
+            "encounter": "Screening 2",
+            "activities": {
+                "items": [
+                    {
+                        "label": "Vital Signs and Temperature",
+                        "parent": "Safety",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Ambulatory ECG placed",
+                        "parent": "Safety",
+                        "procedures": []
+                    }
+                ]
+            },
+            "edges": [
+                "TP_9"
+            ]
+        },
+        {
+            "id": "TP_10",
+            "tick": -1380300,
+            "time": "-3 weeks, 5 days, 35 minutes",
+            "label": "Vital signs supine",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "Vital signs while supine",
+                        "parent": null,
+                        "procedures": []
+                    }
+                ]
+            },
+            "edges": [
+                "TP_11"
+            ]
+        },
+        {
+            "id": "TP_12",
+            "tick": -1379640,
+            "time": "-3 weeks, 5 days, 46 minutes",
+            "label": "Vital signs after 1 min standing",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "parent": null,
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
+                    }
+                ]
+            },
+            "edges": [
+                "TP_13"
+            ]
+        },
+        {
+            "id": "TP_14",
+            "tick": -1378800,
+            "time": "-3 weeks, 5 days, 1 hour",
+            "label": "Vital signs after 3 min standing",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "parent": null,
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
+                    }
+                ]
+            },
+            "edges": [
+                "TP_15"
+            ]
+        },
+        {
+            "id": "TP_15",
+            "tick": -1292400,
+            "time": "-3 weeks, 6 days, 1 hour",
+            "label": "Dose",
+            "encounter": "Baseline",
+            "activities": {
+                "items": [
+                    {
+                        "label": "Patient randomised",
+                        "parent": "Safety",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Vital Signs and Temperature",
+                        "parent": "Safety",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Ambulatory ECG removed",
+                        "parent": "Safety",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Concomitant medications",
+                        "parent": "Safety",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Plasma Specimen (Xanomeline)",
+                        "parent": "Laboratory",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Study drug record , Medications dispensed, Medications returned",
+                        "parent": "Exposure",
+                        "procedures": []
+                    },
+                    {
+                        "label": "ADAS-Cog",
+                        "parent": "Questionaires",
+                        "procedures": []
+                    },
+                    {
+                        "label": "CIBIC+",
+                        "parent": "Questionaires",
+                        "procedures": []
+                    },
+                    {
+                        "label": "DAD",
+                        "parent": "Questionaires",
+                        "procedures": []
+                    },
+                    {
+                        "label": "NPI-X",
+                        "parent": "Questionaires",
+                        "procedures": []
+                    }
+                ]
+            },
+            "edges": [
+                "TP_16"
+            ]
+        },
+        {
+            "id": "TP_17",
+            "tick": -1292400,
+            "time": "-3 weeks, 6 days, 1 hour",
+            "label": "Diary",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "SOG Diary",
+                        "parent": null,
+                        "procedures": [
+                            "SOG Diary"
+                        ]
+                    }
+                ]
+            },
+            "edges": [
+                "TP_18"
+            ]
+        },
+        {
             "id": "TP_1",
             "tick": -1209600,
             "time": "-2 weeks",
@@ -202,180 +376,6 @@
             },
             "edges": [
                 "TP_8"
-            ]
-        },
-        {
-            "id": "TP_8",
-            "tick": -1380600,
-            "time": "-3 weeks, 5 days, 30 minutes",
-            "label": "Screen Two",
-            "encounter": "Screening 2",
-            "activities": {
-                "items": [
-                    {
-                        "label": "Vital Signs and Temperature",
-                        "parent": "Safety",
-                        "procedures": []
-                    },
-                    {
-                        "label": "Ambulatory ECG placed",
-                        "parent": "Safety",
-                        "procedures": []
-                    }
-                ]
-            },
-            "edges": [
-                "TP_9"
-            ]
-        },
-        {
-            "id": "TP_10",
-            "tick": -1380300,
-            "time": "-3 weeks, 5 days, 35 minutes",
-            "label": "Vital signs supine",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "Vital signs while supine",
-                        "parent": null,
-                        "procedures": []
-                    }
-                ]
-            },
-            "edges": [
-                "TP_11"
-            ]
-        },
-        {
-            "id": "TP_12",
-            "tick": -1379640,
-            "time": "-3 weeks, 5 days, 46 minutes",
-            "label": "Vital signs after 1 min standing",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "Vital signs while standing",
-                        "parent": null,
-                        "procedures": [
-                            "Systolic blood pressure",
-                            "Diastolic blood pressure",
-                            "Heart Rate"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_13"
-            ]
-        },
-        {
-            "id": "TP_14",
-            "tick": -1378800,
-            "time": "-3 weeks, 5 days, 1 hour",
-            "label": "Vital signs after 3 min standing",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "Vital signs while standing",
-                        "parent": null,
-                        "procedures": [
-                            "Systolic blood pressure",
-                            "Diastolic blood pressure",
-                            "Heart Rate"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_15"
-            ]
-        },
-        {
-            "id": "TP_15",
-            "tick": -1292400,
-            "time": "-3 weeks, 6 days, 1 hour",
-            "label": "Dose",
-            "encounter": "Baseline",
-            "activities": {
-                "items": [
-                    {
-                        "label": "Patient randomised",
-                        "parent": "Safety",
-                        "procedures": []
-                    },
-                    {
-                        "label": "Vital Signs and Temperature",
-                        "parent": "Safety",
-                        "procedures": []
-                    },
-                    {
-                        "label": "Ambulatory ECG removed",
-                        "parent": "Safety",
-                        "procedures": []
-                    },
-                    {
-                        "label": "Concomitant medications",
-                        "parent": "Safety",
-                        "procedures": []
-                    },
-                    {
-                        "label": "Plasma Specimen (Xanomeline)",
-                        "parent": "Laboratory",
-                        "procedures": []
-                    },
-                    {
-                        "label": "Study drug record , Medications dispensed, Medications returned",
-                        "parent": "Exposure",
-                        "procedures": []
-                    },
-                    {
-                        "label": "ADAS-Cog",
-                        "parent": "Questionaires",
-                        "procedures": []
-                    },
-                    {
-                        "label": "CIBIC+",
-                        "parent": "Questionaires",
-                        "procedures": []
-                    },
-                    {
-                        "label": "DAD",
-                        "parent": "Questionaires",
-                        "procedures": []
-                    },
-                    {
-                        "label": "NPI-X",
-                        "parent": "Questionaires",
-                        "procedures": []
-                    }
-                ]
-            },
-            "edges": [
-                "TP_16"
-            ]
-        },
-        {
-            "id": "TP_17",
-            "tick": -1292400,
-            "time": "-3 weeks, 6 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_18"
             ]
         },
         {

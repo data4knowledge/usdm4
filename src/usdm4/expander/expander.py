@@ -35,7 +35,7 @@ class Expander:
         for node in self._nodes:
             if not node.activities:
                 self._nodes.remove(node)
-        sorted(self._nodes, key=lambda x: x.tick)
+        self._nodes = sorted(self._nodes, key=lambda x: x.tick)
 
     def to_json(self) -> str:
         # print(f"NODES: {len(self._nodes)}")
