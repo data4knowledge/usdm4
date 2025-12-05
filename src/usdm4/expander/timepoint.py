@@ -6,9 +6,16 @@ from .tick import Tick
 from simple_error_log import Errors
 
 
-class Timepoint():
-
-    def __init__(self, study_design: StudyDesign, timeline: ScheduleTimeline, sai: ScheduledActivityInstance, errors: Errors, id: int, offset: int):
+class Timepoint:
+    def __init__(
+        self,
+        study_design: StudyDesign,
+        timeline: ScheduleTimeline,
+        sai: ScheduledActivityInstance,
+        errors: Errors,
+        id: int,
+        offset: int,
+    ):
         self._sai: ScheduledActivityInstance = sai
         self._errors = errors
         self._timeline = timeline
@@ -25,38 +32,55 @@ class Timepoint():
     def id(self) -> str:
         return self._id
 
-    def add_edge(self, next: 'Timepoint') -> None:
+    def add_edge(self, next: "Timepoint") -> None:
         self._edges.append(next.id)
 
     def activity_timelines(self) -> list[ScheduleTimeline]:
-        activities = [self._study_design.find_activity(x) for x in self._sai.activityIds]
-        return [self._study_design.find_timeline(x.timelineId) for x in activities if x.timelineId]
-        
+        activities = [
+            self._study_design.find_activity(x) for x in self._sai.activityIds
+        ]
+        return [
+            self._study_design.find_timeline(x.timelineId)
+            for x in activities
+            if x.timelineId
+        ]
+
     def to_dict(self):
         parents = self._study_design.activity_parent()
-        activities = [self._study_design.find_activity(x) for x in self._sai.activityIds]
+        activities = [
+            self._study_design.find_activity(x) for x in self._sai.activityIds
+        ]
         return {
             "id": self._id,
             "tick": self._tick,
             "time": str(Tick(value=self._tick)),
             "label": self._sai.label,
-            "encounter": self._study_design.find_encounter(self._sai.encounterId).label if self._sai.encounterId else None,
+            "encounter": self._study_design.find_encounter(self._sai.encounterId).label
+            if self._sai.encounterId
+            else None,
             "activities": {
                 "items": [
                     {
                         "label": x.label,
-                        "parent": self._study_design.find_activity(parents[x.id]).label if x.id in parents else None,
+                        "parent": self._study_design.find_activity(parents[x.id]).label
+                        if x.id in parents
+                        else None,
                         "procedures": [p.label for p in x.definedProcedures],
-                    } for x in activities
+                    }
+                    for x in activities
                 ]
             },
-            "edges": self._edges
+            "edges": self._edges,
         }
-    
-    def _calculate_hop(self, timeline: ScheduleTimeline, sai: ScheduledActivityInstance) -> int:
+
+    def _calculate_hop(
+        self, timeline: ScheduleTimeline, sai: ScheduledActivityInstance
+    ) -> int:
         return self._calculate_next_hop(timeline, sai, 0)
 
-    def _calculate_next_hop(self, timeline: ScheduleTimeline, sai: ScheduledActivityInstance, tick: int) -> int:
+    def _calculate_next_hop(
+        self, timeline: ScheduleTimeline, sai: ScheduledActivityInstance, tick: int
+    ) -> int:
         # print(f"NEXT HOP: {timeline.id}, {sai.id}")
         timing: Timing = timeline.find_timing_from(sai.id)
         # print(f"TIMING: {timing}")
@@ -65,7 +89,7 @@ class Timepoint():
         to_timing: Timing = timeline.find_timing_from(to_sai.id)
         value = self._calculate_tick(timing)
         new_tick = tick - value if before else tick + value
-        if to_timing.type.code == "C201358": # Anchor, so stop
+        if to_timing.type.code == "C201358":  # Anchor, so stop
             return new_tick
         else:
             return self._calculate_next_hop(timeline, to_sai, new_tick)
@@ -76,4 +100,3 @@ class Timepoint():
         except Exception as e:
             self._errors.error(f"Failed to decode duration '{timing.value}', {e}")
             return 0
-

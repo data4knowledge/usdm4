@@ -1,24 +1,23 @@
-class Tick():
-
-    def __init__(self, duration: str=None, value: int=None):
+class Tick:
+    def __init__(self, duration: str = None, value: int = None):
         if duration:
             self._tick = self._duration_to_ticks(duration)
         elif value:
             self._tick = value
         else:
             self._tick = 0
-        
+
     @property
     def tick(self):
         return self._tick
-    
+
     def __str__(self) -> str:
         intervals = (
-            ('weeks', 604800),  # 60 * 60 * 24 * 7
-            ('days', 86400),    # 60 * 60 * 24
-            ('hours', 3600),    # 60 * 60
-            ('minutes', 60),
-            ('seconds', 1),
+            ("weeks", 604800),  # 60 * 60 * 24 * 7
+            ("days", 86400),  # 60 * 60 * 24
+            ("hours", 3600),  # 60 * 60
+            ("minutes", 60),
+            ("seconds", 1),
         )
         result = []
         seconds = self._tick
@@ -27,9 +26,9 @@ class Tick():
             if value:
                 seconds -= value * count
                 if value == 1:
-                    name = name.rstrip('s')
+                    name = name.rstrip("s")
                 result.append("{} {}".format(value, name))
-        return ', '.join(result)
+        return ", ".join(result)
 
     def _duration_to_ticks(self, duration: str) -> int:
         if duration.startswith("PT"):

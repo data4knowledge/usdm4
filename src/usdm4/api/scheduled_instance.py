@@ -25,5 +25,5 @@ class ScheduledActivityInstance(ScheduledInstance):
 class ScheduledDecisionInstance(ScheduledInstance):
     conditionAssignments: List[
         ConditionAssignment
-    ] # = []  # Allow for empty list, not in API
+    ]  # = []  # Allow for empty list, not in API
     instanceType: Literal["ScheduledDecisionInstance"]
