@@ -2,6 +2,7 @@ from src.usdm4.api.schedule_timeline import ScheduleTimeline
 from src.usdm4.api.scheduled_instance import (
     ScheduledActivityInstance,
     ScheduledDecisionInstance,
+    ConditionAssignment
 )
 from src.usdm4.api.schedule_timeline_exit import ScheduleTimelineExit
 from src.usdm4.api.timing import Timing
@@ -72,8 +73,11 @@ class TestScheduleTimeline:
         instance1 = ScheduledActivityInstance(
             id="instance1", name="Instance 1", instanceType="ScheduledActivityInstance"
         )
+        condition = ConditionAssignment(
+            id="condition1", condition="xxx", conditionTargetId="id", instanceType="ConditionAssignment"
+        )
         instance2 = ScheduledDecisionInstance(
-            id="instance2", name="Instance 2", instanceType="ScheduledDecisionInstance"
+            id="instance2", name="Instance 2", instanceType="ScheduledDecisionInstance", conditionAssignments=[condition]
         )
 
         self.timeline.instances = [instance1, instance2]
