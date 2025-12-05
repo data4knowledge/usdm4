@@ -33,7 +33,7 @@ class Expander:
         self._process_si(self._timeline, entry, None, 0)
         node: Timepoint
         for node in self._nodes:
-             if not node.activities:
+            if not node.activities:
                 self._nodes.remove(node)
         sorted(self._nodes, key=lambda x: x.tick)
 

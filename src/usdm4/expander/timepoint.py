@@ -35,7 +35,7 @@ class Timepoint:
     @property
     def activities(self) -> bool:
         return len(self._sai.activityIds) > 0
-    
+
     def add_edge(self, next: "Timepoint") -> None:
         self._edges.append(next.id)
 
