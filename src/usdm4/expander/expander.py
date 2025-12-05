@@ -32,10 +32,13 @@ class Expander:
         entry: ScheduledInstance = self._timeline.find_timepoint(self._timeline.entryId)
         self._process_si(self._timeline, entry, 0)
         node: Timepoint
+        new_nodes = []
         for node in self._nodes:
-            if not node.activities:
-                self._nodes.remove(node)
-        self._nodes = sorted(self._nodes, key=lambda x: x.tick)
+            # print(f"NODE CLEAN: {node.id}")
+            if node.activities:
+                # print("NODE KEEP")
+                new_nodes.append(node)
+        self._nodes = sorted(new_nodes, key=lambda x: x.tick)
 
     def to_json(self) -> str:
         # print(f"NODES: {len(self._nodes)}")
@@ -85,9 +88,10 @@ class Expander:
                     timeline, timeline.find_timepoint(si.defaultConditionId), tp.tick
                 )
             elif si.timelineExitId:
-                self._process_si(
-                    timeline, timeline.find_exit(si.timelineExitId), tp.tick
-                )
+                pass
+                # self._process_si(
+                #     timeline, timeline.find_exit(si.timelineExitId), tp.tick
+                # )
             else:
                 self._errors.error(
                     f"Next instance error, {si}",

@@ -148,7 +148,11 @@
                     {
                         "label": "Vital signs while supine",
                         "parent": null,
-                        "procedures": []
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
                     }
                 ]
             },
@@ -229,7 +233,11 @@
                     {
                         "label": "Vital signs while supine",
                         "parent": null,
-                        "procedures": []
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
                     }
                 ]
             },
@@ -348,10 +356,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -369,7 +378,11 @@
                     {
                         "label": "Vital signs while supine",
                         "parent": null,
-                        "procedures": []
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
                     }
                 ]
             },
@@ -426,10 +439,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -445,10 +459,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -464,10 +479,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -483,10 +499,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -502,10 +519,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -521,10 +539,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -540,10 +559,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -559,10 +579,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -578,10 +599,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -597,10 +619,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -616,10 +639,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -635,10 +659,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -654,10 +679,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -745,7 +771,11 @@
                     {
                         "label": "Vital signs while supine",
                         "parent": null,
-                        "procedures": []
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
                     }
                 ]
             },
@@ -802,10 +832,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -821,10 +852,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -840,10 +872,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -859,10 +892,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -878,10 +912,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -897,10 +932,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -916,10 +952,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -935,10 +972,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -954,10 +992,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -973,10 +1012,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -992,10 +1032,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -1011,10 +1052,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -1030,10 +1072,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -1049,10 +1092,11 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
@@ -1123,14 +1167,18 @@
             "id": "TP_90",
             "tick": 2419200,
             "time": "4 weeks",
-            "label": "Anchor",
+            "label": "Extra VS",
             "encounter": null,
             "activities": {
                 "items": [
                     {
-                        "label": "Vital signs while supine",
+                        "label": "Extra VS procedures",
                         "parent": null,
-                        "procedures": []
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
                     }
                 ]
             },
@@ -1147,7 +1195,11 @@
                     {
                         "label": "Vital signs while supine",
                         "parent": null,
-                        "procedures": []
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
                     }
                 ]
             },
@@ -1199,14 +1251,18 @@
             "id": "TP_91",
             "tick": 2422800,
             "time": "4 weeks, 1 hour",
-            "label": "1 Hour",
+            "label": "1 Hour Extra VS",
             "encounter": null,
             "activities": {
                 "items": [
                     {
-                        "label": "Vital signs while supine",
+                        "label": "Extra VS procedures",
                         "parent": null,
-                        "procedures": []
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
                     }
                 ]
             },
@@ -1216,14 +1272,18 @@
             "id": "TP_92",
             "tick": 2430000,
             "time": "4 weeks, 3 hours",
-            "label": "2 Hour",
+            "label": "2 Hour Extra VS",
             "encounter": null,
             "activities": {
                 "items": [
                     {
-                        "label": "Vital signs while supine",
+                        "label": "Extra VS procedures",
                         "parent": null,
-                        "procedures": []
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
                     }
                 ]
             },
@@ -1238,24 +1298,14 @@
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Patient Recorded Outcomes",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Patient-Reported Outcomes Measurement Information System",
+                            "EUROQOL EQ-5D-5L"
                         ]
                     }
                 ]
-            },
-            "edges": []
-        },
-        {
-            "id": "TP_75",
-            "tick": 2678400,
-            "time": "4 weeks, 3 days",
-            "label": "Exit",
-            "encounter": null,
-            "activities": {
-                "items": []
             },
             "edges": []
         },
@@ -1330,7 +1380,11 @@
                     {
                         "label": "Vital signs while supine",
                         "parent": null,
-                        "procedures": []
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
                     }
                 ]
             },
@@ -1459,7 +1513,11 @@
                     {
                         "label": "Vital signs while supine",
                         "parent": null,
-                        "procedures": []
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
                     }
                 ]
             },
@@ -1600,7 +1658,11 @@
                     {
                         "label": "Vital signs while supine",
                         "parent": null,
-                        "procedures": []
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
                     }
                 ]
             },
@@ -1746,7 +1808,11 @@
                     {
                         "label": "Vital signs while supine",
                         "parent": null,
-                        "procedures": []
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
                     }
                 ]
             },
@@ -1882,7 +1948,11 @@
                     {
                         "label": "Vital signs while supine",
                         "parent": null,
-                        "procedures": []
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
                     }
                 ]
             },
@@ -2033,7 +2103,11 @@
                     {
                         "label": "Vital signs while supine",
                         "parent": null,
-                        "procedures": []
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
                     }
                 ]
             },
@@ -2157,7 +2231,11 @@
                     {
                         "label": "Vital signs while supine",
                         "parent": null,
-                        "procedures": []
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
                     }
                 ]
             },

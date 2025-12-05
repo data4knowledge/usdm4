@@ -1,6 +1,6 @@
 sheet,row,column,message,level
 studyDesign,9,1,"Masking has been moved to the 'roles' sheet, value ignored",Warning
-dayCycle,10,3,"No activity 'SOG Diary' found, so one has been created",Warning
+extra,10,3,"No activity 'Extra VS procedures' found, so one has been created",Warning
 mainTimeline,11,3,"No activity 'Screening' found, so one has been created",Warning
 mainTimeline,16,3,"No activity 'Safety' found, so one has been created",Warning
 mainTimeline,32,3,"No activity 'Laboratory' found, so one has been created",Warning
