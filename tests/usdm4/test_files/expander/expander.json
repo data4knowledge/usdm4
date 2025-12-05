@@ -1,180 +1,6 @@
 {
     "nodes": [
         {
-            "id": "TP_8",
-            "tick": -1380600,
-            "time": "-3 weeks, 5 days, 30 minutes",
-            "label": "Screen Two",
-            "encounter": "Screening 2",
-            "activities": {
-                "items": [
-                    {
-                        "label": "Vital Signs and Temperature",
-                        "parent": "Safety",
-                        "procedures": []
-                    },
-                    {
-                        "label": "Ambulatory ECG placed",
-                        "parent": "Safety",
-                        "procedures": []
-                    }
-                ]
-            },
-            "edges": [
-                "TP_9"
-            ]
-        },
-        {
-            "id": "TP_10",
-            "tick": -1380300,
-            "time": "-3 weeks, 5 days, 35 minutes",
-            "label": "Vital signs supine",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "Vital signs while supine",
-                        "parent": null,
-                        "procedures": []
-                    }
-                ]
-            },
-            "edges": [
-                "TP_11"
-            ]
-        },
-        {
-            "id": "TP_12",
-            "tick": -1379640,
-            "time": "-3 weeks, 5 days, 46 minutes",
-            "label": "Vital signs after 1 min standing",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "Vital signs while standing",
-                        "parent": null,
-                        "procedures": [
-                            "Systolic blood pressure",
-                            "Diastolic blood pressure",
-                            "Heart Rate"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_13"
-            ]
-        },
-        {
-            "id": "TP_14",
-            "tick": -1378800,
-            "time": "-3 weeks, 5 days, 1 hour",
-            "label": "Vital signs after 3 min standing",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "Vital signs while standing",
-                        "parent": null,
-                        "procedures": [
-                            "Systolic blood pressure",
-                            "Diastolic blood pressure",
-                            "Heart Rate"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_15"
-            ]
-        },
-        {
-            "id": "TP_15",
-            "tick": -1292400,
-            "time": "-3 weeks, 6 days, 1 hour",
-            "label": "Dose",
-            "encounter": "Baseline",
-            "activities": {
-                "items": [
-                    {
-                        "label": "Patient randomised",
-                        "parent": "Safety",
-                        "procedures": []
-                    },
-                    {
-                        "label": "Vital Signs and Temperature",
-                        "parent": "Safety",
-                        "procedures": []
-                    },
-                    {
-                        "label": "Ambulatory ECG removed",
-                        "parent": "Safety",
-                        "procedures": []
-                    },
-                    {
-                        "label": "Concomitant medications",
-                        "parent": "Safety",
-                        "procedures": []
-                    },
-                    {
-                        "label": "Plasma Specimen (Xanomeline)",
-                        "parent": "Laboratory",
-                        "procedures": []
-                    },
-                    {
-                        "label": "Study drug record , Medications dispensed, Medications returned",
-                        "parent": "Exposure",
-                        "procedures": []
-                    },
-                    {
-                        "label": "ADAS-Cog",
-                        "parent": "Questionaires",
-                        "procedures": []
-                    },
-                    {
-                        "label": "CIBIC+",
-                        "parent": "Questionaires",
-                        "procedures": []
-                    },
-                    {
-                        "label": "DAD",
-                        "parent": "Questionaires",
-                        "procedures": []
-                    },
-                    {
-                        "label": "NPI-X",
-                        "parent": "Questionaires",
-                        "procedures": []
-                    }
-                ]
-            },
-            "edges": [
-                "TP_16"
-            ]
-        },
-        {
-            "id": "TP_17",
-            "tick": -1292400,
-            "time": "-3 weeks, 6 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_18"
-            ]
-        },
-        {
             "id": "TP_1",
             "tick": -1209600,
             "time": "-2 weeks",
@@ -309,9 +135,7 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_2"
-            ]
+            "edges": []
         },
         {
             "id": "TP_3",
@@ -328,9 +152,7 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_4"
-            ]
+            "edges": []
         },
         {
             "id": "TP_5",
@@ -351,9 +173,7 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_6"
-            ]
+            "edges": []
         },
         {
             "id": "TP_7",
@@ -374,14 +194,155 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_8"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_19",
-            "tick": -1206000,
-            "time": "-2 weeks, 1 hour",
+            "id": "TP_8",
+            "tick": -172800,
+            "time": "-1 weeks, 5 days",
+            "label": "Screen Two",
+            "encounter": "Screening 2",
+            "activities": {
+                "items": [
+                    {
+                        "label": "Vital Signs and Temperature",
+                        "parent": "Safety",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Ambulatory ECG placed",
+                        "parent": "Safety",
+                        "procedures": []
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_10",
+            "tick": -172500,
+            "time": "-1 weeks, 5 days, 5 minutes",
+            "label": "Vital signs supine",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "Vital signs while supine",
+                        "parent": null,
+                        "procedures": []
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_12",
+            "tick": -171840,
+            "time": "-1 weeks, 5 days, 16 minutes",
+            "label": "Vital signs after 1 min standing",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "parent": null,
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_14",
+            "tick": -171000,
+            "time": "-1 weeks, 5 days, 30 minutes",
+            "label": "Vital signs after 3 min standing",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "parent": null,
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_15",
+            "tick": 86400,
+            "time": "1 day",
+            "label": "Dose",
+            "encounter": "Baseline",
+            "activities": {
+                "items": [
+                    {
+                        "label": "Patient randomised",
+                        "parent": "Safety",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Vital Signs and Temperature",
+                        "parent": "Safety",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Ambulatory ECG removed",
+                        "parent": "Safety",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Concomitant medications",
+                        "parent": "Safety",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Plasma Specimen (Xanomeline)",
+                        "parent": "Laboratory",
+                        "procedures": []
+                    },
+                    {
+                        "label": "Study drug record , Medications dispensed, Medications returned",
+                        "parent": "Exposure",
+                        "procedures": []
+                    },
+                    {
+                        "label": "ADAS-Cog",
+                        "parent": "Questionaires",
+                        "procedures": []
+                    },
+                    {
+                        "label": "CIBIC+",
+                        "parent": "Questionaires",
+                        "procedures": []
+                    },
+                    {
+                        "label": "DAD",
+                        "parent": "Questionaires",
+                        "procedures": []
+                    },
+                    {
+                        "label": "NPI-X",
+                        "parent": "Questionaires",
+                        "procedures": []
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_17",
+            "tick": 86400,
+            "time": "1 day",
             "label": "Diary",
             "encounter": null,
             "activities": {
@@ -395,644 +356,71 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_20"
-            ]
-        },
-        {
-            "id": "TP_21",
-            "tick": -1119600,
-            "time": "-2 weeks, 1 day, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_22"
-            ]
-        },
-        {
-            "id": "TP_23",
-            "tick": -1033200,
-            "time": "-2 weeks, 2 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_24"
-            ]
-        },
-        {
-            "id": "TP_25",
-            "tick": -946800,
-            "time": "-2 weeks, 3 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_26"
-            ]
-        },
-        {
-            "id": "TP_27",
-            "tick": -860400,
-            "time": "-2 weeks, 4 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_28"
-            ]
-        },
-        {
-            "id": "TP_29",
-            "tick": -774000,
-            "time": "-2 weeks, 5 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_30"
-            ]
-        },
-        {
-            "id": "TP_31",
-            "tick": -687600,
-            "time": "-2 weeks, 6 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_32"
-            ]
-        },
-        {
-            "id": "TP_33",
-            "tick": -601200,
-            "time": "-1 weeks, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_34"
-            ]
-        },
-        {
-            "id": "TP_35",
-            "tick": -514800,
-            "time": "-1 weeks, 1 day, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_36"
-            ]
-        },
-        {
-            "id": "TP_37",
-            "tick": -428400,
-            "time": "-1 weeks, 2 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_38"
-            ]
-        },
-        {
-            "id": "TP_39",
-            "tick": -342000,
-            "time": "-1 weeks, 3 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_40"
-            ]
-        },
-        {
-            "id": "TP_41",
-            "tick": -255600,
-            "time": "-1 weeks, 4 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_42"
-            ]
-        },
-        {
-            "id": "TP_43",
-            "tick": -169200,
-            "time": "-1 weeks, 5 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_44"
-            ]
-        },
-        {
-            "id": "TP_45",
-            "tick": -82800,
-            "time": "-1 weeks, 6 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_46"
-            ]
-        },
-        {
-            "id": "TP_47",
-            "tick": 3600,
-            "time": "1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_48"
-            ]
-        },
-        {
-            "id": "TP_49",
-            "tick": 90000,
-            "time": "1 day, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_50"
-            ]
-        },
-        {
-            "id": "TP_51",
-            "tick": 176400,
-            "time": "2 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_52"
-            ]
-        },
-        {
-            "id": "TP_53",
-            "tick": 262800,
-            "time": "3 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_54"
-            ]
-        },
-        {
-            "id": "TP_55",
-            "tick": 349200,
-            "time": "4 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_56"
-            ]
-        },
-        {
-            "id": "TP_57",
-            "tick": 435600,
-            "time": "5 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_58"
-            ]
-        },
-        {
-            "id": "TP_59",
-            "tick": 522000,
-            "time": "6 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_60"
-            ]
-        },
-        {
-            "id": "TP_61",
-            "tick": 608400,
-            "time": "1 week, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_62"
-            ]
-        },
-        {
-            "id": "TP_63",
-            "tick": 694800,
-            "time": "1 week, 1 day, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_64"
-            ]
-        },
-        {
-            "id": "TP_65",
-            "tick": 781200,
-            "time": "1 week, 2 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_66"
-            ]
-        },
-        {
-            "id": "TP_67",
-            "tick": 867600,
-            "time": "1 week, 3 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_68"
-            ]
-        },
-        {
-            "id": "TP_69",
-            "tick": 954000,
-            "time": "1 week, 4 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_70"
-            ]
-        },
-        {
-            "id": "TP_71",
-            "tick": 1040400,
-            "time": "1 week, 5 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_72"
-            ]
-        },
-        {
-            "id": "TP_73",
-            "tick": 1126800,
-            "time": "1 week, 6 days, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_74"
-            ]
-        },
-        {
-            "id": "TP_75",
-            "tick": 1213200,
-            "time": "2 weeks, 1 hour",
-            "label": "Diary",
-            "encounter": null,
-            "activities": {
-                "items": [
-                    {
-                        "label": "SOG Diary",
-                        "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
-                    }
-                ]
-            },
-            "edges": [
-                "TP_76"
-            ]
+            "edges": []
         },
         {
             "id": "TP_77",
-            "tick": 1299600,
-            "time": "2 weeks, 1 day, 1 hour",
-            "label": "Diary",
+            "tick": 86700,
+            "time": "1 day, 5 minutes",
+            "label": "Vital signs supine",
             "encounter": null,
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Vital signs while supine",
                         "parent": null,
-                        "procedures": [
-                            "SOG Diary"
-                        ]
+                        "procedures": []
                     }
                 ]
             },
-            "edges": [
-                "TP_78"
-            ]
+            "edges": []
         },
         {
             "id": "TP_79",
-            "tick": 1386000,
-            "time": "2 weeks, 2 days, 1 hour",
-            "label": "Diary",
+            "tick": 87360,
+            "time": "1 day, 16 minutes",
+            "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
                 "items": [
                     {
-                        "label": "SOG Diary",
+                        "label": "Vital signs while standing",
                         "parent": null,
                         "procedures": [
-                            "SOG Diary"
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
                         ]
                     }
                 ]
             },
-            "edges": [
-                "TP_80"
-            ]
+            "edges": []
         },
         {
             "id": "TP_81",
-            "tick": 1472400,
-            "time": "2 weeks, 3 days, 1 hour",
+            "tick": 88200,
+            "time": "1 day, 30 minutes",
+            "label": "Vital signs after 3 min standing",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "parent": null,
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_19",
+            "tick": 172800,
+            "time": "2 days",
             "label": "Diary",
             "encounter": null,
             "activities": {
@@ -1046,14 +434,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_82"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_83",
-            "tick": 1558800,
-            "time": "2 weeks, 4 days, 1 hour",
+            "id": "TP_21",
+            "tick": 259200,
+            "time": "3 days",
             "label": "Diary",
             "encounter": null,
             "activities": {
@@ -1067,14 +453,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_84"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_85",
-            "tick": 1645200,
-            "time": "2 weeks, 5 days, 1 hour",
+            "id": "TP_23",
+            "tick": 345600,
+            "time": "4 days",
             "label": "Diary",
             "encounter": null,
             "activities": {
@@ -1088,14 +472,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_86"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_87",
-            "tick": 1731600,
-            "time": "2 weeks, 6 days, 1 hour",
+            "id": "TP_25",
+            "tick": 432000,
+            "time": "5 days",
             "label": "Diary",
             "encounter": null,
             "activities": {
@@ -1109,14 +491,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_88"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_89",
-            "tick": 1818000,
-            "time": "3 weeks, 1 hour",
+            "id": "TP_27",
+            "tick": 518400,
+            "time": "6 days",
             "label": "Diary",
             "encounter": null,
             "activities": {
@@ -1130,14 +510,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_90"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_91",
-            "tick": 1904400,
-            "time": "3 weeks, 1 day, 1 hour",
+            "id": "TP_29",
+            "tick": 604800,
+            "time": "1 week",
             "label": "Diary",
             "encounter": null,
             "activities": {
@@ -1151,14 +529,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_92"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_93",
-            "tick": 1990800,
-            "time": "3 weeks, 2 days, 1 hour",
+            "id": "TP_31",
+            "tick": 691200,
+            "time": "1 week, 1 day",
             "label": "Diary",
             "encounter": null,
             "activities": {
@@ -1172,14 +548,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_94"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_95",
-            "tick": 2077200,
-            "time": "3 weeks, 3 days, 1 hour",
+            "id": "TP_33",
+            "tick": 777600,
+            "time": "1 week, 2 days",
             "label": "Diary",
             "encounter": null,
             "activities": {
@@ -1193,14 +567,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_96"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_97",
-            "tick": 2163600,
-            "time": "3 weeks, 4 days, 1 hour",
+            "id": "TP_35",
+            "tick": 864000,
+            "time": "1 week, 3 days",
             "label": "Diary",
             "encounter": null,
             "activities": {
@@ -1214,14 +586,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_98"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_99",
-            "tick": 2250000,
-            "time": "3 weeks, 5 days, 1 hour",
+            "id": "TP_37",
+            "tick": 950400,
+            "time": "1 week, 4 days",
             "label": "Diary",
             "encounter": null,
             "activities": {
@@ -1235,14 +605,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_100"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_101",
-            "tick": 2336400,
-            "time": "3 weeks, 6 days, 1 hour",
+            "id": "TP_39",
+            "tick": 1036800,
+            "time": "1 week, 5 days",
             "label": "Diary",
             "encounter": null,
             "activities": {
@@ -1256,14 +624,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_102"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_103",
-            "tick": 2422800,
-            "time": "4 weeks, 1 hour",
+            "id": "TP_41",
+            "tick": 1123200,
+            "time": "1 week, 6 days",
             "label": "Diary",
             "encounter": null,
             "activities": {
@@ -1277,14 +643,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_104"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_105",
-            "tick": 2509200,
-            "time": "4 weeks, 1 day, 1 hour",
+            "id": "TP_43",
+            "tick": 1209600,
+            "time": "2 weeks",
             "label": "Diary",
             "encounter": null,
             "activities": {
@@ -1298,27 +662,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_106"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_107",
-            "tick": 2682000,
-            "time": "4 weeks, 3 days, 1 hour",
-            "label": "Exit",
-            "encounter": null,
-            "activities": {
-                "items": []
-            },
-            "edges": [
-                "TP_108"
-            ]
-        },
-        {
-            "id": "TP_108",
-            "tick": 3891600,
-            "time": "6 weeks, 3 days, 1 hour",
+            "id": "TP_82",
+            "tick": 1209600,
+            "time": "2 weeks",
             "label": "Week 2",
             "encounter": "Week 2",
             "activities": {
@@ -1383,14 +732,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_109"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_110",
-            "tick": 3891900,
-            "time": "6 weeks, 3 days, 1 hour, 5 minutes",
+            "id": "TP_84",
+            "tick": 1209900,
+            "time": "2 weeks, 5 minutes",
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
@@ -1402,14 +749,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_111"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_112",
-            "tick": 3892560,
-            "time": "6 weeks, 3 days, 1 hour, 16 minutes",
+            "id": "TP_86",
+            "tick": 1210560,
+            "time": "2 weeks, 16 minutes",
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
@@ -1425,14 +770,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_113"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_114",
-            "tick": 3893400,
-            "time": "6 weeks, 3 days, 1 hour, 30 minutes",
+            "id": "TP_88",
+            "tick": 1211400,
+            "time": "2 weeks, 30 minutes",
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
@@ -1448,14 +791,278 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_115"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_115",
-            "tick": 6312600,
-            "time": "10 weeks, 3 days, 1 hour, 30 minutes",
+            "id": "TP_45",
+            "tick": 1296000,
+            "time": "2 weeks, 1 day",
+            "label": "Diary",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "SOG Diary",
+                        "parent": null,
+                        "procedures": [
+                            "SOG Diary"
+                        ]
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_47",
+            "tick": 1382400,
+            "time": "2 weeks, 2 days",
+            "label": "Diary",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "SOG Diary",
+                        "parent": null,
+                        "procedures": [
+                            "SOG Diary"
+                        ]
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_49",
+            "tick": 1468800,
+            "time": "2 weeks, 3 days",
+            "label": "Diary",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "SOG Diary",
+                        "parent": null,
+                        "procedures": [
+                            "SOG Diary"
+                        ]
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_51",
+            "tick": 1555200,
+            "time": "2 weeks, 4 days",
+            "label": "Diary",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "SOG Diary",
+                        "parent": null,
+                        "procedures": [
+                            "SOG Diary"
+                        ]
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_53",
+            "tick": 1641600,
+            "time": "2 weeks, 5 days",
+            "label": "Diary",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "SOG Diary",
+                        "parent": null,
+                        "procedures": [
+                            "SOG Diary"
+                        ]
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_55",
+            "tick": 1728000,
+            "time": "2 weeks, 6 days",
+            "label": "Diary",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "SOG Diary",
+                        "parent": null,
+                        "procedures": [
+                            "SOG Diary"
+                        ]
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_57",
+            "tick": 1814400,
+            "time": "3 weeks",
+            "label": "Diary",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "SOG Diary",
+                        "parent": null,
+                        "procedures": [
+                            "SOG Diary"
+                        ]
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_59",
+            "tick": 1900800,
+            "time": "3 weeks, 1 day",
+            "label": "Diary",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "SOG Diary",
+                        "parent": null,
+                        "procedures": [
+                            "SOG Diary"
+                        ]
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_61",
+            "tick": 1987200,
+            "time": "3 weeks, 2 days",
+            "label": "Diary",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "SOG Diary",
+                        "parent": null,
+                        "procedures": [
+                            "SOG Diary"
+                        ]
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_63",
+            "tick": 2073600,
+            "time": "3 weeks, 3 days",
+            "label": "Diary",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "SOG Diary",
+                        "parent": null,
+                        "procedures": [
+                            "SOG Diary"
+                        ]
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_65",
+            "tick": 2160000,
+            "time": "3 weeks, 4 days",
+            "label": "Diary",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "SOG Diary",
+                        "parent": null,
+                        "procedures": [
+                            "SOG Diary"
+                        ]
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_67",
+            "tick": 2246400,
+            "time": "3 weeks, 5 days",
+            "label": "Diary",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "SOG Diary",
+                        "parent": null,
+                        "procedures": [
+                            "SOG Diary"
+                        ]
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_69",
+            "tick": 2332800,
+            "time": "3 weeks, 6 days",
+            "label": "Diary",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "SOG Diary",
+                        "parent": null,
+                        "procedures": [
+                            "SOG Diary"
+                        ]
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_71",
+            "tick": 2419200,
+            "time": "4 weeks",
+            "label": "Diary",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "SOG Diary",
+                        "parent": null,
+                        "procedures": [
+                            "SOG Diary"
+                        ]
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_89",
+            "tick": 2419200,
+            "time": "4 weeks",
             "label": "Week 4",
             "encounter": "Week 4",
             "activities": {
@@ -1510,14 +1117,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_116"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_116",
-            "tick": 6312600,
-            "time": "10 weeks, 3 days, 1 hour, 30 minutes",
+            "id": "TP_90",
+            "tick": 2419200,
+            "time": "4 weeks",
             "label": "Anchor",
             "encounter": null,
             "activities": {
@@ -1529,14 +1134,71 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_117"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_117",
-            "tick": 6316200,
-            "time": "10 weeks, 3 days, 2 hours, 30 minutes",
+            "id": "TP_94",
+            "tick": 2419500,
+            "time": "4 weeks, 5 minutes",
+            "label": "Vital signs supine",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "Vital signs while supine",
+                        "parent": null,
+                        "procedures": []
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_96",
+            "tick": 2420160,
+            "time": "4 weeks, 16 minutes",
+            "label": "Vital signs after 1 min standing",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "parent": null,
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_98",
+            "tick": 2421000,
+            "time": "4 weeks, 30 minutes",
+            "label": "Vital signs after 3 min standing",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "Vital signs while standing",
+                        "parent": null,
+                        "procedures": [
+                            "Systolic blood pressure",
+                            "Diastolic blood pressure",
+                            "Heart Rate"
+                        ]
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_91",
+            "tick": 2422800,
+            "time": "4 weeks, 1 hour",
             "label": "1 Hour",
             "encounter": null,
             "activities": {
@@ -1548,14 +1210,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_118"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_118",
-            "tick": 6323400,
-            "time": "10 weeks, 3 days, 4 hours, 30 minutes",
+            "id": "TP_92",
+            "tick": 2430000,
+            "time": "4 weeks, 3 hours",
             "label": "2 Hour",
             "encounter": null,
             "activities": {
@@ -1567,14 +1227,42 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_119"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_119",
-            "tick": 9952200,
-            "time": "16 weeks, 3 days, 4 hours, 30 minutes",
+            "id": "TP_73",
+            "tick": 2505600,
+            "time": "4 weeks, 1 day",
+            "label": "Diary",
+            "encounter": null,
+            "activities": {
+                "items": [
+                    {
+                        "label": "SOG Diary",
+                        "parent": null,
+                        "procedures": [
+                            "SOG Diary"
+                        ]
+                    }
+                ]
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_75",
+            "tick": 2678400,
+            "time": "4 weeks, 3 days",
+            "label": "Exit",
+            "encounter": null,
+            "activities": {
+                "items": []
+            },
+            "edges": []
+        },
+        {
+            "id": "TP_99",
+            "tick": 3628800,
+            "time": "6 weeks",
             "label": "Week 6",
             "encounter": "Week 6",
             "activities": {
@@ -1629,14 +1317,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_120"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_121",
-            "tick": 9952500,
-            "time": "16 weeks, 3 days, 4 hours, 35 minutes",
+            "id": "TP_101",
+            "tick": 3629100,
+            "time": "6 weeks, 5 minutes",
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
@@ -1648,14 +1334,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_122"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_123",
-            "tick": 9953160,
-            "time": "16 weeks, 3 days, 4 hours, 46 minutes",
+            "id": "TP_103",
+            "tick": 3629760,
+            "time": "6 weeks, 16 minutes",
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
@@ -1671,14 +1355,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_124"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_125",
-            "tick": 9954000,
-            "time": "16 weeks, 3 days, 5 hours",
+            "id": "TP_105",
+            "tick": 3630600,
+            "time": "6 weeks, 30 minutes",
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
@@ -1694,14 +1376,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_126"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_126",
-            "tick": 14792400,
-            "time": "24 weeks, 3 days, 5 hours",
+            "id": "TP_106",
+            "tick": 4838400,
+            "time": "8 weeks",
             "label": "Week 8",
             "encounter": "Week 8",
             "activities": {
@@ -1766,14 +1446,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_127"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_128",
-            "tick": 14792700,
-            "time": "24 weeks, 3 days, 5 hours, 5 minutes",
+            "id": "TP_108",
+            "tick": 4838700,
+            "time": "8 weeks, 5 minutes",
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
@@ -1785,14 +1463,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_129"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_130",
-            "tick": 14793360,
-            "time": "24 weeks, 3 days, 5 hours, 16 minutes",
+            "id": "TP_110",
+            "tick": 4839360,
+            "time": "8 weeks, 16 minutes",
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
@@ -1808,14 +1484,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_131"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_132",
-            "tick": 14794200,
-            "time": "24 weeks, 3 days, 5 hours, 30 minutes",
+            "id": "TP_112",
+            "tick": 4840200,
+            "time": "8 weeks, 30 minutes",
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
@@ -1831,14 +1505,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_133"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_133",
-            "tick": 20842200,
-            "time": "34 weeks, 3 days, 5 hours, 30 minutes",
+            "id": "TP_113",
+            "tick": 6048000,
+            "time": "10 weeks",
             "label": "Week NPI",
             "encounter": "Week 8",
             "activities": {
@@ -1850,14 +1522,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_134"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_134",
-            "tick": 28099800,
-            "time": "46 weeks, 3 days, 5 hours, 30 minutes",
+            "id": "TP_114",
+            "tick": 7257600,
+            "time": "12 weeks",
             "label": "Week 12",
             "encounter": "Week 12",
             "activities": {
@@ -1917,14 +1587,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_135"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_136",
-            "tick": 28100100,
-            "time": "46 weeks, 3 days, 5 hours, 35 minutes",
+            "id": "TP_116",
+            "tick": 7257900,
+            "time": "12 weeks, 5 minutes",
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
@@ -1936,14 +1604,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_137"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_138",
-            "tick": 28100760,
-            "time": "46 weeks, 3 days, 5 hours, 46 minutes",
+            "id": "TP_118",
+            "tick": 7258560,
+            "time": "12 weeks, 16 minutes",
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
@@ -1959,14 +1625,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_139"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_140",
-            "tick": 28101600,
-            "time": "46 weeks, 3 days, 6 hours",
+            "id": "TP_120",
+            "tick": 7259400,
+            "time": "12 weeks, 30 minutes",
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
@@ -1982,14 +1646,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_141"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_141",
-            "tick": 36568800,
-            "time": "60 weeks, 3 days, 6 hours",
+            "id": "TP_121",
+            "tick": 8467200,
+            "time": "14 weeks",
             "label": "Week 12 NPI",
             "encounter": "Week 12",
             "activities": {
@@ -2001,14 +1663,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_142"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_142",
-            "tick": 46245600,
-            "time": "76 weeks, 3 days, 6 hours",
+            "id": "TP_122",
+            "tick": 9676800,
+            "time": "16 weeks",
             "label": "Week 16",
             "encounter": "Week 16",
             "activities": {
@@ -2073,14 +1733,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_143"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_144",
-            "tick": 46245900,
-            "time": "76 weeks, 3 days, 6 hours, 5 minutes",
+            "id": "TP_124",
+            "tick": 9677100,
+            "time": "16 weeks, 5 minutes",
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
@@ -2092,14 +1750,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_145"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_146",
-            "tick": 46246560,
-            "time": "76 weeks, 3 days, 6 hours, 16 minutes",
+            "id": "TP_126",
+            "tick": 9677760,
+            "time": "16 weeks, 16 minutes",
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
@@ -2115,14 +1771,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_147"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_148",
-            "tick": 46247400,
-            "time": "76 weeks, 3 days, 6 hours, 30 minutes",
+            "id": "TP_128",
+            "tick": 9678600,
+            "time": "16 weeks, 30 minutes",
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
@@ -2138,14 +1792,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_149"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_149",
-            "tick": 57133800,
-            "time": "94 weeks, 3 days, 6 hours, 30 minutes",
+            "id": "TP_129",
+            "tick": 10886400,
+            "time": "18 weeks",
             "label": "Week 16 NPI",
             "encounter": "Week 16",
             "activities": {
@@ -2157,14 +1809,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_150"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_150",
-            "tick": 69229800,
-            "time": "114 weeks, 3 days, 6 hours, 30 minutes",
+            "id": "TP_130",
+            "tick": 12096000,
+            "time": "20 weeks",
             "label": "Week 20",
             "encounter": "Week 20",
             "activities": {
@@ -2219,14 +1869,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_151"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_152",
-            "tick": 69230100,
-            "time": "114 weeks, 3 days, 6 hours, 35 minutes",
+            "id": "TP_132",
+            "tick": 12096300,
+            "time": "20 weeks, 5 minutes",
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
@@ -2238,14 +1886,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_153"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_154",
-            "tick": 69230760,
-            "time": "114 weeks, 3 days, 6 hours, 46 minutes",
+            "id": "TP_134",
+            "tick": 12096960,
+            "time": "20 weeks, 16 minutes",
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
@@ -2261,14 +1907,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_155"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_156",
-            "tick": 69231600,
-            "time": "114 weeks, 3 days, 7 hours",
+            "id": "TP_136",
+            "tick": 12097800,
+            "time": "20 weeks, 30 minutes",
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
@@ -2284,14 +1928,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_157"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_157",
-            "tick": 82537200,
-            "time": "136 weeks, 3 days, 7 hours",
+            "id": "TP_137",
+            "tick": 13305600,
+            "time": "22 weeks",
             "label": "Week 20 NPI",
             "encounter": "Week 20",
             "activities": {
@@ -2303,14 +1945,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_158"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_158",
-            "tick": 97052400,
-            "time": "160 weeks, 3 days, 7 hours",
+            "id": "TP_138",
+            "tick": 14515200,
+            "time": "24 weeks",
             "label": "Week 24",
             "encounter": "Week 24",
             "activities": {
@@ -2380,14 +2020,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_159"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_160",
-            "tick": 97052700,
-            "time": "160 weeks, 3 days, 7 hours, 5 minutes",
+            "id": "TP_140",
+            "tick": 14515500,
+            "time": "24 weeks, 5 minutes",
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
@@ -2399,14 +2037,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_161"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_162",
-            "tick": 97053360,
-            "time": "160 weeks, 3 days, 7 hours, 16 minutes",
+            "id": "TP_142",
+            "tick": 14516160,
+            "time": "24 weeks, 16 minutes",
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
@@ -2422,14 +2058,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_163"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_164",
-            "tick": 97054200,
-            "time": "160 weeks, 3 days, 7 hours, 30 minutes",
+            "id": "TP_144",
+            "tick": 14517000,
+            "time": "24 weeks, 30 minutes",
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
@@ -2445,14 +2079,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_165"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_165",
-            "tick": 112779000,
-            "time": "186 weeks, 3 days, 7 hours, 30 minutes",
+            "id": "TP_145",
+            "tick": 15724800,
+            "time": "26 weeks",
             "label": "Week 26",
             "encounter": "Week 26",
             "activities": {
@@ -2512,14 +2144,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_166"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_167",
-            "tick": 112779300,
-            "time": "186 weeks, 3 days, 7 hours, 35 minutes",
+            "id": "TP_147",
+            "tick": 15725100,
+            "time": "26 weeks, 5 minutes",
             "label": "Vital signs supine",
             "encounter": null,
             "activities": {
@@ -2531,14 +2161,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_168"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_169",
-            "tick": 112779960,
-            "time": "186 weeks, 3 days, 7 hours, 46 minutes",
+            "id": "TP_149",
+            "tick": 15725760,
+            "time": "26 weeks, 16 minutes",
             "label": "Vital signs after 1 min standing",
             "encounter": null,
             "activities": {
@@ -2554,14 +2182,12 @@
                     }
                 ]
             },
-            "edges": [
-                "TP_170"
-            ]
+            "edges": []
         },
         {
-            "id": "TP_171",
-            "tick": 112780800,
-            "time": "186 weeks, 3 days, 8 hours",
+            "id": "TP_151",
+            "tick": 15726600,
+            "time": "26 weeks, 30 minutes",
             "label": "Vital signs after 3 min standing",
             "encounter": null,
             "activities": {
