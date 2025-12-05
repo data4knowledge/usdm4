@@ -3905,7 +3905,7 @@
                     "id": "ScheduledActivityInstance_23",
                     "extensionAttributes": [],
                     "name": "WK8N",
-                    "label": "Week NPI",
+                    "label": "Week 8 NPI",
                     "description": "-",
                     "defaultConditionId": "ScheduledActivityInstance_24",
                     "epochId": "StudyEpoch_3",
