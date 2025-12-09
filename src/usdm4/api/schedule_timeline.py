@@ -34,3 +34,8 @@ class ScheduleTimeline(ApiBaseModelWithIdNameLabelAndDesc):
         return next(
             (x for x in self.timings if x.relativeFromScheduledInstanceId == id), None
         )
+
+    def find_timing_to(self, id: str) -> Timing:
+        return next(
+            (x for x in self.timings if x.relativeToScheduledInstanceId == id), None
+        )

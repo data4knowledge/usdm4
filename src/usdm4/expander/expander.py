@@ -28,6 +28,10 @@ class Expander:
         self._id = 1
         self._nodes: list[Timepoint] = []
 
+    @property
+    def nodes(self):
+        return self._nodes
+    
     def process(self):
         entry: ScheduledInstance = self._timeline.find_timepoint(self._timeline.entryId)
         self._process_si(self._timeline, entry, 0)
@@ -39,11 +43,8 @@ class Expander:
                 # print("NODE KEEP")
                 new_nodes.append(node)
         self._nodes = sorted(new_nodes, key=lambda x: x.tick)
-
-    def to_json(self) -> str:
-        # print(f"NODES: {len(self._nodes)}")
-        return json.dumps({"nodes": [x.to_dict() for x in self._nodes]}, indent=4)
-
+        # print(f"EXPANDED VIEW: {[x.to_dict() for x in self._nodes]}")
+        
     def _process_si(
         self,
         timeline: ScheduleTimeline,
