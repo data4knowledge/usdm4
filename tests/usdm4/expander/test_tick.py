@@ -1,4 +1,4 @@
-from src.usdm4.expander.tick import Tick
+from usdm4.expander.tick import Tick
 import pytest
 
 

@@ -1,13 +1,13 @@
-from src.usdm4.expander.timepoint import Timepoint
-from src.usdm4.api.study_design import StudyDesign
-from src.usdm4.api.schedule_timeline import ScheduleTimeline
-from src.usdm4.api.scheduled_instance import ScheduledActivityInstance
-from src.usdm4.api.timing import Timing
-from src.usdm4.api.code import Code
-from src.usdm4.api.activity import Activity
-from src.usdm4.api.encounter import Encounter
-from src.usdm4.api.procedure import Procedure
-from src.usdm4.api.population_definition import StudyDesignPopulation
+from usdm4.expander.timepoint import Timepoint
+from usdm4.api.study_design import StudyDesign
+from usdm4.api.schedule_timeline import ScheduleTimeline
+from usdm4.api.scheduled_instance import ScheduledActivityInstance
+from usdm4.api.timing import Timing
+from usdm4.api.code import Code
+from usdm4.api.activity import Activity
+from usdm4.api.encounter import Encounter
+from usdm4.api.procedure import Procedure
+from usdm4.api.population_definition import StudyDesignPopulation
 from simple_error_log import Errors
 import pytest
 
