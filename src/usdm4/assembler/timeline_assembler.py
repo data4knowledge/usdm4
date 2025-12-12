@@ -90,10 +90,10 @@ class TimelineAssembler(BaseAssembler):
         try:
             results = []
             map = {}
-            self._errors.debug(
-                f"EPOCHS:\n{data['epochs']}\n",
-                KlassMethodLocation(self.MODULE, "_add_epochs"),
-            )
+            # self._errors.debug(
+            #     f"EPOCHS:\n{data['epochs']}\n",
+            #     KlassMethodLocation(self.MODULE, "_add_epochs"),
+            # )
             items = data["epochs"]["items"]
             timepoints = data["timepoints"]["items"]
             for index, item in enumerate(items):
@@ -539,10 +539,10 @@ class TimelineAssembler(BaseAssembler):
         bc_ids = []
         sbc_ids = []
         procedures = []
-        print(f"ACTIVITY: {activity}")
+        # print(f"ACTIVITY: {activity}")
         if "actions" in activity:
             for bc_name in activity["actions"]["bcs"]:
-                print(f"BC: {bc_name}")
+                # print(f"BC: {bc_name}")
                 if self._builder.cdisc_bc_library.exists(bc_name):
                     bc: BiomedicalConcept = self._builder.bc(bc_name)
                     if bc:
@@ -589,5 +589,5 @@ class TimelineAssembler(BaseAssembler):
                     procedures.append(procedure)
                 else:
                     self._errors.warning(f"Failed to create procedure with name '{bc}'")
-        print(f"IDS: '{bc_ids}', '{sbc_ids}', '{procedures}'")
+        # print(f"IDS: '{bc_ids}', '{sbc_ids}', '{procedures}'")
         return bc_ids, sbc_ids, procedures
