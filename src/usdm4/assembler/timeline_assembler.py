@@ -297,6 +297,9 @@ class TimelineAssembler(BaseAssembler):
                 f"SAI: {len(results)}",
                 KlassMethodLocation(self.MODULE, "_add_timepoints"),
             )
+            sai: ScheduledActivityInstance
+            for index, sai in enumerate(results[:-1]):
+                sai.defaultConditionId = results[index+1].id
             return results
         except Exception as e:
             self._errors.exception(
@@ -509,6 +512,9 @@ class TimelineAssembler(BaseAssembler):
                 KlassMethodLocation(self.MODULE, "_add_timeline"),
             )
             exit = self._builder.create(ScheduleTimelineExit, {})
+            sai: ScheduledActivityInstance = instances[-1]
+            sai.timelineExitId = exit.id
+            sai.defaultConditionId = None
             duration = None
             return self._builder.create(
                 ScheduleTimeline,
