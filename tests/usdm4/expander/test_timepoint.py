@@ -9,7 +9,6 @@ from usdm4.api.encounter import Encounter
 from usdm4.api.procedure import Procedure
 from usdm4.api.population_definition import StudyDesignPopulation
 from simple_error_log import Errors
-import pytest
 
 
 class TestTimepoint:

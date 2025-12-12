@@ -15,7 +15,6 @@ from usdm4.api.procedure import Procedure
 from usdm4.api.population_definition import StudyDesignPopulation
 from simple_error_log import Errors
 import operator
-import pytest
 
 
 class TestExpander:
