@@ -41,13 +41,23 @@ class Builder:
         self.iso639_library = Iso639Library(root_path)
         self.cross_reference = CrossReference()
         self.other_ct_version_manager = OtherCTVersionManager()
-        self.cdisc_ct_library.load()
-        self.cdisc_bc_library.load()
-        self.iso3166_library.load()
-        self.iso639_library.load()
         self._data_store = None
-        self._cdisc_code_system = self.cdisc_ct_library.system
-        self._cdisc_code_system_version = self.cdisc_ct_library.version
+
+        # Lazy loading: Track if CT libraries have been loaded
+        self._ct_loaded = False
+        self._cdisc_code_system = None
+        self._cdisc_code_system_version = None
+
+    def _ensure_ct_loaded(self):
+        """Lazy load CT libraries only when first needed."""
+        if not self._ct_loaded:
+            self.cdisc_ct_library.load()
+            self.cdisc_bc_library.load()
+            self.iso3166_library.load()
+            self.iso639_library.load()
+            self._cdisc_code_system = self.cdisc_ct_library.system
+            self._cdisc_code_system_version = self.cdisc_ct_library.version
+            self._ct_loaded = True
 
     def clear(self):
         self._id_manager.clear()
@@ -96,6 +106,7 @@ class Builder:
         """
         Create a minimum study with the given title, identifier, and version.
         """
+        self._ensure_ct_loaded()
         # Define the codes to be used in the study
         english_code = self.iso639_code("en")
         title_type = self.cdisc_code("C207616", "Official Study Title")
@@ -197,9 +208,11 @@ class Builder:
         return result
 
     def klass_and_attribute(self, klass: str, attribute: str) -> dict:
+        self._ensure_ct_loaded()
         return self.cdisc_ct_library.klass_and_attribute(klass, attribute)
 
     def klass_and_attribute_value(self, klass: str, attribute: str, value: str) -> Code:
+        self._ensure_ct_loaded()
         code_item, version = self.cdisc_ct_library.klass_and_attribute_value(
             klass, attribute, value
         )
@@ -218,6 +231,7 @@ class Builder:
         )
 
     def cdisc_code(self, code: str, decode: str) -> Code:
+        self._ensure_ct_loaded()
         cl = self.cdisc_ct_library.cl_by_term(code)
         return (
             self.create(
@@ -234,6 +248,7 @@ class Builder:
         )
 
     def cdisc_unit_code(self, unit: str) -> Code:
+        self._ensure_ct_loaded()
         unit = self.cdisc_ct_library.unit(unit)
         unit_cl = self.cdisc_ct_library.unit_code_list()
         return (
@@ -254,6 +269,7 @@ class Builder:
         return self.create(AliasCode, {"standardCode": standard_code})
 
     def bc(self, name) -> BiomedicalConcept | None:
+        self._ensure_ct_loaded()
         if self.cdisc_bc_library.exists(name):
             bc_params = self.cdisc_bc_library.usdm(name)
             self._set_ids(bc_params)
@@ -264,6 +280,7 @@ class Builder:
             return None
 
     def iso3166_code_or_decode(self, text: str) -> Code:
+        self._ensure_ct_loaded()
         code, decode = self.iso3166_library.code_or_decode(text)
         if code:
             return self.create(
@@ -279,6 +296,7 @@ class Builder:
             return None
 
     def iso3166_code(self, code: str) -> Code:
+        self._ensure_ct_loaded()
         code, decode = self.iso3166_library.decode(code)
         if code:
             return self.create(
@@ -294,6 +312,7 @@ class Builder:
             return None
 
     def iso639_code_or_decode(self, text: str) -> Code:
+        self._ensure_ct_loaded()
         code, decode = self.iso639_library.code_or_decode(text)
         # print(f"ISO639: {text} = [{code} {decode}]")
         if code:
@@ -310,6 +329,7 @@ class Builder:
             return None
 
     def iso639_code(self, code: str) -> Code:
+        self._ensure_ct_loaded()
         new_code, decode = self.iso639_library.decode(code)
         if new_code:
             return self.create(
@@ -325,6 +345,7 @@ class Builder:
             return None
 
     def iso3166_region_code(self, code: str) -> Code:
+        self._ensure_ct_loaded()
         code, decode = self.iso3166_library.region_code(code)
         return self.create(
             Code,
@@ -348,6 +369,7 @@ class Builder:
         )
 
     def sponsor(self, sponsor_name: str) -> Organization:
+        self._ensure_ct_loaded()
         sponsor_code = self.cdisc_code("C54149", "Pharmaceutical Company")
         return self.create(
             Organization,
