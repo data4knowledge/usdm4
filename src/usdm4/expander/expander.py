@@ -1,5 +1,4 @@
 import re
-import json
 import operator
 from usdm4.api.study_design import StudyDesign
 from usdm4.api.schedule_timeline import ScheduleTimeline
@@ -31,7 +30,7 @@ class Expander:
     @property
     def nodes(self):
         return self._nodes
-    
+
     def process(self):
         entry: ScheduledInstance = self._timeline.find_timepoint(self._timeline.entryId)
         self._process_si(self._timeline, entry, 0)
@@ -44,7 +43,7 @@ class Expander:
                 new_nodes.append(node)
         self._nodes = sorted(new_nodes, key=lambda x: x.tick)
         # print(f"EXPANDED VIEW: {[x.to_dict() for x in self._nodes]}")
-        
+
     def _process_si(
         self,
         timeline: ScheduleTimeline,
@@ -119,7 +118,7 @@ class Expander:
                         )
                 else:
                     self._errors.error(
-                        f"No day condition encountered, being ignored.",
+                        "No day condition encountered, being ignored.",
                         KlassMethodLocation(self.MODULE, "_process_si"),
                     )
                     self._process_si(
@@ -129,7 +128,7 @@ class Expander:
                     )
             else:
                 self._errors.error(
-                    f"Complex condition encountered, being ignored.",
+                    "Complex condition encountered, being ignored.",
                     KlassMethodLocation(self.MODULE, "_process_si"),
                 )
                 self._process_si(

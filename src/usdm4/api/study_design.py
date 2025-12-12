@@ -98,6 +98,7 @@ class StudyDesign(ApiBaseModelWithIdNameLabelAndDesc):
     def criterion_map(self) -> dict[EligibilityCriterion]:
         return {x.id: x for x in self.eligibilityCriteria}
 
+
 class InterventionalStudyDesign(StudyDesign):
     subTypes: List[Code] = []
     model: Code
