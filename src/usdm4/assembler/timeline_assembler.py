@@ -272,8 +272,6 @@ class TimelineAssembler(BaseAssembler):
         try:
             results = []
             timepoints: list = data["timepoints"]["items"]
-            # epochs: list = data["epochs"]["items"]
-            # encounters: list = data["visits"]["items"]
             for index, item in enumerate(timepoints):
                 sai = self._builder.create(
                     ScheduledActivityInstance,
@@ -410,7 +408,7 @@ class TimelineAssembler(BaseAssembler):
                         Timing, "type", type
                     ),
                     "value": self._encoder.iso8601_duration(
-                        timepoint["value"], timepoint["unit"]
+                        self._set_abs_duration(timepoint["value"]), timepoint["unit"]
                     ),
                     "valueLabel": self._timing_value_label(timepoints, index),
                     "name": f"TIMING-{index}",
@@ -421,12 +419,12 @@ class TimelineAssembler(BaseAssembler):
                     ),
                     "windowLabel": self._window_label(windows, index),
                     "windowLower": self._encoder.iso8601_duration(
-                        window["before"], window["unit"]
+                        self._set_abs_duration(window["before"]), window["unit"]
                     )
                     if window["before"]
                     else "",
                     "windowUpper": self._encoder.iso8601_duration(
-                        window["after"], window["unit"]
+                        self._set_abs_duration(window["after"]), window["unit"]
                     )
                     if window["after"]
                     else "",
@@ -444,6 +442,10 @@ class TimelineAssembler(BaseAssembler):
             )
             return None
 
+    def _set_abs_duration(self, value: int | str) -> int:
+        print(f"DURATION: {value}")
+        return 0 if not isinstance(value, int) else abs(value)
+    
     def _window_label(self, windows: list[dict], index: int) -> str:
         if index >= len(windows):
             return "???"
@@ -461,7 +463,9 @@ class TimelineAssembler(BaseAssembler):
         items = data["timepoints"]["items"]
         item: dict
         for item in items:
-            if item["value"] == "1":
+            print(f"ANCHOR CHECK: '{item['value']}', {type(item['value'])}")
+            if isinstance(item["value"], int) and item["value"] >= 0:
+                print(f"ANCHOR CHECK: POSITIVE")
                 item["sai_instance"]
                 return int(item["index"])
         return 0
