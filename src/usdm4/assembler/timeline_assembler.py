@@ -297,7 +297,7 @@ class TimelineAssembler(BaseAssembler):
             )
             sai: ScheduledActivityInstance
             for index, sai in enumerate(results[:-1]):
-                sai.defaultConditionId = results[index+1].id
+                sai.defaultConditionId = results[index + 1].id
             return results
         except Exception as e:
             self._errors.exception(
@@ -445,7 +445,7 @@ class TimelineAssembler(BaseAssembler):
     def _set_abs_duration(self, value: int | str) -> int:
         # print(f"DURATION: {value}")
         return 0 if not isinstance(value, int) else abs(value)
-    
+
     def _window_label(self, windows: list[dict], index: int) -> str:
         if index >= len(windows):
             return "???"

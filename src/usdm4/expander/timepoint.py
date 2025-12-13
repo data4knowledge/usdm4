@@ -62,6 +62,7 @@ class Timepoint:
             "encounter": self._study_design.find_encounter(self._sai.encounterId).label
             if self._sai.encounterId
             else None,
+            "main_timeline": self._timeline.mainTimeline,
             "activities": {
                 "items": [
                     {
