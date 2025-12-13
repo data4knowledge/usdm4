@@ -443,7 +443,7 @@ class TimelineAssembler(BaseAssembler):
             return None
 
     def _set_abs_duration(self, value: int | str) -> int:
-        print(f"DURATION: {value}")
+        # print(f"DURATION: {value}")
         return 0 if not isinstance(value, int) else abs(value)
     
     def _window_label(self, windows: list[dict], index: int) -> str:
@@ -463,9 +463,9 @@ class TimelineAssembler(BaseAssembler):
         items = data["timepoints"]["items"]
         item: dict
         for item in items:
-            print(f"ANCHOR CHECK: '{item['value']}', {type(item['value'])}")
+            # print(f"ANCHOR CHECK: '{item['value']}', {type(item['value'])}")
             if isinstance(item["value"], int) and item["value"] >= 0:
-                print(f"ANCHOR CHECK: POSITIVE")
+                # print(f"ANCHOR CHECK: POSITIVE")
                 item["sai_instance"]
                 return int(item["index"])
         return 0

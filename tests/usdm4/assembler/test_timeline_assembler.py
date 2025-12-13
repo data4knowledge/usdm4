@@ -443,13 +443,13 @@ class TestTimelineAssemblerTiming:
         data = {
             "timepoints": {
                 "items": [
-                    {"index": "0", "value": "0", "sai_instance": None},
+                    {"index": "0", "value": -1, "sai_instance": None},
                     {
                         "index": "1",
-                        "value": "1",
+                        "value": 1,
                         "sai_instance": None,
                     },  # This should be the anchor
-                    {"index": "2", "value": "7", "sai_instance": None},
+                    {"index": "2", "value": 7, "sai_instance": None},
                 ]
             }
         }
