@@ -72,7 +72,13 @@ class Timepoint:
                         if x.id in parents
                         else None,
                         "procedures": [p.label for p in x.definedProcedures],
-                        "notes": [{"text": x.text, "codes": [self._code_dict(c) for c in x.codes]} for x in x.notes]
+                        "notes": [
+                            {
+                                "text": x.text,
+                                "codes": [self._code_dict(c) for c in x.codes],
+                            }
+                            for x in x.notes
+                        ],
                     }
                     for x in activities
                 ]
@@ -81,8 +87,13 @@ class Timepoint:
         }
 
     def _code_dict(self, code: Code) -> dict:
-        return {"code": code.code, "decode": code.decode, "system": code.codeSystem, "version": code.codeSystemVersion}
-    
+        return {
+            "code": code.code,
+            "decode": code.decode,
+            "system": code.codeSystem,
+            "version": code.codeSystemVersion,
+        }
+
     def _calculate_hop(
         self, timeline: ScheduleTimeline, sai: ScheduledActivityInstance
     ) -> int:
