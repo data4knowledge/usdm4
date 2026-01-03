@@ -1,6 +1,7 @@
 from usdm4.api.study_design import StudyDesign
 from usdm4.api.schedule_timeline import ScheduleTimeline
 from usdm4.api.scheduled_instance import ScheduledActivityInstance
+from usdm4.api.code import Code
 from usdm4.api.timing import Timing
 from .tick import Tick
 from simple_error_log import Errors
@@ -71,6 +72,7 @@ class Timepoint:
                         if x.id in parents
                         else None,
                         "procedures": [p.label for p in x.definedProcedures],
+                        "notes": [{"text": x.text, "codes": [self._code_dict(c) for c in x.codes]} for x in x.notes]
                     }
                     for x in activities
                 ]
@@ -78,6 +80,9 @@ class Timepoint:
             "edges": self._edges,
         }
 
+    def _code_dict(self, code: Code) -> dict:
+        return {"code": code.code, "decode": code.decode, "system": code.codeSystem, "version": code.codeSystemVersion}
+    
     def _calculate_hop(
         self, timeline: ScheduleTimeline, sai: ScheduledActivityInstance
     ) -> int:
