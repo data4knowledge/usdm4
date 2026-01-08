@@ -46,7 +46,8 @@ class TimelineAssembler(BaseAssembler):
             self._link_timepoints_and_activities(data)
             self._conditions = self._add_conditions(data)
             tl = self._add_timeline(data, timepoints, timings)
-            self._timelines.append(tl)
+            if tl:
+                self._timelines.append(tl)
         except Exception as e:
             self._errors.exception(
                 "Failed during creation of study design",
