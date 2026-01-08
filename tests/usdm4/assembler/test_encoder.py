@@ -39,7 +39,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("Phase 0")
 
-        encoder._builder.cdisc_code.assert_called_with("C54721", "Phase 0 Trial")
+        encoder._builder.cdisc_code.assert_called_with("C54721", "Early Phase 1")
         assert result == mock_alias
 
     def test_phase_preclinical(self, encoder):
@@ -51,7 +51,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("PRE-CLINICAL")
 
-        encoder._builder.cdisc_code.assert_called_with("C54721", "Phase 0 Trial")
+        encoder._builder.cdisc_code.assert_called_with("C54721", "Early Phase 1")
         assert result == mock_alias
 
     def test_phase_1(self, encoder):
@@ -63,7 +63,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("Phase I")
 
-        encoder._builder.cdisc_code.assert_called_with("C15600", "Phase I Trial")
+        encoder._builder.cdisc_code.assert_called_with("C15600", "Phase 1")
         assert result == mock_alias
 
     def test_phase_1_numeric(self, encoder):
@@ -75,7 +75,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("1")
 
-        encoder._builder.cdisc_code.assert_called_with("C15600", "Phase I Trial")
+        encoder._builder.cdisc_code.assert_called_with("C15600", "Phase 1")
         assert result == mock_alias
 
     def test_phase_1_2(self, encoder):
@@ -87,7 +87,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("Phase 1-2")
 
-        encoder._builder.cdisc_code.assert_called_with("C15693", "Phase I/II Trial")
+        encoder._builder.cdisc_code.assert_called_with("C15693", "Phase 1/Phase 2")
         assert result == mock_alias
 
     def test_phase_1_slash_2(self, encoder):
@@ -99,7 +99,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("1/2")
 
-        encoder._builder.cdisc_code.assert_called_with("C15693", "Phase I/II Trial")
+        encoder._builder.cdisc_code.assert_called_with("C15693", "Phase 1/Phase 2")
         assert result == mock_alias
 
     def test_phase_1_2_3(self, encoder):
@@ -112,7 +112,7 @@ class TestEncoderPhase:
         result = encoder.phase("1/2/3")
 
         encoder._builder.cdisc_code.assert_called_with(
-            "C198366", "Phase I/II/III Trial"
+            "C198366", "Phase 1/Phase 2/Phase 3"
         )
         assert result == mock_alias
 
@@ -125,7 +125,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("1/3")
 
-        encoder._builder.cdisc_code.assert_called_with("C198367", "Phase I/III Trial")
+        encoder._builder.cdisc_code.assert_called_with("C198367", "Phase 1/Phase 3")
         assert result == mock_alias
 
     def test_phase_1a(self, encoder):
@@ -161,7 +161,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("Phase II")
 
-        encoder._builder.cdisc_code.assert_called_with("C15601", "Phase II Trial")
+        encoder._builder.cdisc_code.assert_called_with("C15601", "Phase 2")
         assert result == mock_alias
 
     def test_phase_2_3(self, encoder):
@@ -173,7 +173,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("2-3")
 
-        encoder._builder.cdisc_code.assert_called_with("C15694", "Phase II/III Trial")
+        encoder._builder.cdisc_code.assert_called_with("C15694", "Phase 2/Phase 3")
         assert result == mock_alias
 
     def test_phase_2a(self, encoder):
@@ -209,7 +209,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("Phase III")
 
-        encoder._builder.cdisc_code.assert_called_with("C15602", "Phase III Trial")
+        encoder._builder.cdisc_code.assert_called_with("C15602", "Phase 3")
         assert result == mock_alias
 
     def test_phase_3a(self, encoder):
@@ -245,7 +245,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("4")
 
-        encoder._builder.cdisc_code.assert_called_with("C15603", "Phase IV Trial")
+        encoder._builder.cdisc_code.assert_called_with("C15603", "Phase 4")
         assert result == mock_alias
 
     def test_phase_5(self, encoder):
@@ -874,7 +874,7 @@ class TestEncoderEdgeCases:
 
         result = encoder.phase("Phase I Trial")
 
-        encoder._builder.cdisc_code.assert_called_with("C15600", "Phase I Trial")
+        encoder._builder.cdisc_code.assert_called_with("C15600", "Phase 1")
         assert result == mock_alias
 
     def test_phase_mixed_case(self, encoder):
@@ -886,7 +886,7 @@ class TestEncoderEdgeCases:
 
         result = encoder.phase("pHaSe Ii")
 
-        encoder._builder.cdisc_code.assert_called_with("C15601", "Phase II Trial")
+        encoder._builder.cdisc_code.assert_called_with("C15601", "Phase 2")
         assert result == mock_alias
 
     def test_document_status_with_spaces(self, encoder):
