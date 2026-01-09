@@ -255,5 +255,8 @@ class StudyVersion(ApiBaseModelWithId):
     def organization_map(self) -> dict[str, Organization]:
         return {x.id: x for x in self.organizations}
 
-    def narrative_content_item_map(self) -> dict[NarrativeContentItem]:
+    def eligibility_critieria_item_map(self) -> dict[str, EligibilityCriterionItem]:
+        return {x.id: x for x in self.eligibilityCriterionItems}
+
+    def narrative_content_item_map(self) -> dict[str, NarrativeContentItem]:
         return {x.id: x for x in self.narrativeContentItems}
