@@ -154,7 +154,7 @@ class TestIdentificationAssemblerValidData:
 
         # Verify organization
         organization = identification_assembler.organizations[0]
-        assert organization.name == "CLINICALTRIALS.GOV"  # _label_to_name conversion
+        assert organization.name == "CT.GOV"  # Uses name field from STANDARD_ORGS
         assert organization.label == "ClinicalTrials.gov"
 
     def test_execute_with_non_standard_organization_identifier(
@@ -200,8 +200,8 @@ class TestIdentificationAssemblerValidData:
         # Verify organization
         organization = identification_assembler.organizations[0]
         assert (
-            organization.name == "CUSTOM-PHARMACEUTICAL-COMPANY"
-        )  # _label_to_name conversion
+            organization.name == "Custom Pharma"
+        )  # Uses name field from non_standard data
         assert organization.label == "Custom Pharmaceutical Company"
         # Note: Organization API model doesn't have description field
 
@@ -269,9 +269,9 @@ class TestIdentificationAssemblerValidData:
         # Verify organizations - check that we have the expected ones that were created
         org_names = [org.name for org in identification_assembler.organizations]
         expected_orgs = [
-            "CLINICALTRIALS.GOV",
-            "EUROPEAN-MEDICINES-AGENCY",
-            "TEST-PHARMACEUTICAL-INC",
+            "CT.GOV",
+            "EMA",
+            "Test Pharma",
         ]
         found_orgs = [org_name for org_name in expected_orgs if org_name in org_names]
         assert len(found_orgs) >= 2, (
@@ -297,9 +297,9 @@ class TestIdentificationAssemblerValidData:
         # Verify standard organizations were created - check that we have the expected ones
         org_names = [org.name for org in identification_assembler.organizations]
         expected_orgs = [
-            "CLINICALTRIALS.GOV",
-            "EUROPEAN-MEDICINES-AGENCY",
-            "FOOD-AND-DRUG-ADMIONISTRATION",
+            "CT.GOV",
+            "EMA",
+            "FDA",
         ]
         found_orgs = [org_name for org_name in expected_orgs if org_name in org_names]
         assert len(found_orgs) >= 1, (
@@ -677,8 +677,8 @@ class TestIdentificationAssemblerPrivateMethods:
         assert hasattr(organization, "name")
         assert hasattr(organization, "label")
         assert (
-            organization.name == "TEST-PHARMACEUTICAL-COMPANY"
-        )  # _label_to_name conversion
+            organization.name == "Test Pharma"
+        )  # Uses name field from org_data
         assert organization.label == "Test Pharmaceutical Company"
         # Note: Organization API model doesn't have description field
 
@@ -1100,9 +1100,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
 
             organization = identification_assembler._create_organization(org_data)
             if organization is not None:
-                assert organization.name == identification_assembler._label_to_name(
-                    org_data["label"]
-                )
+                assert organization.name == org_data["name"]  # Uses name field from org_data
                 assert organization.label == org_data["label"]
 
     def test_create_identifier_with_none_organization(self, identification_assembler):

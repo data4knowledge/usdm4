@@ -124,7 +124,7 @@ class TestStudyVersion:
 
         self.non_sponsor_org = Organization(
             id="org_2",
-            name="ClinicalTrials.gov",
+            name="CT.GOV",
             label="ClinicalTrials.gov",
             type=self.non_sponsor_code,
             identifierScheme="scheme2",
@@ -668,7 +668,7 @@ class TestStudyVersion:
         assert "org_1" in org_map
         assert "org_2" in org_map
         assert org_map["org_1"].name == "Test Sponsor"
-        assert org_map["org_2"].name == "ClinicalTrials.gov"
+        assert org_map["org_2"].name == "CT.GOV"
 
     def test_find_study_design(self):
         """Test finding study design by ID."""
