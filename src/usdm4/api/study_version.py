@@ -202,7 +202,21 @@ class StudyVersion(ApiBaseModelWithId):
     def nct_identifier(self) -> StudyIdentifier:
         map = self.organization_map()
         for x in self.studyIdentifiers:
-            if map[x.scopeId].name == "ClinicalTrials.gov":
+            if map[x.scopeId].name == "CT.GOV":
+                return x.text
+        return ""
+
+    def fda_ind_identifier(self) -> StudyIdentifier:
+        map = self.organization_map()
+        for x in self.studyIdentifiers:
+            if map[x.scopeId].name == "FDA":
+                return x.text
+        return ""
+
+    def ema_identifier(self) -> StudyIdentifier:
+        map = self.organization_map()
+        for x in self.studyIdentifiers:
+            if map[x.scopeId].name == "EMA":
                 return x.text
         return ""
 

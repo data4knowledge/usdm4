@@ -1,3 +1,4 @@
+import copy
 from usdm4.assembler.base_assembler import BaseAssembler
 from usdm4.builder.builder import Builder
 from usdm4.api.address import Address
@@ -91,7 +92,7 @@ class IdentificationAssembler(BaseAssembler):
         "fda": {
             "type": "regulator",
             "name": "FDA",
-            "label": "Food and Drug Admionistration",
+            "label": "Food and Drug Administration",
             "identifier": "FDA",
             "description": "The US medicines regulator",
             "identifierScheme": "Health and Human Services, US Government",
@@ -210,7 +211,7 @@ class IdentificationAssembler(BaseAssembler):
             try:
                 scope = id_details["scope"]
                 organization: dict = (
-                    self.STANDARD_ORGS[scope["standard"]]
+                    copy.deepcopy(self.STANDARD_ORGS[scope["standard"]])
                     if "standard" in scope
                     else scope["non_standard"]
                 )
@@ -290,7 +291,7 @@ class IdentificationAssembler(BaseAssembler):
             organization["type"] = self._builder.cdisc_code(
                 self.ORG_CODES[org_type]["code"], self.ORG_CODES[org_type]["decode"]
             )
-            organization["name"] = self._label_to_name(organization["label"])
+            organization["name"] = organization["name"] if "name" in organization else self._label_to_name(organization["label"])
             return self._builder.create(Organization, organization)
         except Exception as e:
             self._errors.exception(
