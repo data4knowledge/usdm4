@@ -217,7 +217,7 @@ class StudyAssembler(BaseAssembler):
             )
 
     def _get_study_name_label(self, options: dict) -> tuple[str, str]:
-        items = ["acronym", "identifier", "compound"]
+        items = ["identifier", "acronym", "compound"]
         for item in items:
             if item in options and options[item]:
                 name = re.sub(r"[\W_]+", "", options[item].upper())
