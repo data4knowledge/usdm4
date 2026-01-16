@@ -312,10 +312,10 @@
                 "type": {
                   "id": "Code_28",
                   "extensionAttributes": [],
-                  "code": "C132352",
+                  "code": "C71476",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2024-09-27",
-                  "decode": "Protocol Approval by Sponsor Date",
+                  "decode": "Approval Date",
                   "instanceType": "Code"
                 },
                 "dateValue": "2020-08-18",
@@ -664,10 +664,10 @@
                 "type": {
                   "id": "Code_30",
                   "extensionAttributes": [],
-                  "code": "C132352",
+                  "code": "C71476",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2024-09-27",
-                  "decode": "Protocol Approval by Sponsor Date",
+                  "decode": "Approval Date",
                   "instanceType": "Code"
                 },
                 "dateValue": "2021-03-19",
@@ -893,10 +893,10 @@
                 "type": {
                   "id": "Code_32",
                   "extensionAttributes": [],
-                  "code": "C132352",
+                  "code": "C71476",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2024-09-27",
-                  "decode": "Protocol Approval by Sponsor Date",
+                  "decode": "Approval Date",
                   "instanceType": "Code"
                 },
                 "dateValue": "2021-08-31",
@@ -1134,10 +1134,10 @@
                 "type": {
                   "id": "Code_34",
                   "extensionAttributes": [],
-                  "code": "C132352",
+                  "code": "C71476",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2024-09-27",
-                  "decode": "Protocol Approval by Sponsor Date",
+                  "decode": "Approval Date",
                   "instanceType": "Code"
                 },
                 "dateValue": "2022-03-18",
@@ -11193,7 +11193,7 @@
               "code": "C54149",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2024-09-27",
-              "decode": "Pharmaceutical Company",
+              "decode": "Drug Company",
               "instanceType": "Code"
             },
             "appliesToIds": [],
@@ -11224,7 +11224,7 @@
               "code": "C54149",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2024-09-27",
-              "decode": "Pharmaceutical Company",
+              "decode": "Drug Company",
               "instanceType": "Code"
             },
             "identifierScheme": "DUNS",
@@ -11265,7 +11265,7 @@
               "code": "C93453",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2024-09-27",
-              "decode": "Clinical Study Registry",
+              "decode": "Study Registry",
               "instanceType": "Code"
             },
             "identifierScheme": "USGOV",
@@ -11306,7 +11306,7 @@
               "code": "C93453",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2024-09-27",
-              "decode": "Clinical Study Registry",
+              "decode": "Study Registry",
               "instanceType": "Code"
             },
             "identifierScheme": "EU",
@@ -11388,7 +11388,7 @@
               "code": "C54149",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2024-09-27",
-              "decode": "Pharmaceutical Company",
+              "decode": "Drug Company",
               "instanceType": "Code"
             },
             "identifierScheme": "DUNS",
@@ -16011,10 +16011,10 @@
                 "type": {
                   "id": "Code_17",
                   "extensionAttributes": [],
-                  "code": "C132352",
+                  "code": "C71476",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2024-09-27",
-                  "decode": "Protocol Approval by Sponsor Date",
+                  "decode": "Approval Date",
                   "instanceType": "Code"
                 },
                 "dateValue": "2020-05-12",
@@ -16046,10 +16046,10 @@
                 "type": {
                   "id": "Code_19",
                   "extensionAttributes": [],
-                  "code": "C132352",
+                  "code": "C71476",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2024-09-27",
-                  "decode": "Protocol Approval by Sponsor Date",
+                  "decode": "Approval Date",
                   "instanceType": "Code"
                 },
                 "dateValue": "2020-08-18",
@@ -16081,10 +16081,10 @@
                 "type": {
                   "id": "Code_21",
                   "extensionAttributes": [],
-                  "code": "C132352",
+                  "code": "C71476",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2024-09-27",
-                  "decode": "Protocol Approval by Sponsor Date",
+                  "decode": "Approval Date",
                   "instanceType": "Code"
                 },
                 "dateValue": "2021-03-19",
@@ -16116,10 +16116,10 @@
                 "type": {
                   "id": "Code_23",
                   "extensionAttributes": [],
-                  "code": "C132352",
+                  "code": "C71476",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2024-09-27",
-                  "decode": "Protocol Approval by Sponsor Date",
+                  "decode": "Approval Date",
                   "instanceType": "Code"
                 },
                 "dateValue": "2021-08-31",
@@ -16151,10 +16151,10 @@
                 "type": {
                   "id": "Code_25",
                   "extensionAttributes": [],
-                  "code": "C132352",
+                  "code": "C71476",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2024-09-27",
-                  "decode": "Protocol Approval by Sponsor Date",
+                  "decode": "Approval Date",
                   "instanceType": "Code"
                 },
                 "dateValue": "2022-03-18",

@@ -1046,7 +1046,7 @@
               "code": "C54149",
               "codeSystem": "cdisc.org",
               "codeSystemVersion": "2023-12-15",
-              "decode": "Pharmaceutical Company",
+              "decode": "Drug Company",
               "instanceType": "Code"
             },
             "identifierScheme": "To be provided",

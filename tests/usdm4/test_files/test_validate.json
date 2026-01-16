@@ -54,10 +54,10 @@
                 "label": "Design Approval",
                 "name": "D_APPROVE",
                 "type": {
-                  "code": "C132352",
+                  "code": "C71476",
                   "codeSystem": "cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Protocol Approval by Sponsor Date",
+                  "decode": "Approval Date",
                   "id": "Code_7",
                   "instanceType": "Code"
                 }
@@ -114,10 +114,10 @@
             "label": "Design Approval",
             "name": "D_APPROVE",
             "type": {
-              "code": "C132352",
+              "code": "C71476",
               "codeSystem": "cdisc.org",
               "codeSystemVersion": "2023-12-15",
-              "decode": "Protocol Approval by Sponsor Date",
+              "decode": "Approval Date",
               "id": "Code_7",
               "instanceType": "Code"
             }
@@ -142,7 +142,7 @@
               "code": "C54149",
               "codeSystem": "cdisc.org",
               "codeSystemVersion": "2023-12-15",
-              "decode": "Pharmaceutical Company",
+              "decode": "Drug Company",
               "id": "Code_3",
               "instanceType": "Code"
             }

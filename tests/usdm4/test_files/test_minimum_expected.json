@@ -23,10 +23,10 @@
             "type": {
               "id": "Code_7",
               "extensionAttributes": [],
-              "code": "C132352",
+              "code": "C71476",
               "codeSystem": "http://www.cdisc.org",
-              "codeSystemVersion": "2024-09-27",
-              "decode": "Protocol Approval by Sponsor Date",
+              "codeSystemVersion": "2025-09-26",
+              "decode": "Approval Date",
               "instanceType": "Code"
             },
             "dateValue": "2006-06-01",
@@ -39,7 +39,7 @@
                   "extensionAttributes": [],
                   "code": "C68846",
                   "codeSystem": "http://www.cdisc.org",
-                  "codeSystemVersion": "2024-09-27",
+                  "codeSystemVersion": "2025-09-26",
                   "decode": "Global",
                   "instanceType": "Code"
                 },
@@ -73,7 +73,7 @@
               "extensionAttributes": [],
               "code": "C207616",
               "codeSystem": "http://www.cdisc.org",
-              "codeSystemVersion": "2024-09-27",
+              "codeSystemVersion": "2025-09-26",
               "decode": "Official Study Title",
               "instanceType": "Code"
             },
@@ -95,7 +95,7 @@
               "extensionAttributes": [],
               "code": "C54149",
               "codeSystem": "http://www.cdisc.org",
-              "codeSystemVersion": "2025-03-28",
+              "codeSystemVersion": "2025-09-26",
               "decode": "Pharmaceutical Company",
               "instanceType": "Code"
             },
@@ -140,7 +140,7 @@
           "extensionAttributes": [],
           "code": "C70817",
           "codeSystem": "http://www.cdisc.org",
-          "codeSystemVersion": "2025-03-28",
+          "codeSystemVersion": "2025-09-26",
           "decode": "Protocol",
           "instanceType": "Code"
         },
@@ -155,7 +155,7 @@
               "extensionAttributes": [],
               "code": "C25425",
               "codeSystem": "http://www.cdisc.org",
-              "codeSystemVersion": "2024-09-27",
+              "codeSystemVersion": "2025-09-26",
               "decode": "Approved",
               "instanceType": "Code"
             },
@@ -169,10 +169,10 @@
                 "type": {
                   "id": "Code_7",
                   "extensionAttributes": [],
-                  "code": "C132352",
+                  "code": "C71476",
                   "codeSystem": "http://www.cdisc.org",
-                  "codeSystemVersion": "2024-09-27",
-                  "decode": "Protocol Approval by Sponsor Date",
+                  "codeSystemVersion": "2025-09-26",
+                  "decode": "Approval Date",
                   "instanceType": "Code"
                 },
                 "dateValue": "2006-06-01",
@@ -185,7 +185,7 @@
                       "extensionAttributes": [],
                       "code": "C68846",
                       "codeSystem": "http://www.cdisc.org",
-                      "codeSystemVersion": "2024-09-27",
+                      "codeSystemVersion": "2025-09-26",
                       "decode": "Global",
                       "instanceType": "Code"
                     },

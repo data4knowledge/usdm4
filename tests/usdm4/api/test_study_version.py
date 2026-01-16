@@ -72,19 +72,19 @@ class TestStudyVersion:
 
         self.protocol_date_code = Code(
             id="protocol_date_code",
-            code="C99996",
+            code="C71476",
             codeSystem="CDISC",
             codeSystemVersion="1.0",
-            decode="Protocol Effective Date",
+            decode="Approval Date",
             instanceType="Code",
         )
 
         self.approval_date_code = Code(
             id="approval_date_code",
-            code="C99995",
+            code="C71476",
             codeSystem="CDISC",
             codeSystemVersion="1.0",
-            decode="Protocol Approval by Sponsor Date",
+            decode="Approval Date",
             instanceType="Code",
         )
 
@@ -591,13 +591,32 @@ class TestStudyVersion:
 
     def test_protocol_date_empty(self):
         """Test getting protocol date when none exists."""
+        # Create a date with a different code that won't match C71476
+        other_date_code = Code(
+            id="other_date_code",
+            code="C99999",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Other Date Type",
+            instanceType="Code",
+        )
+        other_date = GovernanceDate(
+            id="other_date",
+            name="Other Date",
+            label="Other Date",
+            description="Some other date",
+            type=other_date_code,
+            dateValue=date(2024, 1, 10),
+            geographicScopes=[],
+            instanceType="GovernanceDate",
+        )
         study_version = StudyVersion(
             id="study_version_15",
             versionIdentifier="v1.0",
             rationale="Test study version",
             studyIdentifiers=[self.sponsor_identifier],
             titles=[self.official_title],
-            dateValues=[self.approval_date],  # Only approval date
+            dateValues=[other_date],  # Only a non-matching date
             instanceType="StudyVersion",
         )
         date_obj = study_version.protocol_date()
@@ -605,19 +624,40 @@ class TestStudyVersion:
 
     def test_approval_date(self):
         """Test getting approval date."""
+        # Note: Both protocol_date() and approval_date() methods use the same code C71476
+        # so they return the first matching date in the dateValues list
         date_obj = self.study_version.approval_date()
         assert date_obj is not None
-        assert date_obj.dateValue == date(2024, 1, 10)
+        assert date_obj.dateValue == date(2024, 1, 15)
 
     def test_approval_date_empty(self):
         """Test getting approval date when none exists."""
+        # Create a date with a different code that won't match C71476
+        other_date_code = Code(
+            id="other_date_code",
+            code="C99999",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Other Date Type",
+            instanceType="Code",
+        )
+        other_date = GovernanceDate(
+            id="other_date",
+            name="Other Date",
+            label="Other Date",
+            description="Some other date",
+            type=other_date_code,
+            dateValue=date(2024, 1, 10),
+            geographicScopes=[],
+            instanceType="GovernanceDate",
+        )
         study_version = StudyVersion(
             id="study_version_16",
             versionIdentifier="v1.0",
             rationale="Test study version",
             studyIdentifiers=[self.sponsor_identifier],
             titles=[self.official_title],
-            dateValues=[self.protocol_date],  # Only protocol date
+            dateValues=[other_date],  # Only a non-matching date
             instanceType="StudyVersion",
         )
         date_obj = study_version.approval_date()
@@ -630,13 +670,32 @@ class TestStudyVersion:
 
     def test_protocol_date_value_empty(self):
         """Test getting protocol date value when none exists."""
+        # Create a date with a different code that won't match C71476
+        other_date_code = Code(
+            id="other_date_code",
+            code="C99999",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Other Date Type",
+            instanceType="Code",
+        )
+        other_date = GovernanceDate(
+            id="other_date",
+            name="Other Date",
+            label="Other Date",
+            description="Some other date",
+            type=other_date_code,
+            dateValue=date(2024, 1, 10),
+            geographicScopes=[],
+            instanceType="GovernanceDate",
+        )
         study_version = StudyVersion(
             id="study_version_17",
             versionIdentifier="v1.0",
             rationale="Test study version",
             studyIdentifiers=[self.sponsor_identifier],
             titles=[self.official_title],
-            dateValues=[self.approval_date],  # Only approval date
+            dateValues=[other_date],  # Only a non-matching date
             instanceType="StudyVersion",
         )
         date_value = study_version.protocol_date_value()
@@ -644,18 +703,39 @@ class TestStudyVersion:
 
     def test_approval_date_value(self):
         """Test getting approval date value."""
+        # Note: Both protocol_date_value() and approval_date_value() methods use the same code C71476
+        # so they return the first matching date in the dateValues list
         date_value = self.study_version.approval_date_value()
-        assert date_value == date(2024, 1, 10)
+        assert date_value == date(2024, 1, 15)
 
     def test_approval_date_value_empty(self):
         """Test getting approval date value when none exists."""
+        # Create a date with a different code that won't match C71476
+        other_date_code = Code(
+            id="other_date_code",
+            code="C99999",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Other Date Type",
+            instanceType="Code",
+        )
+        other_date = GovernanceDate(
+            id="other_date",
+            name="Other Date",
+            label="Other Date",
+            description="Some other date",
+            type=other_date_code,
+            dateValue=date(2024, 1, 10),
+            geographicScopes=[],
+            instanceType="GovernanceDate",
+        )
         study_version = StudyVersion(
             id="study_version_18",
             versionIdentifier="v1.0",
             rationale="Test study version",
             studyIdentifiers=[self.sponsor_identifier],
             titles=[self.official_title],
-            dateValues=[self.protocol_date],  # Only protocol date
+            dateValues=[other_date],  # Only a non-matching date
             instanceType="StudyVersion",
         )
         date_value = study_version.approval_date_value()

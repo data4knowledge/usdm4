@@ -211,7 +211,7 @@
                   "code": "C207598",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2024-09-27",
-                  "decode": "Protocol Effective Date",
+                  "decode": "Effective Date",
                   "instanceType": "Code"
                 },
                 "dateValue": "2006-06-01",
@@ -13241,7 +13241,7 @@
                   "code": "C207598",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2024-09-27",
-                  "decode": "Protocol Effective Date",
+                  "decode": "Effective Date",
                   "instanceType": "Code"
                 },
                 "dateValue": "2006-07-01",
@@ -14481,7 +14481,7 @@
                   "code": "C207598",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2024-09-27",
-                  "decode": "Protocol Effective Date",
+                  "decode": "Effective Date",
                   "instanceType": "Code"
                 },
                 "dateValue": "2006-07-01",

@@ -678,9 +678,9 @@ class TestStudyAssemblerEdgeCases:
         )
 
         assert study_assembler.study is not None
-        # Should use acronym (first in priority order)
-        assert study_assembler.study.name == "ACR"
-        assert study_assembler.study.label == "ACR"
+        # Priority order is: identifier > acronym > compound
+        assert study_assembler.study.name == "ID001"
+        assert study_assembler.study.label == "ID-001"
 
     def test_execute_with_empty_string_values(
         self, study_assembler, prepared_assemblers
@@ -798,7 +798,7 @@ class TestStudyAssemblerPrivateMethods:
         assert label == "VALID-ID"
 
     def test_get_study_name_label_priority_order(self, study_assembler):
-        """Test _get_study_name_label priority order (acronym > identifier > compound)."""
+        """Test _get_study_name_label priority order (identifier > acronym > compound)."""
         options = {
             "compound": "COMPOUND",
             "identifier": "IDENTIFIER",
@@ -807,9 +807,9 @@ class TestStudyAssemblerPrivateMethods:
 
         name, label = study_assembler._get_study_name_label(options)
 
-        # Should use acronym (highest priority)
-        assert name == "ACRONYM"
-        assert label == "ACRONYM"
+        # Should use identifier (highest priority)
+        assert name == "IDENTIFIER"
+        assert label == "IDENTIFIER"
 
 
 class TestStudyAssemblerStateManagement:
@@ -1149,8 +1149,8 @@ class TestStudyAssemblerAdditionalCoverage:
 
         name, label = study_assembler._get_study_name_label(options)
 
-        # Should use acronym and clean special characters
+        # Should use identifier (highest priority) and clean special characters
         # The regex r"[\W_]+" removes all non-word characters (including underscores)
-        # "A@C#R$" becomes "ACR" (not "ACRS" as the @ # $ are removed, not replaced with S)
-        assert name == "ACR"
-        assert label == "A@C#R$"
+        # "I%D^E&N*T" becomes "IDENT"
+        assert name == "IDENT"
+        assert label == "I%D^E&N*T"

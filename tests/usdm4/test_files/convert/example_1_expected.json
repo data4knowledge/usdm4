@@ -23,10 +23,10 @@
             "type": {
               "id": "Code_9",
               "extensionAttributes": [],
-              "code": "C132352",
+              "code": "C71476",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2023-12-15",
-              "decode": "Protocol Approval by Sponsor Date",
+              "decode": "Approval Date",
               "instanceType": "Code"
             },
             "dateValue": "2006-06-01",
@@ -5598,7 +5598,7 @@
               "code": "C54149",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2023-12-15",
-              "decode": "Pharmaceutical Company",
+              "decode": "Drug Company",
               "instanceType": "Code"
             },
             "identifierScheme": "DUNS",
@@ -5637,7 +5637,7 @@
               "code": "C93453",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2023-12-15",
-              "decode": "Clinical Study Registry",
+              "decode": "Study Registry",
               "instanceType": "Code"
             },
             "identifierScheme": "USGOV",
@@ -14804,10 +14804,10 @@
                 "type": {
                   "id": "Code_11",
                   "extensionAttributes": [],
-                  "code": "C207598",
+                  "code": "C215663",
                   "codeSystem": "http://www.cdisc.org",
                   "codeSystemVersion": "2023-12-15",
-                  "decode": "Protocol Effective Date",
+                  "decode": "Effective Date",
                   "instanceType": "Code"
                 },
                 "dateValue": "2006-07-01",
