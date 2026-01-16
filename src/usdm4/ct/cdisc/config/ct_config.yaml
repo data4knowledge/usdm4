@@ -52,20 +52,20 @@ code_lists:
 - C207417
 - C207418
 - C207419
-# - C215477
-# - C215478
-# - C215480
-# - C215481
-# - C215483
-# - C215485
+- C215477
+- C215478
+- C215480
+- C215481
+- C215483
+- C215485
 klass_attribute_mapping:
   Study: {}
   StudyProtocolVersion:
     protocolStatus: C188723
   StudyDefinitionDocument:
-    type: C99916x # C215477
+    type: C215477
   Organization:
-    type: C99917x # C188724
+    type: C188724
   Objective:
     level: C188725
   Endpoint:
@@ -94,8 +94,6 @@ klass_attribute_mapping:
     model: C127259
     timePerspective: C127261
     samplingMethod: C127260
-  # Masking:
-  #   role: C99906x
   StudyDesignPopulation:
     plannedSex: C66732
   StudyCohort:
@@ -108,9 +106,9 @@ klass_attribute_mapping:
   GovernanceDate:
     type: C207413
   StudyAmendmentReason:
-    code: C207415x # C207415
+    code: C207415
   StudyAmendmentImpact:
-    type: C99912x # C215481
+    type: C215481
   EligibilityCriteria:
     category: C66797
   Administration:
@@ -120,16 +118,16 @@ klass_attribute_mapping:
     type: C99078
     role: C207417
   StudyTitle:
-    type: C207419 # C99905x
+    type: C207419
   ReferenceIdentifier:
-    type: C99910x # C215478
+    type: C215478
   AdministrableProduct:
     administrableDoseForm: C66726
     productDesignation: C207418
-    sourcing: C99914x # C215483
+    sourcing: C215483
   StudyRole:
-    code: C99911x # C215480
+    code: C215480
   MedicalDevice:
-    sourcing: C99914x # C215483
+    sourcing: C215483
   ProductOrganizationRole:
-    code: C99915x # C215485
+    code: C215485
