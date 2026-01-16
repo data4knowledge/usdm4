@@ -1,5 +1,6 @@
 from datetime import date
 from typing import List, Literal, Union
+from typing_extensions import deprecated
 from .api_base_model import ApiBaseModelWithId
 from .code import Code
 from .identifier import StudyIdentifier, ReferenceIdentifier
@@ -220,6 +221,7 @@ class StudyVersion(ApiBaseModelWithId):
                 return x.text
         return ""
 
+    @deprecated("Use the method relating to the document")
     def protocol_date(self) -> GovernanceDate:
         for x in self.dateValues:
             if x.type.code == "C71476":
@@ -232,6 +234,7 @@ class StudyVersion(ApiBaseModelWithId):
                 return x
         return ""
 
+    @deprecated("Use the method relating to the document")
     def protocol_date_value(self) -> date:
         for x in self.dateValues:
             if x.type.code == "C71476":

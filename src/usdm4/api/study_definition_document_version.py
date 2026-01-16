@@ -1,4 +1,5 @@
 from typing import List, Literal
+from datetime import date
 from .api_base_model import ApiBaseModelWithId
 from .code import Code
 from .governance_date import GovernanceDate
@@ -14,6 +15,18 @@ class StudyDefinitionDocumentVersion(ApiBaseModelWithId):
     notes: List[CommentAnnotation] = []
     instanceType: Literal["StudyDefinitionDocumentVersion"]
 
+    def approval_date(self) -> GovernanceDate:
+        for x in self.dateValues:
+            if x.type.code == "C71476":
+                return x
+        return ""
+
+    def approval_date_value(self) -> date:
+        for x in self.dateValues:
+            if x.type.code == "C71476":
+                return x.dateValue
+        return ""
+    
     def narrative_content_in_order(self):
         sections = []
         narrative_content = self._first_narrative_content()
