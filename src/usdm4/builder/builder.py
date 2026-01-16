@@ -116,7 +116,7 @@ class Builder:
         global_code = self.cdisc_code("C68846", "Global")
         global_scope = self.create(GeographicScope, {"type": global_code})
         approval_date_code = self.cdisc_code(
-            "C132352", "Protocol Approval by Sponsor Date"
+            "C71476", "Approval Date"
         )
 
         # Study Title

@@ -187,7 +187,7 @@ class StudyAssembler(BaseAssembler):
         try:
             if actual_date := self._encoder.to_date(data["sponsor_approval_date"]):
                 sponsor_approval_date_code = self._builder.cdisc_code(
-                    "C132352", "Protocol Approval by Sponsor Date"
+                    "C71476", "Approval Date"
                 )
                 global_code = self._builder.cdisc_code("C68846", "Global")
                 global_scope = self._builder.create(

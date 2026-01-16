@@ -267,8 +267,8 @@ class DocumentAssembler(BaseAssembler):
         try:
             if actual_date := self._encoder.to_date(data["version_date"]):
                 protocol_date_code = self._builder.cdisc_code(
-                    "C207598",
-                    "Protocol Effective Date",
+                    "C71476",
+                    "Approval Date",
                 )
                 global_code = self._builder.cdisc_code("C68846", "Global")
                 global_scope = self._builder.create(

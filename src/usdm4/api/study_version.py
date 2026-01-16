@@ -222,25 +222,25 @@ class StudyVersion(ApiBaseModelWithId):
 
     def protocol_date(self) -> GovernanceDate:
         for x in self.dateValues:
-            if x.type.decode == "Protocol Effective Date":
+            if x.type.code == "C71476":
                 return x
         return ""
 
     def approval_date(self) -> GovernanceDate:
         for x in self.dateValues:
-            if x.type.decode == "Protocol Approval by Sponsor Date":
+            if x.type.code == "C71476":
                 return x
         return ""
 
     def protocol_date_value(self) -> date:
         for x in self.dateValues:
-            if x.type.decode == "Protocol Effective Date":
+            if x.type.code == "C71476":
                 return x.dateValue
         return ""
 
     def approval_date_value(self) -> date:
         for x in self.dateValues:
-            if x.type.decode == "Protocol Approval by Sponsor Date":
+            if x.type.code == "C71476":
                 return x.dateValue
         return ""
 
