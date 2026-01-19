@@ -35,7 +35,7 @@ class AmendmentsAssembler(BaseAssembler):
 
     def _create_amendment(self, data: dict) -> StudyAmendment:
         try:
-            # print(f"DATA: {data}")
+            self._errors.info(f"Amendment assembler source data {data}")
             reason = {}
             global_code = self._builder.cdisc_code("C68846", "Global")
             global_scope = self._builder.create(GeographicScope, {"type": global_code})
@@ -48,7 +48,7 @@ class AmendmentsAssembler(BaseAssembler):
             # print(f"IMPACT: {impact}")
             params = {
                 "name": "AMENDMENT 1",
-                "number": "1",
+                "number": data["identifier"],
                 "summary": data["summary"],
                 "substantialImpact": impact,
                 "primaryReason": reason["primary"],
