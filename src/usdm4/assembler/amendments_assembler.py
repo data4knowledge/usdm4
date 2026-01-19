@@ -45,7 +45,6 @@ class AmendmentsAssembler(BaseAssembler):
                     StudyAmendmentReason, self._encoder.amendment_reason(item)
                 )
             impact = data["impact"]["safety"] or data["impact"]["reliability"]
-            # print(f"IMPACT: {impact}")
             params = {
                 "name": "AMENDMENT 1",
                 "number": data["identifier"],
