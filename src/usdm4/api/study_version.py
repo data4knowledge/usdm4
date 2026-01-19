@@ -74,6 +74,16 @@ class StudyVersion(ApiBaseModelWithId):
         ext: Extension = self.get_extension(OV_EXT_URL)
         return ext.valueBoolean if ext else False
 
+    def first_amendment(self) -> StudyAmendment | None:
+        if self.amendments:
+            all_items = {x.id: x for x in self.amendments}
+            all_ids = list(all_items.keys())
+            prev_ids= [x.previousId for x in self.amendments]
+            first = list(set(all_ids) - set(prev_ids))
+            if first:
+                return all_items[first[0]]
+        return None
+    
     def get_title(self, title_type):
         for title in self.titles:
             if title.type.decode == title_type:

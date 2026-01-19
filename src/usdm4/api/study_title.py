@@ -9,10 +9,10 @@ class StudyTitle(ApiBaseModelWithId):
     instanceType: Literal["StudyTitle"]
 
     def is_official(self) -> bool:
-        return True if self.type.decode == "Official Study Title" else False
+        return True if self.type.code == "C207616" else False
 
     def is_acronym(self) -> bool:
-        return True if self.type.decode == "Study Acronym" else False
+        return True if self.type.code == "C207646" else False
 
     def is_short(self) -> bool:
-        return True if self.type.decode == "Brief Study Title" else False
+        return True if self.type.code == "C207615" else False 

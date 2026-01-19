@@ -19,6 +19,9 @@ from src.usdm4.api.study_definition_document import StudyDefinitionDocument
 from src.usdm4.api.study_definition_document_version import (
     StudyDefinitionDocumentVersion,
 )
+from src.usdm4.api.study_amendment import StudyAmendment
+from src.usdm4.api.study_amendment_reason import StudyAmendmentReason
+from src.usdm4.api.geographic_scope import GeographicScope
 
 
 class TestStudyVersion:
@@ -27,7 +30,7 @@ class TestStudyVersion:
         # Create test codes
         self.official_title_code = Code(
             id="title_code_1",
-            code="C99999",
+            code="C207616",
             codeSystem="CDISC",
             codeSystemVersion="1.0",
             decode="Official Study Title",
@@ -36,7 +39,7 @@ class TestStudyVersion:
 
         self.short_title_code = Code(
             id="title_code_2",
-            code="C99998",
+            code="C207615",
             codeSystem="CDISC",
             codeSystemVersion="1.0",
             decode="Brief Study Title",
@@ -45,7 +48,7 @@ class TestStudyVersion:
 
         self.acronym_code = Code(
             id="title_code_3",
-            code="C99997",
+            code="C207646",
             codeSystem="CDISC",
             codeSystemVersion="1.0",
             decode="Study Acronym",
@@ -1396,3 +1399,357 @@ class TestStudyVersion:
 
         statement = study_version.confidentiality_statement()
         assert statement == ""
+
+    # =====================================================
+    # Tests for original_version method (lines 73-75)
+    # =====================================================
+
+    def test_original_version_true(self):
+        """Test original_version returns True when extension exists with True value."""
+        ov_extension = ExtensionAttribute(
+            id="ext_ov_true",
+            url="www.d4k.dk/usdm/extensions/002",
+            valueBoolean=True,
+            instanceType="ExtensionAttribute",
+        )
+
+        study_version = StudyVersion(
+            id="sv_ov1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            extensionAttributes=[ov_extension],
+            instanceType="StudyVersion",
+        )
+
+        result = study_version.original_version()
+        assert result is True
+
+    def test_original_version_false_with_extension(self):
+        """Test original_version returns False when extension exists with False value."""
+        ov_extension = ExtensionAttribute(
+            id="ext_ov_false",
+            url="www.d4k.dk/usdm/extensions/002",
+            valueBoolean=False,
+            instanceType="ExtensionAttribute",
+        )
+
+        study_version = StudyVersion(
+            id="sv_ov2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            extensionAttributes=[ov_extension],
+            instanceType="StudyVersion",
+        )
+
+        result = study_version.original_version()
+        assert result is False
+
+    def test_original_version_false_no_extension(self):
+        """Test original_version returns False when no extension exists."""
+        study_version = StudyVersion(
+            id="sv_ov3",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            instanceType="StudyVersion",
+        )
+
+        result = study_version.original_version()
+        assert result is False
+
+    # =====================================================
+    # Tests for first_amendment method (lines 77-85)
+    # =====================================================
+
+    def _create_amendment(
+        self, amendment_id: str, previous_id: str = None
+    ) -> StudyAmendment:
+        """Helper method to create a StudyAmendment."""
+        reason_code = Code(
+            id=f"reason_code_{amendment_id}",
+            code="C12345",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Test Reason",
+            instanceType="Code",
+        )
+
+        primary_reason = StudyAmendmentReason(
+            id=f"reason_{amendment_id}",
+            code=reason_code,
+            instanceType="StudyAmendmentReason",
+        )
+
+        country_code = Code(
+            id=f"country_{amendment_id}",
+            code="US",
+            codeSystem="ISO",
+            codeSystemVersion="1.0",
+            decode="United States",
+            instanceType="Code",
+        )
+
+        geo_scope = GeographicScope(
+            id=f"geo_{amendment_id}",
+            type=country_code,
+            instanceType="GeographicScope",
+        )
+
+        return StudyAmendment(
+            id=amendment_id,
+            name=f"Amendment {amendment_id}",
+            label=f"Amendment {amendment_id}",
+            description=f"Description for {amendment_id}",
+            number="1",
+            summary="Test amendment summary",
+            primaryReason=primary_reason,
+            geographicScopes=[geo_scope],
+            previousId=previous_id,
+            instanceType="StudyAmendment",
+        )
+
+    def test_first_amendment_no_amendments(self):
+        """Test first_amendment returns None when no amendments exist."""
+        study_version = StudyVersion(
+            id="sv_fa1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            amendments=[],
+            instanceType="StudyVersion",
+        )
+
+        result = study_version.first_amendment()
+        assert result is None
+
+    def test_first_amendment_single_amendment(self):
+        """Test first_amendment returns the only amendment when there's just one."""
+        amendment1 = self._create_amendment("amend1", previous_id=None)
+
+        study_version = StudyVersion(
+            id="sv_fa2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            amendments=[amendment1],
+            instanceType="StudyVersion",
+        )
+
+        result = study_version.first_amendment()
+        assert result is not None
+        assert result.id == "amend1"
+
+    def test_first_amendment_chain_of_amendments(self):
+        """Test first_amendment returns the latest amendment in a chain.
+
+        The algorithm finds amendments whose ID is NOT in any other amendment's
+        previousId - i.e., the amendment that no other amendment points back to.
+        In a chronological chain where each amendment points to its predecessor,
+        this identifies the latest/most recent amendment (the head of the list).
+        """
+        # Create a chain: amend1 <- amend2 <- amend3 (amend3 is latest)
+        amendment1 = self._create_amendment("amend1", previous_id=None)
+        amendment2 = self._create_amendment("amend2", previous_id="amend1")
+        amendment3 = self._create_amendment("amend3", previous_id="amend2")
+
+        study_version = StudyVersion(
+            id="sv_fa3",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            amendments=[amendment3, amendment1, amendment2],
+            instanceType="StudyVersion",
+        )
+
+        result = study_version.first_amendment()
+        assert result is not None
+        # amend3 is the latest - no other amendment references it as previousId
+        assert result.id == "amend3"
+
+    def test_first_amendment_multiple_amendments_no_chain(self):
+        """Test first_amendment with multiple amendments where none reference others."""
+        # Two amendments with no previousId - both would be 'first'
+        amendment1 = self._create_amendment("amend1", previous_id=None)
+        amendment2 = self._create_amendment("amend2", previous_id=None)
+
+        study_version = StudyVersion(
+            id="sv_fa4",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            amendments=[amendment1, amendment2],
+            instanceType="StudyVersion",
+        )
+
+        result = study_version.first_amendment()
+        assert result is not None
+        # Should return one of the amendments (the first in the result set)
+        assert result.id in ["amend1", "amend2"]
+
+    # =====================================================
+    # Tests for fda_ind_identifier method (lines 220-225)
+    # =====================================================
+
+    def test_fda_ind_identifier_found(self):
+        """Test fda_ind_identifier returns the identifier when FDA org exists."""
+        fda_org = Organization(
+            id="org_fda",
+            name="FDA",
+            label="Food and Drug Administration",
+            type=self.non_sponsor_code,
+            identifierScheme="scheme",
+            identifier="fda_id",
+            instanceType="Organization",
+        )
+
+        fda_identifier = StudyIdentifier(
+            id="id_fda",
+            text="IND-123456",
+            scopeId="org_fda",
+            instanceType="StudyIdentifier",
+        )
+
+        study_version = StudyVersion(
+            id="sv_fda1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier, fda_identifier],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org, fda_org],
+            instanceType="StudyVersion",
+        )
+
+        result = study_version.fda_ind_identifier()
+        assert result == "IND-123456"
+
+    def test_fda_ind_identifier_not_found(self):
+        """Test fda_ind_identifier returns empty string when no FDA org exists."""
+        result = self.study_version.fda_ind_identifier()
+        assert result == ""
+
+    # =====================================================
+    # Tests for ema_identifier method (lines 227-232)
+    # =====================================================
+
+    def test_ema_identifier_found(self):
+        """Test ema_identifier returns the identifier when EMA org exists."""
+        ema_org = Organization(
+            id="org_ema",
+            name="EMA",
+            label="European Medicines Agency",
+            type=self.non_sponsor_code,
+            identifierScheme="scheme",
+            identifier="ema_id",
+            instanceType="Organization",
+        )
+
+        ema_identifier = StudyIdentifier(
+            id="id_ema",
+            text="EudraCT-2024-001234-56",
+            scopeId="org_ema",
+            instanceType="StudyIdentifier",
+        )
+
+        study_version = StudyVersion(
+            id="sv_ema1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier, ema_identifier],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org, ema_org],
+            instanceType="StudyVersion",
+        )
+
+        result = study_version.ema_identifier()
+        assert result == "EudraCT-2024-001234-56"
+
+    def test_ema_identifier_not_found(self):
+        """Test ema_identifier returns empty string when no EMA org exists."""
+        result = self.study_version.ema_identifier()
+        assert result == ""
+
+    # =====================================================
+    # Tests for eligibility_critieria_item_map method (line 271-272)
+    # =====================================================
+
+    def test_eligibility_critieria_item_map(self):
+        """Test eligibility_critieria_item_map returns correct mapping."""
+        item_map = self.study_version.eligibility_critieria_item_map()
+        assert isinstance(item_map, dict)
+        assert "criterion_1" in item_map
+        assert item_map["criterion_1"].id == "criterion_1"
+        assert item_map["criterion_1"].name == "Test Criterion"
+
+    def test_eligibility_critieria_item_map_empty(self):
+        """Test eligibility_critieria_item_map returns empty dict when no items."""
+        study_version = StudyVersion(
+            id="sv_ecim1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            eligibilityCriterionItems=[],
+            instanceType="StudyVersion",
+        )
+
+        item_map = study_version.eligibility_critieria_item_map()
+        assert isinstance(item_map, dict)
+        assert len(item_map) == 0
+
+    def test_eligibility_critieria_item_map_multiple_items(self):
+        """Test eligibility_critieria_item_map with multiple items."""
+        criterion1 = EligibilityCriterionItem(
+            id="crit_1",
+            name="Criterion 1",
+            label="Criterion 1 Label",
+            description="Criterion 1 description",
+            text="Criterion 1 text",
+            instanceType="EligibilityCriterionItem",
+        )
+
+        criterion2 = EligibilityCriterionItem(
+            id="crit_2",
+            name="Criterion 2",
+            label="Criterion 2 Label",
+            description="Criterion 2 description",
+            text="Criterion 2 text",
+            instanceType="EligibilityCriterionItem",
+        )
+
+        criterion3 = EligibilityCriterionItem(
+            id="crit_3",
+            name="Criterion 3",
+            label="Criterion 3 Label",
+            description="Criterion 3 description",
+            text="Criterion 3 text",
+            instanceType="EligibilityCriterionItem",
+        )
+
+        study_version = StudyVersion(
+            id="sv_ecim2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            eligibilityCriterionItems=[criterion1, criterion2, criterion3],
+            instanceType="StudyVersion",
+        )
+
+        item_map = study_version.eligibility_critieria_item_map()
+        assert isinstance(item_map, dict)
+        assert len(item_map) == 3
+        assert "crit_1" in item_map
+        assert "crit_2" in item_map
+        assert "crit_3" in item_map
+        assert item_map["crit_1"].name == "Criterion 1"
+        assert item_map["crit_2"].name == "Criterion 2"
+        assert item_map["crit_3"].name == "Criterion 3"

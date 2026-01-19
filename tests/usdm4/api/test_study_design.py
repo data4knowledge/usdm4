@@ -9,7 +9,7 @@ from src.usdm4.api.activity import Activity
 from src.usdm4.api.encounter import Encounter
 from src.usdm4.api.study_epoch import StudyEpoch
 from src.usdm4.api.population_definition import StudyDesignPopulation
-from src.usdm4.api.eligibility_criterion import EligibilityCriterion
+from src.usdm4.api.eligibility_criterion import EligibilityCriterion, EligibilityCriterionItem
 from src.usdm4.api.analysis_population import AnalysisPopulation
 from src.usdm4.api.schedule_timeline import ScheduleTimeline
 
@@ -673,3 +673,520 @@ class TestStudyDesign:
         activities = design.activity_list()
         assert len(activities) == 1
         assert activities[0].id == "broken_activity"
+
+    # =====================================================
+    # Tests for activity_parent method (lines 75-83, specifically 79-81)
+    # =====================================================
+
+    def test_activity_parent_with_children(self):
+        """Test activity_parent returns mapping of child IDs to parent IDs."""
+        # Create parent activity with children
+        parent_activity = Activity(
+            id="parent_activity",
+            name="Parent Activity",
+            label="Parent Activity",
+            description="Parent activity with children",
+            nextId="next_activity",
+            childIds=["child_1", "child_2", "child_3"],
+            instanceType="Activity",
+        )
+
+        next_activity = Activity(
+            id="next_activity",
+            name="Next Activity",
+            label="Next Activity",
+            description="Next activity",
+            previousId="parent_activity",
+            instanceType="Activity",
+        )
+
+        design = StudyDesign(
+            id="design_ap1",
+            name="Activity Parent Design",
+            label="Activity Parent Design",
+            description="Design with parent-child activities",
+            arms=[],
+            studyCells=[],
+            rationale="Test rationale",
+            epochs=[],
+            population=self.test_population,
+            activities=[parent_activity, next_activity],
+            instanceType="StudyDesign",
+        )
+
+        parent_map = design.activity_parent()
+        assert isinstance(parent_map, dict)
+        assert len(parent_map) == 3
+        assert parent_map["child_1"] == "parent_activity"
+        assert parent_map["child_2"] == "parent_activity"
+        assert parent_map["child_3"] == "parent_activity"
+
+    def test_activity_parent_no_children(self):
+        """Test activity_parent returns empty dict when no activities have children."""
+        parent_map = self.study_design.activity_parent()
+        assert isinstance(parent_map, dict)
+        assert len(parent_map) == 0
+
+    def test_activity_parent_multiple_parents(self):
+        """Test activity_parent with multiple activities having children."""
+        parent1 = Activity(
+            id="parent1",
+            name="Parent 1",
+            label="Parent 1",
+            description="First parent",
+            nextId="parent2",
+            childIds=["child_a", "child_b"],
+            instanceType="Activity",
+        )
+
+        parent2 = Activity(
+            id="parent2",
+            name="Parent 2",
+            label="Parent 2",
+            description="Second parent",
+            previousId="parent1",
+            nextId="parent3",
+            childIds=["child_c"],
+            instanceType="Activity",
+        )
+
+        parent3 = Activity(
+            id="parent3",
+            name="Parent 3",
+            label="Parent 3",
+            description="Third parent (no children)",
+            previousId="parent2",
+            instanceType="Activity",
+        )
+
+        design = StudyDesign(
+            id="design_ap2",
+            name="Multi Parent Design",
+            label="Multi Parent Design",
+            description="Design with multiple parents",
+            arms=[],
+            studyCells=[],
+            rationale="Test rationale",
+            epochs=[],
+            population=self.test_population,
+            activities=[parent1, parent2, parent3],
+            instanceType="StudyDesign",
+        )
+
+        parent_map = design.activity_parent()
+        assert len(parent_map) == 3
+        assert parent_map["child_a"] == "parent1"
+        assert parent_map["child_b"] == "parent1"
+        assert parent_map["child_c"] == "parent2"
+
+    def test_activity_parent_empty_activities(self):
+        """Test activity_parent returns empty dict when no activities exist."""
+        design = StudyDesign(
+            id="design_ap3",
+            name="Empty Activities Design",
+            label="Empty Activities Design",
+            description="Design with no activities",
+            arms=[],
+            studyCells=[],
+            rationale="Test rationale",
+            epochs=[],
+            population=self.test_population,
+            activities=[],
+            instanceType="StudyDesign",
+        )
+
+        parent_map = design.activity_parent()
+        assert parent_map == {}
+
+    # =====================================================
+    # Tests for inclusion_criteria method (lines 100-101)
+    # =====================================================
+
+    def test_inclusion_criteria(self):
+        """Test inclusion_criteria returns inclusion criteria with items."""
+        # Create inclusion criterion (code C25532)
+        inclusion_code = Code(
+            id="inclusion_code",
+            code="C25532",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Inclusion Criteria",
+            instanceType="Code",
+        )
+
+        inclusion_criterion = EligibilityCriterion(
+            id="inc_crit_1",
+            name="Inclusion Criterion 1",
+            label="Inclusion Criterion 1",
+            description="First inclusion criterion",
+            category=inclusion_code,
+            identifier="IC001",
+            criterionItemId="inc_item_1",
+            instanceType="EligibilityCriterion",
+        )
+
+        inclusion_item = EligibilityCriterionItem(
+            id="inc_item_1",
+            name="Inclusion Item 1",
+            label="Inclusion Item 1",
+            description="First inclusion item",
+            text="Age >= 18 years",
+            instanceType="EligibilityCriterionItem",
+        )
+
+        design = StudyDesign(
+            id="design_ic1",
+            name="Inclusion Criteria Design",
+            label="Inclusion Criteria Design",
+            description="Design with inclusion criteria",
+            arms=[],
+            studyCells=[],
+            rationale="Test rationale",
+            epochs=[],
+            population=self.test_population,
+            eligibilityCriteria=[inclusion_criterion],
+            instanceType="StudyDesign",
+        )
+
+        criteria_map = {"inc_item_1": inclusion_item}
+        result = design.inclusion_criteria(criteria_map)
+
+        assert isinstance(result, list)
+        assert len(result) == 1
+        assert "criterionItem" in result[0]
+        assert result[0]["criterionItem"]["text"] == "Age >= 18 years"
+
+    def test_inclusion_criteria_empty(self):
+        """Test inclusion_criteria returns empty list when no inclusion criteria exist."""
+        design = StudyDesign(
+            id="design_ic2",
+            name="No Inclusion Design",
+            label="No Inclusion Design",
+            description="Design without inclusion criteria",
+            arms=[],
+            studyCells=[],
+            rationale="Test rationale",
+            epochs=[],
+            population=self.test_population,
+            eligibilityCriteria=[],
+            instanceType="StudyDesign",
+        )
+
+        result = design.inclusion_criteria({})
+        assert result == []
+
+    # =====================================================
+    # Tests for exclusion_criteria method (lines 103-104)
+    # =====================================================
+
+    def test_exclusion_criteria(self):
+        """Test exclusion_criteria returns exclusion criteria with items."""
+        # Create exclusion criterion (code C25370)
+        exclusion_code = Code(
+            id="exclusion_code",
+            code="C25370",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Exclusion Criteria",
+            instanceType="Code",
+        )
+
+        exclusion_criterion = EligibilityCriterion(
+            id="exc_crit_1",
+            name="Exclusion Criterion 1",
+            label="Exclusion Criterion 1",
+            description="First exclusion criterion",
+            category=exclusion_code,
+            identifier="EC001",
+            criterionItemId="exc_item_1",
+            instanceType="EligibilityCriterion",
+        )
+
+        exclusion_item = EligibilityCriterionItem(
+            id="exc_item_1",
+            name="Exclusion Item 1",
+            label="Exclusion Item 1",
+            description="First exclusion item",
+            text="Pregnant or nursing",
+            instanceType="EligibilityCriterionItem",
+        )
+
+        design = StudyDesign(
+            id="design_ec1",
+            name="Exclusion Criteria Design",
+            label="Exclusion Criteria Design",
+            description="Design with exclusion criteria",
+            arms=[],
+            studyCells=[],
+            rationale="Test rationale",
+            epochs=[],
+            population=self.test_population,
+            eligibilityCriteria=[exclusion_criterion],
+            instanceType="StudyDesign",
+        )
+
+        criteria_map = {"exc_item_1": exclusion_item}
+        result = design.exclusion_criteria(criteria_map)
+
+        assert isinstance(result, list)
+        assert len(result) == 1
+        assert "criterionItem" in result[0]
+        assert result[0]["criterionItem"]["text"] == "Pregnant or nursing"
+
+    def test_exclusion_criteria_empty(self):
+        """Test exclusion_criteria returns empty list when no exclusion criteria exist."""
+        design = StudyDesign(
+            id="design_ec2",
+            name="No Exclusion Design",
+            label="No Exclusion Design",
+            description="Design without exclusion criteria",
+            arms=[],
+            studyCells=[],
+            rationale="Test rationale",
+            epochs=[],
+            population=self.test_population,
+            eligibilityCriteria=[],
+            instanceType="StudyDesign",
+        )
+
+        result = design.exclusion_criteria({})
+        assert result == []
+
+    # =====================================================
+    # Tests for _criteria method (lines 106-116)
+    # =====================================================
+
+    def test_criteria_mixed_categories(self):
+        """Test _criteria filters by category code correctly."""
+        inclusion_code = Code(
+            id="inc_code",
+            code="C25532",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Inclusion",
+            instanceType="Code",
+        )
+
+        exclusion_code = Code(
+            id="exc_code",
+            code="C25370",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Exclusion",
+            instanceType="Code",
+        )
+
+        inc_criterion = EligibilityCriterion(
+            id="inc_crit",
+            name="Inclusion Criterion",
+            label="Inclusion Criterion",
+            description="Inclusion criterion",
+            category=inclusion_code,
+            identifier="IC001",
+            criterionItemId="inc_item",
+            instanceType="EligibilityCriterion",
+        )
+
+        exc_criterion = EligibilityCriterion(
+            id="exc_crit",
+            name="Exclusion Criterion",
+            label="Exclusion Criterion",
+            description="Exclusion criterion",
+            category=exclusion_code,
+            identifier="EC001",
+            criterionItemId="exc_item",
+            instanceType="EligibilityCriterion",
+        )
+
+        inc_item = EligibilityCriterionItem(
+            id="inc_item",
+            name="Inclusion Item",
+            label="Inclusion Item",
+            description="Inclusion item",
+            text="Inclusion text",
+            instanceType="EligibilityCriterionItem",
+        )
+
+        exc_item = EligibilityCriterionItem(
+            id="exc_item",
+            name="Exclusion Item",
+            label="Exclusion Item",
+            description="Exclusion item",
+            text="Exclusion text",
+            instanceType="EligibilityCriterionItem",
+        )
+
+        design = StudyDesign(
+            id="design_mixed",
+            name="Mixed Criteria Design",
+            label="Mixed Criteria Design",
+            description="Design with mixed criteria",
+            arms=[],
+            studyCells=[],
+            rationale="Test rationale",
+            epochs=[],
+            population=self.test_population,
+            eligibilityCriteria=[inc_criterion, exc_criterion],
+            instanceType="StudyDesign",
+        )
+
+        criteria_map = {"inc_item": inc_item, "exc_item": exc_item}
+
+        # Test inclusion
+        inclusion_result = design.inclusion_criteria(criteria_map)
+        assert len(inclusion_result) == 1
+        assert inclusion_result[0]["criterionItem"]["text"] == "Inclusion text"
+
+        # Test exclusion
+        exclusion_result = design.exclusion_criteria(criteria_map)
+        assert len(exclusion_result) == 1
+        assert exclusion_result[0]["criterionItem"]["text"] == "Exclusion text"
+
+    def test_criteria_removes_criterionItemId(self):
+        """Test _criteria removes criterionItemId from result and adds criterionItem."""
+        inclusion_code = Code(
+            id="inc_code2",
+            code="C25532",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Inclusion",
+            instanceType="Code",
+        )
+
+        criterion = EligibilityCriterion(
+            id="criterion_test",
+            name="Test Criterion",
+            label="Test Criterion",
+            description="Test criterion",
+            category=inclusion_code,
+            identifier="TC001",
+            criterionItemId="test_item",
+            instanceType="EligibilityCriterion",
+        )
+
+        item = EligibilityCriterionItem(
+            id="test_item",
+            name="Test Item",
+            label="Test Item",
+            description="Test item",
+            text="Test text",
+            instanceType="EligibilityCriterionItem",
+        )
+
+        design = StudyDesign(
+            id="design_ci",
+            name="Criterion Item Design",
+            label="Criterion Item Design",
+            description="Design for testing criterionItem replacement",
+            arms=[],
+            studyCells=[],
+            rationale="Test rationale",
+            epochs=[],
+            population=self.test_population,
+            eligibilityCriteria=[criterion],
+            instanceType="StudyDesign",
+        )
+
+        criteria_map = {"test_item": item}
+        result = design.inclusion_criteria(criteria_map)
+
+        assert len(result) == 1
+        # Check criterionItemId is removed
+        assert "criterionItemId" not in result[0]
+        # Check criterionItem is added
+        assert "criterionItem" in result[0]
+        assert result[0]["criterionItem"]["id"] == "test_item"
+
+    def test_criteria_multiple_same_category(self):
+        """Test _criteria returns multiple criteria of same category."""
+        inclusion_code = Code(
+            id="inc_code3",
+            code="C25532",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Inclusion",
+            instanceType="Code",
+        )
+
+        criterion1 = EligibilityCriterion(
+            id="crit1",
+            name="Criterion 1",
+            label="Criterion 1",
+            description="First criterion",
+            category=inclusion_code,
+            identifier="C001",
+            criterionItemId="item1",
+            instanceType="EligibilityCriterion",
+        )
+
+        criterion2 = EligibilityCriterion(
+            id="crit2",
+            name="Criterion 2",
+            label="Criterion 2",
+            description="Second criterion",
+            category=inclusion_code,
+            identifier="C002",
+            criterionItemId="item2",
+            instanceType="EligibilityCriterion",
+        )
+
+        criterion3 = EligibilityCriterion(
+            id="crit3",
+            name="Criterion 3",
+            label="Criterion 3",
+            description="Third criterion",
+            category=inclusion_code,
+            identifier="C003",
+            criterionItemId="item3",
+            instanceType="EligibilityCriterion",
+        )
+
+        item1 = EligibilityCriterionItem(
+            id="item1",
+            name="Item 1",
+            label="Item 1",
+            description="First item",
+            text="First criterion text",
+            instanceType="EligibilityCriterionItem",
+        )
+
+        item2 = EligibilityCriterionItem(
+            id="item2",
+            name="Item 2",
+            label="Item 2",
+            description="Second item",
+            text="Second criterion text",
+            instanceType="EligibilityCriterionItem",
+        )
+
+        item3 = EligibilityCriterionItem(
+            id="item3",
+            name="Item 3",
+            label="Item 3",
+            description="Third item",
+            text="Third criterion text",
+            instanceType="EligibilityCriterionItem",
+        )
+
+        design = StudyDesign(
+            id="design_multi",
+            name="Multi Criteria Design",
+            label="Multi Criteria Design",
+            description="Design with multiple inclusion criteria",
+            arms=[],
+            studyCells=[],
+            rationale="Test rationale",
+            epochs=[],
+            population=self.test_population,
+            eligibilityCriteria=[criterion1, criterion2, criterion3],
+            instanceType="StudyDesign",
+        )
+
+        criteria_map = {"item1": item1, "item2": item2, "item3": item3}
+        result = design.inclusion_criteria(criteria_map)
+
+        assert len(result) == 3
+        texts = [r["criterionItem"]["text"] for r in result]
+        assert "First criterion text" in texts
+        assert "Second criterion text" in texts
+        assert "Third criterion text" in texts
