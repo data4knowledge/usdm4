@@ -78,12 +78,12 @@ class StudyVersion(ApiBaseModelWithId):
         if self.amendments:
             all_items = {x.id: x for x in self.amendments}
             all_ids = list(all_items.keys())
-            prev_ids= [x.previousId for x in self.amendments]
+            prev_ids = [x.previousId for x in self.amendments]
             first = list(set(all_ids) - set(prev_ids))
             if first:
                 return all_items[first[0]]
         return None
-    
+
     def get_title(self, title_type):
         for title in self.titles:
             if title.type.decode == title_type:

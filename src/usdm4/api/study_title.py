@@ -15,4 +15,4 @@ class StudyTitle(ApiBaseModelWithId):
         return True if self.type.code == "C207646" else False
 
     def is_short(self) -> bool:
-        return True if self.type.code == "C207615" else False 
+        return True if self.type.code == "C207615" else False

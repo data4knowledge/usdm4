@@ -15,25 +15,120 @@ class Encoder:
     PHASE_MAP = [
         (
             ["0", "PRE-CLINICAL", "PRE CLINICAL"],
-            {"code": "C54721", "m11_decode": "Early Phase 1", "cdisc_decode": "Phase 0 Trial"},
+            {
+                "code": "C54721",
+                "m11_decode": "Early Phase 1",
+                "cdisc_decode": "Phase 0 Trial",
+            },
         ),
-        (["1", "I"], {"code": "C15600", "m11_decode": "Phase 1", "cdisc_decode": "Phase I Trial"}),
-        (["1-2"], {"code": "C15693", "m11_decode": "Phase 1/Phase 2", "cdisc_decode": "Phase I/II Trial"}),
-        (["1/2"], {"code": "C15693", "m11_decode": "Phase 1/Phase 2", "cdisc_decode": "Phase I/II Trial"}),
-        (["1/2/3"], {"code": "C198366", "m11_decode": "Phase 1/Phase 2/Phase 3", "cdisc_decode": "Phase I/II/III Trial"}),
-        (["1/3"], {"code": "C198367", "m11_decode": "Phase 1/Phase 3", "cdisc_decode": "Phase I/III Trial"}),
-        (["1A", "IA"], {"code": "C199990", "m11_decode": None, "cdisc_decode": "Phase Ia Trial"}),
-        (["1B", "IB"], {"code": "C199989", "m11_decode": None, "cdisc_decode": "Phase Ib Trial"}),
-        (["2", "II"], {"code": "C15601", "m11_decode": "Phase 2", "cdisc_decode": "Phase II Trial"}),
-        (["2-3", "II-III"], {"code": "C15694", "m11_decode": "Phase 2/Phase 3", "cdisc_decode": "Phase II/III Trial"}),
-        (["2A", "IIA"], {"code": "C49686", "m11_decode": None, "cdisc_decode": "Phase IIa Trial"}),
-        (["2B", "IIB"], {"code": "C49688", "m11_decode": None, "cdisc_decode": "Phase IIb Trial"}),
-        (["3", "III"], {"code": "C15602", "m11_decode": "Phase 3", "cdisc_decode": "Phase III Trial"}),
-        (["3A", "IIIA"], {"code": "C49687", "m11_decode": None, "cdisc_decode": "Phase IIIa Trial"}),
-        (["3B", "IIIB"], {"code": "C49689", "m11_decode": None, "cdisc_decode": "Phase IIIb Trial"}),
-        (["4", "IV"], {"code": "C15603", "m11_decode": "Phase 4", "cdisc_decode": "Phase IV Trial"}),
-        (["5", "V"], {"code": "C47865", "m11_decode": None, "cdisc_decode": "Phase V Trial"}),
-        (["2/3/4", "V"], {"code": "C217024", "m11_decode": "Phase 2/Phase 3/Phase 4", "cdisc_decode": None}),
+        (
+            ["1", "I"],
+            {
+                "code": "C15600",
+                "m11_decode": "Phase 1",
+                "cdisc_decode": "Phase I Trial",
+            },
+        ),
+        (
+            ["1-2"],
+            {
+                "code": "C15693",
+                "m11_decode": "Phase 1/Phase 2",
+                "cdisc_decode": "Phase I/II Trial",
+            },
+        ),
+        (
+            ["1/2"],
+            {
+                "code": "C15693",
+                "m11_decode": "Phase 1/Phase 2",
+                "cdisc_decode": "Phase I/II Trial",
+            },
+        ),
+        (
+            ["1/2/3"],
+            {
+                "code": "C198366",
+                "m11_decode": "Phase 1/Phase 2/Phase 3",
+                "cdisc_decode": "Phase I/II/III Trial",
+            },
+        ),
+        (
+            ["1/3"],
+            {
+                "code": "C198367",
+                "m11_decode": "Phase 1/Phase 3",
+                "cdisc_decode": "Phase I/III Trial",
+            },
+        ),
+        (
+            ["1A", "IA"],
+            {"code": "C199990", "m11_decode": None, "cdisc_decode": "Phase Ia Trial"},
+        ),
+        (
+            ["1B", "IB"],
+            {"code": "C199989", "m11_decode": None, "cdisc_decode": "Phase Ib Trial"},
+        ),
+        (
+            ["2", "II"],
+            {
+                "code": "C15601",
+                "m11_decode": "Phase 2",
+                "cdisc_decode": "Phase II Trial",
+            },
+        ),
+        (
+            ["2-3", "II-III"],
+            {
+                "code": "C15694",
+                "m11_decode": "Phase 2/Phase 3",
+                "cdisc_decode": "Phase II/III Trial",
+            },
+        ),
+        (
+            ["2A", "IIA"],
+            {"code": "C49686", "m11_decode": None, "cdisc_decode": "Phase IIa Trial"},
+        ),
+        (
+            ["2B", "IIB"],
+            {"code": "C49688", "m11_decode": None, "cdisc_decode": "Phase IIb Trial"},
+        ),
+        (
+            ["3", "III"],
+            {
+                "code": "C15602",
+                "m11_decode": "Phase 3",
+                "cdisc_decode": "Phase III Trial",
+            },
+        ),
+        (
+            ["3A", "IIIA"],
+            {"code": "C49687", "m11_decode": None, "cdisc_decode": "Phase IIIa Trial"},
+        ),
+        (
+            ["3B", "IIIB"],
+            {"code": "C49689", "m11_decode": None, "cdisc_decode": "Phase IIIb Trial"},
+        ),
+        (
+            ["4", "IV"],
+            {
+                "code": "C15603",
+                "m11_decode": "Phase 4",
+                "cdisc_decode": "Phase IV Trial",
+            },
+        ),
+        (
+            ["5", "V"],
+            {"code": "C47865", "m11_decode": None, "cdisc_decode": "Phase V Trial"},
+        ),
+        (
+            ["2/3/4", "V"],
+            {
+                "code": "C217024",
+                "m11_decode": "Phase 2/Phase 3/Phase 4",
+                "cdisc_decode": None,
+            },
+        ),
     ]
     STATUS_MAP = [
         (["APPROVED"], {"code": "C25425", "decode": "Approved"}),
@@ -80,6 +175,12 @@ class Encoder:
         "n": False,
     }
 
+    SCOPE_MAP = {
+        "COUNTRY": {"code": "C25464", "decode": "Country"},
+        "GLOBAL": {"code": "C68846", "decode": "Global"},
+        "REGION": {"code": "C41129", "decode": "Region"},
+    }
+
     def __init__(self, builder: Builder, errors: Errors):
         self._builder: Builder = builder
         self._errors: Errors = errors
@@ -96,11 +197,13 @@ class Encoder:
                 decode = m11_decode if m11_decode else entry["cdisc_decode"]
                 phase_code = self._builder.cdisc_code(code, decode)
                 self._errors.info(
-                    f"Trial phase '{phase}' decoded as '{code}', '{decode}', {"using M11 decode" if m11_decode else "using CDISC decode"}",
+                    f"Trial phase '{phase}' decoded as '{code}', '{decode}', {'using M11 decode' if m11_decode else 'using CDISC decode'}",
                     location=KlassMethodLocation(self.MODULE, "phase"),
                 )
                 if not m11_decode:
-                    self._errors.warning(f"Could not find M11 decode for phase '{phase}'")
+                    self._errors.warning(
+                        f"Could not find M11 decode for phase '{phase}'"
+                    )
                 return self._builder.alias_code(phase_code)
         cdisc_phase_code = self._builder.cdisc_code(
             "C48660",
@@ -160,13 +263,24 @@ class Encoder:
         code = self._builder.cdisc_code("C17649", "Other")
         return {"code": code, "other_reason": "No reason text found"}
 
+    def geographic_scope(self, type: str) -> Code:
+        if type.upper() in self.SCOPE_MAP:
+            scope = self.SCOPE_MAP[type.upper()]
+            return self._builder.cdisc_code(scope["code"], scope["decode"])
+        self._errors.warning(
+            f"Geographic scope not set for '{type}', setting global scope",
+            location=KlassMethodLocation(self.MODULE, "geographic_scope"),
+        )
+        scope = self.SCOPE_MAP["GLOBAL"]
+        return self._builder.cdisc_code(scope["code"], scope["decode"])
+
     def to_date(self, text: str) -> datetime.datetime | None:
         try:
-            input_text = text.strip()
-            if input_text:
-                return parser.parse(input_text)
-            else:
-                return None
+            if text:
+                input_text = text.strip()
+                if input_text:
+                    return parser.parse(input_text)
+            return None
         except Exception as e:
             self._errors.exception(
                 f"Failed to decode date text '{text}'",

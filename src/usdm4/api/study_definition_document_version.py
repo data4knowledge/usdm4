@@ -26,7 +26,7 @@ class StudyDefinitionDocumentVersion(ApiBaseModelWithId):
             if x.type.code == "C71476":
                 return x.dateValue
         return ""
-    
+
     def narrative_content_in_order(self):
         sections = []
         narrative_content = self._first_narrative_content()

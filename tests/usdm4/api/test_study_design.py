@@ -9,7 +9,10 @@ from src.usdm4.api.activity import Activity
 from src.usdm4.api.encounter import Encounter
 from src.usdm4.api.study_epoch import StudyEpoch
 from src.usdm4.api.population_definition import StudyDesignPopulation
-from src.usdm4.api.eligibility_criterion import EligibilityCriterion, EligibilityCriterionItem
+from src.usdm4.api.eligibility_criterion import (
+    EligibilityCriterion,
+    EligibilityCriterionItem,
+)
 from src.usdm4.api.analysis_population import AnalysisPopulation
 from src.usdm4.api.schedule_timeline import ScheduleTimeline
 

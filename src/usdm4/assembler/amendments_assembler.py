@@ -8,6 +8,7 @@ from usdm4.api.geographic_scope import GeographicScope
 from usdm4.api.subject_enrollment import SubjectEnrollment
 from usdm4.api.study_amendment_reason import StudyAmendmentReason
 from usdm4.api.study_amendment import StudyAmendment
+from usdm4.api.code import Code
 
 
 class AmendmentsAssembler(BaseAssembler):
@@ -37,10 +38,7 @@ class AmendmentsAssembler(BaseAssembler):
         try:
             self._errors.info(f"Amendment assembler source data {data}")
             reason = {}
-            global_code = self._builder.cdisc_code("C68846", "Global")
-            global_scope = self._builder.create(GeographicScope, {"type": global_code})
             for k, item in data["reasons"].items():
-                # print(f"REASON_CODE: {k} = {item}")
                 reason[k] = self._builder.create(
                     StudyAmendmentReason, self._encoder.amendment_reason(item)
                 )
@@ -53,7 +51,7 @@ class AmendmentsAssembler(BaseAssembler):
                 "primaryReason": reason["primary"],
                 "secondaryReasons": [reason["secondary"]],
                 "enrollments": [self._create_enrollment(data)],
-                "geographicScopes": [global_scope],
+                "geographicScopes": self._create_scopes(data),
             }
             return self._builder.create(StudyAmendment, params)
         except Exception as e:
@@ -96,3 +94,98 @@ class AmendmentsAssembler(BaseAssembler):
             location = KlassMethodLocation(self.MODULE, "execute")
             self._errors.exception("Failed during creation of enrollments", e, location)
             return None
+
+    def _create_scopes(self, data: dict) -> list[GeographicScope]:
+        results = []
+        if "scope" in data:
+            if data["scope"]:
+                text: str = data["scope"].strip()
+                text_upper = text.upper()
+                if text_upper.startswith("NOT APPLICABLE"):
+                    self._global_scope(results)
+                elif text_upper.startswith("GLOBAL"):
+                    self._global_scope(results)
+                elif text_upper.startswith("NOT GLOBAL") or text_upper.startswith(
+                    "LOCAL"
+                ):
+                    identifier = (
+                        text[10:] if text_upper.startswith("NOT GLOBAL") else text[5:]
+                    )
+                    parts = identifier.split(",")
+                    for part in parts:
+                        text = part.strip()
+                        code, decode = self._builder.iso3166_library.code_or_decode(
+                            text
+                        )
+                        if code:
+                            country_code = self._encoder.geographic_scope("COUNTRY")
+                            self._create_scope(results, country_code, code, decode)
+                        else:
+                            code, decode = self._builder.iso3166_library.region_code(
+                                text
+                            )
+                            if code:
+                                region_code = self._encoder.geographic_scope("REGION")
+                                self._create_scope(results, region_code, code, decode)
+                            else:
+                                self._errors.error(
+                                    f"Failed to set scope for '{part}' from '{data['scope']}', could be a site identifier (not handled currently)",
+                                    KlassMethodLocation(self.MODULE, "_create_scopes"),
+                                )
+                else:
+                    self._global_scope(results)
+                    self._errors.error(
+                        f"Failed to decode scope '{data['scope']}'",
+                        KlassMethodLocation(self.MODULE, "_create_scopes"),
+                    )
+            else:
+                self._global_scope(results)
+                self._errors.error(
+                    "Empty scope found",
+                    KlassMethodLocation(self.MODULE, "_create_scopes"),
+                )
+        else:
+            self._global_scope(results)
+            self._errors.error(
+                "No scope data found",
+                KlassMethodLocation(self.MODULE, "_create_scopes"),
+            )
+        return results
+
+    def _global_scope(self, results: list[GeographicScope]) -> None:
+        global_code = self._encoder.geographic_scope("GLOBAL")
+        self._create_scope(results, global_code)
+
+    def _create_scope(
+        self,
+        results: list[GeographicScope],
+        type: Code,
+        code: str = None,
+        decode: str = None,
+    ) -> None:
+        alias_code = None
+        if code and decode:
+            std_code = (
+                self._builder.iso3166_code(code)
+                if type.code == "C25464"
+                else self._builder.iso3166_region_code(code)
+            )
+            if std_code:
+                alias_code = self._builder.alias_code(std_code)
+            else:
+                self._errors.error(
+                    f"Failed to create standard code for '{code}', '{decode}'",
+                    KlassMethodLocation(self.MODULE, "_create_scope"),
+                )
+        gs = self._builder.create(GeographicScope, {"type": type, "code": alias_code})
+        if gs:
+            self._errors.info(
+                f"Created scope of type {type.decode}{f' -> [{code}, {decode}]' if code else ''}",
+                KlassMethodLocation(self.MODULE, "_create_scope"),
+            )
+            results.append(gs)
+        else:
+            self._errors.error(
+                f"Failed to create geographic scope for {type}, {code}, {decode}",
+                KlassMethodLocation(self.MODULE, "_create_scope"),
+            )

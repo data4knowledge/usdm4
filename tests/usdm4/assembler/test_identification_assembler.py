@@ -676,9 +676,7 @@ class TestIdentificationAssemblerPrivateMethods:
         # Check that it's an Organization-like object with expected attributes
         assert hasattr(organization, "name")
         assert hasattr(organization, "label")
-        assert (
-            organization.name == "Test Pharma"
-        )  # Uses name field from org_data
+        assert organization.name == "Test Pharma"  # Uses name field from org_data
         assert organization.label == "Test Pharmaceutical Company"
         # Note: Organization API model doesn't have description field
 
@@ -1100,7 +1098,9 @@ class TestIdentificationAssemblerAdditionalCoverage:
 
             organization = identification_assembler._create_organization(org_data)
             if organization is not None:
-                assert organization.name == org_data["name"]  # Uses name field from org_data
+                assert (
+                    organization.name == org_data["name"]
+                )  # Uses name field from org_data
                 assert organization.label == org_data["label"]
 
     def test_create_identifier_with_none_organization(self, identification_assembler):

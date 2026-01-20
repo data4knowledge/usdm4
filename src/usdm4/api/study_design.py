@@ -18,6 +18,7 @@ from .schedule_timeline import ScheduleTimeline
 from .estimand import Estimand
 from .comment_annotation import CommentAnnotation
 
+
 class StudyDesign(ApiBaseModelWithIdNameLabelAndDesc):
     studyType: Union[Code, None] = None
     studyPhase: Union[AliasCode, None] = None
@@ -97,15 +98,24 @@ class StudyDesign(ApiBaseModelWithIdNameLabelAndDesc):
     def criterion_map(self) -> dict[EligibilityCriterion]:
         return {x.id: x for x in self.eligibilityCriteria}
 
-    def inclusion_criteria(self, criteria: dict[str, EligibilityCriterionItem]) -> list[dict]:
+    def inclusion_criteria(
+        self, criteria: dict[str, EligibilityCriterionItem]
+    ) -> list[dict]:
         return self._criteria(criteria, "C25532")
 
-    def exclusion_criteria(self, criteria: dict[str, EligibilityCriterionItem]) -> list[dict]:
+    def exclusion_criteria(
+        self, criteria: dict[str, EligibilityCriterionItem]
+    ) -> list[dict]:
         return self._criteria(criteria, "C25370")
 
-    def _criteria(self, criteria: dict[str, EligibilityCriterionItem], category_code: str) -> list[dict]:
+    def _criteria(
+        self, criteria: dict[str, EligibilityCriterionItem], category_code: str
+    ) -> list[dict]:
         results = []
-        ecis = {x.criterionItemId: criteria[x.criterionItemId] for x in self.eligibilityCriteria}
+        ecis = {
+            x.criterionItemId: criteria[x.criterionItemId]
+            for x in self.eligibilityCriteria
+        }
         for ec in self.eligibilityCriteria:
             if ec.category.code != category_code:
                 continue
@@ -114,6 +124,7 @@ class StudyDesign(ApiBaseModelWithIdNameLabelAndDesc):
             combined.pop("criterionItemId")
             results.append(combined)
         return results
+
 
 class InterventionalStudyDesign(StudyDesign):
     subTypes: List[Code] = []
