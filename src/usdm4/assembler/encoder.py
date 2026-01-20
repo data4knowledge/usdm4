@@ -136,10 +136,8 @@ class Encoder:
     def amendment_reason(self, reason_str: str):
         if reason_str:
             parts = reason_str.split(":")
-            # print(f"PARTS: {parts}")
             if len(parts) >= 2:
-                reason_text = parts[1]
-                # print(f"REASON: {reason_text}")
+                reason_text = parts[1].strip()
                 for reason in self.REASON_MAP:
                     if reason_text in reason["decode"]:
                         self._errors.info(

@@ -66,6 +66,7 @@ class TestAmendmentsAssemblerValidData:
     def test_execute_with_complete_valid_data(self, amendments_assembler):
         """Test execute with complete valid amendment data."""
         data = {
+            "identifier": "1",
             "summary": "Amendment to add new safety monitoring procedures",
             "reasons": {
                 "primary": "C207609:New Safety Information Available",
@@ -102,6 +103,7 @@ class TestAmendmentsAssemblerValidData:
     def test_execute_with_minimal_valid_data(self, amendments_assembler):
         """Test execute with minimal valid amendment data."""
         data = {
+            "identifier": "1",
             "summary": "Minor protocol clarification",
             "reasons": {
                 "primary": "C207603:Inconsistency And/Or Error In The Protocol",
@@ -130,6 +132,7 @@ class TestAmendmentsAssemblerValidData:
     def test_execute_with_safety_impact_true(self, amendments_assembler):
         """Test execute with safety impact set to true."""
         data = {
+            "identifier": "1",
             "summary": "Safety-related amendment",
             "reasons": {
                 "primary": "C207609:New Safety Information Available",
@@ -148,6 +151,7 @@ class TestAmendmentsAssemblerValidData:
     def test_execute_with_reliability_impact_true(self, amendments_assembler):
         """Test execute with reliability impact set to true."""
         data = {
+            "identifier": "1",
             "summary": "Reliability-related amendment",
             "reasons": {
                 "primary": "C207610:Protocol Design Error",
@@ -166,6 +170,7 @@ class TestAmendmentsAssemblerValidData:
     def test_execute_with_both_impacts_false(self, amendments_assembler):
         """Test execute with both safety and reliability impacts false."""
         data = {
+            "identifier": "1",
             "summary": "Minor administrative change",
             "reasons": {
                 "primary": "C17649:Other",
@@ -184,6 +189,7 @@ class TestAmendmentsAssemblerValidData:
     def test_execute_with_both_impacts_true(self, amendments_assembler):
         """Test execute with both safety and reliability impacts true."""
         data = {
+            "identifier": "1",
             "summary": "Major protocol amendment",
             "reasons": {
                 "primary": "C207609:New Safety Information Available",
@@ -203,6 +209,7 @@ class TestAmendmentsAssemblerValidData:
         """Test execute with different enrollment unit values."""
         # Test with percentage unit
         data = {
+            "identifier": "1",
             "summary": "Test amendment with percentage enrollment",
             "reasons": {
                 "primary": "C207601:Change In Strategy",
@@ -223,6 +230,7 @@ class TestAmendmentsAssemblerValidData:
     def test_execute_with_non_percentage_enrollment_unit(self, amendments_assembler):
         """Test execute with non-percentage enrollment unit."""
         data = {
+            "identifier": "1",
             "summary": "Test amendment with non-percentage enrollment",
             "reasons": {
                 "primary": "C207602:IMP Addition",
@@ -270,6 +278,7 @@ class TestAmendmentsAssemblerValidData:
             amendments_assembler._builder.clear()
 
             data = {
+                "identifier": "1",
                 "summary": f"Test amendment {i + 1}",
                 "reasons": {"primary": reason, "secondary": "C17649:Other"},
                 "impact": {"safety": i % 2 == 0, "reliability": i % 2 == 1},
