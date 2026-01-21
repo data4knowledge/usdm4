@@ -900,6 +900,300 @@ class TestAmendmentsAssemblerStateManagement:
         )
 
 
+class TestAmendmentsAssemblerScopeCreation:
+    """Test AmendmentsAssembler scope creation methods for coverage of lines 101-143, 168-176, 188."""
+
+    def test_create_scopes_with_global_scope(self, amendments_assembler):
+        """Test _create_scopes with GLOBAL scope text (covers lines 106-107)."""
+        data = {
+            "identifier": "1",
+            "summary": "Test with global scope",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": "C207605:IRB/IEC Feedback",
+            },
+            "impact": {"safety": True, "reliability": False},
+            "scope": "Global",
+        }
+
+        amendments_assembler.execute(data)
+
+        assert amendments_assembler.amendment is not None
+        amendment = amendments_assembler.amendment
+        assert amendment.geographicScopes is not None
+        assert len(amendment.geographicScopes) >= 1
+
+    def test_create_scopes_with_not_applicable_scope(self, amendments_assembler):
+        """Test _create_scopes with NOT APPLICABLE scope text (covers lines 104-105)."""
+        data = {
+            "identifier": "1",
+            "summary": "Test with not applicable scope",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": "C207605:IRB/IEC Feedback",
+            },
+            "impact": {"safety": True, "reliability": False},
+            "scope": "Not Applicable",
+        }
+
+        amendments_assembler.execute(data)
+
+        assert amendments_assembler.amendment is not None
+        amendment = amendments_assembler.amendment
+        assert amendment.geographicScopes is not None
+        assert len(amendment.geographicScopes) >= 1
+
+    def test_create_scopes_with_not_global_country(self, amendments_assembler):
+        """Test _create_scopes with NOT GLOBAL followed by country code (covers lines 108-122)."""
+        data = {
+            "identifier": "1",
+            "summary": "Test with not global country scope",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": "C207605:IRB/IEC Feedback",
+            },
+            "impact": {"safety": True, "reliability": False},
+            "scope": "Not Global US",
+        }
+
+        amendments_assembler.execute(data)
+
+        assert amendments_assembler.amendment is not None
+        amendment = amendments_assembler.amendment
+        assert amendment.geographicScopes is not None
+
+    def test_create_scopes_with_local_country(self, amendments_assembler):
+        """Test _create_scopes with LOCAL followed by country code (covers lines 108-122)."""
+        data = {
+            "identifier": "1",
+            "summary": "Test with local country scope",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": "C207605:IRB/IEC Feedback",
+            },
+            "impact": {"safety": True, "reliability": False},
+            "scope": "Local GB",
+        }
+
+        amendments_assembler.execute(data)
+
+        assert amendments_assembler.amendment is not None
+        amendment = amendments_assembler.amendment
+        assert amendment.geographicScopes is not None
+
+    def test_create_scopes_with_multiple_countries(self, amendments_assembler):
+        """Test _create_scopes with multiple country codes (covers lines 114-122)."""
+        data = {
+            "identifier": "1",
+            "summary": "Test with multiple country scopes",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": "C207605:IRB/IEC Feedback",
+            },
+            "impact": {"safety": True, "reliability": False},
+            "scope": "Not Global US, GB, DE",
+        }
+
+        amendments_assembler.execute(data)
+
+        assert amendments_assembler.amendment is not None
+        amendment = amendments_assembler.amendment
+        assert amendment.geographicScopes is not None
+
+    def test_create_scopes_with_region_code(self, amendments_assembler):
+        """Test _create_scopes with region code (covers lines 124-129)."""
+        data = {
+            "identifier": "1",
+            "summary": "Test with region scope",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": "C207605:IRB/IEC Feedback",
+            },
+            "impact": {"safety": True, "reliability": False},
+            "scope": "Not Global 150",  # Europe region code
+        }
+
+        amendments_assembler.execute(data)
+
+        assert amendments_assembler.amendment is not None
+
+    def test_create_scopes_with_invalid_identifier(self, amendments_assembler, errors):
+        """Test _create_scopes with invalid country/region identifier (covers lines 130-134)."""
+        initial_error_count = errors.error_count()
+        data = {
+            "identifier": "1",
+            "summary": "Test with invalid identifier",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": "C207605:IRB/IEC Feedback",
+            },
+            "impact": {"safety": True, "reliability": False},
+            "scope": "Not Global INVALIDCODE",
+        }
+
+        amendments_assembler.execute(data)
+
+        # Should log an error for invalid scope identifier
+        assert errors.error_count() > initial_error_count
+
+    def test_create_scopes_with_unrecognized_scope_format(self, amendments_assembler, errors):
+        """Test _create_scopes with unrecognized scope format (covers lines 135-140)."""
+        initial_error_count = errors.error_count()
+        data = {
+            "identifier": "1",
+            "summary": "Test with unrecognized scope format",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": "C207605:IRB/IEC Feedback",
+            },
+            "impact": {"safety": True, "reliability": False},
+            "scope": "Some Random Unrecognized Scope Format",
+        }
+
+        amendments_assembler.execute(data)
+
+        # Should log an error for unrecognized scope and default to global
+        assert errors.error_count() > initial_error_count
+        assert amendments_assembler.amendment is not None
+
+    def test_create_scopes_with_empty_scope(self, amendments_assembler, errors):
+        """Test _create_scopes with empty scope string (covers lines 141-146)."""
+        initial_error_count = errors.error_count()
+        data = {
+            "identifier": "1",
+            "summary": "Test with empty scope",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": "C207605:IRB/IEC Feedback",
+            },
+            "impact": {"safety": True, "reliability": False},
+            "scope": "",
+        }
+
+        amendments_assembler.execute(data)
+
+        # Should log an error for empty scope and default to global
+        assert errors.error_count() > initial_error_count
+
+    def test_create_scopes_with_whitespace_only_scope(self, amendments_assembler, errors):
+        """Test _create_scopes with whitespace-only scope (covers lines 101-102)."""
+        initial_error_count = errors.error_count()
+        data = {
+            "identifier": "1",
+            "summary": "Test with whitespace scope",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": "C207605:IRB/IEC Feedback",
+            },
+            "impact": {"safety": True, "reliability": False},
+            "scope": "   ",
+        }
+
+        amendments_assembler.execute(data)
+
+        # Should log an error for empty/whitespace scope
+        assert errors.error_count() > initial_error_count
+
+
+class TestAmendmentsAssemblerCreateScopeMethod:
+    """Test _create_scope private method for coverage of lines 168-176, 188."""
+
+    def test_create_scope_with_country_code(self, amendments_assembler):
+        """Test _create_scope with valid country code (covers lines 168-174)."""
+        results = []
+        country_code = amendments_assembler._encoder.geographic_scope("COUNTRY")
+
+        amendments_assembler._create_scope(results, country_code, "US", "United States")
+
+        assert len(results) == 1
+        scope = results[0]
+        assert scope.instanceType == "GeographicScope"
+        assert scope.code is not None
+
+    def test_create_scope_with_region_code(self, amendments_assembler):
+        """Test _create_scope with region code type (covers lines 168-174)."""
+        results = []
+        region_code = amendments_assembler._encoder.geographic_scope("REGION")
+
+        amendments_assembler._create_scope(results, region_code, "150", "Europe")
+
+        assert len(results) == 1
+        scope = results[0]
+        assert scope.instanceType == "GeographicScope"
+
+    def test_create_scope_without_code_and_decode(self, amendments_assembler):
+        """Test _create_scope without code/decode (covers line 166-167 branch)."""
+        results = []
+        global_code = amendments_assembler._encoder.geographic_scope("GLOBAL")
+
+        amendments_assembler._create_scope(results, global_code)
+
+        assert len(results) == 1
+        scope = results[0]
+        assert scope.instanceType == "GeographicScope"
+        assert scope.code is None
+
+    def test_create_scope_with_invalid_country_code(self, amendments_assembler, errors):
+        """Test _create_scope with invalid country code that fails lookup (covers lines 175-179)."""
+        initial_error_count = errors.error_count()
+        results = []
+        country_code = amendments_assembler._encoder.geographic_scope("COUNTRY")
+
+        # Use a code that won't be found in ISO3166 library
+        amendments_assembler._create_scope(results, country_code, "ZZZZ", "Invalid Country")
+
+        # Should log an error for failed standard code creation
+        assert errors.error_count() > initial_error_count
+
+    def test_global_scope_method(self, amendments_assembler):
+        """Test _global_scope helper method."""
+        results = []
+
+        amendments_assembler._global_scope(results)
+
+        assert len(results) == 1
+        scope = results[0]
+        assert scope.instanceType == "GeographicScope"
+
+
+class TestAmendmentsAssemblerExceptionHandling:
+    """Test exception handling in execute method (covers lines 29-31)."""
+
+    def test_execute_exception_logged(self, amendments_assembler, errors):
+        """Test that exceptions in execute are properly caught and logged (covers lines 29-31)."""
+        # Force an exception by passing data that will cause _create_amendment to fail
+        # We need data that passes the initial check but fails during processing
+        initial_error_count = errors.error_count()
+
+        # Create a mock that will raise an exception
+        original_create_amendment = amendments_assembler._create_amendment
+
+        def raise_exception(data):
+            raise RuntimeError("Test exception for coverage")
+
+        amendments_assembler._create_amendment = raise_exception
+
+        try:
+            data = {
+                "identifier": "1",
+                "summary": "Test exception handling",
+                "reasons": {
+                    "primary": "C207609:New Safety Information Available",
+                    "secondary": "C207605:IRB/IEC Feedback",
+                },
+                "impact": {"safety": True, "reliability": False},
+            }
+
+            amendments_assembler.execute(data)
+
+            # Exception should have been caught and logged
+            assert errors.error_count() > initial_error_count
+            assert amendments_assembler.amendment is None
+        finally:
+            # Restore original method
+            amendments_assembler._create_amendment = original_create_amendment
+
+
 class TestAmendmentsAssemblerAdditionalCoverage:
     """Additional test cases to improve coverage."""
 

@@ -1,3 +1,10 @@
+"""
+Assembler for creating StudyAmendment objects from input data.
+
+This module processes amendment data and constructs USDM4-compliant StudyAmendment
+objects including reasons, enrollment information, and geographic scopes.
+"""
+
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.assembler.base_assembler import BaseAssembler
@@ -8,21 +15,48 @@ from usdm4.api.geographic_scope import GeographicScope
 from usdm4.api.subject_enrollment import SubjectEnrollment
 from usdm4.api.study_amendment_reason import StudyAmendmentReason
 from usdm4.api.study_amendment import StudyAmendment
+from usdm4.api.study_amendment_impact import StudyAmendmentImpact
 from usdm4.api.code import Code
 
 
 class AmendmentsAssembler(BaseAssembler):
+    """
+    Assembler that creates StudyAmendment objects from structured input data.
+
+    Handles the creation of amendments including their reasons, enrollment data,
+    and geographic scope information. Supports global, country-specific, and
+    region-specific scopes.
+    """
+
     MODULE = "usdm4.assembler.amendments_assembler.AmenementsAssembler"
 
     def __init__(self, builder: Builder, errors: Errors):
+        """
+        Initialize the AmendmentsAssembler.
+
+        Args:
+            builder: The Builder instance for creating USDM4 objects.
+            errors: The Errors instance for logging errors and information.
+        """
         super().__init__(builder, errors)
         self._encoder = Encoder(builder, errors)
         self.clear()
 
     def clear(self):
+        """Reset the assembler state by clearing the current amendment."""
         self._amendment = None
 
     def execute(self, data: dict) -> None:
+        """
+        Execute the amendment assembly process.
+
+        Processes the input data dictionary and creates a StudyAmendment object.
+        Any exceptions during processing are caught and logged.
+
+        Args:
+            data: Dictionary containing amendment data with keys like 'identifier',
+                  'summary', 'reasons', 'impact', 'enrollment', and 'scope'.
+        """
         try:
             if data:
                 self._amendment = self._create_amendment(data)
@@ -32,22 +66,40 @@ class AmendmentsAssembler(BaseAssembler):
 
     @property
     def amendment(self) -> StudyAmendment:
+        """
+        Get the created StudyAmendment object.
+
+        Returns:
+            The StudyAmendment object created by the last execute() call,
+            or None if no amendment was created.
+        """
         return self._amendment
 
     def _create_amendment(self, data: dict) -> StudyAmendment:
+        """
+        Create a StudyAmendment from the provided data.
+
+        Constructs the amendment with primary and secondary reasons, impact flags,
+        enrollment information, and geographic scopes.
+
+        Args:
+            data: Dictionary containing amendment details.
+
+        Returns:
+            A StudyAmendment object, or None if creation fails.
+        """
         try:
             self._errors.info(f"Amendment assembler source data {data}")
             reason = {}
             for k, item in data["reasons"].items():
-                reason[k] = self._builder.create(
-                    StudyAmendmentReason, self._encoder.amendment_reason(item)
-                )
-            impact = data["impact"]["safety"] or data["impact"]["reliability"]
+                a_reason = self._encoder.amendment_reason(item)
+                a_reason["otherReason"] = a_reason.pop("other_reason")
+                reason[k] = self._builder.create(StudyAmendmentReason, a_reason)
             params = {
                 "name": "AMENDMENT 1",
                 "number": data["identifier"],
                 "summary": data["summary"],
-                "substantialImpact": impact,
+                "impacts": self._create_amendment_impact(data),
                 "primaryReason": reason["primary"],
                 "secondaryReasons": [reason["secondary"]],
                 "enrollments": [self._create_enrollment(data)],
@@ -59,7 +111,49 @@ class AmendmentsAssembler(BaseAssembler):
             self._errors.exception("Failed during creation of amendments", e, location)
             return None
 
-    def _create_enrollment(self, data: dict):
+    def _create_amendment_impact(self, data: dict) -> list[StudyAmendmentImpact]:
+        try:
+            results = []
+            self._errors.info(f"Creating amendment impacts using {data["impact"]}", KlassMethodLocation(self.MODULE, "_create_amendment_impact"))
+            impact = data["impact"]
+            s_and_r = impact["safety_and_rights"]
+            r_and_r = impact["reliability_and_robustness"]
+            print(f"\nR-R1: {r_and_r}")
+            print(f"R-R2: {r_and_r["reliability"]}")
+            self._create_impact(results, "C215665", "Study Subject Safety", s_and_r["safety"]["substantial"], s_and_r["safety"]["reason"])
+            self._create_impact(results, "C215666", "Study Subject Rights", s_and_r["rights"]["substantial"], s_and_r["rights"]["reason"])
+            self._create_impact(results, "C215667", "Study Data Reliability", r_and_r["reliability"]["substantial"], r_and_r["reliability"]["reason"])
+            self._create_impact(results, "C215668", "Study Data Robustness", r_and_r["robustness"]["substantial"], r_and_r["robustness"]["reason"])
+            return results
+        except Exception as e:
+            self._errors.exception("Failed during creation of amendment impacts", e, KlassMethodLocation(self.MODULE, "_create_amendment_impact"))
+            return []
+        
+    def _create_impact(self, results: list[StudyAmendmentImpact], code: str, decode: str, is_substantial: bool, text: str) -> None:
+        type_code = self._builder.cdisc_code(code, decode)
+        params = {
+            "text": text,
+            "isSubstantial": is_substantial,
+            "type": type_code,
+        }
+        item = self._builder.create(StudyAmendmentImpact, params)
+        if item:
+            results.append(item)
+
+    def _create_enrollment(self, data: dict) -> SubjectEnrollment:
+        """
+        Create a SubjectEnrollment object from the provided data.
+
+        If enrollment data is present, creates a quantity with the specified value
+        and unit (percentage if '%'). Otherwise, creates a default enrollment with
+        value 0.
+
+        Args:
+            data: Dictionary that may contain an 'enrollment' key with 'value' and 'unit'.
+
+        Returns:
+            A SubjectEnrollment object, or None if creation fails.
+        """
         try:
             global_code = self._builder.cdisc_code("C68846", "Global")
             params = {
@@ -91,11 +185,28 @@ class AmendmentsAssembler(BaseAssembler):
                 }
             return self._builder.create(SubjectEnrollment, params)
         except Exception as e:
-            location = KlassMethodLocation(self.MODULE, "execute")
+            location = KlassMethodLocation(self.MODULE, "_create_enrollment")
             self._errors.exception("Failed during creation of enrollments", e, location)
             return None
 
     def _create_scopes(self, data: dict) -> list[GeographicScope]:
+        """
+        Create geographic scopes from the scope data.
+
+        Parses the 'scope' field and creates appropriate GeographicScope objects:
+        - "NOT APPLICABLE" or "GLOBAL": Creates a global scope
+        - "NOT GLOBAL <countries>" or "LOCAL <countries>": Creates country/region scopes
+        - Unrecognized format: Defaults to global scope with an error
+
+        Country codes are looked up in the ISO3166 library. If a code is not found
+        as a country, it is checked as a region code.
+
+        Args:
+            data: Dictionary that may contain a 'scope' key.
+
+        Returns:
+            List of GeographicScope objects.
+        """
         results = []
         if "scope" in data:
             if data["scope"]:
@@ -108,12 +219,14 @@ class AmendmentsAssembler(BaseAssembler):
                 elif text_upper.startswith("NOT GLOBAL") or text_upper.startswith(
                     "LOCAL"
                 ):
+                    # Extract the identifier portion after the prefix
                     identifier = (
                         text[10:] if text_upper.startswith("NOT GLOBAL") else text[5:]
                     )
                     parts = identifier.split(",")
                     for part in parts:
                         text = part.strip()
+                        # Try to find as a country code first
                         code, decode = self._builder.iso3166_library.code_or_decode(
                             text
                         )
@@ -121,6 +234,7 @@ class AmendmentsAssembler(BaseAssembler):
                             country_code = self._encoder.geographic_scope("COUNTRY")
                             self._create_scope(results, country_code, code, decode)
                         else:
+                            # If not a country, try as a region code
                             code, decode = self._builder.iso3166_library.region_code(
                                 text
                             )
@@ -133,18 +247,21 @@ class AmendmentsAssembler(BaseAssembler):
                                     KlassMethodLocation(self.MODULE, "_create_scopes"),
                                 )
                 else:
+                    # Unrecognized scope format - default to global and log error
                     self._global_scope(results)
                     self._errors.error(
                         f"Failed to decode scope '{data['scope']}'",
                         KlassMethodLocation(self.MODULE, "_create_scopes"),
                     )
             else:
+                # Empty scope string - default to global and log error
                 self._global_scope(results)
                 self._errors.error(
                     "Empty scope found",
                     KlassMethodLocation(self.MODULE, "_create_scopes"),
                 )
         else:
+            # No scope key in data - default to global and log error
             self._global_scope(results)
             self._errors.error(
                 "No scope data found",
@@ -153,6 +270,12 @@ class AmendmentsAssembler(BaseAssembler):
         return results
 
     def _global_scope(self, results: list[GeographicScope]) -> None:
+        """
+        Add a global geographic scope to the results list.
+
+        Args:
+            results: List to append the global scope to.
+        """
         global_code = self._encoder.geographic_scope("GLOBAL")
         self._create_scope(results, global_code)
 
@@ -163,8 +286,22 @@ class AmendmentsAssembler(BaseAssembler):
         code: str = None,
         decode: str = None,
     ) -> None:
+        """
+        Create a GeographicScope and add it to the results list.
+
+        For country scopes (C25464), looks up the ISO3166 country code.
+        For region scopes, looks up the ISO3166 region code.
+        Creates an alias code from the standard code if found.
+
+        Args:
+            results: List to append the created scope to.
+            type: The Code object indicating the scope type (Country, Global, Region).
+            code: Optional ISO code string (e.g., 'US', '150').
+            decode: Optional human-readable decode for the code.
+        """
         alias_code = None
         if code and decode:
+            # Look up the standard code based on scope type
             std_code = (
                 self._builder.iso3166_code(code)
                 if type.code == "C25464"

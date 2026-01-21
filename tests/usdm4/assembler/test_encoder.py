@@ -580,16 +580,14 @@ class TestEncoderAmendmentReason:
         assert result["other_reason"] == ""
 
     def test_amendment_reason_other(self, encoder):
-        """Test Other - note that 'Other' matches 'New Data Available (Other Than Safety Data)' first"""
+        """Test Other reason code with exact matching"""
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
         result = encoder.amendment_reason("Reason:Other")
 
-        # "Other" is contained in "New Data Available (Other Than Safety Data)" so it matches that
-        encoder._builder.cdisc_code.assert_called_with(
-            "C207607", "New Data Available (Other Than Safety Data)"
-        )
+        # With exact matching, "Other" matches the "Other" entry in REASON_MAP
+        encoder._builder.cdisc_code.assert_called_with("C17649", "Other")
         assert result["code"] == mock_code
         assert result["other_reason"] == ""
 
@@ -917,10 +915,9 @@ class TestEncoderEdgeCases:
 
         result = encoder.amendment_reason(":")
 
-        # Empty string '' is in any string, so it matches the first reason in REASON_MAP
-        encoder._builder.cdisc_code.assert_called_with(
-            "C207612", "Regulatory Agency Request To Amend"
-        )
+        # With exact matching, empty string doesn't match any reason, so defaults to Other
+        encoder._builder.cdisc_code.assert_called_with("C17649", "Other")
+        encoder._errors.warning.assert_called()
         assert result["code"] == mock_code
         assert result["other_reason"] == ""
 

@@ -242,7 +242,7 @@ class Encoder:
             if len(parts) >= 2:
                 reason_text = parts[1].strip()
                 for reason in self.REASON_MAP:
-                    if reason_text in reason["decode"]:
+                    if reason_text.upper() == reason["decode"].upper():
                         self._errors.info(
                             f"Amendment reason '{reason_text}' decoded as '{reason['code']}', '{reason['decode']}'"
                         )
