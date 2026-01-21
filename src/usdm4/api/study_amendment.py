@@ -22,3 +22,15 @@ class StudyAmendment(ApiBaseModelWithIdNameLabelAndDesc):
     previousId: Union[str, None] = None
     notes: List[CommentAnnotation] = []
     instanceType: Literal["StudyAmendment"]
+
+    def primary_reason_as_text(self) -> str:
+        return self.primaryReason.reason_as_text()
+
+    def primary_other_reason_as_text(self) -> str:
+        return self.primaryReason.other_reason_as_text()
+
+    def secondary_reason_as_text(self) -> str:
+        return self.secondaryReasons[0].reason_as_text() if len(self.secondaryReasons) > 0 else ""
+
+    def secondary_other_reason_as_text(self) -> str:
+        return self.secondaryReasons[0].other_reason_as_text() if len(self.secondaryReasons) > 0 else ""
