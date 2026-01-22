@@ -60,6 +60,25 @@ class TestAmendmentsAssemblerInitialization:
         assert hasattr(amendments_assembler._encoder, "amendment_reason")
 
 
+def make_impact(safety=False, rights=False, reliability=False, robustness=False):
+    """Helper to create the new impact data structure."""
+    return {
+        "safety_and_rights": {
+            "safety": {"substantial": safety, "reason": "Safety reason" if safety else ""},
+            "rights": {"substantial": rights, "reason": "Rights reason" if rights else ""},
+        },
+        "reliability_and_robustness": {
+            "reliability": {"substantial": reliability, "reason": "Reliability reason" if reliability else ""},
+            "robustness": {"substantial": robustness, "reason": "Robustness reason" if robustness else ""},
+        },
+    }
+
+
+def make_changes():
+    """Helper to create default changes data."""
+    return []
+
+
 class TestAmendmentsAssemblerValidData:
     """Test AmendmentsAssembler with valid data."""
 
@@ -72,8 +91,9 @@ class TestAmendmentsAssemblerValidData:
                 "primary": "C207609:New Safety Information Available",
                 "secondary": "C207605:IRB/IEC Feedback",
             },
-            "impact": {"safety": True, "reliability": False},
+            "impact": make_impact(safety=True),
             "enrollment": {"value": 150, "unit": "%"},
+            "changes": make_changes(),
         }
 
         amendments_assembler.execute(data)
@@ -109,7 +129,8 @@ class TestAmendmentsAssemblerValidData:
                 "primary": "C207603:Inconsistency And/Or Error In The Protocol",
                 "secondary": "C17649:Other",
             },
-            "impact": {"safety": False, "reliability": True},
+            "impact": make_impact(reliability=True),
+            "changes": make_changes(),
         }
 
         amendments_assembler.execute(data)
@@ -138,8 +159,9 @@ class TestAmendmentsAssemblerValidData:
                 "primary": "C207609:New Safety Information Available",
                 "secondary": "C207612:Regulatory Agency Request To Amend",
             },
-            "impact": {"safety": True, "reliability": False},
+            "impact": make_impact(safety=True),
             "enrollment": {"value": 200, "unit": "%"},
+            "changes": make_changes(),
         }
 
         amendments_assembler.execute(data)
@@ -157,8 +179,9 @@ class TestAmendmentsAssemblerValidData:
                 "primary": "C207610:Protocol Design Error",
                 "secondary": "C207601:Change In Strategy",
             },
-            "impact": {"safety": False, "reliability": True},
+            "impact": make_impact(reliability=True),
             "enrollment": {"value": 100, "unit": "%"},
+            "changes": make_changes(),
         }
 
         amendments_assembler.execute(data)
@@ -176,8 +199,9 @@ class TestAmendmentsAssemblerValidData:
                 "primary": "C17649:Other",
                 "secondary": "C48660:Not Applicable",
             },
-            "impact": {"safety": False, "reliability": False},
+            "impact": make_impact(),
             "enrollment": {"value": 75, "unit": "%"},
+            "changes": make_changes(),
         }
 
         amendments_assembler.execute(data)
@@ -195,8 +219,9 @@ class TestAmendmentsAssemblerValidData:
                 "primary": "C207609:New Safety Information Available",
                 "secondary": "C207610:Protocol Design Error",
             },
-            "impact": {"safety": True, "reliability": True},
+            "impact": make_impact(safety=True, reliability=True),
             "enrollment": {"value": 300, "unit": "%"},
+            "changes": make_changes(),
         }
 
         amendments_assembler.execute(data)
@@ -215,8 +240,9 @@ class TestAmendmentsAssemblerValidData:
                 "primary": "C207601:Change In Strategy",
                 "secondary": "C17649:Other",
             },
-            "impact": {"safety": False, "reliability": True},
+            "impact": make_impact(reliability=True),
             "enrollment": {"value": 125, "unit": "%"},
+            "changes": make_changes(),
         }
 
         amendments_assembler.execute(data)
@@ -236,8 +262,9 @@ class TestAmendmentsAssemblerValidData:
                 "primary": "C207602:IMP Addition",
                 "secondary": "C207604:Investigator/Site Feedback",
             },
-            "impact": {"safety": True, "reliability": False},
+            "impact": make_impact(safety=True),
             "enrollment": {"value": 50, "unit": "subjects"},
+            "changes": make_changes(),
         }
 
         amendments_assembler.execute(data)
@@ -281,8 +308,9 @@ class TestAmendmentsAssemblerValidData:
                 "identifier": "1",
                 "summary": f"Test amendment {i + 1}",
                 "reasons": {"primary": reason, "secondary": "C17649:Other"},
-                "impact": {"safety": i % 2 == 0, "reliability": i % 2 == 1},
+                "impact": make_impact(safety=i % 2 == 0, reliability=i % 2 == 1),
                 "enrollment": {"value": 100 + i * 10, "unit": "%"},
+                "changes": make_changes(),
             }
 
             amendments_assembler.execute(data)
@@ -912,8 +940,9 @@ class TestAmendmentsAssemblerScopeCreation:
                 "primary": "C207609:New Safety Information Available",
                 "secondary": "C207605:IRB/IEC Feedback",
             },
-            "impact": {"safety": True, "reliability": False},
+            "impact": make_impact(safety=True),
             "scope": "Global",
+            "changes": make_changes(),
         }
 
         amendments_assembler.execute(data)
@@ -932,8 +961,9 @@ class TestAmendmentsAssemblerScopeCreation:
                 "primary": "C207609:New Safety Information Available",
                 "secondary": "C207605:IRB/IEC Feedback",
             },
-            "impact": {"safety": True, "reliability": False},
+            "impact": make_impact(safety=True),
             "scope": "Not Applicable",
+            "changes": make_changes(),
         }
 
         amendments_assembler.execute(data)
@@ -952,8 +982,9 @@ class TestAmendmentsAssemblerScopeCreation:
                 "primary": "C207609:New Safety Information Available",
                 "secondary": "C207605:IRB/IEC Feedback",
             },
-            "impact": {"safety": True, "reliability": False},
+            "impact": make_impact(safety=True),
             "scope": "Not Global US",
+            "changes": make_changes(),
         }
 
         amendments_assembler.execute(data)
@@ -971,8 +1002,9 @@ class TestAmendmentsAssemblerScopeCreation:
                 "primary": "C207609:New Safety Information Available",
                 "secondary": "C207605:IRB/IEC Feedback",
             },
-            "impact": {"safety": True, "reliability": False},
+            "impact": make_impact(safety=True),
             "scope": "Local GB",
+            "changes": make_changes(),
         }
 
         amendments_assembler.execute(data)
@@ -990,8 +1022,9 @@ class TestAmendmentsAssemblerScopeCreation:
                 "primary": "C207609:New Safety Information Available",
                 "secondary": "C207605:IRB/IEC Feedback",
             },
-            "impact": {"safety": True, "reliability": False},
+            "impact": make_impact(safety=True),
             "scope": "Not Global US, GB, DE",
+            "changes": make_changes(),
         }
 
         amendments_assembler.execute(data)
@@ -1009,8 +1042,9 @@ class TestAmendmentsAssemblerScopeCreation:
                 "primary": "C207609:New Safety Information Available",
                 "secondary": "C207605:IRB/IEC Feedback",
             },
-            "impact": {"safety": True, "reliability": False},
+            "impact": make_impact(safety=True),
             "scope": "Not Global 150",  # Europe region code
+            "changes": make_changes(),
         }
 
         amendments_assembler.execute(data)
@@ -1027,8 +1061,9 @@ class TestAmendmentsAssemblerScopeCreation:
                 "primary": "C207609:New Safety Information Available",
                 "secondary": "C207605:IRB/IEC Feedback",
             },
-            "impact": {"safety": True, "reliability": False},
+            "impact": make_impact(safety=True),
             "scope": "Not Global INVALIDCODE",
+            "changes": make_changes(),
         }
 
         amendments_assembler.execute(data)
@@ -1046,8 +1081,9 @@ class TestAmendmentsAssemblerScopeCreation:
                 "primary": "C207609:New Safety Information Available",
                 "secondary": "C207605:IRB/IEC Feedback",
             },
-            "impact": {"safety": True, "reliability": False},
+            "impact": make_impact(safety=True),
             "scope": "Some Random Unrecognized Scope Format",
+            "changes": make_changes(),
         }
 
         amendments_assembler.execute(data)

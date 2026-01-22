@@ -149,7 +149,6 @@ class AmendmentsAssembler(BaseAssembler):
                     results.append(ref)
             else:
                 self._errors.error(f"Failed to extract section ref from '{line}'", KlassMethodLocation(self.MODULE, "_extract_section_numer_and_title"))
-            return []                    
         return results
     
     def _create_amendment_impact(self, data: dict) -> list[StudyAmendmentImpact]:
@@ -159,8 +158,8 @@ class AmendmentsAssembler(BaseAssembler):
             impact = data["impact"]
             s_and_r = impact["safety_and_rights"]
             r_and_r = impact["reliability_and_robustness"]
-            print(f"\nR-R1: {r_and_r}")
-            print(f"R-R2: {r_and_r["reliability"]}")
+            # print(f"\nR-R1: {r_and_r}")
+            # print(f"R-R2: {r_and_r["reliability"]}")
             self._create_impact(results, "C215665", "Study Subject Safety", s_and_r["safety"]["substantial"], s_and_r["safety"]["reason"])
             self._create_impact(results, "C215666", "Study Subject Rights", s_and_r["rights"]["substantial"], s_and_r["rights"]["reason"])
             self._create_impact(results, "C215667", "Study Data Reliability", r_and_r["reliability"]["substantial"], r_and_r["reliability"]["reason"])
