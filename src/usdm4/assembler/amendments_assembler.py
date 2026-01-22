@@ -5,6 +5,7 @@ This module processes amendment data and constructs USDM4-compliant StudyAmendme
 objects including reasons, enrollment information, and geographic scopes.
 """
 
+import re
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.assembler.base_assembler import BaseAssembler
@@ -16,6 +17,8 @@ from usdm4.api.subject_enrollment import SubjectEnrollment
 from usdm4.api.study_amendment_reason import StudyAmendmentReason
 from usdm4.api.study_amendment import StudyAmendment
 from usdm4.api.study_amendment_impact import StudyAmendmentImpact
+from usdm4.api.study_change import StudyChange
+from usdm4.api.document_content_reference import DocumentContentReference
 from usdm4.api.code import Code
 
 
@@ -90,20 +93,17 @@ class AmendmentsAssembler(BaseAssembler):
         """
         try:
             self._errors.info(f"Amendment assembler source data {data}")
-            reason = {}
-            for k, item in data["reasons"].items():
-                a_reason = self._encoder.amendment_reason(item)
-                a_reason["otherReason"] = a_reason.pop("other_reason")
-                reason[k] = self._builder.create(StudyAmendmentReason, a_reason)
+            reasons = self._create_primary_secondary_reasons(data)            
             params = {
                 "name": "AMENDMENT 1",
                 "number": data["identifier"],
                 "summary": data["summary"],
                 "impacts": self._create_amendment_impact(data),
-                "primaryReason": reason["primary"],
-                "secondaryReasons": [reason["secondary"]],
+                "primaryReason": reasons["primary"],
+                "secondaryReasons": [reasons["secondary"]],
                 "enrollments": [self._create_enrollment(data)],
                 "geographicScopes": self._create_scopes(data),
+                "changes": self._create_changes(data),
             }
             return self._builder.create(StudyAmendment, params)
         except Exception as e:
@@ -111,6 +111,47 @@ class AmendmentsAssembler(BaseAssembler):
             self._errors.exception("Failed during creation of amendments", e, location)
             return None
 
+    def _create_primary_secondary_reasons(self, data: dict) -> dict[str, StudyAmendmentReason]:
+        reasons = {}
+        for k, item in data["reasons"].items():
+            a_reason = self._encoder.amendment_reason(item)
+            a_reason["otherReason"] = a_reason.pop("other_reason")
+            reasons[k] = self._builder.create(StudyAmendmentReason, a_reason)
+        return reasons
+            
+    def _create_changes(self, data: dict) -> list[StudyChange]:
+        results = []
+        for item in data["changes"]:
+            refs = self._extract_section_numer_and_title(item["section"])
+            params = {
+                "summary": item["descrition"].strip(),
+                "rationale": item["rationale"].strip(),
+                "changedSections": refs,
+            }
+            change = self._builder.create(StudyChange, params)
+            if change:
+                results.append(change)
+        return results
+
+    def _extract_section_numer_and_title(self, text) -> list[DocumentContentReference]:
+        results = []
+        pattern = r'^(?:Section\s+)?(\d+(?:\.\d+)*),?\s*(.*)$'
+        for line in text.strip().split('\n'):
+            match = re.match(pattern, line.strip())
+            if match:
+                params = {
+                    "sectionNumber": match.group(1),
+                    "sectionTitle": match.group(2),
+                    "appliesToId": "not-ref-set",
+                }
+                ref = self._builder.create(DocumentContentReference, params)
+                if ref: 
+                    results.append(ref)
+            else:
+                self._errors.error(f"Failed to extract section ref from '{line}'", KlassMethodLocation(self.MODULE, "_extract_section_numer_and_title"))
+            return []                    
+        return results
+    
     def _create_amendment_impact(self, data: dict) -> list[StudyAmendmentImpact]:
         try:
             results = []
