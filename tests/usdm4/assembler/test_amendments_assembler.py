@@ -1,8 +1,10 @@
 import os
 import pathlib
 import pytest
+from unittest.mock import MagicMock
 from simple_error_log.errors import Errors
 from src.usdm4.assembler.amendments_assembler import AmendmentsAssembler
+from src.usdm4.assembler.document_assembler import DocumentAssembler
 from src.usdm4.builder.builder import Builder
 
 
@@ -22,6 +24,31 @@ def builder():
 def errors():
     """Create an Errors instance for testing."""
     return Errors()
+
+
+@pytest.fixture
+def document_assembler(builder, errors):
+    """Create a DocumentAssembler instance for testing with a mock document."""
+    assembler = DocumentAssembler(builder, errors)
+    # Execute with minimal document data to create a real document with an id
+    document_data = {
+        "document": {
+            "label": "Test Protocol Document",
+            "version": "1.0",
+            "status": "final",
+            "template": "Protocol Template",
+            "version_date": "2024-01-01",
+        },
+        "sections": [
+            {
+                "section_number": "1",
+                "section_title": "Introduction",
+                "text": "This is the introduction section.",
+            }
+        ],
+    }
+    assembler.execute(document_data)
+    return assembler
 
 
 @pytest.fixture
@@ -82,7 +109,7 @@ def make_changes():
 class TestAmendmentsAssemblerValidData:
     """Test AmendmentsAssembler with valid data."""
 
-    def test_execute_with_complete_valid_data(self, amendments_assembler):
+    def test_execute_with_complete_valid_data(self, amendments_assembler, document_assembler):
         """Test execute with complete valid amendment data."""
         data = {
             "identifier": "1",
@@ -96,7 +123,7 @@ class TestAmendmentsAssemblerValidData:
             "changes": make_changes(),
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should have created an amendment
         assert amendments_assembler.amendment is not None
@@ -120,7 +147,7 @@ class TestAmendmentsAssemblerValidData:
         assert amendment.geographicScopes is not None
         assert len(amendment.geographicScopes) == 1
 
-    def test_execute_with_minimal_valid_data(self, amendments_assembler):
+    def test_execute_with_minimal_valid_data(self, amendments_assembler, document_assembler):
         """Test execute with minimal valid amendment data."""
         data = {
             "identifier": "1",
@@ -133,7 +160,7 @@ class TestAmendmentsAssemblerValidData:
             "changes": make_changes(),
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should have created an amendment
         assert amendments_assembler.amendment is not None
@@ -150,7 +177,7 @@ class TestAmendmentsAssemblerValidData:
         enrollment = amendment.enrollments[0]
         assert enrollment.quantity.value == 0
 
-    def test_execute_with_safety_impact_true(self, amendments_assembler):
+    def test_execute_with_safety_impact_true(self, amendments_assembler, document_assembler):
         """Test execute with safety impact set to true."""
         data = {
             "identifier": "1",
@@ -164,13 +191,13 @@ class TestAmendmentsAssemblerValidData:
             "changes": make_changes(),
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         assert amendments_assembler.amendment is not None
         _ = amendments_assembler.amendment
         # Test that amendment was created successfully
 
-    def test_execute_with_reliability_impact_true(self, amendments_assembler):
+    def test_execute_with_reliability_impact_true(self, amendments_assembler, document_assembler):
         """Test execute with reliability impact set to true."""
         data = {
             "identifier": "1",
@@ -184,13 +211,13 @@ class TestAmendmentsAssemblerValidData:
             "changes": make_changes(),
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         assert amendments_assembler.amendment is not None
         _ = amendments_assembler.amendment
         # Test that amendment was created successfully
 
-    def test_execute_with_both_impacts_false(self, amendments_assembler):
+    def test_execute_with_both_impacts_false(self, amendments_assembler, document_assembler):
         """Test execute with both safety and reliability impacts false."""
         data = {
             "identifier": "1",
@@ -204,13 +231,13 @@ class TestAmendmentsAssemblerValidData:
             "changes": make_changes(),
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         assert amendments_assembler.amendment is not None
         _ = amendments_assembler.amendment
         # Test that amendment was created successfully
 
-    def test_execute_with_both_impacts_true(self, amendments_assembler):
+    def test_execute_with_both_impacts_true(self, amendments_assembler, document_assembler):
         """Test execute with both safety and reliability impacts true."""
         data = {
             "identifier": "1",
@@ -224,13 +251,13 @@ class TestAmendmentsAssemblerValidData:
             "changes": make_changes(),
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         assert amendments_assembler.amendment is not None
         _ = amendments_assembler.amendment
         # Test that amendment was created successfully
 
-    def test_execute_with_different_enrollment_units(self, amendments_assembler):
+    def test_execute_with_different_enrollment_units(self, amendments_assembler, document_assembler):
         """Test execute with different enrollment unit values."""
         # Test with percentage unit
         data = {
@@ -245,7 +272,7 @@ class TestAmendmentsAssemblerValidData:
             "changes": make_changes(),
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         assert amendments_assembler.amendment is not None
         amendment = amendments_assembler.amendment
@@ -253,7 +280,7 @@ class TestAmendmentsAssemblerValidData:
         assert enrollment.quantity.value == 125
         assert enrollment.quantity.unit is not None  # Should have percentage unit
 
-    def test_execute_with_non_percentage_enrollment_unit(self, amendments_assembler):
+    def test_execute_with_non_percentage_enrollment_unit(self, amendments_assembler, document_assembler):
         """Test execute with non-percentage enrollment unit."""
         data = {
             "identifier": "1",
@@ -267,7 +294,7 @@ class TestAmendmentsAssemblerValidData:
             "changes": make_changes(),
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         assert amendments_assembler.amendment is not None
         amendment = amendments_assembler.amendment
@@ -277,7 +304,7 @@ class TestAmendmentsAssemblerValidData:
             enrollment.quantity.unit is None
         )  # Should be None for non-percentage units
 
-    def test_execute_with_all_valid_reason_codes(self, amendments_assembler):
+    def test_execute_with_all_valid_reason_codes(self, amendments_assembler, document_assembler):
         """Test execute with various valid amendment reason codes."""
         valid_reasons = [
             "C207612:Regulatory Agency Request To Amend",
@@ -313,7 +340,7 @@ class TestAmendmentsAssemblerValidData:
                 "changes": make_changes(),
             }
 
-            amendments_assembler.execute(data)
+            amendments_assembler.execute(data, document_assembler)
 
             assert amendments_assembler.amendment is not None
             amendment = amendments_assembler.amendment
@@ -323,23 +350,23 @@ class TestAmendmentsAssemblerValidData:
 class TestAmendmentsAssemblerInvalidData:
     """Test AmendmentsAssembler with invalid data."""
 
-    def test_execute_with_empty_data(self, amendments_assembler):
+    def test_execute_with_empty_data(self, amendments_assembler, document_assembler):
         """Test execute with empty data dictionary."""
         data = {}
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle empty data gracefully
         assert amendments_assembler.amendment is None
 
-    def test_execute_with_none_data(self, amendments_assembler):
+    def test_execute_with_none_data(self, amendments_assembler, document_assembler):
         """Test execute with None data."""
-        amendments_assembler.execute(None)
+        amendments_assembler.execute(None, document_assembler)
 
         # Should handle None data gracefully
         assert amendments_assembler.amendment is None
 
-    def test_execute_with_missing_summary(self, amendments_assembler):
+    def test_execute_with_missing_summary(self, amendments_assembler, document_assembler):
         """Test execute with missing summary field."""
         data = {
             "reasons": {
@@ -349,24 +376,24 @@ class TestAmendmentsAssemblerInvalidData:
             "impact": {"safety": True, "reliability": False},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle missing summary - may create amendment with None summary or fail
         # The exact behavior depends on the Builder's handling of None values
 
-    def test_execute_with_missing_reasons(self, amendments_assembler):
+    def test_execute_with_missing_reasons(self, amendments_assembler, document_assembler):
         """Test execute with missing reasons field."""
         data = {
             "summary": "Test amendment without reasons",
             "impact": {"safety": True, "reliability": False},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle missing reasons gracefully - likely will fail during creation
         # The amendment should be None due to the exception handling
 
-    def test_execute_with_missing_impact(self, amendments_assembler):
+    def test_execute_with_missing_impact(self, amendments_assembler, document_assembler):
         """Test execute with missing impact field."""
         data = {
             "summary": "Test amendment without impact",
@@ -376,11 +403,11 @@ class TestAmendmentsAssemblerInvalidData:
             },
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle missing impact gracefully - likely will fail during creation
 
-    def test_execute_with_invalid_reason_format(self, amendments_assembler):
+    def test_execute_with_invalid_reason_format(self, amendments_assembler, document_assembler):
         """Test execute with invalid reason format."""
         data = {
             "summary": "Test amendment with invalid reasons",
@@ -391,12 +418,12 @@ class TestAmendmentsAssemblerInvalidData:
             "impact": {"safety": True, "reliability": False},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle invalid reason format - encoder should handle this gracefully
         # May create amendment with "Other" reason codes
 
-    def test_execute_with_missing_primary_reason(self, amendments_assembler):
+    def test_execute_with_missing_primary_reason(self, amendments_assembler, document_assembler):
         """Test execute with missing primary reason."""
         data = {
             "summary": "Test amendment without primary reason",
@@ -404,11 +431,11 @@ class TestAmendmentsAssemblerInvalidData:
             "impact": {"safety": True, "reliability": False},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle missing primary reason - likely will fail during creation
 
-    def test_execute_with_missing_secondary_reason(self, amendments_assembler):
+    def test_execute_with_missing_secondary_reason(self, amendments_assembler, document_assembler):
         """Test execute with missing secondary reason."""
         data = {
             "summary": "Test amendment without secondary reason",
@@ -416,11 +443,11 @@ class TestAmendmentsAssemblerInvalidData:
             "impact": {"safety": True, "reliability": False},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle missing secondary reason - likely will fail during creation
 
-    def test_execute_with_invalid_enrollment_value(self, amendments_assembler):
+    def test_execute_with_invalid_enrollment_value(self, amendments_assembler, document_assembler):
         """Test execute with invalid enrollment value."""
         data = {
             "summary": "Test amendment with invalid enrollment",
@@ -432,11 +459,11 @@ class TestAmendmentsAssemblerInvalidData:
             "enrollment": {"value": "invalid_number", "unit": "%"},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle invalid enrollment value - may fail during quantity creation
 
-    def test_execute_with_missing_enrollment_value(self, amendments_assembler):
+    def test_execute_with_missing_enrollment_value(self, amendments_assembler, document_assembler):
         """Test execute with missing enrollment value."""
         data = {
             "summary": "Test amendment with missing enrollment value",
@@ -448,11 +475,11 @@ class TestAmendmentsAssemblerInvalidData:
             "enrollment": {"unit": "%"},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle missing enrollment value - may fail during quantity creation
 
-    def test_execute_with_missing_enrollment_unit(self, amendments_assembler):
+    def test_execute_with_missing_enrollment_unit(self, amendments_assembler, document_assembler):
         """Test execute with missing enrollment unit."""
         data = {
             "summary": "Test amendment with missing enrollment unit",
@@ -464,11 +491,11 @@ class TestAmendmentsAssemblerInvalidData:
             "enrollment": {"value": 100},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle missing enrollment unit - may create quantity with None unit
 
-    def test_execute_with_invalid_impact_values(self, amendments_assembler):
+    def test_execute_with_invalid_impact_values(self, amendments_assembler, document_assembler):
         """Test execute with invalid impact values."""
         data = {
             "summary": "Test amendment with invalid impact",
@@ -479,11 +506,11 @@ class TestAmendmentsAssemblerInvalidData:
             "impact": {"safety": "not_boolean", "reliability": "also_not_boolean"},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle invalid impact values - may fail during boolean evaluation
 
-    def test_execute_with_malformed_data_structure(self, amendments_assembler):
+    def test_execute_with_malformed_data_structure(self, amendments_assembler, document_assembler):
         """Test execute with malformed data structure."""
         malformed_data = {
             "summary": "Test amendment",
@@ -494,7 +521,7 @@ class TestAmendmentsAssemblerInvalidData:
 
         # Should handle malformed data gracefully without crashing
         try:
-            amendments_assembler.execute(malformed_data)
+            amendments_assembler.execute(malformed_data, document_assembler)
         except (AttributeError, TypeError, KeyError):
             # Expected behavior - the method doesn't handle malformed data gracefully
             pass
@@ -502,7 +529,7 @@ class TestAmendmentsAssemblerInvalidData:
         # Amendment should be None due to exception handling
         # The exact behavior depends on where the exception occurs
 
-    def test_execute_with_none_values_in_data(self, amendments_assembler):
+    def test_execute_with_none_values_in_data(self, amendments_assembler, document_assembler):
         """Test execute with None values in data fields."""
         data = {
             "summary": None,
@@ -511,7 +538,7 @@ class TestAmendmentsAssemblerInvalidData:
             "enrollment": None,
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle None values - may fail during processing
 
@@ -519,7 +546,7 @@ class TestAmendmentsAssemblerInvalidData:
 class TestAmendmentsAssemblerEdgeCases:
     """Test AmendmentsAssembler edge cases."""
 
-    def test_execute_with_empty_summary(self, amendments_assembler):
+    def test_execute_with_empty_summary(self, amendments_assembler, document_assembler):
         """Test execute with empty summary string."""
         data = {
             "summary": "",
@@ -530,13 +557,13 @@ class TestAmendmentsAssemblerEdgeCases:
             "impact": {"safety": True, "reliability": False},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle empty summary
         if amendments_assembler.amendment is not None:
             assert amendments_assembler.amendment.summary == ""
 
-    def test_execute_with_very_long_summary(self, amendments_assembler):
+    def test_execute_with_very_long_summary(self, amendments_assembler, document_assembler):
         """Test execute with very long summary text."""
         long_summary = "A" * 1000  # 1000 character summary
         data = {
@@ -548,13 +575,13 @@ class TestAmendmentsAssemblerEdgeCases:
             "impact": {"safety": True, "reliability": False},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle long summary
         if amendments_assembler.amendment is not None:
             assert amendments_assembler.amendment.summary == long_summary
 
-    def test_execute_with_unicode_summary(self, amendments_assembler):
+    def test_execute_with_unicode_summary(self, amendments_assembler, document_assembler):
         """Test execute with unicode characters in summary."""
         unicode_summary = (
             "Amendment with émojis 🧬💊 and special characters: àáâãäåæçèéêë"
@@ -568,13 +595,13 @@ class TestAmendmentsAssemblerEdgeCases:
             "impact": {"safety": True, "reliability": False},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle unicode characters
         if amendments_assembler.amendment is not None:
             assert amendments_assembler.amendment.summary == unicode_summary
 
-    def test_execute_with_zero_enrollment_value(self, amendments_assembler):
+    def test_execute_with_zero_enrollment_value(self, amendments_assembler, document_assembler):
         """Test execute with zero enrollment value."""
         data = {
             "summary": "Amendment with zero enrollment",
@@ -586,14 +613,14 @@ class TestAmendmentsAssemblerEdgeCases:
             "enrollment": {"value": 0, "unit": "%"},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle zero enrollment value
         if amendments_assembler.amendment is not None:
             enrollment = amendments_assembler.amendment.enrollments[0]
             assert enrollment.quantity.value == 0
 
-    def test_execute_with_negative_enrollment_value(self, amendments_assembler):
+    def test_execute_with_negative_enrollment_value(self, amendments_assembler, document_assembler):
         """Test execute with negative enrollment value."""
         data = {
             "summary": "Amendment with negative enrollment",
@@ -605,14 +632,14 @@ class TestAmendmentsAssemblerEdgeCases:
             "enrollment": {"value": -50, "unit": "%"},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle negative enrollment value
         if amendments_assembler.amendment is not None:
             enrollment = amendments_assembler.amendment.enrollments[0]
             assert enrollment.quantity.value == -50
 
-    def test_execute_with_very_large_enrollment_value(self, amendments_assembler):
+    def test_execute_with_very_large_enrollment_value(self, amendments_assembler, document_assembler):
         """Test execute with very large enrollment value."""
         data = {
             "summary": "Amendment with large enrollment",
@@ -624,14 +651,14 @@ class TestAmendmentsAssemblerEdgeCases:
             "enrollment": {"value": 999999, "unit": "%"},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle large enrollment value
         if amendments_assembler.amendment is not None:
             enrollment = amendments_assembler.amendment.enrollments[0]
             assert enrollment.quantity.value == 999999
 
-    def test_execute_with_float_enrollment_value(self, amendments_assembler):
+    def test_execute_with_float_enrollment_value(self, amendments_assembler, document_assembler):
         """Test execute with float enrollment value."""
         data = {
             "summary": "Amendment with float enrollment",
@@ -643,14 +670,14 @@ class TestAmendmentsAssemblerEdgeCases:
             "enrollment": {"value": 123.45, "unit": "%"},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle float enrollment value
         if amendments_assembler.amendment is not None:
             enrollment = amendments_assembler.amendment.enrollments[0]
             assert enrollment.quantity.value == 123.45
 
-    def test_execute_with_special_characters_in_reasons(self, amendments_assembler):
+    def test_execute_with_special_characters_in_reasons(self, amendments_assembler, document_assembler):
         """Test execute with special characters in reason strings."""
         data = {
             "summary": "Amendment with special reason characters",
@@ -661,12 +688,12 @@ class TestAmendmentsAssemblerEdgeCases:
             "impact": {"safety": True, "reliability": False},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle special characters in reasons
         # The encoder should process these and likely fall back to "Other" category
 
-    def test_execute_multiple_times_overwrites_amendment(self, amendments_assembler):
+    def test_execute_multiple_times_overwrites_amendment(self, amendments_assembler, document_assembler):
         """Test that multiple execute calls overwrite the previous amendment."""
         # First call
         data1 = {
@@ -677,7 +704,7 @@ class TestAmendmentsAssemblerEdgeCases:
             },
             "impact": {"safety": True, "reliability": False},
         }
-        amendments_assembler.execute(data1)
+        amendments_assembler.execute(data1, document_assembler)
         first_amendment = amendments_assembler.amendment
 
         # Second call
@@ -689,7 +716,7 @@ class TestAmendmentsAssemblerEdgeCases:
             },
             "impact": {"safety": False, "reliability": True},
         }
-        amendments_assembler.execute(data2)
+        amendments_assembler.execute(data2, document_assembler)
         second_amendment = amendments_assembler.amendment
 
         # Should have overwritten the first amendment
@@ -762,7 +789,7 @@ class TestAmendmentsAssemblerErrorHandling:
     """Test AmendmentsAssembler error handling (without mocking Errors)."""
 
     def test_error_handling_with_exception_in_create_amendment(
-        self, amendments_assembler, errors
+        self, amendments_assembler, document_assembler, errors
     ):
         """Test error handling when _create_amendment raises an exception."""
         # This will likely cause an exception due to missing required fields
@@ -773,14 +800,14 @@ class TestAmendmentsAssemblerErrorHandling:
         }
 
         initial_error_count = errors.error_count()
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should have logged an error
         assert errors.error_count() > initial_error_count
         assert amendments_assembler.amendment is None
 
     def test_error_handling_with_exception_in_create_enrollment(
-        self, amendments_assembler, errors
+        self, amendments_assembler, document_assembler, errors
     ):
         """Test error handling when _create_enrollment raises an exception."""
         # Create a scenario that might cause enrollment creation to fail
@@ -797,12 +824,12 @@ class TestAmendmentsAssemblerErrorHandling:
             },
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # May have logged an error depending on where the exception occurs
         # The amendment might still be None due to exception handling
 
-    def test_error_handling_with_builder_failures(self, amendments_assembler, errors):
+    def test_error_handling_with_builder_failures(self, amendments_assembler, document_assembler, errors):
         """Test error handling when Builder operations fail."""
         # This test depends on the Builder's behavior with invalid data
         data = {
@@ -814,7 +841,7 @@ class TestAmendmentsAssemblerErrorHandling:
             "impact": {"safety": True, "reliability": False},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # The encoder should handle invalid reason codes gracefully
         # May still create an amendment with "Other" reason codes
@@ -823,7 +850,7 @@ class TestAmendmentsAssemblerErrorHandling:
 class TestAmendmentsAssemblerBuilderIntegration:
     """Test AmendmentsAssembler integration with Builder (without mocking)."""
 
-    def test_builder_cdisc_code_integration(self, amendments_assembler):
+    def test_builder_cdisc_code_integration(self, amendments_assembler, document_assembler):
         """Test integration with Builder's cdisc_code method."""
         data = {
             "summary": "Test builder integration",
@@ -834,7 +861,7 @@ class TestAmendmentsAssemblerBuilderIntegration:
             "impact": {"safety": True, "reliability": False},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should integrate with Builder's cdisc_code functionality
         if amendments_assembler.amendment is not None:
@@ -842,7 +869,7 @@ class TestAmendmentsAssemblerBuilderIntegration:
             assert amendment.primaryReason is not None
             # The reason should have a code created by Builder
 
-    def test_builder_create_method_integration(self, amendments_assembler):
+    def test_builder_create_method_integration(self, amendments_assembler, document_assembler):
         """Test integration with Builder's create method."""
         data = {
             "summary": "Test create method integration",
@@ -854,7 +881,7 @@ class TestAmendmentsAssemblerBuilderIntegration:
             "enrollment": {"value": 200, "unit": "%"},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should use Builder's create method to create objects
         if amendments_assembler.amendment is not None:
@@ -869,7 +896,7 @@ class TestAmendmentsAssemblerBuilderIntegration:
             assert hasattr(enrollment, "id")
             assert enrollment.name == "ENROLLMENT"
 
-    def test_encoder_integration(self, amendments_assembler):
+    def test_encoder_integration(self, amendments_assembler, document_assembler):
         """Test integration with Encoder for amendment reasons."""
         data = {
             "summary": "Test encoder integration",
@@ -880,7 +907,7 @@ class TestAmendmentsAssemblerBuilderIntegration:
             "impact": {"safety": True, "reliability": False},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should use Encoder to process amendment reasons
         if amendments_assembler.amendment is not None:
@@ -893,7 +920,7 @@ class TestAmendmentsAssemblerBuilderIntegration:
 class TestAmendmentsAssemblerStateManagement:
     """Test AmendmentsAssembler state management."""
 
-    def test_amendment_property_reflects_current_state(self, amendments_assembler):
+    def test_amendment_property_reflects_current_state(self, amendments_assembler, document_assembler):
         """Test that amendment property reflects current state after operations."""
         # Initially None
         assert amendments_assembler.amendment is None
@@ -907,7 +934,7 @@ class TestAmendmentsAssemblerStateManagement:
             "impact": {"safety": True, "reliability": False},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should reflect current state
         if amendments_assembler.amendment is not None:
@@ -931,7 +958,7 @@ class TestAmendmentsAssemblerStateManagement:
 class TestAmendmentsAssemblerScopeCreation:
     """Test AmendmentsAssembler scope creation methods for coverage of lines 101-143, 168-176, 188."""
 
-    def test_create_scopes_with_global_scope(self, amendments_assembler):
+    def test_create_scopes_with_global_scope(self, amendments_assembler, document_assembler):
         """Test _create_scopes with GLOBAL scope text (covers lines 106-107)."""
         data = {
             "identifier": "1",
@@ -945,14 +972,14 @@ class TestAmendmentsAssemblerScopeCreation:
             "changes": make_changes(),
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         assert amendments_assembler.amendment is not None
         amendment = amendments_assembler.amendment
         assert amendment.geographicScopes is not None
         assert len(amendment.geographicScopes) >= 1
 
-    def test_create_scopes_with_not_applicable_scope(self, amendments_assembler):
+    def test_create_scopes_with_not_applicable_scope(self, amendments_assembler, document_assembler):
         """Test _create_scopes with NOT APPLICABLE scope text (covers lines 104-105)."""
         data = {
             "identifier": "1",
@@ -966,14 +993,14 @@ class TestAmendmentsAssemblerScopeCreation:
             "changes": make_changes(),
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         assert amendments_assembler.amendment is not None
         amendment = amendments_assembler.amendment
         assert amendment.geographicScopes is not None
         assert len(amendment.geographicScopes) >= 1
 
-    def test_create_scopes_with_not_global_country(self, amendments_assembler):
+    def test_create_scopes_with_not_global_country(self, amendments_assembler, document_assembler):
         """Test _create_scopes with NOT GLOBAL followed by country code (covers lines 108-122)."""
         data = {
             "identifier": "1",
@@ -987,13 +1014,13 @@ class TestAmendmentsAssemblerScopeCreation:
             "changes": make_changes(),
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         assert amendments_assembler.amendment is not None
         amendment = amendments_assembler.amendment
         assert amendment.geographicScopes is not None
 
-    def test_create_scopes_with_local_country(self, amendments_assembler):
+    def test_create_scopes_with_local_country(self, amendments_assembler, document_assembler):
         """Test _create_scopes with LOCAL followed by country code (covers lines 108-122)."""
         data = {
             "identifier": "1",
@@ -1007,13 +1034,13 @@ class TestAmendmentsAssemblerScopeCreation:
             "changes": make_changes(),
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         assert amendments_assembler.amendment is not None
         amendment = amendments_assembler.amendment
         assert amendment.geographicScopes is not None
 
-    def test_create_scopes_with_multiple_countries(self, amendments_assembler):
+    def test_create_scopes_with_multiple_countries(self, amendments_assembler, document_assembler):
         """Test _create_scopes with multiple country codes (covers lines 114-122)."""
         data = {
             "identifier": "1",
@@ -1027,13 +1054,13 @@ class TestAmendmentsAssemblerScopeCreation:
             "changes": make_changes(),
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         assert amendments_assembler.amendment is not None
         amendment = amendments_assembler.amendment
         assert amendment.geographicScopes is not None
 
-    def test_create_scopes_with_region_code(self, amendments_assembler):
+    def test_create_scopes_with_region_code(self, amendments_assembler, document_assembler):
         """Test _create_scopes with region code (covers lines 124-129)."""
         data = {
             "identifier": "1",
@@ -1047,11 +1074,11 @@ class TestAmendmentsAssemblerScopeCreation:
             "changes": make_changes(),
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         assert amendments_assembler.amendment is not None
 
-    def test_create_scopes_with_invalid_identifier(self, amendments_assembler, errors):
+    def test_create_scopes_with_invalid_identifier(self, amendments_assembler, document_assembler, errors):
         """Test _create_scopes with invalid country/region identifier (covers lines 130-134)."""
         initial_error_count = errors.error_count()
         data = {
@@ -1066,12 +1093,12 @@ class TestAmendmentsAssemblerScopeCreation:
             "changes": make_changes(),
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should log an error for invalid scope identifier
         assert errors.error_count() > initial_error_count
 
-    def test_create_scopes_with_unrecognized_scope_format(self, amendments_assembler, errors):
+    def test_create_scopes_with_unrecognized_scope_format(self, amendments_assembler, document_assembler, errors):
         """Test _create_scopes with unrecognized scope format (covers lines 135-140)."""
         initial_error_count = errors.error_count()
         data = {
@@ -1086,13 +1113,13 @@ class TestAmendmentsAssemblerScopeCreation:
             "changes": make_changes(),
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should log an error for unrecognized scope and default to global
         assert errors.error_count() > initial_error_count
         assert amendments_assembler.amendment is not None
 
-    def test_create_scopes_with_empty_scope(self, amendments_assembler, errors):
+    def test_create_scopes_with_empty_scope(self, amendments_assembler, document_assembler, errors):
         """Test _create_scopes with empty scope string (covers lines 141-146)."""
         initial_error_count = errors.error_count()
         data = {
@@ -1106,12 +1133,12 @@ class TestAmendmentsAssemblerScopeCreation:
             "scope": "",
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should log an error for empty scope and default to global
         assert errors.error_count() > initial_error_count
 
-    def test_create_scopes_with_whitespace_only_scope(self, amendments_assembler, errors):
+    def test_create_scopes_with_whitespace_only_scope(self, amendments_assembler, document_assembler, errors):
         """Test _create_scopes with whitespace-only scope (covers lines 101-102)."""
         initial_error_count = errors.error_count()
         data = {
@@ -1125,7 +1152,7 @@ class TestAmendmentsAssemblerScopeCreation:
             "scope": "   ",
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should log an error for empty/whitespace scope
         assert errors.error_count() > initial_error_count
@@ -1195,7 +1222,7 @@ class TestAmendmentsAssemblerCreateScopeMethod:
 class TestAmendmentsAssemblerExceptionHandling:
     """Test exception handling in execute method (covers lines 29-31)."""
 
-    def test_execute_exception_logged(self, amendments_assembler, errors):
+    def test_execute_exception_logged(self, amendments_assembler, document_assembler, errors):
         """Test that exceptions in execute are properly caught and logged (covers lines 29-31)."""
         # Force an exception by passing data that will cause _create_amendment to fail
         # We need data that passes the initial check but fails during processing
@@ -1220,7 +1247,7 @@ class TestAmendmentsAssemblerExceptionHandling:
                 "impact": {"safety": True, "reliability": False},
             }
 
-            amendments_assembler.execute(data)
+            amendments_assembler.execute(data, document_assembler)
 
             # Exception should have been caught and logged
             assert errors.error_count() > initial_error_count
@@ -1233,7 +1260,7 @@ class TestAmendmentsAssemblerExceptionHandling:
 class TestAmendmentsAssemblerAdditionalCoverage:
     """Additional test cases to improve coverage."""
 
-    def test_execute_with_complex_mixed_data(self, amendments_assembler):
+    def test_execute_with_complex_mixed_data(self, amendments_assembler, document_assembler):
         """Test execute with complex mixed valid and invalid data."""
         data = {
             "summary": "Complex mixed data test",
@@ -1248,7 +1275,7 @@ class TestAmendmentsAssemblerAdditionalCoverage:
             },
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should process valid data and handle invalid data gracefully
         if amendments_assembler.amendment is not None:
@@ -1260,7 +1287,7 @@ class TestAmendmentsAssemblerAdditionalCoverage:
             enrollment = amendment.enrollments[0]
             assert enrollment.quantity.value == 150.5
 
-    def test_execute_with_whitespace_in_summary(self, amendments_assembler):
+    def test_execute_with_whitespace_in_summary(self, amendments_assembler, document_assembler):
         """Test execute with whitespace in summary."""
         data = {
             "summary": "  Amendment with leading and trailing spaces  ",
@@ -1271,7 +1298,7 @@ class TestAmendmentsAssemblerAdditionalCoverage:
             "impact": {"safety": True, "reliability": False},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should preserve whitespace in summary
         if amendments_assembler.amendment is not None:
@@ -1280,7 +1307,7 @@ class TestAmendmentsAssemblerAdditionalCoverage:
                 == "  Amendment with leading and trailing spaces  "
             )
 
-    def test_execute_with_newlines_in_summary(self, amendments_assembler):
+    def test_execute_with_newlines_in_summary(self, amendments_assembler, document_assembler):
         """Test execute with newlines in summary."""
         multiline_summary = "Amendment summary\nwith multiple\nlines of text"
         data = {
@@ -1292,13 +1319,13 @@ class TestAmendmentsAssemblerAdditionalCoverage:
             "impact": {"safety": True, "reliability": False},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle multiline summary
         if amendments_assembler.amendment is not None:
             assert amendments_assembler.amendment.summary == multiline_summary
 
-    def test_execute_with_boolean_string_impact_values(self, amendments_assembler):
+    def test_execute_with_boolean_string_impact_values(self, amendments_assembler, document_assembler):
         """Test execute with string boolean values in impact."""
         data = {
             "summary": "Test with string boolean values",
@@ -1312,7 +1339,7 @@ class TestAmendmentsAssemblerAdditionalCoverage:
             },
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle string boolean values - behavior depends on Python's truthiness
         # Non-empty strings are truthy in Python
@@ -1323,7 +1350,7 @@ class TestAmendmentsAssemblerAdditionalCoverage:
                 == "Test with string boolean values"
             )
 
-    def test_execute_with_numeric_impact_values(self, amendments_assembler):
+    def test_execute_with_numeric_impact_values(self, amendments_assembler, document_assembler):
         """Test execute with numeric impact values."""
         data = {
             "summary": "Test with numeric impact values",
@@ -1337,7 +1364,7 @@ class TestAmendmentsAssemblerAdditionalCoverage:
             },
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         # Should handle numeric values - 1 is truthy, 0 is falsy
         if amendments_assembler.amendment is not None:
@@ -1368,7 +1395,7 @@ class TestAmendmentsAssemblerAdditionalCoverage:
                 assert enrollment.quantity.value == 0
                 assert enrollment.quantity.unit is None
 
-    def test_geographic_scope_creation(self, amendments_assembler):
+    def test_geographic_scope_creation(self, amendments_assembler, document_assembler):
         """Test that geographic scope is properly created."""
         data = {
             "summary": "Test geographic scope creation",
@@ -1379,7 +1406,7 @@ class TestAmendmentsAssemblerAdditionalCoverage:
             "impact": {"safety": True, "reliability": False},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         if amendments_assembler.amendment is not None:
             amendment = amendments_assembler.amendment
@@ -1390,7 +1417,7 @@ class TestAmendmentsAssemblerAdditionalCoverage:
             assert geo_scope.instanceType == "GeographicScope"
             # Should have Global code (C68846)
 
-    def test_amendment_fixed_values(self, amendments_assembler):
+    def test_amendment_fixed_values(self, amendments_assembler, document_assembler):
         """Test that amendment has fixed name and number values."""
         data = {
             "summary": "Test fixed values",
@@ -1401,10 +1428,272 @@ class TestAmendmentsAssemblerAdditionalCoverage:
             "impact": {"safety": True, "reliability": False},
         }
 
-        amendments_assembler.execute(data)
+        amendments_assembler.execute(data, document_assembler)
 
         if amendments_assembler.amendment is not None:
             amendment = amendments_assembler.amendment
             # These values are hardcoded in the implementation
             assert amendment.name == "AMENDMENT 1"
             assert amendment.number == "1"
+
+
+class TestAmendmentsAssemblerChanges:
+    """Test AmendmentsAssembler _create_changes and _extract_section_numer_and_title methods."""
+
+    def test_create_changes_with_valid_section_data(self, amendments_assembler, document_assembler):
+        """Test _create_changes with valid section data (covers lines 125-133)."""
+        data = {
+            "identifier": "1",
+            "summary": "Test with changes",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": "C207605:IRB/IEC Feedback",
+            },
+            "impact": make_impact(safety=True),
+            "changes": [
+                {
+                    "section": "1.1 Introduction",
+                    "description": "Updated introduction text",
+                    "rationale": "Clarify study objectives",
+                }
+            ],
+        }
+
+        amendments_assembler.execute(data, document_assembler)
+
+        assert amendments_assembler.amendment is not None
+        amendment = amendments_assembler.amendment
+        assert amendment.changes is not None
+        assert len(amendment.changes) == 1
+        change = amendment.changes[0]
+        assert change.summary == "Updated introduction text"
+        assert change.rationale == "Clarify study objectives"
+
+    def test_create_changes_with_multiple_changes(self, amendments_assembler, document_assembler):
+        """Test _create_changes with multiple change items."""
+        data = {
+            "identifier": "1",
+            "summary": "Test with multiple changes",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": "C207605:IRB/IEC Feedback",
+            },
+            "impact": make_impact(safety=True),
+            "changes": [
+                {
+                    "section": "1.1 Introduction",
+                    "description": "First change description",
+                    "rationale": "First rationale",
+                },
+                {
+                    "section": "2.3.1 Procedures",
+                    "description": "Second change description",
+                    "rationale": "Second rationale",
+                },
+            ],
+        }
+
+        amendments_assembler.execute(data, document_assembler)
+
+        assert amendments_assembler.amendment is not None
+        amendment = amendments_assembler.amendment
+        assert amendment.changes is not None
+        assert len(amendment.changes) == 2
+
+    def test_create_changes_with_section_prefix(self, amendments_assembler, document_assembler):
+        """Test _create_changes with 'Section' prefix in section text."""
+        data = {
+            "identifier": "1",
+            "summary": "Test with Section prefix",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": "C207605:IRB/IEC Feedback",
+            },
+            "impact": make_impact(safety=True),
+            "changes": [
+                {
+                    "section": "Section 3.2 Safety Monitoring",
+                    "description": "Added safety monitoring procedures",
+                    "rationale": "Required by regulatory agency",
+                }
+            ],
+        }
+
+        amendments_assembler.execute(data, document_assembler)
+
+        assert amendments_assembler.amendment is not None
+        amendment = amendments_assembler.amendment
+        assert amendment.changes is not None
+        assert len(amendment.changes) == 1
+        # Verify the section reference was created
+        change = amendment.changes[0]
+        assert len(change.changedSections) == 1
+        section_ref = change.changedSections[0]
+        assert section_ref.sectionNumber == "3.2"
+        assert section_ref.sectionTitle == "Safety Monitoring"
+
+    def test_create_changes_with_multiline_sections(self, amendments_assembler, document_assembler):
+        """Test _create_changes with multiple section references in one change."""
+        data = {
+            "identifier": "1",
+            "summary": "Test with multiline sections",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": "C207605:IRB/IEC Feedback",
+            },
+            "impact": make_impact(safety=True),
+            "changes": [
+                {
+                    "section": "1.1 Introduction\n2.3 Methods\n3.4.5 Analysis",
+                    "description": "Multiple sections updated",
+                    "rationale": "Comprehensive revision",
+                }
+            ],
+        }
+
+        amendments_assembler.execute(data, document_assembler)
+
+        assert amendments_assembler.amendment is not None
+        amendment = amendments_assembler.amendment
+        assert amendment.changes is not None
+        assert len(amendment.changes) == 1
+        change = amendment.changes[0]
+        # Should have 3 section references
+        assert len(change.changedSections) == 3
+
+    def test_extract_section_with_invalid_format(self, amendments_assembler, document_assembler, errors):
+        """Test _extract_section_numer_and_title with invalid section format (covers line 150-151)."""
+        initial_error_count = errors.error_count()
+        data = {
+            "identifier": "1",
+            "summary": "Test with invalid section format",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": "C207605:IRB/IEC Feedback",
+            },
+            "impact": make_impact(safety=True),
+            "changes": [
+                {
+                    "section": "Invalid section without number",
+                    "description": "Test description",
+                    "rationale": "Test rationale",
+                }
+            ],
+        }
+
+        amendments_assembler.execute(data, document_assembler)
+
+        # Should log an error for invalid section format
+        assert errors.error_count() > initial_error_count
+
+    def test_extract_section_direct_call(self, amendments_assembler, document_assembler):
+        """Test _extract_section_numer_and_title directly with various formats."""
+        # Set up the _document_assembler attribute needed by _extract_section_numer_and_title
+        amendments_assembler._document_assembler = document_assembler
+
+        # Valid section number without prefix
+        result = amendments_assembler._extract_section_numer_and_title("1.2.3 Title Here")
+        assert len(result) == 1
+        assert result[0].sectionNumber == "1.2.3"
+        assert result[0].sectionTitle == "Title Here"
+
+        # Valid section with 'Section' prefix
+        result = amendments_assembler._extract_section_numer_and_title("Section 4.5 Another Title")
+        assert len(result) == 1
+        assert result[0].sectionNumber == "4.5"
+        assert result[0].sectionTitle == "Another Title"
+
+        # Section number with comma separator
+        result = amendments_assembler._extract_section_numer_and_title("6.7, Some Title")
+        assert len(result) == 1
+        assert result[0].sectionNumber == "6.7"
+        assert result[0].sectionTitle == "Some Title"
+
+    def test_extract_section_with_mixed_valid_invalid(self, amendments_assembler, document_assembler, errors):
+        """Test _extract_section_numer_and_title with mix of valid and invalid lines."""
+        # Set up the _document_assembler attribute needed by _extract_section_numer_and_title
+        amendments_assembler._document_assembler = document_assembler
+
+        initial_error_count = errors.error_count()
+
+        # Multiple lines with one invalid
+        result = amendments_assembler._extract_section_numer_and_title(
+            "1.1 Valid Section\nNo number here\n2.2 Another Valid"
+        )
+
+        # Should have 2 valid results
+        assert len(result) == 2
+        # Should have logged error for invalid line
+        assert errors.error_count() > initial_error_count
+
+
+class TestAmendmentsAssemblerRegionScope:
+    """Test region scope creation specifically (covers lines 282-283)."""
+
+    def test_create_scope_with_region_direct(self, amendments_assembler):
+        """Test _create_scope directly with region type."""
+        results = []
+        region_code = amendments_assembler._encoder.geographic_scope("REGION")
+
+        # Use a valid region code and decode
+        amendments_assembler._create_scope(results, region_code, "150", "Europe")
+
+        assert len(results) == 1
+        scope = results[0]
+        assert scope.instanceType == "GeographicScope"
+        # code may be None if iso3166_region_code lookup fails, but scope should still be created
+
+    def test_execute_with_region_scope_in_amendment(self, amendments_assembler, document_assembler):
+        """Test full amendment creation with region scope (covers lines 282-283)."""
+        # The region_code function expects region name like "Europe", not code "150"
+        data = {
+            "identifier": "1",
+            "summary": "Test with Europe region",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": "C207605:IRB/IEC Feedback",
+            },
+            "impact": make_impact(safety=True),
+            "scope": "Not Global Europe",  # Use region name
+            "changes": make_changes(),
+        }
+
+        amendments_assembler.execute(data, document_assembler)
+
+        assert amendments_assembler.amendment is not None
+        amendment = amendments_assembler.amendment
+        # Should have region scope created
+        assert amendment.geographicScopes is not None
+        assert len(amendment.geographicScopes) >= 1
+
+
+class TestAmendmentsAssemblerGeographicScopeFailure:
+    """Test geographic scope creation failure path (covers line 365)."""
+
+    def test_create_scope_failure_logged(self, amendments_assembler, errors):
+        """Test that failure to create geographic scope is logged (covers line 365)."""
+        initial_error_count = errors.error_count()
+        results = []
+
+        # Mock the builder.create to return None
+        original_create = amendments_assembler._builder.create
+
+        def mock_create(cls, params):
+            from usdm4.api.geographic_scope import GeographicScope
+            if cls == GeographicScope:
+                return None
+            return original_create(cls, params)
+
+        amendments_assembler._builder.create = mock_create
+
+        try:
+            global_code = amendments_assembler._encoder.geographic_scope("GLOBAL")
+            amendments_assembler._create_scope(results, global_code)
+
+            # Should have logged an error
+            assert errors.error_count() > initial_error_count
+            # Results should be empty since creation failed
+            assert len(results) == 0
+        finally:
+            # Restore original create method
+            amendments_assembler._builder.create = original_create

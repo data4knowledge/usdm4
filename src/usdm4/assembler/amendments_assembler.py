@@ -10,6 +10,7 @@ from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.assembler.base_assembler import BaseAssembler
 from usdm4.assembler.encoder import Encoder
+from usdm4.assembler.document_assembler import DocumentAssembler
 from usdm4.builder.builder import Builder
 from usdm4.api.quantity_range import Quantity
 from usdm4.api.geographic_scope import GeographicScope
@@ -20,6 +21,7 @@ from usdm4.api.study_amendment_impact import StudyAmendmentImpact
 from usdm4.api.study_change import StudyChange
 from usdm4.api.document_content_reference import DocumentContentReference
 from usdm4.api.code import Code
+from usdm4.api.narrative_content import NarrativeContent
 
 
 class AmendmentsAssembler(BaseAssembler):
@@ -49,7 +51,7 @@ class AmendmentsAssembler(BaseAssembler):
         """Reset the assembler state by clearing the current amendment."""
         self._amendment = None
 
-    def execute(self, data: dict) -> None:
+    def execute(self, data: dict, document_assembler: DocumentAssembler) -> None:
         """
         Execute the amendment assembly process.
 
@@ -61,6 +63,7 @@ class AmendmentsAssembler(BaseAssembler):
                   'summary', 'reasons', 'impact', 'enrollment', and 'scope'.
         """
         try:
+            self._document_assembler = document_assembler
             if data:
                 self._amendment = self._create_amendment(data)
         except Exception as e:
@@ -121,10 +124,11 @@ class AmendmentsAssembler(BaseAssembler):
             
     def _create_changes(self, data: dict) -> list[StudyChange]:
         results = []
-        for item in data["changes"]:
+        for index, item in enumerate(data["changes"]):
             refs = self._extract_section_numer_and_title(item["section"])
             params = {
-                "summary": item["descrition"].strip(),
+                "name": f"CHANGE_{index+1}",
+                "summary": item["description"].strip(),
                 "rationale": item["rationale"].strip(),
                 "changedSections": refs,
             }
@@ -142,7 +146,7 @@ class AmendmentsAssembler(BaseAssembler):
                 params = {
                     "sectionNumber": match.group(1),
                     "sectionTitle": match.group(2),
-                    "appliesToId": "not-ref-set",
+                    "appliesToId": self._document_assembler.document.id,
                 }
                 ref = self._builder.create(DocumentContentReference, params)
                 if ref: 

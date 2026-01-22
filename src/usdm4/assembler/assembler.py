@@ -105,14 +105,14 @@ class Assembler:
             # Process identification data - establishes study identity and versioning
             self._identification_assembler.execute(data["identification"])
 
-            # Process document data - sets up protocol documents and amendments
+            # Process document data - sets up protocol documents
             self._document_assembler.execute(data["document"])
 
             # Process population data - defines subject populations and analysis sets
             self._population_assembler.execute(data["population"])
 
             # Process amendments data
-            self._amendments_assembler.execute(data["amendments"])
+            self._amendments_assembler.execute(data["amendments"], self._document_assembler)
 
             # Timelines data
             if "soa" in data:

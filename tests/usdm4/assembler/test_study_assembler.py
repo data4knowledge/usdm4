@@ -156,7 +156,7 @@ def prepared_assemblers(
         "impact": {"safety": True, "reliability": False},
         "enrollment": {"value": 100, "unit": "subjects"},
     }
-    amendments_assembler.execute(amendments_data)
+    amendments_assembler.execute(amendments_data, document_assembler)
 
     return {
         "identification": identification_assembler,
