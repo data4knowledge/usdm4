@@ -151,6 +151,7 @@ class AmendmentsAssembler(BaseAssembler):
                 ref = self._builder.create(DocumentContentReference, params)
                 if ref: 
                     results.append(ref)
+                    self._errors.info(f"Extracted section ref from '{line}' -> {params}", KlassMethodLocation(self.MODULE, "_extract_section_numer_and_title"))
             else:
                 self._errors.error(f"Failed to extract section ref from '{line}'", KlassMethodLocation(self.MODULE, "_extract_section_numer_and_title"))
         return results
