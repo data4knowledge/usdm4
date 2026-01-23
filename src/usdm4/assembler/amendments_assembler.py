@@ -268,6 +268,8 @@ class AmendmentsAssembler(BaseAssembler):
             else:
                 for part in scope["unknown"]:
                     text = part.strip()
+                    if not text:
+                        continue
                     # Try to find as a country code first
                     code, decode = self._builder.iso3166_library.code_or_decode(
                         text
