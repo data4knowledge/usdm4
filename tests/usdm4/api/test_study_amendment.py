@@ -207,3 +207,97 @@ class TestStudyAmendment:
         )
 
         assert len(amendment.geographicScopes) == 3
+
+
+class TestStudyAmendmentIsGlobal:
+    """Test the is_global method of StudyAmendment."""
+
+    def _create_code(self, code: str, decode: str, code_id: str = "code1") -> Code:
+        """Helper method to create a Code object."""
+        return Code(
+            id=code_id,
+            code=code,
+            codeSystem="TEST_SYSTEM",
+            codeSystemVersion="1.0",
+            decode=decode,
+            instanceType="Code",
+        )
+
+    def _create_reason(self, decode: str, reason_id: str = "reason1") -> StudyAmendmentReason:
+        """Helper method to create a StudyAmendmentReason object."""
+        code = self._create_code("REASON", decode, f"{reason_id}_code")
+        return StudyAmendmentReason(
+            id=reason_id,
+            code=code,
+            instanceType="StudyAmendmentReason",
+        )
+
+    def _create_geographic_scope_with_type(
+        self, type_code: str, type_decode: str, scope_id: str = "scope1"
+    ) -> GeographicScope:
+        """Helper method to create a GeographicScope with a specific type code."""
+        scope_type = self._create_code(type_code, type_decode, f"{scope_id}_type")
+        return GeographicScope(
+            id=scope_id,
+            type=scope_type,
+            instanceType="GeographicScope",
+        )
+
+    def _create_amendment_with_scopes(self, scopes: list) -> StudyAmendment:
+        """Helper method to create a StudyAmendment with specific scopes."""
+        return StudyAmendment(
+            id="amendment1",
+            name="Amendment 1",
+            number="1",
+            summary="Test summary",
+            primaryReason=self._create_reason("Primary Reason"),
+            geographicScopes=scopes,
+            instanceType="StudyAmendment",
+        )
+
+    def test_is_global_returns_true_for_global_scope(self):
+        """Test is_global returns True when a global scope (C68846) is present."""
+        global_scope = self._create_geographic_scope_with_type("C68846", "Global", "global_scope")
+        amendment = self._create_amendment_with_scopes([global_scope])
+
+        assert amendment.is_global() is True
+
+    def test_is_global_returns_false_for_country_scope(self):
+        """Test is_global returns False when only country scope (C25464) is present."""
+        country_scope = self._create_geographic_scope_with_type("C25464", "Country", "country_scope")
+        amendment = self._create_amendment_with_scopes([country_scope])
+
+        assert amendment.is_global() is False
+
+    def test_is_global_returns_false_for_region_scope(self):
+        """Test is_global returns False when only region scope is present."""
+        region_scope = self._create_geographic_scope_with_type("C25228", "Region", "region_scope")
+        amendment = self._create_amendment_with_scopes([region_scope])
+
+        assert amendment.is_global() is False
+
+    def test_is_global_returns_true_with_mixed_scopes_including_global(self):
+        """Test is_global returns True when global scope is among multiple scopes."""
+        country_scope = self._create_geographic_scope_with_type("C25464", "Country", "country_scope")
+        global_scope = self._create_geographic_scope_with_type("C68846", "Global", "global_scope")
+        region_scope = self._create_geographic_scope_with_type("C25228", "Region", "region_scope")
+        amendment = self._create_amendment_with_scopes([country_scope, global_scope, region_scope])
+
+        assert amendment.is_global() is True
+
+    def test_is_global_returns_false_with_multiple_non_global_scopes(self):
+        """Test is_global returns False when multiple non-global scopes are present."""
+        country_scope1 = self._create_geographic_scope_with_type("C25464", "Country", "country1")
+        country_scope2 = self._create_geographic_scope_with_type("C25464", "Country", "country2")
+        amendment = self._create_amendment_with_scopes([country_scope1, country_scope2])
+
+        assert amendment.is_global() is False
+
+    def test_is_global_finds_global_scope_at_end_of_list(self):
+        """Test is_global finds global scope even when it's at the end of the list."""
+        country_scope1 = self._create_geographic_scope_with_type("C25464", "Country", "country1")
+        country_scope2 = self._create_geographic_scope_with_type("C25464", "Country", "country2")
+        global_scope = self._create_geographic_scope_with_type("C68846", "Global", "global_scope")
+        amendment = self._create_amendment_with_scopes([country_scope1, country_scope2, global_scope])
+
+        assert amendment.is_global() is True

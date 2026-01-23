@@ -214,7 +214,7 @@ class AmendmentsAssembler(BaseAssembler):
                         self._builder.alias_code(unit_code) if unit_code else None
                     )
                 quantity = self._builder.create(
-                    Quantity, {"value": data["enrollment"]["value"], "unit": unit_alias}
+                    Quantity, {"value": self._to_int(data["enrollment"]["value"]), "unit": unit_alias}
                 )
                 params = {
                     "name": "ENROLLMENT",
@@ -234,6 +234,13 @@ class AmendmentsAssembler(BaseAssembler):
             self._errors.exception("Failed during creation of enrollments", e, location)
             return None
 
+    def _to_int(self, item: str | int) -> int:
+        try:
+            return item if isinstance(item, int) else int(str(item))
+        except Exception as e:
+            self._errors.exception(f"Failed to convert '{item}' to integer value", e, KlassMethodLocation(self.MODULE, "_to_int"))
+            return 0
+                    
     def _create_scopes(self, data: dict) -> list[GeographicScope]:
         """
         Create geographic scopes from the scope data.
