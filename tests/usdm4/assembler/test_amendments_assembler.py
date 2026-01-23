@@ -959,7 +959,7 @@ class TestAmendmentsAssemblerScopeCreation:
     """Test AmendmentsAssembler scope creation methods for coverage of lines 101-143, 168-176, 188."""
 
     def test_create_scopes_with_global_scope(self, amendments_assembler, document_assembler):
-        """Test _create_scopes with GLOBAL scope text (covers lines 106-107)."""
+        """Test _create_scopes with GLOBAL scope (covers lines 106-107)."""
         data = {
             "identifier": "1",
             "summary": "Test with global scope",
@@ -968,7 +968,7 @@ class TestAmendmentsAssemblerScopeCreation:
                 "secondary": "C207605:IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
-            "scope": "Global",
+            "scope": {"global": True, "countries": [], "regions": [], "sites": [], "unknown": []},
             "changes": make_changes(),
         }
 
@@ -980,7 +980,7 @@ class TestAmendmentsAssemblerScopeCreation:
         assert len(amendment.geographicScopes) >= 1
 
     def test_create_scopes_with_not_applicable_scope(self, amendments_assembler, document_assembler):
-        """Test _create_scopes with NOT APPLICABLE scope text (covers lines 104-105)."""
+        """Test _create_scopes with NOT APPLICABLE scope (treated as global)."""
         data = {
             "identifier": "1",
             "summary": "Test with not applicable scope",
@@ -989,7 +989,7 @@ class TestAmendmentsAssemblerScopeCreation:
                 "secondary": "C207605:IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
-            "scope": "Not Applicable",
+            "scope": {"global": True, "countries": [], "regions": [], "sites": [], "unknown": []},
             "changes": make_changes(),
         }
 
@@ -1001,7 +1001,7 @@ class TestAmendmentsAssemblerScopeCreation:
         assert len(amendment.geographicScopes) >= 1
 
     def test_create_scopes_with_not_global_country(self, amendments_assembler, document_assembler):
-        """Test _create_scopes with NOT GLOBAL followed by country code (covers lines 108-122)."""
+        """Test _create_scopes with country in countries array (covers lines 108-122)."""
         data = {
             "identifier": "1",
             "summary": "Test with not global country scope",
@@ -1010,7 +1010,7 @@ class TestAmendmentsAssemblerScopeCreation:
                 "secondary": "C207605:IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
-            "scope": "Not Global US",
+            "scope": {"global": False, "countries": ["US"], "regions": [], "sites": [], "unknown": []},
             "changes": make_changes(),
         }
 
@@ -1021,7 +1021,7 @@ class TestAmendmentsAssemblerScopeCreation:
         assert amendment.geographicScopes is not None
 
     def test_create_scopes_with_local_country(self, amendments_assembler, document_assembler):
-        """Test _create_scopes with LOCAL followed by country code (covers lines 108-122)."""
+        """Test _create_scopes with LOCAL country code (covers lines 108-122)."""
         data = {
             "identifier": "1",
             "summary": "Test with local country scope",
@@ -1030,7 +1030,7 @@ class TestAmendmentsAssemblerScopeCreation:
                 "secondary": "C207605:IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
-            "scope": "Local GB",
+            "scope": {"global": False, "countries": ["GB"], "regions": [], "sites": [], "unknown": []},
             "changes": make_changes(),
         }
 
@@ -1050,7 +1050,7 @@ class TestAmendmentsAssemblerScopeCreation:
                 "secondary": "C207605:IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
-            "scope": "Not Global US, GB, DE",
+            "scope": {"global": False, "countries": ["US", "GB", "DE"], "regions": [], "sites": [], "unknown": []},
             "changes": make_changes(),
         }
 
@@ -1070,7 +1070,7 @@ class TestAmendmentsAssemblerScopeCreation:
                 "secondary": "C207605:IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
-            "scope": "Not Global 150",  # Europe region code
+            "scope": {"global": False, "countries": [], "regions": ["Europe"], "sites": [], "unknown": []},
             "changes": make_changes(),
         }
 
@@ -1099,7 +1099,7 @@ class TestAmendmentsAssemblerScopeCreation:
         assert errors.error_count() > initial_error_count
 
     def test_create_scopes_with_unrecognized_scope_format(self, amendments_assembler, document_assembler, errors):
-        """Test _create_scopes with unrecognized scope format (covers lines 135-140)."""
+        """Test _create_scopes with unrecognized scope in unknown array (covers lines 135-140)."""
         initial_error_count = errors.error_count()
         data = {
             "identifier": "1",
@@ -1109,13 +1109,13 @@ class TestAmendmentsAssemblerScopeCreation:
                 "secondary": "C207605:IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
-            "scope": "Some Random Unrecognized Scope Format",
+            "scope": {"global": False, "countries": [], "regions": [], "sites": [], "unknown": ["SomeUnknownCode"]},
             "changes": make_changes(),
         }
 
         amendments_assembler.execute(data, document_assembler)
 
-        # Should log an error for unrecognized scope and default to global
+        # Should log an error for unrecognized scope
         assert errors.error_count() > initial_error_count
         assert amendments_assembler.amendment is not None
 
@@ -1645,7 +1645,6 @@ class TestAmendmentsAssemblerRegionScope:
 
     def test_execute_with_region_scope_in_amendment(self, amendments_assembler, document_assembler):
         """Test full amendment creation with region scope (covers lines 282-283)."""
-        # The region_code function expects region name like "Europe", not code "150"
         data = {
             "identifier": "1",
             "summary": "Test with Europe region",
@@ -1654,7 +1653,7 @@ class TestAmendmentsAssemblerRegionScope:
                 "secondary": "C207605:IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
-            "scope": "Not Global Europe",  # Use region name
+            "scope": {"global": False, "countries": [], "regions": ["Europe"], "sites": [], "unknown": []},
             "changes": make_changes(),
         }
 

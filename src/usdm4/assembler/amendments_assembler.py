@@ -294,10 +294,10 @@ class AmendmentsAssembler(BaseAssembler):
                         country_code = self._encoder.geographic_scope("COUNTRY")
                         self._create_scope(results, country_code, code, decode)
                 for part in scope["regions"]:
-                    code, decode = self._builder.iso3166_library.code_or_decode(part)
+                    code, decode = self._builder.iso3166_library.region_code(part)
                     if code:
-                        country_code = self._encoder.geographic_scope("COUNTRY")
-                        self._create_scope(results, country_code, code, decode)
+                        region_code = self._encoder.geographic_scope("REGION")
+                        self._create_scope(results, region_code, code, decode)
                 for part in scope["sites"]:
                     self._errors.error(
                         f"Failed to set scope for site identifier '{part}' (not handled currently)",
