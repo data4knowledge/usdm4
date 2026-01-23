@@ -260,63 +260,54 @@ class AmendmentsAssembler(BaseAssembler):
             List of GeographicScope objects.
         """
         results = []
-        if "scope" in data:
-            if data["scope"]:
-                text: str = data["scope"].strip()
-                text_upper = text.upper()
-                if text_upper.startswith("NOT APPLICABLE"):
-                    self._global_scope(results)
-                elif text_upper.startswith("GLOBAL"):
-                    self._global_scope(results)
-                elif text_upper.startswith("NOT GLOBAL") or text_upper.startswith(
-                    "LOCAL"
-                ):
-                    # Extract the identifier portion after the prefix
-                    identifier = (
-                        text[10:] if text_upper.startswith("NOT GLOBAL") else text[5:]
+        if "scope" in data and data["scope"]:
+            scope = data["scope"]
+            # {"global": True, "countries": [], "regions": [], "sites": [], "unknown": []}
+            if scope["global"]:
+                self._global_scope(results)
+            else:
+                for part in scope["unknown"]:
+                    text = part.strip()
+                    # Try to find as a country code first
+                    code, decode = self._builder.iso3166_library.code_or_decode(
+                        text
                     )
-                    parts = identifier.split(",")
-                    for part in parts:
-                        text = part.strip()
-                        # Try to find as a country code first
-                        code, decode = self._builder.iso3166_library.code_or_decode(
+                    if code:
+                        country_code = self._encoder.geographic_scope("COUNTRY")
+                        self._create_scope(results, country_code, code, decode)
+                    else:
+                        # If not a country, try as a region code
+                        code, decode = self._builder.iso3166_library.region_code(
                             text
                         )
                         if code:
-                            country_code = self._encoder.geographic_scope("COUNTRY")
-                            self._create_scope(results, country_code, code, decode)
+                            region_code = self._encoder.geographic_scope("REGION")
+                            self._create_scope(results, region_code, code, decode)
                         else:
-                            # If not a country, try as a region code
-                            code, decode = self._builder.iso3166_library.region_code(
-                                text
+                            self._errors.error(
+                                f"Failed to set scope for '{part}' from '{data['scope']}', could be a site identifier (not handled currently)",
+                                KlassMethodLocation(self.MODULE, "_create_scopes"),
                             )
-                            if code:
-                                region_code = self._encoder.geographic_scope("REGION")
-                                self._create_scope(results, region_code, code, decode)
-                            else:
-                                self._errors.error(
-                                    f"Failed to set scope for '{part}' from '{data['scope']}', could be a site identifier (not handled currently)",
-                                    KlassMethodLocation(self.MODULE, "_create_scopes"),
-                                )
-                else:
-                    # Unrecognized scope format - default to global and log error
-                    self._global_scope(results)
+                for part in scope["countries"]:
+                    code, decode = self._builder.iso3166_library.code_or_decode(part)
+                    if code:
+                        country_code = self._encoder.geographic_scope("COUNTRY")
+                        self._create_scope(results, country_code, code, decode)
+                for part in scope["regions"]:
+                    code, decode = self._builder.iso3166_library.code_or_decode(part)
+                    if code:
+                        country_code = self._encoder.geographic_scope("COUNTRY")
+                        self._create_scope(results, country_code, code, decode)
+                for part in scope["sites"]:
                     self._errors.error(
-                        f"Failed to decode scope '{data['scope']}'",
+                        f"Failed to set scope for site identifier '{part}' (not handled currently)",
                         KlassMethodLocation(self.MODULE, "_create_scopes"),
                     )
-            else:
-                # Empty scope string - default to global and log error
-                self._global_scope(results)
-                self._errors.error(
-                    "Empty scope found",
-                    KlassMethodLocation(self.MODULE, "_create_scopes"),
-                )
         else:
-            # No scope key in data - default to global and log error
+            # Empty scope string - default to global and log error
             self._global_scope(results)
             self._errors.error(
-                "No scope data found",
+                "Empty scope found",
                 KlassMethodLocation(self.MODULE, "_create_scopes"),
             )
         return results
