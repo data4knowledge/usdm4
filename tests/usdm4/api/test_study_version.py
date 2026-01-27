@@ -766,7 +766,7 @@ class TestStudyVersion:
             instanceType="StudyVersion",
         )
         date_obj = study_version.approval_date()
-        assert date_obj == ""
+        assert date_obj is None
 
     def test_protocol_date_value(self):
         """Test getting protocol date value."""
@@ -844,7 +844,7 @@ class TestStudyVersion:
             instanceType="StudyVersion",
         )
         date_value = study_version.approval_date_value()
-        assert date_value == ""
+        assert date_value is None
 
     def test_organization_map(self):
         """Test getting organization map."""
