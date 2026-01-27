@@ -247,11 +247,11 @@ class StudyVersion(ApiBaseModelWithId):
                 return x
         return ""
 
-    def approval_date(self) -> GovernanceDate:
+    def approval_date(self) -> GovernanceDate | None:
         for x in self.dateValues:
             if x.type.code == "C71476":
                 return x
-        return ""
+        return None
 
     @deprecated("Use the method relating to the document")
     def protocol_date_value(self) -> date:
@@ -260,11 +260,17 @@ class StudyVersion(ApiBaseModelWithId):
                 return x.dateValue
         return ""
 
-    def approval_date_value(self) -> date:
+    def approval_date_value(self) -> date | None:
         for x in self.dateValues:
             if x.type.code == "C71476":
                 return x.dateValue
-        return ""
+        return None
+
+    def approval_date_text(self) -> str | None:
+        for x in self.dateValues:
+            if x.type.code == "C71476":
+                return x.dateValue.strftime('%Y-%m-%d')
+        return None
 
     def find_study_design(self, id: str) -> StudyDesign:
         return next((x for x in self.studyDesigns if x.id == id), None)

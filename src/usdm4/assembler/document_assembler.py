@@ -108,6 +108,7 @@ class DocumentAssembler(BaseAssembler):
                         "status": self._encoder.document_status(
                             document["status"]
                         ),  # Document status from input
+                        "dates": self._dates
                     },
                 )
 
@@ -265,6 +266,7 @@ class DocumentAssembler(BaseAssembler):
             is later combined with other dates in the study assembler.
         """
         try:
+            print(f"DATE ASSEM: {data["version_date"]}")
             if actual_date := self._encoder.to_date(data["version_date"]):
                 protocol_date_code = self._builder.cdisc_code(
                     "C71476",
@@ -287,12 +289,12 @@ class DocumentAssembler(BaseAssembler):
                     self._dates.append(protocol_date)
             else:
                 self._errors.warning(
-                    "No sponsor approval date detected",
+                    "No document approval date detected",
                     KlassMethodLocation(self.MODULE, "_create_date"),
                 )
         except Exception as e:
             self._errors.exception(
-                "Failed during creation of governance date",
+                f"Failed during creation of governance date '{data["version_date"]}'",
                 e,
                 KlassMethodLocation(self.MODULE, "_create_date"),
             )

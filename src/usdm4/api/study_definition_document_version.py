@@ -15,17 +15,23 @@ class StudyDefinitionDocumentVersion(ApiBaseModelWithId):
     notes: List[CommentAnnotation] = []
     instanceType: Literal["StudyDefinitionDocumentVersion"]
 
-    def approval_date(self) -> GovernanceDate:
+    def approval_date(self) -> GovernanceDate | None:
         for x in self.dateValues:
             if x.type.code == "C71476":
                 return x
-        return ""
+        return None
 
-    def approval_date_value(self) -> date:
+    def approval_date_value(self) -> date | None:
         for x in self.dateValues:
             if x.type.code == "C71476":
                 return x.dateValue
-        return ""
+        return None
+
+    def approval_date_text(self) -> str | None:
+        for x in self.dateValues:
+            if x.type.code == "C71476":
+                return x.dateValue.strftime('%Y-%m-%d')
+        return None
 
     def narrative_content_in_order(self):
         sections = []
