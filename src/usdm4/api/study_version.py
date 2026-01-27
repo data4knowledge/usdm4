@@ -90,11 +90,20 @@ class StudyVersion(ApiBaseModelWithId):
                 return title
         return None
 
+    def sponsor_organization(self) -> Organization | None:
+        role = next((x for x in self.roles if x.code.code == "C70793"), None)
+        if role and len(role.organizationIds) > 0:
+            return self.organization(role.organizationIds[0])
+        # Fallback, find a sponsor organization
+        org = next((x for x in self.organizations if x.type.code == "C54149"), None)
+        return org if org else None
+    
     def sponsor_identifier(self) -> StudyIdentifier | None:
-        for identifier in self.studyIdentifiers:
-            org = self.organization(identifier.scopeId)
-            if org and org.type.code == "C54149":
-                return identifier
+        org = self.sponsor_organization()
+        if org:
+            for identifier in self.studyIdentifiers:
+                if identifier.scopeId == org.id:
+                    return identifier
         return None
 
     def regulatory_identifiers(self) -> list[StudyIdentifier]:
@@ -264,6 +273,9 @@ class StudyVersion(ApiBaseModelWithId):
         self, document_map: dict
     ) -> list[dict[StudyDefinitionDocument, StudyDefinitionDocumentVersion]]:
         return [document_map[x] for x in self.documentVersionIds]
+
+    def role_map(self) -> dict[str, StudyRole]:
+        return {x.id: x for x in self.roles}
 
     def organization_map(self) -> dict[str, Organization]:
         return {x.id: x for x in self.organizations}

@@ -5,6 +5,7 @@ from usdm4.api.address import Address
 from usdm4.api.organization import Organization
 from usdm4.api.identifier import StudyIdentifier
 from usdm4.api.study_title import StudyTitle
+from usdm4.api.study_role import StudyRole
 
 
 from simple_error_log.errors import Errors
@@ -37,6 +38,31 @@ class IdentificationAssembler(BaseAssembler):
         "acronym",
     ]
 
+    ROLE_CODES = {
+        "co-sponsor": {"code": "C215669", "decode": "Co-Sponsor"},
+        "manufacturer": {"code": "C25392", "decode": "Manufacturer"},
+        "investigator": {"code": "C25936", "decode": "Investigator"},
+        "pharmacovigilance": {"code": "C215673", "decode": "Pharmacovigilance"},
+        "project maanger": {"code": "C51851", "decode": "Project Manager"},
+        "local sponsor": {"code": "C215670", "decode": "Local Sponsor"},
+        "laboratory": {"code": "C37984", "decode": "Laboratory"},
+        "study subject": {"code": "C41189", "decode": "Study Subject"},
+        "medical expert": {"code": "C51876", "decode": "Medical Expert"},
+        "statistician": {"code": "C51877", "decode": "Statistician"},
+        "idmc": {"code": "C142578", "decode": "Independent Data Monitoring Committee"},
+        "care provider": {"code": "C17445", "decode": "Care Provider"},
+        "principal investigator": {"code": "C19924", "decode": "Principal investigator "},
+        "outcomes assessor": {"code": "C207599", "decode": "Outcomes Assessor      "},
+        "dec": {"code": "C215671", "decode": "Dose Escalation Committee"},
+        "clinical trial physician": {"code": "C215672", "decode": "Clinical Trial Physician"},
+        "sponsor": {"code": "C70793", "decode": "Sponsor"},
+        "adjudication Committee": {"code": "C78726", "decode": "Adjudication Committee"},
+        "study site": {"code": "C80403", "decode": "Study Site"},
+        "dsmb": {"code": "C142489", "decode": "Data Safety Monitoring Board"},
+        "regulatory agency": {"code": "C188863", "decode": "Regulatory Agency"},
+        "contract research": {"code": "C215662", "decode": "Contract Research"},
+    }
+
     TITLE_CODES = {
         "brief": {"code": "C207615", "decode": "Brief Study Title"},
         "official": {"code": "C207616", "decode": "Official Study Title"},
@@ -59,6 +85,7 @@ class IdentificationAssembler(BaseAssembler):
     STANDARD_ORGS = {
         "ct.gov": {
             "type": "registry",
+            "role": None,
             "name": "CT.GOV",
             "label": "ClinicalTrials.gov",
             "description": "The US clinical trials registry",
@@ -75,6 +102,7 @@ class IdentificationAssembler(BaseAssembler):
         },
         "ema": {
             "type": "regulator",
+            "role": "regulatory agency",
             "name": "EMA",
             "label": "European Medicines Agency",
             "description": "The European medicines regulator",
@@ -91,6 +119,7 @@ class IdentificationAssembler(BaseAssembler):
         },
         "fda": {
             "type": "regulator",
+            "role": "regulatory agency",
             "name": "FDA",
             "label": "Food and Drug Administration",
             "identifier": "FDA",
@@ -122,6 +151,7 @@ class IdentificationAssembler(BaseAssembler):
         self._titles = []
         self._organizations = []
         self._identifiers = []
+        self._roles = []
         self._study_name = ""
 
     def execute(self, data: dict) -> None:
@@ -152,6 +182,7 @@ class IdentificationAssembler(BaseAssembler):
                                 # OR define a custom non-standard organization:
                                 "non_standard": {
                                     "type": str,            # Organization type (must match ORG_CODES keys)
+                                    "role": str,            # Organization role (must match ROLE_CODES keys), can be None
                                     "name": str,            # Organization name
                                     "description": str,     # Organization description
                                     "label": str,           # Organization label/display name
@@ -231,7 +262,7 @@ class IdentificationAssembler(BaseAssembler):
                         self._identifiers.append(identifier)
                     else:
                         self._errors.exception(
-                            f"Failed to create identifier {id_details['identifier']}",
+                            f"Failed to create identifier {id_details['identifier']} from organization '{organization}'",
                             KlassMethodLocation(self.MODULE, "execute"),
                         )
                 else:
@@ -257,6 +288,10 @@ class IdentificationAssembler(BaseAssembler):
     @property
     def identifiers(self):
         return self._identifiers
+
+    @property
+    def roles(self):
+        return self._roles
 
     def _create_address(self, address: dict) -> Address | None:
         try:
@@ -287,6 +322,10 @@ class IdentificationAssembler(BaseAssembler):
 
     def _create_organization(self, organization: dict) -> Organization | None:
         try:
+            role = None
+            if organization["role"]:
+                role: StudyRole = self._create_role(organization["role"])
+                organization.pop("role")
             org_type = organization["type"]
             organization["type"] = self._builder.cdisc_code(
                 self.ORG_CODES[org_type]["code"], self.ORG_CODES[org_type]["decode"]
@@ -296,7 +335,10 @@ class IdentificationAssembler(BaseAssembler):
                 if "name" in organization
                 else self._label_to_name(organization["label"])
             )
-            return self._builder.create(Organization, organization)
+            org = self._builder.create(Organization, organization)
+            if role:
+                role.organizationIds = [org.id]
+            return org
         except Exception as e:
             self._errors.exception(
                 "Failed during creation of organization",
@@ -332,5 +374,23 @@ class IdentificationAssembler(BaseAssembler):
                 f"Failed during creation of title '{text}'of type '{type}'",
                 e,
                 KlassMethodLocation(self.MODULE, "_create_title"),
+            )
+            return None
+
+    def _create_role(self, type: str) -> StudyRole | None:
+        try:
+            role_type = self._builder.cdisc_code(
+                self.ROLE_CODES[type]["code"], self.ROLE_CODES[type]["decode"]
+            )
+            index = len(self._roles)
+            study_role: StudyRole = self._builder.create(StudyRole, {"name": f"ROLE_{index + 1}", "code": role_type})
+            if study_role:
+                self._roles.append(study_role)
+            return study_role
+        except Exception as e:
+            self._errors.exception(
+                f"Failed during creation of role of type '{type}'",
+                e,
+                KlassMethodLocation(self.MODULE, "_create_role"),
             )
             return None
