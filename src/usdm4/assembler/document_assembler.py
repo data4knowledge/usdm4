@@ -108,7 +108,7 @@ class DocumentAssembler(BaseAssembler):
                         "status": self._encoder.document_status(
                             document["status"]
                         ),  # Document status from input
-                        "dates": self._dates
+                        "dateValues": self._dates
                     },
                 )
 
@@ -266,7 +266,6 @@ class DocumentAssembler(BaseAssembler):
             is later combined with other dates in the study assembler.
         """
         try:
-            print(f"DATE ASSEM: {data["version_date"]}")
             if actual_date := self._encoder.to_date(data["version_date"]):
                 protocol_date_code = self._builder.cdisc_code(
                     "C71476",
