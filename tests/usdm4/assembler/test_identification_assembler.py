@@ -50,6 +50,7 @@ class TestIdentificationAssemblerInitialization:
         assert assembler._titles == []
         assert assembler._organizations == []
         assert assembler._identifiers == []
+        assert assembler._roles == []
         assert assembler._study_name == ""
 
     def test_class_constants(self, identification_assembler):
@@ -90,6 +91,7 @@ class TestIdentificationAssemblerInitialization:
             assert org_key in identification_assembler.STANDARD_ORGS
             org = identification_assembler.STANDARD_ORGS[org_key]
             assert "type" in org
+            assert "role" in org  # Role field added for standard orgs
             assert "name" in org
             assert "label" in org
             assert "description" in org
@@ -97,11 +99,43 @@ class TestIdentificationAssemblerInitialization:
             assert "identifierScheme" in org
             assert "legalAddress" in org
 
+        # Test ROLE_CODES structure
+        assert isinstance(identification_assembler.ROLE_CODES, dict)
+        expected_role_types = [
+            "co-sponsor",
+            "manufacturer",
+            "investigator",
+            "pharmacovigilance",
+            "project maanger",
+            "local sponsor",
+            "laboratory",
+            "study subject",
+            "medical expert",
+            "statistician",
+            "idmc",
+            "care provider",
+            "principal investigator",
+            "outcomes assessor",
+            "dec",
+            "clinical trial physician",
+            "sponsor",
+            "adjudication Committee",
+            "study site",
+            "dsmb",
+            "regulatory agency",
+            "contract research",
+        ]
+        for role_type in expected_role_types:
+            assert role_type in identification_assembler.ROLE_CODES
+            assert "code" in identification_assembler.ROLE_CODES[role_type]
+            assert "decode" in identification_assembler.ROLE_CODES[role_type]
+
     def test_properties_initial_state(self, identification_assembler):
         """Test that properties return correct initial state."""
         assert identification_assembler.titles == []
         assert identification_assembler.organizations == []
         assert identification_assembler.identifiers == []
+        assert identification_assembler.roles == []
 
 
 class TestIdentificationAssemblerValidData:
@@ -168,6 +202,7 @@ class TestIdentificationAssemblerValidData:
                     "scope": {
                         "non_standard": {
                             "type": "pharma",
+                            "role": None,
                             "name": "Custom Pharma",
                             "description": "A custom pharmaceutical company",
                             "label": "Custom Pharmaceutical Company",
@@ -221,6 +256,7 @@ class TestIdentificationAssemblerValidData:
                     "scope": {
                         "non_standard": {
                             "type": "pharma",
+                            "role": "sponsor",
                             "name": "Test Pharma",
                             "description": "Test pharmaceutical company",
                             "label": "Test Pharmaceutical Inc",
@@ -391,6 +427,7 @@ class TestIdentificationAssemblerInvalidData:
                     "scope": {
                         "non_standard": {
                             "type": "invalid_type",
+                            "role": None,
                             "name": "Test Org",
                             "description": "Test organization",
                             "label": "Test Organization",
@@ -467,6 +504,7 @@ class TestIdentificationAssemblerInvalidData:
                     "scope": {
                         "non_standard": {
                             "type": "pharma",
+                            "role": None,
                             "name": "Test Org",
                             "description": "Test organization",
                             "label": "Test Organization",
@@ -560,6 +598,7 @@ class TestIdentificationAssemblerEdgeCases:
                     "scope": {
                         "non_standard": {
                             "type": "pharma",
+                            "role": None,
                             "name": "Test Org",
                             "description": "Test organization",
                             "label": "Test Organization",
@@ -599,6 +638,7 @@ class TestIdentificationAssemblerEdgeCases:
                     "scope": {
                         "non_standard": {
                             "type": "pharma",
+                            "role": None,
                             "name": "Valid Org",
                             "description": "Valid organization",
                             "label": "Valid Organization",
@@ -662,6 +702,7 @@ class TestIdentificationAssemblerPrivateMethods:
         """Test _create_organization with valid organization data."""
         org_data = {
             "type": "pharma",
+            "role": None,
             "name": "Test Pharma",
             "description": "Test pharmaceutical company",
             "label": "Test Pharmaceutical Company",
@@ -685,6 +726,7 @@ class TestIdentificationAssemblerPrivateMethods:
         # First create an organization
         org_data = {
             "type": "pharma",
+            "role": None,
             "name": "Test Org",
             "description": "Test organization",
             "label": "Test Organization",
@@ -720,6 +762,101 @@ class TestIdentificationAssemblerPrivateMethods:
         # Check that it's a StudyTitle-like object with expected attributes
         assert hasattr(title, "text")
         assert title.text == "Test Brief Title"
+
+    def test_create_role_with_valid_type(self, identification_assembler):
+        """Test _create_role with valid role type."""
+        role = identification_assembler._create_role("sponsor")
+
+        assert role is not None
+        # Check that it's a StudyRole-like object with expected attributes
+        assert hasattr(role, "name")
+        assert hasattr(role, "code")
+        assert role.name == "ROLE_1"
+        # Role should be added to the roles list
+        assert len(identification_assembler.roles) == 1
+        assert identification_assembler.roles[0] is role
+
+    def test_create_role_with_invalid_type(self, identification_assembler):
+        """Test _create_role with invalid role type."""
+        role = identification_assembler._create_role("invalid_role_type")
+
+        # Should return None due to invalid type
+        assert role is None
+        # No role should be added to the list
+        assert len(identification_assembler.roles) == 0
+
+    def test_create_role_multiple_roles(self, identification_assembler):
+        """Test _create_role creates roles with incrementing names."""
+        role1 = identification_assembler._create_role("sponsor")
+        role2 = identification_assembler._create_role("regulatory agency")
+        role3 = identification_assembler._create_role("investigator")
+
+        assert role1 is not None
+        assert role2 is not None
+        assert role3 is not None
+
+        # Names should increment
+        assert role1.name == "ROLE_1"
+        assert role2.name == "ROLE_2"
+        assert role3.name == "ROLE_3"
+
+        # All roles should be in the list
+        assert len(identification_assembler.roles) == 3
+
+    def test_create_role_sponsor_type(self, identification_assembler):
+        """Test _create_role with sponsor role type."""
+        # Test the sponsor role type which is known to exist in the CDISC reference
+        # Some codes may not exist in all versions of the reference data
+        identification_assembler._roles = []
+
+        role = identification_assembler._create_role("sponsor")
+
+        assert role is not None, "Failed to create role of type 'sponsor'"
+        assert hasattr(role, "code")
+        assert role.code.code == identification_assembler.ROLE_CODES["sponsor"]["code"]
+
+    def test_create_organization_with_role(self, identification_assembler):
+        """Test _create_organization creates role when role is specified."""
+        org_data = {
+            "type": "regulator",
+            "role": "regulatory agency",
+            "name": "Test Regulator",
+            "description": "Test regulatory agency",
+            "label": "Test Regulatory Agency",
+            "identifier": "TEST-REG-ID",
+            "identifierScheme": "Test Scheme",
+            "legalAddress": None,
+        }
+
+        organization = identification_assembler._create_organization(org_data)
+
+        assert organization is not None
+        assert organization.name == "Test Regulator"
+        # Role should have been created and added to roles list
+        assert len(identification_assembler.roles) == 1
+        # Role should have the organization ID
+        role = identification_assembler.roles[0]
+        assert organization.id in role.organizationIds
+
+    def test_create_organization_without_role(self, identification_assembler):
+        """Test _create_organization does not create role when role is None."""
+        org_data = {
+            "type": "pharma",
+            "role": None,
+            "name": "Test Pharma",
+            "description": "Test pharmaceutical company",
+            "label": "Test Pharmaceutical Company",
+            "identifier": "TEST-PHARMA-ID",
+            "identifierScheme": "Test Scheme",
+            "legalAddress": None,
+        }
+
+        organization = identification_assembler._create_organization(org_data)
+
+        assert organization is not None
+        assert organization.name == "Test Pharma"
+        # No role should have been created
+        assert len(identification_assembler.roles) == 0
 
 
 class TestIdentificationAssemblerStateManagement:
@@ -794,6 +931,7 @@ class TestIdentificationAssemblerBuilderIntegration:
                     "scope": {
                         "non_standard": {
                             "type": "pharma",
+                            "role": None,
                             "name": "Test Org",
                             "description": "Test organization",
                             "label": "Test Organization",
@@ -902,6 +1040,7 @@ class TestIdentificationAssemblerErrorHandling:
                         "standard": "ct.gov",
                         "non_standard": {
                             "type": "pharma",
+                            "role": None,
                             "name": "Test Org",
                             "description": "Test organization",
                             "label": "Test Organization",
@@ -1043,6 +1182,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
         """Test _create_organization with missing type field."""
         org_data = {
             # Missing type
+            "role": None,
             "name": "Test Org",
             "description": "Test organization",
             "label": "Test Organization",
@@ -1059,6 +1199,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
         """Test _create_organization with invalid organization type."""
         org_data = {
             "type": "invalid_org_type",
+            "role": None,
             "name": "Test Org",
             "description": "Test organization",
             "label": "Test Organization",
@@ -1088,6 +1229,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
         for org_type in org_types:
             org_data = {
                 "type": org_type,
+                "role": None,
                 "name": f"Test {org_type.title()} Org",
                 "description": f"Test {org_type} organization",
                 "label": f"Test {org_type.title()} Organization",
@@ -1183,6 +1325,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
                         "scope": {
                             "non_standard": {
                                 "type": org_type,
+                                "role": None,
                                 "name": f"Test {org_type.title()}",
                                 "description": f"Test {org_type} organization",
                                 "label": f"Test {org_type.title()} Organization",
@@ -1222,6 +1365,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
                     "scope": {
                         "non_standard": {
                             "type": "pharma",
+                            "role": None,
                             "name": "Test Org",
                             "description": "Test organization",
                             "label": "Test Organization",
@@ -1252,6 +1396,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
                     "scope": {
                         "non_standard": {
                             "type": "pharma",
+                            "role": None,
                             "name": "Test Org",
                             "description": "Test organization",
                             "label": "Test Organization",
@@ -1376,6 +1521,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
                     "scope": {
                         "non_standard": {
                             "type": "pharma",
+                            "role": "sponsor",
                             "name": "Custom Org",
                             "description": "Custom organization",
                             "label": "Custom Organization",
@@ -1406,3 +1552,163 @@ class TestIdentificationAssemblerAdditionalCoverage:
         assert (
             len(identification_assembler.organizations) >= 0
         )  # May have some valid organizations
+
+
+class TestIdentificationAssemblerRoles:
+    """Test IdentificationAssembler role processing."""
+
+    def test_execute_with_standard_org_with_role(self, identification_assembler):
+        """Test execute with standard organization that has a role (e.g., EMA)."""
+        data = {
+            "identifiers": [
+                {"identifier": "EMA-2024-001", "scope": {"standard": "ema"}}
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        # EMA has role "regulatory agency" defined in STANDARD_ORGS
+        if len(identification_assembler.organizations) > 0:
+            # A role should have been created for EMA
+            assert len(identification_assembler.roles) >= 1
+            # The role should link to the organization
+            role = identification_assembler.roles[0]
+            org = identification_assembler.organizations[0]
+            assert org.id in role.organizationIds
+
+    def test_execute_with_standard_org_without_role(self, identification_assembler):
+        """Test execute with standard organization that has no role (e.g., ct.gov)."""
+        data = {
+            "identifiers": [
+                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}}
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        # ct.gov has role=None defined in STANDARD_ORGS
+        if len(identification_assembler.organizations) > 0:
+            # No role should have been created for ct.gov
+            assert len(identification_assembler.roles) == 0
+
+    def test_execute_with_non_standard_org_with_role(self, identification_assembler):
+        """Test execute with non-standard organization that has a role."""
+        data = {
+            "identifiers": [
+                {
+                    "identifier": "SPONSOR-001",
+                    "scope": {
+                        "non_standard": {
+                            "type": "pharma",
+                            "role": "sponsor",
+                            "name": "Test Sponsor",
+                            "description": "Test sponsor company",
+                            "label": "Test Sponsor Company",
+                            "identifier": "TEST-SPONSOR-ID",
+                            "identifierScheme": "Test Scheme",
+                            "legalAddress": {
+                                "lines": ["123 Test St"],
+                                "city": "Test City",
+                                "district": "",
+                                "state": "TS",
+                                "postalCode": "12345",
+                                "country": "USA",
+                            },
+                        }
+                    },
+                }
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        if len(identification_assembler.organizations) > 0:
+            # A role should have been created
+            assert len(identification_assembler.roles) == 1
+            role = identification_assembler.roles[0]
+            # Role should have the sponsor code
+            assert role.code.code == "C70793"
+            # Role should link to the organization
+            org = identification_assembler.organizations[0]
+            assert org.id in role.organizationIds
+
+    def test_execute_with_multiple_orgs_with_roles(self, identification_assembler):
+        """Test execute with multiple organizations that have roles."""
+        data = {
+            "identifiers": [
+                {"identifier": "EMA-2024-001", "scope": {"standard": "ema"}},
+                {"identifier": "FDA-IND-123456", "scope": {"standard": "fda"}},
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        # Both EMA and FDA have roles defined in STANDARD_ORGS
+        if len(identification_assembler.organizations) >= 2:
+            # Roles should have been created for both
+            assert len(identification_assembler.roles) >= 2
+            # Each role should have incrementing names
+            role_names = [role.name for role in identification_assembler.roles]
+            assert "ROLE_1" in role_names
+            assert "ROLE_2" in role_names
+
+    def test_roles_property_is_reference(self, identification_assembler):
+        """Test that roles property returns reference to internal list."""
+        assert identification_assembler.roles is identification_assembler._roles
+
+        # Add a role
+        identification_assembler._create_role("sponsor")
+
+        # Property should still be the same reference
+        assert identification_assembler.roles is identification_assembler._roles
+        assert len(identification_assembler.roles) == 1
+
+    def test_clear_resets_roles(self, identification_assembler):
+        """Test that clear() resets the roles list."""
+        # Add some roles
+        identification_assembler._create_role("sponsor")
+        identification_assembler._create_role("investigator")
+        assert len(identification_assembler.roles) == 2
+
+        # Clear should reset the roles list
+        identification_assembler.clear()
+        assert len(identification_assembler.roles) == 0
+
+    def test_role_has_correct_code(self, identification_assembler):
+        """Test that created roles have the correct code from ROLE_CODES."""
+        role = identification_assembler._create_role("sponsor")
+
+        assert role is not None
+        assert role.code.code == "C70793"
+        assert "Sponsor" in role.code.decode
+
+    def test_execute_preserves_role_order(self, identification_assembler):
+        """Test that roles are created in the order organizations are processed."""
+        data = {
+            "identifiers": [
+                {"identifier": "EMA-2024-001", "scope": {"standard": "ema"}},
+                {
+                    "identifier": "SPONSOR-001",
+                    "scope": {
+                        "non_standard": {
+                            "type": "pharma",
+                            "role": "sponsor",
+                            "name": "Test Sponsor",
+                            "description": "Test sponsor",
+                            "label": "Test Sponsor",
+                            "identifier": "TEST-ID",
+                            "identifierScheme": "Test",
+                            "legalAddress": None,
+                        }
+                    },
+                },
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        if len(identification_assembler.roles) >= 2:
+            # First role should be from EMA (regulatory agency)
+            # Second role should be from non-standard (sponsor)
+            assert identification_assembler.roles[0].name == "ROLE_1"
+            assert identification_assembler.roles[1].name == "ROLE_2"

@@ -22,6 +22,7 @@ from src.usdm4.api.study_definition_document_version import (
 from src.usdm4.api.study_amendment import StudyAmendment
 from src.usdm4.api.study_amendment_reason import StudyAmendmentReason
 from src.usdm4.api.geographic_scope import GeographicScope
+from src.usdm4.api.study_role import StudyRole
 
 
 class TestStudyVersion:
@@ -326,6 +327,107 @@ class TestStudyVersion:
         )
         identifier = study_version.sponsor_identifier()
         assert identifier is None
+
+    def test_sponsor_organization_via_fallback(self):
+        """Test getting sponsor organization via fallback (organization type code C54149)."""
+        # The main study_version fixture uses the fallback path (org type C54149)
+        org = self.study_version.sponsor_organization()
+        assert org is not None
+        assert org.name == "Test Sponsor"
+        assert org.id == "org_1"
+
+    def test_sponsor_organization_via_role(self):
+        """Test getting sponsor organization via role with code C70793."""
+        # Create sponsor role code
+        sponsor_role_code = Code(
+            id="sponsor_role_code",
+            code="C70793",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Sponsor",
+            instanceType="Code",
+        )
+
+        # Create a sponsor role linking to the sponsor organization
+        sponsor_role = StudyRole(
+            id="role_sponsor",
+            name="Sponsor Role",
+            label="Sponsor Role",
+            description="Sponsor role description",
+            code=sponsor_role_code,
+            organizationIds=["org_1"],
+            instanceType="StudyRole",
+        )
+
+        # Create study version with sponsor role
+        study_version = StudyVersion(
+            id="study_version_role",
+            versionIdentifier="v1.0",
+            rationale="Test study version",
+            studyIdentifiers=[self.sponsor_identifier, self.nct_identifier],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org, self.non_sponsor_org],
+            roles=[sponsor_role],
+            instanceType="StudyVersion",
+        )
+
+        org = study_version.sponsor_organization()
+        assert org is not None
+        assert org.name == "Test Sponsor"
+        assert org.id == "org_1"
+
+    def test_sponsor_organization_none(self):
+        """Test sponsor organization returns None when no sponsor exists."""
+        study_version = StudyVersion(
+            id="study_version_no_sponsor",
+            versionIdentifier="v1.0",
+            rationale="Test study version",
+            studyIdentifiers=[self.nct_identifier],
+            titles=[self.official_title],
+            organizations=[self.non_sponsor_org],
+            instanceType="StudyVersion",
+        )
+        org = study_version.sponsor_organization()
+        assert org is None
+
+    def test_sponsor_identifier_via_role(self):
+        """Test getting sponsor identifier when sponsor is found via role."""
+        # Create sponsor role code
+        sponsor_role_code = Code(
+            id="sponsor_role_code_2",
+            code="C70793",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Sponsor",
+            instanceType="Code",
+        )
+
+        # Create a sponsor role linking to the sponsor organization
+        sponsor_role = StudyRole(
+            id="role_sponsor_2",
+            name="Sponsor Role",
+            label="Sponsor Role",
+            description="Sponsor role description",
+            code=sponsor_role_code,
+            organizationIds=["org_1"],
+            instanceType="StudyRole",
+        )
+
+        # Create study version with sponsor role
+        study_version = StudyVersion(
+            id="study_version_role_2",
+            versionIdentifier="v1.0",
+            rationale="Test study version",
+            studyIdentifiers=[self.sponsor_identifier, self.nct_identifier],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org, self.non_sponsor_org],
+            roles=[sponsor_role],
+            instanceType="StudyVersion",
+        )
+
+        identifier = study_version.sponsor_identifier()
+        assert identifier is not None
+        assert identifier.text == "SPONSOR-123"
 
     def test_organization(self):
         """Test getting organization by ID."""
