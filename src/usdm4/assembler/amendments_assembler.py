@@ -96,7 +96,7 @@ class AmendmentsAssembler(BaseAssembler):
         """
         try:
             self._errors.info(f"Amendment assembler source data {data}")
-            reasons = self._create_primary_secondary_reasons(data)            
+            reasons = self._create_primary_secondary_reasons(data)
             params = {
                 "name": "AMENDMENT 1",
                 "number": data["identifier"],
@@ -114,20 +114,22 @@ class AmendmentsAssembler(BaseAssembler):
             self._errors.exception("Failed during creation of amendments", e, location)
             return None
 
-    def _create_primary_secondary_reasons(self, data: dict) -> dict[str, StudyAmendmentReason]:
+    def _create_primary_secondary_reasons(
+        self, data: dict
+    ) -> dict[str, StudyAmendmentReason]:
         reasons = {}
         for k, item in data["reasons"].items():
             a_reason = self._encoder.amendment_reason(item)
             a_reason["otherReason"] = a_reason.pop("other_reason")
             reasons[k] = self._builder.create(StudyAmendmentReason, a_reason)
         return reasons
-            
+
     def _create_changes(self, data: dict) -> list[StudyChange]:
         results = []
         for index, item in enumerate(data["changes"]):
             refs = self._extract_section_numer_and_title(item["section"])
             params = {
-                "name": f"CHANGE_{index+1}",
+                "name": f"CHANGE_{index + 1}",
                 "summary": item["description"].strip(),
                 "rationale": item["rationale"].strip(),
                 "changedSections": refs,
@@ -139,8 +141,8 @@ class AmendmentsAssembler(BaseAssembler):
 
     def _extract_section_numer_and_title(self, text) -> list[DocumentContentReference]:
         results = []
-        pattern = r'^(?:Section\s+)?(\d+(?:\.\d+)*),?\s*(.*)$'
-        for line in text.strip().split('\n'):
+        pattern = r"^(?:Section\s+)?(\d+(?:\.\d+)*),?\s*(.*)$"
+        for line in text.strip().split("\n"):
             match = re.match(pattern, line.strip())
             if match:
                 params = {
@@ -149,32 +151,80 @@ class AmendmentsAssembler(BaseAssembler):
                     "appliesToId": self._document_assembler.document.id,
                 }
                 ref = self._builder.create(DocumentContentReference, params)
-                if ref: 
+                if ref:
                     results.append(ref)
-                    self._errors.info(f"Extracted section ref from '{line}' -> {params}", KlassMethodLocation(self.MODULE, "_extract_section_numer_and_title"))
+                    self._errors.info(
+                        f"Extracted section ref from '{line}' -> {params}",
+                        KlassMethodLocation(
+                            self.MODULE, "_extract_section_numer_and_title"
+                        ),
+                    )
             else:
-                self._errors.error(f"Failed to extract section ref from '{line}'", KlassMethodLocation(self.MODULE, "_extract_section_numer_and_title"))
+                self._errors.error(
+                    f"Failed to extract section ref from '{line}'",
+                    KlassMethodLocation(
+                        self.MODULE, "_extract_section_numer_and_title"
+                    ),
+                )
         return results
-    
+
     def _create_amendment_impact(self, data: dict) -> list[StudyAmendmentImpact]:
         try:
             results = []
-            self._errors.info(f"Creating amendment impacts using {data["impact"]}", KlassMethodLocation(self.MODULE, "_create_amendment_impact"))
+            self._errors.info(
+                f"Creating amendment impacts using {data['impact']}",
+                KlassMethodLocation(self.MODULE, "_create_amendment_impact"),
+            )
             impact = data["impact"]
             s_and_r = impact["safety_and_rights"]
             r_and_r = impact["reliability_and_robustness"]
             # print(f"\nR-R1: {r_and_r}")
             # print(f"R-R2: {r_and_r["reliability"]}")
-            self._create_impact(results, "C215665", "Study Subject Safety", s_and_r["safety"]["substantial"], s_and_r["safety"]["reason"])
-            self._create_impact(results, "C215666", "Study Subject Rights", s_and_r["rights"]["substantial"], s_and_r["rights"]["reason"])
-            self._create_impact(results, "C215667", "Study Data Reliability", r_and_r["reliability"]["substantial"], r_and_r["reliability"]["reason"])
-            self._create_impact(results, "C215668", "Study Data Robustness", r_and_r["robustness"]["substantial"], r_and_r["robustness"]["reason"])
+            self._create_impact(
+                results,
+                "C215665",
+                "Study Subject Safety",
+                s_and_r["safety"]["substantial"],
+                s_and_r["safety"]["reason"],
+            )
+            self._create_impact(
+                results,
+                "C215666",
+                "Study Subject Rights",
+                s_and_r["rights"]["substantial"],
+                s_and_r["rights"]["reason"],
+            )
+            self._create_impact(
+                results,
+                "C215667",
+                "Study Data Reliability",
+                r_and_r["reliability"]["substantial"],
+                r_and_r["reliability"]["reason"],
+            )
+            self._create_impact(
+                results,
+                "C215668",
+                "Study Data Robustness",
+                r_and_r["robustness"]["substantial"],
+                r_and_r["robustness"]["reason"],
+            )
             return results
         except Exception as e:
-            self._errors.exception("Failed during creation of amendment impacts", e, KlassMethodLocation(self.MODULE, "_create_amendment_impact"))
+            self._errors.exception(
+                "Failed during creation of amendment impacts",
+                e,
+                KlassMethodLocation(self.MODULE, "_create_amendment_impact"),
+            )
             return []
-        
-    def _create_impact(self, results: list[StudyAmendmentImpact], code: str, decode: str, is_substantial: bool, text: str) -> None:
+
+    def _create_impact(
+        self,
+        results: list[StudyAmendmentImpact],
+        code: str,
+        decode: str,
+        is_substantial: bool,
+        text: str,
+    ) -> None:
         type_code = self._builder.cdisc_code(code, decode)
         params = {
             "text": text,
@@ -214,7 +264,11 @@ class AmendmentsAssembler(BaseAssembler):
                         self._builder.alias_code(unit_code) if unit_code else None
                     )
                 quantity = self._builder.create(
-                    Quantity, {"value": self._to_int(data["enrollment"]["value"]), "unit": unit_alias}
+                    Quantity,
+                    {
+                        "value": self._to_int(data["enrollment"]["value"]),
+                        "unit": unit_alias,
+                    },
                 )
                 params = {
                     "name": "ENROLLMENT",
@@ -238,9 +292,13 @@ class AmendmentsAssembler(BaseAssembler):
         try:
             return item if isinstance(item, int) else int(str(item))
         except Exception as e:
-            self._errors.exception(f"Failed to convert '{item}' to integer value", e, KlassMethodLocation(self.MODULE, "_to_int"))
+            self._errors.exception(
+                f"Failed to convert '{item}' to integer value",
+                e,
+                KlassMethodLocation(self.MODULE, "_to_int"),
+            )
             return 0
-                    
+
     def _create_scopes(self, data: dict) -> list[GeographicScope]:
         """
         Create geographic scopes from the scope data.
@@ -271,17 +329,13 @@ class AmendmentsAssembler(BaseAssembler):
                     if not text:
                         continue
                     # Try to find as a country code first
-                    code, decode = self._builder.iso3166_library.code_or_decode(
-                        text
-                    )
+                    code, decode = self._builder.iso3166_library.code_or_decode(text)
                     if code:
                         country_code = self._encoder.geographic_scope("COUNTRY")
                         self._create_scope(results, country_code, code, decode)
                     else:
                         # If not a country, try as a region code
-                        code, decode = self._builder.iso3166_library.region_code(
-                            text
-                        )
+                        code, decode = self._builder.iso3166_library.region_code(text)
                         if code:
                             region_code = self._encoder.geographic_scope("REGION")
                             self._create_scope(results, region_code, code, decode)

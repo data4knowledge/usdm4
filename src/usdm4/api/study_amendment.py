@@ -30,10 +30,18 @@ class StudyAmendment(ApiBaseModelWithIdNameLabelAndDesc):
         return self.primaryReason.other_reason_as_text()
 
     def secondary_reason_as_text(self) -> str:
-        return self.secondaryReasons[0].reason_as_text() if len(self.secondaryReasons) > 0 else ""
+        return (
+            self.secondaryReasons[0].reason_as_text()
+            if len(self.secondaryReasons) > 0
+            else ""
+        )
 
     def secondary_other_reason_as_text(self) -> str:
-        return self.secondaryReasons[0].other_reason_as_text() if len(self.secondaryReasons) > 0 else ""
+        return (
+            self.secondaryReasons[0].other_reason_as_text()
+            if len(self.secondaryReasons) > 0
+            else ""
+        )
 
     def is_global(self) -> bool:
         for scope in self.geographicScopes:

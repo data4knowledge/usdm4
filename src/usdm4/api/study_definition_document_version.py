@@ -30,7 +30,7 @@ class StudyDefinitionDocumentVersion(ApiBaseModelWithId):
     def approval_date_text(self) -> str | None:
         for x in self.dateValues:
             if x.type.code == "C71476":
-                return x.dateValue.strftime('%Y-%m-%d')
+                return x.dateValue.strftime("%Y-%m-%d")
         return None
 
     def narrative_content_in_order(self):

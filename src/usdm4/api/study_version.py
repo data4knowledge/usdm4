@@ -97,7 +97,7 @@ class StudyVersion(ApiBaseModelWithId):
         # Fallback, find a sponsor organization
         org = next((x for x in self.organizations if x.type.code == "C54149"), None)
         return org if org else None
-    
+
     def sponsor_identifier(self) -> StudyIdentifier | None:
         org = self.sponsor_organization()
         if org:
@@ -269,7 +269,7 @@ class StudyVersion(ApiBaseModelWithId):
     def approval_date_text(self) -> str | None:
         for x in self.dateValues:
             if x.type.code == "C71476":
-                return x.dateValue.strftime('%Y-%m-%d')
+                return x.dateValue.strftime("%Y-%m-%d")
         return None
 
     def find_study_design(self, id: str) -> StudyDesign:

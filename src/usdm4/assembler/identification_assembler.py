@@ -51,12 +51,21 @@ class IdentificationAssembler(BaseAssembler):
         "statistician": {"code": "C51877", "decode": "Statistician"},
         "idmc": {"code": "C142578", "decode": "Independent Data Monitoring Committee"},
         "care provider": {"code": "C17445", "decode": "Care Provider"},
-        "principal investigator": {"code": "C19924", "decode": "Principal investigator "},
+        "principal investigator": {
+            "code": "C19924",
+            "decode": "Principal investigator ",
+        },
         "outcomes assessor": {"code": "C207599", "decode": "Outcomes Assessor      "},
         "dec": {"code": "C215671", "decode": "Dose Escalation Committee"},
-        "clinical trial physician": {"code": "C215672", "decode": "Clinical Trial Physician"},
+        "clinical trial physician": {
+            "code": "C215672",
+            "decode": "Clinical Trial Physician",
+        },
         "sponsor": {"code": "C70793", "decode": "Sponsor"},
-        "adjudication Committee": {"code": "C78726", "decode": "Adjudication Committee"},
+        "adjudication Committee": {
+            "code": "C78726",
+            "decode": "Adjudication Committee",
+        },
         "study site": {"code": "C80403", "decode": "Study Site"},
         "dsmb": {"code": "C142489", "decode": "Data Safety Monitoring Board"},
         "regulatory agency": {"code": "C188863", "decode": "Regulatory Agency"},
@@ -383,7 +392,9 @@ class IdentificationAssembler(BaseAssembler):
                 self.ROLE_CODES[type]["code"], self.ROLE_CODES[type]["decode"]
             )
             index = len(self._roles)
-            study_role: StudyRole = self._builder.create(StudyRole, {"name": f"ROLE_{index + 1}", "code": role_type})
+            study_role: StudyRole = self._builder.create(
+                StudyRole, {"name": f"ROLE_{index + 1}", "code": role_type}
+            )
             if study_role:
                 self._roles.append(study_role)
             return study_role

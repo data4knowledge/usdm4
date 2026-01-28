@@ -112,7 +112,9 @@ class Assembler:
             self._population_assembler.execute(data["population"])
 
             # Process amendments data
-            self._amendments_assembler.execute(data["amendments"], self._document_assembler)
+            self._amendments_assembler.execute(
+                data["amendments"], self._document_assembler
+            )
 
             # Timelines data
             if "soa" in data:

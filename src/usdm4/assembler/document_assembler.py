@@ -108,7 +108,7 @@ class DocumentAssembler(BaseAssembler):
                         "status": self._encoder.document_status(
                             document["status"]
                         ),  # Document status from input
-                        "dateValues": self._dates
+                        "dateValues": self._dates,
                     },
                 )
 
@@ -293,7 +293,7 @@ class DocumentAssembler(BaseAssembler):
                 )
         except Exception as e:
             self._errors.exception(
-                f"Failed during creation of governance date '{data["version_date"]}'",
+                f"Failed during creation of governance date '{data['version_date']}'",
                 e,
                 KlassMethodLocation(self.MODULE, "_create_date"),
             )
