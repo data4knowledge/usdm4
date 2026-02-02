@@ -16,13 +16,12 @@ from usdm4.api.quantity_range import Quantity
 from usdm4.api.geographic_scope import GeographicScope
 from usdm4.api.subject_enrollment import SubjectEnrollment
 from usdm4.api.study_amendment_reason import StudyAmendmentReason
-from usdm4.api.study_amendment import StudyAmendment
+from usdm4.api.study_amendment import StudyAmendment, SI_EXT_URL
 from usdm4.api.study_amendment_impact import StudyAmendmentImpact
 from usdm4.api.study_change import StudyChange
 from usdm4.api.document_content_reference import DocumentContentReference
 from usdm4.api.code import Code
-from usdm4.api.narrative_content import NarrativeContent
-
+from usdm4.api.extension import Extension, ExtensionAttribute
 
 class AmendmentsAssembler(BaseAssembler):
     """
@@ -97,6 +96,7 @@ class AmendmentsAssembler(BaseAssembler):
         try:
             self._errors.info(f"Amendment assembler source data {data}")
             reasons = self._create_primary_secondary_reasons(data)
+            geo_scopes, site_scopes = self._create_scopes(data)
             params = {
                 "name": "AMENDMENT 1",
                 "number": data["identifier"],
@@ -105,8 +105,9 @@ class AmendmentsAssembler(BaseAssembler):
                 "primaryReason": reasons["primary"],
                 "secondaryReasons": [reasons["secondary"]],
                 "enrollments": [self._create_enrollment(data)],
-                "geographicScopes": self._create_scopes(data),
+                "geographicScopes": geo_scopes,
                 "changes": self._create_changes(data),
+                "extensionAttributes": [site_scopes] if site_scopes else []
             }
             return self._builder.create(StudyAmendment, params)
         except Exception as e:
@@ -299,7 +300,7 @@ class AmendmentsAssembler(BaseAssembler):
             )
             return 0
 
-    def _create_scopes(self, data: dict) -> list[GeographicScope]:
+    def _create_scopes(self, data: dict) -> tuple[list[GeographicScope], ExtensionAttribute]:
         """
         Create geographic scopes from the scope data.
 
@@ -317,7 +318,9 @@ class AmendmentsAssembler(BaseAssembler):
         Returns:
             List of GeographicScope objects.
         """
+        extension = None
         results = []
+        extensions = []
         if "scope" in data and data["scope"]:
             scope = data["scope"]
             # {"global": True, "countries": [], "regions": [], "sites": [], "unknown": []}
@@ -340,10 +343,7 @@ class AmendmentsAssembler(BaseAssembler):
                             region_code = self._encoder.geographic_scope("REGION")
                             self._create_scope(results, region_code, code, decode)
                         else:
-                            self._errors.error(
-                                f"Failed to set scope for '{part}' from '{data['scope']}', could be a site identifier (not handled currently)",
-                                KlassMethodLocation(self.MODULE, "_create_scopes"),
-                            )
+                            self._create_site_scope(extensions, text)
                 for part in scope["countries"]:
                     code, decode = self._builder.iso3166_library.code_or_decode(part)
                     if code:
@@ -355,10 +355,7 @@ class AmendmentsAssembler(BaseAssembler):
                         region_code = self._encoder.geographic_scope("REGION")
                         self._create_scope(results, region_code, code, decode)
                 for part in scope["sites"]:
-                    self._errors.error(
-                        f"Failed to set scope for site identifier '{part}' (not handled currently)",
-                        KlassMethodLocation(self.MODULE, "_create_scopes"),
-                    )
+                    self._create_site_scope(extensions, part)
         else:
             # Empty scope string - default to global and log error
             self._global_scope(results)
@@ -366,7 +363,16 @@ class AmendmentsAssembler(BaseAssembler):
                 "Empty scope found",
                 KlassMethodLocation(self.MODULE, "_create_scopes"),
             )
-        return results
+        if extensions:
+            extension = self._builder.create(
+                ExtensionAttribute,
+                {
+                    "url": SI_EXT_URL,
+                    "extensionAttributes": extensions,
+                },
+            )
+        self._errors.info(f"Scopes created in assembler, geo: {results}, sites: {extension}")
+        return results, extension
 
     def _global_scope(self, results: list[GeographicScope]) -> None:
         """
@@ -377,6 +383,17 @@ class AmendmentsAssembler(BaseAssembler):
         """
         global_code = self._encoder.geographic_scope("GLOBAL")
         self._create_scope(results, global_code)
+
+    def _create_site_scope(self, extensions: list, text: str):
+        extension = self._builder.create(
+            ExtensionAttribute,
+            {
+                "url": SI_EXT_URL,
+                "valueString": text,
+            },
+        )
+        if extension:
+            extensions.append(extension)
 
     def _create_scope(
         self,

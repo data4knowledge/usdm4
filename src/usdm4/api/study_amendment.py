@@ -7,7 +7,9 @@ from .geographic_scope import GeographicScope
 from .subject_enrollment import SubjectEnrollment
 from .governance_date import GovernanceDate
 from .comment_annotation import CommentAnnotation
+from .extension import ExtensionAttribute
 
+SI_EXT_URL = "www.d4k.dk/usdm/extensions/003"  # Site identifier scope. An array of extensions.
 
 class StudyAmendment(ApiBaseModelWithIdNameLabelAndDesc):
     number: str
@@ -22,6 +24,13 @@ class StudyAmendment(ApiBaseModelWithIdNameLabelAndDesc):
     previousId: Union[str, None] = None
     notes: List[CommentAnnotation] = []
     instanceType: Literal["StudyAmendment"]
+
+    def site_identifier_scopes(self) -> list[str]:
+        ext: ExtensionAttribute = self.get_extension(SI_EXT_URL)
+        return [x.valueString for x in ext.extensionAttributes] if ext else []
+
+    def site_identifier_scopes_as_text(self) -> str:
+        return (",").join(self.site_identifier_scopes())
 
     def primary_reason_as_text(self) -> str:
         return self.primaryReason.reason_as_text()
