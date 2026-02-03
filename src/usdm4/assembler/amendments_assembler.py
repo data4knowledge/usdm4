@@ -301,29 +301,12 @@ class AmendmentsAssembler(BaseAssembler):
             return 0
 
     def _create_scopes(self, data: dict) -> tuple[list[GeographicScope], ExtensionAttribute]:
-        """
-        Create geographic scopes from the scope data.
-
-        Parses the 'scope' field and creates appropriate GeographicScope objects:
-        - "NOT APPLICABLE" or "GLOBAL": Creates a global scope
-        - "NOT GLOBAL <countries>" or "LOCAL <countries>": Creates country/region scopes
-        - Unrecognized format: Defaults to global scope with an error
-
-        Country codes are looked up in the ISO3166 library. If a code is not found
-        as a country, it is checked as a region code.
-
-        Args:
-            data: Dictionary that may contain a 'scope' key.
-
-        Returns:
-            List of GeographicScope objects.
-        """
         extension = None
         results = []
         extensions = []
         if "scope" in data and data["scope"]:
             scope = data["scope"]
-            # {"global": True, "countries": [], "regions": [], "sites": [], "unknown": []}
+            # {"global": True/False, "countries": [], "regions": [], "sites": [], "unknown": []}
             if scope["global"]:
                 self._global_scope(results)
             else:
@@ -388,7 +371,7 @@ class AmendmentsAssembler(BaseAssembler):
         extension = self._builder.create(
             ExtensionAttribute,
             {
-                "url": SI_EXT_URL,
+                "url": "site-identifier",
                 "valueString": text,
             },
         )
