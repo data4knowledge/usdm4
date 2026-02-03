@@ -72,6 +72,36 @@ class IdentificationAssembler(BaseAssembler):
         "contract research": {"code": "C215662", "decode": "Contract Research"},
     }
 
+    ROLE_ORGS = {
+        "co_sponsor": {
+            "type": "pharma",
+            "role": "co-sponsor",
+            "description": "The co-sponsor organization",
+            "label": "",
+            "identifier": "Not known",
+            "identifierScheme": "Not known",
+            "legalAddress": {},
+        },
+        "local_sponsor": {
+            "type": "pharma",
+            "role": "local sponsor",
+            "description": "The local sponsor organization",
+            "label": "",
+            "identifier": "Not known",
+            "identifierScheme": "Not known",
+            "legalAddress": {},
+        },
+        "device_manufacturer": {
+            "type": "medical_device",
+            "role": "manufacturer",
+            "description": "The medical device manufacturer",
+            "label": "",
+            "identifier": "Not known",
+            "identifierScheme": "Not known",
+            "legalAddress": {},
+        },
+    }
+
     TITLE_CODES = {
         "brief": {"code": "C207615", "decode": "Brief Study Title"},
         "official": {"code": "C207616", "decode": "Official Study Title"},
@@ -208,7 +238,12 @@ class IdentificationAssembler(BaseAssembler):
                                 }
                             }
                         }
-                    ]
+                    ],
+                    "roles": {
+                        "co_sponsor": {"name": [str], "legal_address": [address structure]},
+                        "local_sponsor": {"name": [str], "legal_address": [address structure]},
+                        "device_manufacturer": {"name": [str], "legal_address": [address structure]},
+                    }
                 }
 
         Note:
@@ -226,6 +261,7 @@ class IdentificationAssembler(BaseAssembler):
         # Make sure data ok.
         titles = data["titles"] if "titles" in data else {}
         identifiers = data["identifiers"] if "identifiers" in data else []
+        roles = data["roles"] if "roles" in data else []
 
         # Titles
         for type, text in titles.items():
@@ -282,6 +318,25 @@ class IdentificationAssembler(BaseAssembler):
             except Exception as e:
                 self._errors.exception(
                     f"Failed during creation of identifier {id_details}",
+                    e,
+                    KlassMethodLocation(self.MODULE, "execute"),
+                )
+        for role, info in roles.items():
+            try:
+                organization = self.ROLE_ORGS[role]
+                organization["label"] = info["name"]
+                organization["legalAddress"] = self._create_address(info["address"])
+                org = self._create_organization(organization)
+                if org:
+                    self._organizations.append(org)
+                else:
+                    self._errors.exception(
+                        f"Failed to create organization in {role}, {organization}",
+                        KlassMethodLocation(self.MODULE, "execute"),
+                    )
+            except Exception as e:
+                self._errors.exception(
+                    f"Failed during creation of organization in {role}, {info}",
                     e,
                     KlassMethodLocation(self.MODULE, "execute"),
                 )
