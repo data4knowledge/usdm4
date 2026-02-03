@@ -1,7 +1,8 @@
-from src.usdm4.api.study_amendment import StudyAmendment
+from src.usdm4.api.study_amendment import StudyAmendment, SI_EXT_URL
 from src.usdm4.api.study_amendment_reason import StudyAmendmentReason
 from src.usdm4.api.geographic_scope import GeographicScope
 from src.usdm4.api.code import Code
+from src.usdm4.api.extension import ExtensionAttribute
 
 
 class TestStudyAmendment:
@@ -329,3 +330,181 @@ class TestStudyAmendmentIsGlobal:
         )
 
         assert amendment.is_global() is True
+
+
+class TestStudyAmendmentSiteIdentifierScopes:
+    """Test the site_identifier_scopes and site_identifier_scopes_as_text methods."""
+
+    def _create_code(self, code: str, decode: str, code_id: str = "code1") -> Code:
+        """Helper method to create a Code object."""
+        return Code(
+            id=code_id,
+            code=code,
+            codeSystem="TEST_SYSTEM",
+            codeSystemVersion="1.0",
+            decode=decode,
+            instanceType="Code",
+        )
+
+    def _create_reason(
+        self, decode: str, reason_id: str = "reason1"
+    ) -> StudyAmendmentReason:
+        """Helper method to create a StudyAmendmentReason object."""
+        code = self._create_code("REASON", decode, f"{reason_id}_code")
+        return StudyAmendmentReason(
+            id=reason_id,
+            code=code,
+            instanceType="StudyAmendmentReason",
+        )
+
+    def _create_geographic_scope(self, scope_id: str = "scope1") -> GeographicScope:
+        """Helper method to create a GeographicScope object."""
+        scope_type = self._create_code("C68846", "Global", f"{scope_id}_type")
+        return GeographicScope(
+            id=scope_id,
+            type=scope_type,
+            instanceType="GeographicScope",
+        )
+
+    def _create_site_extension(self, site_ids: list[str]) -> ExtensionAttribute:
+        """Helper method to create a site identifier extension attribute."""
+        inner_extensions = [
+            ExtensionAttribute(
+                id=f"site_ext_{i}",
+                url=SI_EXT_URL,
+                valueString=site_id,
+                instanceType="ExtensionAttribute",
+            )
+            for i, site_id in enumerate(site_ids)
+        ]
+        return ExtensionAttribute(
+            id="site_scope_ext",
+            url=SI_EXT_URL,
+            extensionAttributes=inner_extensions,
+            instanceType="ExtensionAttribute",
+        )
+
+    def _create_amendment_with_extensions(
+        self, extension_attributes: list[ExtensionAttribute] = None
+    ) -> StudyAmendment:
+        """Helper method to create a StudyAmendment with extension attributes."""
+        return StudyAmendment(
+            id="amendment1",
+            name="Amendment 1",
+            number="1",
+            summary="Test summary",
+            primaryReason=self._create_reason("Primary Reason"),
+            geographicScopes=[self._create_geographic_scope()],
+            extensionAttributes=extension_attributes or [],
+            instanceType="StudyAmendment",
+        )
+
+    def test_site_identifier_scopes_returns_empty_list_when_no_extensions(self):
+        """Test site_identifier_scopes returns empty list when no extensions."""
+        amendment = self._create_amendment_with_extensions([])
+
+        result = amendment.site_identifier_scopes()
+
+        assert result == []
+
+    def test_site_identifier_scopes_returns_empty_list_when_no_matching_extension(self):
+        """Test site_identifier_scopes returns empty list when no matching URL."""
+        other_extension = ExtensionAttribute(
+            id="other_ext",
+            url="www.example.com/other",
+            valueString="some value",
+            instanceType="ExtensionAttribute",
+        )
+        amendment = self._create_amendment_with_extensions([other_extension])
+
+        result = amendment.site_identifier_scopes()
+
+        assert result == []
+
+    def test_site_identifier_scopes_returns_single_site(self):
+        """Test site_identifier_scopes returns single site identifier."""
+        site_ext = self._create_site_extension(["SITE001"])
+        amendment = self._create_amendment_with_extensions([site_ext])
+
+        result = amendment.site_identifier_scopes()
+
+        assert result == ["SITE001"]
+
+    def test_site_identifier_scopes_returns_multiple_sites(self):
+        """Test site_identifier_scopes returns multiple site identifiers."""
+        site_ext = self._create_site_extension(["SITE001", "SITE002", "SITE003"])
+        amendment = self._create_amendment_with_extensions([site_ext])
+
+        result = amendment.site_identifier_scopes()
+
+        assert result == ["SITE001", "SITE002", "SITE003"]
+
+    def test_site_identifier_scopes_case_insensitive_url_match(self):
+        """Test site_identifier_scopes matches URL case-insensitively."""
+        inner_ext = ExtensionAttribute(
+            id="site_ext_0",
+            url=SI_EXT_URL,
+            valueString="SITE001",
+            instanceType="ExtensionAttribute",
+        )
+        site_ext = ExtensionAttribute(
+            id="site_scope_ext",
+            url=SI_EXT_URL.upper(),  # Use uppercase URL
+            extensionAttributes=[inner_ext],
+            instanceType="ExtensionAttribute",
+        )
+        amendment = self._create_amendment_with_extensions([site_ext])
+
+        result = amendment.site_identifier_scopes()
+
+        assert result == ["SITE001"]
+
+    def test_site_identifier_scopes_as_text_returns_empty_string_when_no_sites(self):
+        """Test site_identifier_scopes_as_text returns empty string when no sites."""
+        amendment = self._create_amendment_with_extensions([])
+
+        result = amendment.site_identifier_scopes_as_text()
+
+        assert result == ""
+
+    def test_site_identifier_scopes_as_text_returns_single_site(self):
+        """Test site_identifier_scopes_as_text returns single site without comma."""
+        site_ext = self._create_site_extension(["SITE001"])
+        amendment = self._create_amendment_with_extensions([site_ext])
+
+        result = amendment.site_identifier_scopes_as_text()
+
+        assert result == "SITE001"
+
+    def test_site_identifier_scopes_as_text_returns_comma_separated_sites(self):
+        """Test site_identifier_scopes_as_text returns comma-separated sites."""
+        site_ext = self._create_site_extension(["SITE001", "SITE002", "SITE003"])
+        amendment = self._create_amendment_with_extensions([site_ext])
+
+        result = amendment.site_identifier_scopes_as_text()
+
+        assert result == "SITE001,SITE002,SITE003"
+
+    def test_site_identifier_scopes_with_mixed_extensions(self):
+        """Test site_identifier_scopes with multiple extensions, only matches SI_EXT_URL."""
+        other_extension = ExtensionAttribute(
+            id="other_ext",
+            url="www.example.com/other",
+            valueString="ignored value",
+            instanceType="ExtensionAttribute",
+        )
+        site_ext = self._create_site_extension(["SITE001", "SITE002"])
+        amendment = self._create_amendment_with_extensions([other_extension, site_ext])
+
+        result = amendment.site_identifier_scopes()
+
+        assert result == ["SITE001", "SITE002"]
+
+    def test_site_identifier_scopes_preserves_order(self):
+        """Test site_identifier_scopes preserves the order of site identifiers."""
+        site_ext = self._create_site_extension(["SITE_Z", "SITE_A", "SITE_M"])
+        amendment = self._create_amendment_with_extensions([site_ext])
+
+        result = amendment.site_identifier_scopes()
+
+        assert result == ["SITE_Z", "SITE_A", "SITE_M"]

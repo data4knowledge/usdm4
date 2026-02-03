@@ -1229,8 +1229,7 @@ class TestAmendmentsAssemblerScopeCreation:
     def test_create_scopes_with_unrecognized_scope_format(
         self, amendments_assembler, document_assembler, errors
     ):
-        """Test _create_scopes with unrecognized scope in unknown array (covers lines 135-140)."""
-        initial_error_count = errors.error_count()
+        """Test _create_scopes with unrecognized scope in unknown array - now creates site scope extension."""
         data = {
             "identifier": "1",
             "summary": "Test with unrecognized scope format",
@@ -1251,9 +1250,13 @@ class TestAmendmentsAssemblerScopeCreation:
 
         amendments_assembler.execute(data, document_assembler)
 
-        # Should log an error for unrecognized scope
-        assert errors.error_count() > initial_error_count
+        # Unknown codes that are not countries or regions are now treated as site identifiers
+        # and create site scope extensions instead of logging errors
         assert amendments_assembler.amendment is not None
+        amendment = amendments_assembler.amendment
+        # Should have site scope extension attribute created for the unknown code
+        assert amendment.extensionAttributes is not None
+        assert len(amendment.extensionAttributes) == 1
 
     def test_create_scopes_with_empty_scope(
         self, amendments_assembler, document_assembler, errors
