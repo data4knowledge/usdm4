@@ -1855,3 +1855,474 @@ class TestStudyVersion:
         assert item_map["crit_1"].name == "Criterion 1"
         assert item_map["crit_2"].name == "Criterion 2"
         assert item_map["crit_3"].name == "Criterion 3"
+
+    # =====================================================
+    # Tests for co_sponsor_organization method (line 139)
+    # =====================================================
+
+    def test_co_sponsor_organization_found(self):
+        """Test co_sponsor_organization returns organization when role exists."""
+        # Create co-sponsor role code (C215669)
+        co_sponsor_role_code = Code(
+            id="co_sponsor_role_code",
+            code="C215669",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Co-Sponsor",
+            instanceType="Code",
+        )
+
+        # Create a co-sponsor role linking to an organization
+        co_sponsor_role = StudyRole(
+            id="role_co_sponsor",
+            name="Co-Sponsor Role",
+            label="Co-Sponsor Role",
+            description="Co-sponsor role description",
+            code=co_sponsor_role_code,
+            organizationIds=["org_1"],
+            instanceType="StudyRole",
+        )
+
+        study_version = StudyVersion(
+            id="sv_cosponsor1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org],
+            roles=[co_sponsor_role],
+            instanceType="StudyVersion",
+        )
+
+        org = study_version.co_sponsor_organization()
+        assert org is not None
+        assert org.id == "org_1"
+        assert org.name == "Test Sponsor"
+
+    def test_co_sponsor_organization_not_found(self):
+        """Test co_sponsor_organization returns None when role doesn't exist."""
+        study_version = StudyVersion(
+            id="sv_cosponsor2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org],
+            roles=[],
+            instanceType="StudyVersion",
+        )
+
+        org = study_version.co_sponsor_organization()
+        assert org is None
+
+    # =====================================================
+    # Tests for local_sponsor_organization method (line 142)
+    # =====================================================
+
+    def test_local_sponsor_organization_found(self):
+        """Test local_sponsor_organization returns organization when role exists."""
+        # Create local sponsor role code (C215670)
+        local_sponsor_role_code = Code(
+            id="local_sponsor_role_code",
+            code="C215670",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Local Sponsor",
+            instanceType="Code",
+        )
+
+        # Create a local sponsor role linking to an organization
+        local_sponsor_role = StudyRole(
+            id="role_local_sponsor",
+            name="Local Sponsor Role",
+            label="Local Sponsor Role",
+            description="Local sponsor role description",
+            code=local_sponsor_role_code,
+            organizationIds=["org_1"],
+            instanceType="StudyRole",
+        )
+
+        study_version = StudyVersion(
+            id="sv_localsponsor1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org],
+            roles=[local_sponsor_role],
+            instanceType="StudyVersion",
+        )
+
+        org = study_version.local_sponsor_organization()
+        assert org is not None
+        assert org.id == "org_1"
+        assert org.name == "Test Sponsor"
+
+    def test_local_sponsor_organization_not_found(self):
+        """Test local_sponsor_organization returns None when role doesn't exist."""
+        study_version = StudyVersion(
+            id="sv_localsponsor2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org],
+            roles=[],
+            instanceType="StudyVersion",
+        )
+
+        org = study_version.local_sponsor_organization()
+        assert org is None
+
+    # =====================================================
+    # Tests for manufacturer_organization method (line 145)
+    # =====================================================
+
+    def test_manufacturer_organization_found(self):
+        """Test manufacturer_organization returns organization when role exists."""
+        # Create manufacturer role code (C25392)
+        manufacturer_role_code = Code(
+            id="manufacturer_role_code",
+            code="C25392",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Manufacturer",
+            instanceType="Code",
+        )
+
+        # Create a manufacturer role linking to an organization
+        manufacturer_role = StudyRole(
+            id="role_manufacturer",
+            name="Manufacturer Role",
+            label="Manufacturer Role",
+            description="Manufacturer role description",
+            code=manufacturer_role_code,
+            organizationIds=["org_1"],
+            instanceType="StudyRole",
+        )
+
+        study_version = StudyVersion(
+            id="sv_manufacturer1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org],
+            roles=[manufacturer_role],
+            instanceType="StudyVersion",
+        )
+
+        org = study_version.manufacturer_organization()
+        assert org is not None
+        assert org.id == "org_1"
+        assert org.name == "Test Sponsor"
+
+    def test_manufacturer_organization_not_found(self):
+        """Test manufacturer_organization returns None when role doesn't exist."""
+        study_version = StudyVersion(
+            id="sv_manufacturer2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org],
+            roles=[],
+            instanceType="StudyVersion",
+        )
+
+        org = study_version.manufacturer_organization()
+        assert org is None
+
+    # =====================================================
+    # Tests for device_manufacturer_organization method (lines 148-149)
+    # =====================================================
+
+    def test_device_manufacturer_organization_found(self):
+        """Test device_manufacturer_organization returns organization when role and type match."""
+        # Create device manufacturer organization type code (C215661)
+        device_manufacturer_type_code = Code(
+            id="device_manufacturer_type_code",
+            code="C215661",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Device Manufacturer",
+            instanceType="Code",
+        )
+
+        # Create device manufacturer organization
+        device_manufacturer_org = Organization(
+            id="org_device_manufacturer",
+            name="Device Manufacturer Inc",
+            label="Device Mfg",
+            type=device_manufacturer_type_code,
+            identifierScheme="scheme",
+            identifier="id",
+            instanceType="Organization",
+        )
+
+        # Create manufacturer role code (C25392)
+        manufacturer_role_code = Code(
+            id="manufacturer_role_code_dm",
+            code="C25392",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Manufacturer",
+            instanceType="Code",
+        )
+
+        # Create manufacturer role linking to the device manufacturer org
+        manufacturer_role = StudyRole(
+            id="role_device_manufacturer",
+            name="Manufacturer Role",
+            label="Manufacturer Role",
+            description="Manufacturer role description",
+            code=manufacturer_role_code,
+            organizationIds=["org_device_manufacturer"],
+            instanceType="StudyRole",
+        )
+
+        study_version = StudyVersion(
+            id="sv_device_mfg1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org, device_manufacturer_org],
+            roles=[manufacturer_role],
+            instanceType="StudyVersion",
+        )
+
+        org = study_version.device_manufacturer_organization()
+        assert org is not None
+        assert org.id == "org_device_manufacturer"
+        assert org.name == "Device Manufacturer Inc"
+        assert org.type.code == "C215661"
+
+    def test_device_manufacturer_organization_no_role(self):
+        """Test device_manufacturer_organization returns None when no manufacturer role."""
+        study_version = StudyVersion(
+            id="sv_device_mfg2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org],
+            roles=[],
+            instanceType="StudyVersion",
+        )
+
+        org = study_version.device_manufacturer_organization()
+        assert org is None
+
+    def test_device_manufacturer_organization_wrong_type(self):
+        """Test device_manufacturer_organization returns None when org type doesn't match."""
+        # Create manufacturer role code (C25392)
+        manufacturer_role_code = Code(
+            id="manufacturer_role_code_wt",
+            code="C25392",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Manufacturer",
+            instanceType="Code",
+        )
+
+        # Create manufacturer role linking to sponsor org (which has type C54149, not C215661)
+        manufacturer_role = StudyRole(
+            id="role_manufacturer_wt",
+            name="Manufacturer Role",
+            label="Manufacturer Role",
+            description="Manufacturer role description",
+            code=manufacturer_role_code,
+            organizationIds=["org_1"],
+            instanceType="StudyRole",
+        )
+
+        study_version = StudyVersion(
+            id="sv_device_mfg3",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org],  # type.code is C54149, not C215661
+            roles=[manufacturer_role],
+            instanceType="StudyVersion",
+        )
+
+        org = study_version.device_manufacturer_organization()
+        assert org is None
+
+    # =====================================================
+    # Tests for approval_date_text method (lines 274-277)
+    # =====================================================
+
+    def test_approval_date_text_found(self):
+        """Test approval_date_text returns formatted date string when found."""
+        result = self.study_version.approval_date_text()
+        assert result == "2024-01-15"
+
+    def test_approval_date_text_not_found(self):
+        """Test approval_date_text returns None when no approval date exists."""
+        # Create a date with a different code that won't match C71476
+        other_date_code = Code(
+            id="other_date_code_text",
+            code="C99999",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Other Date Type",
+            instanceType="Code",
+        )
+        other_date = GovernanceDate(
+            id="other_date_text",
+            name="Other Date",
+            label="Other Date",
+            description="Some other date",
+            type=other_date_code,
+            dateValue=date(2024, 1, 10),
+            geographicScopes=[],
+            instanceType="GovernanceDate",
+        )
+
+        study_version = StudyVersion(
+            id="sv_adt1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            dateValues=[other_date],
+            instanceType="StudyVersion",
+        )
+
+        result = study_version.approval_date_text()
+        assert result is None
+
+    def test_approval_date_text_empty_date_values(self):
+        """Test approval_date_text returns None when dateValues is empty."""
+        study_version = StudyVersion(
+            id="sv_adt2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            dateValues=[],
+            instanceType="StudyVersion",
+        )
+
+        result = study_version.approval_date_text()
+        assert result is None
+
+    # =====================================================
+    # Tests for role_map method (line 288)
+    # =====================================================
+
+    def test_role_map_with_roles(self):
+        """Test role_map returns correct mapping when roles exist."""
+        # Create role codes
+        role_code1 = Code(
+            id="role_code_map1",
+            code="C70793",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Sponsor",
+            instanceType="Code",
+        )
+
+        role_code2 = Code(
+            id="role_code_map2",
+            code="C215669",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Co-Sponsor",
+            instanceType="Code",
+        )
+
+        # Create roles
+        role1 = StudyRole(
+            id="role_map_1",
+            name="Sponsor Role",
+            label="Sponsor Role",
+            description="Sponsor role description",
+            code=role_code1,
+            organizationIds=["org_1"],
+            instanceType="StudyRole",
+        )
+
+        role2 = StudyRole(
+            id="role_map_2",
+            name="Co-Sponsor Role",
+            label="Co-Sponsor Role",
+            description="Co-sponsor role description",
+            code=role_code2,
+            organizationIds=["org_2"],
+            instanceType="StudyRole",
+        )
+
+        study_version = StudyVersion(
+            id="sv_rolemap1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            roles=[role1, role2],
+            instanceType="StudyVersion",
+        )
+
+        role_map = study_version.role_map()
+        assert isinstance(role_map, dict)
+        assert len(role_map) == 2
+        assert "role_map_1" in role_map
+        assert "role_map_2" in role_map
+        assert role_map["role_map_1"].name == "Sponsor Role"
+        assert role_map["role_map_2"].name == "Co-Sponsor Role"
+
+    def test_role_map_empty(self):
+        """Test role_map returns empty dict when no roles exist."""
+        study_version = StudyVersion(
+            id="sv_rolemap2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            roles=[],
+            instanceType="StudyVersion",
+        )
+
+        role_map = study_version.role_map()
+        assert isinstance(role_map, dict)
+        assert len(role_map) == 0
+
+    def test_role_map_single_role(self):
+        """Test role_map with a single role."""
+        role_code = Code(
+            id="role_code_single",
+            code="C70793",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Sponsor",
+            instanceType="Code",
+        )
+
+        role = StudyRole(
+            id="role_single",
+            name="Single Role",
+            label="Single Role",
+            description="Single role description",
+            code=role_code,
+            organizationIds=["org_1"],
+            instanceType="StudyRole",
+        )
+
+        study_version = StudyVersion(
+            id="sv_rolemap3",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            roles=[role],
+            instanceType="StudyVersion",
+        )
+
+        role_map = study_version.role_map()
+        assert isinstance(role_map, dict)
+        assert len(role_map) == 1
+        assert "role_single" in role_map
+        assert role_map["role_single"].name == "Single Role"
