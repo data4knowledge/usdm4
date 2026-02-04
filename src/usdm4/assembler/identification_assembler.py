@@ -261,8 +261,9 @@ class IdentificationAssembler(BaseAssembler):
         # Make sure data ok.
         titles = data["titles"] if "titles" in data else {}
         identifiers = data["identifiers"] if "identifiers" in data else []
-        roles = data["roles"] if "roles" in data else []
-
+        roles = data["roles"] if "roles" in data else {}
+        print(f"DATA: {data}")
+        print(f"ROLES: {roles}")
         # Titles
         for type, text in titles.items():
             try:
@@ -322,10 +323,13 @@ class IdentificationAssembler(BaseAssembler):
                     KlassMethodLocation(self.MODULE, "execute"),
                 )
         for role, info in roles.items():
+            print(f"ROLE CREATE: {role}, {info}")
             try:
+                if info is None:
+                    continue
                 organization = self.ROLE_ORGS[role]
                 organization["label"] = info["name"]
-                organization["legalAddress"] = self._create_address(info["address"])
+                organization["legalAddress"] = self._create_address(info["address"]) if "address" in info else None
                 org = self._create_organization(organization)
                 if org:
                     self._organizations.append(org)
