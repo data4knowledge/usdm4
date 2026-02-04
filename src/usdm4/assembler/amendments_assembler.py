@@ -23,6 +23,7 @@ from usdm4.api.document_content_reference import DocumentContentReference
 from usdm4.api.code import Code
 from usdm4.api.extension import Extension, ExtensionAttribute
 
+
 class AmendmentsAssembler(BaseAssembler):
     """
     Assembler that creates StudyAmendment objects from structured input data.
@@ -107,7 +108,7 @@ class AmendmentsAssembler(BaseAssembler):
                 "enrollments": [self._create_enrollment(data)],
                 "geographicScopes": geo_scopes,
                 "changes": self._create_changes(data),
-                "extensionAttributes": [site_scopes] if site_scopes else []
+                "extensionAttributes": [site_scopes] if site_scopes else [],
             }
             return self._builder.create(StudyAmendment, params)
         except Exception as e:
@@ -300,7 +301,9 @@ class AmendmentsAssembler(BaseAssembler):
             )
             return 0
 
-    def _create_scopes(self, data: dict) -> tuple[list[GeographicScope], ExtensionAttribute]:
+    def _create_scopes(
+        self, data: dict
+    ) -> tuple[list[GeographicScope], ExtensionAttribute]:
         extension = None
         results = []
         extensions = []
@@ -354,7 +357,9 @@ class AmendmentsAssembler(BaseAssembler):
                     "extensionAttributes": extensions,
                 },
             )
-        self._errors.info(f"Scopes created in assembler, geo: {results}, sites: {extension}")
+        self._errors.info(
+            f"Scopes created in assembler, geo: {results}, sites: {extension}"
+        )
         return results, extension
 
     def _global_scope(self, results: list[GeographicScope]) -> None:

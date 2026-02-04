@@ -91,12 +91,11 @@ class StudyVersion(ApiBaseModelWithId):
         return None
 
     def sponsor_organization(self) -> Organization | None:
-        role = next((x for x in self.roles if x.code.code == "C70793"), None)
-        if role and len(role.organizationIds) > 0:
-            return self.organization(role.organizationIds[0])
-        # Fallback, find a sponsor organization
-        org = next((x for x in self.organizations if x.type.code == "C54149"), None)
-        return org if org else None
+        org = self._find_first_organization("C70793")
+        if org is None:
+            # Fallback, find a sponsor organization, temporary
+            org = next((x for x in self.organizations if x.type.code == "C54149"), None)
+        return org
 
     def sponsor_identifier(self) -> StudyIdentifier | None:
         org = self.sponsor_organization()
@@ -105,6 +104,57 @@ class StudyVersion(ApiBaseModelWithId):
                 if identifier.scopeId == org.id:
                     return identifier
         return None
+
+    @deprecated("Use sponsor_organization method")
+    def sponsor(self) -> Organization:
+        map = self.organization_map()
+        for x in self.studyIdentifiers:
+            if x.is_sponsor(map):
+                return map[x.scopeId]
+        return None
+
+    def sponsor_identifier_text(self) -> StudyIdentifier:
+        identifier = self.sponsor_identifier()
+        return identifier.text if identifier else ""
+
+    def sponsor_name(self) -> str:
+        org: Organization = self.sponsor_organization()
+        return org.name if org else ""
+
+    def sponsor_label(self) -> str:
+        org: Organization = self.sponsor_organization()
+        return org.label if org else ""
+
+    def sponsor_label_name(self) -> str:
+        label = self.sponsor_label()
+        return label if label else self.sponsor_name()
+
+    def sponsor_address(self) -> str:
+        org: Organization = self.sponsor_organization()
+        if org:
+            return org.legalAddress.text if org.legalAddress else ""
+        return ""
+
+    def co_sponsor_organization(self) -> Organization | None:
+        return self._find_first_organization("C215669")
+
+    def local_sponsor_organization(self) -> Organization | None:
+        return self._find_first_organization("C215670")
+
+    def manufacturer_organization(self) -> Organization | None:
+        return self._find_first_organization("C25392")
+
+    def device_manufacturer_organization(self) -> Organization | None:
+        manufacturers: list[Organization] = self._find_organizations("C25392")
+        return next((x for x in manufacturers if x.type.code == "C215661"), None)
+
+    def _find_first_organization(self, role_code: str) -> Organization | None:
+        orgs = self._find_organizations(role_code)
+        return orgs[0] if len(orgs) > 0 else None
+
+    def _find_organizations(self, role_code: str) -> list[Organization]:
+        role = next((x for x in self.roles if x.code.code == role_code), None)
+        return [self.organization(x) for x in role.organizationIds] if role else []
 
     def regulatory_identifiers(self) -> list[StudyIdentifier]:
         results = []
@@ -172,52 +222,6 @@ class StudyVersion(ApiBaseModelWithId):
             if x.is_acronym():
                 return x
         return None
-
-    def sponsor(self) -> Organization:
-        map = self.organization_map()
-        for x in self.studyIdentifiers:
-            if x.is_sponsor(map):
-                return map[x.scopeId]
-        return None
-
-    # Note: Method sponsor_identifier in base USDM class
-
-    def sponsor_identifier_text(self) -> StudyIdentifier:
-        for x in self.studyIdentifiers:
-            if x.is_sponsor(self.organization_map()):
-                return x.text
-        return ""
-
-    def sponsor_name(self) -> str:
-        map = self.organization_map()
-        x: StudyIdentifier
-        for x in self.studyIdentifiers:
-            if x.is_sponsor(map):
-                return map[x.scopeId].name
-        return ""
-
-    def sponsor_label(self) -> str:
-        map: dict[Organization] = self.organization_map()
-        x: StudyIdentifier
-        for x in self.studyIdentifiers:
-            if x.is_sponsor(map):
-                return map[x.scopeId].label
-        return ""
-
-    def sponsor_label_name(self) -> str:
-        label = self.sponsor_label()
-        return label if label else self.sponsor_name()
-
-    def sponsor_address(self) -> str:
-        map = self.organization_map()
-        for x in self.studyIdentifiers:
-            if x.is_sponsor(map):
-                return (
-                    map[x.scopeId].legalAddress.text
-                    if map[x.scopeId].legalAddress
-                    else ""
-                )
-        return ""
 
     def nct_identifier(self) -> StudyIdentifier:
         map = self.organization_map()

@@ -1,4 +1,5 @@
 from typing import Literal
+from typing_extensions import deprecated
 from .api_base_model import ApiBaseModelWithId
 from .organization import Organization
 from .code import Code
@@ -18,6 +19,7 @@ class ReferenceIdentifier(Identifier):
 class StudyIdentifier(Identifier):
     instanceType: Literal["StudyIdentifier"]
 
+    @deprecated("Use roles not identifiers to find a sponsor organization")
     def is_sponsor(self, organization_map: dict) -> bool:
         org = organization_map[self.scopeId]
         return True if org.type.code == "C54149" else False
