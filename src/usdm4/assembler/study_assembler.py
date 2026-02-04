@@ -12,7 +12,16 @@ from usdm4.assembler.amendments_assembler import AmendmentsAssembler
 from usdm4.assembler.timeline_assembler import TimelineAssembler
 from usdm4.builder.builder import Builder
 from usdm4.api.study import Study
-from usdm4.api.study_version import StudyVersion, CS_EXT_URL, OV_EXT_URL, CC_EXT_URL, CN_EXT_URL, ME_EXT_URL, SS_EXT_URL
+from usdm4.api.study_version import (
+    StudyVersion,
+    CS_EXT_URL,
+    OV_EXT_URL,
+    CC_EXT_URL,
+    CN_EXT_URL,
+    ME_EXT_URL,
+    SS_EXT_URL,
+    SAL_EXT_URL,
+)
 from usdm4.api.geographic_scope import GeographicScope
 from usdm4.api.governance_date import GovernanceDate
 from usdm4.api.extension import ExtensionAttribute
@@ -99,74 +108,47 @@ class StudyAssembler(BaseAssembler):
         """
         try:
             # Create the dates
-            self._create_date(data)
+            valid_date = self._create_date(data)
 
             # Extensions
             extensions = []
+            if not valid_date:
+                # Create where approval infomration is extension
+                self._create_extension(
+                    extensions, SAL_EXT_URL, data["sponsor_approval_date"]
+                )
             if "confidentiality" in data:
                 # Create confidentiality extension
-                extensions.append(
-                    self._builder.create(
-                        ExtensionAttribute,
-                        {
-                            "url": CS_EXT_URL,
-                            "valueString": data["confidentiality"],
-                        },
-                    )
+                self._create_extension(
+                    extensions, CS_EXT_URL, data["confidentiality"]
                 )
             if "original_protocol" in data:
                 # Create original protocol
                 extensions.append(
                     self._builder.create(
-                        ExtensionAttribute,
-                        {
-                            "url": OV_EXT_URL,
-                            "valueBoolean": self._encoder.to_boolean(
-                                data["original_protocol"]
-                            ),
-                        },
+                        ExtensionAttribute, {"url": OV_EXT_URL, "valueBoolean": self._encoder.to_boolean(data["original_protocol"])}
                     )
                 )
             if identification_assembler.compound_codes:
-                extensions.append(
-                    self._builder.create(
-                        ExtensionAttribute,
-                        {
-                            "url": CC_EXT_URL,
-                            "valueString": identification_assembler.compound_codes,
-                        },
-                    )
-                )                
+                # Compound codes
+                self._create_extension(
+                    extensions, CC_EXT_URL, identification_assembler.compound_codes
+                )
             if identification_assembler.compound_names:
-                extensions.append(
-                    self._builder.create(
-                        ExtensionAttribute,
-                        {
-                            "url": CN_EXT_URL,
-                            "valueString": identification_assembler.compound_names,
-                        },
-                    )
-                )                
+                # compound names
+                self._create_extension(
+                    extensions, CN_EXT_URL, identification_assembler.compound_names
+                )
             if identification_assembler.sponsor_signatory:
-                extensions.append(
-                    self._builder.create(
-                        ExtensionAttribute,
-                        {
-                            "url": SS_EXT_URL,
-                            "valueString": identification_assembler.sponsor_signatory,
-                        },
-                    )
-                )                
+                # Sponsor signatory
+                self._create_extension(
+                    extensions, SS_EXT_URL, identification_assembler.sponsor_signatory
+                )
             if identification_assembler.medical_expert:
-                extensions.append(
-                    self._builder.create(
-                        ExtensionAttribute,
-                        {
-                            "url": ME_EXT_URL,
-                            "valueString": identification_assembler.medical_expert,
-                        },
-                    )
-                )                
+                # Medical expert
+                self._create_extension(
+                    extensions, ME_EXT_URL, identification_assembler.medical_expert
+                )
 
             # Create StudyVersion parameters by combining data from all assemblers
             params = {
@@ -219,7 +201,24 @@ class StudyAssembler(BaseAssembler):
     def study(self) -> Study:
         return self._study
 
-    def _create_date(self, data: dict) -> None:
+    def _create_extension(
+        self, extensions: list[ExtensionAttribute], url: str, value: str
+    ) -> None:
+        try:
+            extensions.append(
+                self._builder.create(
+                    ExtensionAttribute, {"url": url, "valueString": value}
+                )
+            )
+        except Exception as e:
+            self._errors.exception(
+                "Failed during creation of extesnion",
+                e,
+                KlassMethodLocation(self.MODULE, "_create_extension"),
+            )
+
+    def _create_date(self, data: dict) -> bool:
+        result = False
         try:
             if actual_date := self._encoder.to_date(data["sponsor_approval_date"]):
                 sponsor_approval_date_code = self._builder.cdisc_code(
@@ -240,17 +239,20 @@ class StudyAssembler(BaseAssembler):
                 )
                 if approval_date:
                     self._dates.append(approval_date)
+                    result = True
             else:
                 self._errors.warning(
                     "No sponsor approval date detected",
                     KlassMethodLocation(self.MODULE, "_create_date"),
                 )
+            return result
         except Exception as e:
             self._errors.exception(
                 "Failed during creation of governance date",
                 e,
                 KlassMethodLocation(self.MODULE, "_create_date"),
             )
+            return False
 
     def _get_study_name_label(self, options: dict) -> tuple[str, str]:
         items = ["identifier", "acronym", "compound"]

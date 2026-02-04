@@ -382,7 +382,7 @@ class IdentificationAssembler(BaseAssembler):
     @property
     def compound_codes(self) -> str:
         return self._compound_codes
-    
+
     def _create_address(self, address: dict) -> Address | None:
         try:
             self._errors.debug(

@@ -40,6 +40,7 @@ CC_EXT_URL = "www.d4k.dk/usdm/extensions/004"  # Compund codes
 CN_EXT_URL = "www.d4k.dk/usdm/extensions/005"  # Compund names
 ME_EXT_URL = "www.d4k.dk/usdm/extensions/006"  # Medical Expert
 SS_EXT_URL = "www.d4k.dk/usdm/extensions/007"  # Sponsor signatory
+SAL_EXT_URL = "www.d4k.dk/usdm/extensions/008"  # Sponsor approval info location
 
 
 class StudyVersion(ApiBaseModelWithId):
@@ -333,6 +334,10 @@ class StudyVersion(ApiBaseModelWithId):
             if x.type.code == "C71476":
                 return x.dateValue.strftime("%Y-%m-%d")
         return None
+
+    def sponsor_approval_location(self) -> str:
+        ext: Extension = self.get_extension(SAL_EXT_URL)
+        return ext.valueString if ext else ""
 
     def find_study_design(self, id: str) -> StudyDesign:
         return next((x for x in self.studyDesigns if x.id == id), None)
