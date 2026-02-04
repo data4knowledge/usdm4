@@ -138,8 +138,44 @@ class StudyVersion(ApiBaseModelWithId):
     def co_sponsor_organization(self) -> Organization | None:
         return self._find_first_organization("C215669")
 
+    def co_sponsor_name(self) -> str:
+        org: Organization = self.co_sponsor_organization()
+        return org.name if org else ""
+
+    def co_sponsor_label(self) -> str:
+        org: Organization = self.co_sponsor_organization()
+        return org.label if org else ""
+
+    def co_sponsor_label_name(self) -> str:
+        label = self.co_sponsor_label()
+        return label if label else self.co_sponsor_name()
+
+    def co_sponsor_address(self) -> str:
+        org: Organization = self.co_sponsor_organization()
+        if org:
+            return org.legalAddress.text if org.legalAddress else ""
+        return ""
+
     def local_sponsor_organization(self) -> Organization | None:
         return self._find_first_organization("C215670")
+
+    def local_sponsor_name(self) -> str:
+        org: Organization = self.local_sponsor_organization()
+        return org.name if org else ""
+
+    def local_sponsor_label(self) -> str:
+        org: Organization = self.local_sponsor_organization()
+        return org.label if org else ""
+
+    def local_sponsor_label_name(self) -> str:
+        label = self.local_sponsor_label()
+        return label if label else self.local_sponsor_name()
+
+    def local_sponsor_address(self) -> str:
+        org: Organization = self.local_sponsor_organization()
+        if org:
+            return org.legalAddress.text if org.legalAddress else ""
+        return ""
 
     def manufacturer_organization(self) -> Organization | None:
         return self._find_first_organization("C25392")
@@ -147,6 +183,24 @@ class StudyVersion(ApiBaseModelWithId):
     def device_manufacturer_organization(self) -> Organization | None:
         manufacturers: list[Organization] = self._find_organizations("C25392")
         return next((x for x in manufacturers if x.type.code == "C215661"), None)
+
+    def device_manufacturer_name(self) -> str:
+        org: Organization = self.device_manufacturer_organization()
+        return org.name if org else ""
+
+    def device_manufacturer_label(self) -> str:
+        org: Organization = self.device_manufacturer_organization()
+        return org.label if org else ""
+
+    def device_manufacturer_label_name(self) -> str:
+        label = self.device_manufacturer_label()
+        return label if label else self.device_manufacturer_name()
+
+    def device_manufacturer_address(self) -> str:
+        org: Organization = self.device_manufacturer_organization()
+        if org:
+            return org.legalAddress.text if org.legalAddress else ""
+        return ""
 
     def _find_first_organization(self, role_code: str) -> Organization | None:
         orgs = self._find_organizations(role_code)
