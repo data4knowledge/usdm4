@@ -192,6 +192,10 @@ class IdentificationAssembler(BaseAssembler):
         self._identifiers = []
         self._roles = []
         self._study_name = ""
+        self._sponsor_signatory = None
+        self._medical_expert = None
+        self._compound_names = None
+        self._compound_codes = None
 
     def execute(self, data: dict) -> None:
         """
@@ -341,6 +345,11 @@ class IdentificationAssembler(BaseAssembler):
                     e,
                     KlassMethodLocation(self.MODULE, "execute"),
                 )
+        if "other" in data:
+            self._sponsor_signatory = data["other"]["sponsor_signatory"]
+            self._medical_expert = data["other"]["medical_expert"]
+            self._compound_names = data["other"]["compound_names"]
+            self._compound_codes = data["other"]["compound_codes"]
 
     @property
     def titles(self):
@@ -358,6 +367,22 @@ class IdentificationAssembler(BaseAssembler):
     def roles(self):
         return self._roles
 
+    @property
+    def sponsor_signatory(self) -> str:
+        return self._sponsor_signatory
+
+    @property
+    def medical_expert(self) -> str:
+        return self._medical_expert
+
+    @property
+    def compound_names(self) -> str:
+        return self._compound_names
+
+    @property
+    def compound_codes(self) -> str:
+        return self._compound_codes
+    
     def _create_address(self, address: dict) -> Address | None:
         try:
             self._errors.debug(

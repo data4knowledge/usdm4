@@ -36,6 +36,10 @@ from .extension import Extension
 
 CS_EXT_URL = "www.d4k.dk/usdm/extensions/001"  # Confidentiality statement
 OV_EXT_URL = "www.d4k.dk/usdm/extensions/002"  # Original protocol (original version)
+CC_EXT_URL = "www.d4k.dk/usdm/extensions/004"  # Compund codes
+CN_EXT_URL = "www.d4k.dk/usdm/extensions/005"  # Compund names
+ME_EXT_URL = "www.d4k.dk/usdm/extensions/006"  # Medical Expert
+SS_EXT_URL = "www.d4k.dk/usdm/extensions/007"  # Sponsor signatory
 
 
 class StudyVersion(ApiBaseModelWithId):
@@ -337,6 +341,22 @@ class StudyVersion(ApiBaseModelWithId):
         self, document_map: dict
     ) -> list[dict[StudyDefinitionDocument, StudyDefinitionDocumentVersion]]:
         return [document_map[x] for x in self.documentVersionIds]
+
+    def compound_codes(self) -> str:
+        ext: Extension = self.get_extension(CC_EXT_URL)
+        return ext.valueString if ext else ""
+
+    def compound_names(self) -> str:
+        ext: Extension = self.get_extension(CN_EXT_URL)
+        return ext.valueString if ext else ""
+
+    def medical_expert(self) -> str:
+        ext: Extension = self.get_extension(ME_EXT_URL)
+        return ext.valueString if ext else ""
+
+    def sponsor_signatory(self) -> str:
+        ext: Extension = self.get_extension(SS_EXT_URL)
+        return ext.valueString if ext else ""
 
     def role_map(self) -> dict[str, StudyRole]:
         return {x.id: x for x in self.roles}

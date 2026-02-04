@@ -12,7 +12,7 @@ from usdm4.assembler.amendments_assembler import AmendmentsAssembler
 from usdm4.assembler.timeline_assembler import TimelineAssembler
 from usdm4.builder.builder import Builder
 from usdm4.api.study import Study
-from usdm4.api.study_version import StudyVersion, CS_EXT_URL, OV_EXT_URL
+from usdm4.api.study_version import StudyVersion, CS_EXT_URL, OV_EXT_URL, CC_EXT_URL, CN_EXT_URL, ME_EXT_URL, SS_EXT_URL
 from usdm4.api.geographic_scope import GeographicScope
 from usdm4.api.governance_date import GovernanceDate
 from usdm4.api.extension import ExtensionAttribute
@@ -127,6 +127,46 @@ class StudyAssembler(BaseAssembler):
                         },
                     )
                 )
+            if identification_assembler.compound_codes:
+                extensions.append(
+                    self._builder.create(
+                        ExtensionAttribute,
+                        {
+                            "url": CC_EXT_URL,
+                            "valueString": identification_assembler.compound_codes,
+                        },
+                    )
+                )                
+            if identification_assembler.compound_names:
+                extensions.append(
+                    self._builder.create(
+                        ExtensionAttribute,
+                        {
+                            "url": CN_EXT_URL,
+                            "valueString": identification_assembler.compound_names,
+                        },
+                    )
+                )                
+            if identification_assembler.sponsor_signatory:
+                extensions.append(
+                    self._builder.create(
+                        ExtensionAttribute,
+                        {
+                            "url": SS_EXT_URL,
+                            "valueString": identification_assembler.sponsor_signatory,
+                        },
+                    )
+                )                
+            if identification_assembler.medical_expert:
+                extensions.append(
+                    self._builder.create(
+                        ExtensionAttribute,
+                        {
+                            "url": ME_EXT_URL,
+                            "valueString": identification_assembler.medical_expert,
+                        },
+                    )
+                )                
 
             # Create StudyVersion parameters by combining data from all assemblers
             params = {
@@ -156,8 +196,6 @@ class StudyAssembler(BaseAssembler):
             }
             study_version = self._builder.create(StudyVersion, params)
 
-            # print(f"STUDY VERSION: {study_version is not None}")
-
             # Create the top-level Study container object
             study_name, study_label = self._get_study_name_label(data["name"])
             self._study = self._builder.create(
@@ -173,9 +211,6 @@ class StudyAssembler(BaseAssembler):
                     else [],  # Reference to protocol document
                 },
             )
-
-            # print(f"STUDY: {self._study is not None}")
-
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
             self._errors.exception("Failed during creation of study", e, location)
