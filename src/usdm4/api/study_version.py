@@ -343,10 +343,19 @@ class StudyVersion(ApiBaseModelWithId):
         return next((x for x in self.studyDesigns if x.id == id), None)
 
     def documents(
-        self, document_map: dict
+        self, document_map: dict[str, dict[StudyDefinitionDocument, StudyDefinitionDocumentVersion]]
     ) -> list[dict[StudyDefinitionDocument, StudyDefinitionDocumentVersion]]:
         return [document_map[x] for x in self.documentVersionIds]
 
+    def to_html(self, template: str, document_map: dict[str, dict[StudyDefinitionDocument, StudyDefinitionDocumentVersion]]) -> str:
+        docs_info = self.documents(document_map)
+        for doc_info in docs_info:
+            study_document: StudyDefinitionDocument = doc_info["document"]
+            if study_document.templateName.upper() == template.upper():
+                study_document_version: StudyDefinitionDocumentVersion = doc_info["version"]
+                return study_document_version.to_html(self.narrative_content_item_map())
+        return None
+    
     def compound_codes(self) -> str:
         ext: Extension = self.get_extension(CC_EXT_URL)
         return ext.valueString if ext else ""

@@ -23,3 +23,9 @@ class Wrapper(ApiBaseModel):
             if version:
                 return study, version, version.find_study_design(id)
         return None, None, None
+
+    def to_html(self, template: str) -> str:
+        study: Study = self.study
+        version: StudyVersion = self.first_version()
+        return version.to_html(template, study.document_map()) if version and study else ""
+         

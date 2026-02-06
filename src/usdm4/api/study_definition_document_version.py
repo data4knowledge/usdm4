@@ -3,7 +3,7 @@ from datetime import date
 from .api_base_model import ApiBaseModelWithId
 from .code import Code
 from .governance_date import GovernanceDate
-from .narrative_content import NarrativeContent
+from .narrative_content import NarrativeContent, NarrativeContentItem
 from .comment_annotation import CommentAnnotation
 
 
@@ -65,6 +65,17 @@ class StudyDefinitionDocumentVersion(ApiBaseModelWithId):
             ),
             None,
         )
+
+    def to_html(self, narrative_content_item_map: dict[str, NarrativeContentItem]) -> str:
+        result = ""
+        narrative_contents = self.narrative_content_in_order()
+        narrative_content: NarrativeContent
+        for narrative_content in narrative_contents:
+            result += narrative_content.format_heading()
+            content: NarrativeContentItem = narrative_content.content_item(narrative_content_item_map)
+            if content:
+                result += content.text
+        return result
 
     def narrative_content_map(self) -> dict[NarrativeContent]:
         return {x.id: x for x in self.contents}
