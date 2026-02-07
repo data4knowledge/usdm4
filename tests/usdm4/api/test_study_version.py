@@ -2326,3 +2326,725 @@ class TestStudyVersion:
         assert len(role_map) == 1
         assert "role_single" in role_map
         assert role_map["role_single"].name == "Single Role"
+
+    # =====================================================
+    # Helper to create a study version with a role-based org
+    # =====================================================
+
+    def _create_study_version_with_role_org(
+        self, sv_id, role_code_id, role_code_value, role_id, org=None, role_org_ids=None
+    ):
+        """Helper to create a StudyVersion with a role linking to an organization."""
+        role_code = Code(
+            id=role_code_id,
+            code=role_code_value,
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Role",
+            instanceType="Code",
+        )
+        role = StudyRole(
+            id=role_id,
+            name="Role",
+            label="Role",
+            description="Role description",
+            code=role_code,
+            organizationIds=role_org_ids or ["org_1"],
+            instanceType="StudyRole",
+        )
+        orgs = [org] if org else [self.sponsor_org]
+        return StudyVersion(
+            id=sv_id,
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            organizations=orgs,
+            roles=[role],
+            instanceType="StudyVersion",
+        )
+
+    # =====================================================
+    # Tests for co_sponsor_name, co_sponsor_label,
+    # co_sponsor_label_name, co_sponsor_address (lines 147-162)
+    # =====================================================
+
+    def test_co_sponsor_name_found(self):
+        """Test co_sponsor_name returns name when co-sponsor role exists."""
+        sv = self._create_study_version_with_role_org(
+            "sv_csn1", "rc_csn1", "C215669", "r_csn1"
+        )
+        assert sv.co_sponsor_name() == "Test Sponsor"
+
+    def test_co_sponsor_name_not_found(self):
+        """Test co_sponsor_name returns empty string when no co-sponsor role."""
+        assert self.study_version.co_sponsor_name() == ""
+
+    def test_co_sponsor_label_found(self):
+        """Test co_sponsor_label returns label when co-sponsor role exists."""
+        sv = self._create_study_version_with_role_org(
+            "sv_csl1", "rc_csl1", "C215669", "r_csl1"
+        )
+        assert sv.co_sponsor_label() == "Test Sponsor Label"
+
+    def test_co_sponsor_label_not_found(self):
+        """Test co_sponsor_label returns empty string when no co-sponsor role."""
+        assert self.study_version.co_sponsor_label() == ""
+
+    def test_co_sponsor_label_name_returns_label(self):
+        """Test co_sponsor_label_name returns label when it exists."""
+        sv = self._create_study_version_with_role_org(
+            "sv_csln1", "rc_csln1", "C215669", "r_csln1"
+        )
+        assert sv.co_sponsor_label_name() == "Test Sponsor Label"
+
+    def test_co_sponsor_label_name_fallback_to_name(self):
+        """Test co_sponsor_label_name falls back to name when label is empty."""
+        org_no_label = Organization(
+            id="org_csln_nolabel",
+            name="Co-Sponsor Inc",
+            label="",
+            type=self.sponsor_code,
+            identifierScheme="scheme",
+            identifier="id",
+            instanceType="Organization",
+        )
+        sv = self._create_study_version_with_role_org(
+            "sv_csln2", "rc_csln2", "C215669", "r_csln2",
+            org=org_no_label, role_org_ids=["org_csln_nolabel"],
+        )
+        assert sv.co_sponsor_label_name() == "Co-Sponsor Inc"
+
+    def test_co_sponsor_address_found(self):
+        """Test co_sponsor_address returns address text when co-sponsor has address."""
+        sv = self._create_study_version_with_role_org(
+            "sv_csa1", "rc_csa1", "C215669", "r_csa1"
+        )
+        assert "123 Main St" in sv.co_sponsor_address()
+
+    def test_co_sponsor_address_no_org(self):
+        """Test co_sponsor_address returns empty string when no co-sponsor."""
+        assert self.study_version.co_sponsor_address() == ""
+
+    def test_co_sponsor_address_no_legal_address(self):
+        """Test co_sponsor_address returns empty string when org has no legalAddress."""
+        org_no_addr = Organization(
+            id="org_csa_noaddr",
+            name="No Address Org",
+            label="No Address",
+            type=self.sponsor_code,
+            identifierScheme="scheme",
+            identifier="id",
+            instanceType="Organization",
+        )
+        sv = self._create_study_version_with_role_org(
+            "sv_csa2", "rc_csa2", "C215669", "r_csa2",
+            org=org_no_addr, role_org_ids=["org_csa_noaddr"],
+        )
+        assert sv.co_sponsor_address() == ""
+
+    # =====================================================
+    # Tests for local_sponsor_name, local_sponsor_label,
+    # local_sponsor_label_name, local_sponsor_address (lines 168-183)
+    # =====================================================
+
+    def test_local_sponsor_name_found(self):
+        """Test local_sponsor_name returns name when local sponsor role exists."""
+        sv = self._create_study_version_with_role_org(
+            "sv_lsn1", "rc_lsn1", "C215670", "r_lsn1"
+        )
+        assert sv.local_sponsor_name() == "Test Sponsor"
+
+    def test_local_sponsor_name_not_found(self):
+        """Test local_sponsor_name returns empty string when no local sponsor role."""
+        assert self.study_version.local_sponsor_name() == ""
+
+    def test_local_sponsor_label_found(self):
+        """Test local_sponsor_label returns label when local sponsor role exists."""
+        sv = self._create_study_version_with_role_org(
+            "sv_lsl1", "rc_lsl1", "C215670", "r_lsl1"
+        )
+        assert sv.local_sponsor_label() == "Test Sponsor Label"
+
+    def test_local_sponsor_label_not_found(self):
+        """Test local_sponsor_label returns empty string when no local sponsor role."""
+        assert self.study_version.local_sponsor_label() == ""
+
+    def test_local_sponsor_label_name_returns_label(self):
+        """Test local_sponsor_label_name returns label when it exists."""
+        sv = self._create_study_version_with_role_org(
+            "sv_lsln1", "rc_lsln1", "C215670", "r_lsln1"
+        )
+        assert sv.local_sponsor_label_name() == "Test Sponsor Label"
+
+    def test_local_sponsor_label_name_fallback_to_name(self):
+        """Test local_sponsor_label_name falls back to name when label is empty."""
+        org_no_label = Organization(
+            id="org_lsln_nolabel",
+            name="Local Sponsor Inc",
+            label="",
+            type=self.sponsor_code,
+            identifierScheme="scheme",
+            identifier="id",
+            instanceType="Organization",
+        )
+        sv = self._create_study_version_with_role_org(
+            "sv_lsln2", "rc_lsln2", "C215670", "r_lsln2",
+            org=org_no_label, role_org_ids=["org_lsln_nolabel"],
+        )
+        assert sv.local_sponsor_label_name() == "Local Sponsor Inc"
+
+    def test_local_sponsor_address_found(self):
+        """Test local_sponsor_address returns address text when local sponsor has address."""
+        sv = self._create_study_version_with_role_org(
+            "sv_lsa1", "rc_lsa1", "C215670", "r_lsa1"
+        )
+        assert "123 Main St" in sv.local_sponsor_address()
+
+    def test_local_sponsor_address_no_org(self):
+        """Test local_sponsor_address returns empty string when no local sponsor."""
+        assert self.study_version.local_sponsor_address() == ""
+
+    def test_local_sponsor_address_no_legal_address(self):
+        """Test local_sponsor_address returns empty string when org has no legalAddress."""
+        org_no_addr = Organization(
+            id="org_lsa_noaddr",
+            name="No Address Org",
+            label="No Address",
+            type=self.sponsor_code,
+            identifierScheme="scheme",
+            identifier="id",
+            instanceType="Organization",
+        )
+        sv = self._create_study_version_with_role_org(
+            "sv_lsa2", "rc_lsa2", "C215670", "r_lsa2",
+            org=org_no_addr, role_org_ids=["org_lsa_noaddr"],
+        )
+        assert sv.local_sponsor_address() == ""
+
+    # =====================================================
+    # Tests for device_manufacturer_name, device_manufacturer_label,
+    # device_manufacturer_label_name, device_manufacturer_address (lines 193-208)
+    # =====================================================
+
+    def _create_device_manufacturer_study_version(self, sv_id, org=None):
+        """Helper to create a StudyVersion with a device manufacturer org."""
+        device_mfg_type_code = Code(
+            id=f"dm_type_{sv_id}",
+            code="C215661",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Device Manufacturer",
+            instanceType="Code",
+        )
+        dm_org = org or Organization(
+            id=f"org_dm_{sv_id}",
+            name="Device Mfg Corp",
+            label="Device Mfg Label",
+            type=device_mfg_type_code,
+            identifierScheme="scheme",
+            identifier="id",
+            legalAddress=self.test_address,
+            instanceType="Organization",
+        )
+        mfg_role_code = Code(
+            id=f"mfg_rc_{sv_id}",
+            code="C25392",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Manufacturer",
+            instanceType="Code",
+        )
+        mfg_role = StudyRole(
+            id=f"role_dm_{sv_id}",
+            name="Manufacturer Role",
+            label="Manufacturer Role",
+            description="Manufacturer role description",
+            code=mfg_role_code,
+            organizationIds=[dm_org.id],
+            instanceType="StudyRole",
+        )
+        return StudyVersion(
+            id=sv_id,
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org, dm_org],
+            roles=[mfg_role],
+            instanceType="StudyVersion",
+        )
+
+    def test_device_manufacturer_name_found(self):
+        """Test device_manufacturer_name returns name when device manufacturer exists."""
+        sv = self._create_device_manufacturer_study_version("sv_dmn1")
+        assert sv.device_manufacturer_name() == "Device Mfg Corp"
+
+    def test_device_manufacturer_name_not_found(self):
+        """Test device_manufacturer_name returns empty string when no device manufacturer."""
+        assert self.study_version.device_manufacturer_name() == ""
+
+    def test_device_manufacturer_label_found(self):
+        """Test device_manufacturer_label returns label when device manufacturer exists."""
+        sv = self._create_device_manufacturer_study_version("sv_dml1")
+        assert sv.device_manufacturer_label() == "Device Mfg Label"
+
+    def test_device_manufacturer_label_not_found(self):
+        """Test device_manufacturer_label returns empty string when no device manufacturer."""
+        assert self.study_version.device_manufacturer_label() == ""
+
+    def test_device_manufacturer_label_name_returns_label(self):
+        """Test device_manufacturer_label_name returns label when it exists."""
+        sv = self._create_device_manufacturer_study_version("sv_dmln1")
+        assert sv.device_manufacturer_label_name() == "Device Mfg Label"
+
+    def test_device_manufacturer_label_name_fallback_to_name(self):
+        """Test device_manufacturer_label_name falls back to name when label is empty."""
+        dm_type_code = Code(
+            id="dm_type_nolabel",
+            code="C215661",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Device Manufacturer",
+            instanceType="Code",
+        )
+        org_no_label = Organization(
+            id="org_dm_nolabel",
+            name="Device Mfg No Label",
+            label="",
+            type=dm_type_code,
+            identifierScheme="scheme",
+            identifier="id",
+            instanceType="Organization",
+        )
+        sv = self._create_device_manufacturer_study_version("sv_dmln2", org=org_no_label)
+        assert sv.device_manufacturer_label_name() == "Device Mfg No Label"
+
+    def test_device_manufacturer_address_found(self):
+        """Test device_manufacturer_address returns address when device manufacturer has address."""
+        sv = self._create_device_manufacturer_study_version("sv_dma1")
+        assert "123 Main St" in sv.device_manufacturer_address()
+
+    def test_device_manufacturer_address_no_org(self):
+        """Test device_manufacturer_address returns empty string when no device manufacturer."""
+        assert self.study_version.device_manufacturer_address() == ""
+
+    def test_device_manufacturer_address_no_legal_address(self):
+        """Test device_manufacturer_address returns empty string when org has no legalAddress."""
+        dm_type_code = Code(
+            id="dm_type_noaddr",
+            code="C215661",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Device Manufacturer",
+            instanceType="Code",
+        )
+        org_no_addr = Organization(
+            id="org_dm_noaddr",
+            name="No Address Mfg",
+            label="No Address",
+            type=dm_type_code,
+            identifierScheme="scheme",
+            identifier="id",
+            instanceType="Organization",
+        )
+        sv = self._create_device_manufacturer_study_version("sv_dma2", org=org_no_addr)
+        assert sv.device_manufacturer_address() == ""
+
+    # =====================================================
+    # Tests for sponsor_approval_location (lines 339-340)
+    # =====================================================
+
+    def test_sponsor_approval_location_with_extension(self):
+        """Test sponsor_approval_location returns value when extension exists."""
+        sal_extension = ExtensionAttribute(
+            id="ext_sal",
+            url="www.d4k.dk/usdm/extensions/008",
+            valueString="Section 5.2",
+            instanceType="ExtensionAttribute",
+        )
+        sv = StudyVersion(
+            id="sv_sal1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            extensionAttributes=[sal_extension],
+            instanceType="StudyVersion",
+        )
+        assert sv.sponsor_approval_location() == "Section 5.2"
+
+    def test_sponsor_approval_location_no_extension(self):
+        """Test sponsor_approval_location returns empty string when no extension."""
+        assert self.study_version.sponsor_approval_location() == ""
+
+    # =====================================================
+    # Tests for compound_codes (lines 360-361)
+    # =====================================================
+
+    def test_compound_codes_with_extension(self):
+        """Test compound_codes returns value when extension exists."""
+        cc_extension = ExtensionAttribute(
+            id="ext_cc",
+            url="www.d4k.dk/usdm/extensions/004",
+            valueString="ABC-123, DEF-456",
+            instanceType="ExtensionAttribute",
+        )
+        sv = StudyVersion(
+            id="sv_cc1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            extensionAttributes=[cc_extension],
+            instanceType="StudyVersion",
+        )
+        assert sv.compound_codes() == "ABC-123, DEF-456"
+
+    def test_compound_codes_no_extension(self):
+        """Test compound_codes returns empty string when no extension."""
+        assert self.study_version.compound_codes() == ""
+
+    # =====================================================
+    # Tests for compound_names (lines 364-365)
+    # =====================================================
+
+    def test_compound_names_with_extension(self):
+        """Test compound_names returns value when extension exists."""
+        cn_extension = ExtensionAttribute(
+            id="ext_cn",
+            url="www.d4k.dk/usdm/extensions/005",
+            valueString="Aspirin, Ibuprofen",
+            instanceType="ExtensionAttribute",
+        )
+        sv = StudyVersion(
+            id="sv_cn1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            extensionAttributes=[cn_extension],
+            instanceType="StudyVersion",
+        )
+        assert sv.compound_names() == "Aspirin, Ibuprofen"
+
+    def test_compound_names_no_extension(self):
+        """Test compound_names returns empty string when no extension."""
+        assert self.study_version.compound_names() == ""
+
+    # =====================================================
+    # Tests for medical_expert (lines 368-369)
+    # =====================================================
+
+    def test_medical_expert_with_extension(self):
+        """Test medical_expert returns value when extension exists."""
+        me_extension = ExtensionAttribute(
+            id="ext_me",
+            url="www.d4k.dk/usdm/extensions/006",
+            valueString="Dr. Jane Smith",
+            instanceType="ExtensionAttribute",
+        )
+        sv = StudyVersion(
+            id="sv_me1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            extensionAttributes=[me_extension],
+            instanceType="StudyVersion",
+        )
+        assert sv.medical_expert() == "Dr. Jane Smith"
+
+    def test_medical_expert_no_extension(self):
+        """Test medical_expert returns empty string when no extension."""
+        assert self.study_version.medical_expert() == ""
+
+    # =====================================================
+    # Tests for sponsor_signatory (lines 372-373)
+    # =====================================================
+
+    def test_sponsor_signatory_with_extension(self):
+        """Test sponsor_signatory returns value when extension exists."""
+        ss_extension = ExtensionAttribute(
+            id="ext_ss",
+            url="www.d4k.dk/usdm/extensions/007",
+            valueString="John Doe, VP Clinical",
+            instanceType="ExtensionAttribute",
+        )
+        sv = StudyVersion(
+            id="sv_ss1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            extensionAttributes=[ss_extension],
+            instanceType="StudyVersion",
+        )
+        assert sv.sponsor_signatory() == "John Doe, VP Clinical"
+
+    def test_sponsor_signatory_no_extension(self):
+        """Test sponsor_signatory returns empty string when no extension."""
+        assert self.study_version.sponsor_signatory() == ""
+
+    # =====================================================
+    # Tests for to_html (lines 351-357)
+    # =====================================================
+
+    def test_to_html_matching_template(self):
+        """Test to_html returns HTML when matching template is found."""
+        from src.usdm4.api.narrative_content import NarrativeContent
+
+        # Create narrative content items
+        item1 = NarrativeContentItem(
+            id="nci_1",
+            name="Section 1 Content",
+            text="<p>Introduction text</p>",
+            instanceType="NarrativeContentItem",
+        )
+        item2 = NarrativeContentItem(
+            id="nci_2",
+            name="Section 2 Content",
+            text="<p>Methods text</p>",
+            instanceType="NarrativeContentItem",
+        )
+
+        # Create narrative contents linked in order
+        nc1 = NarrativeContent(
+            id="nc_1",
+            name="Section 1",
+            sectionNumber="1",
+            sectionTitle="Introduction",
+            displaySectionNumber=True,
+            displaySectionTitle=True,
+            nextId="nc_2",
+            contentItemId="nci_1",
+            instanceType="NarrativeContent",
+        )
+        nc2 = NarrativeContent(
+            id="nc_2",
+            name="Section 2",
+            sectionNumber="2",
+            sectionTitle="Methods",
+            displaySectionNumber=True,
+            displaySectionTitle=True,
+            previousId="nc_1",
+            contentItemId="nci_2",
+            instanceType="NarrativeContent",
+        )
+
+        # Create document version with contents
+        status_code = Code(
+            id="status_html",
+            code="FINAL",
+            codeSystem="DOC_STATUS",
+            codeSystemVersion="1.0",
+            decode="Final",
+            instanceType="Code",
+        )
+        doc_version = StudyDefinitionDocumentVersion(
+            id="dv_html",
+            version="1.0",
+            status=status_code,
+            contents=[nc1, nc2],
+            instanceType="StudyDefinitionDocumentVersion",
+        )
+
+        # Create document
+        doc_language = Code(
+            id="lang_html",
+            code="EN",
+            codeSystem="LANGUAGE",
+            codeSystemVersion="1.0",
+            decode="English",
+            instanceType="Code",
+        )
+        doc_type = Code(
+            id="doc_type_html",
+            code="PROTOCOL",
+            codeSystem="DOC_TYPE",
+            codeSystemVersion="1.0",
+            decode="Protocol Document",
+            instanceType="Code",
+        )
+        doc = StudyDefinitionDocument(
+            id="doc_html",
+            name="Protocol Document",
+            label="Protocol v1.0",
+            templateName="Protocol",
+            language=doc_language,
+            type=doc_type,
+            versions=[doc_version],
+            instanceType="StudyDefinitionDocument",
+        )
+
+        # Create document map
+        document_map = {"dv_html": {"document": doc, "version": doc_version}}
+
+        # Create study version referencing the document version
+        sv = StudyVersion(
+            id="sv_html1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            documentVersionIds=["dv_html"],
+            narrativeContentItems=[item1, item2],
+            instanceType="StudyVersion",
+        )
+
+        result = sv.to_html("Protocol", document_map)
+        assert result is not None
+        assert "<h1>1 Introduction</h1>" in result
+        assert "<p>Introduction text</p>" in result
+        assert "<h1>2 Methods</h1>" in result
+        assert "<p>Methods text</p>" in result
+
+    def test_to_html_no_matching_template(self):
+        """Test to_html returns None when no matching template is found."""
+        # Create a document with a different template name
+        status_code = Code(
+            id="status_html2",
+            code="FINAL",
+            codeSystem="DOC_STATUS",
+            codeSystemVersion="1.0",
+            decode="Final",
+            instanceType="Code",
+        )
+        doc_version = StudyDefinitionDocumentVersion(
+            id="dv_html2",
+            version="1.0",
+            status=status_code,
+            instanceType="StudyDefinitionDocumentVersion",
+        )
+        doc_language = Code(
+            id="lang_html2",
+            code="EN",
+            codeSystem="LANGUAGE",
+            codeSystemVersion="1.0",
+            decode="English",
+            instanceType="Code",
+        )
+        doc_type = Code(
+            id="doc_type_html2",
+            code="CSR",
+            codeSystem="DOC_TYPE",
+            codeSystemVersion="1.0",
+            decode="CSR Document",
+            instanceType="Code",
+        )
+        doc = StudyDefinitionDocument(
+            id="doc_html2",
+            name="CSR Document",
+            label="CSR v1.0",
+            templateName="CSR",
+            language=doc_language,
+            type=doc_type,
+            versions=[doc_version],
+            instanceType="StudyDefinitionDocument",
+        )
+
+        document_map = {"dv_html2": {"document": doc, "version": doc_version}}
+
+        sv = StudyVersion(
+            id="sv_html2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            documentVersionIds=["dv_html2"],
+            instanceType="StudyVersion",
+        )
+
+        result = sv.to_html("Protocol", document_map)
+        assert result is None
+
+    def test_to_html_case_insensitive_template(self):
+        """Test to_html matches template name case-insensitively."""
+        from src.usdm4.api.narrative_content import NarrativeContent
+
+        item = NarrativeContentItem(
+            id="nci_ci",
+            name="Content",
+            text="<p>Content</p>",
+            instanceType="NarrativeContentItem",
+        )
+        nc1 = NarrativeContent(
+            id="nc_ci1",
+            name="Section 1",
+            sectionNumber="1",
+            sectionTitle="Title",
+            displaySectionNumber=True,
+            displaySectionTitle=True,
+            nextId="nc_ci2",
+            contentItemId="nci_ci",
+            instanceType="NarrativeContent",
+        )
+        nc2 = NarrativeContent(
+            id="nc_ci2",
+            name="Section 2",
+            sectionNumber="2",
+            sectionTitle="Second",
+            displaySectionNumber=True,
+            displaySectionTitle=True,
+            previousId="nc_ci1",
+            instanceType="NarrativeContent",
+        )
+        status_code = Code(
+            id="status_ci",
+            code="FINAL",
+            codeSystem="DOC_STATUS",
+            codeSystemVersion="1.0",
+            decode="Final",
+            instanceType="Code",
+        )
+        doc_version = StudyDefinitionDocumentVersion(
+            id="dv_ci",
+            version="1.0",
+            status=status_code,
+            contents=[nc1, nc2],
+            instanceType="StudyDefinitionDocumentVersion",
+        )
+        doc_language = Code(
+            id="lang_ci",
+            code="EN",
+            codeSystem="LANGUAGE",
+            codeSystemVersion="1.0",
+            decode="English",
+            instanceType="Code",
+        )
+        doc_type = Code(
+            id="doc_type_ci",
+            code="PROTOCOL",
+            codeSystem="DOC_TYPE",
+            codeSystemVersion="1.0",
+            decode="Protocol Document",
+            instanceType="Code",
+        )
+        doc = StudyDefinitionDocument(
+            id="doc_ci",
+            name="Protocol Document",
+            label="Protocol v1.0",
+            templateName="protocol",
+            language=doc_language,
+            type=doc_type,
+            versions=[doc_version],
+            instanceType="StudyDefinitionDocument",
+        )
+
+        document_map = {"dv_ci": {"document": doc, "version": doc_version}}
+
+        sv = StudyVersion(
+            id="sv_ci",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            documentVersionIds=["dv_ci"],
+            narrativeContentItems=[item],
+            instanceType="StudyVersion",
+        )
+
+        # Search with different case
+        result = sv.to_html("PROTOCOL", document_map)
+        assert result is not None
+        assert "<p>Content</p>" in result

@@ -668,3 +668,28 @@ class TestAssemblerModuleConstant:
         """Test that MODULE constant is a string."""
         assembler = get_global_assembler()
         assert isinstance(assembler.MODULE, str)
+
+
+class TestAssemblerWrapperExceptionHandling:
+    """Test wrapper method exception handling (covers lines 157-160)."""
+
+    def test_wrapper_exception_returns_none(self):
+        """Test that wrapper returns None when builder.create raises exception."""
+        assembler = get_global_assembler()
+        initial_error_count = global_errors.error_count()
+
+        # Monkey-patch builder.create to raise an exception
+        original_create = assembler._builder.create
+
+        def raise_error(cls, params):
+            raise RuntimeError("Simulated wrapper creation failure")
+
+        assembler._builder.create = raise_error
+
+        try:
+            result = assembler.wrapper("TestSystem", "1.0.0")
+        finally:
+            assembler._builder.create = original_create
+
+        assert result is None
+        assert global_errors.error_count() > initial_error_count

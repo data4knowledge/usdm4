@@ -1882,3 +1882,159 @@ class TestAmendmentsAssemblerGeographicScopeFailure:
         finally:
             # Restore original create method
             amendments_assembler._builder.create = original_create
+
+
+class TestAmendmentsAssemblerToInt:
+    """Test _to_int method (covers lines 296-302)."""
+
+    def test_to_int_with_integer_input(self, amendments_assembler):
+        """Test _to_int with integer input returns it directly."""
+        assert amendments_assembler._to_int(42) == 42
+
+    def test_to_int_with_string_integer(self, amendments_assembler):
+        """Test _to_int with string integer parses correctly."""
+        assert amendments_assembler._to_int("123") == 123
+
+    def test_to_int_with_non_numeric_string(self, amendments_assembler, errors):
+        """Test _to_int with non-numeric string logs error and returns 0 (covers lines 296-302)."""
+        initial_error_count = errors.error_count()
+
+        result = amendments_assembler._to_int("not_a_number")
+
+        assert result == 0
+        assert errors.error_count() > initial_error_count
+
+    def test_to_int_with_float_string(self, amendments_assembler, errors):
+        """Test _to_int with float string logs error and returns 0."""
+        initial_error_count = errors.error_count()
+
+        result = amendments_assembler._to_int("3.14")
+
+        assert result == 0
+        assert errors.error_count() > initial_error_count
+
+    def test_to_int_with_empty_string(self, amendments_assembler, errors):
+        """Test _to_int with empty string logs error and returns 0."""
+        initial_error_count = errors.error_count()
+
+        result = amendments_assembler._to_int("")
+
+        assert result == 0
+        assert errors.error_count() > initial_error_count
+
+
+class TestAmendmentsAssemblerUnknownScopeResolution:
+    """Test unknown scope resolution to country/region codes (covers lines 319, 323-324, 329-330, 344)."""
+
+    def test_create_scopes_unknown_empty_string_skipped(
+        self, amendments_assembler, document_assembler
+    ):
+        """Test that empty strings in unknown array are skipped (covers line 318-319)."""
+        data = {
+            "identifier": "1",
+            "summary": "Test with empty unknown",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": "C207605:IRB/IEC Feedback",
+            },
+            "impact": make_impact(safety=True),
+            "scope": {
+                "global": False,
+                "countries": [],
+                "regions": [],
+                "sites": [],
+                "unknown": ["", "  "],
+            },
+            "changes": make_changes(),
+        }
+
+        amendments_assembler.execute(data, document_assembler)
+
+        assert amendments_assembler.amendment is not None
+
+    def test_create_scopes_unknown_resolved_as_country(
+        self, amendments_assembler, document_assembler
+    ):
+        """Test unknown item resolved as country code (covers lines 321-324)."""
+        data = {
+            "identifier": "1",
+            "summary": "Test unknown as country",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": "C207605:IRB/IEC Feedback",
+            },
+            "impact": make_impact(safety=True),
+            "scope": {
+                "global": False,
+                "countries": [],
+                "regions": [],
+                "sites": [],
+                "unknown": ["US"],
+            },
+            "changes": make_changes(),
+        }
+
+        amendments_assembler.execute(data, document_assembler)
+
+        assert amendments_assembler.amendment is not None
+        amendment = amendments_assembler.amendment
+        # Should have a country scope
+        assert len(amendment.geographicScopes) >= 1
+
+    def test_create_scopes_unknown_resolved_as_region(
+        self, amendments_assembler, document_assembler
+    ):
+        """Test unknown item resolved as region code (covers lines 327-330)."""
+        data = {
+            "identifier": "1",
+            "summary": "Test unknown as region",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": "C207605:IRB/IEC Feedback",
+            },
+            "impact": make_impact(safety=True),
+            "scope": {
+                "global": False,
+                "countries": [],
+                "regions": [],
+                "sites": [],
+                "unknown": ["Europe"],
+            },
+            "changes": make_changes(),
+        }
+
+        amendments_assembler.execute(data, document_assembler)
+
+        assert amendments_assembler.amendment is not None
+        amendment = amendments_assembler.amendment
+        assert len(amendment.geographicScopes) >= 1
+
+    def test_create_scopes_with_sites_array(
+        self, amendments_assembler, document_assembler
+    ):
+        """Test scope with sites array creates site scope extensions (covers line 344)."""
+        data = {
+            "identifier": "1",
+            "summary": "Test with sites",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": "C207605:IRB/IEC Feedback",
+            },
+            "impact": make_impact(safety=True),
+            "scope": {
+                "global": False,
+                "countries": ["US"],
+                "regions": [],
+                "sites": ["Site-001", "Site-002"],
+                "unknown": [],
+            },
+            "changes": make_changes(),
+        }
+
+        amendments_assembler.execute(data, document_assembler)
+
+        assert amendments_assembler.amendment is not None
+        amendment = amendments_assembler.amendment
+        # Should have site scope extensions
+        assert amendment.extensionAttributes is not None
+        assert len(amendment.extensionAttributes) >= 1

@@ -937,3 +937,130 @@ class TestEncoderEdgeCases:
 
         assert result == "PT0M"
         encoder._errors.warning.assert_called()
+
+
+class TestEncoderGeographicScope:
+    """Test geographic_scope encoding method."""
+
+    @pytest.fixture
+    def encoder(self):
+        builder = Mock(spec=Builder)
+        errors = Mock(spec=Errors)
+        return Encoder(builder, errors)
+
+    def test_geographic_scope_country(self, encoder):
+        """Test COUNTRY scope returns correct code."""
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.geographic_scope("COUNTRY")
+
+        encoder._builder.cdisc_code.assert_called_with("C25464", "Country")
+        assert result == mock_code
+
+    def test_geographic_scope_global(self, encoder):
+        """Test GLOBAL scope returns correct code."""
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.geographic_scope("GLOBAL")
+
+        encoder._builder.cdisc_code.assert_called_with("C68846", "Global")
+        assert result == mock_code
+
+    def test_geographic_scope_region(self, encoder):
+        """Test REGION scope returns correct code."""
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.geographic_scope("REGION")
+
+        encoder._builder.cdisc_code.assert_called_with("C41129", "Region")
+        assert result == mock_code
+
+    def test_geographic_scope_lowercase(self, encoder):
+        """Test lowercase scope input."""
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.geographic_scope("country")
+
+        encoder._builder.cdisc_code.assert_called_with("C25464", "Country")
+        assert result == mock_code
+
+    def test_geographic_scope_unknown_falls_back_to_global(self, encoder):
+        """Test unknown scope type falls back to global (covers lines 270-275)."""
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.geographic_scope("UNKNOWN_TYPE")
+
+        encoder._errors.warning.assert_called()
+        encoder._builder.cdisc_code.assert_called_with("C68846", "Global")
+        assert result == mock_code
+
+    def test_geographic_scope_empty_string_falls_back_to_global(self, encoder):
+        """Test empty string scope falls back to global (covers lines 270-275)."""
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.geographic_scope("")
+
+        encoder._errors.warning.assert_called()
+        encoder._builder.cdisc_code.assert_called_with("C68846", "Global")
+        assert result == mock_code
+
+
+class TestEncoderToBoolean:
+    """Test to_boolean encoding method."""
+
+    @pytest.fixture
+    def encoder(self):
+        builder = Mock(spec=Builder)
+        errors = Mock(spec=Errors)
+        return Encoder(builder, errors)
+
+    def test_to_boolean_true_string(self, encoder):
+        """Test 'true' returns True (covers line 322)."""
+        assert encoder.to_boolean("true") is True
+
+    def test_to_boolean_false_string(self, encoder):
+        """Test 'false' returns False."""
+        assert encoder.to_boolean("false") is False
+
+    def test_to_boolean_yes(self, encoder):
+        """Test 'yes' returns True."""
+        assert encoder.to_boolean("yes") is True
+
+    def test_to_boolean_no(self, encoder):
+        """Test 'no' returns False."""
+        assert encoder.to_boolean("no") is False
+
+    def test_to_boolean_one(self, encoder):
+        """Test '1' returns True."""
+        assert encoder.to_boolean("1") is True
+
+    def test_to_boolean_zero(self, encoder):
+        """Test '0' returns False."""
+        assert encoder.to_boolean("0") is False
+
+    def test_to_boolean_y(self, encoder):
+        """Test 'y' returns True."""
+        assert encoder.to_boolean("y") is True
+
+    def test_to_boolean_n(self, encoder):
+        """Test 'n' returns False."""
+        assert encoder.to_boolean("n") is False
+
+    def test_to_boolean_none_returns_false(self, encoder):
+        """Test None returns False."""
+        assert encoder.to_boolean(None) is False
+
+    def test_to_boolean_unknown_returns_false(self, encoder):
+        """Test unknown string returns False."""
+        assert encoder.to_boolean("maybe") is False
+
+    def test_to_boolean_uppercase(self, encoder):
+        """Test uppercase input is lowered."""
+        assert encoder.to_boolean("TRUE") is True
+        assert encoder.to_boolean("YES") is True

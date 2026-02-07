@@ -848,3 +848,219 @@ class TestTimelineAssemblerExceptionCoverage:
         assert timeline_assembler._activities == []
         assert timeline_assembler._conditions == []
         assert timeline_assembler._condition_links == {}
+
+
+class TestTimelineAssemblerBeforeTiming:
+    """Test _add_timing 'Before' branch (covers lines 370-373)."""
+
+    def test_timing_before_anchor(self, timeline_assembler):
+        """Test that timepoints before the anchor use 'Before' type."""
+        # Build data where first timepoint is before the anchor (value < 0),
+        # second timepoint is the anchor (value = 1, first non-negative)
+        data = {
+            "epochs": {"items": [{"text": "Screening"}, {"text": "Screening"}, {"text": "Treatment"}]},
+            "visits": {
+                "items": [
+                    {"text": "Pre-Visit", "references": []},
+                    {"text": "Visit 1", "references": []},
+                    {"text": "Visit 2", "references": []},
+                ]
+            },
+            "timepoints": {
+                "items": [
+                    {"index": "0", "text": "Day -7", "value": -7, "unit": "days"},
+                    {"index": "1", "text": "Day 1", "value": 1, "unit": "days"},
+                    {"index": "2", "text": "Day 14", "value": 14, "unit": "days"},
+                ]
+            },
+            "windows": {
+                "items": [
+                    {"before": 1, "after": 1, "unit": "days"},
+                    {"before": 0, "after": 0, "unit": "days"},
+                    {"before": 2, "after": 2, "unit": "days"},
+                ]
+            },
+        }
+
+        timeline_assembler._add_epochs(data)
+        timeline_assembler._add_encounters(data)
+        timeline_assembler._add_timepoints(data)
+        timings = timeline_assembler._add_timing(data)
+
+        # Should create 3 timings: one "Before", one "Fixed Reference", one "After"
+        assert len(timings) == 3
+
+    def test_full_execution_with_before_timing(self, timeline_assembler):
+        """Test full execution workflow with before-anchor timepoints."""
+        data = {
+            "epochs": {"items": [{"text": "Screening"}, {"text": "Screening"}, {"text": "Treatment"}]},
+            "visits": {
+                "items": [
+                    {"text": "Pre-Visit", "references": []},
+                    {"text": "Visit 1", "references": []},
+                    {"text": "Visit 2", "references": []},
+                ]
+            },
+            "timepoints": {
+                "items": [
+                    {"index": "0", "text": "Day -7", "value": -7, "unit": "days"},
+                    {"index": "1", "text": "Day 1", "value": 1, "unit": "days"},
+                    {"index": "2", "text": "Day 14", "value": 14, "unit": "days"},
+                ]
+            },
+            "windows": {
+                "items": [
+                    {"before": 1, "after": 1, "unit": "days"},
+                    {"before": 0, "after": 0, "unit": "days"},
+                    {"before": 2, "after": 2, "unit": "days"},
+                ]
+            },
+            "activities": {
+                "items": [
+                    {"name": "Consent", "visits": [{"index": 0, "references": []}]},
+                    {"name": "Assessment", "visits": [{"index": 1, "references": []}]},
+                    {"name": "Treatment", "visits": [{"index": 2, "references": []}]},
+                ]
+            },
+            "conditions": {"items": []},
+        }
+
+        timeline_assembler.execute(data)
+
+        assert len(timeline_assembler.timelines) == 1
+        timeline = timeline_assembler.timelines[0]
+        assert len(timeline.timings) == 3
+
+
+class TestTimelineAssemblerChildReferences:
+    """Test _condition_combined in child activities (covers line 490)."""
+
+    def test_link_children_with_references(self, timeline_assembler):
+        """Test linking child activities with condition references (covers lines 489-492)."""
+        data = {
+            "epochs": {"items": [{"text": "Screening"}]},
+            "visits": {
+                "items": [
+                    {"text": "Visit 1", "references": ["c1"]},
+                ]
+            },
+            "timepoints": {
+                "items": [
+                    {"index": "0", "text": "Day 1", "value": "1", "unit": "days"},
+                ]
+            },
+            "activities": {
+                "items": [
+                    {
+                        "name": "Parent",
+                        "children": [
+                            {
+                                "name": "Child",
+                                "index": 0,
+                                "visits": [{"index": 0, "references": ["c1"]}],
+                            }
+                        ],
+                    }
+                ]
+            },
+        }
+
+        timeline_assembler._add_epochs(data)
+        timeline_assembler._add_encounters(data)
+        timeline_assembler._add_activities(data)
+        timeline_assembler._add_timepoints(data)
+        timeline_assembler._link_timepoints_and_activities(data)
+
+        # Verify the condition link was created for child reference
+        assert "c1" in timeline_assembler._condition_links
+        link = timeline_assembler._condition_links["c1"]
+        assert 0 in link["timepoint_index"]
+        assert len(link["activity_id"]) >= 1
+
+
+class TestTimelineAssemblerBiomedicalConcepts:
+    """Test _get_biomedical_concepts method (covers lines 555-602)."""
+
+    def test_get_biomedical_concepts_with_no_actions(self, timeline_assembler):
+        """Test _get_biomedical_concepts when activity has no 'actions' key."""
+        activity = {"name": "Simple Activity"}
+
+        bc_ids, sbc_ids, procedures = timeline_assembler._get_biomedical_concepts(activity)
+
+        assert bc_ids == []
+        assert sbc_ids == []
+        assert procedures == []
+
+    def test_get_biomedical_concepts_with_surrogate_bc(self, timeline_assembler):
+        """Test _get_biomedical_concepts creates surrogate BC when not in library (covers lines 564-580)."""
+        activity = {
+            "name": "Activity With BCs",
+            "actions": {
+                "bcs": ["NonExistentBC"],
+            },
+        }
+
+        bc_ids, sbc_ids, procedures = timeline_assembler._get_biomedical_concepts(activity)
+
+        # Since "NonExistentBC" won't exist in CDISC BC library, should create surrogate
+        assert len(sbc_ids) >= 1
+        assert len(procedures) >= 1
+        # Surrogates should be added to the assembler's list
+        assert len(timeline_assembler._biomedical_concept_surrogates) >= 1
+
+    def test_get_biomedical_concepts_creates_procedure(self, timeline_assembler):
+        """Test _get_biomedical_concepts creates Procedure objects (covers lines 581-602)."""
+        activity = {
+            "name": "Activity With Procedure",
+            "actions": {
+                "bcs": ["AnotherNonExistentBC"],
+            },
+        }
+
+        bc_ids, sbc_ids, procedures = timeline_assembler._get_biomedical_concepts(activity)
+
+        # Should have created a procedure
+        assert len(procedures) >= 1
+        procedure = procedures[0]
+        assert procedure.label == "AnotherNonExistentBC"
+        assert procedure.procedureType == "Activity With Procedure"
+
+    def test_get_biomedical_concepts_with_multiple_bcs(self, timeline_assembler):
+        """Test _get_biomedical_concepts with multiple BC names."""
+        activity = {
+            "name": "Multi BC Activity",
+            "actions": {
+                "bcs": ["BC_One", "BC_Two", "BC_Three"],
+            },
+        }
+
+        bc_ids, sbc_ids, procedures = timeline_assembler._get_biomedical_concepts(activity)
+
+        # Should create surrogates and procedures for all three
+        assert len(sbc_ids) >= 3
+        assert len(procedures) >= 3
+
+    def test_activities_with_actions_integration(self, timeline_assembler):
+        """Test full activity creation with biomedical concepts."""
+        data = {
+            "activities": {
+                "items": [
+                    {
+                        "name": "BC Activity",
+                        "visits": [{"index": 0, "references": []}],
+                        "actions": {
+                            "bcs": ["TestBC"],
+                        },
+                    },
+                ]
+            }
+        }
+
+        activities = timeline_assembler._add_activities(data)
+
+        assert len(activities) == 1
+        activity = activities[0]
+        # Activity should have surrogate BC IDs
+        assert len(activity.bcSurrogateIds) >= 1
+        # Activity should have procedures
+        assert len(activity.definedProcedures) >= 1

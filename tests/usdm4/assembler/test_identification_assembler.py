@@ -1,3 +1,4 @@
+import copy
 import os
 import pathlib
 import pytest
@@ -1712,3 +1713,195 @@ class TestIdentificationAssemblerRoles:
             # Second role should be from non-standard (sponsor)
             assert identification_assembler.roles[0].name == "ROLE_1"
             assert identification_assembler.roles[1].name == "ROLE_2"
+
+
+class TestIdentificationAssemblerTitleExceptionHandler:
+    """Test title creation exception handler (covers lines 278-279)."""
+
+    def test_title_creation_exception_is_caught(self, builder, errors):
+        """Test that exceptions during title creation are caught and logged."""
+        assembler = IdentificationAssembler(builder, errors)
+        initial_error_count = errors.error_count()
+
+        # Monkey-patch _create_title to raise an exception
+        original = assembler._create_title
+
+        def raise_error(type, text):
+            raise RuntimeError("Simulated title creation failure")
+
+        assembler._create_title = raise_error
+
+        try:
+            data = {"titles": {"brief": "Will fail"}}
+            assembler.execute(data)
+        finally:
+            assembler._create_title = original
+
+        assert len(assembler.titles) == 0
+        assert errors.error_count() > initial_error_count
+
+
+class TestIdentificationAssemblerRolesProcessing:
+    """Test roles processing loop (covers lines 326-347)."""
+
+    _original_role_orgs = None
+
+    def setup_method(self):
+        """Restore ROLE_ORGS before each test since _create_organization mutates it."""
+        if TestIdentificationAssemblerRolesProcessing._original_role_orgs is None:
+            TestIdentificationAssemblerRolesProcessing._original_role_orgs = copy.deepcopy(
+                IdentificationAssembler.ROLE_ORGS
+            )
+        IdentificationAssembler.ROLE_ORGS = copy.deepcopy(
+            TestIdentificationAssemblerRolesProcessing._original_role_orgs
+        )
+
+    def test_execute_with_co_sponsor_role(self, identification_assembler):
+        """Test execute with co_sponsor role data (covers lines 326-336)."""
+        data = {
+            "roles": {
+                "co_sponsor": {
+                    "name": "Co-Sponsor Corp",
+                },
+            }
+        }
+
+        identification_assembler.execute(data)
+
+        # Should have created an organization for co_sponsor
+        assert len(identification_assembler.organizations) >= 1
+        org_labels = [org.label for org in identification_assembler.organizations]
+        assert "Co-Sponsor Corp" in org_labels
+
+    def test_execute_with_local_sponsor_role(self, identification_assembler):
+        """Test execute with local_sponsor role data."""
+        data = {
+            "roles": {
+                "local_sponsor": {
+                    "name": "Local Sponsor Ltd",
+                },
+            }
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) >= 1
+        org_labels = [org.label for org in identification_assembler.organizations]
+        assert "Local Sponsor Ltd" in org_labels
+
+    def test_execute_with_device_manufacturer_role(self, identification_assembler):
+        """Test execute with device_manufacturer role data."""
+        data = {
+            "roles": {
+                "device_manufacturer": {
+                    "name": "Device Maker Inc",
+                },
+            }
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) >= 1
+        org_labels = [org.label for org in identification_assembler.organizations]
+        assert "Device Maker Inc" in org_labels
+
+    def test_execute_with_role_and_address(self, identification_assembler):
+        """Test execute with role that includes an address (covers line 332)."""
+        data = {
+            "roles": {
+                "co_sponsor": {
+                    "name": "Addressed Corp",
+                    "address": {
+                        "lines": ["123 Main St"],
+                        "city": "Springfield",
+                        "district": "",
+                        "state": "IL",
+                        "postalCode": "62701",
+                        "country": "USA",
+                    },
+                },
+            }
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) >= 1
+
+    def test_execute_with_none_role_info_skips(self, identification_assembler):
+        """Test execute with None role info skips processing (covers lines 327-328)."""
+        data = {
+            "roles": {
+                "co_sponsor": None,
+                "local_sponsor": None,
+            }
+        }
+
+        identification_assembler.execute(data)
+
+        # Should not create any organizations since info is None
+        assert len(identification_assembler.organizations) == 0
+
+    def test_execute_with_role_exception_is_caught(self, builder, errors):
+        """Test exception during role processing is caught (covers lines 342-347)."""
+        assembler = IdentificationAssembler(builder, errors)
+        builder.clear()
+        initial_error_count = errors.error_count()
+
+        # Use an invalid role key that doesn't exist in ROLE_ORGS
+        data = {
+            "roles": {
+                "nonexistent_role": {"name": "Bad Role"},
+            }
+        }
+
+        assembler.execute(data)
+
+        assert errors.error_count() > initial_error_count
+
+    def test_execute_with_multiple_roles(self, identification_assembler):
+        """Test execute with multiple roles."""
+        data = {
+            "roles": {
+                "co_sponsor": {"name": "Co-Sponsor Corp"},
+                "local_sponsor": {"name": "Local Sponsor Ltd"},
+                "device_manufacturer": {"name": "Device Maker Inc"},
+            }
+        }
+
+        identification_assembler.execute(data)
+
+        # Should create organizations for all three roles
+        assert len(identification_assembler.organizations) >= 3
+
+
+class TestIdentificationAssemblerOtherData:
+    """Test 'other' data processing (covers lines 348-352)."""
+
+    def test_execute_with_other_data(self, identification_assembler):
+        """Test execute with 'other' data sets sponsor_signatory etc."""
+        data = {
+            "other": {
+                "sponsor_signatory": "Dr. Jane Smith",
+                "medical_expert": "Dr. John Doe",
+                "compound_names": "Compound A, Compound B",
+                "compound_codes": "ABC-123, DEF-456",
+            }
+        }
+
+        identification_assembler.execute(data)
+
+        assert identification_assembler.sponsor_signatory == "Dr. Jane Smith"
+        assert identification_assembler.medical_expert == "Dr. John Doe"
+        assert identification_assembler.compound_names == "Compound A, Compound B"
+        assert identification_assembler.compound_codes == "ABC-123, DEF-456"
+
+    def test_execute_without_other_data_leaves_defaults(self, identification_assembler):
+        """Test execute without 'other' data leaves properties as None."""
+        data = {"titles": {"brief": "Test"}}
+
+        identification_assembler.execute(data)
+
+        assert identification_assembler.sponsor_signatory is None
+        assert identification_assembler.medical_expert is None
+        assert identification_assembler.compound_names is None
+        assert identification_assembler.compound_codes is None

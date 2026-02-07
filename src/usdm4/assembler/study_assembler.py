@@ -112,7 +112,7 @@ class StudyAssembler(BaseAssembler):
 
             # Extensions
             extensions = []
-            if not valid_date:
+            if not valid_date and "sponsor_approval_date" in data:
                 # Create where approval infomration is extension
                 self._create_extension(
                     extensions, SAL_EXT_URL, data["sponsor_approval_date"]

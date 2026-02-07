@@ -195,6 +195,163 @@ class TestStudyDefinitionDocumentVersion:
         assert len(doc_version.dateValues) == 2
         assert len(doc_version.notes) == 2
 
+    # Tests for approval_date()
+    def test_approval_date_found(self):
+        """Test approval_date returns GovernanceDate with code C71476."""
+        approval_code = Code(
+            id="type_approval",
+            code="C71476",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Protocol Approval Date",
+            instanceType="Code",
+        )
+        geo_type_code = Code(
+            id="geo_type1",
+            code="COUNTRY",
+            codeSystem="GEO_TYPE",
+            codeSystemVersion="1.0",
+            decode="Country",
+            instanceType="Code",
+        )
+        geo_scope = GeographicScope(
+            id="geo1", type=geo_type_code, instanceType="GeographicScope"
+        )
+        gov_date = GovernanceDate(
+            id="date_approval",
+            name="Approval Date",
+            label="Approval",
+            type=approval_code,
+            dateValue=date(2024, 6, 15),
+            geographicScopes=[geo_scope],
+            instanceType="GovernanceDate",
+        )
+        self.doc_version.dateValues = [gov_date]
+
+        result = self.doc_version.approval_date()
+        assert result is not None
+        assert result.id == "date_approval"
+        assert result.dateValue == date(2024, 6, 15)
+
+    def test_approval_date_not_found(self):
+        """Test approval_date returns None when no C71476 date exists."""
+        other_code = Code(
+            id="type_other",
+            code="C99999",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Other Date",
+            instanceType="Code",
+        )
+        geo_type_code = Code(
+            id="geo_type1",
+            code="COUNTRY",
+            codeSystem="GEO_TYPE",
+            codeSystemVersion="1.0",
+            decode="Country",
+            instanceType="Code",
+        )
+        geo_scope = GeographicScope(
+            id="geo1", type=geo_type_code, instanceType="GeographicScope"
+        )
+        gov_date = GovernanceDate(
+            id="date_other",
+            name="Other Date",
+            label="Other",
+            type=other_code,
+            dateValue=date(2024, 1, 1),
+            geographicScopes=[geo_scope],
+            instanceType="GovernanceDate",
+        )
+        self.doc_version.dateValues = [gov_date]
+
+        result = self.doc_version.approval_date()
+        assert result is None
+
+    def test_approval_date_empty_date_values(self):
+        """Test approval_date returns None with empty dateValues."""
+        assert self.doc_version.approval_date() is None
+
+    # Tests for approval_date_value()
+    def test_approval_date_value_found(self):
+        """Test approval_date_value returns date when C71476 date exists."""
+        approval_code = Code(
+            id="type_approval",
+            code="C71476",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Protocol Approval Date",
+            instanceType="Code",
+        )
+        geo_type_code = Code(
+            id="geo_type1",
+            code="COUNTRY",
+            codeSystem="GEO_TYPE",
+            codeSystemVersion="1.0",
+            decode="Country",
+            instanceType="Code",
+        )
+        geo_scope = GeographicScope(
+            id="geo1", type=geo_type_code, instanceType="GeographicScope"
+        )
+        gov_date = GovernanceDate(
+            id="date_approval",
+            name="Approval Date",
+            label="Approval",
+            type=approval_code,
+            dateValue=date(2024, 6, 15),
+            geographicScopes=[geo_scope],
+            instanceType="GovernanceDate",
+        )
+        self.doc_version.dateValues = [gov_date]
+
+        result = self.doc_version.approval_date_value()
+        assert result == date(2024, 6, 15)
+
+    def test_approval_date_value_not_found(self):
+        """Test approval_date_value returns None when no C71476 date exists."""
+        assert self.doc_version.approval_date_value() is None
+
+    # Tests for approval_date_text()
+    def test_approval_date_text_found(self):
+        """Test approval_date_text returns formatted date string."""
+        approval_code = Code(
+            id="type_approval",
+            code="C71476",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Protocol Approval Date",
+            instanceType="Code",
+        )
+        geo_type_code = Code(
+            id="geo_type1",
+            code="COUNTRY",
+            codeSystem="GEO_TYPE",
+            codeSystemVersion="1.0",
+            decode="Country",
+            instanceType="Code",
+        )
+        geo_scope = GeographicScope(
+            id="geo1", type=geo_type_code, instanceType="GeographicScope"
+        )
+        gov_date = GovernanceDate(
+            id="date_approval",
+            name="Approval Date",
+            label="Approval",
+            type=approval_code,
+            dateValue=date(2024, 6, 15),
+            geographicScopes=[geo_scope],
+            instanceType="GovernanceDate",
+        )
+        self.doc_version.dateValues = [gov_date]
+
+        result = self.doc_version.approval_date_text()
+        assert result == "2024-06-15"
+
+    def test_approval_date_text_not_found(self):
+        """Test approval_date_text returns None when no C71476 date exists."""
+        assert self.doc_version.approval_date_text() is None
+
     # Tests for narrative_content_in_order()
     def test_narrative_content_in_order_empty(self):
         """Test narrative_content_in_order with empty contents."""
