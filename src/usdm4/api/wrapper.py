@@ -27,5 +27,6 @@ class Wrapper(ApiBaseModel):
     def to_html(self, template: str) -> str:
         study: Study = self.study
         version: StudyVersion = self.first_version()
-        return version.to_html(template, study.document_map()) if version and study else ""
-         
+        return (
+            version.to_html(template, study.document_map()) if version and study else ""
+        )

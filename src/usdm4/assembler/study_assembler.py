@@ -119,14 +119,18 @@ class StudyAssembler(BaseAssembler):
                 )
             if "confidentiality" in data:
                 # Create confidentiality extension
-                self._create_extension(
-                    extensions, CS_EXT_URL, data["confidentiality"]
-                )
+                self._create_extension(extensions, CS_EXT_URL, data["confidentiality"])
             if "original_protocol" in data:
                 # Create original protocol
                 extensions.append(
                     self._builder.create(
-                        ExtensionAttribute, {"url": OV_EXT_URL, "valueBoolean": self._encoder.to_boolean(data["original_protocol"])}
+                        ExtensionAttribute,
+                        {
+                            "url": OV_EXT_URL,
+                            "valueBoolean": self._encoder.to_boolean(
+                                data["original_protocol"]
+                            ),
+                        },
                     )
                 )
             if identification_assembler.compound_codes:

@@ -2410,8 +2410,12 @@ class TestStudyVersion:
             instanceType="Organization",
         )
         sv = self._create_study_version_with_role_org(
-            "sv_csln2", "rc_csln2", "C215669", "r_csln2",
-            org=org_no_label, role_org_ids=["org_csln_nolabel"],
+            "sv_csln2",
+            "rc_csln2",
+            "C215669",
+            "r_csln2",
+            org=org_no_label,
+            role_org_ids=["org_csln_nolabel"],
         )
         assert sv.co_sponsor_label_name() == "Co-Sponsor Inc"
 
@@ -2438,8 +2442,12 @@ class TestStudyVersion:
             instanceType="Organization",
         )
         sv = self._create_study_version_with_role_org(
-            "sv_csa2", "rc_csa2", "C215669", "r_csa2",
-            org=org_no_addr, role_org_ids=["org_csa_noaddr"],
+            "sv_csa2",
+            "rc_csa2",
+            "C215669",
+            "r_csa2",
+            org=org_no_addr,
+            role_org_ids=["org_csa_noaddr"],
         )
         assert sv.co_sponsor_address() == ""
 
@@ -2489,8 +2497,12 @@ class TestStudyVersion:
             instanceType="Organization",
         )
         sv = self._create_study_version_with_role_org(
-            "sv_lsln2", "rc_lsln2", "C215670", "r_lsln2",
-            org=org_no_label, role_org_ids=["org_lsln_nolabel"],
+            "sv_lsln2",
+            "rc_lsln2",
+            "C215670",
+            "r_lsln2",
+            org=org_no_label,
+            role_org_ids=["org_lsln_nolabel"],
         )
         assert sv.local_sponsor_label_name() == "Local Sponsor Inc"
 
@@ -2517,8 +2529,12 @@ class TestStudyVersion:
             instanceType="Organization",
         )
         sv = self._create_study_version_with_role_org(
-            "sv_lsa2", "rc_lsa2", "C215670", "r_lsa2",
-            org=org_no_addr, role_org_ids=["org_lsa_noaddr"],
+            "sv_lsa2",
+            "rc_lsa2",
+            "C215670",
+            "r_lsa2",
+            org=org_no_addr,
+            role_org_ids=["org_lsa_noaddr"],
         )
         assert sv.local_sponsor_address() == ""
 
@@ -2617,7 +2633,9 @@ class TestStudyVersion:
             identifier="id",
             instanceType="Organization",
         )
-        sv = self._create_device_manufacturer_study_version("sv_dmln2", org=org_no_label)
+        sv = self._create_device_manufacturer_study_version(
+            "sv_dmln2", org=org_no_label
+        )
         assert sv.device_manufacturer_label_name() == "Device Mfg No Label"
 
     def test_device_manufacturer_address_found(self):

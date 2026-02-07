@@ -1,7 +1,6 @@
 import os
 import pathlib
 import pytest
-from unittest.mock import MagicMock
 from simple_error_log.errors import Errors
 from src.usdm4.assembler.amendments_assembler import AmendmentsAssembler
 from src.usdm4.assembler.document_assembler import DocumentAssembler

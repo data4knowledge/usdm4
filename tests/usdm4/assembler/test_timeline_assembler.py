@@ -858,7 +858,13 @@ class TestTimelineAssemblerBeforeTiming:
         # Build data where first timepoint is before the anchor (value < 0),
         # second timepoint is the anchor (value = 1, first non-negative)
         data = {
-            "epochs": {"items": [{"text": "Screening"}, {"text": "Screening"}, {"text": "Treatment"}]},
+            "epochs": {
+                "items": [
+                    {"text": "Screening"},
+                    {"text": "Screening"},
+                    {"text": "Treatment"},
+                ]
+            },
             "visits": {
                 "items": [
                     {"text": "Pre-Visit", "references": []},
@@ -893,7 +899,13 @@ class TestTimelineAssemblerBeforeTiming:
     def test_full_execution_with_before_timing(self, timeline_assembler):
         """Test full execution workflow with before-anchor timepoints."""
         data = {
-            "epochs": {"items": [{"text": "Screening"}, {"text": "Screening"}, {"text": "Treatment"}]},
+            "epochs": {
+                "items": [
+                    {"text": "Screening"},
+                    {"text": "Screening"},
+                    {"text": "Treatment"},
+                ]
+            },
             "visits": {
                 "items": [
                     {"text": "Pre-Visit", "references": []},
@@ -985,7 +997,9 @@ class TestTimelineAssemblerBiomedicalConcepts:
         """Test _get_biomedical_concepts when activity has no 'actions' key."""
         activity = {"name": "Simple Activity"}
 
-        bc_ids, sbc_ids, procedures = timeline_assembler._get_biomedical_concepts(activity)
+        bc_ids, sbc_ids, procedures = timeline_assembler._get_biomedical_concepts(
+            activity
+        )
 
         assert bc_ids == []
         assert sbc_ids == []
@@ -1000,7 +1014,9 @@ class TestTimelineAssemblerBiomedicalConcepts:
             },
         }
 
-        bc_ids, sbc_ids, procedures = timeline_assembler._get_biomedical_concepts(activity)
+        bc_ids, sbc_ids, procedures = timeline_assembler._get_biomedical_concepts(
+            activity
+        )
 
         # Since "NonExistentBC" won't exist in CDISC BC library, should create surrogate
         assert len(sbc_ids) >= 1
@@ -1017,7 +1033,9 @@ class TestTimelineAssemblerBiomedicalConcepts:
             },
         }
 
-        bc_ids, sbc_ids, procedures = timeline_assembler._get_biomedical_concepts(activity)
+        bc_ids, sbc_ids, procedures = timeline_assembler._get_biomedical_concepts(
+            activity
+        )
 
         # Should have created a procedure
         assert len(procedures) >= 1
@@ -1034,7 +1052,9 @@ class TestTimelineAssemblerBiomedicalConcepts:
             },
         }
 
-        bc_ids, sbc_ids, procedures = timeline_assembler._get_biomedical_concepts(activity)
+        bc_ids, sbc_ids, procedures = timeline_assembler._get_biomedical_concepts(
+            activity
+        )
 
         # Should create surrogates and procedures for all three
         assert len(sbc_ids) >= 3

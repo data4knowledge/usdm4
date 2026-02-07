@@ -1749,8 +1749,8 @@ class TestIdentificationAssemblerRolesProcessing:
     def setup_method(self):
         """Restore ROLE_ORGS before each test since _create_organization mutates it."""
         if TestIdentificationAssemblerRolesProcessing._original_role_orgs is None:
-            TestIdentificationAssemblerRolesProcessing._original_role_orgs = copy.deepcopy(
-                IdentificationAssembler.ROLE_ORGS
+            TestIdentificationAssemblerRolesProcessing._original_role_orgs = (
+                copy.deepcopy(IdentificationAssembler.ROLE_ORGS)
             )
         IdentificationAssembler.ROLE_ORGS = copy.deepcopy(
             TestIdentificationAssemblerRolesProcessing._original_role_orgs

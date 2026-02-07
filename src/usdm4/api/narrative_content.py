@@ -34,11 +34,13 @@ class NarrativeContent(ApiBaseModelWithIdAndName):
             result = 1
         else:
             text = (
-                self.sectionNumber[:-1] if self.sectionNumber.endswith(".") else self.sectionNumber
+                self.sectionNumber[:-1]
+                if self.sectionNumber.endswith(".")
+                else self.sectionNumber
             )
             result = len(text.split("."))
         return result
-    
+
     def format_heading(self) -> str:
         level = self.level()
         number = self.sectionNumber

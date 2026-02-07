@@ -1159,9 +1159,7 @@ class TestStudyAssemblerAdditionalCoverage:
 class TestStudyAssemblerExtensions:
     """Test extension creation paths (covers lines 127, 134, 139, 144, 149)."""
 
-    def test_execute_with_original_protocol(
-        self, study_assembler, prepared_assemblers
-    ):
+    def test_execute_with_original_protocol(self, study_assembler, prepared_assemblers):
         """Test execute with original_protocol creates boolean extension (covers line 127)."""
         data = {
             "name": {"acronym": "TST"},
@@ -1200,31 +1198,52 @@ class TestStudyAssemblerExtensions:
         ta = TimelineAssembler(builder, errors)
 
         # Set up identification with compound data
-        ia.execute({
-            "titles": {"brief": "Test"},
-            "identifiers": [{"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}}],
-            "other": {
-                "sponsor_signatory": "Dr. Smith",
-                "medical_expert": "Dr. Jones",
-                "compound_names": "CompoundA",
-                "compound_codes": "CODE-123",
-            },
-        })
+        ia.execute(
+            {
+                "titles": {"brief": "Test"},
+                "identifiers": [
+                    {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}}
+                ],
+                "other": {
+                    "sponsor_signatory": "Dr. Smith",
+                    "medical_expert": "Dr. Jones",
+                    "compound_names": "CompoundA",
+                    "compound_codes": "CODE-123",
+                },
+            }
+        )
 
-        pa.execute({
-            "label": "Pop",
-            "inclusion_exclusion": {"inclusion": ["Age >= 18"], "exclusion": ["Pregnant"]},
-        })
+        pa.execute(
+            {
+                "label": "Pop",
+                "inclusion_exclusion": {
+                    "inclusion": ["Age >= 18"],
+                    "exclusion": ["Pregnant"],
+                },
+            }
+        )
         ta._timelines = []
         ta._epochs = []
         ta._encounters = []
         ta._activities = []
         ta._conditions = []
-        sda.execute({"label": "Design", "rationale": "Rat", "trial_phase": "phase-1"}, pa, ta)
-        da.execute({
-            "document": {"label": "Doc", "version": "1.0", "status": "final", "template": "T", "version_date": "2024-01-01"},
-            "sections": [{"section_number": "1", "section_title": "Intro", "text": "Text"}],
-        })
+        sda.execute(
+            {"label": "Design", "rationale": "Rat", "trial_phase": "phase-1"}, pa, ta
+        )
+        da.execute(
+            {
+                "document": {
+                    "label": "Doc",
+                    "version": "1.0",
+                    "status": "final",
+                    "template": "T",
+                    "version_date": "2024-01-01",
+                },
+                "sections": [
+                    {"section_number": "1", "section_title": "Intro", "text": "Text"}
+                ],
+            }
+        )
         aa.execute(None, da)
 
         data = {

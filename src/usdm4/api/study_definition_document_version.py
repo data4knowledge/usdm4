@@ -66,13 +66,17 @@ class StudyDefinitionDocumentVersion(ApiBaseModelWithId):
             None,
         )
 
-    def to_html(self, narrative_content_item_map: dict[str, NarrativeContentItem]) -> str:
+    def to_html(
+        self, narrative_content_item_map: dict[str, NarrativeContentItem]
+    ) -> str:
         result = ""
         narrative_contents = self.narrative_content_in_order()
         narrative_content: NarrativeContent
         for narrative_content in narrative_contents:
             result += narrative_content.format_heading()
-            content: NarrativeContentItem = narrative_content.content_item(narrative_content_item_map)
+            content: NarrativeContentItem = narrative_content.content_item(
+                narrative_content_item_map
+            )
             if content:
                 result += content.text
         return result

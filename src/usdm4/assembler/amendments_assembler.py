@@ -21,7 +21,7 @@ from usdm4.api.study_amendment_impact import StudyAmendmentImpact
 from usdm4.api.study_change import StudyChange
 from usdm4.api.document_content_reference import DocumentContentReference
 from usdm4.api.code import Code
-from usdm4.api.extension import Extension, ExtensionAttribute
+from usdm4.api.extension import ExtensionAttribute
 
 
 class AmendmentsAssembler(BaseAssembler):
