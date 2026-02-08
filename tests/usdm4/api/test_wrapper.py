@@ -1030,7 +1030,9 @@ class TestWrapper:
     # Tests for study_document_version method
     # =====================================================
 
-    def _create_document_version(self, version_id: str) -> StudyDefinitionDocumentVersion:
+    def _create_document_version(
+        self, version_id: str
+    ) -> StudyDefinitionDocumentVersion:
         """Helper to create a StudyDefinitionDocumentVersion."""
         status_code = Code(
             id="status_code1",
