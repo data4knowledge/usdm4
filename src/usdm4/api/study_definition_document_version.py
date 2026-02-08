@@ -73,12 +73,9 @@ class StudyDefinitionDocumentVersion(ApiBaseModelWithId):
         narrative_contents = self.narrative_content_in_order()
         narrative_content: NarrativeContent
         for narrative_content in narrative_contents:
-            result += narrative_content.format_heading()
-            content: NarrativeContentItem = narrative_content.content_item(
-                narrative_content_item_map
-            )
+            content = narrative_content.content(narrative_content_item_map)
             if content:
-                result += content.text
+                result += content
         return result
 
     def narrative_content_map(self) -> dict[NarrativeContent]:

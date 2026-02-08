@@ -356,15 +356,24 @@ class StudyVersion(ApiBaseModelWithId):
         document_map: dict[
             str, dict[StudyDefinitionDocument, StudyDefinitionDocumentVersion]
         ],
-    ) -> str:
+    ) -> str | None:
+        sddv: StudyDefinitionDocumentVersion
+        if sddv := self.study_document_version(template, document_map):
+            return sddv.to_html(self.narrative_content_item_map())
+        return None
+
+    def study_document_version(
+        self,
+        template: str,
+        document_map: dict[
+            str, dict[StudyDefinitionDocument, StudyDefinitionDocumentVersion]
+        ],
+    ) -> StudyDefinitionDocumentVersion | None:
         docs_info = self.documents(document_map)
         for doc_info in docs_info:
             study_document: StudyDefinitionDocument = doc_info["document"]
             if study_document.templateName.upper() == template.upper():
-                study_document_version: StudyDefinitionDocumentVersion = doc_info[
-                    "version"
-                ]
-                return study_document_version.to_html(self.narrative_content_item_map())
+                return doc_info["version"]
         return None
 
     def compound_codes(self) -> str:

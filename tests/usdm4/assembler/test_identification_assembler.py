@@ -1960,9 +1960,7 @@ class TestIdentificationAssemblerDeepcopyProtection:
         # _create_organization pops 'role' from the dict; deepcopy prevents this
         # from affecting STANDARD_ORGS
         for key, org in IdentificationAssembler.STANDARD_ORGS.items():
-            assert "role" in org, (
-                f"STANDARD_ORGS['{key}'] lost its 'role' key"
-            )
+            assert "role" in org, f"STANDARD_ORGS['{key}'] lost its 'role' key"
 
     def test_standard_orgs_type_remains_string(self, identification_assembler):
         """Test that 'type' in STANDARD_ORGS remains a string, not a CDISC code object."""

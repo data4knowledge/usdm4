@@ -18,6 +18,10 @@ class NarrativeContent(ApiBaseModelWithIdAndName):
     contentItemId: Union[str, None] = None
     instanceType: Literal["NarrativeContent"]
 
+    def content(self, narrative_content_item_map: dict) -> str | None:
+        content: NarrativeContentItem = self.content_item(narrative_content_item_map)
+        return self.format_heading() + content.text if content else None
+
     def content_item(
         self, narrative_content_item_map: dict
     ) -> NarrativeContentItem | None:

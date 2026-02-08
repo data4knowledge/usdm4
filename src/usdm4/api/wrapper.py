@@ -3,6 +3,7 @@ from .api_base_model import ApiBaseModel
 from .study import Study
 from .study_version import StudyVersion
 from .study_design import StudyDesign
+from .study_definition_document_version import StudyDefinitionDocumentVersion
 
 
 class Wrapper(ApiBaseModel):
@@ -29,4 +30,15 @@ class Wrapper(ApiBaseModel):
         version: StudyVersion = self.first_version()
         return (
             version.to_html(template, study.document_map()) if version and study else ""
+        )
+
+    def study_document_version(
+        self, template: str
+    ) -> StudyDefinitionDocumentVersion | None:
+        study: Study = self.study
+        version: StudyVersion = self.first_version()
+        return (
+            version.study_document_version(template, study.document_map())
+            if version and study
+            else None
         )

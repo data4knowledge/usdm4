@@ -11,6 +11,10 @@ from src.usdm4.api.study_arm import StudyArm
 from src.usdm4.api.study_cell import StudyCell
 from src.usdm4.api.study_epoch import StudyEpoch
 from src.usdm4.api.population_definition import StudyDesignPopulation
+from src.usdm4.api.study_definition_document import (
+    StudyDefinitionDocument,
+    StudyDefinitionDocumentVersion,
+)
 
 
 class TestWrapper:
@@ -1021,3 +1025,124 @@ class TestWrapper:
         assert isinstance(result[0], Study)
         assert isinstance(result[1], StudyVersion)
         assert isinstance(result[2], InterventionalStudyDesign)
+
+    # =====================================================
+    # Tests for study_document_version method
+    # =====================================================
+
+    def _create_document_version(self, version_id: str) -> StudyDefinitionDocumentVersion:
+        """Helper to create a StudyDefinitionDocumentVersion."""
+        status_code = Code(
+            id="status_code1",
+            code="C99079x2",
+            codeSystem="http://www.cdisc.org",
+            codeSystemVersion="2024-09-27",
+            decode="Final",
+            instanceType="Code",
+        )
+        return StudyDefinitionDocumentVersion(
+            id=version_id,
+            version="1.0",
+            status=status_code,
+            instanceType="StudyDefinitionDocumentVersion",
+        )
+
+    def _create_document(
+        self, template_name: str, doc_versions: list[StudyDefinitionDocumentVersion]
+    ) -> StudyDefinitionDocument:
+        """Helper to create a StudyDefinitionDocument."""
+        language_code = Code(
+            id="lang_code1",
+            code="en",
+            codeSystem="ISO 639-1",
+            codeSystemVersion="2024",
+            decode="English",
+            instanceType="Code",
+        )
+        type_code = Code(
+            id="doc_type_code1",
+            code="C70817",
+            codeSystem="http://www.cdisc.org",
+            codeSystemVersion="2024-09-27",
+            decode="Protocol",
+            instanceType="Code",
+        )
+        return StudyDefinitionDocument(
+            id=f"doc_{template_name}",
+            name=f"Document {template_name}",
+            templateName=template_name,
+            language=language_code,
+            type=type_code,
+            versions=doc_versions,
+            instanceType="StudyDefinitionDocument",
+        )
+
+    def _create_wrapper_with_documents(
+        self,
+        documents: list[StudyDefinitionDocument],
+        document_version_ids: list[str],
+    ) -> Wrapper:
+        """Helper to create a Wrapper with a study version linked to documents."""
+        study_version = self._create_study_version_with_design("version1")
+        study_version.documentVersionIds = document_version_ids
+        self.study.versions = [study_version]
+        self.study.documentedBy = documents
+        return Wrapper(study=self.study, usdmVersion="3.0")
+
+    def test_study_document_version_no_versions(self):
+        """Test study_document_version() returns None when study has no versions."""
+        wrapper = Wrapper(study=self.study, usdmVersion="3.0")
+        result = wrapper.study_document_version("protocol")
+        assert result is None
+
+    def test_study_document_version_no_documents(self):
+        """Test study_document_version() returns None when version has no documents."""
+        study_version = self._create_study_version_with_design("version1")
+        self.study.versions = [study_version]
+        wrapper = Wrapper(study=self.study, usdmVersion="3.0")
+        result = wrapper.study_document_version("protocol")
+        assert result is None
+
+    def test_study_document_version_template_not_found(self):
+        """Test study_document_version() returns None when template name doesn't match."""
+        doc_version = self._create_document_version("dv1")
+        doc = self._create_document("protocol", [doc_version])
+        wrapper = self._create_wrapper_with_documents([doc], ["dv1"])
+        result = wrapper.study_document_version("nonexistent")
+        assert result is None
+
+    def test_study_document_version_found(self):
+        """Test study_document_version() returns the correct document version."""
+        doc_version = self._create_document_version("dv1")
+        doc = self._create_document("protocol", [doc_version])
+        wrapper = self._create_wrapper_with_documents([doc], ["dv1"])
+        result = wrapper.study_document_version("protocol")
+        assert result is not None
+        assert isinstance(result, StudyDefinitionDocumentVersion)
+        assert result.id == "dv1"
+
+    def test_study_document_version_case_insensitive(self):
+        """Test study_document_version() matches template name case-insensitively."""
+        doc_version = self._create_document_version("dv1")
+        doc = self._create_document("Protocol", [doc_version])
+        wrapper = self._create_wrapper_with_documents([doc], ["dv1"])
+
+        assert wrapper.study_document_version("protocol") is not None
+        assert wrapper.study_document_version("PROTOCOL") is not None
+        assert wrapper.study_document_version("Protocol") is not None
+
+    def test_study_document_version_multiple_documents(self):
+        """Test study_document_version() finds the correct document among multiple."""
+        dv1 = self._create_document_version("dv1")
+        dv2 = self._create_document_version("dv2")
+        doc1 = self._create_document("protocol", [dv1])
+        doc2 = self._create_document("icf", [dv2])
+        wrapper = self._create_wrapper_with_documents([doc1, doc2], ["dv1", "dv2"])
+
+        result = wrapper.study_document_version("icf")
+        assert result is not None
+        assert result.id == "dv2"
+
+        result = wrapper.study_document_version("protocol")
+        assert result is not None
+        assert result.id == "dv1"

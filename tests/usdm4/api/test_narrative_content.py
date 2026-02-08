@@ -1,4 +1,4 @@
-from src.usdm4.api.narrative_content import NarrativeContent
+from src.usdm4.api.narrative_content import NarrativeContent, NarrativeContentItem
 
 
 class TestNarrativeContentLevel:
@@ -182,3 +182,120 @@ class TestNarrativeContentFormatHeading:
             instanceType="NarrativeContent",
         )
         assert nc.format_heading() == "<h3>1.2.3</h3>"
+
+
+class TestNarrativeContentContent:
+    """Test NarrativeContent.content() method."""
+
+    def _create_item_map(self, item_id: str, text: str) -> dict:
+        """Helper to create a narrative content item map."""
+        item = NarrativeContentItem(
+            id=item_id,
+            name="Item",
+            text=text,
+            instanceType="NarrativeContentItem",
+        )
+        return {item_id: item}
+
+    def test_content_with_heading_and_text(self):
+        """Test content returns heading + text when content item exists."""
+        nc = NarrativeContent(
+            id="nc1",
+            name="Test",
+            sectionNumber="1",
+            sectionTitle="Introduction",
+            displaySectionNumber=True,
+            displaySectionTitle=True,
+            contentItemId="item1",
+            instanceType="NarrativeContent",
+        )
+        item_map = self._create_item_map("item1", "<p>Hello world</p>")
+        assert nc.content(item_map) == "<h1>1 Introduction</h1><p>Hello world</p>"
+
+    def test_content_no_heading(self):
+        """Test content returns just text when there is no heading."""
+        nc = NarrativeContent(
+            id="nc1",
+            name="Test",
+            sectionNumber=None,
+            sectionTitle=None,
+            displaySectionNumber=True,
+            displaySectionTitle=True,
+            contentItemId="item1",
+            instanceType="NarrativeContent",
+        )
+        item_map = self._create_item_map("item1", "<p>Body text</p>")
+        assert nc.content(item_map) == "<p>Body text</p>"
+
+    def test_content_item_not_in_map(self):
+        """Test content returns None when contentItemId is not in the map."""
+        nc = NarrativeContent(
+            id="nc1",
+            name="Test",
+            sectionNumber="1",
+            sectionTitle="Title",
+            displaySectionNumber=True,
+            displaySectionTitle=True,
+            contentItemId="missing_id",
+            instanceType="NarrativeContent",
+        )
+        item_map = self._create_item_map("item1", "some text")
+        assert nc.content(item_map) is None
+
+    def test_content_no_content_item_id(self):
+        """Test content returns None when contentItemId is None."""
+        nc = NarrativeContent(
+            id="nc1",
+            name="Test",
+            sectionNumber="1",
+            sectionTitle="Title",
+            displaySectionNumber=True,
+            displaySectionTitle=True,
+            contentItemId=None,
+            instanceType="NarrativeContent",
+        )
+        assert nc.content({}) is None
+
+    def test_content_empty_map(self):
+        """Test content returns None with empty map."""
+        nc = NarrativeContent(
+            id="nc1",
+            name="Test",
+            sectionNumber="1",
+            sectionTitle="Title",
+            displaySectionNumber=True,
+            displaySectionTitle=True,
+            contentItemId="item1",
+            instanceType="NarrativeContent",
+        )
+        assert nc.content({}) is None
+
+    def test_content_nested_section(self):
+        """Test content with nested section number produces correct heading level."""
+        nc = NarrativeContent(
+            id="nc1",
+            name="Test",
+            sectionNumber="2.3.1",
+            sectionTitle="Details",
+            displaySectionNumber=True,
+            displaySectionTitle=True,
+            contentItemId="item1",
+            instanceType="NarrativeContent",
+        )
+        item_map = self._create_item_map("item1", "<p>Detail text</p>")
+        assert nc.content(item_map) == "<h3>2.3.1 Details</h3><p>Detail text</p>"
+
+    def test_content_zero_section_number(self):
+        """Test content with section number '0' produces no heading."""
+        nc = NarrativeContent(
+            id="nc1",
+            name="Test",
+            sectionNumber="0",
+            sectionTitle="Hidden",
+            displaySectionNumber=True,
+            displaySectionTitle=True,
+            contentItemId="item1",
+            instanceType="NarrativeContent",
+        )
+        item_map = self._create_item_map("item1", "<p>Preamble</p>")
+        assert nc.content(item_map) == "<p>Preamble</p>"

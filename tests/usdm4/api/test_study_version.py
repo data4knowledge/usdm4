@@ -3066,3 +3066,109 @@ class TestStudyVersion:
         result = sv.to_html("PROTOCOL", document_map)
         assert result is not None
         assert "<p>Content</p>" in result
+
+    # =====================================================
+    # Tests for study_document_version method
+    # =====================================================
+
+    def test_study_document_version_no_documents(self):
+        """Test study_document_version() returns None when no documents linked."""
+        sv = StudyVersion(
+            id="sv_sdv1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            documentVersionIds=[],
+            instanceType="StudyVersion",
+        )
+        result = sv.study_document_version("Protocol", {})
+        assert result is None
+
+    def test_study_document_version_matching_template(self):
+        """Test study_document_version() returns version when template matches."""
+        version1 = self._create_document_version("dv_sdv2", "1.0")
+        doc1 = self._create_document_with_versions("doc_sdv2", "Protocol", [version1])
+        document_map = self._create_document_map([(doc1, [version1])])
+
+        sv = StudyVersion(
+            id="sv_sdv2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            documentVersionIds=["dv_sdv2"],
+            instanceType="StudyVersion",
+        )
+
+        result = sv.study_document_version("Protocol", document_map)
+        assert result is not None
+        assert isinstance(result, StudyDefinitionDocumentVersion)
+        assert result.id == "dv_sdv2"
+
+    def test_study_document_version_no_matching_template(self):
+        """Test study_document_version() returns None when template doesn't match."""
+        version1 = self._create_document_version("dv_sdv3", "1.0")
+        doc1 = self._create_document_with_versions("doc_sdv3", "CSR", [version1])
+        document_map = self._create_document_map([(doc1, [version1])])
+
+        sv = StudyVersion(
+            id="sv_sdv3",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            documentVersionIds=["dv_sdv3"],
+            instanceType="StudyVersion",
+        )
+
+        result = sv.study_document_version("Protocol", document_map)
+        assert result is None
+
+    def test_study_document_version_case_insensitive(self):
+        """Test study_document_version() matches template name case-insensitively."""
+        version1 = self._create_document_version("dv_sdv4", "1.0")
+        doc1 = self._create_document_with_versions("doc_sdv4", "Protocol", [version1])
+        document_map = self._create_document_map([(doc1, [version1])])
+
+        sv = StudyVersion(
+            id="sv_sdv4",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            documentVersionIds=["dv_sdv4"],
+            instanceType="StudyVersion",
+        )
+
+        assert sv.study_document_version("protocol", document_map) is not None
+        assert sv.study_document_version("PROTOCOL", document_map) is not None
+        assert sv.study_document_version("Protocol", document_map) is not None
+
+    def test_study_document_version_multiple_documents(self):
+        """Test study_document_version() finds the correct document among multiple."""
+        version1 = self._create_document_version("dv_sdv5a", "1.0")
+        version2 = self._create_document_version("dv_sdv5b", "1.0")
+        doc1 = self._create_document_with_versions("doc_sdv5a", "Protocol", [version1])
+        doc2 = self._create_document_with_versions("doc_sdv5b", "ICF", [version2])
+        document_map = self._create_document_map(
+            [(doc1, [version1]), (doc2, [version2])]
+        )
+
+        sv = StudyVersion(
+            id="sv_sdv5",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            documentVersionIds=["dv_sdv5a", "dv_sdv5b"],
+            instanceType="StudyVersion",
+        )
+
+        result = sv.study_document_version("ICF", document_map)
+        assert result is not None
+        assert result.id == "dv_sdv5b"
+
+        result = sv.study_document_version("Protocol", document_map)
+        assert result is not None
+        assert result.id == "dv_sdv5a"
