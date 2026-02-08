@@ -1874,6 +1874,193 @@ class TestIdentificationAssemblerRolesProcessing:
         assert len(identification_assembler.organizations) >= 3
 
 
+class TestIdentificationAssemblerDeepcopyProtection:
+    """Test that STANDARD_ORGS and ROLE_ORGS class constants are not mutated by execute().
+
+    The execute method uses copy.deepcopy on STANDARD_ORGS (line 291) and ROLE_ORGS (line 329)
+    because _create_organization pops 'role', replaces 'type' with a CDISC code object,
+    and replaces 'legalAddress' with an Address object. Without deepcopy these mutations
+    would corrupt the class-level dictionaries.
+    """
+
+    def test_standard_orgs_unchanged_after_execute(self, identification_assembler):
+        """Test that STANDARD_ORGS is not mutated after processing a standard org identifier."""
+        snapshot = copy.deepcopy(IdentificationAssembler.STANDARD_ORGS)
+
+        data = {
+            "identifiers": [
+                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}},
+            ]
+        }
+        identification_assembler.execute(data)
+
+        assert IdentificationAssembler.STANDARD_ORGS == snapshot
+
+    def test_standard_orgs_unchanged_after_all_standard_orgs(
+        self, identification_assembler
+    ):
+        """Test that STANDARD_ORGS is not mutated after processing all standard orgs."""
+        snapshot = copy.deepcopy(IdentificationAssembler.STANDARD_ORGS)
+
+        data = {
+            "identifiers": [
+                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}},
+                {"identifier": "EMA-2024-001", "scope": {"standard": "ema"}},
+                {"identifier": "FDA-IND-123456", "scope": {"standard": "fda"}},
+            ]
+        }
+        identification_assembler.execute(data)
+
+        assert IdentificationAssembler.STANDARD_ORGS == snapshot
+
+    def test_standard_orgs_unchanged_after_repeated_execute(self, builder, errors):
+        """Test that STANDARD_ORGS survives multiple execute calls with the same org."""
+        snapshot = copy.deepcopy(IdentificationAssembler.STANDARD_ORGS)
+
+        for _ in range(3):
+            builder.clear()
+            assembler = IdentificationAssembler(builder, errors)
+            data = {
+                "identifiers": [
+                    {"identifier": "EMA-2024-001", "scope": {"standard": "ema"}},
+                ]
+            }
+            assembler.execute(data)
+
+        assert IdentificationAssembler.STANDARD_ORGS == snapshot
+
+    def test_standard_orgs_legaladdress_unchanged(self, identification_assembler):
+        """Test that nested legalAddress dicts in STANDARD_ORGS are not mutated."""
+        snapshot_addresses = {
+            key: copy.deepcopy(org["legalAddress"])
+            for key, org in IdentificationAssembler.STANDARD_ORGS.items()
+        }
+
+        data = {
+            "identifiers": [
+                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}},
+            ]
+        }
+        identification_assembler.execute(data)
+
+        for key, org in IdentificationAssembler.STANDARD_ORGS.items():
+            assert org["legalAddress"] == snapshot_addresses[key], (
+                f"STANDARD_ORGS['{key}']['legalAddress'] was mutated"
+            )
+
+    def test_standard_orgs_role_key_preserved(self, identification_assembler):
+        """Test that 'role' key is not popped from STANDARD_ORGS entries."""
+        data = {
+            "identifiers": [
+                {"identifier": "EMA-2024-001", "scope": {"standard": "ema"}},
+            ]
+        }
+        identification_assembler.execute(data)
+
+        # _create_organization pops 'role' from the dict; deepcopy prevents this
+        # from affecting STANDARD_ORGS
+        for key, org in IdentificationAssembler.STANDARD_ORGS.items():
+            assert "role" in org, (
+                f"STANDARD_ORGS['{key}'] lost its 'role' key"
+            )
+
+    def test_standard_orgs_type_remains_string(self, identification_assembler):
+        """Test that 'type' in STANDARD_ORGS remains a string, not a CDISC code object."""
+        data = {
+            "identifiers": [
+                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}},
+            ]
+        }
+        identification_assembler.execute(data)
+
+        # _create_organization replaces 'type' string with a CDISC code object;
+        # deepcopy prevents this from affecting STANDARD_ORGS
+        for key, org in IdentificationAssembler.STANDARD_ORGS.items():
+            assert isinstance(org["type"], str), (
+                f"STANDARD_ORGS['{key}']['type'] was mutated from str to {type(org['type'])}"
+            )
+
+    def test_role_orgs_unchanged_after_execute(self, identification_assembler):
+        """Test that ROLE_ORGS is not mutated after processing a role."""
+        snapshot = copy.deepcopy(IdentificationAssembler.ROLE_ORGS)
+
+        data = {
+            "roles": {
+                "co_sponsor": {"name": "Co-Sponsor Corp"},
+            }
+        }
+        identification_assembler.execute(data)
+
+        assert IdentificationAssembler.ROLE_ORGS == snapshot
+
+    def test_role_orgs_unchanged_after_all_roles(self, identification_assembler):
+        """Test that ROLE_ORGS is not mutated after processing all role types."""
+        snapshot = copy.deepcopy(IdentificationAssembler.ROLE_ORGS)
+
+        data = {
+            "roles": {
+                "co_sponsor": {"name": "Co-Sponsor Corp"},
+                "local_sponsor": {"name": "Local Sponsor Ltd"},
+                "device_manufacturer": {"name": "Device Maker Inc"},
+            }
+        }
+        identification_assembler.execute(data)
+
+        assert IdentificationAssembler.ROLE_ORGS == snapshot
+
+    def test_role_orgs_unchanged_after_repeated_execute(self, builder, errors):
+        """Test that ROLE_ORGS survives multiple execute calls."""
+        snapshot = copy.deepcopy(IdentificationAssembler.ROLE_ORGS)
+
+        for _ in range(3):
+            builder.clear()
+            assembler = IdentificationAssembler(builder, errors)
+            data = {
+                "roles": {
+                    "co_sponsor": {"name": "Co-Sponsor Corp"},
+                }
+            }
+            assembler.execute(data)
+
+        assert IdentificationAssembler.ROLE_ORGS == snapshot
+
+    def test_role_orgs_label_not_overwritten(self, identification_assembler):
+        """Test that ROLE_ORGS entries retain their original empty label."""
+        data = {
+            "roles": {
+                "co_sponsor": {"name": "Overwrite Attempt"},
+            }
+        }
+        identification_assembler.execute(data)
+
+        # execute sets organization["label"] = info["name"]; deepcopy prevents
+        # this from affecting ROLE_ORGS
+        assert IdentificationAssembler.ROLE_ORGS["co_sponsor"]["label"] == ""
+
+    def test_role_orgs_legaladdress_unchanged(self, identification_assembler):
+        """Test that ROLE_ORGS legalAddress stays as empty dict after execute."""
+        data = {
+            "roles": {
+                "co_sponsor": {
+                    "name": "Corp",
+                    "address": {
+                        "lines": ["1 St"],
+                        "city": "C",
+                        "district": "",
+                        "state": "S",
+                        "postalCode": "00000",
+                        "country": "USA",
+                    },
+                },
+            }
+        }
+        identification_assembler.execute(data)
+
+        # execute replaces organization["legalAddress"] with an Address object;
+        # deepcopy prevents this from affecting ROLE_ORGS
+        assert IdentificationAssembler.ROLE_ORGS["co_sponsor"]["legalAddress"] == {}
+
+
 class TestIdentificationAssemblerOtherData:
     """Test 'other' data processing (covers lines 348-352)."""
 
