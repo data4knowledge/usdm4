@@ -326,7 +326,8 @@ class IdentificationAssembler(BaseAssembler):
             try:
                 if info is None:
                     continue
-                organization = self.ROLE_ORGS[role]
+                organization = copy.deepcopy(self.ROLE_ORGS[role])
+                # organization = self.ROLE_ORGS[role]
                 organization["label"] = info["name"]
                 organization["legalAddress"] = (
                     self._create_address(info["address"]) if "address" in info else None
