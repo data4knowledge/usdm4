@@ -324,16 +324,23 @@ class IdentificationAssembler(BaseAssembler):
                 )
         for role, info in roles.items():
             try:
+                self._errors.debug(
+                    f"Processing {role}, {info}",
+                    KlassMethodLocation(self.MODULE, "execute"),
+                )
                 if info is None:
                     continue
                 organization = copy.deepcopy(self.ROLE_ORGS[role])
-                # organization = self.ROLE_ORGS[role]
                 organization["label"] = info["name"]
                 organization["legalAddress"] = (
                     self._create_address(info["address"]) if "address" in info else None
                 )
                 org = self._create_organization(organization)
                 if org:
+                    self._errors.debug(
+                        f"Organization {org} in {role} created",
+                        KlassMethodLocation(self.MODULE, "execute"),
+                    )
                     self._organizations.append(org)
                 else:
                     self._errors.exception(
