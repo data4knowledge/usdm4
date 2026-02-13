@@ -87,7 +87,7 @@ class TestIdentificationAssemblerInitialization:
 
         # Test STANDARD_ORGS structure
         assert isinstance(identification_assembler.STANDARD_ORGS, dict)
-        expected_standard_orgs = ["ct.gov", "ema", "fda"]
+        expected_standard_orgs = ["ct.gov", "ema", "fda", "jrct", "nmpa", "who"]
         for org_key in expected_standard_orgs:
             assert org_key in identification_assembler.STANDARD_ORGS
             org = identification_assembler.STANDARD_ORGS[org_key]
@@ -2090,3 +2090,119 @@ class TestIdentificationAssemblerOtherData:
         assert identification_assembler.medical_expert is None
         assert identification_assembler.compound_names is None
         assert identification_assembler.compound_codes is None
+
+
+class TestIdentificationAssemblerStandardOrgCreation:
+    """Test that each standard organization in STANDARD_ORGS can be created successfully."""
+
+    @pytest.mark.parametrize(
+        "org_key,expected_name,expected_label,has_role",
+        [
+            ("ct.gov", "CT.GOV", "ClinicalTrials.gov", False),
+            ("ema", "EMA", "European Medicines Agency", True),
+            ("fda", "FDA", "Food and Drug Administration", True),
+            ("jrct", "jRCT", "Japan Registry of Clinical Trials", False),
+            ("nmpa", "NMPA", "National Medical Products Administration", True),
+            ("who", "WHO UTN", "WHO Registry of Clinical Trials", False),
+        ],
+    )
+    def test_standard_org_creates_organization(
+        self,
+        identification_assembler,
+        org_key,
+        expected_name,
+        expected_label,
+        has_role,
+    ):
+        """Test that a standard org identifier creates the correct organization."""
+        data = {
+            "identifiers": [
+                {
+                    "identifier": f"TEST-{org_key.upper()}-001",
+                    "scope": {"standard": org_key},
+                }
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.identifiers) == 1, (
+            f"Failed to create identifier for standard org '{org_key}'"
+        )
+        assert len(identification_assembler.organizations) == 1, (
+            f"Failed to create organization for standard org '{org_key}'"
+        )
+
+        org = identification_assembler.organizations[0]
+        assert org.name == expected_name
+        assert org.label == expected_label
+
+        identifier = identification_assembler.identifiers[0]
+        assert identifier.text == f"TEST-{org_key.upper()}-001"
+        assert identifier.scopeId == org.id
+
+    @pytest.mark.parametrize(
+        "org_key,expected_name,has_role",
+        [
+            ("ct.gov", "CT.GOV", False),
+            ("ema", "EMA", True),
+            ("fda", "FDA", True),
+            ("jrct", "jRCT", False),
+            ("nmpa", "NMPA", True),
+            ("who", "WHO UTN", False),
+        ],
+    )
+    def test_standard_org_creates_role_when_expected(
+        self, identification_assembler, org_key, expected_name, has_role
+    ):
+        """Test that standard orgs with a role create a StudyRole, and those without do not."""
+        data = {
+            "identifiers": [
+                {
+                    "identifier": f"TEST-{org_key.upper()}-001",
+                    "scope": {"standard": org_key},
+                }
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        if has_role:
+            assert len(identification_assembler.roles) == 1, (
+                f"Expected a role to be created for standard org '{org_key}'"
+            )
+            role = identification_assembler.roles[0]
+            org = identification_assembler.organizations[0]
+            assert org.id in role.organizationIds
+        else:
+            assert len(identification_assembler.roles) == 0, (
+                f"Expected no role for standard org '{org_key}', but found {len(identification_assembler.roles)}"
+            )
+
+    @pytest.mark.parametrize(
+        "org_key",
+        ["ct.gov", "ema", "fda", "jrct", "nmpa", "who"],
+    )
+    def test_standard_org_creates_address(self, identification_assembler, org_key):
+        """Test that each standard org creates an organization with a legal address."""
+        data = {
+            "identifiers": [
+                {
+                    "identifier": f"TEST-{org_key.upper()}-001",
+                    "scope": {"standard": org_key},
+                }
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) == 1, (
+            f"Failed to create organization for standard org '{org_key}'"
+        )
+        org = identification_assembler.organizations[0]
+        assert org.legalAddress is not None, (
+            f"Organization for '{org_key}' should have a legal address"
+        )
+        assert hasattr(org.legalAddress, "text"), (
+            f"Address for '{org_key}' should have text set"
+        )
