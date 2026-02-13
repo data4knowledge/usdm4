@@ -3,9 +3,10 @@ from usdm4.assembler.base_assembler import BaseAssembler
 from usdm4.builder.builder import Builder
 from usdm4.api.address import Address
 from usdm4.api.organization import Organization
-from usdm4.api.identifier import StudyIdentifier
+from usdm4.api.identifier import StudyIdentifier, SIT_EXT_URL, ExtensionAttribute
 from usdm4.api.study_title import StudyTitle
 from usdm4.api.study_role import StudyRole
+from usdm4.api.code import Code
 
 
 from simple_error_log.errors import Errors
@@ -123,37 +124,25 @@ class IdentificationAssembler(BaseAssembler):
     }
 
     IDENTIFIER_CODES = {
-        "ct.gov": {
-            "code": "C172240",
-            "decode": "Clinicaltrials.gov Identifier"
-        },
+        "ct.gov": {"code": "C172240", "decode": "Clinicaltrials.gov Identifier"},
         "jrct": {
             "code": "C218687",
-            "decode": "Japan Registry for Clinical Trials Number"
+            "decode": "Japan Registry for Clinical Trials Number",
         },
-        "nmpa": {
-            "code": "C218688",
-            "decode": "NMPA IND Number"
-        },
+        "nmpa": {"code": "C218688", "decode": "NMPA IND Number"},
         "other": {
             "code": "C218690",
-            "decode": "Other Regulatory or Clinical Trial Identifier"
+            "decode": "Other Regulatory or Clinical Trial Identifier",
         },
-        "who": {
-            "code": "C218689",
-            "decode": "WHO/UTN Number"
-        },
-        "ema": {
-            "code": "C218684",
-            "decode": "EU Clinical Trial Register Number"
-        },
+        "who": {"code": "C218689", "decode": "WHO/UTN Number"},
+        "ema": {"code": "C218684", "decode": "EU Clinical Trial Register Number"},
         "fda": {
             "code": "C218685",
-            "decode": "US FDA Investigational New Drug Application Number"
+            "decode": "US FDA Investigational New Drug Application Number",
         },
         "fda-ide": {
             "code": "C218686",
-            "decode": "US FDA Investigational Device Exemption Application Number"
+            "decode": "US FDA Investigational Device Exemption Application Number",
         },
     }
 
@@ -406,7 +395,8 @@ class IdentificationAssembler(BaseAssembler):
                 # Identifier and scoping Organization
                 org = self._create_organization(organization)
                 if org:
-                    identifier = self._create_identifier(id_details["identifier"], org)
+                    scope_key = scope["standard"] if "standard" in scope else "other"
+                    identifier = self._create_identifier(scope_key, id_details["identifier"], org)
                     if identifier:
                         self._organizations.append(org)
                         self._identifiers.append(identifier)
@@ -550,20 +540,42 @@ class IdentificationAssembler(BaseAssembler):
             return None
 
     def _create_identifier(
-        self, identifier: str, org: Organization
+        self, scope: str, identifier: str, org: Organization
     ) -> StudyIdentifier | None:
         try:
+            type_code = self._identifier_type(scope)
             identifier = self._builder.create(
-                StudyIdentifier, {"text": identifier, "scopeId": org.id}
+                StudyIdentifier,
+                {
+                    "text": identifier,
+                    "scopeId": org.id,
+                    "extensionAttributes": [type_code],
+                },
             )
             return identifier
         except Exception as e:
             self._errors.exception(
-                f"Failed during creation of identifier '{identifier}'",
+                f"Failed during creation of identifier '{identifier}' with scope type '{scope}' and organisation {org}",
                 e,
                 KlassMethodLocation(self.MODULE, "_create_identifier"),
             )
             return None
+
+    def _identifier_type(self, scope: str) -> ExtensionAttribute:
+        if scope in self.IDENTIFIER_CODES:
+            code = self.IDENTIFIER_CODES[scope]["code"]
+            decode = self.IDENTIFIER_CODES[scope]["decode"]
+        else:
+            code = self.IDENTIFIER_CODES["other"]["code"]
+            decode = self.IDENTIFIER_CODES["other"]["decode"]
+        code: Code = self._builder.cdisc_code(code, decode)
+        return self._builder.create(
+            ExtensionAttribute,
+            {
+                "url": SIT_EXT_URL,
+                "valueCode": code,
+            },
+        )
 
     def _create_title(self, type: str, text: str) -> StudyTitle | None:
         try:

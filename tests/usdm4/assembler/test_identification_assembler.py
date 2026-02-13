@@ -741,7 +741,7 @@ class TestIdentificationAssemblerPrivateMethods:
         if organization is not None:
             # Now create identifier
             identifier = identification_assembler._create_identifier(
-                "TEST-001", organization
+                "other", "TEST-001", organization
             )
 
             assert identifier is not None
@@ -1248,7 +1248,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
 
     def test_create_identifier_with_none_organization(self, identification_assembler):
         """Test _create_identifier with None organization."""
-        identifier = identification_assembler._create_identifier("TEST-001", None)
+        identifier = identification_assembler._create_identifier("other", "TEST-001", None)
         # Should return None due to None organization
         assert identifier is None
 

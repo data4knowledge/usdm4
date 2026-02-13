@@ -3,6 +3,8 @@ from typing_extensions import deprecated
 from .api_base_model import ApiBaseModelWithId
 from .organization import Organization
 from .code import Code
+from .extensions_d4k import SIT_EXT_URL
+from .extension import ExtensionAttribute
 
 
 class Identifier(ApiBaseModelWithId):
@@ -26,6 +28,10 @@ class StudyIdentifier(Identifier):
 
     def scoped_by(self, organization_map: dict) -> Organization:
         return organization_map[self.scopeId]
+
+    def of_type(self) -> str | None:
+        ext: ExtensionAttribute = self.get_extension(SIT_EXT_URL)
+        return ext.valueCode if ext else None
 
 
 class AdministrableProductIdentifier(Identifier):

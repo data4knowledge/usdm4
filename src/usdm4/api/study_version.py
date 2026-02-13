@@ -31,7 +31,7 @@ from .study_definition_document import (
     StudyDefinitionDocumentVersion,
 )
 from .condition import Condition
-from .extension import Extension
+from .extension import ExtensionAttribute
 from .extensions_d4k import (
     CS_EXT_URL,
     OV_EXT_URL,
@@ -72,11 +72,11 @@ class StudyVersion(ApiBaseModelWithId):
     instanceType: Literal["StudyVersion"]
 
     def confidentiality_statement(self) -> str:
-        ext: Extension = self.get_extension(CS_EXT_URL)
+        ext: ExtensionAttribute = self.get_extension(CS_EXT_URL)
         return ext.valueString if ext else ""
 
     def original_version(self) -> bool:
-        ext: Extension = self.get_extension(OV_EXT_URL)
+        ext: ExtensionAttribute = self.get_extension(OV_EXT_URL)
         return ext.valueBoolean if ext else False
 
     def first_amendment(self) -> StudyAmendment | None:
@@ -336,7 +336,7 @@ class StudyVersion(ApiBaseModelWithId):
         return None
 
     def sponsor_approval_location(self) -> str:
-        ext: Extension = self.get_extension(SAL_EXT_URL)
+        ext: ExtensionAttribute = self.get_extension(SAL_EXT_URL)
         return ext.valueString if ext else ""
 
     def find_study_design(self, id: str) -> StudyDesign:
@@ -377,19 +377,19 @@ class StudyVersion(ApiBaseModelWithId):
         return None
 
     def compound_codes(self) -> str:
-        ext: Extension = self.get_extension(CC_EXT_URL)
+        ext: ExtensionAttribute = self.get_extension(CC_EXT_URL)
         return ext.valueString if ext else ""
 
     def compound_names(self) -> str:
-        ext: Extension = self.get_extension(CN_EXT_URL)
+        ext: ExtensionAttribute = self.get_extension(CN_EXT_URL)
         return ext.valueString if ext else ""
 
     def medical_expert(self) -> str:
-        ext: Extension = self.get_extension(ME_EXT_URL)
+        ext: ExtensionAttribute = self.get_extension(ME_EXT_URL)
         return ext.valueString if ext else ""
 
     def sponsor_signatory(self) -> str:
-        ext: Extension = self.get_extension(SS_EXT_URL)
+        ext: ExtensionAttribute = self.get_extension(SS_EXT_URL)
         return ext.valueString if ext else ""
 
     def role_map(self) -> dict[str, StudyRole]:
