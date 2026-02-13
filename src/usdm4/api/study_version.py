@@ -32,15 +32,15 @@ from .study_definition_document import (
 )
 from .condition import Condition
 from .extension import Extension
-
-
-CS_EXT_URL = "www.d4k.dk/usdm/extensions/001"  # Confidentiality statement
-OV_EXT_URL = "www.d4k.dk/usdm/extensions/002"  # Original protocol (original version)
-CC_EXT_URL = "www.d4k.dk/usdm/extensions/004"  # Compund codes
-CN_EXT_URL = "www.d4k.dk/usdm/extensions/005"  # Compund names
-ME_EXT_URL = "www.d4k.dk/usdm/extensions/006"  # Medical Expert
-SS_EXT_URL = "www.d4k.dk/usdm/extensions/007"  # Sponsor signatory
-SAL_EXT_URL = "www.d4k.dk/usdm/extensions/008"  # Sponsor approval info location
+from .extensions_d4k import (
+    CS_EXT_URL,
+    OV_EXT_URL,
+    CC_EXT_URL,
+    CN_EXT_URL,
+    ME_EXT_URL,
+    SS_EXT_URL,
+    SAL_EXT_URL,
+)
 
 
 class StudyVersion(ApiBaseModelWithId):

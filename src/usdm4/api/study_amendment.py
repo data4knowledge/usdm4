@@ -8,10 +8,7 @@ from .subject_enrollment import SubjectEnrollment
 from .governance_date import GovernanceDate
 from .comment_annotation import CommentAnnotation
 from .extension import ExtensionAttribute
-
-SI_EXT_URL = (
-    "www.d4k.dk/usdm/extensions/003"  # Site identifier scope. An array of extensions.
-)
+from .extensions_d4k import SI_EXT_URL
 
 
 class StudyAmendment(ApiBaseModelWithIdNameLabelAndDesc):
