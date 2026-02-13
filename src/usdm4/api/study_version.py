@@ -207,10 +207,10 @@ class StudyVersion(ApiBaseModelWithId):
             return org.legalAddress.text if org.legalAddress else ""
         return ""
 
-    def ct_gov_identifier(self) -> StudyIdentifier:
+    def nct_identifier(self) -> StudyIdentifier:
         return self._identifier_of_type("C172240")
 
-    def npma_identifier(self) -> StudyIdentifier:
+    def nmpa_identifier(self) -> StudyIdentifier:
         return self._identifier_of_type("C218688")
     
     def who_identifier(self) -> StudyIdentifier:
@@ -219,11 +219,11 @@ class StudyVersion(ApiBaseModelWithId):
     def ema_identifier(self) -> StudyIdentifier:
         return self._identifier_of_type("C218684")
     
-    def fda_identifier(self) -> StudyIdentifier:
+    def fda_ind_identifier(self) -> StudyIdentifier:
         return self._identifier_of_type("C218685")
     
     def fda_ide_identifier(self) -> StudyIdentifier:
-        return self._identifier_of_type("C218686"),
+        return self._identifier_of_type("C218686")
 
     def jrct_identifier(self) -> StudyIdentifier:
         return self._identifier_of_type("C218687")
@@ -315,27 +315,6 @@ class StudyVersion(ApiBaseModelWithId):
             if x.is_acronym():
                 return x
         return None
-
-    def nct_identifier(self) -> StudyIdentifier:
-        map = self.organization_map()
-        for x in self.studyIdentifiers:
-            if map[x.scopeId].name == "CT.GOV":
-                return x.text
-        return ""
-
-    def fda_ind_identifier(self) -> StudyIdentifier:
-        map = self.organization_map()
-        for x in self.studyIdentifiers:
-            if map[x.scopeId].name == "FDA":
-                return x.text
-        return ""
-
-    def ema_identifier(self) -> StudyIdentifier:
-        map = self.organization_map()
-        for x in self.studyIdentifiers:
-            if map[x.scopeId].name == "EMA":
-                return x.text
-        return ""
 
     @deprecated("Use the method relating to the document")
     def protocol_date(self) -> GovernanceDate:

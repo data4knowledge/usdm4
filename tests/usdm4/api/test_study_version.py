@@ -669,25 +669,6 @@ class TestStudyVersion:
         address = study_version.sponsor_address()
         assert address == ""
 
-    def test_nct_identifier(self):
-        """Test getting NCT identifier."""
-        nct = self.study_version.nct_identifier()
-        assert nct == "NCT12345678"
-
-    def test_nct_identifier_empty(self):
-        """Test getting NCT identifier when none exists."""
-        study_version = StudyVersion(
-            id="study_version_14",
-            versionIdentifier="v1.0",
-            rationale="Test study version",
-            studyIdentifiers=[self.sponsor_identifier],  # Only sponsor identifier
-            titles=[self.official_title],
-            organizations=[self.sponsor_org],  # Only sponsor org
-            instanceType="StudyVersion",
-        )
-        nct = study_version.nct_identifier()
-        assert nct == ""
-
     def test_protocol_date(self):
         """Test getting protocol date."""
         date_obj = self.study_version.protocol_date()
@@ -1698,86 +1679,44 @@ class TestStudyVersion:
         assert result.id in ["amend1", "amend2"]
 
     # =====================================================
-    # Tests for fda_ind_identifier method (lines 220-225)
-    # =====================================================
-
-    def test_fda_ind_identifier_found(self):
-        """Test fda_ind_identifier returns the identifier when FDA org exists."""
-        fda_org = Organization(
-            id="org_fda",
-            name="FDA",
-            label="Food and Drug Administration",
-            type=self.non_sponsor_code,
-            identifierScheme="scheme",
-            identifier="fda_id",
-            instanceType="Organization",
-        )
-
-        fda_identifier = StudyIdentifier(
-            id="id_fda",
-            text="IND-123456",
-            scopeId="org_fda",
-            instanceType="StudyIdentifier",
-        )
-
-        study_version = StudyVersion(
-            id="sv_fda1",
-            versionIdentifier="v1.0",
-            rationale="Test",
-            studyIdentifiers=[self.sponsor_identifier, fda_identifier],
-            titles=[self.official_title],
-            organizations=[self.sponsor_org, fda_org],
-            instanceType="StudyVersion",
-        )
-
-        result = study_version.fda_ind_identifier()
-        assert result == "IND-123456"
-
-    def test_fda_ind_identifier_not_found(self):
-        """Test fda_ind_identifier returns empty string when no FDA org exists."""
-        result = self.study_version.fda_ind_identifier()
-        assert result == ""
-
-    # =====================================================
-    # Tests for ema_identifier method (lines 227-232)
+    # Tests for ema_identifier method (line 219-220)
     # =====================================================
 
     def test_ema_identifier_found(self):
-        """Test ema_identifier returns the identifier when EMA org exists."""
-        ema_org = Organization(
-            id="org_ema",
-            name="EMA",
-            label="European Medicines Agency",
-            type=self.non_sponsor_code,
-            identifierScheme="scheme",
-            identifier="ema_id",
-            instanceType="Organization",
+        """Test ema_identifier returns identifier when type C218684 exists."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_ema", "SPONSOR-123", "org_1", "C999999"
         )
-
-        ema_identifier = StudyIdentifier(
-            id="id_ema",
-            text="EudraCT-2024-001234-56",
-            scopeId="org_ema",
-            instanceType="StudyIdentifier",
+        ema_id = self._create_identifier_with_type(
+            "id_ema", "EudraCT-2024-001234-56", "org_2", "C218684"
         )
-
-        study_version = StudyVersion(
+        sv = StudyVersion(
             id="sv_ema1",
             versionIdentifier="v1.0",
             rationale="Test",
-            studyIdentifiers=[self.sponsor_identifier, ema_identifier],
+            studyIdentifiers=[sponsor_id, ema_id],
             titles=[self.official_title],
-            organizations=[self.sponsor_org, ema_org],
             instanceType="StudyVersion",
         )
-
-        result = study_version.ema_identifier()
-        assert result == "EudraCT-2024-001234-56"
+        result = sv.ema_identifier()
+        assert result is not None
+        assert result.text == "EudraCT-2024-001234-56"
 
     def test_ema_identifier_not_found(self):
-        """Test ema_identifier returns empty string when no EMA org exists."""
-        result = self.study_version.ema_identifier()
-        assert result == ""
+        """Test ema_identifier returns None when no matching identifier exists."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_ema2", "SPONSOR-123", "org_1", "C999999"
+        )
+        sv = StudyVersion(
+            id="sv_ema2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id],
+            titles=[self.official_title],
+            instanceType="StudyVersion",
+        )
+        result = sv.ema_identifier()
+        assert result is None
 
     # =====================================================
     # Tests for eligibility_critieria_item_map method (line 271-272)
@@ -3204,11 +3143,11 @@ class TestStudyVersion:
         )
 
     # =====================================================
-    # Tests for ct_gov_identifier method (line 210-211)
+    # Tests for nct_identifier method (line 210-211)
     # =====================================================
 
-    def test_ct_gov_identifier_found(self):
-        """Test ct_gov_identifier returns identifier when type C172240 exists."""
+    def test_nct_identifier_found(self):
+        """Test nct_identifier returns identifier when type C172240 exists."""
         sponsor_id = self._create_identifier_with_type(
             "id_sponsor_ctgov", "SPONSOR-123", "org_1", "C999999"
         )
@@ -3223,12 +3162,12 @@ class TestStudyVersion:
             titles=[self.official_title],
             instanceType="StudyVersion",
         )
-        result = sv.ct_gov_identifier()
+        result = sv.nct_identifier()
         assert result is not None
         assert result.text == "NCT00000001"
 
-    def test_ct_gov_identifier_not_found(self):
-        """Test ct_gov_identifier returns None when no matching identifier exists."""
+    def test_nct_identifier_not_found(self):
+        """Test nct_identifier returns None when no matching identifier exists."""
         sponsor_id = self._create_identifier_with_type(
             "id_sponsor_ctgov2", "SPONSOR-123", "org_1", "C999999"
         )
@@ -3240,20 +3179,20 @@ class TestStudyVersion:
             titles=[self.official_title],
             instanceType="StudyVersion",
         )
-        result = sv.ct_gov_identifier()
+        result = sv.nct_identifier()
         assert result is None
 
     # =====================================================
-    # Tests for npma_identifier method (line 213-214)
+    # Tests for nmpa_identifier method (line 213-214)
     # =====================================================
 
-    def test_npma_identifier_found(self):
-        """Test npma_identifier returns identifier when type C218688 exists."""
+    def test_nmpa_identifier_found(self):
+        """Test nmpa_identifier returns identifier when type C218688 exists."""
         sponsor_id = self._create_identifier_with_type(
             "id_sponsor_npma", "SPONSOR-123", "org_1", "C999999"
         )
         npma_id = self._create_identifier_with_type(
-            "id_npma", "NPMA-12345", "org_2", "C218688"
+            "id_npma", "NMPA-12345", "org_2", "C218688"
         )
         sv = StudyVersion(
             id="sv_npma1",
@@ -3263,12 +3202,12 @@ class TestStudyVersion:
             titles=[self.official_title],
             instanceType="StudyVersion",
         )
-        result = sv.npma_identifier()
+        result = sv.nmpa_identifier()
         assert result is not None
-        assert result.text == "NPMA-12345"
+        assert result.text == "NMPA-12345"
 
-    def test_npma_identifier_not_found(self):
-        """Test npma_identifier returns None when no matching identifier exists."""
+    def test_nmpa_identifier_not_found(self):
+        """Test nmpa_identifier returns None when no matching identifier exists."""
         sponsor_id = self._create_identifier_with_type(
             "id_sponsor_npma2", "SPONSOR-123", "org_1", "C999999"
         )
@@ -3280,7 +3219,7 @@ class TestStudyVersion:
             titles=[self.official_title],
             instanceType="StudyVersion",
         )
-        result = sv.npma_identifier()
+        result = sv.nmpa_identifier()
         assert result is None
 
     # =====================================================
@@ -3324,11 +3263,11 @@ class TestStudyVersion:
         assert result is None
 
     # =====================================================
-    # Tests for fda_identifier method (line 222-223)
+    # Tests for fda_ind_identifier method (line 222-223)
     # =====================================================
 
-    def test_fda_identifier_by_type_found(self):
-        """Test fda_identifier returns identifier when type C218685 exists."""
+    def test_fda_ind_identifier_by_type_found(self):
+        """Test fda_ind_identifier returns identifier when type C218685 exists."""
         sponsor_id = self._create_identifier_with_type(
             "id_sponsor_fda", "SPONSOR-123", "org_1", "C999999"
         )
@@ -3343,12 +3282,12 @@ class TestStudyVersion:
             titles=[self.official_title],
             instanceType="StudyVersion",
         )
-        result = sv.fda_identifier()
+        result = sv.fda_ind_identifier()
         assert result is not None
         assert result.text == "FDA-2024-001"
 
-    def test_fda_identifier_by_type_not_found(self):
-        """Test fda_identifier returns None when no matching identifier exists."""
+    def test_fda_ind_identifier_by_type_not_found(self):
+        """Test fda_ind_identifier returns None when no matching identifier exists."""
         sponsor_id = self._create_identifier_with_type(
             "id_sponsor_fda2", "SPONSOR-123", "org_1", "C999999"
         )
@@ -3360,7 +3299,7 @@ class TestStudyVersion:
             titles=[self.official_title],
             instanceType="StudyVersion",
         )
-        result = sv.fda_identifier()
+        result = sv.fda_ind_identifier()
         assert result is None
 
     # =====================================================
@@ -3384,12 +3323,11 @@ class TestStudyVersion:
             instanceType="StudyVersion",
         )
         result = sv.fda_ide_identifier()
-        # NOTE: trailing comma on line 226 causes this to return a tuple
-        assert isinstance(result, tuple)
-        assert result[0].text == "IDE-2024-001"
+        assert result is not None
+        assert result.text == "IDE-2024-001"
 
     def test_fda_ide_identifier_not_found(self):
-        """Test fda_ide_identifier returns tuple with None when no matching identifier exists."""
+        """Test fda_ide_identifier returns None when no matching identifier exists."""
         sponsor_id = self._create_identifier_with_type(
             "id_sponsor_ide2", "SPONSOR-123", "org_1", "C999999"
         )
@@ -3402,9 +3340,7 @@ class TestStudyVersion:
             instanceType="StudyVersion",
         )
         result = sv.fda_ide_identifier()
-        # NOTE: trailing comma on line 226 causes this to return a tuple
-        assert isinstance(result, tuple)
-        assert result[0] is None
+        assert result is None
 
     # =====================================================
     # Tests for jrct_identifier method (line 228-229)
@@ -3563,6 +3499,6 @@ class TestStudyVersion:
             titles=[self.official_title],
             instanceType="StudyVersion",
         )
-        result = sv.ct_gov_identifier()
+        result = sv.nct_identifier()
         assert result is not None
         assert result.text == "FIRST-MATCH"
