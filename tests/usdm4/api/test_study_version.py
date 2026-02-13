@@ -14,7 +14,7 @@ from src.usdm4.api.study_intervention import StudyIntervention
 from src.usdm4.api.narrative_content import NarrativeContentItem
 from src.usdm4.api.address import Address
 from src.usdm4.api.population_definition import StudyDesignPopulation
-from src.usdm4.api.extension import ExtensionAttribute
+from src.usdm4.api.extension import ExtensionAttribute, BaseCode
 from src.usdm4.api.study_definition_document import StudyDefinitionDocument
 from src.usdm4.api.study_definition_document_version import (
     StudyDefinitionDocumentVersion,
@@ -3172,3 +3172,397 @@ class TestStudyVersion:
         result = sv.study_document_version("Protocol", document_map)
         assert result is not None
         assert result.id == "dv_sdv5a"
+
+    # =====================================================
+    # Helper for identifier type extension tests
+    # =====================================================
+
+    def _create_identifier_with_type(
+        self, identifier_id: str, text: str, scope_id: str, type_code: str
+    ) -> StudyIdentifier:
+        """Helper to create a StudyIdentifier with a SIT extension (identifier type)."""
+        sit_code = BaseCode(
+            id=f"sit_code_{identifier_id}",
+            code=type_code,
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode=f"Identifier Type {type_code}",
+            instanceType="Code",
+        )
+        sit_extension = ExtensionAttribute(
+            id=f"sit_ext_{identifier_id}",
+            url="www.d4k.dk/usdm/extensions/009",
+            valueCode=sit_code,
+            instanceType="ExtensionAttribute",
+        )
+        return StudyIdentifier(
+            id=identifier_id,
+            text=text,
+            scopeId=scope_id,
+            extensionAttributes=[sit_extension],
+            instanceType="StudyIdentifier",
+        )
+
+    # =====================================================
+    # Tests for ct_gov_identifier method (line 210-211)
+    # =====================================================
+
+    def test_ct_gov_identifier_found(self):
+        """Test ct_gov_identifier returns identifier when type C172240 exists."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_ctgov", "SPONSOR-123", "org_1", "C999999"
+        )
+        ct_gov_id = self._create_identifier_with_type(
+            "id_ctgov", "NCT00000001", "org_2", "C172240"
+        )
+        sv = StudyVersion(
+            id="sv_ctgov1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id, ct_gov_id],
+            titles=[self.official_title],
+            instanceType="StudyVersion",
+        )
+        result = sv.ct_gov_identifier()
+        assert result is not None
+        assert result.text == "NCT00000001"
+
+    def test_ct_gov_identifier_not_found(self):
+        """Test ct_gov_identifier returns None when no matching identifier exists."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_ctgov2", "SPONSOR-123", "org_1", "C999999"
+        )
+        sv = StudyVersion(
+            id="sv_ctgov2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id],
+            titles=[self.official_title],
+            instanceType="StudyVersion",
+        )
+        result = sv.ct_gov_identifier()
+        assert result is None
+
+    # =====================================================
+    # Tests for npma_identifier method (line 213-214)
+    # =====================================================
+
+    def test_npma_identifier_found(self):
+        """Test npma_identifier returns identifier when type C218688 exists."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_npma", "SPONSOR-123", "org_1", "C999999"
+        )
+        npma_id = self._create_identifier_with_type(
+            "id_npma", "NPMA-12345", "org_2", "C218688"
+        )
+        sv = StudyVersion(
+            id="sv_npma1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id, npma_id],
+            titles=[self.official_title],
+            instanceType="StudyVersion",
+        )
+        result = sv.npma_identifier()
+        assert result is not None
+        assert result.text == "NPMA-12345"
+
+    def test_npma_identifier_not_found(self):
+        """Test npma_identifier returns None when no matching identifier exists."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_npma2", "SPONSOR-123", "org_1", "C999999"
+        )
+        sv = StudyVersion(
+            id="sv_npma2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id],
+            titles=[self.official_title],
+            instanceType="StudyVersion",
+        )
+        result = sv.npma_identifier()
+        assert result is None
+
+    # =====================================================
+    # Tests for who_identifier method (line 216-217)
+    # =====================================================
+
+    def test_who_identifier_found(self):
+        """Test who_identifier returns identifier when type C218689 exists."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_who", "SPONSOR-123", "org_1", "C999999"
+        )
+        who_id = self._create_identifier_with_type(
+            "id_who", "WHO-2024-001", "org_2", "C218689"
+        )
+        sv = StudyVersion(
+            id="sv_who1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id, who_id],
+            titles=[self.official_title],
+            instanceType="StudyVersion",
+        )
+        result = sv.who_identifier()
+        assert result is not None
+        assert result.text == "WHO-2024-001"
+
+    def test_who_identifier_not_found(self):
+        """Test who_identifier returns None when no matching identifier exists."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_who2", "SPONSOR-123", "org_1", "C999999"
+        )
+        sv = StudyVersion(
+            id="sv_who2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id],
+            titles=[self.official_title],
+            instanceType="StudyVersion",
+        )
+        result = sv.who_identifier()
+        assert result is None
+
+    # =====================================================
+    # Tests for fda_identifier method (line 222-223)
+    # =====================================================
+
+    def test_fda_identifier_by_type_found(self):
+        """Test fda_identifier returns identifier when type C218685 exists."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_fda", "SPONSOR-123", "org_1", "C999999"
+        )
+        fda_id = self._create_identifier_with_type(
+            "id_fda_new", "FDA-2024-001", "org_2", "C218685"
+        )
+        sv = StudyVersion(
+            id="sv_fda_new1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id, fda_id],
+            titles=[self.official_title],
+            instanceType="StudyVersion",
+        )
+        result = sv.fda_identifier()
+        assert result is not None
+        assert result.text == "FDA-2024-001"
+
+    def test_fda_identifier_by_type_not_found(self):
+        """Test fda_identifier returns None when no matching identifier exists."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_fda2", "SPONSOR-123", "org_1", "C999999"
+        )
+        sv = StudyVersion(
+            id="sv_fda_new2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id],
+            titles=[self.official_title],
+            instanceType="StudyVersion",
+        )
+        result = sv.fda_identifier()
+        assert result is None
+
+    # =====================================================
+    # Tests for fda_ide_identifier method (line 225-226)
+    # =====================================================
+
+    def test_fda_ide_identifier_found(self):
+        """Test fda_ide_identifier returns identifier when type C218686 exists."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_ide", "SPONSOR-123", "org_1", "C999999"
+        )
+        fda_ide_id = self._create_identifier_with_type(
+            "id_fda_ide", "IDE-2024-001", "org_2", "C218686"
+        )
+        sv = StudyVersion(
+            id="sv_fda_ide1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id, fda_ide_id],
+            titles=[self.official_title],
+            instanceType="StudyVersion",
+        )
+        result = sv.fda_ide_identifier()
+        # NOTE: trailing comma on line 226 causes this to return a tuple
+        assert isinstance(result, tuple)
+        assert result[0].text == "IDE-2024-001"
+
+    def test_fda_ide_identifier_not_found(self):
+        """Test fda_ide_identifier returns tuple with None when no matching identifier exists."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_ide2", "SPONSOR-123", "org_1", "C999999"
+        )
+        sv = StudyVersion(
+            id="sv_fda_ide2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id],
+            titles=[self.official_title],
+            instanceType="StudyVersion",
+        )
+        result = sv.fda_ide_identifier()
+        # NOTE: trailing comma on line 226 causes this to return a tuple
+        assert isinstance(result, tuple)
+        assert result[0] is None
+
+    # =====================================================
+    # Tests for jrct_identifier method (line 228-229)
+    # =====================================================
+
+    def test_jrct_identifier_found(self):
+        """Test jrct_identifier returns identifier when type C218687 exists."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_jrct", "SPONSOR-123", "org_1", "C999999"
+        )
+        jrct_id = self._create_identifier_with_type(
+            "id_jrct", "jRCT-2024-001", "org_2", "C218687"
+        )
+        sv = StudyVersion(
+            id="sv_jrct1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id, jrct_id],
+            titles=[self.official_title],
+            instanceType="StudyVersion",
+        )
+        result = sv.jrct_identifier()
+        assert result is not None
+        assert result.text == "jRCT-2024-001"
+
+    def test_jrct_identifier_not_found(self):
+        """Test jrct_identifier returns None when no matching identifier exists."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_jrct2", "SPONSOR-123", "org_1", "C999999"
+        )
+        sv = StudyVersion(
+            id="sv_jrct2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id],
+            titles=[self.official_title],
+            instanceType="StudyVersion",
+        )
+        result = sv.jrct_identifier()
+        assert result is None
+
+    # =====================================================
+    # Tests for other_identifiers method (line 231-239)
+    # =====================================================
+
+    def test_other_identifiers_found(self):
+        """Test other_identifiers returns identifiers with type code C218690."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_oi", "SPONSOR-123", "org_1", "C999999"
+        )
+        other_id_1 = self._create_identifier_with_type(
+            "id_other_1", "OTHER-001", "org_2", "C218690"
+        )
+        other_id_2 = self._create_identifier_with_type(
+            "id_other_2", "OTHER-002", "org_2", "C218690"
+        )
+        sv = StudyVersion(
+            id="sv_other1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id, other_id_1, other_id_2],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org],
+            instanceType="StudyVersion",
+        )
+        result = sv.other_identifiers()
+        assert len(result) == 2
+        texts = [x.text for x in result]
+        assert "OTHER-001" in texts
+        assert "OTHER-002" in texts
+
+    def test_other_identifiers_excludes_sponsor(self):
+        """Test other_identifiers excludes the sponsor identifier even if it has type C218690."""
+        sponsor_id_with_type = self._create_identifier_with_type(
+            "id_sponsor_typed", "SPONSOR-TYPED", "org_1", "C218690"
+        )
+        other_id = self._create_identifier_with_type(
+            "id_other_3", "OTHER-003", "org_2", "C218690"
+        )
+        sv = StudyVersion(
+            id="sv_other2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id_with_type, other_id],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org, self.non_sponsor_org],
+            instanceType="StudyVersion",
+        )
+        result = sv.other_identifiers()
+        # sponsor_id_with_type is the sponsor_identifier() since org_1 is sponsor
+        # so it should be excluded
+        assert len(result) == 1
+        assert result[0].text == "OTHER-003"
+
+    def test_other_identifiers_empty(self):
+        """Test other_identifiers returns empty list when no identifiers have type C218690."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_oi2", "SPONSOR-123", "org_1", "C999999"
+        )
+        sv = StudyVersion(
+            id="sv_other_empty",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org],
+            instanceType="StudyVersion",
+        )
+        result = sv.other_identifiers()
+        assert result == []
+
+    def test_other_identifiers_skips_non_matching_types(self):
+        """Test other_identifiers skips identifiers with non-C218690 type codes."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_oi3", "SPONSOR-123", "org_1", "C999999"
+        )
+        ct_gov_id = self._create_identifier_with_type(
+            "id_ctgov_skip", "NCT99999", "org_2", "C172240"
+        )
+        other_id = self._create_identifier_with_type(
+            "id_other_4", "OTHER-004", "org_2", "C218690"
+        )
+        sv = StudyVersion(
+            id="sv_other3",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id, ct_gov_id, other_id],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org],
+            instanceType="StudyVersion",
+        )
+        result = sv.other_identifiers()
+        assert len(result) == 1
+        assert result[0].text == "OTHER-004"
+
+    # =====================================================
+    # Tests for _identifier_of_type private method (line 241-242)
+    # =====================================================
+
+    def test_identifier_of_type_multiple_matches_returns_first(self):
+        """Test _identifier_of_type returns the first matching identifier."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_iot", "SPONSOR-123", "org_1", "C999999"
+        )
+        id_1 = self._create_identifier_with_type(
+            "id_dup_1", "FIRST-MATCH", "org_2", "C172240"
+        )
+        id_2 = self._create_identifier_with_type(
+            "id_dup_2", "SECOND-MATCH", "org_2", "C172240"
+        )
+        sv = StudyVersion(
+            id="sv_iot1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id, id_1, id_2],
+            titles=[self.official_title],
+            instanceType="StudyVersion",
+        )
+        result = sv.ct_gov_identifier()
+        assert result is not None
+        assert result.text == "FIRST-MATCH"

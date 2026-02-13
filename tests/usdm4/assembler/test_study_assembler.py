@@ -87,7 +87,7 @@ def prepared_assemblers(
     # Prepare identification assembler with basic data
     identification_data = {
         "titles": {"brief": "Test Study", "official": "Official Test Study"},
-        "identifiers": [{"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}}],
+        "identifiers": [{"identifier": "NCT12345678", "scope": {"standard": "nct"}}],
     }
     identification_assembler.execute(identification_data)
 
@@ -1202,7 +1202,7 @@ class TestStudyAssemblerExtensions:
             {
                 "titles": {"brief": "Test"},
                 "identifiers": [
-                    {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}}
+                    {"identifier": "NCT12345678", "scope": {"standard": "nct"}}
                 ],
                 "other": {
                     "sponsor_signatory": "Dr. Smith",

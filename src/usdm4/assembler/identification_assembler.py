@@ -7,6 +7,7 @@ from usdm4.api.identifier import StudyIdentifier, SIT_EXT_URL, ExtensionAttribut
 from usdm4.api.study_title import StudyTitle
 from usdm4.api.study_role import StudyRole
 from usdm4.api.code import Code
+from usdm4.api.extension import BaseCode
 
 
 from simple_error_log.errors import Errors
@@ -124,7 +125,7 @@ class IdentificationAssembler(BaseAssembler):
     }
 
     IDENTIFIER_CODES = {
-        "ct.gov": {"code": "C172240", "decode": "Clinicaltrials.gov Identifier"},
+        "nct": {"code": "C172240", "decode": "Clinicaltrials.gov Identifier"},
         "jrct": {
             "code": "C218687",
             "decode": "Japan Registry for Clinical Trials Number",
@@ -136,7 +137,7 @@ class IdentificationAssembler(BaseAssembler):
         },
         "who": {"code": "C218689", "decode": "WHO/UTN Number"},
         "ema": {"code": "C218684", "decode": "EU Clinical Trial Register Number"},
-        "fda": {
+        "fda-ind": {
             "code": "C218685",
             "decode": "US FDA Investigational New Drug Application Number",
         },
@@ -147,7 +148,7 @@ class IdentificationAssembler(BaseAssembler):
     }
 
     STANDARD_ORGS = {
-        "ct.gov": {
+        "nct": {
             "type": "registry",
             "role": None,
             "name": "CT.GOV",
@@ -181,7 +182,7 @@ class IdentificationAssembler(BaseAssembler):
                 "country": "NL",
             },
         },
-        "fda": {
+        "fda-ind": {
             "type": "regulator",
             "role": "regulatory agency",
             "name": "FDA",
@@ -313,7 +314,7 @@ class IdentificationAssembler(BaseAssembler):
                             "identifier": str,  # The actual identifier value
                             "scope": {          # Organization scope for the identifier
                                 # Either use a standard predefined organization:
-                                "standard": str,    # Key from STANDARD_ORGS (e.g., "ct.gov", "ema", "fda")
+                                "standard": str,    # Key from STANDARD_ORGS (e.g., "nct", "ema", "fda")
 
                                 # OR define a custom non-standard organization:
                                 "non_standard": {
@@ -568,12 +569,21 @@ class IdentificationAssembler(BaseAssembler):
         else:
             code = self.IDENTIFIER_CODES["other"]["code"]
             decode = self.IDENTIFIER_CODES["other"]["decode"]
-        code: Code = self._builder.cdisc_code(code, decode)
+        code: Code = self._builder.create(
+            Code, 
+            {
+                "code": code, 
+                "decode": decode,
+                "codeSystem": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl",
+                "codeSystemVersion": "25.12e"
+            }
+        )
+        base_code = BaseCode(**code.model_dump(include={"id", "code", "codeSystem", "codeSystemVersion", "decode", "instanceType"}))
         return self._builder.create(
             ExtensionAttribute,
             {
                 "url": SIT_EXT_URL,
-                "valueCode": code,
+                "valueCode": base_code,
             },
         )
 

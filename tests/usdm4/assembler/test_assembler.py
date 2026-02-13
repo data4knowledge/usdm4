@@ -28,7 +28,7 @@ def minimal_study_data():
         "identification": {
             "titles": {"brief": "Test Study", "official": "Official Test Study"},
             "identifiers": [
-                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}}
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}}
             ],
         },
         "document": {

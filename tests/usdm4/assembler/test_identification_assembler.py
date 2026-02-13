@@ -87,7 +87,7 @@ class TestIdentificationAssemblerInitialization:
 
         # Test STANDARD_ORGS structure
         assert isinstance(identification_assembler.STANDARD_ORGS, dict)
-        expected_standard_orgs = ["ct.gov", "ema", "fda", "jrct", "nmpa", "who"]
+        expected_standard_orgs = ["nct", "ema", "fda-ind", "fda-ide", "jrct", "nmpa", "who"]
         for org_key in expected_standard_orgs:
             assert org_key in identification_assembler.STANDARD_ORGS
             org = identification_assembler.STANDARD_ORGS[org_key]
@@ -173,7 +173,7 @@ class TestIdentificationAssemblerValidData:
         """Test execute with standard organization identifier."""
         data = {
             "identifiers": [
-                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}}
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}}
             ]
         }
 
@@ -250,7 +250,7 @@ class TestIdentificationAssemblerValidData:
                 "acronym": "TSX",
             },
             "identifiers": [
-                {"identifier": "NCT98765432", "scope": {"standard": "ct.gov"}},
+                {"identifier": "NCT98765432", "scope": {"standard": "nct"}},
                 {"identifier": "EMA-2024-001", "scope": {"standard": "ema"}},
                 {
                     "identifier": "SPONSOR-001",
@@ -319,9 +319,9 @@ class TestIdentificationAssemblerValidData:
         """Test execute with all standard organizations."""
         data = {
             "identifiers": [
-                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}},
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}},
                 {"identifier": "EMA-2024-001", "scope": {"standard": "ema"}},
-                {"identifier": "FDA-IND-123456", "scope": {"standard": "fda"}},
+                {"identifier": "FDA-IND-123456", "scope": {"standard": "fda-ind"}},
             ]
         }
 
@@ -580,7 +580,7 @@ class TestIdentificationAssemblerEdgeCases:
         """Test execute with special characters in identifiers."""
         data = {
             "identifiers": [
-                {"identifier": "NCT-2024/001_TEST", "scope": {"standard": "ct.gov"}}
+                {"identifier": "NCT-2024/001_TEST", "scope": {"standard": "nct"}}
             ]
         }
 
@@ -632,7 +632,7 @@ class TestIdentificationAssemblerEdgeCases:
                 "official": "Valid Official Title",
             },
             "identifiers": [
-                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}},
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}},
                 {"identifier": "INVALID-001", "scope": {"standard": "invalid_org"}},
                 {
                     "identifier": "VALID-001",
@@ -885,7 +885,7 @@ class TestIdentificationAssemblerStateManagement:
         data = {
             "titles": {"brief": "Test Title"},
             "identifiers": [
-                {"identifier": "TEST-001", "scope": {"standard": "ct.gov"}}
+                {"identifier": "TEST-001", "scope": {"standard": "nct"}}
             ],
         }
 
@@ -999,7 +999,7 @@ class TestIdentificationAssemblerErrorHandling:
         """Test error handling with None values in data."""
         data = {
             "titles": {"brief": None, "official": "Valid Title"},
-            "identifiers": [{"identifier": None, "scope": {"standard": "ct.gov"}}],
+            "identifiers": [{"identifier": None, "scope": {"standard": "nct"}}],
         }
 
         # Should handle None values gracefully
@@ -1038,7 +1038,7 @@ class TestIdentificationAssemblerErrorHandling:
                 {
                     "identifier": "TEST-001",
                     "scope": {
-                        "standard": "ct.gov",
+                        "standard": "nct",
                         "non_standard": {
                             "type": "pharma",
                             "role": None,
@@ -1420,8 +1420,8 @@ class TestIdentificationAssemblerAdditionalCoverage:
         """Test execute with multiple identifiers for the same organization."""
         data = {
             "identifiers": [
-                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}},
-                {"identifier": "NCT87654321", "scope": {"standard": "ct.gov"}},
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}},
+                {"identifier": "NCT87654321", "scope": {"standard": "nct"}},
             ]
         }
 
@@ -1511,7 +1511,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
                 "acronym": "VB",
             },
             "identifiers": [
-                {"identifier": "VALID-001", "scope": {"standard": "ct.gov"}},
+                {"identifier": "VALID-001", "scope": {"standard": "nct"}},
                 {
                     "identifier": "",  # Empty identifier
                     "scope": {"standard": "ema"},
@@ -1581,7 +1581,7 @@ class TestIdentificationAssemblerRoles:
         """Test execute with standard organization that has no role (e.g., ct.gov)."""
         data = {
             "identifiers": [
-                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}}
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}}
             ]
         }
 
@@ -1638,7 +1638,7 @@ class TestIdentificationAssemblerRoles:
         data = {
             "identifiers": [
                 {"identifier": "EMA-2024-001", "scope": {"standard": "ema"}},
-                {"identifier": "FDA-IND-123456", "scope": {"standard": "fda"}},
+                {"identifier": "FDA-IND-123456", "scope": {"standard": "fda-ind"}},
             ]
         }
 
@@ -1889,7 +1889,7 @@ class TestIdentificationAssemblerDeepcopyProtection:
 
         data = {
             "identifiers": [
-                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}},
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}},
             ]
         }
         identification_assembler.execute(data)
@@ -1904,9 +1904,9 @@ class TestIdentificationAssemblerDeepcopyProtection:
 
         data = {
             "identifiers": [
-                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}},
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}},
                 {"identifier": "EMA-2024-001", "scope": {"standard": "ema"}},
-                {"identifier": "FDA-IND-123456", "scope": {"standard": "fda"}},
+                {"identifier": "FDA-IND-123456", "scope": {"standard": "fda-ind"}},
             ]
         }
         identification_assembler.execute(data)
@@ -1938,7 +1938,7 @@ class TestIdentificationAssemblerDeepcopyProtection:
 
         data = {
             "identifiers": [
-                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}},
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}},
             ]
         }
         identification_assembler.execute(data)
@@ -1966,7 +1966,7 @@ class TestIdentificationAssemblerDeepcopyProtection:
         """Test that 'type' in STANDARD_ORGS remains a string, not a CDISC code object."""
         data = {
             "identifiers": [
-                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}},
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}},
             ]
         }
         identification_assembler.execute(data)
@@ -2098,9 +2098,10 @@ class TestIdentificationAssemblerStandardOrgCreation:
     @pytest.mark.parametrize(
         "org_key,expected_name,expected_label,has_role",
         [
-            ("ct.gov", "CT.GOV", "ClinicalTrials.gov", False),
+            ("nct", "CT.GOV", "ClinicalTrials.gov", False),
             ("ema", "EMA", "European Medicines Agency", True),
-            ("fda", "FDA", "Food and Drug Administration", True),
+            ("fda-ind", "FDA", "Food and Drug Administration", True),
+            ("fda-ide", "FDA", "Food and Drug Administration", True),
             ("jrct", "jRCT", "Japan Registry of Clinical Trials", False),
             ("nmpa", "NMPA", "National Medical Products Administration", True),
             ("who", "WHO UTN", "WHO Registry of Clinical Trials", False),
@@ -2144,9 +2145,10 @@ class TestIdentificationAssemblerStandardOrgCreation:
     @pytest.mark.parametrize(
         "org_key,expected_name,has_role",
         [
-            ("ct.gov", "CT.GOV", False),
+            ("nct", "CT.GOV", False),
             ("ema", "EMA", True),
-            ("fda", "FDA", True),
+            ("fda-ind", "FDA", True),
+            ("fda-ide", "FDA", True),
             ("jrct", "jRCT", False),
             ("nmpa", "NMPA", True),
             ("who", "WHO UTN", False),
@@ -2181,7 +2183,7 @@ class TestIdentificationAssemblerStandardOrgCreation:
 
     @pytest.mark.parametrize(
         "org_key",
-        ["ct.gov", "ema", "fda", "jrct", "nmpa", "who"],
+        ["nct", "ema", "fda-ind", "fda-ide", "jrct", "nmpa", "who"],
     )
     def test_standard_org_creates_address(self, identification_assembler, org_key):
         """Test that each standard org creates an organization with a legal address."""

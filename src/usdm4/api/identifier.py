@@ -29,10 +29,9 @@ class StudyIdentifier(Identifier):
     def scoped_by(self, organization_map: dict) -> Organization:
         return organization_map[self.scopeId]
 
-    def of_type(self) -> str | None:
+    def of_type(self) -> Code | None:
         ext: ExtensionAttribute = self.get_extension(SIT_EXT_URL)
         return ext.valueCode if ext else None
-
 
 class AdministrableProductIdentifier(Identifier):
     instanceType: Literal["AdministrableProductIdentifier"]
