@@ -121,6 +121,42 @@ class IdentificationAssembler(BaseAssembler):
         "academic": {"code": "C18240", "decode": "Academic Institution"},
         "medical_device": {"code": "C215661", "decode": "Medical Device Company"},
     }
+
+    IDENTIFIER_CODES = {
+        "ct.gov": {
+            "code": "C172240",
+            "decode": "Clinicaltrials.gov Identifier"
+        },
+        "jrct": {
+            "code": "C218687",
+            "decode": "Japan Registry for Clinical Trials Number"
+        },
+        "nmpa": {
+            "code": "C218688",
+            "decode": "NMPA IND Number"
+        },
+        "other": {
+            "code": "C218690",
+            "decode": "Other Regulatory or Clinical Trial Identifier"
+        },
+        "who": {
+            "code": "C218689",
+            "decode": "WHO/UTN Number"
+        },
+        "ema": {
+            "code": "C218684",
+            "decode": "EU Clinical Trial Register Number"
+        },
+        "fda": {
+            "code": "C218685",
+            "decode": "US FDA Investigational New Drug Application Number"
+        },
+        "fda-ide": {
+            "code": "C218686",
+            "decode": "US FDA Investigational Device Exemption Application Number"
+        },
+    }
+
     STANDARD_ORGS = {
         "ct.gov": {
             "type": "registry",
@@ -157,6 +193,23 @@ class IdentificationAssembler(BaseAssembler):
             },
         },
         "fda": {
+            "type": "regulator",
+            "role": "regulatory agency",
+            "name": "FDA",
+            "label": "Food and Drug Administration",
+            "identifier": "FDA",
+            "description": "The US medicines regulator",
+            "identifierScheme": "Health and Human Services, US Government",
+            "legalAddress": {
+                "lines": ["10903 New Hampshire Ave"],
+                "city": "Silver Spring",
+                "district": "",
+                "state": "MD",
+                "postalCode": "20903",
+                "country": "USA",
+            },
+        },
+        "fda-ide": {
             "type": "regulator",
             "role": "regulatory agency",
             "name": "FDA",
