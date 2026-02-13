@@ -87,7 +87,15 @@ class TestIdentificationAssemblerInitialization:
 
         # Test STANDARD_ORGS structure
         assert isinstance(identification_assembler.STANDARD_ORGS, dict)
-        expected_standard_orgs = ["nct", "ema", "fda-ind", "fda-ide", "jrct", "nmpa", "who"]
+        expected_standard_orgs = [
+            "nct",
+            "ema",
+            "fda-ind",
+            "fda-ide",
+            "jrct",
+            "nmpa",
+            "who",
+        ]
         for org_key in expected_standard_orgs:
             assert org_key in identification_assembler.STANDARD_ORGS
             org = identification_assembler.STANDARD_ORGS[org_key]
@@ -172,9 +180,7 @@ class TestIdentificationAssemblerValidData:
     ):
         """Test execute with standard organization identifier."""
         data = {
-            "identifiers": [
-                {"identifier": "NCT12345678", "scope": {"standard": "nct"}}
-            ]
+            "identifiers": [{"identifier": "NCT12345678", "scope": {"standard": "nct"}}]
         }
 
         identification_assembler.execute(data)
@@ -884,9 +890,7 @@ class TestIdentificationAssemblerStateManagement:
         """Test that properties reflect current state after operations."""
         data = {
             "titles": {"brief": "Test Title"},
-            "identifiers": [
-                {"identifier": "TEST-001", "scope": {"standard": "nct"}}
-            ],
+            "identifiers": [{"identifier": "TEST-001", "scope": {"standard": "nct"}}],
         }
 
         identification_assembler.execute(data)
@@ -1248,7 +1252,9 @@ class TestIdentificationAssemblerAdditionalCoverage:
 
     def test_create_identifier_with_none_organization(self, identification_assembler):
         """Test _create_identifier with None organization."""
-        identifier = identification_assembler._create_identifier("other", "TEST-001", None)
+        identifier = identification_assembler._create_identifier(
+            "other", "TEST-001", None
+        )
         # Should return None due to None organization
         assert identifier is None
 
@@ -1580,9 +1586,7 @@ class TestIdentificationAssemblerRoles:
     def test_execute_with_standard_org_without_role(self, identification_assembler):
         """Test execute with standard organization that has no role (e.g., ct.gov)."""
         data = {
-            "identifiers": [
-                {"identifier": "NCT12345678", "scope": {"standard": "nct"}}
-            ]
+            "identifiers": [{"identifier": "NCT12345678", "scope": {"standard": "nct"}}]
         }
 
         identification_assembler.execute(data)

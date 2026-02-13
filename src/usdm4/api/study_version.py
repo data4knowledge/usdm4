@@ -212,22 +212,22 @@ class StudyVersion(ApiBaseModelWithId):
 
     def nmpa_identifier(self) -> StudyIdentifier:
         return self._identifier_of_type("C218688")
-    
+
     def who_identifier(self) -> StudyIdentifier:
         return self._identifier_of_type("C218689")
-    
+
     def ema_identifier(self) -> StudyIdentifier:
         return self._identifier_of_type("C218684")
-    
+
     def fda_ind_identifier(self) -> StudyIdentifier:
         return self._identifier_of_type("C218685")
-    
+
     def fda_ide_identifier(self) -> StudyIdentifier:
         return self._identifier_of_type("C218686")
 
     def jrct_identifier(self) -> StudyIdentifier:
         return self._identifier_of_type("C218687")
-    
+
     def other_identifiers(self) -> list[StudyIdentifier]:
         result = []
         si = self.sponsor_identifier()
@@ -237,9 +237,11 @@ class StudyVersion(ApiBaseModelWithId):
             if identifier.of_type().code == "C218690":
                 result.append(identifier)
         return result
-    
+
     def _identifier_of_type(self, code: str) -> StudyIdentifier:
-        return next((x for x in self.studyIdentifiers if x.of_type().code == code), None)
+        return next(
+            (x for x in self.studyIdentifiers if x.of_type().code == code), None
+        )
 
     def _find_first_organization(self, role_code: str) -> Organization | None:
         orgs = self._find_organizations(role_code)

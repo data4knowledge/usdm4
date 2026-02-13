@@ -33,6 +33,7 @@ class StudyIdentifier(Identifier):
         ext: ExtensionAttribute = self.get_extension(SIT_EXT_URL)
         return ext.valueCode if ext else None
 
+
 class AdministrableProductIdentifier(Identifier):
     instanceType: Literal["AdministrableProductIdentifier"]
 

@@ -397,7 +397,9 @@ class IdentificationAssembler(BaseAssembler):
                 org = self._create_organization(organization)
                 if org:
                     scope_key = scope["standard"] if "standard" in scope else "other"
-                    identifier = self._create_identifier(scope_key, id_details["identifier"], org)
+                    identifier = self._create_identifier(
+                        scope_key, id_details["identifier"], org
+                    )
                     if identifier:
                         self._organizations.append(org)
                         self._identifiers.append(identifier)
@@ -570,15 +572,26 @@ class IdentificationAssembler(BaseAssembler):
             code = self.IDENTIFIER_CODES["other"]["code"]
             decode = self.IDENTIFIER_CODES["other"]["decode"]
         code: Code = self._builder.create(
-            Code, 
+            Code,
             {
-                "code": code, 
+                "code": code,
                 "decode": decode,
                 "codeSystem": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl",
-                "codeSystemVersion": "25.12e"
-            }
+                "codeSystemVersion": "25.12e",
+            },
         )
-        base_code = BaseCode(**code.model_dump(include={"id", "code", "codeSystem", "codeSystemVersion", "decode", "instanceType"}))
+        base_code = BaseCode(
+            **code.model_dump(
+                include={
+                    "id",
+                    "code",
+                    "codeSystem",
+                    "codeSystemVersion",
+                    "decode",
+                    "instanceType",
+                }
+            )
+        )
         return self._builder.create(
             ExtensionAttribute,
             {
