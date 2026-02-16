@@ -18,7 +18,7 @@ from usdm4.api.study_version import (
     OV_EXT_URL,
     CC_EXT_URL,
     CN_EXT_URL,
-    ME_EXT_URL,
+    MECDL_EXT_URL,
     SS_EXT_URL,
     SAL_EXT_URL,
 )
@@ -147,6 +147,11 @@ class StudyAssembler(BaseAssembler):
                 # Sponsor signatory
                 self._create_extension(
                     extensions, SS_EXT_URL, identification_assembler.sponsor_signatory
+                )
+            if identification_assembler.medical_expert_contact_details_location:
+                # Medical expert contact details location
+                self._create_extension(
+                    extensions, MECDL_EXT_URL, identification_assembler.medical_expert_contact_details_location
                 )
 
             # Create StudyVersion parameters by combining data from all assemblers

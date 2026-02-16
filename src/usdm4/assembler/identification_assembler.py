@@ -8,8 +8,7 @@ from usdm4.api.study_title import StudyTitle
 from usdm4.api.study_role import StudyRole
 from usdm4.api.code import Code
 from usdm4.api.extension import BaseCode
-
-
+from usdm4.api.assigned_person import AssignedPerson
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 
@@ -289,6 +288,7 @@ class IdentificationAssembler(BaseAssembler):
         self._sponsor_signatory = None
         self._compound_names = None
         self._compound_codes = None
+        self._medical_expert_contact_details_location = None
 
     def execute(self, data: dict) -> None:
         """
@@ -452,28 +452,14 @@ class IdentificationAssembler(BaseAssembler):
         if "other" in data:
             if "medical_expert" in data["other"]:
                 me = data["other"]["medical_expert"]
-                if me:
-                    role: StudyRole = self._create_role()
-                organization.pop("role")
-                organization = copy.deepcopy(self.ROLE_ORGS[role])
-                organization["label"] = info["name"]
-                organization["legalAddress"] = (
-                    self._create_address(info["address"]) if "address" in info else None
-                )
-                org = self._create_organization(organization)
-                if org:
-                    self._errors.debug(
-                        f"Organization {org} in {role} created",
-                        KlassMethodLocation(self.MODULE, "execute"),
-                    )
-                    self._organizations.append(org)
+                if me and me["name"]:
+                    ap: AssignedPerson = self._create_assigned_person(me)
+                    if ap:
+                        role: StudyRole = self._create_role("medical expert")
+                        if role:
+                            role.assignedPersons = [ap]
                 else:
-                    self._errors.exception(
-                        f"Failed to create organization in {role}, {organization}",
-                        KlassMethodLocation(self.MODULE, "execute"),
-                    )
-
-
+                    self._medical_expert_contact_details_location
             self._sponsor_signatory = data["other"]["sponsor_signatory"]
             self._compound_names = data["other"]["compound_names"]
             self._compound_codes = data["other"]["compound_codes"]
@@ -501,6 +487,10 @@ class IdentificationAssembler(BaseAssembler):
     @property
     def compound_names(self) -> str:
         return self._compound_names
+
+    @property
+    def medical_expert_contact_details_location(self) -> str | None:
+        return self._medical_expert_contact_details_location
 
     @property
     def compound_codes(self) -> str:
@@ -649,5 +639,19 @@ class IdentificationAssembler(BaseAssembler):
                 f"Failed during creation of role of type '{type}'",
                 e,
                 KlassMethodLocation(self.MODULE, "_create_role"),
+            )
+            return None
+
+    def _create_assigned_person(self, data: dict) -> AssignedPerson | None:
+        try:
+            ap: AssignedPerson = self._builder.create(
+                AssignedPerson, {"text": data["name"]}
+            )
+            return ap
+        except Exception as e:
+            self._errors.exception(
+                f"Failed during creation of assigned person from {data}",
+                e,
+                KlassMethodLocation(self.MODULE, "_create_associated_person"),
             )
             return None
