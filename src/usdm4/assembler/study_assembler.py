@@ -148,11 +148,6 @@ class StudyAssembler(BaseAssembler):
                 self._create_extension(
                     extensions, SS_EXT_URL, identification_assembler.sponsor_signatory
                 )
-            if identification_assembler.medical_expert:
-                # Medical expert
-                self._create_extension(
-                    extensions, ME_EXT_URL, identification_assembler.medical_expert
-                )
 
             # Create StudyVersion parameters by combining data from all assemblers
             params = {

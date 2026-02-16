@@ -37,7 +37,7 @@ from .extensions_d4k import (
     OV_EXT_URL,
     CC_EXT_URL,
     CN_EXT_URL,
-    ME_EXT_URL,
+    MECDL_EXT_URL,
     SS_EXT_URL,
     SAL_EXT_URL,
 )
@@ -399,9 +399,9 @@ class StudyVersion(ApiBaseModelWithId):
         ext: ExtensionAttribute = self.get_extension(CN_EXT_URL)
         return ext.valueString if ext else ""
 
-    def medical_expert(self) -> str:
-        ext: ExtensionAttribute = self.get_extension(ME_EXT_URL)
-        return ext.valueString if ext else ""
+    def medical_expert_contact_details_location(self) -> str | None:
+        ext: ExtensionAttribute = self.get_extension(MECDL_EXT_URL)
+        return ext.valueString if ext else None
 
     def sponsor_signatory(self) -> str:
         ext: ExtensionAttribute = self.get_extension(SS_EXT_URL)

@@ -287,7 +287,6 @@ class IdentificationAssembler(BaseAssembler):
         self._roles = []
         self._study_name = ""
         self._sponsor_signatory = None
-        self._medical_expert = None
         self._compound_names = None
         self._compound_codes = None
 
@@ -451,8 +450,31 @@ class IdentificationAssembler(BaseAssembler):
                     KlassMethodLocation(self.MODULE, "execute"),
                 )
         if "other" in data:
+            if "medical_expert" in data["other"]:
+                me = data["other"]["medical_expert"]
+                if me:
+                    role: StudyRole = self._create_role()
+                organization.pop("role")
+                organization = copy.deepcopy(self.ROLE_ORGS[role])
+                organization["label"] = info["name"]
+                organization["legalAddress"] = (
+                    self._create_address(info["address"]) if "address" in info else None
+                )
+                org = self._create_organization(organization)
+                if org:
+                    self._errors.debug(
+                        f"Organization {org} in {role} created",
+                        KlassMethodLocation(self.MODULE, "execute"),
+                    )
+                    self._organizations.append(org)
+                else:
+                    self._errors.exception(
+                        f"Failed to create organization in {role}, {organization}",
+                        KlassMethodLocation(self.MODULE, "execute"),
+                    )
+
+
             self._sponsor_signatory = data["other"]["sponsor_signatory"]
-            self._medical_expert = data["other"]["medical_expert"]
             self._compound_names = data["other"]["compound_names"]
             self._compound_codes = data["other"]["compound_codes"]
 
@@ -475,10 +497,6 @@ class IdentificationAssembler(BaseAssembler):
     @property
     def sponsor_signatory(self) -> str:
         return self._sponsor_signatory
-
-    @property
-    def medical_expert(self) -> str:
-        return self._medical_expert
 
     @property
     def compound_names(self) -> str:

@@ -7,7 +7,8 @@ SI_EXT_URL = (
 )
 CC_EXT_URL = "www.d4k.dk/usdm/extensions/004"  # Compund codes
 CN_EXT_URL = "www.d4k.dk/usdm/extensions/005"  # Compund names
-ME_EXT_URL = "www.d4k.dk/usdm/extensions/006"  # Medical Expert
+MECDL_EXT_URL = "www.d4k.dk/usdm/extensions/006"  # Medical expert contact details location
 SS_EXT_URL = "www.d4k.dk/usdm/extensions/007"  # Sponsor signatory
 SAL_EXT_URL = "www.d4k.dk/usdm/extensions/008"  # Sponsor approval info location
 SIT_EXT_URL = "www.d4k.dk/usdm/extensions/009"  # Study identifier type
+APCD_EXT_URL = "www.d4k.dk/usdm/extensions/010"  # Assigned person contact details
