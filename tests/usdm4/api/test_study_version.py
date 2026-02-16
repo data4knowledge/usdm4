@@ -2694,7 +2694,7 @@ class TestStudyVersion:
     # =====================================================
 
     def test_medical_expert_with_extension(self):
-        """Test medical_expert returns value when extension exists."""
+        """Test medical_expert_contact_details_location returns value when extension exists."""
         me_extension = ExtensionAttribute(
             id="ext_me",
             url="www.d4k.dk/usdm/extensions/006",
@@ -2710,11 +2710,11 @@ class TestStudyVersion:
             extensionAttributes=[me_extension],
             instanceType="StudyVersion",
         )
-        assert sv.medical_expert() == "Dr. Jane Smith"
+        assert sv.medical_expert_contact_details_location() == "Dr. Jane Smith"
 
     def test_medical_expert_no_extension(self):
-        """Test medical_expert returns empty string when no extension."""
-        assert self.study_version.medical_expert() == ""
+        """Test medical_expert_contact_details_location returns None when no extension."""
+        assert self.study_version.medical_expert_contact_details_location() is None
 
     # =====================================================
     # Tests for sponsor_signatory (lines 372-373)

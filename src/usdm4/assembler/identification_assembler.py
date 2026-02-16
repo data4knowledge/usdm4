@@ -9,6 +9,7 @@ from usdm4.api.study_role import StudyRole
 from usdm4.api.code import Code
 from usdm4.api.extension import BaseCode
 from usdm4.api.assigned_person import AssignedPerson
+from usdm4.api.person_name import PersonName
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 
@@ -644,14 +645,22 @@ class IdentificationAssembler(BaseAssembler):
 
     def _create_assigned_person(self, data: dict) -> AssignedPerson | None:
         try:
+            person_name: PersonName = self._builder.create(
+                PersonName, {"text": data["name"]}
+            )
             ap: AssignedPerson = self._builder.create(
-                AssignedPerson, {"text": data["name"]}
+                AssignedPerson,
+                {
+                    "name": data["name"],
+                    "personName": person_name,
+                    "jobTitle": "Medical Expert",
+                },
             )
             return ap
         except Exception as e:
             self._errors.exception(
                 f"Failed during creation of assigned person from {data}",
                 e,
-                KlassMethodLocation(self.MODULE, "_create_associated_person"),
+                KlassMethodLocation(self.MODULE, "_create_assigned_person"),
             )
             return None

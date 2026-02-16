@@ -1206,7 +1206,7 @@ class TestStudyAssemblerExtensions:
                 ],
                 "other": {
                     "sponsor_signatory": "Dr. Smith",
-                    "medical_expert": "Dr. Jones",
+                    "medical_expert": {"name": "Dr. Jones"},
                     "compound_names": "CompoundA",
                     "compound_codes": "CODE-123",
                 },
@@ -1259,11 +1259,12 @@ class TestStudyAssemblerExtensions:
         assert sa.study is not None
         study_version = sa.study.versions[0]
         ext_urls = [e.url for e in study_version.extensionAttributes]
-        # Should have compound_codes, compound_names, sponsor_signatory, medical_expert extensions
+        # Should have compound_codes, compound_names, sponsor_signatory extensions
         assert "www.d4k.dk/usdm/extensions/004" in ext_urls  # compound_codes
         assert "www.d4k.dk/usdm/extensions/005" in ext_urls  # compound_names
         assert "www.d4k.dk/usdm/extensions/007" in ext_urls  # sponsor_signatory
-        assert "www.d4k.dk/usdm/extensions/006" in ext_urls  # medical_expert
+        # medical_expert with a name creates a role, not an extension
+        assert "www.d4k.dk/usdm/extensions/006" not in ext_urls
 
 
 class TestStudyAssemblerCreateExtensionException:

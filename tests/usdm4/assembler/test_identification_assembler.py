@@ -2071,7 +2071,7 @@ class TestIdentificationAssemblerOtherData:
         data = {
             "other": {
                 "sponsor_signatory": "Dr. Jane Smith",
-                "medical_expert": "Dr. John Doe",
+                "medical_expert": {"name": "Dr. John Doe"},
                 "compound_names": "Compound A, Compound B",
                 "compound_codes": "ABC-123, DEF-456",
             }
@@ -2080,9 +2080,12 @@ class TestIdentificationAssemblerOtherData:
         identification_assembler.execute(data)
 
         assert identification_assembler.sponsor_signatory == "Dr. Jane Smith"
-        assert identification_assembler.medical_expert == "Dr. John Doe"
         assert identification_assembler.compound_names == "Compound A, Compound B"
         assert identification_assembler.compound_codes == "ABC-123, DEF-456"
+        # medical_expert with a name creates a role and assigned person
+        assert len(identification_assembler.roles) == 1
+        assert identification_assembler.roles[0].code.code == "C51876"
+        assert identification_assembler.roles[0].assignedPersons[0].personName.text == "Dr. John Doe"
 
     def test_execute_without_other_data_leaves_defaults(self, identification_assembler):
         """Test execute without 'other' data leaves properties as None."""
@@ -2091,9 +2094,39 @@ class TestIdentificationAssemblerOtherData:
         identification_assembler.execute(data)
 
         assert identification_assembler.sponsor_signatory is None
-        assert identification_assembler.medical_expert is None
+        assert identification_assembler.medical_expert_contact_details_location is None
         assert identification_assembler.compound_names is None
         assert identification_assembler.compound_codes is None
+
+    def test_execute_with_medical_expert_empty_name(self, identification_assembler):
+        """Test execute with medical_expert that has an empty name does not create a role."""
+        data = {
+            "other": {
+                "sponsor_signatory": None,
+                "medical_expert": {"name": ""},
+                "compound_names": None,
+                "compound_codes": None,
+            }
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.roles) == 0
+
+    def test_execute_with_medical_expert_none(self, identification_assembler):
+        """Test execute with medical_expert set to None does not create a role."""
+        data = {
+            "other": {
+                "sponsor_signatory": None,
+                "medical_expert": None,
+                "compound_names": None,
+                "compound_codes": None,
+            }
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.roles) == 0
 
 
 class TestIdentificationAssemblerStandardOrgCreation:

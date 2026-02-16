@@ -30,6 +30,7 @@ from .masking import Masking
 from .narrative_content import NarrativeContent, NarrativeContentItem
 from .objective import Objective
 from .organization import Organization
+from .person_name import PersonName
 from .population_definition import StudyDesignPopulation, StudyCohort
 from .procedure import Procedure
 from .quantity_range import Quantity
@@ -115,6 +116,7 @@ __all__ = [
     "Objective",
     "ObservationalStudyDesign",
     "Organization",
+    "PersonName",
     "Procedure",
     "Quantity",
     "Range",
