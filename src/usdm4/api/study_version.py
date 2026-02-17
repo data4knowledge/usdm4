@@ -2,6 +2,7 @@ from datetime import date
 from typing import List, Literal, Union
 from typing_extensions import deprecated
 from .api_base_model import ApiBaseModelWithId
+from .assigned_person import AssignedPerson
 from .code import Code
 from .identifier import StudyIdentifier, ReferenceIdentifier
 from .study_design import (
@@ -251,6 +252,10 @@ class StudyVersion(ApiBaseModelWithId):
         role = next((x for x in self.roles if x.code.code == role_code), None)
         return [self.organization(x) for x in role.organizationIds] if role else []
 
+    def _find_assigned_persons(self, role_code: str) -> list[AssignedPerson]:
+        role = next((x for x in self.roles if x.code.code == role_code), None)
+        return role.assignedPersons if role else []
+        
     def regulatory_identifiers(self) -> list[StudyIdentifier]:
         results = []
         for identifier in self.studyIdentifiers:
@@ -399,6 +404,10 @@ class StudyVersion(ApiBaseModelWithId):
         ext: ExtensionAttribute = self.get_extension(CN_EXT_URL)
         return ext.valueString if ext else ""
 
+    def medical_expert(self) -> AssignedPerson | None:
+        aps = self._find_assigned_persons("C51876")
+        return aps[0] if len(aps) > 0 else None
+    
     def medical_expert_contact_details_location(self) -> str | None:
         ext: ExtensionAttribute = self.get_extension(MECDL_EXT_URL)
         return ext.valueString if ext else None

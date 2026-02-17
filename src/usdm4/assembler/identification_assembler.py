@@ -452,15 +452,22 @@ class IdentificationAssembler(BaseAssembler):
                 )
         if "other" in data:
             if "medical_expert" in data["other"]:
+                me: dict
                 me = data["other"]["medical_expert"]
-                if me and me["name"]:
-                    ap: AssignedPerson = self._create_assigned_person(me)
-                    if ap:
-                        role: StudyRole = self._create_role("medical expert")
-                        if role:
-                            role.assignedPersons = [ap]
-                else:
-                    self._medical_expert_contact_details_location
+                if me: 
+                    if me.get("name"):
+                        ap: AssignedPerson = self._create_assigned_person(me)
+                        if ap:
+                            role: StudyRole = self._create_role("medical expert")
+                            if role:
+                                role.assignedPersons = [ap]
+                    elif me.get("reference"):
+                        self._medical_expert_contact_details_location = ("/n").join(me["reference"])
+                    else:
+                        self._errors.warning(
+                            f"No medical expert contact information detected",
+                            KlassMethodLocation(self.MODULE, "execute"),
+                        )
             self._sponsor_signatory = data["other"]["sponsor_signatory"]
             self._compound_names = data["other"]["compound_names"]
             self._compound_codes = data["other"]["compound_codes"]

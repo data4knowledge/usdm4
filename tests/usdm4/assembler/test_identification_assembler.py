@@ -2245,3 +2245,84 @@ class TestIdentificationAssemblerStandardOrgCreation:
         assert hasattr(org.legalAddress, "text"), (
             f"Address for '{org_key}' should have text set"
         )
+
+
+class TestIdentificationAssemblerCoverageGaps:
+    """Tests targeting specific uncovered lines."""
+
+    _original_role_orgs = None
+
+    def setup_method(self):
+        """Restore ROLE_ORGS before each test since _create_organization mutates it."""
+        if TestIdentificationAssemblerCoverageGaps._original_role_orgs is None:
+            TestIdentificationAssemblerCoverageGaps._original_role_orgs = (
+                copy.deepcopy(IdentificationAssembler.ROLE_ORGS)
+            )
+        IdentificationAssembler.ROLE_ORGS = copy.deepcopy(
+            TestIdentificationAssemblerCoverageGaps._original_role_orgs
+        )
+
+    def test_role_org_creation_failure_logs_error(self, builder, errors):
+        """Test that failed organization creation during role processing logs an error (line 443)."""
+        assembler = IdentificationAssembler(builder, errors)
+        builder.clear()
+        initial_error_count = errors.error_count()
+
+        # Monkey-patch _create_organization to return None
+        original = assembler._create_organization
+
+        def return_none(organization):
+            return None
+
+        assembler._create_organization = return_none
+
+        try:
+            data = {
+                "roles": {
+                    "co_sponsor": {"name": "Will Fail Corp"},
+                }
+            }
+            assembler.execute(data)
+        finally:
+            assembler._create_organization = original
+
+        assert len(assembler.organizations) == 0
+        assert errors.error_count() > initial_error_count
+
+    def test_medical_expert_with_reference(self, identification_assembler):
+        """Test medical expert with reference key sets contact details location (line 465)."""
+        data = {
+            "other": {
+                "sponsor_signatory": None,
+                "medical_expert": {
+                    "reference": ["Section 1", "Section 2"],
+                },
+                "compound_names": None,
+                "compound_codes": None,
+            }
+        }
+
+        identification_assembler.execute(data)
+
+        assert identification_assembler.medical_expert_contact_details_location == "Section 1/nSection 2"
+        assert len(identification_assembler.roles) == 0
+
+    def test_identifier_type_unknown_scope_uses_other(self, identification_assembler):
+        """Test _identifier_type with unknown scope falls back to 'other' codes (lines 588-589)."""
+        result = identification_assembler._identifier_type("unknown_scope")
+
+        assert result is not None
+        assert result.valueCode.code == "C218690"
+        assert result.valueCode.decode == "Other Regulatory or Clinical Trial Identifier"
+
+    def test_create_assigned_person_exception(self, builder, errors):
+        """Test _create_assigned_person exception handling (lines 667-673)."""
+        assembler = IdentificationAssembler(builder, errors)
+        builder.clear()
+        initial_error_count = errors.error_count()
+
+        # Pass data that will cause an exception (missing required 'name' key)
+        result = assembler._create_assigned_person({})
+
+        assert result is None
+        assert errors.error_count() > initial_error_count
