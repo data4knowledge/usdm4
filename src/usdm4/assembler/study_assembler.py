@@ -151,7 +151,9 @@ class StudyAssembler(BaseAssembler):
             if identification_assembler.medical_expert_contact_details_location:
                 # Medical expert contact details location
                 self._create_extension(
-                    extensions, MECDL_EXT_URL, identification_assembler.medical_expert_contact_details_location
+                    extensions,
+                    MECDL_EXT_URL,
+                    identification_assembler.medical_expert_contact_details_location,
                 )
 
             # Create StudyVersion parameters by combining data from all assemblers

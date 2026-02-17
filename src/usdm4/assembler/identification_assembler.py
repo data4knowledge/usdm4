@@ -454,7 +454,7 @@ class IdentificationAssembler(BaseAssembler):
             if "medical_expert" in data["other"]:
                 me: dict
                 me = data["other"]["medical_expert"]
-                if me: 
+                if me:
                     if me.get("name"):
                         ap: AssignedPerson = self._create_assigned_person(me)
                         if ap:
@@ -462,10 +462,12 @@ class IdentificationAssembler(BaseAssembler):
                             if role:
                                 role.assignedPersons = [ap]
                     elif me.get("reference"):
-                        self._medical_expert_contact_details_location = ("/n").join(me["reference"])
+                        self._medical_expert_contact_details_location = ("/n").join(
+                            me["reference"]
+                        )
                     else:
                         self._errors.warning(
-                            f"No medical expert contact information detected",
+                            "No medical expert contact information detected",
                             KlassMethodLocation(self.MODULE, "execute"),
                         )
             self._sponsor_signatory = data["other"]["sponsor_signatory"]

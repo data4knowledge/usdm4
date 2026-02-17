@@ -2085,7 +2085,10 @@ class TestIdentificationAssemblerOtherData:
         # medical_expert with a name creates a role and assigned person
         assert len(identification_assembler.roles) == 1
         assert identification_assembler.roles[0].code.code == "C51876"
-        assert identification_assembler.roles[0].assignedPersons[0].personName.text == "Dr. John Doe"
+        assert (
+            identification_assembler.roles[0].assignedPersons[0].personName.text
+            == "Dr. John Doe"
+        )
 
     def test_execute_without_other_data_leaves_defaults(self, identification_assembler):
         """Test execute without 'other' data leaves properties as None."""
@@ -2255,8 +2258,8 @@ class TestIdentificationAssemblerCoverageGaps:
     def setup_method(self):
         """Restore ROLE_ORGS before each test since _create_organization mutates it."""
         if TestIdentificationAssemblerCoverageGaps._original_role_orgs is None:
-            TestIdentificationAssemblerCoverageGaps._original_role_orgs = (
-                copy.deepcopy(IdentificationAssembler.ROLE_ORGS)
+            TestIdentificationAssemblerCoverageGaps._original_role_orgs = copy.deepcopy(
+                IdentificationAssembler.ROLE_ORGS
             )
         IdentificationAssembler.ROLE_ORGS = copy.deepcopy(
             TestIdentificationAssemblerCoverageGaps._original_role_orgs
@@ -2304,7 +2307,10 @@ class TestIdentificationAssemblerCoverageGaps:
 
         identification_assembler.execute(data)
 
-        assert identification_assembler.medical_expert_contact_details_location == "Section 1/nSection 2"
+        assert (
+            identification_assembler.medical_expert_contact_details_location
+            == "Section 1/nSection 2"
+        )
         assert len(identification_assembler.roles) == 0
 
     def test_identifier_type_unknown_scope_uses_other(self, identification_assembler):
@@ -2313,7 +2319,9 @@ class TestIdentificationAssemblerCoverageGaps:
 
         assert result is not None
         assert result.valueCode.code == "C218690"
-        assert result.valueCode.decode == "Other Regulatory or Clinical Trial Identifier"
+        assert (
+            result.valueCode.decode == "Other Regulatory or Clinical Trial Identifier"
+        )
 
     def test_create_assigned_person_exception(self, builder, errors):
         """Test _create_assigned_person exception handling (lines 667-673)."""

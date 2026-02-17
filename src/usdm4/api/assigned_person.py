@@ -4,6 +4,7 @@ from .person_name import PersonName
 from .extension import ExtensionAttribute
 from .extensions_d4k import APCD_EXT_URL
 
+
 class AssignedPerson(ApiBaseModelWithIdNameLabelAndDesc):
     personName: PersonName
     jobTitle: str
