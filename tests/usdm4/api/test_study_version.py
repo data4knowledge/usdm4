@@ -3177,6 +3177,7 @@ class TestStudyVersion:
             rationale="Test",
             studyIdentifiers=[sponsor_id],
             titles=[self.official_title],
+            organizations=[self.sponsor_org],
             instanceType="StudyVersion",
         )
         result = sv.nct_identifier()
@@ -3257,6 +3258,7 @@ class TestStudyVersion:
             rationale="Test",
             studyIdentifiers=[sponsor_id],
             titles=[self.official_title],
+            organizations=[self.sponsor_org],
             instanceType="StudyVersion",
         )
         result = sv.who_identifier()
@@ -3297,6 +3299,7 @@ class TestStudyVersion:
             rationale="Test",
             studyIdentifiers=[sponsor_id],
             titles=[self.official_title],
+            organizations=[self.sponsor_org],
             instanceType="StudyVersion",
         )
         result = sv.fda_ind_identifier()
@@ -3502,3 +3505,217 @@ class TestStudyVersion:
         result = sv.nct_identifier()
         assert result is not None
         assert result.text == "FIRST-MATCH"
+
+    # =====================================================
+    # Helper to create an Organization with a given name
+    # =====================================================
+
+    def _create_org(self, org_id: str, name: str) -> Organization:
+        """Helper to create an Organization with a given name."""
+        org_type = Code(
+            id=f"org_type_{org_id}",
+            code="C93453",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Registry",
+            instanceType="Code",
+        )
+        return Organization(
+            id=org_id,
+            name=name,
+            label=name,
+            type=org_type,
+            identifierScheme="scheme",
+            identifier=org_id,
+            instanceType="Organization",
+        )
+
+    # =====================================================
+    # Tests for identifier fallback by org name
+    # =====================================================
+
+    def test_nct_identifier_fallback_by_org(self):
+        """Test nct_identifier falls back to identifier scoped by org named CT.GOV."""
+        ctgov_org = self._create_org("org_ctgov", "CT.GOV")
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_fb1", "SPONSOR-123", "org_1", "C999999"
+        )
+        ctgov_id = self._create_identifier_with_type(
+            "id_ctgov_fb", "NCT00000002", "org_ctgov", "C999998"
+        )
+        sv = StudyVersion(
+            id="sv_ctgov_fb",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id, ctgov_id],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org, ctgov_org],
+            instanceType="StudyVersion",
+        )
+        result = sv.nct_identifier()
+        assert result is not None
+        assert result.text == "NCT00000002"
+
+    def test_who_identifier_fallback_by_org(self):
+        """Test who_identifier falls back to identifier scoped by org named EMA."""
+        ema_org = self._create_org("org_ema", "EMA")
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_fb2", "SPONSOR-123", "org_1", "C999999"
+        )
+        ema_id = self._create_identifier_with_type(
+            "id_ema_fb", "WHO-EMA-2024-001", "org_ema", "C999998"
+        )
+        sv = StudyVersion(
+            id="sv_who_fb",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id, ema_id],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org, ema_org],
+            instanceType="StudyVersion",
+        )
+        result = sv.who_identifier()
+        assert result is not None
+        assert result.text == "WHO-EMA-2024-001"
+
+    def test_fda_ind_identifier_fallback_by_org(self):
+        """Test fda_ind_identifier falls back to identifier scoped by org named FDA."""
+        fda_org = self._create_org("org_fda", "FDA")
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_fb3", "SPONSOR-123", "org_1", "C999999"
+        )
+        fda_id = self._create_identifier_with_type(
+            "id_fda_fb", "IND-2024-001", "org_fda", "C999998"
+        )
+        sv = StudyVersion(
+            id="sv_fda_fb",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id, fda_id],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org, fda_org],
+            instanceType="StudyVersion",
+        )
+        result = sv.fda_ind_identifier()
+        assert result is not None
+        assert result.text == "IND-2024-001"
+
+    # =====================================================
+    # Tests for nct_identifier_text method
+    # =====================================================
+
+    def test_nct_identifier_text_found(self):
+        """Test nct_identifier_text returns text when NCT identifier exists."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_nit1", "SPONSOR-123", "org_1", "C999999"
+        )
+        ct_gov_id = self._create_identifier_with_type(
+            "id_nit1", "NCT00000003", "org_2", "C172240"
+        )
+        sv = StudyVersion(
+            id="sv_nit1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id, ct_gov_id],
+            titles=[self.official_title],
+            instanceType="StudyVersion",
+        )
+        result = sv.nct_identifier_text()
+        assert result == "NCT00000003"
+
+    def test_nct_identifier_text_not_found(self):
+        """Test nct_identifier_text returns empty string when no NCT identifier."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_nit2", "SPONSOR-123", "org_1", "C999999"
+        )
+        sv = StudyVersion(
+            id="sv_nit2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org],
+            instanceType="StudyVersion",
+        )
+        result = sv.nct_identifier_text()
+        assert result == ""
+
+    # =====================================================
+    # Tests for ema_identifier_text method
+    # =====================================================
+
+    def test_ema_identifier_text_found(self):
+        """Test ema_identifier_text returns text when EMA identifier exists."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_eit1", "SPONSOR-123", "org_1", "C999999"
+        )
+        ema_id = self._create_identifier_with_type(
+            "id_eit1", "EudraCT-2024-001234-56", "org_2", "C218684"
+        )
+        sv = StudyVersion(
+            id="sv_eit1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id, ema_id],
+            titles=[self.official_title],
+            instanceType="StudyVersion",
+        )
+        result = sv.ema_identifier_text()
+        assert result == "EudraCT-2024-001234-56"
+
+    def test_ema_identifier_text_not_found(self):
+        """Test ema_identifier_text returns empty string when no EMA identifier."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_eit2", "SPONSOR-123", "org_1", "C999999"
+        )
+        sv = StudyVersion(
+            id="sv_eit2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org],
+            instanceType="StudyVersion",
+        )
+        result = sv.ema_identifier_text()
+        assert result == ""
+
+    # =====================================================
+    # Tests for fda_ind_identifier_text method
+    # =====================================================
+
+    def test_fda_ind_identifier_text_found(self):
+        """Test fda_ind_identifier_text returns text when FDA IND identifier exists."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_fit1", "SPONSOR-123", "org_1", "C999999"
+        )
+        fda_id = self._create_identifier_with_type(
+            "id_fit1", "FDA-IND-2024-001", "org_2", "C218685"
+        )
+        sv = StudyVersion(
+            id="sv_fit1",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id, fda_id],
+            titles=[self.official_title],
+            instanceType="StudyVersion",
+        )
+        result = sv.fda_ind_identifier_text()
+        assert result == "FDA-IND-2024-001"
+
+    def test_fda_ind_identifier_text_not_found(self):
+        """Test fda_ind_identifier_text returns empty string when no FDA IND identifier."""
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_fit2", "SPONSOR-123", "org_1", "C999999"
+        )
+        sv = StudyVersion(
+            id="sv_fit2",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org],
+            instanceType="StudyVersion",
+        )
+        result = sv.fda_ind_identifier_text()
+        assert result == ""

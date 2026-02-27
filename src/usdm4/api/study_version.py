@@ -208,25 +208,37 @@ class StudyVersion(ApiBaseModelWithId):
             return org.legalAddress.text if org.legalAddress else ""
         return ""
 
-    def nct_identifier(self) -> StudyIdentifier:
-        return self._identifier_of_type("C172240")
+    def nct_identifier_text(self) -> StudyIdentifier | None:
+        identifier = self.nct_identifier()
+        return identifier.text if identifier else ""
 
-    def nmpa_identifier(self) -> StudyIdentifier:
+    def nct_identifier(self) -> StudyIdentifier | None:
+        return self._identifier_type_or_scoped_by_org("C172240", "CT.GOV")
+
+    def nmpa_identifier(self) -> StudyIdentifier | None:
         return self._identifier_of_type("C218688")
 
-    def who_identifier(self) -> StudyIdentifier:
-        return self._identifier_of_type("C218689")
+    def who_identifier(self) -> StudyIdentifier | None:
+        return self._identifier_type_or_scoped_by_org("C218689", "EMA")
 
-    def ema_identifier(self) -> StudyIdentifier:
+    def ema_identifier_text(self) -> StudyIdentifier | None:
+        identifier = self.ema_identifier()
+        return identifier.text if identifier else ""
+
+    def ema_identifier(self) -> StudyIdentifier | None:
         return self._identifier_of_type("C218684")
 
-    def fda_ind_identifier(self) -> StudyIdentifier:
-        return self._identifier_of_type("C218685")
+    def fda_ind_identifier_text(self) -> StudyIdentifier | None:
+        identifier = self.fda_ind_identifier()
+        return identifier.text if identifier else ""
 
-    def fda_ide_identifier(self) -> StudyIdentifier:
+    def fda_ind_identifier(self) -> StudyIdentifier | None:
+        return self._identifier_type_or_scoped_by_org("C218685", "FDA")
+
+    def fda_ide_identifier(self) -> StudyIdentifier | None:
         return self._identifier_of_type("C218686")
 
-    def jrct_identifier(self) -> StudyIdentifier:
+    def jrct_identifier(self) -> StudyIdentifier | None:
         return self._identifier_of_type("C218687")
 
     def other_identifiers(self) -> list[StudyIdentifier]:
@@ -239,11 +251,24 @@ class StudyVersion(ApiBaseModelWithId):
                 result.append(identifier)
         return result
 
-    def _identifier_of_type(self, code: str) -> StudyIdentifier:
+    def _identifier_type_or_scoped_by_org(self, type: str, name: str) -> StudyIdentifier | None:
+        identifier = self._identifier_of_type(type)
+        if identifier is None:
+            identifier = self._identifier_scoped_by_org(name)
+        return identifier
+
+    def _identifier_of_type(self, code: str) -> StudyIdentifier | None:
         return next(
             (x for x in self.studyIdentifiers if x.of_type().code == code), None
         )
 
+    def _identifier_scoped_by_org(self, name: str) -> StudyIdentifier | None:
+        map = self.organization_map()
+        for identifier in self.studyIdentifiers:
+            if map[identifier.scopeId].name.upper() == name.upper():
+                return identifier
+        return None
+    
     def _find_first_organization(self, role_code: str) -> Organization | None:
         orgs = self._find_organizations(role_code)
         return orgs[0] if len(orgs) > 0 else None
