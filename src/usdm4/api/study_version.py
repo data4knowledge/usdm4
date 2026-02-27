@@ -251,7 +251,9 @@ class StudyVersion(ApiBaseModelWithId):
                 result.append(identifier)
         return result
 
-    def _identifier_type_or_scoped_by_org(self, type: str, name: str) -> StudyIdentifier | None:
+    def _identifier_type_or_scoped_by_org(
+        self, type: str, name: str
+    ) -> StudyIdentifier | None:
         identifier = self._identifier_of_type(type)
         if identifier is None:
             identifier = self._identifier_scoped_by_org(name)
@@ -259,7 +261,12 @@ class StudyVersion(ApiBaseModelWithId):
 
     def _identifier_of_type(self, code: str) -> StudyIdentifier | None:
         return next(
-            (x for x in self.studyIdentifiers if x.of_type().code == code), None
+            (
+                x
+                for x in self.studyIdentifiers
+                if x.of_type() is not None and x.of_type().code == code
+            ),
+            None,
         )
 
     def _identifier_scoped_by_org(self, name: str) -> StudyIdentifier | None:
@@ -268,7 +275,7 @@ class StudyVersion(ApiBaseModelWithId):
             if map[identifier.scopeId].name.upper() == name.upper():
                 return identifier
         return None
-    
+
     def _find_first_organization(self, role_code: str) -> Organization | None:
         orgs = self._find_organizations(role_code)
         return orgs[0] if len(orgs) > 0 else None
