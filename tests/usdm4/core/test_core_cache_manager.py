@@ -173,6 +173,44 @@ class TestCoreValidationResult:
         assert d["is_valid"] is True
         assert d["rules_executed"] == 10
 
+    def test_to_errors_empty(self):
+        from usdm4.core.core_validation_result import CoreValidationResult
+
+        result = CoreValidationResult()
+        errors = result.to_errors()
+        assert errors.count() == 0
+
+    def test_to_errors_with_findings(self):
+        from usdm4.core.core_validation_result import (
+            CoreRuleFinding,
+            CoreValidationResult,
+        )
+
+        result = CoreValidationResult(
+            findings=[
+                CoreRuleFinding(
+                    rule_id="CORE-001",
+                    description="Test rule",
+                    message="Something wrong",
+                    errors=[{"value": "bad"}, {"value": "also bad"}],
+                ),
+                CoreRuleFinding(
+                    rule_id="CORE-002",
+                    description="Another rule",
+                    message="",
+                    errors=[{"value": "issue"}],
+                ),
+            ]
+        )
+        errors = result.to_errors()
+        assert errors.count() == 3
+        assert errors.error_count() == 3
+        items = errors.to_dict()
+        assert items[0]["type"] == "CORE-001"
+        assert "Something wrong" in items[0]["message"]
+        assert items[2]["type"] == "CORE-002"
+        assert "Another rule" in items[2]["message"]
+
 
 class TestCoreValidatorClassifyErrors:
     """Tests for the static _classify_errors method."""

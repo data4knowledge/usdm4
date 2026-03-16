@@ -12,7 +12,6 @@ from usdm4.convert.convert import Convert
 from usdm4.builder.builder import Builder
 from usdm4.assembler.assembler import Assembler
 from usdm4.core.core_validator import CoreValidator
-from usdm4.core.core_validation_result import CoreValidationResult
 
 
 class USDM4:
@@ -32,7 +31,7 @@ class USDM4:
         version: str = "4-0",
         cache_dir: Optional[str] = None,
         api_key: Optional[str] = None,
-    ) -> CoreValidationResult:
+    ) -> Errors:
         """
         Validate a USDM JSON file using the CDISC Rules Engine (CORE).
 
@@ -49,10 +48,11 @@ class USDM4:
                 ``CDISC_LIBRARY_API_KEY`` or ``CDISC_API_KEY`` environment variable.
 
         Returns:
-            A :class:`~usdm4.core.CoreValidationResult` with findings.
+            An :class:`~simple_error_log.errors.Errors` instance with findings.
         """
         validator = self._get_core_validator(cache_dir, api_key)
-        return validator.validate(file_path, version=version)
+        result = validator.validate(file_path, version=version)
+        return result.to_errors()
 
     def validate_core_async(
         self,
@@ -64,7 +64,7 @@ class USDM4:
         """
         Validate a USDM JSON file using CDISC CORE in a background thread.
 
-        Returns immediately with a ``Future[CoreValidationResult]``.
+        Returns immediately with a ``Future[Errors]``.
 
         Args:
             file_path: Path to the USDM JSON file.
@@ -73,11 +73,23 @@ class USDM4:
             api_key: Optional CDISC Library API key.
 
         Returns:
-            A ``Future`` whose ``.result()`` returns a
-            :class:`~usdm4.core.CoreValidationResult`.
+            A ``Future`` whose ``.result()`` returns an
+            :class:`~simple_error_log.errors.Errors` instance.
         """
         validator = self._get_core_validator(cache_dir, api_key)
-        return validator.validate_async(file_path, version=version)
+        future = validator.validate_async(file_path, version=version)
+        # Wrap the future to convert CoreValidationResult -> Errors
+        wrapped = Future()
+
+        def _on_done(f):
+            try:
+                result = f.result()
+                wrapped.set_result(result.to_errors())
+            except Exception as e:
+                wrapped.set_exception(e)
+
+        future.add_done_callback(_on_done)
+        return wrapped
 
     def _get_core_validator(
         self, cache_dir: Optional[str] = None, api_key: Optional[str] = None

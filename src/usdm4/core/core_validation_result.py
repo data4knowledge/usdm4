@@ -5,6 +5,8 @@ Data classes for CDISC CORE validation results.
 from dataclasses import dataclass, field
 from typing import Any
 
+from simple_error_log.errors import Errors
+
 
 @dataclass
 class CoreRuleFinding:
@@ -131,3 +133,20 @@ class CoreValidationResult:
                 for f in self.findings
             ],
         }
+
+    def to_errors(self) -> Errors:
+        """Convert findings to an :class:`~simple_error_log.errors.Errors` instance."""
+        errors = Errors()
+        for finding in self.findings:
+            for error in finding.errors:
+                if isinstance(error, dict):
+                    detail = ", ".join(
+                        f"{k}: {v}" for k, v in error.items()
+                    )
+                else:
+                    detail = str(error)
+                message = (
+                    f"{finding.message or finding.description}: {detail}"
+                )
+                errors.add(message, error_type=finding.rule_id)
+        return errors
