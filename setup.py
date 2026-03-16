@@ -19,6 +19,7 @@ setuptools.setup(
         "usdm3==0.12.1",
         "simple_error_log>=0.7.0",
         "python-dateutil==2.9.0.post0",
+        "cdisc-rules-engine",
     ],
     packages=setuptools.find_packages(where="src"),
     package_dir={"": "src"},
