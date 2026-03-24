@@ -1,6 +1,8 @@
+from pydantic import ValidationError
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.builder.builder import Builder
+from usdm4.assembler.schema import AssemblerInput
 from usdm4.assembler.identification_assembler import IdentificationAssembler
 from usdm4.assembler.population_assembler import PopulationAssembler
 from usdm4.assembler.document_assembler import DocumentAssembler
@@ -56,51 +58,47 @@ class Assembler:
         self._study_assembler.clear()
         self._timeline_assembler.clear()
 
-    def execute(self, data: dict) -> None:
+    def execute(self, data: AssemblerInput | dict) -> None:
         """
         Executes the assembly process to build a complete Study object from structured data.
 
+        Accepts either an ``AssemblerInput`` Pydantic model or a raw ``dict``.  When a
+        dict is supplied it is validated against the ``AssemblerInput`` schema; structural
+        errors are reported via the shared ``Errors`` instance and the method returns
+        early.  After validation the **original** dict is forwarded to the sub-assemblers
+        so that their existing key-access patterns are preserved unchanged.
+
         Args:
-            data (dict): A dictionary containing all the structured data needed to assemble a study.
-                        The data parameter must have the following top-level structure:
-
-                        {
-                            "identification": dict,    # Study identification data (IDs, versions, etc.)
-                            "document": dict,          # Document-related data (protocols, amendments, etc.)
-                            "population": dict,        # Population definitions and analysis populations
-                            "study_design": dict,      # Study design elements (arms, epochs, activities, etc.)
-                            "study": dict             # Core study information (title, objectives, etc.)
-                        }
-
-                        Each top-level key corresponds to a specific domain of study data:
-
-                        - "identification": Contains study identifiers, version information, and
-                          regulatory identifiers needed to uniquely identify the study
-
-                        - "document": Contains study definition documents, protocol versions,
-                          amendments, and other document-related metadata
-
-                        - "population": Contains population definitions, analysis populations,
-                          eligibility criteria, and subject enrollment information
-
-                        - "study_design": Contains the structural elements of the study design
-                          including study arms, epochs, elements, activities, encounters,
-                          procedures, and timeline information
-
-                        - "study": Contains the core study metadata including titles, objectives,
-                          indications, interventions, and high-level study characteristics
+            data: A dict (or ``AssemblerInput``) with the top-level keys
+                  ``identification``, ``document``, ``population``, ``study_design``,
+                  ``study``, and optionally ``amendments`` and ``soa``.
 
         Returns:
             None
-
-        Note:
-            The assembly process is sequential and interdependent:
-            1. Identification data is processed first to establish study identity
-            2. Document data is processed to set up protocol and amendment structure
-            3. Population data is processed to define subject populations
-            4. Study design data is processed (requires population data for references)
-            5. Study data is processed last (requires all other components for assembly)
         """
+        # --- input validation ------------------------------------------------
+        if isinstance(data, dict):
+            try:
+                AssemblerInput.model_validate(data)
+            except ValidationError as e:
+                location = KlassMethodLocation(self.MODULE, "execute")
+                for error in e.errors():
+                    field_path = ".".join(str(loc) for loc in error["loc"])
+                    msg = f"Schema validation: {field_path} — {error['msg']}"
+                    self._errors.error(msg, location)
+                return
+        elif isinstance(data, AssemblerInput):
+            data = data.model_dump(by_alias=True, exclude_none=True)
+        else:
+            location = KlassMethodLocation(self.MODULE, "execute")
+            self._errors.error(
+                f"Invalid input type: expected dict or AssemblerInput, "
+                f"got {type(data).__name__}",
+                location,
+            )
+            return
+
+        # --- assembly ---------------------------------------------------------
         try:
             # Process identification data - establishes study identity and versioning
             self._identification_assembler.execute(data["identification"])

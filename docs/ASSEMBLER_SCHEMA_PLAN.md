@@ -4,6 +4,8 @@
 
 The `usdm4.assembler.Assembler.execute()` method currently accepts an untyped `dict` as its input. This plan introduces Pydantic models that formally define the expected structure, providing validation, clear error messages, self-documenting code, and IDE support — while maintaining full backward compatibility with existing callers that pass raw dicts.
 
+The schema validates input at the `Assembler.execute()` boundary. Once validated, the data is converted back to dicts via `model_dump()` and passed to sub-assemblers unchanged. Sub-assemblers and the Builder continue to work with dicts — this plan does not change their internal code.
+
 The schema belongs in `usdm4` because the assembler lives here. Any package that calls the assembler — `usdm4_protocol`, `study_definitions_workbench`, or future consumers — should work against a single canonical schema definition owned by the same package that processes it.
 
 ---
@@ -38,11 +40,25 @@ Each sub-assembler reads specific keys from its portion of the dict. There is no
 
 ## 3. Proposed Design
 
-### 3.1 New Module Location
+### 3.1 Architecture
+
+The schema acts as a **validation gate** at the assembler entry point:
+
+```
+Caller passes dict
+    → AssemblerInput.model_validate(dict)     # Validate structure and types
+    → model_dump() per domain                 # Convert back to dicts
+    → Sub-assemblers receive dicts as before   # No internal changes
+    → Builder receives dicts as before         # No internal changes
+```
+
+This keeps the change surface minimal: only `assembler.py` is modified. Sub-assemblers, `BaseAssembler`, the Builder, and all existing tests remain untouched.
+
+### 3.2 New Module Location
 
 ```
 src/usdm4/assembler/
-├── assembler.py                    # Modified: accepts AssemblerInput or dict
+├── assembler.py                    # Modified: validates input, then passes dicts to sub-assemblers
 ├── schema/                         # NEW: Pydantic schema models
 │   ├── __init__.py                 # Re-exports AssemblerInput and all sub-schemas
 │   ├── assembler_input.py          # Top-level AssemblerInput model
@@ -53,13 +69,13 @@ src/usdm4/assembler/
 │   ├── study_design_schema.py      # Study design domain
 │   ├── study_schema.py             # Study domain
 │   └── timeline_schema.py          # SoA/Timeline domain
-├── base_assembler.py
-├── identification_assembler.py
-├── document_assembler.py
+├── base_assembler.py               # Unchanged
+├── identification_assembler.py     # Unchanged
+├── document_assembler.py           # Unchanged
 ├── ...
 ```
 
-### 3.2 Top-Level Schema
+### 3.3 Top-Level Schema
 
 ```python
 # assembler/schema/assembler_input.py
@@ -85,7 +101,7 @@ class AssemblerInput(BaseModel):
     soa: TimelineInput | None = None
 ```
 
-### 3.3 Domain Schemas
+### 3.4 Domain Schemas
 
 Each schema mirrors the structure currently consumed by the corresponding assembler.
 
@@ -262,10 +278,9 @@ class StudyInput(BaseModel):
     label: str = ""
     version: str = ""
     rationale: str = ""
-    description: str = ""
     sponsor_approval_date: str = ""     # ISO format
     confidentiality: str = ""
-    original_protocol: bool | str = ""
+    original_protocol: str = ""
 ```
 
 #### Amendments
@@ -273,7 +288,7 @@ class StudyInput(BaseModel):
 ```python
 # assembler/schema/amendments_schema.py
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 class AmendmentReasons(BaseModel):
     model_config = ConfigDict(strict=False)
@@ -312,18 +327,16 @@ class AmendmentEnrollment(BaseModel):
     unit: str = ""
 
 class AmendmentScope(BaseModel):
-    model_config = ConfigDict(strict=False)
-
-    global_: bool = False               # Note: aliased from "global" in dict
-    unknown: list[str] = []
-    countries: list[str] = []
-    regions: list[str] = []
-    sites: list[str] = []
-
     model_config = ConfigDict(
         strict=False,
         populate_by_name=True,
     )
+
+    global_: bool = Field(False, alias="global")
+    unknown: list[str] = []
+    countries: list[str] = []
+    regions: list[str] = []
+    sites: list[str] = []
 
 class AmendmentChange(BaseModel):
     model_config = ConfigDict(strict=False)
@@ -350,7 +363,6 @@ class AmendmentsInput(BaseModel):
 # assembler/schema/timeline_schema.py
 
 from pydantic import BaseModel, ConfigDict
-from typing import Any
 
 class EpochItem(BaseModel):
     model_config = ConfigDict(strict=False)
@@ -403,13 +415,6 @@ class ConditionItem(BaseModel):
     reference: str = ""
     text: str = ""
 
-class FeatureBlock(BaseModel):
-    """Generic wrapper for a feature's item list."""
-    model_config = ConfigDict(strict=False)
-
-    found: bool = False
-    items: list[Any] = []
-
 class EpochsBlock(BaseModel):
     model_config = ConfigDict(strict=False)
 
@@ -461,36 +466,53 @@ class TimelineInput(BaseModel):
 
 ## 4. Integration with the Assembler
 
-### 4.1 Backward-Compatible `execute()` Method
+### 4.1 Validated `execute()` Method
 
-The change to `assembler.py` is minimal:
+The change to `assembler.py` validates input and then passes dicts to sub-assemblers as before:
 
 ```python
+from pydantic import ValidationError
 from usdm4.assembler.schema import AssemblerInput
 
 class Assembler:
 
     def execute(self, data: AssemblerInput | dict) -> None:
+        # Validate input
         if isinstance(data, dict):
-            data = AssemblerInput.model_validate(data)
+            try:
+                validated = AssemblerInput.model_validate(data)
+            except ValidationError as e:
+                location = KlassMethodLocation(self.MODULE, "execute")
+                for error in e.errors():
+                    field_path = ".".join(str(loc) for loc in error["loc"])
+                    msg = f"Schema validation: {field_path} — {error['msg']}"
+                    self._errors.error(msg, location)
+                return
+        else:
+            validated = data
+
+        # Convert back to dicts for sub-assemblers
+        dumped = validated.model_dump(by_alias=True)
 
         try:
-            self._identification_assembler.execute(data.identification)
-            self._document_assembler.execute(data.document)
-            self._population_assembler.execute(data.population)
-            self._amendments_assembler.execute(data.amendments, self._document_assembler)
+            self._identification_assembler.execute(dumped["identification"])
+            self._document_assembler.execute(dumped["document"])
+            self._population_assembler.execute(dumped["population"])
+            self._amendments_assembler.execute(
+                dumped["amendments"], self._document_assembler
+            )
 
-            if data.soa is not None:
-                self._timeline_assembler.execute(data.soa)
+            if dumped.get("soa") is not None:
+                self._timeline_assembler.execute(dumped["soa"])
 
             self._study_design_assembler.execute(
-                data.study_design,
+                dumped["study_design"],
                 self._population_assembler,
                 self._timeline_assembler,
             )
 
             self._study_assembler.execute(
-                data.study,
+                dumped["study"],
                 self._identification_assembler,
                 self._study_design_assembler,
                 self._document_assembler,
@@ -503,21 +525,17 @@ class Assembler:
             self._errors.exception("Failed during assembler", e, location)
 ```
 
-### 4.2 Sub-Assembler Migration
+Key points:
+- **`model_dump(by_alias=True)`** ensures aliased fields like `global_` → `"global"` round-trip correctly back to the dict keys sub-assemblers expect.
+- Sub-assemblers, `BaseAssembler`, and the Builder are completely untouched.
+- Validation errors are reported through the existing `Errors` system and abort early — no point running assemblers on structurally invalid data.
 
-Each sub-assembler's `execute()` signature changes from `data: dict` to the corresponding schema type. This can be done incrementally — one assembler at a time. Internally, each sub-assembler replaces `data["key"]` access with `data.key` attribute access.
+### 4.2 What Does NOT Change
 
-The migration order follows the existing processing sequence:
-
-1. `IdentificationAssembler.execute(data: IdentificationInput)`
-2. `DocumentAssembler.execute(data: DocumentInput)`
-3. `PopulationAssembler.execute(data: PopulationInput)`
-4. `AmendmentsAssembler.execute(data: AmendmentsInput, ...)`
-5. `TimelineAssembler.execute(data: TimelineInput)`
-6. `StudyDesignAssembler.execute(data: StudyDesignInput, ...)`
-7. `StudyAssembler.execute(data: StudyInput, ...)`
-
-Each assembler can be migrated independently. During the transition, an assembler that hasn't been migrated yet can call `data.model_dump()` to get the dict it expects.
+- **`BaseAssembler`**: Retains `execute(self, data: dict)` signature.
+- **All seven sub-assemblers**: Continue to receive dicts and use `data["key"]` / `data.get("key")` access.
+- **Builder**: Continues to receive dicts for object construction.
+- **Existing tests**: All sub-assembler tests pass without modification since they still pass dicts.
 
 ---
 
@@ -535,7 +553,7 @@ A `validate_strict()` class method on `AssemblerInput` enables stricter checking
 class AssemblerInput(BaseModel):
 
     @classmethod
-    def validate_strict(cls, data: dict) -> "AssemblerInput":
+    def validate_strict(cls, data: dict) -> tuple["AssemblerInput", list[str]]:
         """Validate with warnings for empty required fields."""
         instance = cls.model_validate(data)
         warnings = []
@@ -551,26 +569,6 @@ class AssemblerInput(BaseModel):
 
 This gives callers the option to catch quality issues during development without breaking production flows.
 
-### 5.3 Error Reporting Integration
-
-Validation errors should integrate with the existing `simple_error_log.Errors` system:
-
-```python
-def execute(self, data: AssemblerInput | dict) -> None:
-    if isinstance(data, dict):
-        try:
-            data = AssemblerInput.model_validate(data)
-        except ValidationError as e:
-            location = KlassMethodLocation(self.MODULE, "execute")
-            for error in e.errors():
-                field_path = ".".join(str(loc) for loc in error["loc"])
-                msg = f"Schema validation: {field_path} — {error['msg']}"
-                self._errors.error(msg, location)
-            return
-```
-
-This translates Pydantic's structured validation errors into the error tracking format that all consumers already know how to handle.
-
 ---
 
 ## 6. Implementation Approach
@@ -581,38 +579,30 @@ Add the `assembler/schema/` module with all Pydantic models. No changes to exist
 
 **Tasks:**
 
-1. Create `assembler/schema/` directory and `__init__.py`
-2. Implement all seven domain schema files
-3. Implement `AssemblerInput` top-level model
-4. Add unit tests validating:
+1. Add `pydantic>=2.0` to `requirements.txt`
+2. Create `assembler/schema/` directory and `__init__.py`
+3. Implement all seven domain schema files
+4. Implement `AssemblerInput` top-level model
+5. Add unit tests validating:
    - A minimal valid dict passes validation
    - Missing required fields produce clear errors
    - Type coercion works (string → int, etc.)
    - Extra keys are ignored (forward compatibility)
+   - `model_dump(by_alias=True)` round-trips correctly (especially `AmendmentScope.global_` → `"global"`)
    - Each domain schema matches what its assembler currently reads
 
 ### Phase B: Integrate with Assembler (Backward-Compatible)
 
-Modify `assembler.py` to accept `AssemblerInput | dict`. Existing dict-passing callers continue to work through `model_validate()`.
+Modify `assembler.py` to validate input via the schema, then `model_dump()` back to dicts for sub-assemblers. Existing dict-passing callers continue to work. Sub-assemblers are not modified.
 
 **Tasks:**
 
-1. Update `Assembler.execute()` to validate input
+1. Update `Assembler.execute()` to validate input and convert to dicts
 2. Add validation error → `Errors` integration
-3. Add integration tests with real extraction output from M11, CPT, and Legacy
+3. Verify all existing assembler tests still pass (they should — sub-assemblers are unchanged)
+4. Add integration tests with real extraction output from M11, CPT, and Legacy
 
-### Phase C: Migrate Sub-Assemblers (Incremental)
-
-Update each sub-assembler to accept its typed schema instead of `dict`. This can be done one assembler at a time, in any order.
-
-**Tasks (per assembler):**
-
-1. Change `execute(data: dict)` to `execute(data: <SchemaType>)`
-2. Replace `data["key"]` with `data.key`
-3. Replace `data.get("key", default)` with direct attribute access (defaults are on the model)
-4. Update unit tests
-
-### Phase D: Public API
+### Phase C: Public API
 
 Export the schema from `usdm4` so external packages can import it directly:
 
@@ -639,7 +629,7 @@ This allows `usdm4_protocol` format handlers to construct typed `AssemblerInput`
 ### 7.1 Schema Unit Tests
 
 ```
-tests/assembler/schema/
+tests/usdm4/assembler/schema/
 ├── test_assembler_input.py         # Top-level validation
 ├── test_identification_schema.py   # Per-domain validation
 ├── test_document_schema.py
@@ -659,27 +649,27 @@ Each test file covers:
 - **Extra keys ignored**: forward compatibility
 - **Nested validation**: errors in deeply nested fields surface with full path
 - **Default values**: confirm defaults match current assembler behaviour
+- **Round-trip**: `dict → model_validate() → model_dump(by_alias=True)` preserves keys sub-assemblers expect
 
 ### 7.2 Regression Tests
 
 Capture the actual dicts produced by the three existing extraction packages (M11, CPT, Legacy) and validate them against the schema. These become the golden regression set — if the schema rejects a dict that works today, the schema is wrong.
 
-### 7.3 Round-Trip Tests
+### 7.3 Existing Test Preservation
 
-```python
-def test_round_trip():
-    """Dict → AssemblerInput → model_dump() → should equal original dict."""
-    original = load_sample_extraction_output()
-    schema = AssemblerInput.model_validate(original)
-    round_tripped = schema.model_dump()
-    # Compare (allowing for default-filling of missing optional fields)
-```
+All existing sub-assembler tests must continue to pass without modification. Since sub-assemblers still receive dicts, this should be automatic. The schema is additive — it validates before the existing code runs, it does not replace the existing code.
 
 ---
 
 ## 8. Dependencies
 
-The only new dependency is **Pydantic v2**, which is already a dependency of `usdm4` (the API layer uses `BaseModel` throughout). No new packages are required.
+**Pydantic v2 is a new dependency.** It must be added to `requirements.txt`:
+
+```
+pydantic>=2.0
+```
+
+The project currently depends on `usdm3`, `simple_error_log`, and `python-dateutil`. Pydantic v2 is a well-established, widely-used library with no transitive dependency conflicts expected.
 
 ---
 
@@ -702,26 +692,19 @@ This is documented as a **prerequisite** in the `usdm4_protocol` implementation 
 
 ```
 Phase A: Schema Models  ─────────────────────────────  [Non-breaking]
+    ├── Add pydantic>=2.0 dependency
     ├── assembler/schema/ module
     ├── All seven domain schema files
     ├── AssemblerInput top-level model
     └── Unit tests
 
 Phase B: Assembler Integration  ──────────────────────  [Backward-compatible]
-    ├── execute() accepts AssemblerInput | dict
+    ├── execute() validates via schema, then model_dump() to dicts
     ├── Validation error → Errors integration
+    ├── Existing sub-assembler tests still pass (unchanged)
     └── Integration tests with real extraction output
 
-Phase C: Sub-Assembler Migration  ────────────────────  [Incremental, any order]
-    ├── IdentificationAssembler → IdentificationInput
-    ├── DocumentAssembler → DocumentInput
-    ├── PopulationAssembler → PopulationInput
-    ├── AmendmentsAssembler → AmendmentsInput
-    ├── TimelineAssembler → TimelineInput
-    ├── StudyDesignAssembler → StudyDesignInput
-    └── StudyAssembler → StudyInput
-
-Phase D: Public API  ─────────────────────────────────  [After Phase B]
+Phase C: Public API  ─────────────────────────────────  [After Phase B]
     └── Export schema types from usdm4 public API
 ```
 
