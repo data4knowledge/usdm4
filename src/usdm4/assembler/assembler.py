@@ -88,7 +88,7 @@ class Assembler:
                     self._errors.error(msg, location)
                 return
         elif isinstance(data, AssemblerInput):
-            data = data.model_dump(by_alias=True, exclude_none=True)
+            data = data.model_dump(by_alias=True, exclude_unset=True)
         else:
             location = KlassMethodLocation(self.MODULE, "execute")
             self._errors.error(

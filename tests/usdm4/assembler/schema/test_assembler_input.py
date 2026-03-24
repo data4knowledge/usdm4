@@ -64,11 +64,25 @@ class TestAssemblerInputValidation:
         result = AssemblerInput.model_validate(minimal_valid_dict)
         assert result.study.version == "1.0"
 
-    def test_validate_strict_returns_warnings(self, minimal_valid_dict):
-        del minimal_valid_dict["identification"]["titles"]["brief"]
+    def test_validate_strict_warns_on_empty_official_title(self, minimal_valid_dict):
         minimal_valid_dict["identification"]["titles"] = {}
         result, warnings = AssemblerInput.validate_strict(minimal_valid_dict)
         assert any("official" in w for w in warnings)
+
+    def test_validate_strict_warns_on_empty_document_version(self, minimal_valid_dict):
+        minimal_valid_dict["document"]["document"]["version"] = ""
+        result, warnings = AssemblerInput.validate_strict(minimal_valid_dict)
+        assert any("document.document.version" in w for w in warnings)
+
+    def test_validate_strict_warns_on_empty_study_version(self, minimal_valid_dict):
+        minimal_valid_dict["study"]["version"] = ""
+        result, warnings = AssemblerInput.validate_strict(minimal_valid_dict)
+        assert any("study.version" in w for w in warnings)
+
+    def test_validate_strict_no_warnings_when_complete(self, minimal_valid_dict):
+        minimal_valid_dict["identification"]["titles"]["official"] = "Full Title"
+        result, warnings = AssemblerInput.validate_strict(minimal_valid_dict)
+        assert len(warnings) == 0
 
     def test_none_input_raises(self):
         with pytest.raises(ValidationError):
