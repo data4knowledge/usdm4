@@ -32,7 +32,7 @@ class NonStandardOrganization(BaseModel):
     label: str = ""
     identifier: str = ""
     identifierScheme: str = ""
-    legalAddress: Address = Address()
+    legalAddress: Address | None = None
 
 
 class IdentifierScope(BaseModel):

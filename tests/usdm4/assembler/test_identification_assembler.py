@@ -1387,10 +1387,14 @@ class TestIdentificationAssemblerAdditionalCoverage:
 
         identification_assembler.execute(data)
 
-        # Should handle None legal address gracefully
-        if len(identification_assembler.organizations) > 0:
-            org = identification_assembler.organizations[0]
-            assert org.label == "Test Organization"
+        # Should create org and identifier successfully without an address
+        assert len(identification_assembler.organizations) == 1
+        assert len(identification_assembler.identifiers) == 1
+        org = identification_assembler.organizations[0]
+        assert org.name == "Test Org"
+        assert org.label == "Test Organization"
+        assert org.legalAddress is None
+        assert identification_assembler.identifiers[0].text == "TEST-001"
 
     def test_execute_with_organization_empty_legal_address(
         self, identification_assembler
@@ -1418,7 +1422,74 @@ class TestIdentificationAssemblerAdditionalCoverage:
 
         identification_assembler.execute(data)
 
-        # Should handle empty address dict
+        # Empty dict is falsy, so address should be set to None
+        assert len(identification_assembler.organizations) == 1
+        assert len(identification_assembler.identifiers) == 1
+        org = identification_assembler.organizations[0]
+        assert org.name == "Test Org"
+        assert org.legalAddress is None
+
+    def test_execute_non_standard_org_address_not_required(
+        self, identification_assembler
+    ):
+        """Test that a non-standard organization works without any address field."""
+        data = {
+            "identifiers": [
+                {
+                    "identifier": "NOADDR-001",
+                    "scope": {
+                        "non_standard": {
+                            "type": "academic",
+                            "role": None,
+                            "name": "University of Nowhere",
+                            "description": "An academic institution",
+                            "label": "University of Nowhere",
+                            "identifier": "UNI-001",
+                            "identifierScheme": "Internal",
+                            "legalAddress": None,
+                        }
+                    },
+                },
+                {
+                    "identifier": "WITHADDR-001",
+                    "scope": {
+                        "non_standard": {
+                            "type": "pharma",
+                            "role": None,
+                            "name": "Pharma With Addr",
+                            "description": "A pharma company",
+                            "label": "Pharma With Address",
+                            "identifier": "PWA-001",
+                            "identifierScheme": "DUNS",
+                            "legalAddress": {
+                                "lines": ["100 Lab Drive"],
+                                "city": "Cambridge",
+                                "district": "",
+                                "state": "MA",
+                                "postalCode": "02139",
+                                "country": "USA",
+                            },
+                        }
+                    },
+                },
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        # Both orgs should be created
+        assert len(identification_assembler.organizations) == 2
+        assert len(identification_assembler.identifiers) == 2
+
+        # First org has no address
+        org_no_addr = identification_assembler.organizations[0]
+        assert org_no_addr.name == "University of Nowhere"
+        assert org_no_addr.legalAddress is None
+
+        # Second org has an address
+        org_with_addr = identification_assembler.organizations[1]
+        assert org_with_addr.name == "Pharma With Addr"
+        assert org_with_addr.legalAddress is not None
 
     def test_execute_with_multiple_identifiers_same_organization(
         self, identification_assembler

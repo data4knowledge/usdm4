@@ -68,6 +68,49 @@ class TestStudyIdentifier:
         assert si.scope.non_standard.type == "registry"
         assert si.scope.non_standard.name == "Custom Reg"
 
+    def test_non_standard_scope_without_address(self):
+        si = StudyIdentifier.model_validate({
+            "identifier": "CUSTOM-2",
+            "scope": {
+                "non_standard": {
+                    "type": "pharma",
+                    "name": "No Address Org",
+                }
+            },
+        })
+        assert si.scope.non_standard.legalAddress is None
+
+    def test_non_standard_scope_with_explicit_none_address(self):
+        si = StudyIdentifier.model_validate({
+            "identifier": "CUSTOM-3",
+            "scope": {
+                "non_standard": {
+                    "type": "pharma",
+                    "name": "Explicit None Org",
+                    "legalAddress": None,
+                }
+            },
+        })
+        assert si.scope.non_standard.legalAddress is None
+
+    def test_non_standard_scope_with_address(self):
+        si = StudyIdentifier.model_validate({
+            "identifier": "CUSTOM-4",
+            "scope": {
+                "non_standard": {
+                    "type": "pharma",
+                    "name": "With Address Org",
+                    "legalAddress": {
+                        "lines": ["123 Main St"],
+                        "city": "Boston",
+                        "country": "USA",
+                    },
+                }
+            },
+        })
+        assert si.scope.non_standard.legalAddress is not None
+        assert si.scope.non_standard.legalAddress.city == "Boston"
+
     def test_missing_identifier_raises(self):
         with pytest.raises(ValidationError):
             StudyIdentifier.model_validate({"scope": {"standard": "nct"}})
