@@ -4,20 +4,24 @@ Cache manager for CDISC CORE validation resources.
 Manages a configurable cache directory for storing downloaded resources
 (JSONata files, XSD schemas, rules, CT packages) so they persist across
 validation runs and package upgrades.
+
+The default cache location is platform-appropriate:
+- macOS:   ~/Library/Caches/usdm4/core/
+- Windows: %LOCALAPPDATA%/usdm4/Cache/core/
+- Linux:   ~/.cache/usdm4/core/
 """
 
-import hashlib
 import json
 import logging
 import os
 import urllib.request
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
 
-logger = logging.getLogger(__name__)
+from platformdirs import user_cache_dir
 
-# Default cache location: ~/.cache/usdm4/core/ (or platform equivalent)
-_DEFAULT_CACHE_DIR = Path.home() / ".cache" / "usdm4" / "core"
+logger = logging.getLogger(__name__)
 
 # GitHub URLs for resources not included in the cdisc-rules-engine pip package
 _GITHUB_RAW_BASE = "https://raw.githubusercontent.com/cdisc-org/cdisc-rules-engine/main"
@@ -113,29 +117,66 @@ _XHTML_SCHEMA_FILES = [
 ]
 
 
+def default_cache_dir() -> Path:
+    """Return the platform-appropriate default cache directory.
+
+    - macOS:   ~/Library/Caches/usdm4/core/
+    - Windows: %LOCALAPPDATA%/usdm4/Cache/core/
+    - Linux:   ~/.cache/usdm4/core/  (respects $XDG_CACHE_HOME)
+    """
+    return Path(user_cache_dir("usdm4")) / "core"
+
+
+@dataclass
+class CacheStatus:
+    """Result of a cache readiness check.
+
+    Attributes:
+        ready: ``True`` when all pre-fetchable resources are present.
+        has_resources: JSONata and XSD schema files are present.
+        has_rules: Validation rules for the requested version are cached.
+        has_ct_index: The CT package index is cached.
+        cache_dir: The resolved cache directory path.
+        details: Human-readable list of what is missing (empty when ready).
+    """
+
+    ready: bool = False
+    has_resources: bool = False
+    has_rules: bool = False
+    has_ct_index: bool = False
+    cache_dir: str = ""
+    details: list[str] = field(default_factory=list)
+
+
 class CoreCacheManager:
     """
     Manages the local cache directory for CDISC CORE validation resources.
 
     Resources cached include:
-    - JSONata custom function files
-    - XSD schema files (USDM XHTML + XHTML 1.1)
-    - Validation rules (cached by the CDISC Rules Engine itself)
-    - CT package data (cached by the CDISC Rules Engine itself)
 
-    The cache directory is configurable. By default it uses
-    ~/.cache/usdm4/core/ which survives package upgrades.
+    - JSONata custom function files (from GitHub, no API key needed)
+    - XSD schema files — USDM XHTML + XHTML 1.1 (from GitHub, no API key needed)
+    - Validation rules (from CDISC Library API, API key required)
+    - CT package index and codelist data (from CDISC Library API, API key required)
+
+    The cache directory is configurable.  The default location is
+    platform-appropriate (see :func:`default_cache_dir`).
 
     Args:
-        cache_dir: Path to the cache directory. If None, uses the default.
+        cache_dir: Path to the cache directory.  If ``None``, uses the
+            platform default.
     """
 
     def __init__(self, cache_dir: Optional[str] = None):
         if cache_dir is not None:
             self._cache_dir = Path(cache_dir)
         else:
-            self._cache_dir = _DEFAULT_CACHE_DIR
+            self._cache_dir = default_cache_dir()
         self._cache_dir.mkdir(parents=True, exist_ok=True)
+
+    # ------------------------------------------------------------------
+    # Directory layout
+    # ------------------------------------------------------------------
 
     @property
     def cache_dir(self) -> Path:
@@ -155,19 +196,191 @@ class CoreCacheManager:
     def schema_dir(self) -> Path:
         return self.resources_dir / "schema" / "xml"
 
+    # ------------------------------------------------------------------
+    # Readiness check
+    # ------------------------------------------------------------------
+
+    def is_populated(self, version: str = "4-0") -> CacheStatus:
+        """Check whether all pre-fetchable resources are present.
+
+        This performs only local file-existence checks — no network calls,
+        no API key needed.  It returns quickly in all cases.
+
+        Args:
+            version: USDM version string (e.g. ``"4-0"``).
+
+        Returns:
+            A :class:`CacheStatus` describing what is present and what is
+            missing.
+        """
+        missing: list[str] = []
+
+        has_resources = self._has_jsonata_resources() and self._has_xsd_resources()
+        if not self._has_jsonata_resources():
+            missing.append("JSONata custom function files")
+        if not self._has_xsd_resources():
+            missing.append("XSD schema files")
+
+        has_rules = self._has_rules(version)
+        if not has_rules:
+            missing.append(f"USDM validation rules (version {version})")
+
+        has_ct_index = self._has_ct_index()
+        if not has_ct_index:
+            missing.append("CT package index")
+
+        return CacheStatus(
+            ready=len(missing) == 0,
+            has_resources=has_resources,
+            has_rules=has_rules,
+            has_ct_index=has_ct_index,
+            cache_dir=str(self._cache_dir),
+            details=missing,
+        )
+
+    def _has_jsonata_resources(self) -> bool:
+        return self.jsonata_dir.exists() and any(self.jsonata_dir.glob("*.jsonata"))
+
+    def _has_xsd_resources(self) -> bool:
+        sentinel = self.schema_dir / "cdisc-usdm-xhtml-1.0" / "usdm-xhtml-1.0.xsd"
+        return sentinel.exists()
+
+    def _has_rules(self, version: str) -> bool:
+        rules_file = self._cache_dir / "rules" / "usdm" / f"{version}.json"
+        return rules_file.exists()
+
+    def _has_ct_index(self) -> bool:
+        ct_file = self._cache_dir / "ct" / "published_packages.json"
+        return ct_file.exists()
+
+    # ------------------------------------------------------------------
+    # Prepare / update
+    # ------------------------------------------------------------------
+
+    def prepare(
+        self,
+        version: str = "4-0",
+        api_key: Optional[str] = None,
+    ) -> CacheStatus:
+        """Download all resources needed for USDM CORE validation.
+
+        Returns immediately if the cache is already fully populated.
+        Otherwise downloads only the missing pieces:
+
+        1. JSONata and XSD files are fetched from GitHub (no API key).
+        2. USDM validation rules and the CT package index are fetched
+           from the CDISC Library API (requires *api_key*).
+
+        CT codelist data for specific ``codeSystemVersion`` values used
+        in a file is *not* pre-fetched here — it is downloaded on demand
+        during validation because the required versions vary per file.
+
+        Args:
+            version: USDM version string (e.g. ``"4-0"``).
+            api_key: CDISC Library API key.  If ``None``, falls back to
+                the ``CDISC_LIBRARY_API_KEY`` or ``CDISC_API_KEY``
+                environment variables.
+
+        Returns:
+            A :class:`CacheStatus` reflecting the state of the cache
+            after the operation.
+        """
+        status = self.is_populated(version)
+        if status.ready:
+            logger.info("CORE cache is already populated at %s", self._cache_dir)
+            return status
+
+        # Resolve the API key
+        resolved_key = api_key or os.environ.get(
+            "CDISC_LIBRARY_API_KEY", os.environ.get("CDISC_API_KEY", "")
+        )
+
+        # --- GitHub resources (no API key needed) -------------------------
+        if not status.has_resources:
+            logger.info("Downloading resource files from GitHub ...")
+            self._ensure_jsonata_resources()
+            self._ensure_xsd_schema_resources()
+
+        # --- CDISC Library resources (API key needed) ---------------------
+        if not status.has_rules or not status.has_ct_index:
+            if not resolved_key:
+                logger.warning(
+                    "CDISC Library API key not available. Set the "
+                    "CDISC_LIBRARY_API_KEY environment variable or pass "
+                    "api_key to download rules and CT data."
+                )
+            else:
+                self._prepare_api_resources(version, resolved_key)
+
+        return self.is_populated(version)
+
+    def _prepare_api_resources(self, version: str, api_key: str) -> None:
+        """Download rules and CT index from the CDISC Library API."""
+        # Deferred import to avoid import-time side effects
+        from cdisc_rules_engine.config import config
+        from cdisc_rules_engine.services.cache import CacheServiceFactory
+        from cdisc_rules_engine.services.cdisc_library_service import (
+            CDISCLibraryService,
+        )
+        from cdisc_rules_engine.constants.cache_constants import PUBLISHED_CT_PACKAGES
+        from cdisc_rules_engine.utilities.utils import get_rules_cache_key
+
+        # Ensure the env var is set for the library service
+        if "CDISC_LIBRARY_API_KEY" not in os.environ:
+            os.environ["CDISC_LIBRARY_API_KEY"] = api_key
+
+        cache = CacheServiceFactory(config).get_cache_service()
+        library_service = CDISCLibraryService(api_key, cache)
+
+        # --- Rules ---
+        if not self._has_rules(version):
+            logger.info("Downloading USDM validation rules (version %s) ...", version)
+            try:
+                cache_key = get_rules_cache_key("usdm", version)
+                result = library_service.get_rules_by_catalog("usdm", version)
+                rules = (
+                    result.get("rules", [])
+                    if isinstance(result, dict)
+                    else result
+                )
+                self.cache_rules("usdm", version, rules)
+                logger.info("Cached %d rules", len(rules))
+            except Exception as e:
+                logger.warning("Failed to download rules: %s", e)
+
+        # --- CT package index ---
+        if not self._has_ct_index():
+            logger.info("Downloading CT package index ...")
+            try:
+                packages = library_service.get_all_ct_packages()
+                ct_packages = [
+                    package.get("href", "").split("/")[-1]
+                    for package in packages
+                ]
+                cache.add(PUBLISHED_CT_PACKAGES, ct_packages)
+                self.cache_ct_packages(ct_packages)
+                logger.info("Cached %d CT package names", len(ct_packages))
+            except Exception as e:
+                logger.warning("Failed to download CT package index: %s", e)
+
+    # ------------------------------------------------------------------
+    # Resource downloads (GitHub — no API key)
+    # ------------------------------------------------------------------
+
     def ensure_resources(self) -> None:
         """
-        Download all required resources if not already present in the cache.
+        Download JSONata and XSD resources if not already present.
 
-        This includes JSONata custom functions and XSD schema files that are
-        not included in the cdisc-rules-engine pip package.
+        This is called automatically during validation but can also be
+        called independently.  No API key is required — the files are
+        fetched from GitHub.
         """
         self._ensure_jsonata_resources()
         self._ensure_xsd_schema_resources()
 
     def _ensure_jsonata_resources(self) -> None:
         """Download JSONata custom function files if not present."""
-        if self.jsonata_dir.exists() and any(self.jsonata_dir.glob("*.jsonata")):
+        if self._has_jsonata_resources():
             return
 
         self.jsonata_dir.mkdir(parents=True, exist_ok=True)
@@ -183,8 +396,7 @@ class CoreCacheManager:
 
     def _ensure_xsd_schema_resources(self) -> None:
         """Download XSD schema files if not present."""
-        sentinel = self.schema_dir / "cdisc-usdm-xhtml-1.0" / "usdm-xhtml-1.0.xsd"
-        if sentinel.exists():
+        if self._has_xsd_resources():
             return
 
         # Create subdirectories
@@ -204,12 +416,21 @@ class CoreCacheManager:
                 # Some files may not exist but continue - not all are critical
                 pass
 
+    # ------------------------------------------------------------------
+    # Clear
+    # ------------------------------------------------------------------
+
     def clear(self) -> None:
         """Remove all cached resources. They will be re-downloaded on next use."""
         import shutil
+
         if self._cache_dir.exists():
             shutil.rmtree(self._cache_dir)
         self._cache_dir.mkdir(parents=True, exist_ok=True)
+
+    # ------------------------------------------------------------------
+    # Disk cache: rules
+    # ------------------------------------------------------------------
 
     def cache_rules(self, standard: str, version: str, rules: list) -> None:
         """
@@ -245,6 +466,10 @@ class CoreCacheManager:
                 return json.load(f)
         except (json.JSONDecodeError, OSError):
             return None
+
+    # ------------------------------------------------------------------
+    # Disk cache: CT packages
+    # ------------------------------------------------------------------
 
     def cache_ct_packages(self, packages: list) -> None:
         """

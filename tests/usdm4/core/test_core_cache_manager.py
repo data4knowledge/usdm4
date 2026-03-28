@@ -1,13 +1,18 @@
-"""Tests for CoreCacheManager."""
+"""Tests for CoreCacheManager, CacheStatus, and default_cache_dir."""
 
 import json
 import os
 import tempfile
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
-from usdm4.core.core_cache_manager import CoreCacheManager
+from usdm4.core.core_cache_manager import (
+    CacheStatus,
+    CoreCacheManager,
+    default_cache_dir,
+)
 
 
 @pytest.fixture
@@ -22,15 +27,66 @@ def manager(cache_dir):
     return CoreCacheManager(cache_dir)
 
 
+# ------------------------------------------------------------------
+# default_cache_dir
+# ------------------------------------------------------------------
+
+class TestDefaultCacheDir:
+    def test_returns_path(self):
+        result = default_cache_dir()
+        assert isinstance(result, Path)
+
+    def test_ends_with_core(self):
+        result = default_cache_dir()
+        assert result.name == "core"
+        assert result.parent.name == "usdm4"
+
+    def test_uses_platformdirs(self):
+        """Verify we delegate to platformdirs.user_cache_dir."""
+        with patch("usdm4.core.core_cache_manager.user_cache_dir", return_value="/fake/cache/usdm4"):
+            result = default_cache_dir()
+        assert result == Path("/fake/cache/usdm4") / "core"
+
+
+# ------------------------------------------------------------------
+# CacheStatus
+# ------------------------------------------------------------------
+
+class TestCacheStatus:
+    def test_default_values(self):
+        status = CacheStatus()
+        assert status.ready is False
+        assert status.has_resources is False
+        assert status.has_rules is False
+        assert status.has_ct_index is False
+        assert status.cache_dir == ""
+        assert status.details == []
+
+    def test_ready_when_all_true(self):
+        status = CacheStatus(
+            ready=True,
+            has_resources=True,
+            has_rules=True,
+            has_ct_index=True,
+            cache_dir="/some/dir",
+        )
+        assert status.ready is True
+        assert status.details == []
+
+
+# ------------------------------------------------------------------
+# CoreCacheManager basics
+# ------------------------------------------------------------------
+
 class TestCoreCacheManager:
     def test_creates_cache_dir(self, cache_dir):
         mgr = CoreCacheManager(cache_dir)
         assert Path(cache_dir).exists()
 
-    def test_default_cache_dir(self):
-        mgr = CoreCacheManager()
-        expected = Path.home() / ".cache" / "usdm4" / "core"
-        assert mgr.cache_dir == expected
+    def test_default_cache_dir_uses_platformdirs(self):
+        with patch("usdm4.core.core_cache_manager.user_cache_dir", return_value="/fake/cache/usdm4"):
+            mgr = CoreCacheManager()
+            assert mgr.cache_dir == Path("/fake/cache/usdm4") / "core"
 
     def test_custom_cache_dir(self, cache_dir):
         mgr = CoreCacheManager(cache_dir)
@@ -95,6 +151,135 @@ class TestCoreCacheManager:
         assert manager.load_cached_rules("usdm", "4-0") is None
         # But the cache dir itself should still exist
         assert manager.cache_dir.exists()
+
+
+# ------------------------------------------------------------------
+# is_populated
+# ------------------------------------------------------------------
+
+class TestIsPopulated:
+    def test_empty_cache_returns_not_ready(self, manager):
+        status = manager.is_populated()
+        assert status.ready is False
+        assert status.has_resources is False
+        assert status.has_rules is False
+        assert status.has_ct_index is False
+        assert len(status.details) > 0
+
+    def test_cache_dir_in_status(self, manager, cache_dir):
+        status = manager.is_populated()
+        assert status.cache_dir == cache_dir
+
+    def test_partial_population_resources_only(self, manager):
+        """Populate JSONata and XSD but not rules or CT."""
+        # Create jsonata files
+        jsonata_dir = manager.jsonata_dir
+        jsonata_dir.mkdir(parents=True, exist_ok=True)
+        (jsonata_dir / "parse_refs.jsonata").write_text("// jsonata")
+
+        # Create XSD sentinel
+        xsd_dir = manager.schema_dir / "cdisc-usdm-xhtml-1.0"
+        xsd_dir.mkdir(parents=True, exist_ok=True)
+        (xsd_dir / "usdm-xhtml-1.0.xsd").write_text("<schema/>")
+
+        status = manager.is_populated()
+        assert status.has_resources is True
+        assert status.has_rules is False
+        assert status.has_ct_index is False
+        assert status.ready is False
+
+    def test_fully_populated(self, manager):
+        """Simulate a fully populated cache."""
+        # JSONata
+        jsonata_dir = manager.jsonata_dir
+        jsonata_dir.mkdir(parents=True, exist_ok=True)
+        (jsonata_dir / "parse_refs.jsonata").write_text("// jsonata")
+
+        # XSD sentinel
+        xsd_dir = manager.schema_dir / "cdisc-usdm-xhtml-1.0"
+        xsd_dir.mkdir(parents=True, exist_ok=True)
+        (xsd_dir / "usdm-xhtml-1.0.xsd").write_text("<schema/>")
+
+        # Rules
+        manager.cache_rules("usdm", "4-0", [{"core_id": "CORE-001"}])
+
+        # CT index
+        manager.cache_ct_packages(["sdtmct-2025-09-26"])
+
+        status = manager.is_populated("4-0")
+        assert status.ready is True
+        assert status.has_resources is True
+        assert status.has_rules is True
+        assert status.has_ct_index is True
+        assert status.details == []
+
+    def test_version_specific_rules(self, manager):
+        """Rules cached for 4-0 should not satisfy a check for 3-0."""
+        manager.cache_rules("usdm", "4-0", [{"core_id": "CORE-001"}])
+        assert manager._has_rules("4-0") is True
+        assert manager._has_rules("3-0") is False
+
+
+# ------------------------------------------------------------------
+# prepare (mocked — no network)
+# ------------------------------------------------------------------
+
+class TestPrepare:
+    def test_returns_immediately_when_populated(self, manager):
+        """If already populated, prepare() should not download anything."""
+        # Populate everything
+        jsonata_dir = manager.jsonata_dir
+        jsonata_dir.mkdir(parents=True, exist_ok=True)
+        (jsonata_dir / "parse_refs.jsonata").write_text("// jsonata")
+
+        xsd_dir = manager.schema_dir / "cdisc-usdm-xhtml-1.0"
+        xsd_dir.mkdir(parents=True, exist_ok=True)
+        (xsd_dir / "usdm-xhtml-1.0.xsd").write_text("<schema/>")
+
+        manager.cache_rules("usdm", "4-0", [{"core_id": "CORE-001"}])
+        manager.cache_ct_packages(["sdtmct-2025-09-26"])
+
+        # Patch ensure methods to ensure they are NOT called
+        with patch.object(manager, "_ensure_jsonata_resources") as mock_jsonata, \
+             patch.object(manager, "_ensure_xsd_schema_resources") as mock_xsd:
+            status = manager.prepare("4-0", api_key="fake-key")
+
+        mock_jsonata.assert_not_called()
+        mock_xsd.assert_not_called()
+        assert status.ready is True
+
+    def test_downloads_resources_when_missing(self, manager):
+        """If resources are missing, prepare() should attempt download."""
+        # No resources at all — but also no API key, so only GitHub downloads attempted
+        with patch.object(manager, "_ensure_jsonata_resources") as mock_jsonata, \
+             patch.object(manager, "_ensure_xsd_schema_resources") as mock_xsd:
+            manager.prepare("4-0")
+
+        mock_jsonata.assert_called_once()
+        mock_xsd.assert_called_once()
+
+    def test_warns_without_api_key(self, manager, caplog):
+        """Without an API key, prepare() should log a warning about rules/CT."""
+        import logging
+
+        # Populate resources to skip GitHub downloads
+        jsonata_dir = manager.jsonata_dir
+        jsonata_dir.mkdir(parents=True, exist_ok=True)
+        (jsonata_dir / "sift_tree.jsonata").write_text("// jsonata")
+
+        xsd_dir = manager.schema_dir / "cdisc-usdm-xhtml-1.0"
+        xsd_dir.mkdir(parents=True, exist_ok=True)
+        (xsd_dir / "usdm-xhtml-1.0.xsd").write_text("<schema/>")
+
+        # Remove any env var
+        env = {k: v for k, v in os.environ.items()
+               if k not in ("CDISC_LIBRARY_API_KEY", "CDISC_API_KEY")}
+
+        with patch.dict(os.environ, env, clear=True), \
+             caplog.at_level(logging.WARNING, logger="usdm4.core.core_cache_manager"):
+            manager.prepare("4-0")
+
+        assert any("API key" in msg for msg in caplog.messages)
 
 
 class TestCoreValidationResult:

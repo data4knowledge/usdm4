@@ -61,7 +61,8 @@ class CoreValidator:
     Args:
         cache_dir: Path to the persistent cache directory for downloaded
             resources (rules, CT packages, schemas). If None, defaults
-            to ``~/.cache/usdm4/core/``.
+            to a platform-appropriate location (see
+            :func:`~usdm4.core.core_cache_manager.default_cache_dir`).
         api_key: CDISC Library API key. If None, reads from the
             ``CDISC_LIBRARY_API_KEY`` or ``CDISC_API_KEY`` environment variable.
 
@@ -161,8 +162,12 @@ class CoreValidator:
         # side effects until actually needed)
         engine_imports = self._import_engine()
 
-        # Ensure resource files are available
+        # Ensure resource files are available (JSONata, XSD)
         self._cache_manager.ensure_resources()
+
+        # Pre-populate rules and CT index if not already cached.
+        # This avoids first-run downloads during the validation loop.
+        self._cache_manager.prepare(version=version, api_key=self._api_key)
 
         # The CDISC Rules Engine expects a resources/ dir in CWD.
         # We need to set CWD to a location that has the resources.
