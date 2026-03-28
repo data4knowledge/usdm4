@@ -392,6 +392,8 @@ class IdentificationAssembler(BaseAssembler):
                     organization["legalAddress"] = self._create_address(
                         organization["legalAddress"]
                     )
+                else:
+                    organization["legalAddress"] = None
 
                 # Identifier and scoping Organization
                 org = self._create_organization(organization)

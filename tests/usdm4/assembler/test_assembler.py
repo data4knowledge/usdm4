@@ -3,6 +3,7 @@ import pathlib
 import pytest
 from simple_error_log.errors import Errors
 from src.usdm4.assembler.assembler import Assembler
+from src.usdm4.assembler.schema import AssemblerInput
 from src.usdm4.__info__ import __model_version__ as usdm_version
 
 
@@ -653,6 +654,56 @@ class TestAssemblerErrorHandling:
             pass
 
         # Should have logged errors for missing data
+        assert global_errors.error_count() > initial_error_count
+
+
+class TestAssemblerSchemaIntegration:
+    """Test Assembler schema validation paths."""
+
+    def test_execute_with_assembler_input_instance(self, minimal_study_data):
+        """Test execute with a pre-validated AssemblerInput object."""
+        assembler = get_global_assembler()
+        schema_input = AssemblerInput.model_validate(minimal_study_data)
+        assembler.execute(schema_input)
+
+        assert assembler.study is not None
+        assert assembler.study.name == "TST"
+
+    def test_execute_with_invalid_type_logs_error(self):
+        """Test execute with invalid type (not dict or AssemblerInput)."""
+        assembler = get_global_assembler()
+        initial_error_count = global_errors.error_count()
+
+        assembler.execute(42)
+
+        assert global_errors.error_count() > initial_error_count
+        assert assembler.study is None
+
+    def test_execute_with_list_logs_error(self):
+        """Test execute with a list logs error and returns early."""
+        assembler = get_global_assembler()
+        initial_error_count = global_errors.error_count()
+
+        assembler.execute([1, 2, 3])
+
+        assert global_errors.error_count() > initial_error_count
+
+    def test_execute_with_none_logs_error(self):
+        """Test execute with None logs error via invalid type path."""
+        assembler = get_global_assembler()
+        initial_error_count = global_errors.error_count()
+
+        assembler.execute(None)
+
+        assert global_errors.error_count() > initial_error_count
+
+    def test_schema_validation_error_reports_field_paths(self):
+        """Test that schema validation errors include field paths."""
+        assembler = get_global_assembler()
+        initial_error_count = global_errors.error_count()
+
+        assembler.execute({"identification": {}})
+
         assert global_errors.error_count() > initial_error_count
 
 

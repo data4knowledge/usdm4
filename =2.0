@@ -1,0 +1,7 @@
+Requirement already satisfied: pydantic in ./.venv/lib/python3.12/site-packages (2.7.3)
+Requirement already satisfied: annotated-types>=0.4.0 in ./.venv/lib/python3.12/site-packages (from pydantic) (0.7.0)
+Requirement already satisfied: pydantic-core==2.18.4 in ./.venv/lib/python3.12/site-packages (from pydantic) (2.18.4)
+Requirement already satisfied: typing-extensions>=4.6.1 in ./.venv/lib/python3.12/site-packages (from pydantic) (4.14.1)
+
+[notice] A new release of pip is available: 25.3 -> 26.0.1
+[notice] To update, run: pip install --upgrade pip
