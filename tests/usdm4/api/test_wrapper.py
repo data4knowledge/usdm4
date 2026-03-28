@@ -986,6 +986,15 @@ class TestWrapper:
         assert version.id == "version1"  # Still returns first version
         assert design is None  # But design2 is not in first version
 
+    def test_to_html_no_version(self):
+        """Test to_html returns empty string when study has no versions."""
+        wrapper = Wrapper(
+            study=self.study,
+            usdmVersion="3.0",
+        )
+        result = wrapper.to_html("<html>{{content}}</html>")
+        assert result == ""
+
     def test_study_version_and_design_empty_id(self):
         """Test study_version_and_design() with empty string id."""
         study_version = self._create_study_version_with_design(

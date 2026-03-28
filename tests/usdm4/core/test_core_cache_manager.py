@@ -83,10 +83,11 @@ class TestCoreCacheManager:
         mgr = CoreCacheManager(cache_dir)
         assert Path(cache_dir).exists()
 
-    def test_default_cache_dir_uses_platformdirs(self):
-        with patch("usdm4.core.core_cache_manager.user_cache_dir", return_value="/fake/cache/usdm4"):
+    def test_default_cache_dir_uses_platformdirs(self, tmp_path):
+        fake_cache = str(tmp_path / "fake_cache" / "usdm4")
+        with patch("usdm4.core.core_cache_manager.user_cache_dir", return_value=fake_cache):
             mgr = CoreCacheManager()
-            assert mgr.cache_dir == Path("/fake/cache/usdm4") / "core"
+            assert mgr.cache_dir == Path(fake_cache) / "core"
 
     def test_custom_cache_dir(self, cache_dir):
         mgr = CoreCacheManager(cache_dir)
@@ -395,6 +396,231 @@ class TestCoreValidationResult:
         assert "Something wrong" in items[0]["message"]
         assert items[2]["type"] == "CORE-002"
         assert "Another rule" in items[2]["message"]
+
+
+# ------------------------------------------------------------------
+# CoreCacheManager — corrupt file handling
+# ------------------------------------------------------------------
+
+class TestCoreCacheManagerCorruptFiles:
+    """Tests for graceful handling of corrupt cached files."""
+
+    def test_load_cached_rules_corrupt_json(self, manager):
+        """Corrupt rules file should return None, not raise."""
+        rules_dir = manager.cache_dir / "rules" / "usdm"
+        rules_dir.mkdir(parents=True, exist_ok=True)
+        (rules_dir / "4-0.json").write_text("NOT VALID JSON{{{")
+        assert manager.load_cached_rules("usdm", "4-0") is None
+
+    def test_load_cached_ct_packages_corrupt_json(self, manager):
+        """Corrupt CT packages file should return None."""
+        ct_dir = manager.cache_dir / "ct"
+        ct_dir.mkdir(parents=True, exist_ok=True)
+        (ct_dir / "published_packages.json").write_text("{broken")
+        assert manager.load_cached_ct_packages() is None
+
+    def test_load_cached_ct_package_data_corrupt_json(self, manager):
+        """Corrupt CT package data file should return None."""
+        ct_data_dir = manager.cache_dir / "ct" / "data"
+        ct_data_dir.mkdir(parents=True, exist_ok=True)
+        (ct_data_dir / "sdtmct-2025-09-26.json").write_text("bad")
+        assert manager.load_cached_ct_package_data("sdtmct-2025-09-26") is None
+
+
+# ------------------------------------------------------------------
+# CoreCacheManager — ensure_resources
+# ------------------------------------------------------------------
+
+class TestEnsureResources:
+    def test_ensure_resources_delegates(self, manager):
+        """ensure_resources calls both internal methods."""
+        with patch.object(manager, "_ensure_jsonata_resources") as mock_j, \
+             patch.object(manager, "_ensure_xsd_schema_resources") as mock_x:
+            manager.ensure_resources()
+        mock_j.assert_called_once()
+        mock_x.assert_called_once()
+
+    def test_ensure_jsonata_skips_when_present(self, manager):
+        """Should return early if JSONata files already exist."""
+        jsonata_dir = manager.jsonata_dir
+        jsonata_dir.mkdir(parents=True, exist_ok=True)
+        (jsonata_dir / "parse_refs.jsonata").write_text("// jsonata")
+
+        with patch("usdm4.core.core_cache_manager.urllib.request.urlretrieve") as mock_dl:
+            manager._ensure_jsonata_resources()
+        mock_dl.assert_not_called()
+
+    def test_ensure_xsd_skips_when_present(self, manager):
+        """Should return early if XSD sentinel file already exists."""
+        xsd_dir = manager.schema_dir / "cdisc-usdm-xhtml-1.0"
+        xsd_dir.mkdir(parents=True, exist_ok=True)
+        (xsd_dir / "usdm-xhtml-1.0.xsd").write_text("<schema/>")
+
+        with patch("usdm4.core.core_cache_manager.urllib.request.urlretrieve") as mock_dl:
+            manager._ensure_xsd_schema_resources()
+        mock_dl.assert_not_called()
+
+    def test_ensure_jsonata_handles_download_failure(self, manager):
+        """Download failure should log warning, not raise."""
+        with patch("usdm4.core.core_cache_manager.urllib.request.urlretrieve",
+                    side_effect=OSError("network error")):
+            manager._ensure_jsonata_resources()
+        # Should not raise — files just won't be present
+
+
+# ------------------------------------------------------------------
+# CoreValidationResult — additional format_text branches
+# ------------------------------------------------------------------
+
+class TestCoreValidationResultFormatBranches:
+
+    def test_format_text_valid_with_execution_errors(self):
+        from usdm4.core.core_validation_result import CoreValidationResult
+
+        result = CoreValidationResult(
+            file_path="/test/study.json",
+            version="4-0",
+            rules_executed=50,
+            execution_errors=[{"rule_id": "CORE-X", "error": "crashed"}],
+        )
+        text = result.format_text()
+        assert "Validation PASSED" in text
+        assert "rule execution errors" in text
+
+    def test_format_text_findings_with_execution_errors(self):
+        from usdm4.core.core_validation_result import (
+            CoreRuleFinding,
+            CoreValidationResult,
+        )
+
+        result = CoreValidationResult(
+            file_path="/test/study.json",
+            findings=[
+                CoreRuleFinding(
+                    rule_id="CORE-001",
+                    description="Test",
+                    message="Bad",
+                    errors=[{"value": "x"}],
+                )
+            ],
+            execution_errors=[{"rule_id": "CORE-X", "error": "crashed"}],
+            rules_executed=50,
+        )
+        text = result.format_text()
+        assert "1 validation issue(s)" in text
+        assert "1 rule execution errors" in text
+
+    def test_format_text_more_than_10_errors(self):
+        from usdm4.core.core_validation_result import (
+            CoreRuleFinding,
+            CoreValidationResult,
+        )
+
+        result = CoreValidationResult(
+            file_path="/test/study.json",
+            findings=[
+                CoreRuleFinding(
+                    rule_id="CORE-001",
+                    description="Test",
+                    message="Bad",
+                    errors=[{"value": f"err{i}"} for i in range(15)],
+                )
+            ],
+            rules_executed=50,
+        )
+        text = result.format_text()
+        assert "and 5 more" in text
+
+    def test_to_errors_non_dict_error(self):
+        from usdm4.core.core_validation_result import (
+            CoreRuleFinding,
+            CoreValidationResult,
+        )
+
+        result = CoreValidationResult(
+            findings=[
+                CoreRuleFinding(
+                    rule_id="CORE-001",
+                    description="Test",
+                    message="Bad",
+                    errors=["plain string error"],
+                )
+            ]
+        )
+        errors = result.to_errors()
+        assert errors.count() == 1
+        items = errors.to_dict()
+        assert "plain string error" in items[0]["message"]
+
+
+# ------------------------------------------------------------------
+# CoreValidator — mocked integration tests
+# ------------------------------------------------------------------
+
+class TestCoreValidatorInit:
+    """Tests for CoreValidator initialisation."""
+
+    def test_init_with_cache_dir(self, cache_dir):
+        from usdm4.core.core_validator import CoreValidator
+
+        validator = CoreValidator(cache_dir=cache_dir)
+        assert validator.cache_manager.cache_dir == Path(cache_dir)
+
+    def test_init_with_api_key(self, cache_dir):
+        from usdm4.core.core_validator import CoreValidator
+
+        validator = CoreValidator(cache_dir=cache_dir, api_key="test-key")
+        assert validator._api_key == "test-key"
+
+    def test_init_reads_env_var(self, cache_dir):
+        from usdm4.core.core_validator import CoreValidator
+
+        with patch.dict(os.environ, {"CDISC_LIBRARY_API_KEY": "env-key"}, clear=False):
+            validator = CoreValidator(cache_dir=cache_dir)
+            assert validator._api_key == "env-key"
+
+    def test_cache_manager_property(self, cache_dir):
+        from usdm4.core.core_validator import CoreValidator
+
+        validator = CoreValidator(cache_dir=cache_dir)
+        assert isinstance(validator.cache_manager, CoreCacheManager)
+
+
+class TestCoreValidatorValidateFile:
+    """Tests for CoreValidator._validate_file."""
+
+    def test_file_not_found(self, cache_dir, tmp_path):
+        from usdm4.core.core_validator import CoreValidator
+
+        validator = CoreValidator(cache_dir=cache_dir)
+        with pytest.raises(FileNotFoundError):
+            validator._validate_file(str(tmp_path / "nonexistent.json"))
+
+    def test_not_json_extension(self, cache_dir, tmp_path):
+        from usdm4.core.core_validator import CoreValidator
+
+        txt_file = tmp_path / "study.txt"
+        txt_file.write_text("hello")
+        validator = CoreValidator(cache_dir=cache_dir)
+        with pytest.raises(ValueError, match="Expected a JSON file"):
+            validator._validate_file(str(txt_file))
+
+    def test_missing_study_key(self, cache_dir, tmp_path):
+        from usdm4.core.core_validator import CoreValidator
+
+        json_file = tmp_path / "bad.json"
+        json_file.write_text('{"notStudy": true}')
+        validator = CoreValidator(cache_dir=cache_dir)
+        with pytest.raises(ValueError, match="missing 'study' key"):
+            validator._validate_file(str(json_file))
+
+    def test_valid_file_passes(self, cache_dir, tmp_path):
+        from usdm4.core.core_validator import CoreValidator
+
+        json_file = tmp_path / "good.json"
+        json_file.write_text('{"study": {}}')
+        validator = CoreValidator(cache_dir=cache_dir)
+        validator._validate_file(str(json_file))  # should not raise
 
 
 class TestCoreValidatorClassifyErrors:

@@ -1,3 +1,4 @@
+import warnings
 from datetime import date
 from src.usdm4.api.study_version import StudyVersion
 from src.usdm4.api.code import Code
@@ -15,6 +16,8 @@ from src.usdm4.api.narrative_content import NarrativeContentItem
 from src.usdm4.api.address import Address
 from src.usdm4.api.population_definition import StudyDesignPopulation
 from src.usdm4.api.extension import ExtensionAttribute, BaseCode
+from src.usdm4.api.assigned_person import AssignedPerson
+from src.usdm4.api.person_name import PersonName
 from src.usdm4.api.study_definition_document import StudyDefinitionDocument
 from src.usdm4.api.study_definition_document_version import (
     StudyDefinitionDocumentVersion,
@@ -594,7 +597,9 @@ class TestStudyVersion:
 
     def test_sponsor(self):
         """Test getting sponsor organization."""
-        sponsor = self.study_version.sponsor()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            sponsor = self.study_version.sponsor()
         assert sponsor is not None
         assert sponsor.name == "Test Sponsor"
 
@@ -609,7 +614,9 @@ class TestStudyVersion:
             organizations=[self.non_sponsor_org],  # Only non-sponsor org
             instanceType="StudyVersion",
         )
-        sponsor = study_version.sponsor()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            sponsor = study_version.sponsor()
         assert sponsor is None
 
     def test_sponsor_identifier_text(self):
@@ -671,7 +678,9 @@ class TestStudyVersion:
 
     def test_protocol_date(self):
         """Test getting protocol date."""
-        date_obj = self.study_version.protocol_date()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            date_obj = self.study_version.protocol_date()
         assert date_obj is not None
         assert date_obj.dateValue == date(2024, 1, 15)
 
@@ -705,7 +714,9 @@ class TestStudyVersion:
             dateValues=[other_date],  # Only a non-matching date
             instanceType="StudyVersion",
         )
-        date_obj = study_version.protocol_date()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            date_obj = study_version.protocol_date()
         assert date_obj == ""
 
     def test_approval_date(self):
@@ -751,7 +762,9 @@ class TestStudyVersion:
 
     def test_protocol_date_value(self):
         """Test getting protocol date value."""
-        date_value = self.study_version.protocol_date_value()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            date_value = self.study_version.protocol_date_value()
         assert date_value == date(2024, 1, 15)
 
     def test_protocol_date_value_empty(self):
@@ -784,7 +797,9 @@ class TestStudyVersion:
             dateValues=[other_date],  # Only a non-matching date
             instanceType="StudyVersion",
         )
-        date_value = study_version.protocol_date_value()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            date_value = study_version.protocol_date_value()
         assert date_value == ""
 
     def test_approval_date_value(self):
@@ -3719,3 +3734,148 @@ class TestStudyVersion:
         )
         result = sv.fda_ind_identifier_text()
         assert result == ""
+
+    # =====================================================
+    # Tests for _find_assigned_persons / medical_expert
+    # =====================================================
+
+    def test_medical_expert_found(self):
+        """Test medical_expert returns first assigned person with role C51876."""
+        person_name = PersonName(
+            id="pn1",
+            text="Dr. Expert",
+            familyName="Expert",
+            givenNames=["Dr"],
+            instanceType="PersonName",
+        )
+        assigned_person = AssignedPerson(
+            id="ap1",
+            name="Medical Expert",
+            label="ME",
+            description="Medical Expert",
+            personName=person_name,
+            jobTitle="Medical Expert",
+            instanceType="AssignedPerson",
+        )
+        role_code = Code(
+            id="rc_me",
+            code="C51876",
+            codeSystem="http://www.cdisc.org",
+            codeSystemVersion="2024-09-27",
+            decode="Medical Expert",
+            instanceType="Code",
+        )
+        me_role = StudyRole(
+            id="role_me",
+            name="Medical Expert Role",
+            label="ME",
+            description="Medical Expert",
+            code=role_code,
+            assignedPersons=[assigned_person],
+            instanceType="StudyRole",
+        )
+        sv = StudyVersion(
+            id="sv_me_test",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            roles=[me_role],
+            instanceType="StudyVersion",
+        )
+        result = sv.medical_expert()
+        assert result is not None
+        assert result.id == "ap1"
+
+    def test_medical_expert_not_found(self):
+        """Test medical_expert returns None when no C51876 role exists."""
+        result = self.study_version.medical_expert()
+        assert result is None
+
+    def test_find_assigned_persons_no_matching_role(self):
+        """Test _find_assigned_persons returns empty list for non-existent role."""
+        result = self.study_version._find_assigned_persons("NONEXISTENT")
+        assert result == []
+
+    # =====================================================
+    # Tests for StudyIdentifier.of_type (identifier.py line 30)
+    # =====================================================
+
+    def test_identifier_of_type_with_extension(self):
+        """Test StudyIdentifier.of_type returns code when extension exists."""
+        ext_code = BaseCode(
+            id="bc1",
+            code="C12345",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="IND Number",
+            instanceType="Code",
+        )
+        ext = ExtensionAttribute(
+            id="ext_sit",
+            url="www.d4k.dk/usdm/extensions/009",
+            valueCode=ext_code,
+            instanceType="ExtensionAttribute",
+        )
+        identifier = StudyIdentifier(
+            id="id_ext",
+            text="IND-12345",
+            scopeId="org1",
+            extensionAttributes=[ext],
+            instanceType="StudyIdentifier",
+        )
+        result = identifier.of_type()
+        assert result is not None
+        assert result.code == "C12345"
+
+    def test_identifier_of_type_no_extension(self):
+        """Test StudyIdentifier.of_type returns None when no extension."""
+        result = self.sponsor_identifier.of_type()
+        assert result is None
+
+    # =====================================================
+    # Tests for AssignedPerson.contact_details (line 15-16)
+    # =====================================================
+
+    def test_assigned_person_contact_details_with_extension(self):
+        """Test contact_details returns value when extension exists."""
+        ext = ExtensionAttribute(
+            id="ext_apcd",
+            url="www.d4k.dk/usdm/extensions/010",
+            valueString="contact@example.com",
+            instanceType="ExtensionAttribute",
+        )
+        person_name = PersonName(
+            id="pn_cd",
+            text="Dr. Contact",
+            instanceType="PersonName",
+        )
+        person = AssignedPerson(
+            id="ap_cd",
+            name="Contact Person",
+            label="CP",
+            description="Contact",
+            personName=person_name,
+            jobTitle="Contact",
+            extensionAttributes=[ext],
+            instanceType="AssignedPerson",
+        )
+        assert person.contact_details() == "contact@example.com"
+
+    def test_assigned_person_contact_details_no_extension(self):
+        """Test contact_details returns None when no extension."""
+        person_name = PersonName(
+            id="pn_ne",
+            text="Dr. None",
+            instanceType="PersonName",
+        )
+        person = AssignedPerson(
+            id="ap_ne",
+            name="No Contact",
+            label="NC",
+            description="No Contact",
+            personName=person_name,
+            jobTitle="None",
+            instanceType="AssignedPerson",
+        )
+        assert person.contact_details() is None

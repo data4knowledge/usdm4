@@ -207,6 +207,58 @@ class TestScheduleTimeline:
         assert timeline.plannedDuration.text == "4 weeks"
         assert timeline.mainTimeline is False
 
+    def test_find_exit_found(self):
+        """Test find_exit method when exit exists."""
+        exit1 = ScheduleTimelineExit(id="exit1", instanceType="ScheduleTimelineExit")
+        exit2 = ScheduleTimelineExit(id="exit2", instanceType="ScheduleTimelineExit")
+        self.timeline.exits = [exit1, exit2]
+        result = self.timeline.find_exit("exit2")
+        assert result == exit2
+
+    def test_find_exit_not_found(self):
+        """Test find_exit method when exit doesn't exist."""
+        exit1 = ScheduleTimelineExit(id="exit1", instanceType="ScheduleTimelineExit")
+        self.timeline.exits = [exit1]
+        result = self.timeline.find_exit("nonexistent")
+        assert result is None
+
+    def test_find_timing_to_found(self):
+        """Test find_timing_to method when timing exists."""
+        timing1 = Timing(
+            id="timing1",
+            name="Timing 1",
+            type=Code(
+                id="code1",
+                code="TYPE1",
+                codeSystem="SYSTEM1",
+                codeSystemVersion="1.0",
+                decode="Type 1",
+                instanceType="Code",
+            ),
+            value="1",
+            valueLabel="Day 1",
+            relativeToFrom=Code(
+                id="code2",
+                code="FROM1",
+                codeSystem="SYSTEM1",
+                codeSystemVersion="1.0",
+                decode="From 1",
+                instanceType="Code",
+            ),
+            relativeFromScheduledInstanceId="instance1",
+            relativeToScheduledInstanceId="instance2",
+            instanceType="Timing",
+        )
+        self.timeline.timings = [timing1]
+        result = self.timeline.find_timing_to("instance2")
+        assert result == timing1
+
+    def test_find_timing_to_not_found(self):
+        """Test find_timing_to method when timing doesn't exist."""
+        self.timeline.timings = []
+        result = self.timeline.find_timing_to("nonexistent")
+        assert result is None
+
     def test_timeline_empty_lists(self):
         """Test timeline with empty lists."""
         timeline = ScheduleTimeline(

@@ -161,6 +161,40 @@ def test_load_invalid_wrapper_data():
         os.unlink(temp_file)
 
 
+def test_builder():
+    """Test builder method returns a Builder instance."""
+    from usdm4.builder.builder import Builder
+
+    errors = Errors()
+    builder = USDM4().builder(errors)
+    assert isinstance(builder, Builder)
+
+
+def test_assembler():
+    """Test assembler method returns an Assembler instance."""
+    from usdm4.assembler.assembler import Assembler
+
+    errors = Errors()
+    assembler = USDM4().assembler(errors)
+    assert isinstance(assembler, Assembler)
+
+
+def test_from_json():
+    """Test deprecated from_json method."""
+    import warnings
+
+    errors = Errors()
+    wrapper = USDM4().minimum("Test Study", "SPONSOR-1234", "1", errors)
+    data_dict = json.loads(wrapper.to_json())
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        result = USDM4().from_json(data_dict)
+
+    assert result is not None
+    assert result.study is not None
+
+
 def test_loadd_with_complete_study():
     """Test loadd method with more complete study data using minimum."""
     errors = Errors()
