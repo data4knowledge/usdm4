@@ -1,12 +1,11 @@
 """Tests for the USDM4 facade's CORE cache integration methods."""
 
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
-import pytest
 
 from usdm4 import USDM4
-from usdm4.core.core_cache_manager import CacheStatus, default_cache_dir
+from usdm4.core.core_cache_manager import CacheStatus
 
 
 class TestUSDM4CacheDir:
@@ -102,20 +101,25 @@ class TestCoreExports:
 
     def test_cache_status_exported(self):
         from usdm4.core import CacheStatus
+
         assert CacheStatus is not None
 
     def test_default_cache_dir_exported(self):
         from usdm4.core import default_cache_dir
+
         assert callable(default_cache_dir)
 
     def test_core_cache_manager_exported(self):
         from usdm4.core import CoreCacheManager
+
         assert CoreCacheManager is not None
 
     def test_core_validator_exported(self):
         from usdm4.core import CoreValidator
+
         assert CoreValidator is not None
 
     def test_core_validation_result_exported(self):
         from usdm4.core import CoreValidationResult
+
         assert CoreValidationResult is not None

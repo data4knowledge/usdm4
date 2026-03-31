@@ -65,8 +65,12 @@ class CoreRuleFinding:
             # Include any check-related or domain-specific fields
             # (exclude the redundant identity keys already captured)
             skip = {
-                "instanceType", "id", "path",
-                "name", "sectionNumber", "sectionTitle",
+                "instanceType",
+                "id",
+                "path",
+                "name",
+                "sectionNumber",
+                "sectionTitle",
             }
             extras = {
                 k: CoreRuleFinding._sanitise_value(v)
@@ -141,7 +145,9 @@ class CoreValidationResult:
         lines.append(f"Rules executed: {self.rules_executed}")
         lines.append(f"Rules skipped: {self.rules_skipped}")
         lines.append(f"CT packages available: {self.ct_packages_available}")
-        loaded = ", ".join(self.ct_packages_loaded) if self.ct_packages_loaded else "None"
+        loaded = (
+            ", ".join(self.ct_packages_loaded) if self.ct_packages_loaded else "None"
+        )
         lines.append(f"CT packages loaded: {loaded}")
         lines.append("")
 
@@ -209,9 +215,7 @@ class CoreValidationResult:
                     "description": f.description,
                     "message": f.message,
                     "error_count": f.error_count,
-                    "errors": [
-                        CoreRuleFinding._format_error(e) for e in f.errors
-                    ],
+                    "errors": [CoreRuleFinding._format_error(e) for e in f.errors],
                 }
                 for f in self.findings
             ],

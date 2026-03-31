@@ -7,15 +7,26 @@ from src.usdm4.assembler.schema import AssemblerInput
 def minimal_valid_dict():
     return {
         "identification": {"titles": {"brief": "Test"}},
-        "document": {"document": {"label": "Doc", "version": "1.0", "status": "final", "template": "T", "version_date": "2024-01-01"}, "sections": []},
-        "population": {"label": "Pop", "inclusion_exclusion": {"inclusion": [], "exclusion": []}},
+        "document": {
+            "document": {
+                "label": "Doc",
+                "version": "1.0",
+                "status": "final",
+                "template": "T",
+                "version_date": "2024-01-01",
+            },
+            "sections": [],
+        },
+        "population": {
+            "label": "Pop",
+            "inclusion_exclusion": {"inclusion": [], "exclusion": []},
+        },
         "study_design": {"label": "Design", "rationale": "R", "trial_phase": "1"},
         "study": {"name": {"acronym": "TST"}, "version": "1.0", "rationale": "R"},
     }
 
 
 class TestAssemblerInputValidation:
-
     def test_minimal_valid_dict_passes(self, minimal_valid_dict):
         result = AssemblerInput.model_validate(minimal_valid_dict)
         assert result.identification.titles.brief == "Test"

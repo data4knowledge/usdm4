@@ -1,11 +1,9 @@
 from src.usdm4.assembler.schema.population_schema import (
     PopulationInput,
-    InclusionExclusion,
 )
 
 
 class TestPopulationInput:
-
     def test_defaults(self):
         p = PopulationInput()
         assert p.label == ""

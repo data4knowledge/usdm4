@@ -43,6 +43,7 @@ _EXECUTION_ERROR_TYPES = {
     "Outside scope",
 }
 
+
 class CoreValidator:
     """
     Validates USDM JSON files using the CDISC Rules Engine (CORE).
@@ -69,9 +70,7 @@ class CoreValidator:
         api_key: Optional[str] = None,
     ):
         self._cache_manager = CoreCacheManager(cache_dir)
-        self._api_key = api_key or os.environ.get(
-            "CDISC_LIBRARY_API_KEY", ""
-        )
+        self._api_key = api_key or os.environ.get("CDISC_LIBRARY_API_KEY", "")
         # Ensure the API key env var is set for the rules engine
         if self._api_key and "CDISC_LIBRARY_API_KEY" not in os.environ:
             os.environ["CDISC_LIBRARY_API_KEY"] = self._api_key
@@ -146,9 +145,7 @@ class CoreValidator:
         os.chdir(cdisc_package_dir)
 
         try:
-            return self._run_validation(
-                abs_path, version, engine_imports
-            )
+            return self._run_validation(abs_path, version, engine_imports)
         finally:
             os.chdir(original_cwd)
             logging.disable(original_log_level)
@@ -220,6 +217,7 @@ class CoreValidator:
                 dst = dst_jsonata / f.name
                 if not dst.exists():
                     import shutil
+
                     shutil.copy2(f, dst)
 
         # Copy XSD schema files
@@ -235,6 +233,7 @@ class CoreValidator:
                         dst = dst_subdir / f.name
                         if not dst.exists():
                             import shutil
+
                             shutil.copy2(f, dst)
 
     def _run_validation(
@@ -278,6 +277,7 @@ class CoreValidator:
 
         # Reset the USDMDataService singleton so it loads the new file
         from cdisc_rules_engine.services.data_services import USDMDataService
+
         USDMDataService._instance = None
 
         # Load USDM data
@@ -285,7 +285,9 @@ class CoreValidator:
             usdm_data = json.load(f)
 
         # --- CT Package Setup ---
-        ct_packages = self._load_ct_packages(cache, CDISCLibraryService, PUBLISHED_CT_PACKAGES)
+        ct_packages = self._load_ct_packages(
+            cache, CDISCLibraryService, PUBLISHED_CT_PACKAGES
+        )
         ct_versions_needed = self._extract_ct_versions(usdm_data)
         ct_package_metadata, loaded_packages = self._load_ct_data(
             cache, CDISCLibraryService, ct_packages, ct_versions_needed
@@ -366,7 +368,9 @@ class CoreValidator:
     # Helper methods
     # ------------------------------------------------------------------
 
-    def _load_ct_packages(self, cache, CDISCLibraryService, PUBLISHED_CT_PACKAGES) -> list:
+    def _load_ct_packages(
+        self, cache, CDISCLibraryService, PUBLISHED_CT_PACKAGES
+    ) -> list:
         """Load the list of published CT packages, using disk cache if available."""
         # Try disk cache first
         cached = self._cache_manager.load_cached_ct_packages()
@@ -418,7 +422,9 @@ class CoreValidator:
                     continue
 
                 # Try disk cache first
-                cached_data = self._cache_manager.load_cached_ct_package_data(package_name)
+                cached_data = self._cache_manager.load_cached_ct_package_data(
+                    package_name
+                )
                 if cached_data:
                     ct_package_metadata[package_name] = cached_data
                     loaded_packages.append(package_name)
@@ -470,7 +476,11 @@ class CoreValidator:
             library_service = CDISCLibraryService(self._api_key, cache)
             result = library_service.get_rules_by_catalog("usdm", version)
             rules = result.get("rules", []) if isinstance(result, dict) else result
-            actual_key = result.get("key_prefix", cache_key) if isinstance(result, dict) else cache_key
+            actual_key = (
+                result.get("key_prefix", cache_key)
+                if isinstance(result, dict)
+                else cache_key
+            )
 
             for rule in rules:
                 rule_id = rule.get("core_id", "unknown")

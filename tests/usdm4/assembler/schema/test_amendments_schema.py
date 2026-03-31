@@ -1,14 +1,11 @@
-import pytest
 from src.usdm4.assembler.schema.amendments_schema import (
     AmendmentsInput,
     AmendmentScope,
     AmendmentImpact,
-    AmendmentChange,
 )
 
 
 class TestAmendmentsInput:
-
     def test_defaults(self):
         a = AmendmentsInput()
         assert a.identifier == ""
@@ -34,7 +31,11 @@ class TestAmendmentsInput:
             "enrollment": {"value": 100, "unit": "%"},
             "scope": {"global": True},
             "changes": [
-                {"section": "1.2, Background", "description": "Updated safety info", "rationale": "New data"},
+                {
+                    "section": "1.2, Background",
+                    "description": "Updated safety info",
+                    "rationale": "New data",
+                },
             ],
         }
         result = AmendmentsInput.model_validate(data)
@@ -44,7 +45,6 @@ class TestAmendmentsInput:
 
 
 class TestAmendmentScope:
-
     def test_global_alias(self):
         """Test that 'global' key in dict maps to global_ field."""
         s = AmendmentScope.model_validate({"global": True, "countries": ["US", "UK"]})
@@ -59,7 +59,6 @@ class TestAmendmentScope:
 
 
 class TestAmendmentImpact:
-
     def test_defaults(self):
         i = AmendmentImpact()
         assert i.safety_and_rights.safety.substantial is False

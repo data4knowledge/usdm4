@@ -5,16 +5,10 @@ from src.usdm4.assembler.schema.identification_schema import (
     StudyIdentifier,
     Titles,
     Address,
-    NonStandardOrganization,
-    IdentifierScope,
-    RoleOrganization,
-    MedicalExpert,
-    OtherIdentification,
 )
 
 
 class TestTitles:
-
     def test_empty_defaults(self):
         t = Titles()
         assert t.brief == ""
@@ -28,86 +22,96 @@ class TestTitles:
 
 
 class TestAddress:
-
     def test_empty_defaults(self):
         a = Address()
         assert a.lines == []
         assert a.country == ""
 
     def test_full_address(self):
-        a = Address.model_validate({
-            "lines": ["123 Main St"],
-            "city": "Boston",
-            "state": "MA",
-            "postalCode": "02101",
-            "country": "USA",
-        })
+        a = Address.model_validate(
+            {
+                "lines": ["123 Main St"],
+                "city": "Boston",
+                "state": "MA",
+                "postalCode": "02101",
+                "country": "USA",
+            }
+        )
         assert a.city == "Boston"
 
 
 class TestStudyIdentifier:
-
     def test_standard_scope(self):
-        si = StudyIdentifier.model_validate({
-            "identifier": "NCT123",
-            "scope": {"standard": "nct"},
-        })
+        si = StudyIdentifier.model_validate(
+            {
+                "identifier": "NCT123",
+                "scope": {"standard": "nct"},
+            }
+        )
         assert si.identifier == "NCT123"
         assert si.scope.standard == "nct"
 
     def test_non_standard_scope(self):
-        si = StudyIdentifier.model_validate({
-            "identifier": "CUSTOM-1",
-            "scope": {
-                "non_standard": {
-                    "type": "registry",
-                    "name": "Custom Reg",
-                }
-            },
-        })
+        si = StudyIdentifier.model_validate(
+            {
+                "identifier": "CUSTOM-1",
+                "scope": {
+                    "non_standard": {
+                        "type": "registry",
+                        "name": "Custom Reg",
+                    }
+                },
+            }
+        )
         assert si.scope.non_standard.type == "registry"
         assert si.scope.non_standard.name == "Custom Reg"
 
     def test_non_standard_scope_without_address(self):
-        si = StudyIdentifier.model_validate({
-            "identifier": "CUSTOM-2",
-            "scope": {
-                "non_standard": {
-                    "type": "pharma",
-                    "name": "No Address Org",
-                }
-            },
-        })
+        si = StudyIdentifier.model_validate(
+            {
+                "identifier": "CUSTOM-2",
+                "scope": {
+                    "non_standard": {
+                        "type": "pharma",
+                        "name": "No Address Org",
+                    }
+                },
+            }
+        )
         assert si.scope.non_standard.legalAddress is None
 
     def test_non_standard_scope_with_explicit_none_address(self):
-        si = StudyIdentifier.model_validate({
-            "identifier": "CUSTOM-3",
-            "scope": {
-                "non_standard": {
-                    "type": "pharma",
-                    "name": "Explicit None Org",
-                    "legalAddress": None,
-                }
-            },
-        })
+        si = StudyIdentifier.model_validate(
+            {
+                "identifier": "CUSTOM-3",
+                "scope": {
+                    "non_standard": {
+                        "type": "pharma",
+                        "name": "Explicit None Org",
+                        "legalAddress": None,
+                    }
+                },
+            }
+        )
         assert si.scope.non_standard.legalAddress is None
 
     def test_non_standard_scope_with_address(self):
-        si = StudyIdentifier.model_validate({
-            "identifier": "CUSTOM-4",
-            "scope": {
-                "non_standard": {
-                    "type": "pharma",
-                    "name": "With Address Org",
-                    "legalAddress": {
-                        "lines": ["123 Main St"],
-                        "city": "Boston",
-                        "country": "USA",
-                    },
-                }
-            },
-        })
+        si = StudyIdentifier.model_validate(
+            {
+                "identifier": "CUSTOM-4",
+                "scope": {
+                    "non_standard": {
+                        "type": "pharma",
+                        "name": "With Address Org",
+                        "legalAddress": {
+                            "lines": ["123 Main St"],
+                            "city": "Boston",
+                            "country": "USA",
+                        },
+                    }
+                },
+            }
+        )
         assert si.scope.non_standard.legalAddress is not None
         assert si.scope.non_standard.legalAddress.city == "Boston"
 
@@ -117,7 +121,6 @@ class TestStudyIdentifier:
 
 
 class TestIdentificationInput:
-
     def test_empty_defaults(self):
         ii = IdentificationInput()
         assert ii.identifiers == []

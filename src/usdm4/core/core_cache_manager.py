@@ -290,9 +290,7 @@ class CoreCacheManager:
             return status
 
         # Resolve the API key
-        resolved_key = api_key or os.environ.get(
-            "CDISC_LIBRARY_API_KEY", ""
-        )
+        resolved_key = api_key or os.environ.get("CDISC_LIBRARY_API_KEY", "")
 
         # --- GitHub resources (no API key needed) -------------------------
         if not status.has_resources:
@@ -322,7 +320,6 @@ class CoreCacheManager:
             CDISCLibraryService,
         )
         from cdisc_rules_engine.constants.cache_constants import PUBLISHED_CT_PACKAGES
-        from cdisc_rules_engine.utilities.utils import get_rules_cache_key
 
         # Ensure the env var is set for the library service
         if "CDISC_LIBRARY_API_KEY" not in os.environ:
@@ -335,13 +332,8 @@ class CoreCacheManager:
         if not self._has_rules(version):
             logger.info("Downloading USDM validation rules (version %s) ...", version)
             try:
-                cache_key = get_rules_cache_key("usdm", version)
                 result = library_service.get_rules_by_catalog("usdm", version)
-                rules = (
-                    result.get("rules", [])
-                    if isinstance(result, dict)
-                    else result
-                )
+                rules = result.get("rules", []) if isinstance(result, dict) else result
                 self.cache_rules("usdm", version, rules)
                 logger.info("Cached %d rules", len(rules))
             except Exception as e:
@@ -353,8 +345,7 @@ class CoreCacheManager:
             try:
                 packages = library_service.get_all_ct_packages()
                 ct_packages = [
-                    package.get("href", "").split("/")[-1]
-                    for package in packages
+                    package.get("href", "").split("/")[-1] for package in packages
                 ]
                 cache.add(PUBLISHED_CT_PACKAGES, ct_packages)
                 self.cache_ct_packages(ct_packages)

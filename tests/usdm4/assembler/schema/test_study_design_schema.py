@@ -2,7 +2,6 @@ from src.usdm4.assembler.schema.study_design_schema import StudyDesignInput
 
 
 class TestStudyDesignInput:
-
     def test_defaults(self):
         sd = StudyDesignInput()
         assert sd.label == ""

@@ -1,8 +1,6 @@
 """Tests for CoreCacheManager, CacheStatus, and default_cache_dir."""
 
-import json
 import os
-import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
@@ -31,6 +29,7 @@ def manager(cache_dir):
 # default_cache_dir
 # ------------------------------------------------------------------
 
+
 class TestDefaultCacheDir:
     def test_returns_path(self):
         result = default_cache_dir()
@@ -43,7 +42,10 @@ class TestDefaultCacheDir:
 
     def test_uses_platformdirs(self):
         """Verify we delegate to platformdirs.user_cache_dir."""
-        with patch("usdm4.core.core_cache_manager.user_cache_dir", return_value="/fake/cache/usdm4"):
+        with patch(
+            "usdm4.core.core_cache_manager.user_cache_dir",
+            return_value="/fake/cache/usdm4",
+        ):
             result = default_cache_dir()
         assert result == Path("/fake/cache/usdm4") / "core"
 
@@ -51,6 +53,7 @@ class TestDefaultCacheDir:
 # ------------------------------------------------------------------
 # CacheStatus
 # ------------------------------------------------------------------
+
 
 class TestCacheStatus:
     def test_default_values(self):
@@ -78,14 +81,17 @@ class TestCacheStatus:
 # CoreCacheManager basics
 # ------------------------------------------------------------------
 
+
 class TestCoreCacheManager:
     def test_creates_cache_dir(self, cache_dir):
-        mgr = CoreCacheManager(cache_dir)
+        CoreCacheManager(cache_dir)
         assert Path(cache_dir).exists()
 
     def test_default_cache_dir_uses_platformdirs(self, tmp_path):
         fake_cache = str(tmp_path / "fake_cache" / "usdm4")
-        with patch("usdm4.core.core_cache_manager.user_cache_dir", return_value=fake_cache):
+        with patch(
+            "usdm4.core.core_cache_manager.user_cache_dir", return_value=fake_cache
+        ):
             mgr = CoreCacheManager()
             assert mgr.cache_dir == Path(fake_cache) / "core"
 
@@ -158,6 +164,7 @@ class TestCoreCacheManager:
 # is_populated
 # ------------------------------------------------------------------
 
+
 class TestIsPopulated:
     def test_empty_cache_returns_not_ready(self, manager):
         status = manager.is_populated()
@@ -225,6 +232,7 @@ class TestIsPopulated:
 # prepare (mocked — no network)
 # ------------------------------------------------------------------
 
+
 class TestPrepare:
     def test_returns_immediately_when_populated(self, manager):
         """If already populated, prepare() should not download anything."""
@@ -241,8 +249,10 @@ class TestPrepare:
         manager.cache_ct_packages(["sdtmct-2025-09-26"])
 
         # Patch ensure methods to ensure they are NOT called
-        with patch.object(manager, "_ensure_jsonata_resources") as mock_jsonata, \
-             patch.object(manager, "_ensure_xsd_schema_resources") as mock_xsd:
+        with (
+            patch.object(manager, "_ensure_jsonata_resources") as mock_jsonata,
+            patch.object(manager, "_ensure_xsd_schema_resources") as mock_xsd,
+        ):
             status = manager.prepare("4-0", api_key="fake-key")
 
         mock_jsonata.assert_not_called()
@@ -252,8 +262,10 @@ class TestPrepare:
     def test_downloads_resources_when_missing(self, manager):
         """If resources are missing, prepare() should attempt download."""
         # No resources at all — but also no API key, so only GitHub downloads attempted
-        with patch.object(manager, "_ensure_jsonata_resources") as mock_jsonata, \
-             patch.object(manager, "_ensure_xsd_schema_resources") as mock_xsd:
+        with (
+            patch.object(manager, "_ensure_jsonata_resources") as mock_jsonata,
+            patch.object(manager, "_ensure_xsd_schema_resources") as mock_xsd,
+        ):
             manager.prepare("4-0")
 
         mock_jsonata.assert_called_once()
@@ -273,11 +285,16 @@ class TestPrepare:
         (xsd_dir / "usdm-xhtml-1.0.xsd").write_text("<schema/>")
 
         # Remove any env var
-        env = {k: v for k, v in os.environ.items()
-               if k not in ("CDISC_LIBRARY_API_KEY", "CDISC_API_KEY")}
+        env = {
+            k: v
+            for k, v in os.environ.items()
+            if k not in ("CDISC_LIBRARY_API_KEY", "CDISC_API_KEY")
+        }
 
-        with patch.dict(os.environ, env, clear=True), \
-             caplog.at_level(logging.WARNING, logger="usdm4.core.core_cache_manager"):
+        with (
+            patch.dict(os.environ, env, clear=True),
+            caplog.at_level(logging.WARNING, logger="usdm4.core.core_cache_manager"),
+        ):
             manager.prepare("4-0")
 
         assert any("API key" in msg for msg in caplog.messages)
@@ -402,6 +419,7 @@ class TestCoreValidationResult:
 # CoreCacheManager — corrupt file handling
 # ------------------------------------------------------------------
 
+
 class TestCoreCacheManagerCorruptFiles:
     """Tests for graceful handling of corrupt cached files."""
 
@@ -431,11 +449,14 @@ class TestCoreCacheManagerCorruptFiles:
 # CoreCacheManager — ensure_resources
 # ------------------------------------------------------------------
 
+
 class TestEnsureResources:
     def test_ensure_resources_delegates(self, manager):
         """ensure_resources calls both internal methods."""
-        with patch.object(manager, "_ensure_jsonata_resources") as mock_j, \
-             patch.object(manager, "_ensure_xsd_schema_resources") as mock_x:
+        with (
+            patch.object(manager, "_ensure_jsonata_resources") as mock_j,
+            patch.object(manager, "_ensure_xsd_schema_resources") as mock_x,
+        ):
             manager.ensure_resources()
         mock_j.assert_called_once()
         mock_x.assert_called_once()
@@ -446,7 +467,9 @@ class TestEnsureResources:
         jsonata_dir.mkdir(parents=True, exist_ok=True)
         (jsonata_dir / "parse_refs.jsonata").write_text("// jsonata")
 
-        with patch("usdm4.core.core_cache_manager.urllib.request.urlretrieve") as mock_dl:
+        with patch(
+            "usdm4.core.core_cache_manager.urllib.request.urlretrieve"
+        ) as mock_dl:
             manager._ensure_jsonata_resources()
         mock_dl.assert_not_called()
 
@@ -456,14 +479,18 @@ class TestEnsureResources:
         xsd_dir.mkdir(parents=True, exist_ok=True)
         (xsd_dir / "usdm-xhtml-1.0.xsd").write_text("<schema/>")
 
-        with patch("usdm4.core.core_cache_manager.urllib.request.urlretrieve") as mock_dl:
+        with patch(
+            "usdm4.core.core_cache_manager.urllib.request.urlretrieve"
+        ) as mock_dl:
             manager._ensure_xsd_schema_resources()
         mock_dl.assert_not_called()
 
     def test_ensure_jsonata_handles_download_failure(self, manager):
         """Download failure should log warning, not raise."""
-        with patch("usdm4.core.core_cache_manager.urllib.request.urlretrieve",
-                    side_effect=OSError("network error")):
+        with patch(
+            "usdm4.core.core_cache_manager.urllib.request.urlretrieve",
+            side_effect=OSError("network error"),
+        ):
             manager._ensure_jsonata_resources()
         # Should not raise — files just won't be present
 
@@ -472,8 +499,8 @@ class TestEnsureResources:
 # CoreValidationResult — additional format_text branches
 # ------------------------------------------------------------------
 
-class TestCoreValidationResultFormatBranches:
 
+class TestCoreValidationResultFormatBranches:
     def test_format_text_valid_with_execution_errors(self):
         from usdm4.core.core_validation_result import CoreValidationResult
 
@@ -556,6 +583,7 @@ class TestCoreValidationResultFormatBranches:
 # ------------------------------------------------------------------
 # CoreValidator — mocked integration tests
 # ------------------------------------------------------------------
+
 
 class TestCoreValidatorInit:
     """Tests for CoreValidator initialisation."""
@@ -641,7 +669,10 @@ class TestCoreValidatorClassifyErrors:
                 "errors": [
                     {"value": "bad_data", "dataset": "X"},
                     {"error": "Column not found in data", "dataset": "Y"},
-                    {"error": "Error occurred during dataset preprocessing", "dataset": "Z"},
+                    {
+                        "error": "Error occurred during dataset preprocessing",
+                        "dataset": "Z",
+                    },
                 ]
             }
         }

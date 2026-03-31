@@ -2,7 +2,6 @@ from src.usdm4.assembler.schema.study_schema import StudyInput, StudyName
 
 
 class TestStudyName:
-
     def test_defaults(self):
         n = StudyName()
         assert n.identifier == ""
@@ -16,7 +15,6 @@ class TestStudyName:
 
 
 class TestStudyInput:
-
     def test_defaults(self):
         s = StudyInput()
         assert s.version == ""

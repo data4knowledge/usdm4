@@ -32,8 +32,10 @@ def main():
         print(f"Error: file not found: {args.file}", file=sys.stderr)
         sys.exit(1)
 
-    output_path = Path(args.output) if args.output else input_path.with_name(
-        f"{input_path.stem}_core.yaml"
+    output_path = (
+        Path(args.output)
+        if args.output
+        else input_path.with_name(f"{input_path.stem}_core.yaml")
     )
 
     usdm = USDM4(cache_dir=args.cache_dir)
