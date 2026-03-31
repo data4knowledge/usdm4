@@ -1,6 +1,5 @@
 import json
 import pathlib
-from concurrent.futures import Future
 from typing import Optional
 from typing_extensions import deprecated
 from simple_error_log.errors import Errors
@@ -48,8 +47,7 @@ class USDM4:
         Validate a USDM JSON file using the CDISC Rules Engine (CORE).
 
         Runs the full set of CDISC CORE conformance rules against the file.
-        This may take several minutes. For non-blocking execution, use
-        :meth:`validate_core_async` instead.
+        This may take several minutes.
 
         Args:
             file_path: Path to the USDM JSON file.
@@ -66,43 +64,6 @@ class USDM4:
         validator = self._get_core_validator(cache_dir, api_key)
         result = validator.validate(file_path, version=version)
         return result.to_errors()
-
-    def validate_core_async(
-        self,
-        file_path: str,
-        version: str = "4-0",
-        cache_dir: Optional[str] = None,
-        api_key: Optional[str] = None,
-    ) -> Future:
-        """
-        Validate a USDM JSON file using CDISC CORE in a background thread.
-
-        Returns immediately with a ``Future[Errors]``.
-
-        Args:
-            file_path: Path to the USDM JSON file.
-            version: USDM version (``"3-0"`` or ``"4-0"``). Default ``"4-0"``.
-            cache_dir: Optional path to the cache directory.
-            api_key: Optional CDISC Library API key.
-
-        Returns:
-            A ``Future`` whose ``.result()`` returns an
-            :class:`~simple_error_log.errors.Errors` instance.
-        """
-        validator = self._get_core_validator(cache_dir, api_key)
-        future = validator.validate_async(file_path, version=version)
-        # Wrap the future to convert CoreValidationResult -> Errors
-        wrapped = Future()
-
-        def _on_done(f):
-            try:
-                result = f.result()
-                wrapped.set_result(result.to_errors())
-            except Exception as e:
-                wrapped.set_exception(e)
-
-        future.add_done_callback(_on_done)
-        return wrapped
 
     def prepare_core(
         self,

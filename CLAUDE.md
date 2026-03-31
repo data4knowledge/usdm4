@@ -74,4 +74,4 @@ The CDISC Rules Engine reports three types of non-finding errors that are filter
 
 - Version is defined in `src/usdm4/__info__.py`
 - The `cdisc-rules-engine` requires Python 3.12+ (version 0.15.0 onwards).
-- The CDISC Rules Engine is not thread-safe (mutates `os.getcwd()` and `sys.stdout`). A single-thread `ThreadPoolExecutor` serialises async validation runs.
+- The CDISC Rules Engine is not thread-safe (mutates `os.getcwd()` and `sys.stdout`). Callers needing async/background execution should manage threading themselves.

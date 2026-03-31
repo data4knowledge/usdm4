@@ -9,15 +9,9 @@ CT packages, and schema resources.
 Usage:
     from usdm4.core import CoreValidator
 
-    # Synchronous
     validator = CoreValidator()
     result = validator.validate("study.json")
     print(result.format_text())
-
-    # Asynchronous (background)
-    future = validator.validate_async("study.json")
-    # ... do other work ...
-    result = future.result()  # blocks until done
 """
 
 import io
@@ -25,7 +19,6 @@ import json
 import logging
 import os
 import sys
-from concurrent.futures import Future, ThreadPoolExecutor
 from pathlib import Path
 from typing import Optional
 
@@ -49,13 +42,6 @@ _EXECUTION_ERROR_TYPES = {
     "Error occurred during dataset preprocessing",
     "Outside scope",
 }
-
-# Thread pool shared by all CoreValidator instances for background work.
-# A single-thread pool serialises validation runs, which is appropriate
-# because the CDISC Rules Engine is not thread-safe (it mutates globals
-# like os.getcwd and sys.stdout).
-_executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="usdm4-core")
-
 
 class CoreValidator:
     """
@@ -101,11 +87,10 @@ class CoreValidator:
         version: str = "4-0",
     ) -> CoreValidationResult:
         """
-        Validate a USDM JSON file synchronously.
+        Validate a USDM JSON file.
 
         This may take several minutes depending on file size and whether
-        resources need to be downloaded. For non-blocking execution, use
-        :meth:`validate_async` instead.
+        resources need to be downloaded.
 
         Args:
             file_path: Path to the USDM JSON file.
@@ -119,32 +104,6 @@ class CoreValidator:
             ValueError: If the file is not valid JSON or not a USDM file.
         """
         return self._execute_validation(file_path, version)
-
-    def validate_async(
-        self,
-        file_path: str,
-        version: str = "4-0",
-    ) -> Future:
-        """
-        Validate a USDM JSON file in a background thread.
-
-        Returns immediately with a :class:`~concurrent.futures.Future` that
-        will contain the :class:`CoreValidationResult` when validation completes.
-
-        Args:
-            file_path: Path to the USDM JSON file.
-            version: USDM version string (``"3-0"`` or ``"4-0"``).
-
-        Returns:
-            A ``Future[CoreValidationResult]``. Call ``.result()`` to block
-            until done, or use ``.add_done_callback(fn)`` to be notified.
-
-        Example::
-
-            future = validator.validate_async("study.json")
-            future.add_done_callback(lambda f: print(f.result().format_text()))
-        """
-        return _executor.submit(self._execute_validation, file_path, version)
 
     # ------------------------------------------------------------------
     # Internal implementation

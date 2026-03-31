@@ -16,7 +16,7 @@ The `cdisc-rules-engine` package is installed automatically as a dependency of u
 
 ## Quick Start
 
-### Synchronous Validation
+### Validation via the USDM4 Facade
 
 ```python
 from usdm4 import USDM4
@@ -28,37 +28,6 @@ if result.is_valid:
     print("Validation passed")
 else:
     print(result.format_text())
-```
-
-### Background Validation
-
-Validation can take several minutes. The async method returns a `concurrent.futures.Future` so your application remains responsive:
-
-```python
-from usdm4 import USDM4
-
-usdm = USDM4()
-future = usdm.validate_core_async("study.json")
-
-# Do other work while validation runs...
-
-# Block until results are ready
-result = future.result()
-print(result.format_text())
-```
-
-Or use a callback to be notified when validation completes:
-
-```python
-def on_complete(future):
-    result = future.result()
-    if result.is_valid:
-        print("Validation passed")
-    else:
-        print(f"Found {result.finding_count} issues")
-
-future = usdm.validate_core_async("study.json")
-future.add_done_callback(on_complete)
 ```
 
 ### Using CoreValidator Directly
@@ -89,13 +58,7 @@ Synchronous validation. Returns a `CoreValidationResult`. Parameters:
 - `cache_dir` — Optional path to the cache directory. Defaults to `~/.cache/usdm4/core/`.
 - `api_key` — Optional CDISC Library API key. Falls back to `CDISC_LIBRARY_API_KEY` or `CDISC_API_KEY` environment variables.
 
-**`validate_core_async(file_path, version="4-0", cache_dir=None, api_key=None)`**
-
-Identical parameters, but returns a `Future[CoreValidationResult]` immediately. Validation runs in a background thread.
-
 ### CoreValidationResult
-
-The result object returned by both methods.
 
 **Properties:**
 
@@ -185,7 +148,7 @@ Both can be used independently. `validate()` runs local Python rule implementati
 
 ### Thread Safety
 
-The CDISC Rules Engine is not thread-safe — it mutates `os.getcwd()` and `sys.stdout` during execution. The module uses a single-thread `ThreadPoolExecutor` to serialise background validation runs. Multiple concurrent `validate_core_async()` calls will queue and execute one at a time.
+The CDISC Rules Engine is not thread-safe — it mutates `os.getcwd()` and `sys.stdout` during execution. Callers needing async or background execution should manage their own threading.
 
 ### Output Suppression
 
@@ -217,7 +180,7 @@ Two rules are excluded from execution due to known bugs in the CDISC Rules Engin
 Not all errors from the engine indicate data quality issues. Some rules apply to entity types that may not be present in every USDM file. The module separates these into:
 
 - **Findings** — Real data issues reported by rules.
-- **Execution errors** — Rules that couldn't run because the expected fields or datasets don't exist in this file. These include "Column not found in data" and "Error occurred during dataset preprocessing" errors.
+- **Execution errors** — Rules that couldn't run because the expected fields or datasets don't exist in this file. These include "Column not found in data", "Error occurred during dataset preprocessing", and "Outside scope" errors.
 
 Only findings are surfaced via `result.findings`. Execution errors are available separately via `result.execution_errors` for debugging.
 
@@ -226,7 +189,7 @@ Only findings are surfaced via `result.findings`. Execution errors are available
 ```
 src/usdm4/core/
     __init__.py                  # Exports CoreValidator, CoreValidationResult, CoreCacheManager
-    core_validator.py            # Main validator with validate() and validate_async()
+    core_validator.py            # Main validator with validate()
     core_validation_result.py    # Result dataclasses (CoreValidationResult, CoreRuleFinding)
     core_cache_manager.py        # Persistent disk cache for rules, CT, schemas
 
