@@ -236,7 +236,10 @@ class CoreValidationResult:
                     parts.append(f"at {path}")
                 location = " ".join(parts)
 
+                detail = formatted.get("detail", "")
                 description = finding.message or finding.description
+                if detail:
+                    description = f"{description}: {detail}"
                 if location:
                     message = f"{description} [{location}]"
                 else:
