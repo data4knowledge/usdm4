@@ -64,7 +64,7 @@ class CoreValidator:
             to a platform-appropriate location (see
             :func:`~usdm4.core.core_cache_manager.default_cache_dir`).
         api_key: CDISC Library API key. If None, reads from the
-            ``CDISC_LIBRARY_API_KEY`` or ``CDISC_API_KEY`` environment variable.
+            ``CDISC_LIBRARY_API_KEY`` environment variable.
 
     Example::
 
@@ -81,7 +81,7 @@ class CoreValidator:
     ):
         self._cache_manager = CoreCacheManager(cache_dir)
         self._api_key = api_key or os.environ.get(
-            "CDISC_LIBRARY_API_KEY", os.environ.get("CDISC_API_KEY", "")
+            "CDISC_LIBRARY_API_KEY", ""
         )
         # Ensure the API key env var is set for the rules engine
         if self._api_key and "CDISC_LIBRARY_API_KEY" not in os.environ:

@@ -278,8 +278,7 @@ class CoreCacheManager:
         Args:
             version: USDM version string (e.g. ``"4-0"``).
             api_key: CDISC Library API key.  If ``None``, falls back to
-                the ``CDISC_LIBRARY_API_KEY`` or ``CDISC_API_KEY``
-                environment variables.
+                the ``CDISC_LIBRARY_API_KEY`` environment variable.
 
         Returns:
             A :class:`CacheStatus` reflecting the state of the cache
@@ -292,7 +291,7 @@ class CoreCacheManager:
 
         # Resolve the API key
         resolved_key = api_key or os.environ.get(
-            "CDISC_LIBRARY_API_KEY", os.environ.get("CDISC_API_KEY", "")
+            "CDISC_LIBRARY_API_KEY", ""
         )
 
         # --- GitHub resources (no API key needed) -------------------------

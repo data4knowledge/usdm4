@@ -58,7 +58,7 @@ class USDM4:
                 resources. If None, uses the instance-level cache_dir or a
                 platform-appropriate default.
             api_key: Optional CDISC Library API key. If None, reads from
-                ``CDISC_LIBRARY_API_KEY`` or ``CDISC_API_KEY`` environment variable.
+                ``CDISC_LIBRARY_API_KEY`` environment variable.
 
         Returns:
             An :class:`~simple_error_log.errors.Errors` instance with findings.
@@ -120,7 +120,7 @@ class USDM4:
         Args:
             version: USDM version string (``"3-0"`` or ``"4-0"``).
             api_key: Optional CDISC Library API key. If None, reads from the
-                ``CDISC_LIBRARY_API_KEY`` or ``CDISC_API_KEY`` environment variable.
+                ``CDISC_LIBRARY_API_KEY`` environment variable.
 
         Returns:
             A :class:`~usdm4.core.core_cache_manager.CacheStatus` indicating
