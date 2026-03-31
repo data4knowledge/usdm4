@@ -6,7 +6,7 @@ from pathlib import Path
 
 import yaml
 
-from usdm4 import USDM4
+from usdm4.core.core_validator import CoreValidator
 
 
 def main():
@@ -36,24 +36,30 @@ def main():
         f"{input_path.stem}_core.yaml"
     )
 
-    usdm = USDM4(cache_dir=args.cache_dir)
+    validator = CoreValidator(cache_dir=args.cache_dir)
 
     print(f"Validating {input_path} ...", file=sys.stderr)
-    errors = usdm.validate_core(str(input_path), cache_dir=args.cache_dir)
+    result = validator.validate(str(input_path))
 
-    output = errors.to_dict()
+    output = result.to_dict()
     with open(output_path, "w") as f:
         yaml.dump(output, f, default_flow_style=False, sort_keys=False)
 
     print(f"Results written to {output_path}", file=sys.stderr)
-    if errors.error_count() == 0:
+    if result.is_valid:
         print("Validation PASSED", file=sys.stderr)
     else:
         print(
-            f"Validation found {errors.error_count()} issue(s)",
+            f"Validation found {result.finding_count} issue(s) "
+            f"across {len(result.findings)} rule(s)",
             file=sys.stderr,
         )
-    sys.exit(0 if errors.error_count() == 0 else 1)
+        if result.execution_error_count > 0:
+            print(
+                f"({result.execution_error_count} execution errors filtered)",
+                file=sys.stderr,
+            )
+    sys.exit(0 if result.is_valid else 1)
 
 
 if __name__ == "__main__":

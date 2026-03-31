@@ -41,10 +41,13 @@ _EXCLUDED_RULES = {
     "CORE-000956",  # JSONata bug
 }
 
-# Sentinel for execution errors (not real data issues)
+# Sentinel for execution errors (not real data issues).
+# The CDISC Rules Engine reports these when a rule doesn't apply to a
+# particular entity type — they are not validation findings.
 _EXECUTION_ERROR_TYPES = {
     "Column not found in data",
     "Error occurred during dataset preprocessing",
+    "Outside scope",
 }
 
 # Thread pool shared by all CoreValidator instances for background work.

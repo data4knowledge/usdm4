@@ -54,6 +54,22 @@ For web-server deployments, pass an explicit `cache_dir` to `USDM4(cache_dir=...
 
 **Important:** Tests must be run in VSCode (or a local terminal), NOT in Cowork. The test suite depends on installed packages (`cdisc-rules-engine`, `usdm3`, etc.) and the project's virtual environment, which are not available in the Cowork sandbox. When writing or modifying tests, create the files but do not attempt to execute them in Cowork.
 
+## CORE CLI tool
+
+`core.py` is a standalone CLI for running CDISC CORE validation:
+
+```bash
+python core.py study.json [-o output.yaml] [--cache-dir /path/to/cache]
+```
+
+Output is a structured YAML file with findings grouped by rule, each error showing entity, instance_id, path, and relevant details. Execution errors (rules that don't apply to a given entity type) are counted but excluded from findings.
+
+The validator uses `CoreValidator` directly (not the `USDM4` facade) to preserve the full `CoreValidationResult` structure in the output.
+
+### Execution error filtering
+
+The CDISC Rules Engine reports three types of non-finding errors that are filtered to `execution_errors`: "Column not found in data", "Error occurred during dataset preprocessing", and "Outside scope". These indicate a rule doesn't apply to the entity being checked — they are not data quality issues.
+
 ## Notes
 
 - Version is defined in `src/usdm4/__info__.py`

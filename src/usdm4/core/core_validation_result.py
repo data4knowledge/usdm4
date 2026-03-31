@@ -21,6 +21,57 @@ class CoreRuleFinding:
     def error_count(self) -> int:
         return len(self.errors)
 
+    @staticmethod
+    def _format_error(error: dict[str, Any]) -> dict[str, Any]:
+        """
+        Extract the useful fields from a raw CORE engine error dict
+        into a concise, readable form.
+        """
+        if not isinstance(error, dict):
+            return {"detail": str(error)}
+
+        formatted: dict[str, Any] = {}
+
+        # Instance identity
+        if "instance_id" in error:
+            formatted["instance_id"] = error["instance_id"]
+        if "entity" in error:
+            formatted["entity"] = error["entity"]
+        if "path" in error:
+            formatted["path"] = error["path"]
+
+        # Pull useful fields out of the value sub-dict
+        value = error.get("value")
+        if isinstance(value, dict):
+            for key in ("name", "sectionNumber", "sectionTitle"):
+                if key in value:
+                    formatted[key] = value[key]
+            # Include any check-related or domain-specific fields
+            # (exclude the redundant identity keys already captured)
+            skip = {
+                "instanceType", "id", "path",
+                "name", "sectionNumber", "sectionTitle",
+            }
+            extras = {
+                k: v for k, v in value.items()
+                if k not in skip
+                and not k.endswith(".id")
+                and not k.endswith(".name")
+                and not k.endswith(".version")
+            }
+            if extras:
+                formatted["details"] = extras
+        elif value is not None:
+            formatted["value"] = value
+
+        # Any top-level error message from the engine
+        if "error" in error and error["error"]:
+            formatted["error"] = error["error"]
+        if "message" in error and error["message"]:
+            formatted["message"] = error["message"]
+
+        return formatted if formatted else {"raw": error}
+
 
 @dataclass
 class CoreValidationResult:
@@ -102,7 +153,20 @@ class CoreValidationResult:
                 lines.append(f"Message: {finding.message}")
             lines.append(f"Errors ({finding.error_count}):")
             for error in finding.errors[:10]:
-                lines.append(f"  - {error}")
+                fe = CoreRuleFinding._format_error(error)
+                entity = fe.get("entity", "")
+                iid = fe.get("instance_id", "")
+                path = fe.get("path", "")
+                parts = []
+                if entity and iid:
+                    parts.append(f"{entity} ({iid})")
+                if path:
+                    parts.append(path)
+                details = fe.get("details")
+                if details:
+                    extras = ", ".join(f"{k}={v}" for k, v in details.items())
+                    parts.append(extras)
+                lines.append(f"  - {' | '.join(parts) if parts else error}")
             if finding.error_count > 10:
                 lines.append(f"  ... and {finding.error_count - 10} more")
 
@@ -128,7 +192,9 @@ class CoreValidationResult:
                     "description": f.description,
                     "message": f.message,
                     "error_count": f.error_count,
-                    "errors": f.errors,
+                    "errors": [
+                        CoreRuleFinding._format_error(e) for e in f.errors
+                    ],
                 }
                 for f in self.findings
             ],
@@ -139,14 +205,24 @@ class CoreValidationResult:
         errors = Errors()
         for finding in self.findings:
             for error in finding.errors:
-                if isinstance(error, dict):
-                    detail = ", ".join(
-                        f"{k}: {v}" for k, v in error.items()
-                    )
+                formatted = CoreRuleFinding._format_error(error)
+                # Build a concise, human-readable message
+                parts = []
+                entity = formatted.get("entity", "")
+                instance_id = formatted.get("instance_id", "")
+                path = formatted.get("path", "")
+                if entity and instance_id:
+                    parts.append(f"{entity} ({instance_id})")
+                elif instance_id:
+                    parts.append(instance_id)
+                if path:
+                    parts.append(f"at {path}")
+                location = " ".join(parts)
+
+                description = finding.message or finding.description
+                if location:
+                    message = f"{description} [{location}]"
                 else:
-                    detail = str(error)
-                message = (
-                    f"{finding.message or finding.description}: {detail}"
-                )
+                    message = description
                 errors.add(message, error_type=finding.rule_id)
         return errors
