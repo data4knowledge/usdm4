@@ -268,8 +268,17 @@ class CoreValidator:
         PUBLISHED_CT_PACKAGES = engine["PUBLISHED_CT_PACKAGES"]
         LibraryMetadataContainer = engine["LibraryMetadataContainer"]
 
-        # Initialize the in-memory cache used by the rules engine
+        # The CDISC Rules Engine uses class-level singletons for both the
+        # in-memory cache and the USDMDataService. These retain data from
+        # previous validation runs, so we must reset them to ensure each
+        # file is validated independently.
         cache = CacheServiceFactory(config).get_cache_service()
+        with cache.dataset_cache_lock:
+            cache.dataset_cache.clear()
+
+        # Reset the USDMDataService singleton so it loads the new file
+        from cdisc_rules_engine.services.data_services import USDMDataService
+        USDMDataService._instance = None
 
         # Load USDM data
         with open(abs_path, "r", encoding="utf-8") as f:

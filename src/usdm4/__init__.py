@@ -11,6 +11,7 @@ from usdm4.convert.convert import Convert
 from usdm4.builder.builder import Builder
 from usdm4.assembler.assembler import Assembler
 from usdm4.core.core_validator import CoreValidator
+from usdm4.core.core_validation_result import CoreValidationResult
 from usdm4.core.core_cache_manager import CoreCacheManager, CacheStatus
 
 
@@ -42,7 +43,7 @@ class USDM4:
         version: str = "4-0",
         cache_dir: Optional[str] = None,
         api_key: Optional[str] = None,
-    ) -> Errors:
+    ) -> "CoreValidationResult":
         """
         Validate a USDM JSON file using the CDISC Rules Engine (CORE).
 
@@ -59,11 +60,12 @@ class USDM4:
                 ``CDISC_LIBRARY_API_KEY`` environment variable.
 
         Returns:
-            An :class:`~simple_error_log.errors.Errors` instance with findings.
+            A :class:`~usdm4.core.core_validation_result.CoreValidationResult`
+            with findings and metadata. Call ``.to_errors()`` for a flat
+            :class:`~simple_error_log.errors.Errors` instance.
         """
         validator = self._get_core_validator(cache_dir, api_key)
-        result = validator.validate(file_path, version=version)
-        return result.to_errors()
+        return validator.validate(file_path, version=version)
 
     def prepare_core(
         self,

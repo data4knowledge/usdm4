@@ -22,6 +22,22 @@ class CoreRuleFinding:
         return len(self.errors)
 
     @staticmethod
+    def _sanitise_value(obj: Any) -> Any:
+        """
+        Recursively convert non-standard types (e.g. jsonata JList) to
+        plain Python types so the result is safe for JSON/YAML serialisation.
+        """
+        if obj is None or isinstance(obj, (bool, int, float, str)):
+            return obj
+        if isinstance(obj, dict):
+            return {str(k): CoreRuleFinding._sanitise_value(v) for k, v in obj.items()}
+        # Catch list, tuple, and list-like objects (e.g. jsonata.utils.JList)
+        try:
+            return [CoreRuleFinding._sanitise_value(item) for item in obj]
+        except TypeError:
+            return str(obj)
+
+    @staticmethod
     def _format_error(error: dict[str, Any]) -> dict[str, Any]:
         """
         Extract the useful fields from a raw CORE engine error dict
@@ -53,7 +69,8 @@ class CoreRuleFinding:
                 "name", "sectionNumber", "sectionTitle",
             }
             extras = {
-                k: v for k, v in value.items()
+                k: CoreRuleFinding._sanitise_value(v)
+                for k, v in value.items()
                 if k not in skip
                 and not k.endswith(".id")
                 and not k.endswith(".name")
@@ -62,7 +79,7 @@ class CoreRuleFinding:
             if extras:
                 formatted["details"] = extras
         elif value is not None:
-            formatted["value"] = value
+            formatted["value"] = CoreRuleFinding._sanitise_value(value)
 
         # Any top-level error message from the engine
         if "error" in error and error["error"]:

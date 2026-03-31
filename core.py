@@ -6,7 +6,7 @@ from pathlib import Path
 
 import yaml
 
-from usdm4.core.core_validator import CoreValidator
+from usdm4 import USDM4
 
 
 def main():
@@ -36,10 +36,10 @@ def main():
         f"{input_path.stem}_core.yaml"
     )
 
-    validator = CoreValidator(cache_dir=args.cache_dir)
+    usdm = USDM4(cache_dir=args.cache_dir)
 
     print(f"Validating {input_path} ...", file=sys.stderr)
-    result = validator.validate(str(input_path))
+    result = usdm.validate_core(str(input_path), cache_dir=args.cache_dir)
 
     output = result.to_dict()
     with open(output_path, "w") as f:
