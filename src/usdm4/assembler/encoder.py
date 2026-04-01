@@ -291,6 +291,8 @@ class Encoder:
 
     def iso8601_duration(self, value: int, unit: str) -> str:
         try:
+            if value == 0:
+                return self.ZERO_DURATION
             unit_text: str = unit.strip()
             if unit_text.upper() in ["Y", "YRS", "YR", "YEARS", "YEAR"]:
                 return f"P{value}Y"

@@ -921,18 +921,39 @@ class TestEncoderEdgeCases:
         assert result["code"] == mock_code
         assert result["other_reason"] == ""
 
-    def test_iso8601_duration_zero_value(self, encoder):
-        """Test duration with zero value"""
-        assert encoder.iso8601_duration(0, "DAYS") == "P0D"
-        assert encoder.iso8601_duration(0, "HOURS") == "PT0H"
+    def test_iso8601_duration_zero_value_returns_zero_duration(self, encoder):
+        """Zero value should return ZERO_DURATION regardless of unit."""
+        assert encoder.iso8601_duration(0, "DAYS") == "PT0M"
+        assert encoder.iso8601_duration(0, "HOURS") == "PT0M"
+        assert encoder.iso8601_duration(0, "WEEKS") == "PT0M"
+        assert encoder.iso8601_duration(0, "M") == "PT0M"
+        assert encoder.iso8601_duration(0, "S") == "PT0M"
+
+    def test_iso8601_duration_zero_value_with_empty_unit(self, encoder):
+        """Zero value with empty unit should return ZERO_DURATION without warning.
+
+        Regression test: before the fix, value=0 with unit="" fell through
+        to the warning path because the empty unit didn't match any pattern.
+        """
+        result = encoder.iso8601_duration(0, "")
+
+        assert result == "PT0M"
+        encoder._errors.warning.assert_not_called()
+
+    def test_iso8601_duration_zero_value_with_whitespace_unit(self, encoder):
+        """Zero value with whitespace-only unit should return ZERO_DURATION without warning."""
+        result = encoder.iso8601_duration(0, "   ")
+
+        assert result == "PT0M"
+        encoder._errors.warning.assert_not_called()
 
     def test_iso8601_duration_large_value(self, encoder):
         """Test duration with large value"""
         assert encoder.iso8601_duration(1000, "DAYS") == "P1000D"
         assert encoder.iso8601_duration(999, "HOURS") == "PT999H"
 
-    def test_iso8601_duration_empty_unit(self, encoder):
-        """Test duration with empty unit string"""
+    def test_iso8601_duration_nonzero_value_empty_unit_warns(self, encoder):
+        """Non-zero value with empty unit should still warn and return ZERO_DURATION."""
         result = encoder.iso8601_duration(5, "")
 
         assert result == "PT0M"
