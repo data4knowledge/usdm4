@@ -394,6 +394,8 @@ class TimelineAssembler(BaseAssembler):
             )
             return results
 
+    _EMPTY_WINDOW = {"before": 0, "after": 0, "unit": ""}
+
     def _timing(
         self, data: dict, index: int, type: str, from_id: str, to_id: str
     ) -> Timing:
@@ -401,7 +403,7 @@ class TimelineAssembler(BaseAssembler):
             windows: list = data["windows"]["items"]
             timepoints: list = data["timepoints"]["items"]
             timepoint = timepoints[index]
-            window = windows[index]
+            window = windows[index] if index < len(windows) else self._EMPTY_WINDOW
             item: Timing = self._builder.create(
                 Timing,
                 {

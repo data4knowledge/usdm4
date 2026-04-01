@@ -712,6 +712,178 @@ class TestTimelineAssemblerIntegration:
         assert timeline_assembler.conditions[0].text == "If patient consents"
 
 
+class TestTimelineAssemblerWindowsBoundsCheck:
+    """Test _timing when windows list is shorter than timepoints list.
+
+    Regression tests for the fix where ``windows[index]`` raised IndexError
+    when a study had fewer windows than timepoints.  The fix falls back to
+    ``_EMPTY_WINDOW`` (``{"before": 0, "after": 0, "unit": ""}``) so the
+    timing is still created with empty window bounds.
+    """
+
+    def test_timing_with_fewer_windows_than_timepoints(self, timeline_assembler):
+        """Timing should be created with empty window when index exceeds windows list."""
+        data = {
+            "epochs": {
+                "items": [
+                    {"text": "Screening"},
+                    {"text": "Treatment"},
+                    {"text": "Treatment"},
+                ]
+            },
+            "visits": {
+                "items": [
+                    {"text": "Visit 1", "references": []},
+                    {"text": "Visit 2", "references": []},
+                    {"text": "Visit 3", "references": []},
+                ]
+            },
+            "timepoints": {
+                "items": [
+                    {"index": "0", "text": "Day 1", "value": 1, "unit": "days"},
+                    {"index": "1", "text": "Day 7", "value": 7, "unit": "days"},
+                    {"index": "2", "text": "Day 14", "value": 14, "unit": "days"},
+                ]
+            },
+            "windows": {
+                "items": [
+                    {"before": 1, "after": 1, "unit": "days"},
+                    # Only 1 window for 3 timepoints
+                ]
+            },
+            "activities": {
+                "items": [
+                    {"name": "A1", "visits": [{"index": 0, "references": []}]},
+                    {"name": "A2", "visits": [{"index": 1, "references": []}]},
+                    {"name": "A3", "visits": [{"index": 2, "references": []}]},
+                ]
+            },
+            "conditions": {"items": []},
+        }
+
+        timeline_assembler.execute(data)
+
+        # All 3 timings should be created despite only 1 window
+        timeline = timeline_assembler.timelines[0]
+        assert len(timeline.timings) == 3
+
+    def test_timing_with_empty_windows_list(self, timeline_assembler):
+        """Timing should be created even when the windows list is completely empty."""
+        data = {
+            "epochs": {
+                "items": [
+                    {"text": "Screening"},
+                    {"text": "Treatment"},
+                ]
+            },
+            "visits": {
+                "items": [
+                    {"text": "Visit 1", "references": []},
+                    {"text": "Visit 2", "references": []},
+                ]
+            },
+            "timepoints": {
+                "items": [
+                    {"index": "0", "text": "Day 1", "value": 1, "unit": "days"},
+                    {"index": "1", "text": "Day 7", "value": 7, "unit": "days"},
+                ]
+            },
+            "windows": {
+                "items": []  # No windows at all
+            },
+            "activities": {
+                "items": [
+                    {"name": "A1", "visits": [{"index": 0, "references": []}]},
+                    {"name": "A2", "visits": [{"index": 1, "references": []}]},
+                ]
+            },
+            "conditions": {"items": []},
+        }
+
+        timeline_assembler.execute(data)
+
+        timeline = timeline_assembler.timelines[0]
+        assert len(timeline.timings) == 2
+
+        # Window bounds should be empty for all timings
+        for timing in timeline.timings:
+            assert timing.windowLower == ""
+            assert timing.windowUpper == ""
+
+    def test_timing_window_values_when_in_range(self, timeline_assembler):
+        """Timings within the windows range should still get proper window bounds."""
+        data = {
+            "epochs": {
+                "items": [
+                    {"text": "Screening"},
+                    {"text": "Treatment"},
+                    {"text": "Treatment"},
+                ]
+            },
+            "visits": {
+                "items": [
+                    {"text": "Visit 1", "references": []},
+                    {"text": "Visit 2", "references": []},
+                    {"text": "Visit 3", "references": []},
+                ]
+            },
+            "timepoints": {
+                "items": [
+                    {"index": "0", "text": "Day 1", "value": 1, "unit": "days"},
+                    {"index": "1", "text": "Day 7", "value": 7, "unit": "days"},
+                    {"index": "2", "text": "Day 14", "value": 14, "unit": "days"},
+                ]
+            },
+            "windows": {
+                "items": [
+                    {"before": 0, "after": 0, "unit": "days"},
+                    {"before": 2, "after": 3, "unit": "days"},
+                    # Missing third window — should fall back to _EMPTY_WINDOW
+                ]
+            },
+            "activities": {
+                "items": [
+                    {"name": "A1", "visits": [{"index": 0, "references": []}]},
+                    {"name": "A2", "visits": [{"index": 1, "references": []}]},
+                    {"name": "A3", "visits": [{"index": 2, "references": []}]},
+                ]
+            },
+            "conditions": {"items": []},
+        }
+
+        timeline_assembler.execute(data)
+
+        timeline = timeline_assembler.timelines[0]
+        assert len(timeline.timings) == 3
+
+        # Second timing (index 1) should have real window bounds
+        timing_with_window = timeline.timings[1]
+        assert timing_with_window.windowLower != ""
+        assert timing_with_window.windowUpper != ""
+
+        # Third timing (index 2) should have empty window bounds
+        timing_without_window = timeline.timings[2]
+        assert timing_without_window.windowLower == ""
+        assert timing_without_window.windowUpper == ""
+
+    def test_window_label_returns_question_marks_for_missing_window(
+        self, timeline_assembler
+    ):
+        """_window_label should return '???' when index exceeds windows list."""
+        windows = [{"before": 1, "after": 2, "unit": "days"}]
+
+        assert timeline_assembler._window_label(windows, 0) == "-1..+2 days"
+        assert timeline_assembler._window_label(windows, 1) == "???"
+        assert timeline_assembler._window_label(windows, 99) == "???"
+
+    def test_empty_window_constant(self, timeline_assembler):
+        """_EMPTY_WINDOW should have zero before/after and empty unit."""
+        ew = timeline_assembler._EMPTY_WINDOW
+        assert ew["before"] == 0
+        assert ew["after"] == 0
+        assert ew["unit"] == ""
+
+
 class TestTimelineAssemblerEdgeCases:
     """Test TimelineAssembler edge cases."""
 
