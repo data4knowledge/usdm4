@@ -3572,26 +3572,26 @@ class TestStudyVersion:
         assert result.text == "NCT00000002"
 
     def test_who_identifier_fallback_by_org(self):
-        """Test who_identifier falls back to identifier scoped by org named EMA."""
-        ema_org = self._create_org("org_ema", "EMA")
+        """Test who_identifier falls back to identifier scoped by org named WHO UTN."""
+        who_org = self._create_org("org_who", "WHO UTN")
         sponsor_id = self._create_identifier_with_type(
             "id_sponsor_fb2", "SPONSOR-123", "org_1", "C999999"
         )
-        ema_id = self._create_identifier_with_type(
-            "id_ema_fb", "WHO-EMA-2024-001", "org_ema", "C999998"
+        who_id = self._create_identifier_with_type(
+            "id_who_fb", "UTN-2024-001", "org_who", "C999998"
         )
         sv = StudyVersion(
             id="sv_who_fb",
             versionIdentifier="v1.0",
             rationale="Test",
-            studyIdentifiers=[sponsor_id, ema_id],
+            studyIdentifiers=[sponsor_id, who_id],
             titles=[self.official_title],
-            organizations=[self.sponsor_org, ema_org],
+            organizations=[self.sponsor_org, who_org],
             instanceType="StudyVersion",
         )
         result = sv.who_identifier()
         assert result is not None
-        assert result.text == "WHO-EMA-2024-001"
+        assert result.text == "UTN-2024-001"
 
     def test_fda_ind_identifier_fallback_by_org(self):
         """Test fda_ind_identifier falls back to identifier scoped by org named FDA."""

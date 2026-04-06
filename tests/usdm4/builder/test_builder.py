@@ -6,7 +6,7 @@ from src.usdm4.builder.builder import Builder
 from src.usdm4.api.code import Code
 from tests.usdm4.helpers.files import write_json_file, read_json_file
 
-SAVE = True
+SAVE = False
 
 
 def root_path():
