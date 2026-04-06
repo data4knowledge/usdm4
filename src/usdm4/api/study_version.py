@@ -219,7 +219,7 @@ class StudyVersion(ApiBaseModelWithId):
         return self._identifier_of_type("C218688")
 
     def who_identifier(self) -> StudyIdentifier | None:
-        return self._identifier_type_or_scoped_by_org("C218689", "EMA")
+        return self._identifier_type_or_scoped_by_org("C218689", "WHO UTN")
 
     def ema_identifier_text(self) -> StudyIdentifier | None:
         identifier = self.ema_identifier()
