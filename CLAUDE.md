@@ -25,7 +25,7 @@ USDM4 extends the `usdm3` base library with USDM v4 support: API model classes, 
 
 ## Key dependencies
 
-- `usdm3>=0.12.2` — base USDM infrastructure
+- `usdm3>=0.12.3` — base USDM infrastructure
 - `pydantic>=2.0` — model validation and serialisation
 - `cdisc-rules-engine>=0.15.0` — CDISC CORE validation engine
 - `platformdirs>=3.0` — platform-appropriate cache directory resolution
