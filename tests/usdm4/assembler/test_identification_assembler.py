@@ -198,6 +198,39 @@ class TestIdentificationAssemblerValidData:
         assert organization.name == "CT.GOV"  # Uses name field from STANDARD_ORGS
         assert organization.label == "ClinicalTrials.gov"
 
+    def test_execute_with_other_standard_organization_identifier(
+        self, identification_assembler
+    ):
+        """An identifier whose scope.standard is "other" (the extractor's
+        sentinel for an unclassified identifier) should resolve to the
+        built-in Unknown organisation and round-trip without error."""
+        data = {
+            "identifiers": [
+                {
+                    "identifier": "NCTA12313212",
+                    "scope": {"standard": "other"},
+                }
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        # One identifier and one organisation created — no exception logged.
+        assert len(identification_assembler.identifiers) == 1
+        assert len(identification_assembler.organizations) == 1
+
+        # Identifier value is preserved verbatim.
+        identifier = identification_assembler.identifiers[0]
+        assert identifier.text == "NCTA12313212"
+
+        # Organisation is the built-in Unknown placeholder.
+        organization = identification_assembler.organizations[0]
+        assert organization.name == "Unknown"
+        assert organization.label == "Unknown Organization"
+        # legalAddress is None in STANDARD_ORGS["other"], so the assembler
+        # should not attach one.
+        assert organization.legalAddress is None
+
     def test_execute_with_non_standard_organization_identifier(
         self, identification_assembler
     ):

@@ -122,6 +122,7 @@ class IdentificationAssembler(BaseAssembler):
         "gov": {"code": "C199144", "decode": "Government Institute"},
         "academic": {"code": "C18240", "decode": "Academic Institution"},
         "medical_device": {"code": "C215661", "decode": "Medical Device Company"},
+        "unknown": {"code": "C17998", "decode": "Unknown"},
     }
 
     IDENTIFIER_CODES = {
@@ -266,6 +267,21 @@ class IdentificationAssembler(BaseAssembler):
                 "postalCode": "CH-1211",
                 "country": "CHE",
             },
+        },
+        # Fallback organisation for identifiers the upstream extractor
+        # couldn't classify into a known registry/regulator. Lets the
+        # assembler preserve the identifier value without fabricating an
+        # address. Keyed on "other" so it matches the sentinel used by
+        # the extractor and by _create_identifier's scope_key fallback.
+        "other": {
+            "type": "unknown",
+            "role": None,
+            "name": "Unknown",
+            "label": "Unknown Organization",
+            "identifier": "Unknown",
+            "description": "Unclassified identifier; source organisation unknown",
+            "identifierScheme": "Unknown",
+            "legalAddress": None,
         },
     }
 
