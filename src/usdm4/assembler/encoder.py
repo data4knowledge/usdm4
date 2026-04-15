@@ -275,15 +275,27 @@ class Encoder:
         return self._builder.cdisc_code(scope["code"], scope["decode"])
 
     def to_date(self, text: str) -> datetime.datetime | None:
+        if not text:
+            return None
+        input_text = text.strip()
+        if not input_text:
+            return None
         try:
-            if text:
-                input_text = text.strip()
-                if input_text:
-                    return parser.parse(input_text)
+            return parser.parse(input_text)
+        except (ValueError, TypeError, OverflowError):
+            # Unparseable is a normal case — the docx often carries non-date
+            # text here (e.g. "Not applicable", "Refer to electronic
+            # signature…", "TBD"). Keep the log short; no traceback needed.
+            preview = input_text[:80] + ("…" if len(input_text) > 80 else "")
+            self._errors.warning(
+                f"No date detected for '{preview}'; treating as absent.",
+                location=KlassMethodLocation(self.MODULE, "to_date"),
+            )
             return None
         except Exception as e:
+            # Unexpected — keep the full traceback for these.
             self._errors.exception(
-                f"Failed to decode date text '{text}'",
+                f"Unexpected error decoding date text '{text}'",
                 e,
                 location=KlassMethodLocation(self.MODULE, "to_date"),
             )

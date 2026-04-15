@@ -711,11 +711,12 @@ class TestEncoderToDate:
         assert result is None
 
     def test_to_date_invalid_format(self, encoder):
-        """Test invalid date format"""
+        """Test invalid date format — logs a warning (not a traceback-bearing exception)."""
         result = encoder.to_date("invalid date")
 
         assert result is None
-        encoder._errors.exception.assert_called()
+        encoder._errors.warning.assert_called()
+        encoder._errors.exception.assert_not_called()
 
     def test_to_date_partial_date(self, encoder):
         """Test partial date like year-month"""
