@@ -2438,3 +2438,215 @@ class TestIdentificationAssemblerCoverageGaps:
 
         assert result is None
         assert errors.error_count() > initial_error_count
+
+
+class TestIdentificationAssemblerScopeOrgCache:
+    """Tests for the scope-based organisation cache.
+
+    Multiple identifiers sharing the same standard scope (e.g. two "other"
+    identifiers) must reuse a single Organisation rather than trying to
+    create a duplicate, which the builder rejects.
+    """
+
+    def test_two_other_identifiers_both_created(self, identification_assembler):
+        """Two 'other' identifiers should both appear in the identifiers list."""
+        data = {
+            "identifiers": [
+                {"identifier": "IDE 98765", "scope": {"standard": "other"}},
+                {"identifier": "OTHER-1234", "scope": {"standard": "other"}},
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        texts = [i.text for i in identification_assembler.identifiers]
+        assert "IDE 98765" in texts
+        assert "OTHER-1234" in texts
+
+    def test_two_other_identifiers_share_one_org(self, identification_assembler):
+        """Two 'other' identifiers should share a single Organisation."""
+        data = {
+            "identifiers": [
+                {"identifier": "IDE 98765", "scope": {"standard": "other"}},
+                {"identifier": "OTHER-1234", "scope": {"standard": "other"}},
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) == 1
+        assert len(identification_assembler.identifiers) == 2
+        # Both identifiers should reference the same org
+        org_id = identification_assembler.organizations[0].id
+        assert identification_assembler.identifiers[0].scopeId == org_id
+        assert identification_assembler.identifiers[1].scopeId == org_id
+
+    def test_two_nct_identifiers_share_one_org(self, identification_assembler):
+        """Two NCT identifiers should share a single CT.GOV Organisation."""
+        data = {
+            "identifiers": [
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}},
+                {"identifier": "NCT87654321", "scope": {"standard": "nct"}},
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) == 1
+        assert len(identification_assembler.identifiers) == 2
+
+    def test_mixed_scopes_get_separate_orgs(self, identification_assembler):
+        """Identifiers with different scopes should each get their own org."""
+        data = {
+            "identifiers": [
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}},
+                {"identifier": "IND 12345", "scope": {"standard": "fda-ind"}},
+                {"identifier": "IDE 98765", "scope": {"standard": "other"}},
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) == 3
+        assert len(identification_assembler.identifiers) == 3
+
+    def test_single_identifier_per_scope_unaffected(self, identification_assembler):
+        """Single identifier per scope should work exactly as before."""
+        data = {
+            "identifiers": [
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}},
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) == 1
+        assert len(identification_assembler.identifiers) == 1
+        assert identification_assembler.identifiers[0].text == "NCT12345678"
+
+    def test_three_other_identifiers(self, identification_assembler):
+        """Three 'other' identifiers should all be created under one org."""
+        data = {
+            "identifiers": [
+                {"identifier": "IDE 98765", "scope": {"standard": "other"}},
+                {"identifier": "OTHER-1234", "scope": {"standard": "other"}},
+                {"identifier": "MISC-5678", "scope": {"standard": "other"}},
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) == 1
+        assert len(identification_assembler.identifiers) == 3
+        texts = [i.text for i in identification_assembler.identifiers]
+        assert "IDE 98765" in texts
+        assert "OTHER-1234" in texts
+        assert "MISC-5678" in texts
+
+    def test_non_standard_different_orgs_stay_separate(self, identification_assembler):
+        """Two non-standard identifiers with different org names get separate Organisations."""
+        data = {
+            "identifiers": [
+                {
+                    "identifier": "UNI-001",
+                    "scope": {
+                        "non_standard": {
+                            "type": "academic",
+                            "role": None,
+                            "name": "University of Nowhere",
+                            "description": "Academic",
+                            "label": "University of Nowhere",
+                            "identifier": "UNI-001",
+                            "identifierScheme": "Internal",
+                            "legalAddress": None,
+                        }
+                    },
+                },
+                {
+                    "identifier": "PHARMA-001",
+                    "scope": {
+                        "non_standard": {
+                            "type": "pharma",
+                            "role": None,
+                            "name": "Pharma Corp",
+                            "description": "Pharma",
+                            "label": "Pharma Corp",
+                            "identifier": "PC-001",
+                            "identifierScheme": "DUNS",
+                            "legalAddress": None,
+                        }
+                    },
+                },
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) == 2
+        assert len(identification_assembler.identifiers) == 2
+        org_names = [o.name for o in identification_assembler.organizations]
+        assert "University of Nowhere" in org_names
+        assert "Pharma Corp" in org_names
+
+    def test_non_standard_same_org_shared(self, identification_assembler):
+        """Two non-standard identifiers with the same org name share one Organisation."""
+        data = {
+            "identifiers": [
+                {
+                    "identifier": "ID-001",
+                    "scope": {
+                        "non_standard": {
+                            "type": "pharma",
+                            "role": None,
+                            "name": "Same Corp",
+                            "description": "Pharma",
+                            "label": "Same Corp",
+                            "identifier": "SC-001",
+                            "identifierScheme": "DUNS",
+                            "legalAddress": None,
+                        }
+                    },
+                },
+                {
+                    "identifier": "ID-002",
+                    "scope": {
+                        "non_standard": {
+                            "type": "pharma",
+                            "role": None,
+                            "name": "Same Corp",
+                            "description": "Pharma",
+                            "label": "Same Corp",
+                            "identifier": "SC-001",
+                            "identifierScheme": "DUNS",
+                            "legalAddress": None,
+                        }
+                    },
+                },
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) == 1
+        assert len(identification_assembler.identifiers) == 2
+        texts = [i.text for i in identification_assembler.identifiers]
+        assert "ID-001" in texts
+        assert "ID-002" in texts
+
+    def test_fda_ind_and_fda_ide_share_one_org(self, identification_assembler):
+        """fda-ind and fda-ide both map to org 'FDA' and must share it."""
+        data = {
+            "identifiers": [
+                {"identifier": "IND 12345", "scope": {"standard": "fda-ind"}},
+                {"identifier": "IDE 98765", "scope": {"standard": "fda-ide"}},
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) == 1
+        assert identification_assembler.organizations[0].name == "FDA"
+        assert len(identification_assembler.identifiers) == 2
+        texts = [i.text for i in identification_assembler.identifiers]
+        assert "IND 12345" in texts
+        assert "IDE 98765" in texts

@@ -393,42 +393,67 @@ class IdentificationAssembler(BaseAssembler):
                 )
 
         # Identifiers
+        # Cache organisations by scope key so that multiple identifiers
+        # sharing the same standard scope (e.g. two "other" identifiers)
+        # reuse the same Organisation instead of trying to create a
+        # duplicate (which the builder rejects).
         id_details: dict
+        scope_org_cache: dict[str, Organization] = {}
         for id_details in identifiers:
             try:
                 scope = id_details["scope"]
-                organization: dict = (
-                    copy.deepcopy(self.STANDARD_ORGS[scope["standard"]])
-                    if "standard" in scope
-                    else scope["non_standard"]
-                )
-
-                # Address
-                if organization["legalAddress"]:
-                    organization["legalAddress"] = self._create_address(
-                        organization["legalAddress"]
-                    )
+                if "standard" in scope:
+                    scope_key = scope["standard"]
+                    # Cache by org name so scopes that share an org
+                    # (e.g. fda-ind and fda-ide both use "FDA") reuse
+                    # it instead of hitting a duplicate-name rejection.
+                    cache_key = self.STANDARD_ORGS[scope_key]["name"]
                 else:
-                    organization["legalAddress"] = None
+                    # For identifier type code lookup, non-standard orgs
+                    # always map to "other".
+                    scope_key = "other"
+                    # For the org cache, use the org name so different
+                    # organisations stay separate while same-named ones
+                    # (e.g. two "other" identifiers on the same sponsor)
+                    # still share correctly.
+                    cache_key = scope.get("non_standard", {}).get("name", "other")
 
-                # Identifier and scoping Organization
-                org = self._create_organization(organization)
+                # Reuse a previously created org for this scope, or create one
+                org = scope_org_cache.get(cache_key)
+                if org is None:
+                    organization: dict = (
+                        copy.deepcopy(self.STANDARD_ORGS[scope["standard"]])
+                        if "standard" in scope
+                        else scope["non_standard"]
+                    )
+
+                    # Address
+                    if organization["legalAddress"]:
+                        organization["legalAddress"] = self._create_address(
+                            organization["legalAddress"]
+                        )
+                    else:
+                        organization["legalAddress"] = None
+
+                    org = self._create_organization(organization)
+                    if org:
+                        self._organizations.append(org)
+                        scope_org_cache[cache_key] = org
+
                 if org:
-                    scope_key = scope["standard"] if "standard" in scope else "other"
                     identifier = self._create_identifier(
                         scope_key, id_details["identifier"], org
                     )
                     if identifier:
-                        self._organizations.append(org)
                         self._identifiers.append(identifier)
                     else:
                         self._errors.exception(
-                            f"Failed to create identifier {id_details['identifier']} from organization '{organization}'",
+                            f"Failed to create identifier {id_details['identifier']} with scope '{scope_key}'",
                             KlassMethodLocation(self.MODULE, "execute"),
                         )
                 else:
                     self._errors.exception(
-                        f"Failed to create organization {organization}",
+                        f"Failed to create organization for scope '{scope_key}'",
                         KlassMethodLocation(self.MODULE, "execute"),
                     )
             except Exception as e:
