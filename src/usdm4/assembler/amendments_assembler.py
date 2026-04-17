@@ -260,7 +260,7 @@ class AmendmentsAssembler(BaseAssembler):
             geo_scope = self._builder.create(GeographicScope, params)
             if "enrollment" in data:
                 unit_alias = None
-                if data["enrollment"]["unit"] == "%":
+                if data["enrollment"]["unit"] in ("%", "percent", "percentage"):
                     unit_code = self._builder.cdisc_code("C25613", "Percentage")
                     unit_alias = (
                         self._builder.alias_code(unit_code) if unit_code else None

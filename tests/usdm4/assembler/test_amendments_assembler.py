@@ -331,6 +331,30 @@ class TestAmendmentsAssemblerValidData:
             enrollment.quantity.unit is None
         )  # Should be None for non-percentage units
 
+    def test_execute_with_percent_word_enrollment_unit(
+        self, amendments_assembler, document_assembler
+    ):
+        """Test execute with 'percent' as unit string (AI extraction path)."""
+        data = {
+            "identifier": "1",
+            "summary": "Test amendment with AI-style percent enrollment",
+            "reasons": {
+                "primary": "C207601:Change In Strategy",
+                "secondary": "C17649:Other",
+            },
+            "impact": make_impact(),
+            "enrollment": {"value": 66, "unit": "percent"},
+            "changes": make_changes(),
+        }
+
+        amendments_assembler.execute(data, document_assembler)
+
+        assert amendments_assembler.amendment is not None
+        amendment = amendments_assembler.amendment
+        enrollment = amendment.enrollments[0]
+        assert enrollment.quantity.value == 66
+        assert enrollment.quantity.unit is not None  # Should have percentage unit
+
     def test_execute_with_all_valid_reason_codes(
         self, amendments_assembler, document_assembler
     ):
@@ -828,6 +852,30 @@ class TestAmendmentsAssemblerPrivateMethods:
             assert enrollment.instanceType == "SubjectEnrollment"
             assert enrollment.name == "ENROLLMENT"
             assert enrollment.quantity.value == 150
+            assert enrollment.quantity.unit is not None  # Should have percentage unit
+
+    def test_create_enrollment_with_percent_word(self, amendments_assembler):
+        """Test _create_enrollment with 'percent' string (AI extraction path)."""
+        data = {"enrollment": {"value": 66, "unit": "percent"}}
+
+        enrollment = amendments_assembler._create_enrollment(data)
+
+        if enrollment is not None:
+            assert enrollment.instanceType == "SubjectEnrollment"
+            assert enrollment.name == "ENROLLMENT"
+            assert enrollment.quantity.value == 66
+            assert enrollment.quantity.unit is not None  # Should have percentage unit
+
+    def test_create_enrollment_with_percentage_word(self, amendments_assembler):
+        """Test _create_enrollment with 'percentage' string (FHIR round-trip path)."""
+        data = {"enrollment": {"value": 66, "unit": "percentage"}}
+
+        enrollment = amendments_assembler._create_enrollment(data)
+
+        if enrollment is not None:
+            assert enrollment.instanceType == "SubjectEnrollment"
+            assert enrollment.name == "ENROLLMENT"
+            assert enrollment.quantity.value == 66
             assert enrollment.quantity.unit is not None  # Should have percentage unit
 
     def test_create_enrollment_without_enrollment_data(self, amendments_assembler):
