@@ -431,6 +431,22 @@ effort for diminishing returns.
  123  + global-scope batch (3 hand-authored)
 ```
 
+A follow-up day pushed the total further via five more hand-authored clusters:
+
+```
+ 135  + cluster A self-reference (4: DDF00021/22/184/253)
+       + cluster B quantity-unit (4: DDF00234/35/238/39)
+       + cluster C mixed simple (5: DDF00033/44/63/188/256)
+ 143  + cluster E distinct-within-scope (4: DDF00219/20/21/22)
+       + cluster F mutex scope (4: DDF00189/195/205/250)
+ 151  + cluster G orphan / reverse-FK (3: DDF00080/96/99)
+       + cluster one-offs (5: DDF00018/42/186/236/241)
+```
+
+**151 of 210 ≈ 72 % coverage.** Roughly 60 stubs remain; the rest sit in
+genuinely hard territory (timing state machines, cross-class ordering
+consistency, CT-scoped cardinality, USDM-schema conformance).
+
 A day of focused work can add ~40 rules when patterns emerge; hand-authoring
 alone is ~10 rules/hour once the workflow is clean.
 
@@ -449,3 +465,145 @@ code under test — it's test-data drift. Either make the assertion
 version-agnostic (check format rather than the date string), regenerate
 the fixture at the new version via a `SAVE=True` pattern, or pin the
 test to a specific CT package version if snapshotting matters.
+
+## 11. DataStore traversal patterns
+
+The hand-authored rules accumulated a small vocabulary of DataStore
+access patterns. Reach for these before inventing new ones.
+
+**`instances_by_klass(klass)`** — iterate every indexed instance of a
+type. The workhorse. Returns a list of dicts from `_decompose`; they
+are live references into the input JSON tree.
+
+**`instance_by_id(id)`** — FK resolution. Use when a rule needs the
+target of an `xxxId` attribute. Returns `None` for unknown ids — always
+guard with `isinstance(..., dict)` before reading fields.
+
+**`parent_by_klass(id, "Class")`** — typed ancestor walk. Returns the
+nearest ancestor with `instanceType == "Class"` or `None` if none
+exists. Essential when a rule scope is "X within Y" and you need Y's
+fields. Examples: DDF00080 (SAI's parent `ScheduleTimeline` — we need
+its `mainTimeline` flag), DDF00096 (Endpoint's parent `Objective` —
+we need its `level.code`).
+
+**`data._parent.get(id)`** — immediate parent of any class. Private
+attribute; no public API for this. Use when the parent's *type* isn't
+known up front, only that you need whatever's directly above. Examples:
+DDF00044 (ConditionAssignment's immediate container, which varies —
+ScheduledDecisionInstance in practice but nothing in the rule hinges
+on that), DDF00260 (any instance with a space in its id). Access is
+safe but not future-proofed: if DataStore grows a public `parent(id)`
+accessor, switch to it.
+
+**`data._ids`** — full id → instance dict. Use for model-wide passes
+that aren't scoped to any class (DDF00260 is the only current example).
+Same private-access caveat as `_parent`.
+
+**`path_by_id(id)`** — the `$.Study....` string used in error
+locations. Always use this rather than constructing paths manually.
+
+### Scope a rule by semantic parent, not by the raw class
+
+CORE sometimes over-broadens the scope class. The rule text is
+authoritative: "the range for a planned age" means *specifically* the
+Range under `StudyDesignPopulation.plannedAge` / `StudyCohort.plannedAge`,
+not every Range instance in the model (there are many — under durations,
+strengths, timings, etc.). DDF00042 scopes on the parent classes and
+pulls `instance.get("plannedAge")`; DDF00241 stayed on all Ranges
+because its rule text isn't parent-specific.
+
+Read the rule text critically before trusting the YAML's `class` field.
+If the rule says "the X of a Y", you almost always want to iterate Y
+and pull `.get("x")`.
+
+### Counter for "distinct within scope"
+
+`collections.Counter` + list comprehension is the clean idiom for the
+CORE "group by X, flag groups with count > 1" pattern:
+
+```python
+codes = [e.get("code") for e in entries if isinstance(e, dict) and e.get("code")]
+duplicates = [c for c, n in Counter(codes).items() if n > 1]
+```
+
+Used across cluster E (DDF00219-222). If CORE groups by multiple fields
+(e.g. DDF00221 groups by `codeSystem + codeSystemVersion + code`), use
+tuples as keys.
+
+### Reverse-FK / orphan via set intersection
+
+Several rules are shaped "every X must be referenced from some Y". Build
+the set of referenced ids in one pass, then check each X:
+
+```python
+referenced = {sai.get("epochId") for sai in data.instances_by_klass("SAI") if sai.get("epochId")}
+for epoch in data.instances_by_klass("StudyEpoch"):
+    if epoch["id"] not in referenced:
+        self._add_failure(...)
+```
+
+DDF00099 (epochs), DDF00250 (dual-reference detection via `pop_refs &
+cohort_refs`).
+
+## 12. "Specified" can mean "has an id" in CORE semantics
+
+Several rules use the shape "if X is specified, then Y". The natural
+Python interpretation is `if x:` (truthy). CORE's JSONata is often
+stricter — `$exists($st.denominator.id)` — meaning "the embedded object
+has been materialised with an id". An empty dict `{}` or a dict with
+only `{"extensionAttributes": []}` is *not* "specified" in CORE terms.
+
+Examples where this matters:
+- **DDF00186** (strength denominator) — the test is
+  `$exists(denominator.id) and ($exists(denominator.unit)=false or unit=null)`.
+  Implemented as `if not denominator.get("id"): continue`.
+- **DDF00238** / **DDF00239** — "specified" means having a `value` set,
+  not just `denominator is not None`.
+
+When the rule has a CORE JSONata reference block, read the
+`$exists(...)` guard carefully and mirror its condition in Python
+rather than defaulting to truthiness.
+
+## 13. YAML `classification` tag goes stale after a predicate fill-in
+
+When you hand-fill `predicate: biconditional` + `side_a` / `side_b` on
+an intermediate YAML, the `classification: MED_TEXT` tag stays put.
+Stage-2 uses the predicate (not the classification) to dispatch, so
+the rule is effectively implemented — but a filter like
+`grep "classification: MED_TEXT"` will still show it as a stub.
+
+**Use `grep -l NotImplementedError src/usdm4/rules/library/rule_ddf*.py`
+as the true signal** of which rules still need work. The YAML
+classification is a stage-1 hint, not the final state.
+
+This is how 6 rules in "cluster D" (DDF00020/34/39/164/165/177) looked
+like stubs on a classification filter but were actually rendered and
+passing — the YAMLs had been filled earlier in the same session.
+
+## 14. Fixture firings on real data are findings, not bugs
+
+Hand-authored rules increasingly fire against the long-standing
+`test_package.py` fixtures. Some observed this session:
+
+- **DDF00188** — `example_2.json` encodes `plannedSex` as a single
+  `"Both"` (C49636) code rather than separate Male (C20197) + Female
+  (C16576) entries. The rule matches CORE's check exactly; the
+  fixture is non-compliant.
+- **DDF00189** — `example_2.json` has a StudyRole with
+  `appliesToIds: []`. CORE's condition (`appliesToIds and ...`)
+  requires non-empty. Rule correctly flags it.
+- **DDF00236** — `example_2.json` has a BC with a synonym equal
+  (case-insensitive) to its label. WARNING-severity.
+
+These are legitimate findings against stale fixtures. They don't
+change the pass/fail outcome of the tests that were already failing
+on pre-existing issues (DDF00166 "Protocol" decode, DDF00217 "Decode"
+placeholder), but they'll need to be reconciled when the fixtures get
+cleaned up — either update the fixtures to be rule-compliant or add
+the rule firings to the expected baseline.
+
+**Work order for fixture cleanup:** resolve DDF00166 / DDF00217 first
+(they're the hard-failure blockers). Once `test_validate` and
+`test_example_2` are green, the package tests become a live regression
+detector for every new rule addition; today any new firing hides
+behind the existing failure.
