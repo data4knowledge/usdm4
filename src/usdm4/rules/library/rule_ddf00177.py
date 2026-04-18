@@ -16,37 +16,20 @@ class RuleDDF00177(RuleTemplate):
             "If an administration's dose is specified then a corresponding route is expected and vice versa.",
         )
 
-    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     (study.versions.studyInterventions)@$si.
-    #       $si.administrations@$sa.
-    #           [(
-    #               $ValU:=function($v){$v.value&($v.unit? " " & $v.unit.standardCode.decode & " ("&$v.unit.standardCode.code&")")};
-    #               $FValU:=function($n)
-    #                   {
-    #                       (
-    #                           $exists($n)
-    #                               ?   $type($n)="object"
-    #                                   ?   $exists($n.value)
-    #                                       ? $ValU($n)
-    #                                   : $string($n)
-    #                               : "Missing"
-    #                       )              
-    #                   };
-    #                   {
-    #                       "instanceType": $sa.instanceType,
-    #                       "id": $sa.id,
-    #                       "path": $sa._path,
-    #                       "StudyIntervention.id": $si.id,
-    #                       "StudyIntervention.name": $si.name,
-    #                       "name": $sa.name,
-    #                       "dose.id": $sa.dose.id,
-    #                       "dose(value)": $FValU($sa.dose),
-    #                       "route.id": $sa.route.id,
-    #                       "route": ($sa.route? ($sa.route.standardCode.decode & " (" & $sa.route.standardCode.code & ")")),
-    #                       "check": $exists($sa.dose.id) != $exists($sa.route.id)
-    #                   }
-    #           )][check=true]
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00177: not yet implemented")
+        data = config["data"]
+        for item in data.instances_by_klass("Administration"):
+            a = bool(item.get("dose"))
+            b = bool(item.get("route"))
+            if a != b:
+                if a and not b:
+                    msg = "dose is set but route is missing"
+                else:
+                    msg = "route is set but dose is missing"
+                self._add_failure(
+                    msg,
+                    "Administration",
+                    "dose, route",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

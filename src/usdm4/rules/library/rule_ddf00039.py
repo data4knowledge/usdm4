@@ -16,32 +16,20 @@ class RuleDDF00039(RuleTemplate):
             "If the duration will vary, a quantity is not expected for the duration and vice versa.",
         )
 
-    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     ($.**[instanceType="Duration"])@$d.
-    #       $d.[(
-    #               $ValU:=function($v){$v.value&($v.unit? " " & $v.unit.standardCode.decode & " ("&$v.unit.standardCode.code&")")};
-    #               $FValU:=function($n)
-    #                   {
-    #                       (
-    #                           $exists($n)
-    #                               ?   $type($n)="object"
-    #                                   ?   $exists($n.value)
-    #                                       ? $ValU($n)
-    #                                       : $exists($n.minValue) or $exists($n.maxValue)
-    #                                           ? $ValU($n.minValue)&" to "&$ValU($n.maxValue)
-    #                                           : $string($n)
-    #                                   : $string($n)
-    #                               : "Missing"
-    #                       )              
-    #                   };{
-    #                               "instanceType": instanceType,
-    #                               "id": id,
-    #                               "path": _path,
-    #                               "quantity(value/range)": $FValU(quantity),
-    #                               "durationWillVary": durationWillVary,
-    #                               "check": (durationWillVary and quantity) or (durationWillVary=false and ($not(quantity) or $exists(quantity)=false))
-    #                               })][check=true]
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00039: not yet implemented")
+        data = config["data"]
+        for item in data.instances_by_klass("Duration"):
+            a = (item.get("durationWillVary") is True)
+            b = (not bool(item.get("quantity")))
+            if a != b:
+                if a and not b:
+                    msg = "durationWillVary is set but quantity is missing"
+                else:
+                    msg = "quantity is set but durationWillVary is missing"
+                self._add_failure(
+                    msg,
+                    "Duration",
+                    "durationWillVary, quantity",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

@@ -16,6 +16,20 @@ class RuleDDF00034(RuleTemplate):
             "If duration will vary (attribute durationWillVary is True) then a reason (attribute reasonDurationWillVary) must be given and vice versa.",
         )
 
-    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00034: not yet implemented")
+        data = config["data"]
+        for item in data.instances_by_klass("Duration"):
+            a = (item.get("durationWillVary") is True)
+            b = bool(item.get("reasonDurationWillVary"))
+            if a != b:
+                if a and not b:
+                    msg = "durationWillVary is set but reasonDurationWillVary is missing"
+                else:
+                    msg = "reasonDurationWillVary is set but durationWillVary is missing"
+                self._add_failure(
+                    msg,
+                    "Duration",
+                    "durationWillVary, reasonDurationWillVary",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

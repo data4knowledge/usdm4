@@ -16,35 +16,20 @@ class RuleDDF00164(RuleTemplate):
             "If a section number is to be displayed then a number must be specified and vice versa.",
         )
 
-    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     ($.**.documentedBy)@$db.
-    #       $db.versions@$sv.
-    #       $sv.contents@$nc.
-    #       $nc.
-    #         [
-    #           (
-    #             $NoSectNo:=function(){$type($nc.sectionNumber)="null" or sectionNumber="" or $exists(sectionNumber)=false} ;
-    #             $ChkX:=function()
-    #               {
-    #                 ($NoSectNo()=true and displaySectionNumber=true)
-    #               };
-    #               {
-    #                 "instanceType": $nc.instanceType,
-    #                 "id": $nc.id,
-    #                 "path": $nc._path,
-    #                 "StudyDefinitionDocument.id": $db.id,
-    #                 "StudyDefinitionDocument.name": $db.name,
-    #                 "StudyDefinitionDocumentVersion.id": $sv.id,
-    #                 "StudyDefinitionDocumentVersion.version": $sv.version,
-    #                 "name": $nc.name,
-    #                 "displaySectionNumber": $nc.displaySectionNumber,
-    #                 "sectionNumber": $nc.sectionNumber,
-    #                 "check": $ChkX()
-    #               }
-    #           )
-    #         ]
-    #         [check=true]
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00164: not yet implemented")
+        data = config["data"]
+        for item in data.instances_by_klass("NarrativeContent"):
+            a = (item.get("displaySectionNumber") is True)
+            b = bool(item.get("sectionNumber"))
+            if a != b:
+                if a and not b:
+                    msg = "displaySectionNumber is set but sectionNumber is missing"
+                else:
+                    msg = "sectionNumber is set but displaySectionNumber is missing"
+                self._add_failure(
+                    msg,
+                    "NarrativeContent",
+                    "displaySectionNumber, sectionNumber",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

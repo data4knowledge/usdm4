@@ -364,6 +364,105 @@ def render_body_idref(data: dict) -> tuple[str, bool]:
     return body, True
 
 
+def _biconditional_check_expr(side: dict, item_var: str = "item") -> Optional[str]:
+    """
+    Build a Python truthiness expression for one side of a biconditional.
+    Returns None if the side spec is invalid or uses an unknown check kind.
+    """
+    if not isinstance(side, dict):
+        return None
+    attr = side.get("attr")
+    check = side.get("check")
+    if not attr or not check:
+        return None
+    if check == "non_empty":
+        # Truthy: present and non-empty (non-empty string / non-zero number / non-empty list / dict)
+        return f'bool({item_var}.get("{attr}"))'
+    if check == "empty":
+        # Opposite of non_empty — useful for inverse biconditionals
+        # ("if X then Y is NOT expected, and vice versa").
+        return f'(not bool({item_var}.get("{attr}")))'
+    if check == "equal_to_bool":
+        value = side.get("value", True)
+        lit = "True" if value is True else "False"
+        return f'({item_var}.get("{attr}") is {lit})'
+    if check == "equal_to":
+        value = side.get("value")
+        if value is None:
+            return None
+        return f'({item_var}.get("{attr}") == {value!r})'
+    if check == "code_equals":
+        value = side.get("value")
+        if not isinstance(value, str):
+            return None
+        # code may be at item.code.code, or the attr IS 'code' and we're
+        # testing code.code directly.
+        return (
+            f'(isinstance({item_var}.get("{attr}"), dict) '
+            f'and {item_var}["{attr}"].get("code") == "{value}")'
+        )
+    return None
+
+
+def render_body_biconditional(data: dict) -> tuple[str, bool]:
+    """
+    Biconditional predicate: two conditions on the same instance must have
+    the same truth value. Returns (body, is_implemented).
+
+    YAML schema:
+        predicate: biconditional
+        class: <Klass>
+        side_a:
+          attr: <attribute>
+          check: equal_to_bool | equal_to | non_empty | code_equals
+          value: <optional literal — for equal_to_bool / equal_to / code_equals>
+        side_b:
+          attr: <attribute>
+          check: equal_to_bool | equal_to | non_empty | code_equals
+          value: <optional literal>
+
+    Stubs if the sides aren't fully specified — the stage-1 classifier
+    sets predicate=biconditional but leaves sides incomplete for common
+    rules where the specifics need a human.
+    """
+    cls = data.get("class") or data.get("entity", "").split(",")[0].strip()
+    a = data.get("side_a")
+    b = data.get("side_b")
+    a_expr = _biconditional_check_expr(a)
+    b_expr = _biconditional_check_expr(b)
+    if not cls or cls == "All" or a_expr is None or b_expr is None:
+        return _stub_body(
+            data,
+            reason="biconditional predicate missing complete side_a / side_b "
+                   "specs (required fields: attr, check; plus value for "
+                   "equal_to_bool / equal_to / code_equals). Fill them in "
+                   "the intermediate YAML and regenerate.",
+        ), False
+
+    a_attr = a["attr"]
+    b_attr = b["attr"]
+    body = f'''
+    def validate(self, config: dict) -> bool:
+        data = config["data"]
+        for item in data.instances_by_klass("{cls}"):
+            a = {a_expr}
+            b = {b_expr}
+            if a != b:
+                if a and not b:
+                    msg = "{a_attr} is set but {b_attr} is missing"
+                else:
+                    msg = "{b_attr} is set but {a_attr} is missing"
+                self._add_failure(
+                    msg,
+                    "{cls}",
+                    "{a_attr}, {b_attr}",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()
+'''
+    return body, True
+
+
 def render_body_mutex_listed_attrs(data: dict) -> tuple[str, bool]:
     """
     mutual-exclusion: at most one of the listed attributes may be non-empty
@@ -471,6 +570,8 @@ def render_rule_body(data: dict) -> tuple[str, bool]:
             return render_body_idref(data)
         if predicate == "mutual-exclusion":
             return render_body_mutex_listed_attrs(data)
+        if predicate == "biconditional":
+            return render_body_biconditional(data)
         # 'conditional' and anything else falls through to a stub.
         return _stub_body(
             data,

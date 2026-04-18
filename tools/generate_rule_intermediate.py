@@ -320,6 +320,7 @@ RE_CT            = re.compile(r"must be specified (using|according to).*codelist
 RE_UNIQUE        = re.compile(r"must be unique|must not (have|contain) duplicate|must not be referenced more than once|expected to be unique", re.I)
 RE_REQUIRED      = re.compile(r"must be (defined|specified|given|provided|included)|at least one|must have (at least|exactly)", re.I)
 RE_MUTEX         = re.compile(r"but not both|must not be defined|mutually exclusive", re.I)
+RE_BICONDITIONAL = re.compile(r"\bvice versa\b", re.I)
 RE_CONDITIONAL   = re.compile(r"\bif\b.*\bthen\b|when .*must|and vice versa", re.I)
 RE_IDREF         = re.compile(r"must reference|must refer to|must only reference", re.I)
 RE_FORMAT        = re.compile(r"iso 8601|must be formatted|non-negative|duration|must match the pattern", re.I)
@@ -382,13 +383,15 @@ def infer_from_core(walked: WalkedConditions) -> Optional[dict]:
 
 def infer_from_text(text: str) -> Optional[str]:
     """Fallback classifier when CORE is a JSONata string. Returns predicate or None."""
-    if RE_CT.search(text):          return "ct-member"
-    if RE_UNIQUE.search(text):      return "unique-within-scope"
-    if RE_MUTEX.search(text):       return "mutual-exclusion"
-    if RE_IDREF.search(text):       return "id-reference-resolves"
-    if RE_CONDITIONAL.search(text): return "conditional"
-    if RE_FORMAT.search(text):      return "format"
-    if RE_REQUIRED.search(text):    return "required-attribute"
+    if RE_CT.search(text):           return "ct-member"
+    if RE_UNIQUE.search(text):       return "unique-within-scope"
+    if RE_MUTEX.search(text):        return "mutual-exclusion"
+    if RE_IDREF.search(text):        return "id-reference-resolves"
+    # Biconditional is a more specific case of conditional — check it first.
+    if RE_BICONDITIONAL.search(text): return "biconditional"
+    if RE_CONDITIONAL.search(text):  return "conditional"
+    if RE_FORMAT.search(text):       return "format"
+    if RE_REQUIRED.search(text):     return "required-attribute"
     return None
 
 
@@ -628,6 +631,7 @@ def main() -> int:
     from collections import Counter
     cls_counter: Counter = Counter()
     written = 0
+    preserved = 0
     for row in v4_rows:
         if only and row.rule_id.upper() not in only:
             continue
@@ -635,10 +639,17 @@ def main() -> int:
         data = build_intermediate(row, core_rule)
         cls_counter[data["classification"]] += 1
         out_path = out_dir / f"rule_{row.rule_id.lower()}.yaml"
+        # Preserve hand-edited YAMLs that carry the MANUAL sentinel. Stage-2
+        # reads these as-is and the human's field completions survive.
+        if out_path.exists() and "# MANUAL: do not regenerate" in out_path.read_text():
+            preserved += 1
+            continue
         out_path.write_text(render_yaml(data))
         written += 1
 
     print(f"\nWrote {written} intermediate YAML(s) to {out_dir}", file=sys.stderr)
+    if preserved:
+        print(f"Preserved {preserved} YAML(s) with MANUAL sentinel (hand-edited, not regenerated)", file=sys.stderr)
     print("By classification:", file=sys.stderr)
     for cls, n in sorted(cls_counter.items(), key=lambda kv: (-kv[1], kv[0])):
         print(f"  {n:4d}  {cls}", file=sys.stderr)

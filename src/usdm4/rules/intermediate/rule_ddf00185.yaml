@@ -7,7 +7,7 @@ classification: MED_TEXT
 confidence: medium
 source: rule-text
 review_required: true
-predicate: conditional
+predicate: biconditional
 class: Administration
 entity: Administration
 attributes: dose, administrableProduct
