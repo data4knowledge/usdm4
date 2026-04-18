@@ -156,6 +156,13 @@ def render_body_ct(data: dict) -> tuple[str, bool]:
       not a real CT lookup. Stub it.
     - (klass, attr) pair not registered in the CT library → the generated
       _ct_check would raise CTException at runtime. Stub it with a note.
+
+    Fallback:
+    - When stage-1 extracted `attribute: codeSystemVersion` (a common
+      stage-1 mis-extraction — CORE's condition is really walking into the
+      `.codeSystemVersion` sub-field of a nested Code object, not the
+      class's own attribute), try the xlsx 'Attributes' column instead.
+      The xlsx attribute is usually the real one on the parent class.
     """
     cls = data.get("class") or data.get("entity", "").split(",")[0].strip()
     attr = data.get("attribute") or data.get("attributes", "").split(",")[0].strip()
@@ -165,6 +172,12 @@ def render_body_ct(data: dict) -> tuple[str, bool]:
             reason=f"HIGH_CT_MEMBER with class={cls!r} attr={attr!r} — likely a "
                    "schema-conformance rule, not CT lookup. Needs hand-authoring.",
         ), False
+    # Narrow fallback for the codeSystemVersion mis-extraction. Try the xlsx
+    # "Attributes" column's first entry as a replacement.
+    if attr == "codeSystemVersion":
+        xlsx_attr = (data.get("attributes") or "").split(",")[0].strip()
+        if xlsx_attr and xlsx_attr != attr and _ct_codelist_exists(cls, xlsx_attr):
+            attr = xlsx_attr
     if not _ct_codelist_exists(cls, attr):
         return _stub_body(
             data,

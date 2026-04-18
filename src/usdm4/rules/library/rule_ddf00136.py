@@ -16,6 +16,5 @@ class RuleDDF00136(RuleTemplate):
             "An encounter's contact modes must be specified according to the Mode of Subject Contact (C171445) SDTM codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist).",
         )
 
-    # TODO: implement. HIGH_CT_MEMBER with no CT codelist registered for ('Encounter', 'codeSystemVersion'). Update ct_config.yaml or revise the rule's class/attribute before implementing.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00136: not yet implemented")
+        return self._ct_check(config, "Encounter", "contactModes")

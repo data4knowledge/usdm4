@@ -16,6 +16,5 @@ class RuleDDF00215(RuleTemplate):
             "An interventional study design's sub types must be specified according to the extensible Trial Type Response (C66739) SDTM codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist).",
         )
 
-    # TODO: implement. HIGH_CT_MEMBER with no CT codelist registered for ('InterventionalStudyDesign', 'codeSystemVersion'). Update ct_config.yaml or revise the rule's class/attribute before implementing.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00215: not yet implemented")
+        return self._ct_check(config, "InterventionalStudyDesign", "subTypes")

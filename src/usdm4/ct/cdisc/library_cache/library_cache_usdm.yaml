@@ -1602,6 +1602,63 @@ C215485:
       service or commodity.
     preferredTerm: Supplier
     submissionValue: Supplier
+C215486:
+  conceptId: C215486
+  definition: The terminology relevant to the observational study design subtype value
+    set.
+  extensible: 'true'
+  name: Observational Study Design Subtype Value Set Terminology
+  preferredTerm: CDISC DDF Observational Study Design Subtype Value Set Terminology
+  source:
+    effective_date: '2026-03-27'
+    package: ddfct
+  submissionValue: Observational Study Design Subtype Value Set Terminology
+  synonyms:
+  - Observational Study Design Subtype Value Set Terminology
+  terms:
+  - conceptId: C215657
+    definition: A study that assesses the effectiveness of health information on reducing
+      ill health and enhancing good health by influencing beliefs, attitudes, and
+      behavior of individuals and communities.
+    preferredTerm: Clinical Education Study
+    submissionValue: Clinical Education
+  - conceptId: C215654
+    definition: A study that assesses the variables that influence the occurrence
+      frequency and/or population distribution of a given disease, condition, or injury
+    preferredTerm: Disease Determinants Study
+    submissionValue: Disease Determinants
+  - conceptId: C215658
+    definition: A study that assesses the causative factors associated with a disease,
+      condition, or injury.
+    preferredTerm: Disease Etiology Study
+    submissionValue: Disease Etiology
+  - conceptId: C215653
+    definition: A study that assesses the occurrence of new cases of disease, condition,
+      or injury in a defined population over a specified period of time.
+    preferredTerm: Disease Incidence Study
+    submissionValue: Disease Incidence
+  - conceptId: C215675
+    definition: A study that assesses the proportion of persons in a population who
+      have a particular disease, condition, or injury at a specified point in time
+      or over a specified period of time. (CDC)
+    preferredTerm: Disease Prevalence Study
+    submissionValue: Disease Prevalence
+  - conceptId: C215655
+    definition: A study that assesses the prediction of the probable course and outcome
+      of a disease, condition, or injury.
+    preferredTerm: Disease Prognosis Study
+    submissionValue: Disease Prognosis
+  - conceptId: C215656
+    definition: A study that assesses drug usage patterns for prophylaxis or treatment
+      of health problems, or promoting maintenance of health and well-being.
+    preferredTerm: Drug Utilization Study
+    submissionValue: Drug Utilization
+  - conceptId: C49667
+    definition: A study that assesses the medical risks to a subject. Safety is usually
+      assessed by examining a wide range of clinical parameters, including adverse
+      events, vital signs, physical exam, laboratory tests.
+    preferredTerm: Safety Study
+    submissionValue: Safety
 C66726:
   conceptId: C66726
   definition: A terminology codelist relevant to the physical form of the administered

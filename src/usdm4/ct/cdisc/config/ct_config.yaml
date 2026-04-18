@@ -61,6 +61,7 @@ code_lists:
 - C215483
 - C215484
 - C215485
+- C215486
 klass_attribute_mapping:
   Study: {}
   StudyProtocolVersion:
@@ -92,6 +93,9 @@ klass_attribute_mapping:
     model: C99076
     intentTypes: C66736
     blindingSchema: C66735
+    # Duplicated from StudyDesign — CT lookup doesn't walk inheritance, so
+    # rules dispatched against the concrete subclass need an explicit entry.
+    characteristics: C207416
   ObservationalStudyDesign:
     subTypes: C215486
     model: C127259

@@ -12,8 +12,10 @@ class TestRuleDDF00215:
         assert rule._level == RuleTemplate.ERROR
         assert rule._rule_text == "An interventional study design's sub types must be specified according to the extensible Trial Type Response (C66739) SDTM codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist)."
 
-    def test_not_implemented(self):
-        """Lock-in: fails the moment the rule gains a real validate() body."""
-        rule = RuleDDF00215()
-        with pytest.raises(NotImplementedError):
-            rule.validate({"data": None, "ct": None})
+    @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
+    def test_valid_data_passes(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: craft negative fixture (invalid USDM, rule flags)")
+    def test_invalid_data_fails(self):
+        pass
