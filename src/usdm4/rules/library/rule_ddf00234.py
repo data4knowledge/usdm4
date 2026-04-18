@@ -1,4 +1,14 @@
+# MANUAL: do not regenerate
+#
+# plannedEnrollmentNumber is an embedded Quantity or Range on
+# StudyDesignPopulation / StudyCohort. Unit must NOT be present on
+# whichever representation is used (Quantity.unit, or Range's
+# minValue.unit / maxValue.unit). "Specified" = any non-None value.
 from usdm4.rules.rule_template import RuleTemplate
+
+
+SCOPE_CLASSES = ["StudyDesignPopulation", "StudyCohort"]
+ATTRIBUTE = "plannedEnrollmentNumber"
 
 
 class RuleDDF00234(RuleTemplate):
@@ -16,53 +26,32 @@ class RuleDDF00234(RuleTemplate):
             "A unit must not be specified for a planned enrollment number.",
         )
 
-    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     ($.**.studyDesigns)@$sd.
-    #       $sd.population@$p.
-    #      	$p.
-    #      	    [
-    #      	        (
-    #                   $InCohortQ:=$boolean(cohorts.plannedEnrollmentNumber.unit);      
-    #      	            $InCohortR:=($boolean(cohorts.plannedEnrollmentNumber.minValue.unit) or $boolean(cohorts.plannedEnrollmentNumber.maxValue.unit));
-    #                   $InPopQ:=$boolean(plannedEnrollmentNumber.unit);      
-    #      	            $InPopR:=($boolean(plannedEnrollmentNumber.minValue.unit) or $boolean(plannedEnrollmentNumber.maxValue.unit));
-    #                   $FValU:=function($n)
-    #                       {
-    #                           (
-    #                               $exists($n)
-    #                               ?   $type($n)="object"
-    #                                   ?   $exists($n.value)
-    #                                       ? $exists($n.unit.id)
-    #                                           ? $n.value & " " & $n.unit.standardCode.decode & " (" & $n.unit.standardCode.code & ")" 
-    #                                           : $n.value                                      
-    #                                       : $exists($n.minValue)
-    #                                           ? $exists($n.minValue.unit.id) or  $exists($n.maxValue.unit.id)
-    #                                               ? $n.minValue.value & " " & $n.minValue.unit.standardCode.decode &  "(" & $n.minValue.unit.standardCode.code & 
-    #                                                   ") to " & $n.maxValue.value & " " & $n.maxValue.unit.standardCode.decode &  "(" & $n.maxValue.unit.standardCode.code & ")"
-    #                                               : $n.minValue.value & " to " & $n.maxValue.value
-    #                                           : $string($n)
-    #                                   : $string($n)
-    #                               : "Missing"
-    #                           )              
-    #                       };
-    #                   	{
-    #      	                    "instanceType": $p.instanceType,
-    #      	                    "id": $p.id,
-    #      	                    "path": $p._path,
-    #                           "StudyDesign.id": $sd.id,
-    #      	                    "StudyDesign.name": $sd.name,
-    #      	                    "name": $p.name,
-    #      	                    "plannedEnrollmentNumber.id": $p.plannedEnrollmentNumber.id,
-    #                           "plannedEnrollmentNumber(value/range)": $FValU($p.plannedEnrollmentNumber),
-    #                           "cohorts.name": "["& $join($p.cohorts.(id & ": " & name),", ") & "]",
-    #                           "cohorts.plannedEnrollmentNumber.id": "["& $join($p.cohorts.(id & ": " & plannedEnrollmentNumber.id),", ") & "]",
-    #     	                    "cohorts.plannedEnrollmentNumber(value/range)": "["& $join($p.cohorts.(id & ": " & $FValU(plannedEnrollmentNumber)),", ") & "]",
-    #                           "check": ($InCohortQ=true or $InCohortR or $InPopQ=true or $InPopR=true)
-    #                       }
-    #      	        )
-    #      	    ]
-    #      	    [check = true]
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00234: not yet implemented")
+        data = config["data"]
+        for klass in SCOPE_CLASSES:
+            for instance in data.instances_by_klass(klass):
+                self._check_quantity_or_range(data, klass, instance)
+        return self._result()
+
+    def _check_quantity_or_range(self, data, klass, instance):
+        number = instance.get(ATTRIBUTE)
+        if not isinstance(number, dict):
+            return
+        # Quantity case
+        if number.get("unit"):
+            self._add_failure(
+                f"{klass}.{ATTRIBUTE} has a unit; none expected for a planned enrollment number",
+                klass,
+                ATTRIBUTE,
+                data.path_by_id(instance["id"]),
+            )
+        # Range case
+        for endpoint_name in ("minValue", "maxValue"):
+            endpoint = number.get(endpoint_name)
+            if isinstance(endpoint, dict) and endpoint.get("unit"):
+                self._add_failure(
+                    f"{klass}.{ATTRIBUTE}.{endpoint_name} has a unit; none expected for a planned enrollment number",
+                    klass,
+                    ATTRIBUTE,
+                    data.path_by_id(instance["id"]),
+                )

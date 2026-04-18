@@ -1,3 +1,7 @@
+# MANUAL: do not regenerate
+#
+# At-least-one check on Duration: at least one of `text` (string) or
+# `quantity` (embedded Quantity object) must be specified.
 from usdm4.rules.rule_template import RuleTemplate
 
 
@@ -16,17 +20,18 @@ class RuleDDF00033(RuleTemplate):
             "At least the text or the quantity must be specified for a duration.",
         )
 
-    # TODO: implement. MED_TEXT format: no specific format kind identified
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     ($.**[instanceType="Duration"])@$d.
-    #       $d.[{
-    #                               "instanceType": $d.instanceType,
-    #                               "id": $d.id,
-    #                               "path": $d._path,
-    #                               "text": $d.text,
-    #                               "quantity": quantity,
-    #                               "check": $not(text or quantity)
-    #                               }][check=true]
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00033: not yet implemented")
+        data = config["data"]
+        for duration in data.instances_by_klass("Duration"):
+            text = duration.get("text")
+            quantity = duration.get("quantity")
+            has_text = isinstance(text, str) and text.strip() != ""
+            has_quantity = quantity is not None and quantity != {}
+            if not (has_text or has_quantity):
+                self._add_failure(
+                    "Duration has neither text nor quantity specified",
+                    "Duration",
+                    "text, quantity",
+                    data.path_by_id(duration["id"]),
+                )
+        return self._result()

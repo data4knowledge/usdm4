@@ -1,4 +1,13 @@
+# MANUAL: do not regenerate
+#
+# Twin of DDF00234 but for plannedCompletionNumber on
+# StudyDesignPopulation / StudyCohort. No unit expected on either the
+# Quantity or the Range representation.
 from usdm4.rules.rule_template import RuleTemplate
+
+
+SCOPE_CLASSES = ["StudyDesignPopulation", "StudyCohort"]
+ATTRIBUTE = "plannedCompletionNumber"
 
 
 class RuleDDF00235(RuleTemplate):
@@ -16,53 +25,30 @@ class RuleDDF00235(RuleTemplate):
             "A unit must not be specified for a planned completion number.",
         )
 
-    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     ($.**.studyDesigns)@$sd.
-    #       $sd.population@$p.
-    #      	$p.
-    #      	    [
-    #      	        (
-    #                   $InCohortQ:=$boolean(cohorts.plannedCompletionNumber.unit);      
-    #      	            $InCohortR:=($boolean(cohorts.plannedCompletionNumber.minValue.unit) or $boolean(cohorts.plannedCompletionNumber.maxValue.unit));
-    #                   $InPopQ:=$boolean(plannedCompletionNumber.unit);      
-    #      	            $InPopR:=($boolean(plannedCompletionNumber.minValue.unit) or $boolean(plannedCompletionNumber.maxValue.unit));
-    #                   $FValU:=function($n)
-    #                       {
-    #                           (
-    #                               $exists($n)
-    #                               ?   $type($n)="object"
-    #                                   ?   $exists($n.value)
-    #                                       ? $exists($n.unit.id)
-    #                                           ? $n.value & " " & $n.unit.standardCode.decode & " (" & $n.unit.standardCode.code & ")" 
-    #                                           : $n.value                                      
-    #                                       : $exists($n.minValue)
-    #                                           ? $exists($n.minValue.unit.id) or  $exists($n.maxValue.unit.id)
-    #                                               ? $n.minValue.value & " " & $n.minValue.unit.standardCode.decode &  "(" & $n.minValue.unit.standardCode.code & 
-    #                                                   ") to " & $n.maxValue.value & " " & $n.maxValue.unit.standardCode.decode &  "(" & $n.maxValue.unit.standardCode.code & ")"
-    #                                               : $n.minValue.value & " to " & $n.maxValue.value
-    #                                           : $string($n)
-    #                                   : $string($n)
-    #                               : "Missing"
-    #                           )              
-    #                       };
-    #                   	{
-    #      	                    "instanceType": $p.instanceType,
-    #      	                    "id": $p.id,
-    #      	                    "path": $p._path,
-    #                           "StudyDesign.id": $sd.id,
-    #      	                    "StudyDesign.name": $sd.name,
-    #      	                    "name": $p.name,
-    #      	                    "plannedCompletionNumber.id": $p.plannedCompletionNumber.id,
-    #                           "plannedCompletionNumber(value/range)": $FValU($p.plannedCompletionNumber),
-    #                           "cohorts.name": "["& $join($p.cohorts.(id & ": " & name),", ") & "]",
-    #                           "cohorts.plannedCompletionNumber.id": "["& $join($p.cohorts.(id & ": " & plannedCompletionNumber.id),", ") & "]",
-    #     	                    "cohorts.plannedCompletionNumber(value/range)": "["& $join($p.cohorts.(id & ": " & $FValU(plannedCompletionNumber)),", ") & "]",
-    #                           "check": ($InCohortQ=true or $InCohortR or $InPopQ=true or $InPopR=true)
-    #                       }
-    #      	        )
-    #      	    ]
-    #      	    [check = true]
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00235: not yet implemented")
+        data = config["data"]
+        for klass in SCOPE_CLASSES:
+            for instance in data.instances_by_klass(klass):
+                self._check_quantity_or_range(data, klass, instance)
+        return self._result()
+
+    def _check_quantity_or_range(self, data, klass, instance):
+        number = instance.get(ATTRIBUTE)
+        if not isinstance(number, dict):
+            return
+        if number.get("unit"):
+            self._add_failure(
+                f"{klass}.{ATTRIBUTE} has a unit; none expected for a planned completion number",
+                klass,
+                ATTRIBUTE,
+                data.path_by_id(instance["id"]),
+            )
+        for endpoint_name in ("minValue", "maxValue"):
+            endpoint = number.get(endpoint_name)
+            if isinstance(endpoint, dict) and endpoint.get("unit"):
+                self._add_failure(
+                    f"{klass}.{ATTRIBUTE}.{endpoint_name} has a unit; none expected for a planned completion number",
+                    klass,
+                    ATTRIBUTE,
+                    data.path_by_id(instance["id"]),
+                )

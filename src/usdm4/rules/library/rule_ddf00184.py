@@ -1,3 +1,7 @@
+# MANUAL: do not regenerate
+#
+# Self-reference check: a Substance must not name itself as its
+# reference substance (`referenceSubstanceId` is a scalar FK in USDM JSON).
 from usdm4.rules.rule_template import RuleTemplate
 
 
@@ -6,7 +10,7 @@ class RuleDDF00184(RuleTemplate):
     DDF00184: A substance must not references itself as a reference substance.
 
     Applies to: Substance
-    Attributes: referenceSubstance
+    Attributes: referenceSubstanceId
     """
 
     def __init__(self):
@@ -16,6 +20,15 @@ class RuleDDF00184(RuleTemplate):
             "A substance must not references itself as a reference substance.",
         )
 
-    # TODO: implement. STUB: rule not present in CORE catalogue
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00184: not yet implemented")
+        data = config["data"]
+        for substance in data.instances_by_klass("Substance"):
+            ref_id = substance.get("referenceSubstanceId")
+            if ref_id and ref_id == substance.get("id"):
+                self._add_failure(
+                    "Substance refers to itself as its reference substance",
+                    "Substance",
+                    "referenceSubstanceId",
+                    data.path_by_id(substance["id"]),
+                )
+        return self._result()
