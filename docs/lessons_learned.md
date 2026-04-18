@@ -216,6 +216,19 @@ bucket is the honest ceiling — each one is bespoke logic.
   flag required to replace. The tests/usdm4/rules/test_rule_ddf00105.py
   file had a sophisticated hand-authored mock-based test; a naïve
   regeneration would have lost it silently.
+- **Severity is a silent trap when hand-authoring.** When you write a rule
+  body by hand, `RuleTemplate.ERROR` is the natural default. But a rule's
+  severity is determined by the xlsx (surfaced in the YAML's `severity`
+  field) and may be `WARNING`. Two of three rules I hand-authored in the
+  global-scope batch defaulted to ERROR when the YAML said WARNING — the
+  metadata test caught both. **Always copy `severity` from the YAML**, not
+  from muscle memory.
+- **xlsx attribute names ≠ USDM JSON field names.** The xlsx "Attributes"
+  column uses *semantic* names (`members`, `children`, `scope`, `dose`);
+  the actual USDM JSON uses the reference convention
+  (`memberIds`, `childIds`, `scopeId`). The generated metadata echoes the
+  xlsx, but the `validate()` body must use the real JSON field names. Always
+  verify via `dataStructure.yml` before coding.
 
 ## 7. Authoritative sources for CT codelist bindings
 
@@ -277,32 +290,149 @@ bad config.
 **Workflow:** use USDM_CT.xlsx as the primary codelist source; use UML
 as a validator that the (class, attribute) actually exists in the model.
 
-## 8. Coverage realism — don't over-promise
+## 8. "Complete the blanks" predicates — biconditional and implication
+
+Some rule patterns are detectable from rule text but can't be fully
+generated from text alone — you need the specific attributes and check
+kinds filled in by a human. We handled two of these explicitly:
+
+- **`biconditional`** — rule text contains `"vice versa"` or `"while if"`.
+  Fires when the truth values of two conditions diverge.
+- **`implication`** — rule text matches `"if ... then"` without biconditional
+  markers. Fires when the antecedent holds but the consequent doesn't.
+
+### The two-tier pattern
+
+Stage-1 classifier sets `predicate: biconditional` (or `implication`) but
+leaves the side specs (`side_a` / `side_b`, or `antecedent` / `consequent`)
+empty. Stage-2's renderer stubs anything with incomplete specs and
+generates working code for anything complete.
+
+A human fills in the YAML specs between runs:
+
+```yaml
+# MANUAL: do not regenerate    ← stage-1 preserves the file
+predicate: biconditional
+class: Duration
+side_a:
+  attr: durationWillVary
+  check: equal_to_bool
+  value: true
+side_b:
+  attr: reasonDurationWillVary
+  check: non_empty
+```
+
+The MANUAL sentinel on the YAML is essential — without it, the next
+stage-1 regeneration clobbers the hand-completed specs.
+
+### Shared check-kind library
+
+Both predicates share the same check expressions, defined once in
+`_biconditional_check_expr()`. Adding a new check kind gives both
+predicates a new capability:
+
+- `non_empty` — truthy value present
+- `empty` — opposite of non_empty (used for inverse biconditionals)
+- `equal_to_bool` — `item.attr is True` / `is False`
+- `equal_to` — `item.attr == literal`
+- `code_equals` — `item.attr.code == "C#####"` (for embedded Code/AliasCode attributes)
+
+### What we got in two small passes
+
+- **6 biconditional rules** generated from text classification + YAML specs
+- **3 implication rules** (DDF00013, DDF00178, and DDF00261 which reclassified as biconditional after broadening the regex to include "while if")
+
+Total: **9 more rules real for roughly 100 lines of generator code plus
+~80 lines of YAML hand-edits**. The value isn't just these 9 rules —
+it's the two templates' availability for any future MED_TEXT stub that
+fits the pattern.
+
+### When this approach fails
+
+The "global-scope singular" cluster looked like a candidate (3 rules,
+shared `if scope is global then ...` shape) but each rule's constraint
+was actually different (cross-type uniqueness vs total-count-one vs a
+different parent walk). A unified predicate would have needed three
+parameter groups — more engineering than three hand-authored rules.
+
+**Rule of thumb:** if two rules' Python bodies would have ≥ 70% line
+overlap after parameter extraction, a template is worthwhile. Less than
+that, hand-author each.
+
+## 9. Hand-authoring workflow for bespoke rules
+
+The per-rule recipe, refined across ~13 hand-authored rules this
+session. Targets a ~5-minute cycle per rule.
+
+1. **Read the intermediate YAML.** Note `text`, `class`, `attributes`,
+   `severity`, `_core_jsonata_reference` (if present).
+2. **Interpret the semantics.** Rule text is primary; CORE JSONata is a
+   useful algorithmic guide for the check, especially for identifying
+   which parent class to iterate and which codes to match.
+3. **Verify field names in `dataStructure.yml`.** The xlsx attribute
+   column uses semantic names that don't always match USDM JSON field
+   names (see §6 on `members` vs `memberIds`). A quick lookup catches
+   this before coding.
+4. **Write the `validate()` body** using DataStore primitives —
+   `instances_by_klass`, `parent_by_klass`, `instance_by_id`,
+   `path_by_id`. Copy severity from YAML to avoid the ERROR-default
+   trap (§6).
+5. **Add the `# MANUAL: do not regenerate` sentinel at the top of the
+   file.** This prevents stage-2 from overwriting your work on the next
+   regeneration.
+6. **Regenerate the test file** via
+   `python3 tools/generate_rule_python.py --only DDF##### --overwrite-tests`.
+   The sentinel protects the rule; the test file is re-emitted as an
+   "implemented" skeleton (metadata check + two skipped TODO placeholders
+   for positive/negative fixture data).
+
+Typical timings:
+- Cardinality / mutex / at-least-one-of / simple scoped check — 3 min each
+- Cross-reference / scoped group-by — 5-8 min each
+- Rules with inline helper functions in CORE's JSONata — 8-15 min each
+
+## 10. Coverage realism — don't over-promise
 
 After all the generator infrastructure (stage-1 YAML, stage-2 dispatch,
 JSONata translator, MED_TEXT predicate dispatch, HAS_IMPLEMENTATION
-preservation, CT codelist precheck, CT config extended with 8 new
-(class, attribute) bindings), **92 of 210 V4 rules have real
-implementations** (~44 %). The remaining 118 fall into predictable buckets:
+preservation, CT codelist precheck, CT config extended, biconditional
+and implication predicates, plus ~13 hand-authored rules),
+**123 of 210 V4 rules have real implementations** (~59 %). The
+remaining 87 fall into predictable buckets:
 
-- 62 LOW_CUSTOM — rule-specific logic the JSONata translator can't help with
-- 31 MED_TEXT stubs — mostly `predicate: conditional` (24), plus smaller
-  edge cases (format kind not ISO 8601, uniqueness without scope, etc.)
-- 17 HIGH_CT_MEMBER — class / attribute pair has no registered CT
+- 52 LOW_CUSTOM — rule-specific logic the JSONata translator can't help with
+- 14 MED_TEXT conditional — rule-specific "if X then Y" logic that
+  doesn't fit biconditional or simple implication (min < max comparisons,
+  cross-class walks, ordering consistency, etc.)
+- 11 HIGH_CT_MEMBER — class / attribute pair has no registered CT
   codelist; several of these are stage-1 bugs where CORE's condition
   walked into `codeSystemVersion` of a nested Code object and the
-  extractor took that as the attribute. Salvageable with a stage-2
-  fallback that prefers the xlsx "Attributes" column when CORE's
-  attribute is `codeSystemVersion`.
+  extractor took that as the attribute
 - 4 STUB — not in CORE at all
 - 3 HIGH_UNIQUE_WITHIN_SCOPE — scope not inferable from CORE or rule text
 - 1 HIGH_FORMAT — format kind not identified
 
-Getting from 92 to, say, 150 means domain-knowledge hand-authoring per
-rule, not more generator engineering. The generator ceiling for rules of
-this shape is roughly 45 %. Know this going in; don't chase an 80 % auto-
-generation target — you'll either produce quietly-wrong rules or spend
-exponentially more effort for diminishing returns.
+Getting from 123 to 150+ means domain-knowledge hand-authoring per
+rule, at roughly 5 minutes each per §9's workflow. Not more generator
+engineering — the generator ceiling for this rule catalogue is around
+60 %. Know this going in; don't chase an 80 % auto-generation target —
+you'll either produce quietly-wrong rules or spend exponentially more
+effort for diminishing returns.
+
+**Session totals across a representative day:**
+
+```
+  84  start of session (after initial merge + stage-1/2 pipeline)
+ 101  + CT config + stage-2 xlsx-attribute fallback (+ cache refresh)
+ 111  + 10 hand-authored (at-least-one / cardinality / mutex / uniqueness)
+ 117  + biconditional batch (6)
+ 120  + implication batch (3)
+ 123  + global-scope batch (3 hand-authored)
+```
+
+A day of focused work can add ~40 rules when patterns emerge; hand-authoring
+alone is ~10 rules/hour once the workflow is clean.
 
 **Fixture quality and validation development are co-work.** As rules go
 from stub to active, test fixtures that passed quietly start flagging
