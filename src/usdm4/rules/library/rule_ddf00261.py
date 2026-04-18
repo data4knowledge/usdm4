@@ -16,18 +16,20 @@ class RuleDDF00261(RuleTemplate):
             "If a geographic scope type is global then no code is expected to specify the specific area within scope while if it is not global then a code is expected to specify the specific area within scope.",
         )
 
-    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     **[instanceType="GeographicScope" and (type.code="C68846")=($exists(code) and code)].
-    #       {
-    #         "instanceType": instanceType,
-    #         "id": id,
-    #         "path": _path,
-    #         "type.code": type.code,
-    #         "type.decode": type.decode,
-    #         "code.standardCode.code": code.standardCode.code,
-    #         "code.standardCode.decode": code.standardCode.decode
-    #       }
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00261: not yet implemented")
+        data = config["data"]
+        for item in data.instances_by_klass("GeographicScope"):
+            a = (isinstance(item.get("type"), dict) and item["type"].get("code") == "C68846")
+            b = (not bool(item.get("code")))
+            if a != b:
+                if a and not b:
+                    msg = "type is set but code is missing"
+                else:
+                    msg = "code is set but type is missing"
+                self._add_failure(
+                    msg,
+                    "GeographicScope",
+                    "type, code",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

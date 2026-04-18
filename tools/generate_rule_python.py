@@ -463,6 +463,58 @@ def render_body_biconditional(data: dict) -> tuple[str, bool]:
     return body, True
 
 
+def render_body_implication(data: dict) -> tuple[str, bool]:
+    """
+    Implication predicate: *if* antecedent holds, *then* consequent must hold.
+    One-way (unlike biconditional). Returns (body, is_implemented).
+
+    YAML schema:
+        predicate: implication
+        class: <Klass>
+        antecedent:
+          attr: <attribute>
+          check: equal_to_bool | equal_to | non_empty | empty | code_equals
+          value: <optional literal>
+        consequent:
+          attr: <attribute>
+          check: equal_to_bool | equal_to | non_empty | empty | code_equals
+          value: <optional literal>
+
+    Stubs if sides aren't fully specified — stage-1 classifies rules as
+    implication from text but leaves specs for a human.
+    """
+    cls = data.get("class") or data.get("entity", "").split(",")[0].strip()
+    ante = data.get("antecedent")
+    cons = data.get("consequent")
+    a_expr = _biconditional_check_expr(ante)
+    c_expr = _biconditional_check_expr(cons)
+    if not cls or cls == "All" or a_expr is None or c_expr is None:
+        return _stub_body(
+            data,
+            reason="implication predicate missing complete antecedent / "
+                   "consequent specs (required: attr, check; plus value for "
+                   "equal_to_bool / equal_to / code_equals). Fill them in "
+                   "the intermediate YAML and regenerate.",
+        ), False
+
+    a_attr = ante["attr"]
+    c_attr = cons["attr"]
+    body = f'''
+    def validate(self, config: dict) -> bool:
+        data = config["data"]
+        for item in data.instances_by_klass("{cls}"):
+            if {a_expr} and not {c_expr}:
+                self._add_failure(
+                    "{a_attr} is set but required {c_attr} is missing",
+                    "{cls}",
+                    "{a_attr}, {c_attr}",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()
+'''
+    return body, True
+
+
 def render_body_mutex_listed_attrs(data: dict) -> tuple[str, bool]:
     """
     mutual-exclusion: at most one of the listed attributes may be non-empty
@@ -572,6 +624,8 @@ def render_rule_body(data: dict) -> tuple[str, bool]:
             return render_body_mutex_listed_attrs(data)
         if predicate == "biconditional":
             return render_body_biconditional(data)
+        if predicate == "implication":
+            return render_body_implication(data)
         # 'conditional' and anything else falls through to a stub.
         return _stub_body(
             data,

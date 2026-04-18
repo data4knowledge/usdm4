@@ -16,40 +16,14 @@ class RuleDDF00178(RuleTemplate):
             "If a dose is specified then a corresponding frequency must also be specified.",
         )
 
-    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     (study.versions.studyInterventions)@$si.
-    #       $si.administrations@$sa.
-    #           [(
-    #               $ValU:=function($v){$v.value&($v.unit? " " & $v.unit.standardCode.decode & " ("&$v.unit.standardCode.code&")")};
-    #               $FValU:=function($n)
-    #                   {
-    #                       (
-    #                           $exists($n)
-    #                               ?   $type($n)="object"
-    #                                   ?   $exists($n.value)
-    #                                       ? $ValU($n)
-    #                                       : $exists($n.minValue) or $exists($n.maxValue)
-    #                                           ? $ValU($n.minValue)&" to "&$ValU($n.maxValue)
-    #                                           : "Missing"
-    #                                   : $string($n)
-    #                               : "Missing"
-    #                       )              
-    #                   };
-    #                   {
-    #                       "instanceType": $sa.instanceType,
-    #                       "id": $sa.id,
-    #                       "path": $sa._path,
-    #                       "StudyIntervention.id": $si.id,
-    #                       "StudyIntervention.name": $si.name,
-    #                       "name": $sa.name,
-    #                       "dose.id": $sa.dose.id,
-    #                       "dose(value/range)": $FValU($sa.dose),
-    #                       "frequency.id": $sa.frequency.id,
-    #                      "frequency": ($sa.frequency ? ($sa.frequency.standardCode.decode & " (" & $sa.frequency.standardCode.code & ")")),
-    #                      "check": ($exists($sa.dose.id) and $exists($sa.frequency.id)=false)
-    #                   }
-    #           )][check=true]    
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00178: not yet implemented")
+        data = config["data"]
+        for item in data.instances_by_klass("Administration"):
+            if bool(item.get("dose")) and not bool(item.get("frequency")):
+                self._add_failure(
+                    "dose is set but required frequency is missing",
+                    "Administration",
+                    "dose, frequency",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

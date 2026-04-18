@@ -12,8 +12,10 @@ class TestRuleDDF00261:
         assert rule._level == RuleTemplate.WARNING
         assert rule._rule_text == "If a geographic scope type is global then no code is expected to specify the specific area within scope while if it is not global then a code is expected to specify the specific area within scope."
 
-    def test_not_implemented(self):
-        """Lock-in: fails the moment the rule gains a real validate() body."""
-        rule = RuleDDF00261()
-        with pytest.raises(NotImplementedError):
-            rule.validate({"data": None, "ct": None})
+    @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
+    def test_valid_data_passes(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: craft negative fixture (invalid USDM, rule flags)")
+    def test_invalid_data_fails(self):
+        pass

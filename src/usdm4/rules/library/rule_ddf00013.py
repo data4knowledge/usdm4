@@ -16,6 +16,14 @@ class RuleDDF00013(RuleTemplate):
             "If a biomedical concept property is required then it must also be enabled, while if it is not enabled then it must not be required.",
         )
 
-    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00013: not yet implemented")
+        data = config["data"]
+        for item in data.instances_by_klass("BiomedicalConceptProperty"):
+            if (item.get("isRequired") is True) and not (item.get("isEnabled") is True):
+                self._add_failure(
+                    "isRequired is set but required isEnabled is missing",
+                    "BiomedicalConceptProperty",
+                    "isRequired, isEnabled",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

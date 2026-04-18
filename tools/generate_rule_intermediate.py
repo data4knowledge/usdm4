@@ -320,7 +320,8 @@ RE_CT            = re.compile(r"must be specified (using|according to).*codelist
 RE_UNIQUE        = re.compile(r"must be unique|must not (have|contain) duplicate|must not be referenced more than once|expected to be unique", re.I)
 RE_REQUIRED      = re.compile(r"must be (defined|specified|given|provided|included)|at least one|must have (at least|exactly)", re.I)
 RE_MUTEX         = re.compile(r"but not both|must not be defined|mutually exclusive", re.I)
-RE_BICONDITIONAL = re.compile(r"\bvice versa\b", re.I)
+RE_BICONDITIONAL = re.compile(r"\bvice versa\b|\bwhile if\b", re.I)
+RE_IMPLICATION   = re.compile(r"\bif\b[^.]*\bthen\b", re.I)   # checked after biconditional
 RE_CONDITIONAL   = re.compile(r"\bif\b.*\bthen\b|when .*must|and vice versa", re.I)
 RE_IDREF         = re.compile(r"must reference|must refer to|must only reference", re.I)
 RE_FORMAT        = re.compile(r"iso 8601|must be formatted|non-negative|duration|must match the pattern", re.I)
@@ -389,6 +390,9 @@ def infer_from_text(text: str) -> Optional[str]:
     if RE_IDREF.search(text):        return "id-reference-resolves"
     # Biconditional is a more specific case of conditional — check it first.
     if RE_BICONDITIONAL.search(text): return "biconditional"
+    # Plain "if X then Y" (one-way) — the template fills in when side specs
+    # are provided in the YAML, otherwise falls through to a stub.
+    if RE_IMPLICATION.search(text):   return "implication"
     if RE_CONDITIONAL.search(text):  return "conditional"
     if RE_FORMAT.search(text):       return "format"
     if RE_REQUIRED.search(text):     return "required-attribute"
