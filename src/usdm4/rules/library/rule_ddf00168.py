@@ -16,33 +16,20 @@ class RuleDDF00168(RuleTemplate):
             "A piece of narrative content must only reference narrative content items that have been defined within the study version as the narrative content.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     ($.**.study)@$s.$s.documentedBy@$sd.
-    #       $sd.versions@$sv.
-    #       $sv.contents@$nc.
-    #       $nc.
-    #         [
-    #           ($ChkX:=function()
-    #             {
-    #               contentItemId and $not(contentItemId in $s.versions.narrativeContentItems.id)
-    #             };
-    #             {
-    #               "instanceType": $nc.instanceType,
-    #               "id": $nc.id,
-    #               "path": $nc._path,
-    #               "StudyDefinitionDocument.id": $sd.id,
-    #               "StudyDefinitionDocument.name": $sd.name,
-    #               "StudyDefinitionDocumentVersion.id": $sv.id,
-    #               "StudyDefinitionDocumentVersion.version": $sv.version,
-    #               "name": $nc.name,
-    #               "contentItemId": $nc.contentItemId,
-    #               "sectionNumber": $nc.sectionNumber,
-    #               "check": $ChkX()
-    #             }
-    #           )
-    #         ]
-    #         [check=true]
-
+    # GENERATED — predicate inferred from rule text, please review.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00168: not yet implemented")
+        from usdm4.rules.primitives import any_ids_unresolved
+        data = config["data"]
+        for item in data.instances_by_klass("NarrativeContent"):
+            raw = item.get("contentItem")
+            if raw in (None, "", [], {}):
+                continue
+            ids = raw if isinstance(raw, list) else [raw]
+            for unresolved in any_ids_unresolved(ids, data):
+                self._add_failure(
+                    f"contentItem references unresolved id {unresolved!r}",
+                    "NarrativeContent",
+                    "contentItem",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

@@ -16,7 +16,7 @@ class RuleDDF00091(RuleTemplate):
             "When a condition applies to a procedure, activity, biomedical concept, biomedical concept category, or biomedical concept surrogate then an instance must be available in the corresponding class with the specified id.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
     # Reference — CORE JSONata condition (semantics, not executed):
     #     (
     #       $idityp:=$.study.versions.**[id]{id:instanceType};

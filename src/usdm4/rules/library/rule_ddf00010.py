@@ -16,7 +16,7 @@ class RuleDDF00010(RuleTemplate):
             "The names of all child instances of the same parent class must be unique.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. HIGH_UNIQUE_WITHIN_SCOPE without scope info — ambiguous (global vs per-parent vs intra-attribute). Review rule text.
     # Reference — CORE JSONata condition (semantics, not executed):
     #     **.*[id and instanceType and name].$
     #         {

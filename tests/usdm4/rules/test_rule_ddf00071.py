@@ -12,8 +12,10 @@ class TestRuleDDF00071:
         assert rule._level == RuleTemplate.ERROR
         assert rule._rule_text == "A study cell must only reference an arm that is defined within the same study design as the study cell."
 
-    def test_not_implemented(self):
-        """Lock-in: fails the moment the rule gains a real validate() body."""
-        rule = RuleDDF00071()
-        with pytest.raises(NotImplementedError):
-            rule.validate({"data": None, "ct": None})
+    @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
+    def test_valid_data_passes(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: craft negative fixture (invalid USDM, rule flags)")
+    def test_invalid_data_fails(self):
+        pass

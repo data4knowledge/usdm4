@@ -1,3 +1,63 @@
+- attribute: elements
+  exception: null
+  klass: StudyElement
+  level: Error
+  message: Required attribute 'elements' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyElement[0]
+  rule: DDF00040
+  rule_id: DDF00040
+  rule_text: Each study element must be referenced by at least one study cell.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00040
+- attribute: elements
+  exception: null
+  klass: StudyElement
+  level: Error
+  message: Required attribute 'elements' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyElement[1]
+  rule: DDF00040
+  rule_id: DDF00040
+  rule_text: Each study element must be referenced by at least one study cell.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00040
+- attribute: elements
+  exception: null
+  klass: StudyElement
+  level: Error
+  message: Required attribute 'elements' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyElement[2]
+  rule: DDF00040
+  rule_id: DDF00040
+  rule_text: Each study element must be referenced by at least one study cell.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00040
+- attribute: elements
+  exception: null
+  klass: StudyElement
+  level: Error
+  message: Required attribute 'elements' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyElement[3]
+  rule: DDF00040
+  rule_id: DDF00040
+  rule_text: Each study element must be referenced by at least one study cell.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00040
+- attribute: elements
+  exception: null
+  klass: StudyElement
+  level: Error
+  message: Required attribute 'elements' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyElement[4]
+  rule: DDF00040
+  rule_id: DDF00040
+  rule_text: Each study element must be referenced by at least one study cell.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00040
 - attribute: type
   exception: null
   klass: Timing
@@ -453,6 +513,19 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00051
+- attribute: plannedAge
+  exception: null
+  klass: StudyDesignPopulation
+  level: Error
+  message: Required attribute 'plannedAge' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyDesignPopulation
+  rule: DDF00097
+  rule_id: DDF00097
+  rule_text: Within a study design, the planned age range must be specified either
+    in the study population or in all cohorts.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00097
 - attribute: role
   exception: null
   klass: StudyIntervention
@@ -479,6 +552,32 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00112
+- attribute: plannedCompletionNumber
+  exception: null
+  klass: StudyDesignPopulation
+  level: Error
+  message: Required attribute 'plannedCompletionNumber' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyDesignPopulation
+  rule: DDF00132
+  rule_id: DDF00132
+  rule_text: Within a study design, if a planned completion number is defined, it
+    must be specified either in the study population or in all cohorts.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00132
+- attribute: plannedEnrollmentNumber
+  exception: null
+  klass: StudyDesignPopulation
+  level: Error
+  message: Required attribute 'plannedEnrollmentNumber' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyDesignPopulation
+  rule: DDF00133
+  rule_id: DDF00133
+  rule_text: Within a study design, if a planned enrollment number is defined, it
+    must be specified either in the study population or in all cohorts.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00133
 - attribute: type
   exception: null
   klass: StudyDefinitionDocument
@@ -572,3 +671,471 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00217
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[0]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[1]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[2]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[3]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[4]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[5]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[6]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[7]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[8]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[9]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[10]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[11]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[12]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[13]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[14]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[15]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[16]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[17]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[18]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[19]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[20]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[21]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[22]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[23]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[24]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[25]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[26]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[27]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[28]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[29]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[30]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[31]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[32]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[33]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[34]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249
+- attribute: criterionItem
+  exception: null
+  klass: EligibilityCriterion
+  level: Warning
+  message: Required attribute 'criterionItem' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[35]
+  rule: DDF00249
+  rule_id: DDF00249
+  rule_text: An eligibility criterion item is expected to be used in at least one
+    study design.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00249

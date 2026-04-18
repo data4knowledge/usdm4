@@ -16,7 +16,7 @@ class RuleDDF00173(RuleTemplate):
             "Every identifier must be unique within the scope of an identified organization.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. HIGH_UNIQUE_WITHIN_SCOPE without scope info — ambiguous (global vs per-parent vs intra-attribute). Review rule text.
     # Reference — CORE JSONata condition (semantics, not executed):
     #     study.versions@$sv.
     #       (

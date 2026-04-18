@@ -16,7 +16,7 @@ class RuleDDF00213(RuleTemplate):
             "If the intervention model indicates a single group design then only one intervention is expected. In all other cases more interventions are expected.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
     # Reference — CORE JSONata condition (semantics, not executed):
     #     ($.study.versions)@$sv.
     #       ($sv.studyDesigns[studyType.code = "C98388"])@$sd.

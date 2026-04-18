@@ -16,24 +16,24 @@ class RuleDDF00171(RuleTemplate):
             "The expanded text for all abbreviations defined for a study version are expected to be unique.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     study.versions@$sv.
-    #       (
-    #         $filter($sv.abbreviations,function($v,$i,$a)
-    #           {$count($a[$lowercase($.expandedText)=$lowercase($v.expandedText)])>1}
-    #         )
-    #         ~> $sort(function($l,$r){$lowercase($l.expandedText)>$lowercase($r.expandedText)})
-    #       ).
-    #       {
-    #         "instanceType": instanceType,
-    #         "id": id,
-    #         "path": _path,
-    #         "StudyVersion.id": $sv.id,
-    #         "StudyVersion.versionIdentifier": $sv.versionIdentifier,
-    #         "abbreviatedText": abbreviatedText,
-    #         "expandedText": expandedText
-    #       }
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00171: not yet implemented")
+        data = config["data"]
+        seen: dict = {}
+        for item in data.instances_by_klass("Abbreviation"):
+            scope = data.parent_by_klass(item["id"], ['StudyVersion'])
+            if scope is None:
+                continue
+            value = item.get("expandedText")
+            if value in (None, "", [], {}):
+                continue
+            key = (scope["id"], value)
+            if key in seen:
+                self._add_failure(
+                    f"Duplicate expandedText {value!r} within scope",
+                    "Abbreviation",
+                    "expandedText",
+                    data.path_by_id(item["id"]),
+                )
+            else:
+                seen[key] = item["id"]
+        return self._result()

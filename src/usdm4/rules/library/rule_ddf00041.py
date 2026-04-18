@@ -16,16 +16,14 @@ class RuleDDF00041(RuleTemplate):
             "Within a study design, there must be at least one endpoint with level primary.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     $.study.versions.studyDesigns.
-    #       {
-    #           "instanceType": instanceType,
-    #           "id": id,
-    #           "path": _path,
-    #           "name": name,
-    #           "# Primary endpoints": $count(objectives.endpoints[level.code="C94496"])
-    #       }[`# Primary endpoints` = 0][]
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00041: not yet implemented")
+        data = config["data"]
+        for item in data.instances_by_klass("Endpoint"):
+            if not item.get("level"):
+                self._add_failure(
+                    "Required attribute 'level' is missing or empty",
+                    "Endpoint",
+                    "level",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

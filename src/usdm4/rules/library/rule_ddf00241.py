@@ -16,7 +16,7 @@ class RuleDDF00241(RuleTemplate):
             "If the unit is the same (or missing) for both the minimum and maximum value, then the minimum value must be less than the maximum value.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
     # Reference — CORE JSONata condition (semantics, not executed):
     #     (study.**[instanceType="Range"])@$rg.
     #       $rg.

@@ -16,7 +16,7 @@ class RuleDDF00185(RuleTemplate):
             "If a dose is specified, then a corresponding administrable product must also be specified either directly or embedded in the medical device and vice versa.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
     # Reference — CORE JSONata condition (semantics, not executed):
     #     (study.versions)@$sv.
     #       $sv.studyInterventions@$si.

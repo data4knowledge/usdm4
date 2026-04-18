@@ -16,19 +16,14 @@ class RuleDDF00227(RuleTemplate):
             "An interventional study must be specified using the InterventionalStudyDesign class.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     (study.versions)@$sv.
-    #       $sv.studyDesigns@$sd.
-    #       $sd.    [({
-    #                       "instanceType": instanceType,
-    #                       "id": id,
-    #                       "path": _path,
-    #                       "name": name,
-    #                       "studyType": studyType ? studyType.decode & " (" & studyType.code & ")",
-    #                       "check": studyType.code="C98388" and instanceType != "InterventionalStudyDesign"
-    #                   }
-    #           )][check=true]
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00227: not yet implemented")
+        data = config["data"]
+        for item in data.instances_by_klass("InterventionalStudyDesign"):
+            if not item.get("studyType"):
+                self._add_failure(
+                    "Required attribute 'studyType' is missing or empty",
+                    "InterventionalStudyDesign",
+                    "studyType",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

@@ -16,7 +16,7 @@ class RuleDDF00101(RuleTemplate):
             "Within a study design, if study type is Interventional then at least one intervention is expected to be referenced from a procedure.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
     # Reference — CORE JSONata condition (semantics, not executed):
     #     ($.study.versions[$not("studyType" in $keys($)) or studyType.code = "C98388"])@$sv.
     #       ($sv.studyDesigns[$not("studyType" in $keys($)) or studyType.code = "C98388"])@$sd.

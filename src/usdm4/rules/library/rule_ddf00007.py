@@ -16,6 +16,6 @@ class RuleDDF00007(RuleTemplate):
             'If timing type is "Fixed Reference" then it must point to only one scheduled instance (e.g. attribute relativeToScheduledInstance must be equal to relativeFromScheduledInstance or it must be missing).',
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
     def validate(self, config: dict) -> bool:
         raise NotImplementedError("DDF00007: not yet implemented")

@@ -16,7 +16,7 @@ class RuleDDF00039(RuleTemplate):
             "If the duration will vary, a quantity is not expected for the duration and vice versa.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
     # Reference — CORE JSONata condition (semantics, not executed):
     #     ($.**[instanceType="Duration"])@$d.
     #       $d.[(

@@ -16,21 +16,14 @@ class RuleDDF00249(RuleTemplate):
             "An eligibility criterion item is expected to be used in at least one study design.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     study.versions@$sv.
-    #       $sv.eligibilityCriterionItems
-    #         [
-    #           $not(id in $sv.studyDesigns.eligibilityCriteria.criterionItemId)
-    #         ].
-    #         {
-    #           "instanceType": instanceType,
-    #           "id": id,
-    #           "path": _path,
-    #           "StudyVersion.id": $sv.id,
-    #           "StudyVersion.versionIdentifier": $sv.versionIdentifier,
-    #           "name": name
-    #         }
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00249: not yet implemented")
+        data = config["data"]
+        for item in data.instances_by_klass("EligibilityCriterion"):
+            if not item.get("criterionItem"):
+                self._add_failure(
+                    "Required attribute 'criterionItem' is missing or empty",
+                    "EligibilityCriterion",
+                    "criterionItem",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

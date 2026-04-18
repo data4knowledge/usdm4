@@ -16,7 +16,7 @@ class RuleDDF00164(RuleTemplate):
             "If a section number is to be displayed then a number must be specified and vice versa.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
     # Reference — CORE JSONata condition (semantics, not executed):
     #     ($.**.documentedBy)@$db.
     #       $db.versions@$sv.

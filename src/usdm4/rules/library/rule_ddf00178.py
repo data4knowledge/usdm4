@@ -16,7 +16,7 @@ class RuleDDF00178(RuleTemplate):
             "If a dose is specified then a corresponding frequency must also be specified.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
     # Reference — CORE JSONata condition (semantics, not executed):
     #     (study.versions.studyInterventions)@$si.
     #       $si.administrations@$sa.

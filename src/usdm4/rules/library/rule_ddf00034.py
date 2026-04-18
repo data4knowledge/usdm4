@@ -16,6 +16,6 @@ class RuleDDF00034(RuleTemplate):
             "If duration will vary (attribute durationWillVary is True) then a reason (attribute reasonDurationWillVary) must be given and vice versa.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
     def validate(self, config: dict) -> bool:
         raise NotImplementedError("DDF00034: not yet implemented")

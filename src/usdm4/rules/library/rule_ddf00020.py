@@ -16,6 +16,6 @@ class RuleDDF00020(RuleTemplate):
             "If the reason for a study amendment is 'Other' then this must be specified (attribute reasonOther must be completed), and vice versa.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
     def validate(self, config: dict) -> bool:
         raise NotImplementedError("DDF00020: not yet implemented")

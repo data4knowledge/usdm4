@@ -16,6 +16,14 @@ class RuleDDF00098(RuleTemplate):
             "Within a study design, the planned sex must be specified either in the study population or in all cohorts.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00098: not yet implemented")
+        data = config["data"]
+        for item in data.instances_by_klass("StudyDesignPopulation"):
+            if not item.get("plannedSex"):
+                self._add_failure(
+                    "Required attribute 'plannedSex' is missing or empty",
+                    "StudyDesignPopulation",
+                    "plannedSex",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

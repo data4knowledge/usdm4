@@ -16,7 +16,7 @@ class RuleDDF00206(RuleTemplate):
             "Sourcing must not be defined for an administrable product which is only referenced as an embedded product for a medical device.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. mutual-exclusion with class='AdministrableProduct' attrs=['sourcing'] — needs at least 2 attrs.
     # Reference — CORE JSONata condition (semantics, not executed):
     #     (study.versions)@$sv.
     #       $sv.administrableProducts@$ap.

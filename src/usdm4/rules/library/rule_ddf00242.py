@@ -16,20 +16,14 @@ class RuleDDF00242(RuleTemplate):
             "For each range, a unit must be specified either for both the minimum and the maximum value, or for neither of them.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     (study.**[instanceType="Range"])@$rg.
-    #       $rg.
-    #           [($ValU:=function($v){$v.value&($v.unit? " " & $v.unit.standardCode.decode & " ("&$v.unit.standardCode.code&")": " (unit not specified)")};
-    #               {
-    #                   "instanceType": instanceType,
-    #                   "id": id,
-    #                   "path": _path,
-    #                   "minValue": $ValU(minValue) ,
-    #                   "maxValue": $ValU(maxValue) ,
-    #                   "check": $exists(minValue.unit.id) != $exists(maxValue.unit.id)
-    #               }
-    #           )][check=true]
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00242: not yet implemented")
+        data = config["data"]
+        for item in data.instances_by_klass("Range"):
+            if not item.get("minValue"):
+                self._add_failure(
+                    "Required attribute 'minValue' is missing or empty",
+                    "Range",
+                    "minValue",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

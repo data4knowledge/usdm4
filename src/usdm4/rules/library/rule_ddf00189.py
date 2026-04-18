@@ -16,7 +16,7 @@ class RuleDDF00189(RuleTemplate):
             "Every study role must apply to either a study version or at least one study design, but not both.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. mutual-exclusion with class='StudyRole' attrs=['appliesTo'] — needs at least 2 attrs.
     # Reference — CORE JSONata condition (semantics, not executed):
     #     study.versions@$sv.
     #       ($sv.roles

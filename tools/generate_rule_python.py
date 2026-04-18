@@ -34,6 +34,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from collections import Counter
 from pathlib import Path
@@ -316,6 +317,74 @@ def render_body_format(data: dict) -> str:
     return _stub_body(data, reason=f"HIGH_FORMAT with format={fmt!r} but no pattern available")
 
 
+def render_body_idref(data: dict) -> tuple[str, bool]:
+    """
+    id-reference-resolves: iterate the class, for each instance check that
+    every id in the reference attribute resolves via instance_by_id.
+    """
+    cls = data.get("class") or data.get("entity", "").split(",")[0].strip()
+    attr = data.get("attribute") or data.get("attributes", "").split(",")[0].strip()
+    if cls in ("All", "", None) or attr in ("All", "", None):
+        return _stub_body(
+            data,
+            reason=f"id-reference-resolves with class={cls!r} attr={attr!r} — insufficient info to generate.",
+        ), False
+    body = f'''
+    # GENERATED — predicate inferred from rule text, please review.
+    def validate(self, config: dict) -> bool:
+        from usdm4.rules.primitives import any_ids_unresolved
+        data = config["data"]
+        for item in data.instances_by_klass("{cls}"):
+            raw = item.get("{attr}")
+            if raw in (None, "", [], {{}}):
+                continue
+            ids = raw if isinstance(raw, list) else [raw]
+            for unresolved in any_ids_unresolved(ids, data):
+                self._add_failure(
+                    f"{attr} references unresolved id {{unresolved!r}}",
+                    "{cls}",
+                    "{attr}",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()
+'''
+    return body, True
+
+
+def render_body_mutex_listed_attrs(data: dict) -> tuple[str, bool]:
+    """
+    mutual-exclusion: at most one of the listed attributes may be non-empty
+    on an instance. The list of attrs comes from the xlsx 'Attributes'
+    column (comma-separated).
+    """
+    cls = data.get("class") or data.get("entity", "").split(",")[0].strip()
+    attrs_raw = data.get("attributes", "")
+    attrs = [a.strip() for a in re.split(r"[,;/]", attrs_raw) if a.strip()]
+    if not cls or cls == "All" or len(attrs) < 2:
+        return _stub_body(
+            data,
+            reason=f"mutual-exclusion with class={cls!r} attrs={attrs!r} — needs at least 2 attrs.",
+        ), False
+    attrs_literal = repr(attrs)
+    body = f'''
+    # GENERATED — predicate inferred from rule text, please review.
+    def validate(self, config: dict) -> bool:
+        data = config["data"]
+        attrs = {attrs_literal}
+        for item in data.instances_by_klass("{cls}"):
+            present = [a for a in attrs if item.get(a) not in (None, "", [], {{}})]
+            if len(present) > 1:
+                self._add_failure(
+                    "Mutually exclusive attributes both set: " + ", ".join(present),
+                    "{cls}",
+                    ", ".join(attrs),
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()
+'''
+    return body, True
+
+
 def render_body_from_jsonata(data: dict) -> Optional[str]:
     """Try the translator against CORE JSONata captured in the YAML."""
     jsonata = data.get("_core_jsonata_reference")
@@ -364,12 +433,46 @@ def render_rule_body(data: dict) -> tuple[str, bool]:
         # Generic regex with no pattern → stub
         return render_body_format(data), False
 
-    # MED_TEXT / LOW_CUSTOM — try the JSONata translator, else stub.
-    if cls in ("MED_TEXT", "LOW_CUSTOM"):
+    # MED_TEXT — try the JSONata translator first (highest fidelity when it
+    # matches), then fall back to predicate-based HIGH_* templates using the
+    # text-inferred predicate. Anything left over is stubbed.
+    if cls == "MED_TEXT":
         translated = render_body_from_jsonata(data)
         if translated is not None:
             return translated, True
-        return _stub_body(data, reason=f"{cls}: JSONata translator did not match a known pattern"), False
+        predicate = data.get("predicate", "")
+        if predicate == "ct-member":
+            return render_body_ct(data)
+        if predicate == "required-attribute":
+            return render_body_required_attribute(data), True
+        if predicate == "unique-within-scope":
+            return render_body_unique(data)
+        if predicate == "format":
+            fmt = data.get("format")
+            if fmt == "iso8601-duration":
+                return render_body_format(data), True
+            return _stub_body(
+                data, reason="MED_TEXT format: no specific format kind identified"
+            ), False
+        if predicate == "id-reference-resolves":
+            return render_body_idref(data)
+        if predicate == "mutual-exclusion":
+            return render_body_mutex_listed_attrs(data)
+        # 'conditional' and anything else falls through to a stub.
+        return _stub_body(
+            data,
+            reason=f"MED_TEXT predicate={predicate!r}: no template — typically a "
+                   "rule-specific conditional. Hand-author using the JSONata "
+                   "reference below.",
+        ), False
+
+    # LOW_CUSTOM — try the JSONata translator, else stub. LOW_CUSTOM rules
+    # have predicate='custom' by definition, so no predicate dispatch.
+    if cls == "LOW_CUSTOM":
+        translated = render_body_from_jsonata(data)
+        if translated is not None:
+            return translated, True
+        return _stub_body(data, reason="LOW_CUSTOM: JSONata translator did not match a known pattern"), False
 
     # STUB: xlsx-only, no CORE entry
     return _stub_body(data, reason="STUB: rule not present in CORE catalogue"), False

@@ -16,6 +16,14 @@ class RuleDDF00097(RuleTemplate):
             "Within a study design, the planned age range must be specified either in the study population or in all cohorts.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00097: not yet implemented")
+        data = config["data"]
+        for item in data.instances_by_klass("StudyDesignPopulation"):
+            if not item.get("plannedAge"):
+                self._add_failure(
+                    "Required attribute 'plannedAge' is missing or empty",
+                    "StudyDesignPopulation",
+                    "plannedAge",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

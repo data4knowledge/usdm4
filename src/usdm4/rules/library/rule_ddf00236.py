@@ -16,7 +16,7 @@ class RuleDDF00236(RuleTemplate):
             "If a synonym is specified then it is not expected to be equal to the label of the biomedical concept (case insensitive).",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
     # Reference — CORE JSONata condition (semantics, not executed):
     #     (study.versions.biomedicalConcepts)@$bc.
     #       $bc.

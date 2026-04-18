@@ -16,7 +16,7 @@ class RuleDDF00245(RuleTemplate):
             "Within a document version, the specified section numbers for narrative content must be unique.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. HIGH_UNIQUE_WITHIN_SCOPE without scope info — ambiguous (global vs per-parent vs intra-attribute). Review rule text.
     # Reference — CORE JSONata condition (semantics, not executed):
     #     $.study.documentedBy@$sdd.
     #       $sdd.versions@$sddv.

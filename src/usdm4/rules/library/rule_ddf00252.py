@@ -16,22 +16,20 @@ class RuleDDF00252(RuleTemplate):
             "A study element must only reference study interventions that are referenced by the same study design as the study element.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     ($.**.versions)@$sv.
-    #       $sv.studyDesigns@$sd.
-    #               $sd.elements[$count(studyInterventionIds[$not ($ in $sd.studyInterventionIds)])>0].
-    #                               {
-    #                               "instanceType": instanceType,
-    #                               "id": id,
-    #                               "path": _path,
-    #                               "StudyDesign.id": $sd.id,
-    #                               "StudyDesign.name": $sd.name,
-    #                               "StudyDesign.studyInterventionIds": $sd.studyInterventionIds,
-    #                               "name": name,
-    #                               "Invalid studyInterventionIds": studyInterventionIds[$not ($ in $sd.studyInterventionIds)],
-    #                               "Invalid StudyIntervention.name": "["&$join(studyInterventionIds[$not ($ in $sd.studyInterventionIds)].($oid:=$;$oid&": "&($o:=$sv.studyInterventions[id=$oid];$o?$o.name:"Not defined")),"; ")&"]"
-    #                               }
-
+    # GENERATED — predicate inferred from rule text, please review.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00252: not yet implemented")
+        from usdm4.rules.primitives import any_ids_unresolved
+        data = config["data"]
+        for item in data.instances_by_klass("StudyElement"):
+            raw = item.get("studyInterventions")
+            if raw in (None, "", [], {}):
+                continue
+            ids = raw if isinstance(raw, list) else [raw]
+            for unresolved in any_ids_unresolved(ids, data):
+                self._add_failure(
+                    f"studyInterventions references unresolved id {unresolved!r}",
+                    "StudyElement",
+                    "studyInterventions",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

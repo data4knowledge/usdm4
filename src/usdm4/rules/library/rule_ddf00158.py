@@ -16,23 +16,14 @@ class RuleDDF00158(RuleTemplate):
             "Each defined eligibility criterion must be used by at least one study population or cohort within the same study design.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     ($.**.studyDesigns)@$s.
-    #       $s.eligibilityCriteria@$ec
-    #         [
-    #           $not($ec.id in $append($s.population.criterionIds,$s.population.cohorts.criterionIds))
-    #         ].
-    #         {
-    #           "instanceType": $ec.instanceType,
-    #           "id": $ec.id,
-    #           "path": $ec._path,
-    #           "StudyDesign.id": $s.id,
-    #           "StudyDesign.name": $s.name,
-    #           "name": $ec.name,
-    #           "category": $ec.category.decode,
-    #           "identifier": $ec.identifier
-    #         }
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00158: not yet implemented")
+        data = config["data"]
+        for item in data.instances_by_klass("ObservationalStudyDesign"):
+            if not item.get("criteria"):
+                self._add_failure(
+                    "Required attribute 'criteria' is missing or empty",
+                    "ObservationalStudyDesign",
+                    "criteria",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

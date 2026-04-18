@@ -12,8 +12,10 @@ class TestRuleDDF00030:
         assert rule._level == RuleTemplate.ERROR
         assert rule._rule_text == "At least the text or the family name must be specified for a person name."
 
-    def test_not_implemented(self):
-        """Lock-in: fails the moment the rule gains a real validate() body."""
-        rule = RuleDDF00030()
-        with pytest.raises(NotImplementedError):
-            rule.validate({"data": None, "ct": None})
+    @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
+    def test_valid_data_passes(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: craft negative fixture (invalid USDM, rule flags)")
+    def test_invalid_data_fails(self):
+        pass

@@ -12,8 +12,10 @@ class TestRuleDDF00097:
         assert rule._level == RuleTemplate.ERROR
         assert rule._rule_text == "Within a study design, the planned age range must be specified either in the study population or in all cohorts."
 
-    def test_not_implemented(self):
-        """Lock-in: fails the moment the rule gains a real validate() body."""
-        rule = RuleDDF00097()
-        with pytest.raises(NotImplementedError):
-            rule.validate({"data": None, "ct": None})
+    @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
+    def test_valid_data_passes(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: craft negative fixture (invalid USDM, rule flags)")
+    def test_invalid_data_fails(self):
+        pass

@@ -167,6 +167,58 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00060
+- attribute: plannedAge
+  exception: null
+  klass: StudyDesignPopulation
+  level: Error
+  message: Required attribute 'plannedAge' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyDesignPopulation
+  rule: DDF00097
+  rule_id: DDF00097
+  rule_text: Within a study design, the planned age range must be specified either
+    in the study population or in all cohorts.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00097
+- attribute: plannedSex
+  exception: null
+  klass: StudyDesignPopulation
+  level: Error
+  message: Required attribute 'plannedSex' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyDesignPopulation
+  rule: DDF00098
+  rule_id: DDF00098
+  rule_text: Within a study design, the planned sex must be specified either in the
+    study population or in all cohorts.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00098
+- attribute: plannedCompletionNumber
+  exception: null
+  klass: StudyDesignPopulation
+  level: Error
+  message: Required attribute 'plannedCompletionNumber' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyDesignPopulation
+  rule: DDF00132
+  rule_id: DDF00132
+  rule_text: Within a study design, if a planned completion number is defined, it
+    must be specified either in the study population or in all cohorts.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00132
+- attribute: plannedEnrollmentNumber
+  exception: null
+  klass: StudyDesignPopulation
+  level: Error
+  message: Required attribute 'plannedEnrollmentNumber' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyDesignPopulation
+  rule: DDF00133
+  rule_id: DDF00133
+  rule_text: Within a study design, if a planned enrollment number is defined, it
+    must be specified either in the study population or in all cohorts.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00133
 - attribute: type
   exception: null
   klass: StudyDefinitionDocument
@@ -200,3 +252,16 @@
   status: Exception
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00217
+- attribute: studyType
+  exception: null
+  klass: InterventionalStudyDesign
+  level: Error
+  message: Required attribute 'studyType' is missing or empty
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0]
+  rule: DDF00227
+  rule_id: DDF00227
+  rule_text: An interventional study must be specified using the InterventionalStudyDesign
+    class.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00227

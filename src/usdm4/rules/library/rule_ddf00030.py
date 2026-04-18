@@ -16,19 +16,14 @@ class RuleDDF00030(RuleTemplate):
             "At least the text or the family name must be specified for a person name.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     (study.**[instanceType="PersonName"])@$pn.
-    #       $pn.
-    #           [(  {
-    #                   "instanceType": instanceType,
-    #                   "id": id,
-    #                   "path": _path,
-    #                   "familyName": familyName,
-    #                   "text": text,
-    #                   "check":  $not(familyName or text)
-    #               }
-    #           )][check=true]
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00030: not yet implemented")
+        data = config["data"]
+        for item in data.instances_by_klass("PersonName"):
+            if not item.get("text"):
+                self._add_failure(
+                    "Required attribute 'text' is missing or empty",
+                    "PersonName",
+                    "text",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

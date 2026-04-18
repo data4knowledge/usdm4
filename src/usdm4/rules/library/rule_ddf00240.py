@@ -16,27 +16,20 @@ class RuleDDF00240(RuleTemplate):
             "A procedure must only reference a study intervention that is referenced by the same study design as the activity within which the procedure is defined.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     (study.versions)@$sv.
-    #       $sv.studyDesigns@$sd.
-    #       $sd.activities@$sa.
-    #       $sa.definedProcedures@$sp.
-    #       $sp.
-    #           [studyInterventionId[$ and $not($ in $sd.studyInterventionIds)].
-    #               {
-    #                   "instanceType": $sp.instanceType,
-    #                   "id": $sp.id,
-    #                   "path": $sp._path,
-    #                   "StudyDesign.id": $sd.id,
-    #                   "StudyDesign.name": $sd.name,
-    #                   "StudyDesign.studyInterventionIds": $sd.studyInterventionIds,
-    #                   "Activity.id": $sa.id,
-    #                   "Activity.name": $sa.name,
-    #                   "name": $sp.name,
-    #                   "studyInterventionId": $sp.studyInterventionId,
-    #                   "StudyIntervention.name": $sv.studyInterventions[id=$sp.studyInterventionId].name 
-    #               }]
-
+    # GENERATED — predicate inferred from rule text, please review.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00240: not yet implemented")
+        from usdm4.rules.primitives import any_ids_unresolved
+        data = config["data"]
+        for item in data.instances_by_klass("Procedure"):
+            raw = item.get("studyIntervention")
+            if raw in (None, "", [], {}):
+                continue
+            ids = raw if isinstance(raw, list) else [raw]
+            for unresolved in any_ids_unresolved(ids, data):
+                self._add_failure(
+                    f"studyIntervention references unresolved id {unresolved!r}",
+                    "Procedure",
+                    "studyIntervention",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

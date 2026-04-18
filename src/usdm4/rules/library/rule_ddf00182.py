@@ -16,7 +16,7 @@ class RuleDDF00182(RuleTemplate):
             "Within a study protocol document version, if a date of a specific type exists with a global geographic scope then no other dates are expected with the same type.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
     # Reference — CORE JSONata condition (semantics, not executed):
     #     study@$s.
     #       $s.documentedBy@$sdd.

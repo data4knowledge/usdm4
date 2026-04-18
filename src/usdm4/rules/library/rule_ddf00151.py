@@ -16,6 +16,6 @@ class RuleDDF00151(RuleTemplate):
             "If geographic scope type is global then there must be only one geographic scope specified.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
     def validate(self, config: dict) -> bool:
         raise NotImplementedError("DDF00151: not yet implemented")

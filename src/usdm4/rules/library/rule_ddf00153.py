@@ -16,7 +16,7 @@ class RuleDDF00153(RuleTemplate):
             "A planned duration is expected for the main timeline.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. MED_TEXT format: no specific format kind identified
     # Reference — CORE JSONata condition (semantics, not executed):
     #     (study.versions.studyDesigns)@$sd.
     #       $sd.scheduleTimelines@$st.

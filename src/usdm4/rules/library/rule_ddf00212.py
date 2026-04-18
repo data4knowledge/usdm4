@@ -16,7 +16,7 @@ class RuleDDF00212(RuleTemplate):
             "If 'appliesTo' is specified for a product organization role, then the product organization role must only apply to medical devices or administrable products.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
     # Reference — CORE JSONata condition (semantics, not executed):
     #     (study.versions)@$sv.
     #       $sv.productOrganizationRoles@$pr.

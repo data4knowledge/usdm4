@@ -16,6 +16,20 @@ class RuleDDF00072(RuleTemplate):
             "A study cell must only reference an epoch that is defined within the same study design as the study cell.",
         )
 
-    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # GENERATED — predicate inferred from rule text, please review.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00072: not yet implemented")
+        from usdm4.rules.primitives import any_ids_unresolved
+        data = config["data"]
+        for item in data.instances_by_klass("StudyCell"):
+            raw = item.get("epoch")
+            if raw in (None, "", [], {}):
+                continue
+            ids = raw if isinstance(raw, list) else [raw]
+            for unresolved in any_ids_unresolved(ids, data):
+                self._add_failure(
+                    f"epoch references unresolved id {unresolved!r}",
+                    "StudyCell",
+                    "epoch",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()
