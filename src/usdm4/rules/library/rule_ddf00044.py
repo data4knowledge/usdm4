@@ -1,4 +1,4 @@
-from usdm3.rules.library.rule_template import RuleTemplate
+from usdm4.rules.rule_template import RuleTemplate
 
 
 class RuleDDF00044(RuleTemplate):

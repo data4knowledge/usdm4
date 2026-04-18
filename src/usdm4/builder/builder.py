@@ -16,11 +16,11 @@ from usdm4.api.study_version import StudyVersion
 from usdm4.api.biomedical_concept import BiomedicalConcept
 from usdm4.api import __all__ as v4_classes
 from usdm4.__info__ import __model_version__, __package_version__
-from usdm3.base.id_manager import IdManager
-from usdm3.base.api_instance import APIInstance
-from usdm3.ct.cdisc.library import Library as CdiscCTLibrary
-from usdm3.bc.cdisc.library import Library as CdiscBCLibrary
-from usdm3.data_store.data_store import DataStore
+from usdm4.base.id_manager import IdManager
+from usdm4.base.api_instance import APIInstance
+from usdm4.ct.cdisc.library import Library as CdiscCTLibrary
+from usdm4.bc.cdisc.library import Library as CdiscBCLibrary
+from usdm4.data_store.data_store import DataStore
 from usdm4.ct.iso.iso3166.library import Library as Iso3166Library
 from usdm4.ct.iso.iso639.library import Library as Iso639Library
 from usdm4.builder.cross_reference import CrossReference
