@@ -1,3 +1,9 @@
+# MANUAL: do not regenerate
+#
+# Twin of DDF00238 but for Strength.denominator. CORE condition:
+#   $exists(denominator.id) and (!$exists(denominator.unit) or unit=null)
+# i.e. denominator is "specified" when it has an id; once specified, its
+# unit attribute must be non-empty.
 from usdm4.rules.rule_template import RuleTemplate
 
 
@@ -16,27 +22,20 @@ class RuleDDF00186(RuleTemplate):
             "If a strength denominator is specified, it must have a unit.",
         )
 
-    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     (study.versions.administrableProducts)@$ap.
-    #       $ap.ingredients@$in.
-    #       $in.substance@$su.
-    #       $su.**.strengths@$st.
-    #       $st.
-    #           [(
-    #                   {
-    #                       "instanceType": $st.instanceType,
-    #                       "id": $st.id,
-    #                       "path": $st._path,
-    #                       "Ingredient.id": $in.id,
-    #                       "Substance.id": $su.id,
-    #                       "Substance.name": $su.name,
-    #                       "name": $st.name,
-    #                       "denominator.id": $st.denominator.id,
-    #                       "denominator.value": $st.denominator.value,
-    #                       "check": $exists($st.denominator.id) and ($exists($st.denominator.unit)=false or $st.denominator.unit=null)
-    #                   }
-    #           )][check=true]
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00186: not yet implemented")
+        data = config["data"]
+        for strength in data.instances_by_klass("Strength"):
+            denominator = strength.get("denominator")
+            if not isinstance(denominator, dict):
+                continue
+            # "specified" per CORE = has an id
+            if not denominator.get("id"):
+                continue
+            if not denominator.get("unit"):
+                self._add_failure(
+                    "Strength.denominator is specified but has no unit",
+                    "Strength",
+                    "denominator",
+                    data.path_by_id(strength["id"]),
+                )
+        return self._result()

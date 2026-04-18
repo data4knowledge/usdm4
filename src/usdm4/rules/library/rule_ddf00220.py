@@ -1,4 +1,13 @@
+# MANUAL: do not regenerate
+#
+# Twin of DDF00219 on `subTypes`. Distinct `code` values expected within
+# each study design's subTypes list.
+from collections import Counter
+
 from usdm4.rules.rule_template import RuleTemplate
+
+
+SCOPE_CLASSES = ["InterventionalStudyDesign", "ObservationalStudyDesign"]
 
 
 class RuleDDF00220(RuleTemplate):
@@ -16,26 +25,22 @@ class RuleDDF00220(RuleTemplate):
             "Within a study design, if more sub types are defined, they must be distinct.",
         )
 
-    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     study.versions.studyDesigns.
-    #       (
-    #         subTypes
-    #           {
-    #               code: $count(id)>1?"["&$join($.(id&": "&decode&" ("&code&")"),"; ")&"]"
-    #           } ~>
-    #         $each(
-    #           function($v){
-    #             {
-    #               "instanceType": instanceType,
-    #               "id": id,
-    #               "path": _path,
-    #               "name": name,
-    #               "subTypes": $v
-    #             }
-    #           }
-    #         )
-    #       )  
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00220: not yet implemented")
+        data = config["data"]
+        for klass in SCOPE_CLASSES:
+            for design in data.instances_by_klass(klass):
+                entries = design.get("subTypes") or []
+                codes = [
+                    entry.get("code")
+                    for entry in entries
+                    if isinstance(entry, dict) and entry.get("code")
+                ]
+                duplicates = [c for c, n in Counter(codes).items() if n > 1]
+                if duplicates:
+                    self._add_failure(
+                        f"{klass}.subTypes has duplicate code(s): {', '.join(duplicates)}",
+                        klass,
+                        "subTypes",
+                        data.path_by_id(design["id"]),
+                    )
+        return self._result()

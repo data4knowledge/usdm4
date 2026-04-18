@@ -1,3 +1,7 @@
+# MANUAL: do not regenerate
+#
+# For each BiomedicalConcept, no entry in `synonyms` (case-insensitive)
+# may equal its `label`. synonyms is a list of strings on BC in USDM.
 from usdm4.rules.rule_template import RuleTemplate
 
 
@@ -16,20 +20,21 @@ class RuleDDF00236(RuleTemplate):
             "If a synonym is specified then it is not expected to be equal to the label of the biomedical concept (case insensitive).",
         )
 
-    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     (study.versions.biomedicalConcepts)@$bc.
-    #       $bc.
-    #           [(  {
-    #                   "instanceType": instanceType,
-    #                   "id": id,
-    #                   "path": _path,
-    #                   "name": name,
-    #                   "label/synonym": label,
-    #                   "synonyms": "["&$join(synonyms,", ")&"]",
-    #                   "check":  $exists($filter(synonyms,function($v){($lowercase($v) =$lowercase(label))}) )
-    #               }
-    #           )][check=true]
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00236: not yet implemented")
+        data = config["data"]
+        for bc in data.instances_by_klass("BiomedicalConcept"):
+            label = bc.get("label")
+            synonyms = bc.get("synonyms") or []
+            if not isinstance(label, str) or not label:
+                continue
+            label_lower = label.lower()
+            for synonym in synonyms:
+                if isinstance(synonym, str) and synonym.lower() == label_lower:
+                    self._add_failure(
+                        f"BiomedicalConcept synonym {synonym!r} equals the label (case-insensitive)",
+                        "BiomedicalConcept",
+                        "synonyms",
+                        data.path_by_id(bc["id"]),
+                    )
+                    break
+        return self._result()
