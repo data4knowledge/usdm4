@@ -148,6 +148,33 @@ rules have rule-specific shapes and a narrow translator hits its ceiling
 fast. Still worthwhile because the translated bodies are idiomatic Python,
 not runtime JSONata.
 
+### Predicate dispatch extends MED_TEXT coverage with review-flagged code
+
+MED_TEXT rules have CORE conditions as JSONata strings the narrow
+translator can't parse — but the rule *text* matched a known idiom during
+stage 1, so the YAML carries a text-inferred `predicate` plus class /
+attribute / scope. Stage 2 dispatches MED_TEXT by predicate the same way
+HIGH_* dispatches by classification, reusing the same body renderers
+(`render_body_required_attribute`, `render_body_unique`, etc.) plus two
+new ones (`render_body_idref`, `render_body_mutex_listed_attrs`).
+
+Generated code from text-inferred predicates carries a
+`# GENERATED — predicate inferred from rule text, please review.` header
+so the reviewer knows the confidence is lower than structured-CORE
+generation.
+
+Coverage delta from one dispatch extension:
+
+- 15 / 15 `required-attribute` → real
+- 11 / 11 `id-reference-resolves` → real
+-  4 /  7 `unique-within-scope` → real (3 stubbed, no scope in YAML)
+-  0 /  2 `format` → stub (format kind wasn't ISO 8601 duration)
+-  0 /  2 `mutual-exclusion` → stub (needed ≥ 2 attrs, had only 1)
+-  0 / 24 `conditional` → stub (rule-specific "if X then Y", no template)
+
+~30 rules moved from stub to generated body in one pass. The `conditional`
+bucket is the honest ceiling — each one is bespoke logic.
+
 ### Generator pitfalls
 
 - **CORE's `instance_type` ≠ xlsx entity.** CORE walks into child classes
@@ -164,6 +191,13 @@ not runtime JSONata.
 - **JSONata variable leakage.** If the stage-1 attribute starts with `$`,
   the extractor picked up a JSONata variable name by mistake. Treat as
   unresolved and stub.
+- **Text classifiers fold "at least one of A or B" into "required A".**
+  The `required-attribute` regex matches "must be specified" which also
+  appears in "at least X or Y must be specified". DDF00030 ("At least
+  the text or the family name must be specified for a person name") was
+  generated as a required-attribute check on `text` only, missing the
+  alternation. Generated code is a starting point; the
+  `# GENERATED — please review` header is doing real work.
 
 ## 6. Debugging patterns that paid off repeatedly
 
@@ -182,3 +216,106 @@ not runtime JSONata.
   flag required to replace. The tests/usdm4/rules/test_rule_ddf00105.py
   file had a sophisticated hand-authored mock-based test; a naïve
   regeneration would have lost it silently.
+
+## 7. Authoritative sources for CT codelist bindings
+
+When generating rules that call `_ct_check(config, class, attribute)`, the
+hard question is *which codelist does values of this attribute draw from?*
+Three sources can answer, and they answer different questions:
+
+- **`DDF-RA/Deliverables/UML/dataStructure.yml`** gives the attribute's
+  *own concept* NCI C-code. For `Timing.relativeToFrom` the UML says
+  `NCI C-Code: C201297` — that's "Timing Relative To From" (the attribute
+  name concept), **not** the codelist the values come from. Using this
+  as a codelist binding is wrong — I tripped on this.
+- **`DDF-RA/Deliverables/CT/USDM_CT.xlsx`**, sheet `DDF Entities&Attributes`,
+  column `Codelist URL` — this *is* the authoritative binding. For
+  `Timing.relativeToFrom` the URL is
+  `https://evsexplore.semantics.cancer.gov/.../C201265`. Extract the
+  `C#####` from the URL. Only 55 of the ~255 attributes carry a URL;
+  the rest don't have a controlled value-set.
+- **CORE rule text**, e.g. `"... (C201265) DDF codelist"`. Regex out
+  `\((C\d+)\)` from rule text. Usually agrees with USDM_CT.xlsx when
+  both are populated.
+
+**Preferred pipeline:** extract the C-code from rule text (regex over
+xlsx source text); validate with USDM_CT.xlsx if available; never treat
+UML's attribute NCI code as a codelist binding.
+
+### Three conditions must all hold for a CT rule to run
+
+`ct_config.yaml` has two sections with a silent precondition between
+them:
+
+1. The `klass_attribute_mapping` entry registers the `(class, attribute,
+   codelist)` triple.
+2. The codelist must appear in the top-level `code_lists:` list so the
+   CT library loads its terms at init.
+3. The codelist must actually be published in one of the loaded CDISC
+   packages (`ddfct`, `sdtmct`, `protocolct`). Adding `C215479` to
+   `code_lists:` when it isn't in any cached CDISC package fails: either
+   silently (lookup returns None → `_ct_check` raises `CTException`) or
+   loudly (CT library tries to fetch from CDISC Library API at load
+   time → network call → ProxyError in offline environments).
+
+All three conditions were satisfied for our 8 config additions. When
+testing a new codelist, refresh the CT cache first; the library needs
+the data before code-gen can rely on it.
+
+### UML cross-check has a different job
+
+`dataStructure.yml` doesn't give the codelist binding, but it does
+validate whether `(class, attribute)` exists at all. Two of my initial
+10 proposals — `StudyIntervention.productDesignation` and
+`StudyDesignPopulation.unit` — failed this check: the attribute doesn't
+exist on the stated class. Rule DDF00210 is really about
+`AdministrableProduct.productDesignation` (CORE walked through the
+wrong parent); DDF00237 targets `Quantity.unit` nested in `plannedAge`.
+UML caught both as stage-1 class-identification bugs before I shipped
+bad config.
+
+**Workflow:** use USDM_CT.xlsx as the primary codelist source; use UML
+as a validator that the (class, attribute) actually exists in the model.
+
+## 8. Coverage realism — don't over-promise
+
+After all the generator infrastructure (stage-1 YAML, stage-2 dispatch,
+JSONata translator, MED_TEXT predicate dispatch, HAS_IMPLEMENTATION
+preservation, CT codelist precheck, CT config extended with 8 new
+(class, attribute) bindings), **92 of 210 V4 rules have real
+implementations** (~44 %). The remaining 118 fall into predictable buckets:
+
+- 62 LOW_CUSTOM — rule-specific logic the JSONata translator can't help with
+- 31 MED_TEXT stubs — mostly `predicate: conditional` (24), plus smaller
+  edge cases (format kind not ISO 8601, uniqueness without scope, etc.)
+- 17 HIGH_CT_MEMBER — class / attribute pair has no registered CT
+  codelist; several of these are stage-1 bugs where CORE's condition
+  walked into `codeSystemVersion` of a nested Code object and the
+  extractor took that as the attribute. Salvageable with a stage-2
+  fallback that prefers the xlsx "Attributes" column when CORE's
+  attribute is `codeSystemVersion`.
+- 4 STUB — not in CORE at all
+- 3 HIGH_UNIQUE_WITHIN_SCOPE — scope not inferable from CORE or rule text
+- 1 HIGH_FORMAT — format kind not identified
+
+Getting from 92 to, say, 150 means domain-knowledge hand-authoring per
+rule, not more generator engineering. The generator ceiling for rules of
+this shape is roughly 45 %. Know this going in; don't chase an 80 % auto-
+generation target — you'll either produce quietly-wrong rules or spend
+exponentially more effort for diminishing returns.
+
+**Fixture quality and validation development are co-work.** As rules go
+from stub to active, test fixtures that passed quietly start flagging
+real data issues (placeholder codes like `C12345`, literal string
+`"Decode"`, null values serialised as `"None"`). Plan for a
+regenerate-expected-errors pass after each substantial generator run,
+and expect a few tests to need fixture updates rather than code fixes.
+
+**CT cache refreshes create their own failures.** Tests that pin a
+specific CT package version (hardcoded dates like `"2025-09-26"` or
+fixture JSONs generated against a specific package) break when the
+cache is refreshed to a newer package. This isn't a regression in the
+code under test — it's test-data drift. Either make the assertion
+version-agnostic (check format rather than the date string), regenerate
+the fixture at the new version via a `SAVE=True` pattern, or pin the
+test to a specific CT package version if snapshotting matters.

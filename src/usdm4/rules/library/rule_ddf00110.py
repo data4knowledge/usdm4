@@ -16,6 +16,5 @@ class RuleDDF00110(RuleTemplate):
             "An eligibility criterion's category must be specified using the Category of Inclusion/Exclusion (C66797) SDTM codelist.",
         )
 
-    # TODO: implement. HIGH_CT_MEMBER with no CT codelist registered for ('EligibilityCriterion', 'category'). Update ct_config.yaml or revise the rule's class/attribute before implementing.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00110: not yet implemented")
+        return self._ct_check(config, "EligibilityCriterion", "category")

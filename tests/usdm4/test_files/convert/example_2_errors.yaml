@@ -671,6 +671,126 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00217
+- attribute: unit
+  exception: null
+  klass: Quantity
+  level: Error
+  message: Invalid code and decode 'None' and 'None', neither the code and decode
+    are in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyDesignPopulation.StudyCohort[0].Range.Quantity
+  rule: DDF00233
+  rule_id: DDF00233
+  rule_text: A unit must be coded according to the extensible unit (C71620) SDTM codelist
+    (e.g. an entry with a code or decode used from the codelist should be consistent
+    with the full entry in the codelist).
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00233
+- attribute: unit
+  exception: null
+  klass: Quantity
+  level: Error
+  message: Invalid code and decode 'None' and 'None', neither the code and decode
+    are in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyDesignPopulation.StudyCohort[1].Range.Quantity
+  rule: DDF00233
+  rule_id: DDF00233
+  rule_text: A unit must be coded according to the extensible unit (C71620) SDTM codelist
+    (e.g. an entry with a code or decode used from the codelist should be consistent
+    with the full entry in the codelist).
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00233
+- attribute: unit
+  exception: null
+  klass: Quantity
+  level: Error
+  message: Invalid code and decode 'None' and 'None', neither the code and decode
+    are in the codelist
+  path: $.Study.StudyVersion[0].StudyIntervention[0].Quantity
+  rule: DDF00233
+  rule_id: DDF00233
+  rule_text: A unit must be coded according to the extensible unit (C71620) SDTM codelist
+    (e.g. an entry with a code or decode used from the codelist should be consistent
+    with the full entry in the codelist).
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00233
+- attribute: unit
+  exception: null
+  klass: Quantity
+  level: Error
+  message: Invalid code and decode 'None' and 'None', neither the code and decode
+    are in the codelist
+  path: $.Study.StudyVersion[0].StudyIntervention[0].Administration[0].Duration.Quantity
+  rule: DDF00233
+  rule_id: DDF00233
+  rule_text: A unit must be coded according to the extensible unit (C71620) SDTM codelist
+    (e.g. an entry with a code or decode used from the codelist should be consistent
+    with the full entry in the codelist).
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00233
+- attribute: unit
+  exception: null
+  klass: Quantity
+  level: Error
+  message: Invalid code and decode 'None' and 'None', neither the code and decode
+    are in the codelist
+  path: $.Study.StudyVersion[0].StudyIntervention[0].Administration[0].Quantity
+  rule: DDF00233
+  rule_id: DDF00233
+  rule_text: A unit must be coded according to the extensible unit (C71620) SDTM codelist
+    (e.g. an entry with a code or decode used from the codelist should be consistent
+    with the full entry in the codelist).
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00233
+- attribute: unit
+  exception: null
+  klass: Quantity
+  level: Error
+  message: Invalid code and decode 'None' and 'None', neither the code and decode
+    are in the codelist
+  path: $.Study.StudyVersion[0].StudyIntervention[1].Quantity
+  rule: DDF00233
+  rule_id: DDF00233
+  rule_text: A unit must be coded according to the extensible unit (C71620) SDTM codelist
+    (e.g. an entry with a code or decode used from the codelist should be consistent
+    with the full entry in the codelist).
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00233
+- attribute: unit
+  exception: null
+  klass: Quantity
+  level: Error
+  message: Invalid code and decode 'None' and 'None', neither the code and decode
+    are in the codelist
+  path: $.Study.StudyVersion[0].StudyIntervention[1].Administration[0].Duration.Quantity
+  rule: DDF00233
+  rule_id: DDF00233
+  rule_text: A unit must be coded according to the extensible unit (C71620) SDTM codelist
+    (e.g. an entry with a code or decode used from the codelist should be consistent
+    with the full entry in the codelist).
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00233
+- attribute: unit
+  exception: null
+  klass: Quantity
+  level: Error
+  message: Invalid code and decode 'None' and 'None', neither the code and decode
+    are in the codelist
+  path: $.Study.StudyVersion[0].StudyIntervention[1].Administration[0].Quantity
+  rule: DDF00233
+  rule_id: DDF00233
+  rule_text: A unit must be coded according to the extensible unit (C71620) SDTM codelist
+    (e.g. an entry with a code or decode used from the codelist should be consistent
+    with the full entry in the codelist).
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00233
 - attribute: criterionItem
   exception: null
   klass: EligibilityCriterion

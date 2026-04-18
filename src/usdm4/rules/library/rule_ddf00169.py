@@ -16,6 +16,5 @@ class RuleDDF00169(RuleTemplate):
             "A study definition document version's status must be specified using the status Value Set Terminology (C188723) DDF codelist.",
         )
 
-    # TODO: implement. HIGH_CT_MEMBER with no CT codelist registered for ('StudyDefinitionDocumentVersion', 'status'). Update ct_config.yaml or revise the rule's class/attribute before implementing.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00169: not yet implemented")
+        return self._ct_check(config, "StudyDefinitionDocumentVersion", "status")

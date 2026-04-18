@@ -5,7 +5,7 @@ C123650:
   name: Tumor or Lesion Identification Test Results
   preferredTerm: CDISC SDTM Tumor and Lesion Identification Test Result Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: TUIDRS
   synonyms:
@@ -188,7 +188,7 @@ C124309:
   name: Tumor or Lesion Properties Test Result
   preferredTerm: CDISC SDTM Tumor or Lesion Properties Test Result Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: TRPROPRS
   synonyms:
@@ -282,12 +282,6 @@ C124309:
     definition: Being or existing in a specified place or at the specified time. (NCI)
     preferredTerm: Present
     submissionValue: PRESENT
-  - conceptId: C94525
-    definition: An indication that multiple tumors have coalesced into one tumor.
-    preferredTerm: Matted Tumor Mass Present
-    submissionValue: TUMOR MERGED
-    synonyms:
-    - Tumor Merged
   - conceptId: C71687
     definition: In an unchanged or similar condition.
     preferredTerm: Unchanged
@@ -296,6 +290,52 @@ C124309:
     definition: Leaving no doubt; not open to question. (NCI)
     preferredTerm: Unequivocal
     submissionValue: UNEQUIVOCAL
+C127259:
+  conceptId: C127259
+  definition: A terminology codelist relevant to the trial design developed to compare
+    biomedical and/or health outcomes in pre-defined and non-assigned groups of individuals.
+  extensible: 'true'
+  name: Observational Study Model
+  preferredTerm: CDISC SDTM Observational Study Model Terminology
+  source:
+    effective_date: '2026-03-27'
+    package: sdtmct
+  submissionValue: OBSSMO
+  synonyms:
+  - Observational Study Model
+  terms:
+  - conceptId: C15197
+    definition: Retrospective study in which individuals with an outcome (cases) are
+      compared to those who do not have the outcome (controls). (CDISC Glossary)
+    preferredTerm: Case-Control Study
+    submissionValue: CASE CONTROL
+  - conceptId: C127779
+    definition: A study in which the subject characteristics of the case, immediately
+      prior to disease onset (sometimes called the hazard period), are compared to
+      characteristics of same case at a prior time (i.e., control period). (ClinicalTrials.gov)
+    preferredTerm: Observational Case-Crossover Study
+    submissionValue: CASE CROSSOVER
+  - conceptId: C15362
+    definition: A study in which the subject with the condition under study (the case)
+      is compared against a theoretical/historical model of distribution that serves
+      as a control.
+    preferredTerm: Case Study
+    submissionValue: CASE ONLY
+  - conceptId: C15208
+    definition: Study of a group of individuals, some of whom are exposed to a variable
+      of interest, in which subjects are followed over time. (CDISC Glossary)
+    preferredTerm: Cohort Study
+    submissionValue: COHORT
+  - conceptId: C127780
+    definition: A study in which geographically distinct study populations are compared
+      with respect to a particular outcome.
+    preferredTerm: Ecologic or Community Based Study
+    submissionValue: ECOLOGIC OR COMMUNITY
+  - conceptId: C15407
+    definition: A study in which related or non-related family members are compared
+      with respect to a particular outcome.
+    preferredTerm: Family Study
+    submissionValue: FAMILY BASED
 C127260:
   conceptId: C127260
   definition: A terminology codelist relevant to the sampling method used to assign
@@ -304,7 +344,7 @@ C127260:
   name: Observational Study Sampling Method
   preferredTerm: CDISC SDTM Observational Study Sampling Method Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: OBSSSM
   synonyms:
@@ -331,7 +371,7 @@ C127261:
   name: Observational Study Time Perspective
   preferredTerm: CDISC SDTM Observational Study Time Perspective Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: OBSSTP
   synonyms:
@@ -360,7 +400,7 @@ C127262:
   name: Environmental Setting
   preferredTerm: CDISC SDTM Environmental Setting Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: SETTING
   synonyms:
@@ -456,7 +496,7 @@ C171445:
   name: Mode of Subject Contact
   preferredTerm: CDISC SDTM Mode of Subject Contact Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: CNTMODE
   synonyms:
@@ -511,13 +551,13 @@ C171445:
     submissionValue: TEXT MESSAGE
 C174222:
   conceptId: C174222
-  definition: The terminology relevant to the identification of the kind of arm.
+  definition: The terminology relevant to the study arm type value set.
   extensible: 'true'
   name: Study Arm Type Value Set Terminology
-  preferredTerm: CDISC Protocol Study Arm Type Value Set Terminology
+  preferredTerm: CDISC DDF Study Arm Type Value Set Terminology
   source:
-    effective_date: '2025-09-26'
-    package: protocolct
+    effective_date: '2026-03-27'
+    package: ddfct
   submissionValue: Study Arm Type Value Set Terminology
   synonyms:
   - Study Arm Type Value Set Terminology
@@ -567,7 +607,7 @@ C188723:
   name: Study Definition Document Version Value Set Terminology
   preferredTerm: CDISC DDF Study Definition Document Version Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Study Definition Document Version Value Set Terminology
   synonyms:
@@ -604,7 +644,7 @@ C188724:
   name: Organization Type Value Set Terminology
   preferredTerm: CDISC DDF Organization Type Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Organization Type Value Set Terminology
   synonyms:
@@ -666,7 +706,7 @@ C188725:
   name: Objective Level Value Set Terminology
   preferredTerm: CDISC DDF Objective Level Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Objective Level Value Set Terminology
   synonyms:
@@ -703,7 +743,7 @@ C188726:
   name: Endpoint Level Value Set Terminology
   preferredTerm: CDISC DDF Endpoint Level Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Endpoint Level Value Set Terminology
   synonyms:
@@ -735,7 +775,7 @@ C188727:
   name: Study Arm Data Origin Type Value Set Terminology
   preferredTerm: CDISC DDF Study Arm Data Origin Type Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Study Arm Data Origin Type Value Set Terminology
   synonyms:
@@ -775,7 +815,7 @@ C188728:
   name: Encounter Type Value Set Terminology
   preferredTerm: CDISC DDF Encounter Type Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Encounter Type Value Set Terminology
   synonyms:
@@ -793,7 +833,7 @@ C201264:
   name: Timing Type Value Set Terminology
   preferredTerm: CDISC DDF Timing Type Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Timing Type Value Set Terminology
   synonyms:
@@ -821,7 +861,7 @@ C201265:
   name: Timing Relative To From Value Set Terminology
   preferredTerm: CDISC DDF Timing Relative To From Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Timing Relative To From Value Set Terminology
   synonyms:
@@ -854,7 +894,7 @@ C207412:
   name: Geographic Scope Type Value Set Terminology
   preferredTerm: CDISC DDF Geographic Scope Type Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Geographic Scope Type Value Set Terminology
   synonyms:
@@ -881,7 +921,7 @@ C207413:
   name: Governance Date Type Value Set Terminology
   preferredTerm: CDISC DDF Governance Date Type Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Governance Date Type Value Set Terminology
   synonyms:
@@ -909,7 +949,7 @@ C207415:
   name: Study Amendment Reason Code Value Set Terminology
   preferredTerm: CDISC DDF Study Amendment Reason Code Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Study Amendment Reason Code Value Set Terminology
   synonyms:
@@ -1003,7 +1043,7 @@ C207416:
   name: Study Design Characteristics Value Set Terminology
   preferredTerm: CDISC DDF Study Design Characteristics Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Study Design Characteristics Value Set Terminology
   synonyms:
@@ -1063,7 +1103,7 @@ C207417:
   name: Study Intervention Role Value Set Terminology
   preferredTerm: CDISC DDF Study Intervention Role Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Study Intervention Role Value Set Terminology
   synonyms:
@@ -1138,7 +1178,7 @@ C207418:
   name: Product Designation Value Set Terminology
   preferredTerm: CDISC DDF Product Designation Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Product Designation Value Set Terminology
   synonyms:
@@ -1166,7 +1206,7 @@ C207419:
   name: Study Title Type Value Set Terminology
   preferredTerm: CDISC DDF Study Title Type Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Study Title Type Value Set Terminology
   synonyms:
@@ -1207,7 +1247,7 @@ C215477:
   name: Study Definition Document Type Value Set Terminology
   preferredTerm: CDISC DDF Study Definition Document Type Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Study Definition Document Type Value Set Terminology
   synonyms:
@@ -1226,7 +1266,7 @@ C215478:
   name: Reference Identifier Type Value Set Terminology
   preferredTerm: CDISC DDF Reference Identifier Type Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Reference Identifier Type Value Set Terminology
   synonyms:
@@ -1249,6 +1289,27 @@ C215478:
     submissionValue: Pediatric Investigation Plan
     synonyms:
     - PIP
+C215479:
+  conceptId: C215479
+  definition: The terminology relevant to the administrable product property type
+    value set.
+  extensible: 'true'
+  name: Administrable Product Property Type Value Set Terminology
+  preferredTerm: CDISC DDF Administrable Product Property Type Value Set Terminology
+  source:
+    effective_date: '2026-03-27'
+    package: ddfct
+  submissionValue: Administrable Product Property Type Value Set Terminology
+  synonyms:
+  - Administrable Product Property Type Value Set Terminology
+  terms:
+  - conceptId: C45997
+    definition: The negative logarithm (base 10) of the concentration of hydronium
+      ions, which is used as a measure of the acidity or alkalinity of a fluid.
+    preferredTerm: pH
+    submissionValue: pH
+    synonyms:
+    - pH
 C215480:
   conceptId: C215480
   definition: The terminology relevant to the study role code terminology value set.
@@ -1256,7 +1317,7 @@ C215480:
   name: Study Role Code Value Set Terminology
   preferredTerm: CDISC DDF Study Role Code Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Study Role Code Value Set Terminology
   synonyms:
@@ -1352,7 +1413,7 @@ C215480:
     preferredTerm: Sponsor Medical Expert
     submissionValue: Medical Expert
   - conceptId: C207599
-    definition: The individual who evaluates the outcome(s) of interest. (Clinicaltrials.gov)
+    definition: The individual who evaluates the outcome(s) of interest.
     preferredTerm: Outcomes Assessor
     submissionValue: Outcomes Assessor
   - conceptId: C215673
@@ -1414,7 +1475,7 @@ C215481:
   name: Study Amendment Impact Type Value Set Terminology
   preferredTerm: CDISC DDF Study Amendment Impact Type Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Study Amendment Impact Type Value Set Terminology
   synonyms:
@@ -1453,7 +1514,7 @@ C215483:
   name: Administrable Product Sourcing Value Set Terminology
   preferredTerm: CDISC DDF Administrable Product Sourcing Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Administrable Product Sourcing Value Set Terminology
   synonyms:
@@ -1467,6 +1528,54 @@ C215483:
     definition: An indication that the entity is obtained from a local source.
     preferredTerm: Locally Sourced Indicator
     submissionValue: Locally Sourced
+C215484:
+  conceptId: C215484
+  definition: The terminology relevant to the medical device identifier type value
+    set.
+  extensible: 'true'
+  name: Medical Device Identifier Type Value Set Terminology
+  preferredTerm: CDISC DDF Medical Device Identifier Type Value Set Terminology
+  source:
+    effective_date: '2026-03-27'
+    package: ddfct
+  submissionValue: Medical Device Identifier Type Value Set Terminology
+  synonyms:
+  - Medical Device Identifier Type Value Set Terminology
+  terms:
+  - conceptId: C104504
+    definition: A distinctive alpha-numeric identification code assigned by the manufacturer
+      or distributor to a specific quantity of manufactured material or product that
+      is produced in a manner that is expected to render it homogeneous.
+    preferredTerm: Batch Number
+    submissionValue: Batch Number
+    synonyms:
+    - Batch Identifier
+    - Batch Number
+  - conceptId: C112279
+    definition: A UDI is a unique numeric or alphanumeric code that includes a device
+      identifier, which is specific to a device model, and a production identifier,
+      which includes the current production information for that specific device,
+      such as the lot or batch number, the serial number and/or expiration date. (FDA)
+    preferredTerm: FDA Unique Device Identifier
+    submissionValue: FDA Unique Device Identification
+    synonyms:
+    - FDA Unique Device Identification
+  - conceptId: C70848
+    definition: A short sequence of characters assigned by the manufacturer or distributor
+      to a specific quantity of manufactured material or product.
+    preferredTerm: Lot Number
+    submissionValue: Lot Number
+    synonyms:
+    - Lot Identifier
+    - Lot Number
+  - conceptId: C99285
+    definition: The identifier assigned to a particular design of a device, usually
+      an alphanumeric text string.
+    preferredTerm: Model Number
+    submissionValue: Model Number
+    synonyms:
+    - Model Identifier
+    - Model Number
 C215485:
   conceptId: C215485
   definition: The terminology relevant to the product organization role code value
@@ -1475,7 +1584,7 @@ C215485:
   name: Product Organization Role Code Value Set Terminology
   preferredTerm: CDISC DDF Product Organization Role Code Value Set Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: ddfct
   submissionValue: Product Organization Role Code Value Set Terminology
   synonyms:
@@ -1501,7 +1610,7 @@ C66726:
   name: Dosage Form
   preferredTerm: CDISC SDTM Dosage Form Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: FRM
   synonyms:
@@ -2721,7 +2830,7 @@ C66728:
   name: Relation to Reference Period
   preferredTerm: CDISC SDTM Relation to Reference Period Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: STENRF
   synonyms:
@@ -2775,7 +2884,7 @@ C66729:
   name: Route of Administration Response
   preferredTerm: CDISC SDTM Route of Administration Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: ROUTE
   synonyms:
@@ -3417,7 +3526,7 @@ C66732:
   name: Sex of Participants Response
   preferredTerm: CDISC SDTM Sex of Study Group Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: SEXPOP
   synonyms:
@@ -3454,7 +3563,7 @@ C66733:
   name: Size Response
   preferredTerm: CDISC SDTM Size Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: SIZE
   synonyms:
@@ -3483,7 +3592,7 @@ C66735:
   name: Trial Blinding Schema Response
   preferredTerm: CDISC SDTM Trial Blinding Schema Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: TBLIND
   synonyms:
@@ -3531,7 +3640,7 @@ C66736:
   name: Trial Intent Type Response
   preferredTerm: CDISC SDTM Trial Indication Type Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: TINDTP
   synonyms:
@@ -3614,7 +3723,7 @@ C66737:
   name: Trial Phase Response
   preferredTerm: CDISC SDTM Trial Phase Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: TPHASE
   synonyms:
@@ -3808,7 +3917,7 @@ C66739:
   name: Trial Type Response
   preferredTerm: CDISC SDTM Trial Type Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: TTYPE
   synonyms:
@@ -3999,7 +4108,7 @@ C66742:
   name: No Yes Response
   preferredTerm: CDISC SDTM Yes No Unknown or Not Applicable Response Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: NY
   synonyms:
@@ -4040,7 +4149,7 @@ C66770:
   name: Units for Vital Signs Results
   preferredTerm: CDISC SDTM Unit for Vital Sign Result Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: VSRESU
   synonyms:
@@ -4276,7 +4385,7 @@ C66797:
   name: Category of Inclusion/Exclusion
   preferredTerm: CDISC SDTM Category for Inclusion And Or Exclusion Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: IECAT
   synonyms:
@@ -4299,7 +4408,7 @@ C71113:
   name: Frequency
   preferredTerm: CDISC SDTM Frequency Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: FREQ
   synonyms:
@@ -4920,7 +5029,7 @@ C71148:
   name: Position
   preferredTerm: CDISC SDTM Body Position Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: POSITION
   synonyms:
@@ -5045,7 +5154,7 @@ C71620:
   name: Unit
   preferredTerm: CDISC SDTM Unit of Measure Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: UNIT
   synonyms:
@@ -6090,6 +6199,7 @@ C71620:
     - G/L
     - GI/L
     - Giga per Liter
+    - Giga/L
     - K/cumm
     - Thou/mcL
   - conceptId: C198388
@@ -7195,6 +7305,13 @@ C71620:
     submissionValue: dyn*s/cm5
     synonyms:
     - dyne*sec/cm5
+  - conceptId: C225759
+    definition: A dosing measurement based on the electronic cigarette unit.
+    preferredTerm: Electronic Cigarette Dosing Unit
+    submissionValue: E-CIGARETTE
+    synonyms:
+    - eCigarette Dosing Unit
+    - Electronic Cigarette Dosing Unit
   - conceptId: C161491
     definition: A unit for measuring concentration or/and reactivity of a test substance
       as defined in the literature reference standard for the particular quantitative
@@ -7311,6 +7428,14 @@ C71620:
       of substance per one square meter of surface area.
     preferredTerm: Enzyme Unit per Meter Squared
     submissionValue: Enzyme U/m2
+  - conceptId: C225760
+    definition: A unit of concentration (biologic activity) equal to one enzyme unit
+      of substance per milligram of total protein.
+    preferredTerm: Enzyme Unit per Milligram of Protein
+    submissionValue: Enzyme U/mg Protein
+    synonyms:
+    - Enzyme U/mg Tprot
+    - Enzyme Unit per Milligram of Protein
   - conceptId: C176384
     definition: An arbitrary unit established by the European Pharmacopoeia.
     preferredTerm: European Pharmacopoeia Unit
@@ -7516,6 +7641,23 @@ C71620:
     submissionValue: ft3
     synonyms:
     - Standard Cubic Foot
+  - conceptId: C225761
+    definition: A dosing unit defined as the number of grams of iodine in an administered
+      dose.
+    preferredTerm: Grams Iodine
+    submissionValue: g IODINE
+    synonyms:
+    - gI
+    - Grams Iodine
+  - conceptId: C225762
+    definition: A dosing concentration unit defined as the number of grams of iodine
+      per liter of volume in an administered dose.
+    preferredTerm: Grams Iodine Per Liter
+    submissionValue: g IODINE/L
+    synonyms:
+    - gI/L
+    - Grams Iodine Per Liter
+    - mgI/mL
   - conceptId: C48155
     definition: A unit of mass equal to one thousandth (1E-3) of a kilogram, the kilogram
       being the base unit of mass in the International System of Units (SI).
@@ -7523,6 +7665,13 @@ C71620:
     submissionValue: g
     synonyms:
     - Gram
+  - conceptId: C222688
+    definition: A concentration unit expressed as the amount of a substance (in grams)
+      contained in 100 grams of a sample or specimen.
+    preferredTerm: Gram per One Hundred Grams
+    submissionValue: g/100g
+    synonyms:
+    - Grams per 100 Grams
   - conceptId: C204705
     definition: A unit of measure for the linear mass density of fibers in grams per
       9000 meters of the fiber.
@@ -7777,6 +7926,16 @@ C71620:
     synonyms:
     - GE/mL
     - Genomic Equivalents per Milliliter
+  - conceptId: C225763
+    definition: A concentration unit measured as a number of milligram equivalents
+      of solute per milliliter of solution.
+    preferredTerm: Milligram Equivalents Per Milliliter
+    submissionValue: gEq/L
+    synonyms:
+    - mgEq/mL
+    - Milligram Equivalents/Milliliter
+    - ngEq/nL
+    - ugEq/uL
   - conceptId: C198391
     definition: A dosing measurement based on the glass unit. (NCI)
     preferredTerm: Glass Dosing Unit
@@ -8878,6 +9037,14 @@ C71620:
     - 10^6 Electronvolts
     - 10^6 eV
     - Megaelectronvolt
+  - conceptId: C225764
+    definition: A dosing unit defined as the number of milligrams of iodine in an
+      administered dose.
+    preferredTerm: Milligrams Iodine
+    submissionValue: mg IODINE
+    synonyms:
+    - mgI
+    - Milligrams Iodine
   - conceptId: C28253
     definition: A unit of mass equal to one thousandth (1E-3) of a gram.
     preferredTerm: Milligram
@@ -9084,6 +9251,10 @@ C71620:
     definition: A unit of mass equal to one milligram per puff unit.
     preferredTerm: Milligram per Puff
     submissionValue: mg/PUFF
+  - conceptId: C225765
+    definition: A unit of measure expressed in milligram(s) per tablet.
+    preferredTerm: Milligram Per Tablet
+    submissionValue: mg/TABLET
   - conceptId: C67404
     definition: A unit of mass flow rate equal to one milligram per week or a dose
       administration rate unit equal to the rate at which a milligram of a product
@@ -9626,6 +9797,14 @@ C71620:
       per kilopascal per liter of volume.
     preferredTerm: Millimole per Minute per Thousand Pascal per Liter
     submissionValue: mmol/min/kPa/L
+  - conceptId: C105511
+    definition: A unit of fraction expressed as the ratio of the amount of a substance
+      in solution, in millimoles, to the amount of creatinine in the mixture, in moles.
+    preferredTerm: Millimole Per Mole of Creatinine
+    submissionValue: mmol/mol CREATININE
+    synonyms:
+    - mmol/mol CREAT
+    - umol/mmol CREATININE
   - conceptId: C111253
     definition: A unit of fraction expressed as the ratio of the amount of a substance
       in solution, in millimoles, to the amount of a different substance in the mixture,
@@ -10657,6 +10836,11 @@ C71620:
     submissionValue: RNA copies/mL
     synonyms:
     - RNA Copies per Milliliter
+  - conceptId: C225766
+    definition: A unit of measurement equal to the number of ribonucleic acid (RNA)
+      copies per unit of mass equal to one microgram.
+    preferredTerm: RNA Copies per Microgram
+    submissionValue: RNA copies/ug
   - conceptId: C70575
     definition: A unit of exposure to ionizing radiation. One Roentgen is the amount
       of gamma or x-rays required to produce ions resulting in a charge of 2.58E-4
@@ -10710,6 +10894,14 @@ C71620:
     submissionValue: SACHET
     synonyms:
     - Sachet dosing unit
+  - conceptId: C225767
+    definition: An arbitrary unit for the quantitation of IgA antibodies to beta-2
+      glycoprotein 1, which has been normalized and calibrated to an assay standard.
+    preferredTerm: Standard IgA Anti-Beta 2 Glycoprotein 1 Unit
+    submissionValue: SAU
+    synonyms:
+    - Standard IgA Anti-Beta 2 Glycoprotein 1 Units
+    - Standard IgA Anti-Beta 2 GP1 Units
   - conceptId: C116233
     definition: Unit of measure of potency of allergenic product expressed as a number
       of standardized biological units per one milliliter of formulation.
@@ -10772,6 +10964,14 @@ C71620:
     - SFU/Well
     - Spot Forming Cells/Well
     - Spots/Well
+  - conceptId: C225768
+    definition: An arbitrary unit for the quantitation of IgG antibodies to beta-2
+      glycoprotein 1, which has been normalized and calibrated to an assay standard.
+    preferredTerm: Standard IgG Anti-Beta 2 Glycoprotein 1 Unit
+    submissionValue: SGU
+    synonyms:
+    - Standard IgG Anti-Beta 2 Glycoprotein 1 Units
+    - Standard IgG Anti-Beta 2 GP1 Units
   - conceptId: C112433
     definition: A dosing measurement based on the shock wave unit.
     preferredTerm: Shockwave Dosing Unit
@@ -10787,6 +10987,14 @@ C71620:
     submissionValue: Siemens
     synonyms:
     - Siemens
+  - conceptId: C225769
+    definition: An arbitrary unit for the quantitation of IgM antibodies to beta-2
+      glycoprotein 1, which has been normalized and calibrated to an assay standard.
+    preferredTerm: Standard IgM Anti-Beta 2 Glycoprotein 1 Unit
+    submissionValue: SMU
+    synonyms:
+    - Standard IgM Anti-Beta 2 Glycoprotein 1 Units
+    - Standard IgM Anti-Beta 2 GP1 Units
   - conceptId: C48537
     definition: A dosing measurement based on the spray unit.(NCI)
     preferredTerm: Spray Dosing Unit
@@ -11397,6 +11605,16 @@ C71620:
     submissionValue: ugEq
     synonyms:
     - Microgram Equivalent
+  - conceptId: C166087
+    definition: Microgram equivalents of a substance per gram of matrix or tissue
+      (e.g., radiolabeled dose).
+    preferredTerm: Microgram Equivalents Per Gram
+    submissionValue: ugEq/g
+    synonyms:
+    - mgEq/kg
+    - Milligram Equivalents/Kilogram
+    - ngEq/mg
+    - ugEq/g
   - conceptId: C122230
     definition: A concentration unit measured as the number of microgram equivalents
       of solute per liter of solution, or as the number of nanogram equivalents of
@@ -11793,7 +12011,7 @@ C74456:
   name: Anatomical Location
   preferredTerm: CDISC SDTM Anatomical Location Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: LOC
   synonyms:
@@ -11847,6 +12065,10 @@ C74456:
     submissionValue: ABDOMINAL SKIN
     synonyms:
     - Abdominal Skin
+  - conceptId: C225624
+    definition: The soft tissue of the abdominal wall.
+    preferredTerm: Abdominal Wall Soft Tissue
+    submissionValue: ABDOMINAL WALL SOFT TISSUE
   - conceptId: C77608
     definition: The tissue that surrounds the organs present in the abdominal cavity.
     preferredTerm: Abdominal Wall
@@ -12706,42 +12928,94 @@ C74456:
     submissionValue: C1 VERTEBRA
     synonyms:
     - C1 Vertebra
+  - conceptId: C225625
+    definition: The area of the skin innervated by the second cervical spinal nerve,
+      covering the upper neck and posterior scalp behind and above the ears.
+    preferredTerm: C2 Dermatome
+    submissionValue: C2 DERMATOME
+    synonyms:
+    - C2 Nerve Root Dermatome
   - conceptId: C32240
     definition: The second of the seven cervical vertebrae. (NCI)
     preferredTerm: C2 Vertebra
     submissionValue: C2 VERTEBRA
     synonyms:
     - C2 Vertebra
+  - conceptId: C225626
+    definition: The area of the skin innervated by the third cervical spinal nerve,
+      encompassing the lower part of the neck and extending to the upper shoulders
+      and the area behind the ears.
+    preferredTerm: C3 Dermatome
+    submissionValue: C3 DERMATOME
+    synonyms:
+    - C3 Nerve Root Dermatome
   - conceptId: C32241
     definition: The third of the seven cervical vertebrae. (NCI)
     preferredTerm: C3 Vertebra
     submissionValue: C3 VERTEBRA
     synonyms:
     - C3 Vertebra
+  - conceptId: C225627
+    definition: The area of the skin innervated by the fourth cervical spinal nerve,
+      covering the lower neck, upper shoulders, and the clavicular region.
+    preferredTerm: C4 Dermatome
+    submissionValue: C4 DERMATOME
+    synonyms:
+    - C4 Nerve Root Dermatome
   - conceptId: C32242
     definition: The fourth of the seven cervical vertebrae. (NCI)
     preferredTerm: C4 Vertebra
     submissionValue: C4 VERTEBRA
     synonyms:
     - C4 Vertebra
+  - conceptId: C225628
+    definition: The area of the skin innervated by the fifth cervical spinal nerve,
+      including the lateral aspect of the upper arm down to the elbow.
+    preferredTerm: C5 Dermatome
+    submissionValue: C5 DERMATOME
+    synonyms:
+    - C5 Nerve Root Dermatome
   - conceptId: C32243
     definition: The fifth of the seven cervical vertebrae. (NCI)
     preferredTerm: C5 Vertebra
     submissionValue: C5 VERTEBRA
     synonyms:
     - C5 Vertebra
+  - conceptId: C225629
+    definition: The area of the skin innervated by the sixth cervical spinal nerve,
+      covering the lateral aspect of the forearm and including the thumb.
+    preferredTerm: C6 Dermatome
+    submissionValue: C6 DERMATOME
+    synonyms:
+    - C6 Nerve Root Dermatome
   - conceptId: C32244
     definition: The sixth of the seven cervical vertebrae. (NCI)
     preferredTerm: C6 Vertebra
     submissionValue: C6 VERTEBRA
     synonyms:
     - C6 Vertebra
+  - conceptId: C225630
+    definition: The area of the skin innervated by the seventh cervical spinal nerve,
+      including the central part of the posterior forearm and extending to the middle
+      finger.
+    preferredTerm: C7 Dermatome
+    submissionValue: C7 DERMATOME
+    synonyms:
+    - C7 Nerve Root Dermatome
   - conceptId: C32245
     definition: The seventh of the seven cervical vertebrae. (NCI)
     preferredTerm: C7 Vertebra
     submissionValue: C7 VERTEBRA
     synonyms:
     - C7 Vertebra
+  - conceptId: C225631
+    definition: The area of the skin innervated by the eighth cervical spinal nerve,
+      covering the medial aspect of the forearm and including the ring and little
+      fingers.
+    preferredTerm: C8 Dermatome
+    submissionValue: C8 DERMATOME
+    synonyms:
+    - C8 Nerve Root Dermatome
   - conceptId: C142295
     definition: A roughened surface on the superior portion of the posterior half
       of the calcaneus, where the calcaneal (Achilles) tendon inserts.
@@ -13007,6 +13281,13 @@ C74456:
       accessory nerve and the transverse cervical vessels.
     preferredTerm: Neck Lymph Node Boundary Level V
     submissionValue: CERVICAL LYMPH NODE LEVEL V
+  - conceptId: C132514
+    definition: Cervical lymph nodes located in the anterior compartment of the neck,
+      between the hyoid bone and the suprasternal notch.
+    preferredTerm: Anterior Compartment Lymph Node Group (Level VI)
+    submissionValue: CERVICAL LYMPH NODE LEVEL VI
+    synonyms:
+    - Central Compartment Lymph Nodes
   - conceptId: C32298
     definition: Lymph node(s) in the cervical region, or neck.
     preferredTerm: Cervical Lymph Node
@@ -14435,6 +14716,14 @@ C74456:
       primary function is to raise the eyebrows.
     preferredTerm: Frontalis Muscle
     submissionValue: FRONTALIS MUSCLE
+  - conceptId: C225632
+    definition: The area of the brain where the frontal and parietal lobes meet.
+    preferredTerm: Fronto-Parietal Region
+    submissionValue: FRONTO-PARIETAL REGION
+  - conceptId: C225633
+    definition: The area of the brain where the frontal and temporal lobes meet.
+    preferredTerm: Fronto-Temporal Region
+    submissionValue: FRONTO-TEMPORAL REGION
   - conceptId: C135172
     definition: The portion of the interior of the eye that includes the sensory retina,
       the optic disc, and the macula.
@@ -14831,6 +15120,10 @@ C74456:
     submissionValue: HEAD OF THE HUMERUS
     synonyms:
     - Head of the Humerus
+  - conceptId: C225634
+    definition: The soft tissue of the head.
+    preferredTerm: Head Soft Tissue
+    submissionValue: HEAD SOFT TISSUE
   - conceptId: C12419
     definition: The portion of the body containing the mouth, the brain and multiple
       sensory organs.
@@ -15139,6 +15432,10 @@ C74456:
     submissionValue: ILEOCECAL JUNCTION
     synonyms:
     - Ileocecal Region
+  - conceptId: C225635
+    definition: A superior mesenteric lymph node located near the ileocolic artery.
+    preferredTerm: Ileocolic Lymph Node
+    submissionValue: ILEOCOLIC LYMPH NODE
   - conceptId: C176318
     definition: A lymph node located in the ileum.
     preferredTerm: Ileum Lymph Node
@@ -15598,12 +15895,27 @@ C74456:
     - Joint, Stifle
     - Knee
     - Tibiofemoral Joint
+  - conceptId: C225636
+    definition: The area of the skin innervated by the first lumbar spinal nerve,
+      covering the groin and the uppermost part of the inner thigh.
+    preferredTerm: L1 Dermatome
+    submissionValue: L1 DERMATOME
+    synonyms:
+    - L1 Nerve Root Dermatome
   - conceptId: C32899
     definition: The first lumbar vertebra counting from the top down. (NCI)
     preferredTerm: L1 Vertebra
     submissionValue: L1 VERTEBRA
     synonyms:
     - L1 Vertebra
+  - conceptId: C225637
+    definition: The area of the skin innervated by the second lumbar spinal nerve,
+      extending from the upper part of the anterior thigh down to just above the middle
+      thigh.
+    preferredTerm: L2 Dermatome
+    submissionValue: L2 DERMATOME
+    synonyms:
+    - L2 Nerve Root Dermatome
   - conceptId: C32900
     definition: The second lumbar vertebra counting from the top down. (NCI)
     preferredTerm: L2 Vertebra
@@ -15614,6 +15926,14 @@ C74456:
     definition: The space between the L2 and L3 vertebrae.
     preferredTerm: L2-L3 Intervertebral Space
     submissionValue: L2-L3 INTERVERTEBRAL SPACE
+  - conceptId: C225638
+    definition: The area of the skin innervated by the third lumbar spinal nerve,
+      covering the middle to lower anterior thigh and extending over the medial knee
+      area.
+    preferredTerm: L3 Dermatome
+    submissionValue: L3 DERMATOME
+    synonyms:
+    - L3 Nerve Root Dermatome
   - conceptId: C32901
     definition: The third lumbar vertebra counting from the top down. (NCI)
     preferredTerm: L3 Vertebra
@@ -15624,6 +15944,14 @@ C74456:
     definition: The space between the L3 and L4 vertebrae.
     preferredTerm: L3-L4 Intervertebral Space
     submissionValue: L3-L4 INTERVERTEBRAL SPACE
+  - conceptId: C225639
+    definition: The area of the skin innervated by the fourth lumbar spinal nerve,
+      encompassing the front of the knee, the medial side of the lower leg, and ending
+      at the medial malleolus (inside part of the ankle).
+    preferredTerm: L4 Dermatome
+    submissionValue: L4 DERMATOME
+    synonyms:
+    - L4 Nerve Root Dermatome
   - conceptId: C32902
     definition: The fourth lumbar vertebra counting from the top down. (NCI)
     preferredTerm: L4 Vertebra
@@ -15634,6 +15962,14 @@ C74456:
     definition: The space between the L4 and L5 vertebrae.
     preferredTerm: L4-L5 Intervertebral Space
     submissionValue: L4-L5 INTERVERTEBRAL SPACE
+  - conceptId: C225640
+    definition: The area of the skin innervated by the fifth lumbar spinal nerve,
+      covering the lateral part of the lower leg and extending down to the dorsum
+      of the foot, including the great toe.
+    preferredTerm: L5 Dermatome
+    submissionValue: L5 DERMATOME
+    synonyms:
+    - L5 Nerve Root Dermatome
   - conceptId: C32903
     definition: The fifth lumbar vertebra counting from the top down. (NCI)
     preferredTerm: L5 Vertebra
@@ -15657,6 +15993,13 @@ C74456:
     submissionValue: LACRIMAL BONE
     synonyms:
     - Lacrimal Bone
+  - conceptId: C32907
+    definition: Either of two ducts (superior and inferior) that originate at the
+      puncta lacrimalia of the eye and terminate at the lacrimal sac.
+    preferredTerm: Lacrimal Canaliculus
+    submissionValue: LACRIMAL CANALICULUS
+    synonyms:
+    - Canaliculus of the Eye
   - conceptId: C12346
     definition: The exocrine glands that produce the watery serous component of tears.
     preferredTerm: Lacrimal Gland
@@ -16202,6 +16545,10 @@ C74456:
       ed.)
     preferredTerm: Lower Jugular Lymph Node Group (Level IV)
     submissionValue: LOWER JUGULAR LYMPH NODE
+  - conceptId: C225641
+    definition: The soft tissue of the lower limb(s).
+    preferredTerm: Lower Limb Soft Tissue
+    submissionValue: LOWER LIMB SOFT TISSUE
   - conceptId: C33012
     definition: The part of the respiratory system below the bifurcation of the trachea.
       It includes the lungs and the parts of the lungs such as the bronchi, bronchioles
@@ -16943,6 +17290,10 @@ C74456:
       is to extend the neck.
     preferredTerm: Neck Extensor Muscles
     submissionValue: NECK EXTENSOR MUSCLES
+  - conceptId: C225642
+    definition: The soft tissue of the neck.
+    preferredTerm: Neck Soft Tissue
+    submissionValue: NECK SOFT TISSUE
   - conceptId: C13063
     definition: The region that connects the head to the rest of the body. (NCI)
     preferredTerm: Neck
@@ -17036,6 +17387,10 @@ C74456:
       (NCI)
     preferredTerm: Occipital Scalp
     submissionValue: OCCIPITAL SCALP
+  - conceptId: C225643
+    definition: The area of the brain where the occipital and temporal lobes meet.
+    preferredTerm: Occipito-Temporal Region
+    submissionValue: OCCIPITO-TEMPORAL REGION
   - conceptId: C12758
     definition: A cranial nerve extending from the oculomotor nucleus and accessory
       parasympathetic nucleus, which innervates the pupil, lens, upper eyelid, and
@@ -17044,6 +17399,11 @@ C74456:
     submissionValue: OCULOMOTOR NERVE
     synonyms:
     - Third Cranial Nerve
+  - conceptId: C225644
+    definition: A synovial bursa in the elbow that is located between the olecranon
+      and the skin.
+    preferredTerm: Olecranon Bursa
+    submissionValue: OLECRANON BURSA
   - conceptId: C33200
     definition: A prominence at the proximal end of the ulna. It forms the tip of
       the elbow. (NCI)
@@ -17275,6 +17635,10 @@ C74456:
       lateral to the ascending and descending colons.
     preferredTerm: Paracolic Gutter
     submissionValue: PARACOLIC GUTTER
+  - conceptId: C225645
+    definition: A superior mediastinal lymph node located near the esophagus.
+    preferredTerm: Paraesophageal Lymph Node
+    submissionValue: PARAESOPHAGEAL LYMPH NODE
   - conceptId: C147453
     definition: A lymph node located adjacent to the larynx, in the parapharyngeal
       space.
@@ -17319,6 +17683,10 @@ C74456:
     definition: The area of the body surrounding the spinal column.
     preferredTerm: Paraspinal Region
     submissionValue: PARASPINAL REGION
+  - conceptId: C225646
+    definition: The soft tissue of the paraspinal region.
+    preferredTerm: Paraspinal Soft Tissue
+    submissionValue: PARASPINAL SOFT TISSUE
   - conceptId: C52557
     definition: A usually small autonomic ganglion of the parasympathetic nervous
       system. The majority are located near or in the organs that they innervate.
@@ -17371,6 +17739,14 @@ C74456:
     definition: The outermost of the two pleural membranes.
     preferredTerm: Parietal Pleura
     submissionValue: PARIETAL PLEURA
+  - conceptId: C225647
+    definition: The area of the brain where the parietal and occipital lobes meet.
+    preferredTerm: Parieto-Occipital Region
+    submissionValue: PARIETO-OCCIPITAL REGION
+  - conceptId: C225648
+    definition: The area of the brain where the parietal and temporal lobes meet.
+    preferredTerm: Parieto-Temporal Region
+    submissionValue: PARIETO-TEMPORAL REGION
   - conceptId: C33278
     definition: Lymph node(s) in or adjacent to the parotid gland.
     preferredTerm: Parotid Gland Lymph Node
@@ -17436,12 +17812,20 @@ C74456:
     submissionValue: PELVIC LYMPH NODE
     synonyms:
     - Pelvic Lymph Node
+  - conceptId: C225649
+    definition: Any of the muscles of the pelvis.
+    preferredTerm: Pelvic Muscle
+    submissionValue: PELVIC MUSCLE
   - conceptId: C189531
     definition: The part of the pelvic wall that is formed by the piriformis and obturator
       internus muscles and contains the iliac vessels, pelvic ureters, and lateral
       pelvic lymph nodes.
     preferredTerm: Pelvic Sidewall
     submissionValue: PELVIC SIDEWALL
+  - conceptId: C225650
+    definition: The soft tissue of the pelvis.
+    preferredTerm: Pelvic Soft Tissue
+    submissionValue: PELVIC SOFT TISSUE
   - conceptId: C12767
     definition: The bony, basin-shaped structure formed by the bones of the pelvis.
     preferredTerm: Pelvis
@@ -17594,6 +17978,11 @@ C74456:
       longitudinal, and transverse arches.
     preferredTerm: Peroneus Longus
     submissionValue: PERONEUS LONGUS MUSCLE
+  - conceptId: C225651
+    definition: A synovial bursa in the knee that is located between the hamstring
+      tendons and the tibia.
+    preferredTerm: Pes Anserine Bursa
+    submissionValue: PES ANSERINE BURSA
   - conceptId: C33318
     definition: A tonsil in the mucosa of the nasopharynx.
     preferredTerm: Pharyngeal Tonsil
@@ -17839,6 +18228,11 @@ C74456:
       the maxilla.
     preferredTerm: Premaxilla Bone
     submissionValue: PREMAXILLA BONE
+  - conceptId: C225652
+    definition: A synovial bursa in the knee that is located between the patella and
+      the skin.
+    preferredTerm: Prepatellar Bursa
+    submissionValue: PREPATELLAR BURSA
   - conceptId: C79432
     definition: Exocrine glands of the male reproductive system located adjacent to
       the prepuce.
@@ -17864,6 +18258,11 @@ C74456:
       of the thyroid gland and the innominate vein.
     preferredTerm: Pretracheal Lymph Node
     submissionValue: PRETRACHEAL LYMPH NODE
+  - conceptId: C225653
+    definition: A pelvic lymph node located within the retropubic space, between the
+      pubic symphysis and the anterior wall of the urinary bladder.
+    preferredTerm: Prevesical Lymph Node
+    submissionValue: PREVESICAL LYMPH NODE
   - conceptId: C97340
     definition: A brain region in the occipital cortex that receives visual stimuli
       from the retina. (NCI)
@@ -18094,10 +18493,30 @@ C74456:
       trunk and branches into the lungs.
     preferredTerm: Pulmonary Artery
     submissionValue: PULMONARY ARTERY BRANCH
+  - conceptId: C225654
+    definition: A pulmonary lymph node located between the origin of the lobar bronchi.
+    preferredTerm: Pulmonary Interlobar Lymph Node
+    submissionValue: PULMONARY INTERLOBAR LYMPH NODE
+  - conceptId: C225655
+    definition: An inferior mediastinal lymph node located within the pulmonary ligament.
+    preferredTerm: Pulmonary Ligament Lymph Node
+    submissionValue: PULMONARY LIGAMENT LYMPH NODE
+  - conceptId: C225656
+    definition: A pulmonary lymph node located within the lobes of the lung.
+    preferredTerm: Pulmonary Lobar Lymph Node
+    submissionValue: PULMONARY LOBAR LYMPH NODE
   - conceptId: C191304
     definition: A lymph node that is found within the parenchyma of the lung. (NCI)
     preferredTerm: Pulmonary Lymph Node
     submissionValue: PULMONARY LYMPH NODE
+  - conceptId: C225657
+    definition: A pulmonary lymph node located within the segmental bronchi.
+    preferredTerm: Pulmonary Segmental Lymph Node
+    submissionValue: PULMONARY SEGMENTAL LYMPH NODE
+  - conceptId: C225658
+    definition: A pulmonary lymph node located within the subsegmental bronchi.
+    preferredTerm: Pulmonary Subsegmental Lymph Node
+    submissionValue: PULMONARY SUBSEGMENTAL LYMPH NODE
   - conceptId: C116918
     definition: The artery arising from the right ventricle of the heart that bifurcates
       into the left and right pulmonary arteries.
@@ -18250,6 +18669,21 @@ C74456:
       of the colon to the anus or anal canal.
     preferredTerm: Rectum
     submissionValue: RECTUM
+  - conceptId: C225659
+    definition: The distal one-third of the rectum, which is supplied by the middle
+      and inferior rectal arteries.
+    preferredTerm: Lower Third of Rectum
+    submissionValue: RECTUM, LOWER THIRD
+  - conceptId: C225660
+    definition: The central one-third of the rectum, which is supplied by the middle
+      and superior rectal arteries.
+    preferredTerm: Middle Third of Rectum
+    submissionValue: RECTUM, MIDDLE THIRD
+  - conceptId: C225661
+    definition: The proximal one-third of the rectum, which is supplied by the superior
+      rectal artery.
+    preferredTerm: Upper Third of Rectum
+    submissionValue: RECTUM, UPPER THIRD
   - conceptId: C53175
     definition: A muscle in the quadriceps femoris muscle group between the vastus
       lateralis and vastus medialis and lying on the vastus intermedius; primary function
@@ -18319,6 +18753,10 @@ C74456:
       it is continuous with the pigment epithelium of the pars plana. (NCI)
     preferredTerm: Retinal Pigment Epithelium
     submissionValue: RETINAL PIGMENTED EPITHELIAL LAYER
+  - conceptId: C53063
+    definition: Any of the veins that drain the retina of the eye.
+    preferredTerm: Retinal Vein
+    submissionValue: RETINAL VEIN
   - conceptId: C54155
     definition: The area behind the orbit of the eye.
     preferredTerm: Retro-Orbital Region
@@ -18356,6 +18794,10 @@ C74456:
     definition: A lymph node located posterior to the sternum.
     preferredTerm: Retrosternal Lymph Node
     submissionValue: RETROSTERNAL LYMPH NODE
+  - conceptId: C225662
+    definition: A superior mediastinal lymph node located posterior to the trachea.
+    preferredTerm: Retrotracheal Lymph Node
+    submissionValue: RETROTRACHEAL LYMPH NODE
   - conceptId: C186136
     definition: A muscle of the back, in general extending from the spinous processes
       of the second to fifth thoracic vertebrae to the medial border of the scapula;
@@ -18492,6 +18934,44 @@ C74456:
     definition: Band of fibrous tissue that anchors various organs in place.
     preferredTerm: Round Ligament
     submissionValue: ROUND LIGAMENT
+  - conceptId: C225663
+    definition: The area of the skin innervated by the first sacral spinal nerve,
+      covering the lateral and plantar aspects of the foot, including the heel, and
+      extends up the posterior aspect of the lower leg and calf.
+    preferredTerm: S1 Dermatome
+    submissionValue: S1 DERMATOME
+    synonyms:
+    - S1 Nerve Root Dermatome
+  - conceptId: C225664
+    definition: The area of the skin innervated by the second sacral spinal nerve,
+      covering the posterior aspect of the thigh and the upper portion of the calf.
+      This dermatome extends vertically along the back of the leg, providing sensory
+      innervation to the skin in these regions.
+    preferredTerm: S2 Dermatome
+    submissionValue: S2 DERMATOME
+    synonyms:
+    - S2 Nerve Root Dermatome
+  - conceptId: C225665
+    definition: The area of the skin innervated by the third sacral spinal nerve,
+      covering the region around the buttocks and extending around the inner thigh.
+    preferredTerm: S3 Dermatome
+    submissionValue: S3 DERMATOME
+    synonyms:
+    - S3 Nerve Root Dermatome
+  - conceptId: C225666
+    definition: The area of the skin innervated by the fourth sacral spinal nerve,
+      covering a portion of the perineal region, including parts of the genital area.
+    preferredTerm: S4 Dermatome
+    submissionValue: S4 DERMATOME
+    synonyms:
+    - S4 Nerve Root Dermatome
+  - conceptId: C225667
+    definition: An innervation area by the fifth sacral spinal nerve, primarily covering
+      the skin around the coccyx and anus.
+    preferredTerm: S5 Dermatome
+    submissionValue: S5 DERMATOME
+    synonyms:
+    - S5 Nerve Root Dermatome
   - conceptId: C105447
     definition: The prominence on the lateral surface of the sacrum, posterior to
       the auricular surface of the sacrum. (NCI)
@@ -18707,6 +19187,14 @@ C74456:
     submissionValue: SHOULDER JOINT
     synonyms:
     - Shoulder Joint
+  - conceptId: C225668
+    definition: Any of the muscles of the shoulder.
+    preferredTerm: Shoulder Muscle
+    submissionValue: SHOULDER MUSCLE
+  - conceptId: C225669
+    definition: The soft tissue of the shoulder.
+    preferredTerm: Shoulder Soft Tissue
+    submissionValue: SHOULDER SOFT TISSUE
   - conceptId: C25203
     definition: The region of the body between the neck and the upper arm. (NCI)
     preferredTerm: Shoulder
@@ -18948,6 +19436,14 @@ C74456:
     synonyms:
     - ACCESSORY NERVE
     - CRANIAL ACCESSORY NERVE
+  - conceptId: C33869
+    definition: The space formed by the series of interconnected canals that run through
+      the vertebral bodies of the spinal column, and which houses the spinal cord
+      and meninges.
+    preferredTerm: Vertebral Canal
+    submissionValue: SPINAL CANAL
+    synonyms:
+    - Vertebral Canal
   - conceptId: C186139
     definition: The parenchyma of the spinal cord, which consists of a canal surrounded
       by a neuron containing gray matter centrally and white matter containing myelinated
@@ -19056,6 +19552,16 @@ C74456:
       tubercle ventrally.
     preferredTerm: Striatum Nuclei
     submissionValue: STRIATUM
+  - conceptId: C225670
+    definition: A synovial bursa in the shoulder that is located between the rotator
+      cuff tendons and the acromion.
+    preferredTerm: Subacromial Bursa
+    submissionValue: SUBACROMIAL BURSA
+  - conceptId: C225671
+    definition: A mediastinal lymph node located between the aortic arch and the left
+      pulmonary artery, in the aortopulmonary window lateral to the ligamentum arteriosum.
+    preferredTerm: Subaortic Lymph Node
+    submissionValue: SUBAORTIC LYMPH NODE
   - conceptId: C156507
     definition: The space between the arachnoid membrane and the pia mater.
     preferredTerm: Subarachnoid Space
@@ -19179,6 +19685,10 @@ C74456:
     definition: A lymph node located in a superficial part of the body.
     preferredTerm: Superficial Lymph Node
     submissionValue: SUPERFICIAL LYMPH NODE
+  - conceptId: C33666
+    definition: Any of the veins that drain the subcutaneous tissue layers.
+    preferredTerm: Superficial Vein
+    submissionValue: SUPERFICIAL VEIN
   - conceptId: C33674
     definition: A ridge on the frontal lobe of the brain located above the superior
       frontal sulcus.
@@ -19306,72 +19816,164 @@ C74456:
     synonyms:
     - Synovial Membrane
     - Synovial Stratum
+  - conceptId: C225672
+    definition: The area of the skin innervated by the first thoracic spinal nerve,
+      covering the medial aspect of the upper arm near the axilla (armpit).
+    preferredTerm: T1 Dermatome
+    submissionValue: T1 DERMATOME
+    synonyms:
+    - T1 Nerve Root Dermatome
   - conceptId: C33720
     definition: The first thoracic vertebra counting from the top down. (NCI)
     preferredTerm: T1 Vertebra
     submissionValue: T1 VERTEBRA
     synonyms:
     - T1 Vertebra
+  - conceptId: C225673
+    definition: The area of the skin innervated by the tenth thoracic spinal nerve,
+      corresponding approximately to the level of the umbilicus (navel).
+    preferredTerm: T10 Dermatome
+    submissionValue: T10 DERMATOME
+    synonyms:
+    - T10 Nerve Root Dermatome
   - conceptId: C33721
     definition: The tenth thoracic vertebra counting from the top down. (NCI)
     preferredTerm: T10 Vertebra
     submissionValue: T10 VERTEBRA
     synonyms:
     - T10 Vertebra
+  - conceptId: C225674
+    definition: The area of the skin innervated by the eleventh thoracic spinal nerve,
+      covering a horizontal segment of the lower abdomen, situated just below the
+      T10 dermatome (which is at the level of the umbilicus), and extends around the
+      body towards the back.
+    preferredTerm: T11 Dermatome
+    submissionValue: T11 DERMATOME
+    synonyms:
+    - T11 Nerve Root Dermatome
   - conceptId: C33722
     definition: The eleventh thoracic vertebra counting from the top down. (NCI)
     preferredTerm: T11 Vertebra
     submissionValue: T11 VERTEBRA
     synonyms:
     - T11 Vertebra
+  - conceptId: C225675
+    definition: The area of the skin innervated by the twelfth thoracic spinal nerve,
+      covering the lower abdomen and upper aspect of the groin area.
+    preferredTerm: T12 Dermatome
+    submissionValue: T12 DERMATOME
+    synonyms:
+    - T12 Nerve Root Dermatome
   - conceptId: C33723
     definition: The twelfth thoracic vertebra counting from the top down. (NCI)
     preferredTerm: T12 Vertebra
     submissionValue: T12 VERTEBRA
     synonyms:
     - T12 Vertebra
+  - conceptId: C225676
+    definition: The area of the skin innervated by the second thoracic spinal nerve,
+      covering the upper chest and extending to the upper medial aspect of the arm.
+    preferredTerm: T2 Dermatome
+    submissionValue: T2 DERMATOME
+    synonyms:
+    - T2 Nerve Root Dermatome
   - conceptId: C33724
     definition: The second thoracic vertebra counting from the top down. (NCI)
     preferredTerm: T2 Vertebra
     submissionValue: T2 VERTEBRA
     synonyms:
     - T2 Vertebra
+  - conceptId: C225677
+    definition: The area of the skin innervated by the third thoracic spinal nerve,
+      covering the upper part of the chest, just below the clavicle, and extending
+      around the upper portion of the back.
+    preferredTerm: T3 Dermatome
+    submissionValue: T3 DERMATOME
+    synonyms:
+    - T3 Nerve Root Dermatome
   - conceptId: C33725
     definition: The third thoracic vertebra counting from the top down. (NCI)
     preferredTerm: T3 Vertebra
     submissionValue: T3 VERTEBRA
     synonyms:
     - T3 Vertebra
+  - conceptId: C225678
+    definition: The area of the skin innervated by the fourth thoracic spinal nerve,
+      located at the level of the nipples, extending around the chest and upper back.
+    preferredTerm: T4 Dermatome
+    submissionValue: T4 DERMATOME
+    synonyms:
+    - T4 Nerve Root Dermatome
   - conceptId: C33726
     definition: The fourth thoracic vertebra counting from the top down. (NCI)
     preferredTerm: T4 Vertebra
     submissionValue: T4 VERTEBRA
     synonyms:
     - T4 Vertebra
+  - conceptId: C225679
+    definition: The area of the skin innervated by the fifth thoracic spinal nerve,
+      located just below the T4 dermatome, and covers a horizontal band between the
+      nipple line and the lower sternum.
+    preferredTerm: T5 Dermatome
+    submissionValue: T5 DERMATOME
+    synonyms:
+    - T5 Nerve Root Dermatome
   - conceptId: C33727
     definition: The fifth thoracic vertebra counting from the top down. (NCI)
     preferredTerm: T5 Vertebra
     submissionValue: T5 VERTEBRA
     synonyms:
     - T5 Vertebra
+  - conceptId: C225680
+    definition: The area of the skin innervated by the sixth thoracic spinal nerve,
+      located at the level of the xiphoid process of the sternum, wrapping around
+      the mid-to-lower chest and back.
+    preferredTerm: T6 Dermatome
+    submissionValue: T6 DERMATOME
+    synonyms:
+    - T6 Nerve Root Dermatome
   - conceptId: C33728
     definition: The sixth thoracic vertebra counting from the top down. (NCI)
     preferredTerm: T6 Vertebra
     submissionValue: T6 VERTEBRA
     synonyms:
     - T6 Vertebra
+  - conceptId: C225681
+    definition: The area of the skin innervated by the seventh thoracic spinal nerve
+      and covers a horizontal band just below the T6 dermatome, extending around the
+      lower part of the chest and the upper abdomen.
+    preferredTerm: T7 Dermatome
+    submissionValue: T7 DERMATOME
+    synonyms:
+    - T7 Nerve Root Dermatome
   - conceptId: C33729
     definition: The seventh thoracic vertebra counting from the top down. (NCI)
     preferredTerm: T7 Vertebra
     submissionValue: T7 VERTEBRA
     synonyms:
     - T7 Vertebra
+  - conceptId: C225682
+    definition: The area of the skin innervated by the eighth thoracic spinal nerve,
+      located below the T7 dermatome, wrapping around midway between the xiphoid process
+      and the umbilicus, covering part of the upper abdomen.
+    preferredTerm: T8 Dermatome
+    submissionValue: T8 DERMATOME
+    synonyms:
+    - T8 Nerve Root Dermatome
   - conceptId: C33730
     definition: The eighth thoracic vertebra counting from the top down. (NCI)
     preferredTerm: T8 Vertebra
     submissionValue: T8 VERTEBRA
     synonyms:
     - T8 Vertebra
+  - conceptId: C225683
+    definition: The area of the skin innervated by the ninth thoracic spinal nerve,
+      covering a horizontal segment just above the umbilicus, extending around the
+      middle section of the abdomen and back.
+    preferredTerm: T9 Dermatome
+    submissionValue: T9 DERMATOME
+    synonyms:
+    - T9 Nerve Root Dermatome
   - conceptId: C33731
     definition: The ninth thoracic vertebra counting from the top down. (NCI)
     preferredTerm: T9 Vertebra
@@ -19543,6 +20145,10 @@ C74456:
     definition: Lymph node located in the thoracic cavity. (NCI)
     preferredTerm: Thoracic Lymph Node
     submissionValue: THORACIC LYMPH NODE
+  - conceptId: C225684
+    definition: The soft tissue of the thorax.
+    preferredTerm: Thoracic Soft Tissue
+    submissionValue: THORACIC SOFT TISSUE
   - conceptId: C69315
     definition: The vertebrae of the thoracic spine, numbered one through twelve in
       humans.
@@ -19807,6 +20413,12 @@ C74456:
     submissionValue: TROCHANTER
     synonyms:
     - Trochanter
+  - conceptId: C225685
+    definition: A synovial bursa on the outer side of the hip that is located between
+      the greater trochanter bone, the tendon of the gluteus medius, and the iliotibial
+      tract.
+    preferredTerm: Trochanteric Bursa
+    submissionValue: TROCHANTERIC BURSA
   - conceptId: C12808
     definition: The cranial nerve that controls the superior oblique muscle of the
       eye. (NCI)
@@ -19887,6 +20499,10 @@ C74456:
     definition: A lymph node located in the upper region of the neck. (NCI)
     preferredTerm: Upper Cervical Lymph Node
     submissionValue: UPPER CERVICAL LYMPH NODE
+  - conceptId: C225686
+    definition: The soft tissue of the upper limb(s).
+    preferredTerm: Upper Limb Soft Tissue
+    submissionValue: UPPER LIMB SOFT TISSUE
   - conceptId: C33839
     definition: The sinuses and those parts of the respiratory system above the trachea.
       It includes the nares, nasopharynx, oropharynx, larynx, vocal cords, glottis
@@ -20197,7 +20813,7 @@ C78734:
   name: Specimen Type
   preferredTerm: CDISC SDTM Specimen Type Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: SPECTYPE
   synonyms:
@@ -20976,7 +21592,7 @@ C78735:
   name: Evaluator
   preferredTerm: CDISC SDTM Evaluator Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: EVAL
   synonyms:
@@ -21224,7 +21840,8 @@ C78735:
     - ENT Specialist
     - Otorhinolaryngologist
   - conceptId: C42709
-    definition: A mother or a father.
+    definition: A person with a biological or adoptive relationship to a child and
+      has a role as that child's parent.
     preferredTerm: Parent
     submissionValue: PARENT
   - conceptId: C17723
@@ -21355,7 +21972,7 @@ C85492:
   name: Method
   preferredTerm: CDISC SDTM Method Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: METHOD
   synonyms:
@@ -21515,7 +22132,10 @@ C85492:
     preferredTerm: Automated Count
     submissionValue: AUTOMATED COUNT
   - conceptId: C198345
-    definition: Any type of computer-assisted microscopy.
+    definition: Any type of computer-assisted microscopy that uses digital imaging
+      and software to classify and quantify particles. This enables objective, reproducible
+      evaluation by applying algorithms to detect the presence of entities such as
+      protein aggregates, cell counts, and other morphological information.
     preferredTerm: Automated Microscopy
     submissionValue: AUTOMATED MICROSCOPY
   - conceptId: C176330
@@ -21668,6 +22288,11 @@ C85492:
       in a specimen using centrifugal force.
     preferredTerm: Centrifugation
     submissionValue: CENTRIFUGATION
+  - conceptId: C225692
+    definition: Any assay in which the analyte is quantified using light emission
+      that is generated from a chemical reaction.
+    preferredTerm: Chemiluminescent Assay
+    submissionValue: CHEMILUMINESCENT ASSAY
   - conceptId: C172557
     definition: A type of chemiluminescent immunoassay that uses paramagnetic microparticles
       bound to antigen or primary antibodies as a substrate for analyte binding prior
@@ -22024,6 +22649,14 @@ C85492:
       and can be a plasmid insert, genomic DNA or a PCR product.
     preferredTerm: Direct Sequencing
     submissionValue: DIRECT SEQUENCING
+  - conceptId: C225693
+    definition: A type of chromogenic in situ hybridization that uses a two color
+      hybridization probe, which is visualized by a peroxidase reaction
+    preferredTerm: Dual-Color Chromogenic in Situ Hybridization
+    submissionValue: DISH
+    synonyms:
+    - Dual-Color Chromogenic in Situ Hybridization
+    - Dual-Color CISH
   - conceptId: C181461
     definition: A technique for microbial characterization that assesses the zone
       edge of susceptible bacteria isolates after disk diffusion with an antimicrobial
@@ -22357,10 +22990,10 @@ C85492:
     preferredTerm: Flow Cytometry
     submissionValue: FLOW CYTOMETRY
   - conceptId: C112284
-    definition: A method of measuring the number of cells in a sample by placing the
-      cells in a fluid and passing them, in a stream, through a special light microscope
-      that can record and analyze images of the cells to determine the presence of
-      foreign particles, cell counts, protein aggregates and morphology information.
+    definition: A method of measuring the number of entities in a sample by placing
+      those entities in a fluid and passing them, in a stream, through a special light
+      microscope that can record and analyze images to determine the presence of foreign
+      particles, cell counts, protein aggregates, and morphology information.
     preferredTerm: Flow Microscopy
     submissionValue: FLOW MICROSCOPY
   - conceptId: C82392
@@ -22730,6 +23363,11 @@ C85492:
       with immune cell markers are sequenced.
     preferredTerm: Immune Repertoire Deep Sequencing
     submissionValue: IMMUNE REPERTOIRE DEEP SEQUENCING
+  - conceptId: C225694
+    definition: A next generation sequencing technique in which specific genes associated
+      with immune cell markers are targeted.
+    preferredTerm: Immune Repertoire Targeted Sequencing
+    submissionValue: IMMUNE REPERTOIRE TARGETED SEQUENCING
   - conceptId: C163547
     definition: An imaging technique that utilizes positron emission tomography following
       administration of labeled antibody to confer specificity in the image.
@@ -23324,6 +23962,23 @@ C85492:
     submissionValue: MASS SPECTROMETRY
     synonyms:
     - MassSpec
+  - conceptId: C225695
+    definition: A microscopy staining method that utilizes a combination of May-Grunwald
+      and Giemsa stains and is used to preferentially visualize blood cells and bone
+      marrow cells.
+    preferredTerm: May-Grunwald Giemsa Stain
+    submissionValue: MAY-GRUNWALD GIEMSA STAIN
+    synonyms:
+    - MGG Stain
+    - Pappenheim Stain
+  - conceptId: C225696
+    definition: A microscopy staining method that utilizes the May-Grunwald stain,
+      an alcohol-based composition of methylene blue and eosin, and is preferentially
+      used to visualize blood cells and bone marrow cells.
+    preferredTerm: May-Grunwald Stain
+    submissionValue: MAY-GRUNWALD STAIN
+    synonyms:
+    - MG Stain
   - conceptId: C111249
     definition: A clot detection method that uses a mechanical means (electromagnetic
       mechanical or electromechanical) to detect the presence of or quantify the formation
@@ -23938,6 +24593,15 @@ C85492:
       (NCI)
     preferredTerm: Photometry
     submissionValue: PHOTOMETRY
+  - conceptId: C198843
+    definition: An optical technique used to detect volumetric changes in blood in
+      peripheral circulation. Using low-intensity infrared light, changes in blood
+      flow can be detected as changes in the intensity of light, with the signal being
+      proportional to the quantity of blood flowing through the blood vessels.
+    preferredTerm: Photoplethysmography
+    submissionValue: PHOTOPLETHYSMOGRAPHY
+    synonyms:
+    - PPG
   - conceptId: C20989
     definition: A systemic evaluation of the body and its functions using visual inspection,
       palpation, percussion and auscultation.
@@ -24104,6 +24768,16 @@ C85492:
       of ultrasonic sound waves are measured as they pass through tissue.
     preferredTerm: Quantitative Ultrasound
     submissionValue: QUANTITATIVE ULTRASOUND
+  - conceptId: C225697
+    definition: A microbiological technique in which bacterial cells are mixed with
+      type-specific antisera, causing the bacterial capsule to swell and become more
+      visible under a microscope. The reaction is based on the binding of antibodies
+      to the polysaccharide capsule, resulting in a characteristic change in refractivity
+      that allows identification and serotyping of encapsulated bacteria.
+    preferredTerm: Quellung Reaction
+    submissionValue: QUELLUNG REACTION
+    synonyms:
+    - Neufeld Reaction
   - conceptId: C119296
     definition: A quantitative technique used to detect and estimate the concentration
       of an antigen by measuring the diameter of the ring of precipitation (precipitin
@@ -24313,6 +24987,8 @@ C85492:
       to form an image of the target organ. (NCI)
     preferredTerm: Radionuclide Imaging
     submissionValue: SCINTIGRAPHY
+    synonyms:
+    - Gamma Scan
   - conceptId: C154790
     definition: An analytical technique in which a mass spectrometer is used to measure
       the atomic weight of sputtered ionized atoms (secondary ions) that are ejected
@@ -24525,6 +25201,15 @@ C85492:
       structural and functional information.
     preferredTerm: Single Photon Tomography and Computed Tomography Scan
     submissionValue: SPECT/CT SCAN
+  - conceptId: C162464
+    definition: A type of optical coherence tomography that acquires all information
+      in a single axial scan through the tissue simultaneously by evaluating the frequency
+      spectrum of the interference between the reflected light and a stationary reference
+      mirror. (AAO EyeWiki)
+    preferredTerm: Spectral Domain-Optical Coherence Tomography
+    submissionValue: SPECTRAL DOMAIN OPTICAL COHERENCE TOMOGRAPHY
+    synonyms:
+    - SD-OCT
   - conceptId: C116701
     definition: A technique used to calculate the transmittance of light through a
       material.
@@ -24994,7 +25679,7 @@ C96785:
   name: Oncology Response Assessment Result
   preferredTerm: CDISC SDTM Tumor Response Result Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: ONCRSR
   synonyms:
@@ -25671,7 +26356,7 @@ C99073:
   name: Laterality
   preferredTerm: CDISC SDTM Laterality Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: LAT
   synonyms:
@@ -25717,7 +26402,7 @@ C99074:
   name: Directionality
   preferredTerm: CDISC SDTM Directionality Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: DIR
   synonyms:
@@ -25750,7 +26435,7 @@ C99074:
     preferredTerm: Anterotemporal
     submissionValue: ANTEROTEMPORAL
   - conceptId: C25423
-    definition: Relating to or located at the apex.
+    definition: Of, or pertaining to, an apex.
     preferredTerm: Apical
     submissionValue: APICAL
   - conceptId: C90067
@@ -25974,7 +26659,7 @@ C99076:
   name: Intervention Model Response
   preferredTerm: CDISC SDTM Intervention Model Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: INTMODEL
   synonyms:
@@ -26019,7 +26704,7 @@ C99077:
   name: Study Type Response
   preferredTerm: CDISC SDTM Study Type Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: STYPE
   synonyms:
@@ -26067,7 +26752,7 @@ C99078:
   name: Intervention Type Response
   preferredTerm: CDISC SDTM Intervention Type Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: INTTYPE
   synonyms:
@@ -26170,7 +26855,7 @@ C99079:
   name: Epoch
   preferredTerm: CDISC SDTM Epoch Terminology
   source:
-    effective_date: '2025-09-26'
+    effective_date: '2026-03-27'
     package: sdtmct
   submissionValue: EPOCH
   synonyms:

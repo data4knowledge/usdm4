@@ -16,6 +16,5 @@ class RuleDDF00223(RuleTemplate):
             "A study design's observational model must be specified according to the extensible Observational Study Model (C127259) SDTM codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist).",
         )
 
-    # TODO: implement. HIGH_CT_MEMBER with no CT codelist registered for ('ObservationalStudyDesign', 'model'). Update ct_config.yaml or revise the rule's class/attribute before implementing.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00223: not yet implemented")
+        return self._ct_check(config, "ObservationalStudyDesign", "model")

@@ -16,6 +16,5 @@ class RuleDDF00233(RuleTemplate):
             "A unit must be coded according to the extensible unit (C71620) SDTM codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist).",
         )
 
-    # TODO: implement. HIGH_CT_MEMBER with no CT codelist registered for ('Quantity', 'unit'). Update ct_config.yaml or revise the rule's class/attribute before implementing.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00233: not yet implemented")
+        return self._ct_check(config, "Quantity", "unit")

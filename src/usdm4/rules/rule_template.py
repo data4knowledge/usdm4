@@ -75,7 +75,12 @@ class RuleTemplate:
                     else [instance[attribute]]
                 )
                 for item in items:
-                    # print(f"ITEM: {item}")
+                    # Skip null / non-dict entries — an optional Code attribute
+                    # that is absent or set to None is a legitimate empty value,
+                    # not an "invalid code". Also protects `"code" in item` from
+                    # TypeError when item isn't iterable.
+                    if not isinstance(item, dict):
+                        continue
                     code = item["code"] if "code" in item else None
                     decode = item["decode"] if "decode" in item else None
                     code_index = self._find_index(codes, code)

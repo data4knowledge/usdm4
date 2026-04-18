@@ -234,24 +234,20 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00166
-- attribute: ''
-  exception: "argument of type 'NoneType' is not iterable\n\nTraceback (most recent\
-    \ call last):\n  File \"/sessions/lucid-eager-euler/mnt/github/usdm4/src/usdm4/rules/engine.py\"\
-    , line 84, in _execute_rules\n    passed = rule.validate(config)\n  File \"/sessions/lucid-eager-euler/mnt/github/usdm4/src/usdm4/rules/library/rule_ddf00217.py\"\
-    , line 20, in validate\n    return self._ct_check(config, \"InterventionalStudyDesign\"\
-    , \"blindingSchema\")\n  File \"/sessions/lucid-eager-euler/mnt/github/usdm4/src/usdm4/rules/rule_template.py\"\
-    , line 79, in _ct_check\n    code = item[\"code\"] if \"code\" in item else None\n\
-    TypeError: argument of type 'NoneType' is not iterable\n"
-  klass: ''
+- attribute: status
+  exception: null
+  klass: StudyDefinitionDocumentVersion
   level: Error
-  message: ''
-  path: ''
-  rule: ''
-  rule_id: DDF00217
-  rule_text: ''
-  status: Exception
+  message: Invalid code and decode 'C98388' and 'Interventional Study', neither the
+    code and decode are in the codelist
+  path: $.Study.StudyDefinitionDocument[0].StudyDefinitionDocumentVersion[0]
+  rule: DDF00169
+  rule_id: DDF00169
+  rule_text: A study definition document version's status must be specified using
+    the status Value Set Terminology (C188723) DDF codelist.
+  status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
-  type: DDF00217
+  type: DDF00169
 - attribute: studyType
   exception: null
   klass: InterventionalStudyDesign
