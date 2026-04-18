@@ -1,3 +1,9 @@
+# MANUAL: do not regenerate
+#
+# Id values must not contain spaces. Applies to every indexed instance —
+# DataStore's private `_ids` dict is the only way to reach all of them
+# without enumerating every class. Acceptable here because it's a
+# cross-cutting model-wide check.
 from usdm4.rules.rule_template import RuleTemplate
 
 
@@ -16,15 +22,20 @@ class RuleDDF00260(RuleTemplate):
             "Id values are expected not to have spaces in their string values.",
         )
 
-    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     (**[$contains($string(id)," ")])@$i.
-    #       {
-    #         "instanceType": $i.instanceType,
-    #         "id": $join(['"','"'],$i.id),
-    #         "path": $i._path,
-    #         "name": $i.name
-    #       }
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00260: not yet implemented")
+        data = config["data"]
+        # Iterate every indexed instance. DataStore doesn't expose a public
+        # iterator, so access _ids directly.
+        for iid, item in data._ids.items():
+            if not isinstance(iid, str) or " " not in iid:
+                continue
+            instance_type = (
+                item.get("instanceType", "Unknown") if isinstance(item, dict) else "Unknown"
+            )
+            self._add_failure(
+                f"id value {iid!r} contains a space",
+                instance_type,
+                "id",
+                data.path_by_id(iid),
+            )
+        return self._result()

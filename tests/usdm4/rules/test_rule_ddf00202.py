@@ -12,8 +12,10 @@ class TestRuleDDF00202:
         assert rule._level == RuleTemplate.ERROR
         assert rule._rule_text == "The sponsor study role must point to exactly one organization."
 
-    def test_not_implemented(self):
-        """Lock-in: fails the moment the rule gains a real validate() body."""
-        rule = RuleDDF00202()
-        with pytest.raises(NotImplementedError):
-            rule.validate({"data": None, "ct": None})
+    @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
+    def test_valid_data_passes(self):
+        pass
+
+    @pytest.mark.skip(reason="TODO: craft negative fixture (invalid USDM, rule flags)")
+    def test_invalid_data_fails(self):
+        pass

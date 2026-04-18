@@ -394,6 +394,19 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00051
+- attribute: objectives
+  exception: null
+  klass: InterventionalStudyDesign
+  level: Error
+  message: Expected exactly one Primary Objective in study design, found 0
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0]
+  rule: DDF00084
+  rule_id: DDF00084
+  rule_text: Within a study design there must be exactly one objective with level
+    'Primary Objective'.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00084
 - attribute: plannedCompletionNumber
   exception: null
   klass: StudyDesignPopulation
@@ -435,6 +448,32 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00166
+- attribute: studyIdentifiers
+  exception: null
+  klass: StudyVersion
+  level: Error
+  message: Expected exactly one sponsor study identifier, found 0
+  path: $.Study.StudyVersion[0]
+  rule: DDF00172
+  rule_id: DDF00172
+  rule_text: There must be exactly one sponsor study identifier (i.e., a study identifier
+    whose scope is an organization that is identified as the organization for the
+    sponsor study role).
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00172
+- attribute: roles
+  exception: null
+  klass: StudyVersion
+  level: Error
+  message: Expected exactly one sponsor study role, found 0
+  path: $.Study.StudyVersion[0]
+  rule: DDF00201
+  rule_id: DDF00201
+  rule_text: There must be exactly one study role with a code of sponsor.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00201
 - attribute: blindingSchema
   exception: null
   klass: InterventionalStudyDesign

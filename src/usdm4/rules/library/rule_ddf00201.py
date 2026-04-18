@@ -1,4 +1,12 @@
+# MANUAL: do not regenerate
+#
+# Cardinality rule: exactly one StudyRole per StudyVersion must have the
+# sponsor code C70793. Close sibling of DDF00172 (exactly one sponsor
+# study identifier) and DDF00202 (sponsor role points to exactly one org).
 from usdm4.rules.rule_template import RuleTemplate
+
+
+SPONSOR_ROLE_CODE = "C70793"
 
 
 class RuleDDF00201(RuleTemplate):
@@ -16,20 +24,19 @@ class RuleDDF00201(RuleTemplate):
             "There must be exactly one study role with a code of sponsor.",
         )
 
-    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     study.versions@$sv.
-    #       (
-    #         $sproles:=$sv.roles[code.code="C70793"];
-    #         {
-    #           "instanceType": $sv.instanceType,
-    #           "id": $sv.id,
-    #           "path": $sv._path,
-    #           "versionIdentifier": $sv.versionIdentifier,
-    #           "# Sponsor Roles": $count($sproles),
-    #           "Sponsor Roles": $sproles?"["&$join($sproles.(id&": "&code.decode&"("&code.code&")"),"; ")&"]"
-    #         }
-    #       )[`# Sponsor Roles` != 1]
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00201: not yet implemented")
+        data = config["data"]
+        for sv in data.instances_by_klass("StudyVersion"):
+            count = 0
+            for role in sv.get("roles") or []:
+                code = role.get("code") or {}
+                if isinstance(code, dict) and code.get("code") == SPONSOR_ROLE_CODE:
+                    count += 1
+            if count != 1:
+                self._add_failure(
+                    f"Expected exactly one sponsor study role, found {count}",
+                    "StudyVersion",
+                    "roles",
+                    data.path_by_id(sv["id"]),
+                )
+        return self._result()

@@ -513,6 +513,19 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00051
+- attribute: objectives
+  exception: null
+  klass: InterventionalStudyDesign
+  level: Error
+  message: Expected exactly one Primary Objective in study design, found 0
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0]
+  rule: DDF00084
+  rule_id: DDF00084
+  rule_text: Within a study design there must be exactly one objective with level
+    'Primary Objective'.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00084
 - attribute: plannedAge
   exception: null
   klass: StudyDesignPopulation
@@ -578,6 +591,510 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00133
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[0]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[1]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[2]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[3]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[4]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[5]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[6]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[7]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[8]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[9]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[10]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[11]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[12]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[13]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[14]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[15]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[16]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[17]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[18]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[19]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[20]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[21]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[22]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[23]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[24]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[25]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[26]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[27]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[28]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[29]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[30]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[31]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[32]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[33]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[34]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
+- attribute: id
+  exception: null
+  klass: EligibilityCriterion
+  level: Error
+  message: EligibilityCriterion is referenced by both the study design population
+    and a cohort
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[35]
+  rule: DDF00159
+  rule_id: DDF00159
+  rule_text: An eligibility criterion must not be referenced by both a study design
+    population and any of the cohorts of the same study design population.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00159
 - attribute: type
   exception: null
   klass: StudyDefinitionDocument
@@ -593,6 +1110,20 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00166
+- attribute: studyIdentifiers
+  exception: null
+  klass: StudyVersion
+  level: Error
+  message: Expected exactly one sponsor study identifier, found 0
+  path: $.Study.StudyVersion[0]
+  rule: DDF00172
+  rule_id: DDF00172
+  rule_text: There must be exactly one sponsor study identifier (i.e., a study identifier
+    whose scope is an organization that is identified as the organization for the
+    sponsor study role).
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00172
 - attribute: frequency
   exception: null
   klass: Administration
@@ -655,6 +1186,18 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00176
+- attribute: roles
+  exception: null
+  klass: StudyVersion
+  level: Error
+  message: Expected exactly one sponsor study role, found 0
+  path: $.Study.StudyVersion[0]
+  rule: DDF00201
+  rule_id: DDF00201
+  rule_text: There must be exactly one study role with a code of sponsor.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00201
 - attribute: blindingSchema
   exception: null
   klass: InterventionalStudyDesign
