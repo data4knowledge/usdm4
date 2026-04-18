@@ -16,5 +16,6 @@ class RuleDDF00044(RuleTemplate):
             "The target for a condition must not be equal to its parent.",
         )
 
+    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00044: not yet implemented")

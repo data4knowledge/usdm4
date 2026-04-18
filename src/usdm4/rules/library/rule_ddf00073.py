@@ -12,9 +12,10 @@ class RuleDDF00073(RuleTemplate):
     def __init__(self):
         super().__init__(
             "DDF00073",
-            RuleTemplate.ERROR,
+            RuleTemplate.WARNING,
             "Only one version of any code system is expected to be used within a study version.",
         )
 
+    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00073: not yet implemented")

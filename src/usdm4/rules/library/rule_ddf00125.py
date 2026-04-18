@@ -16,5 +16,6 @@ class RuleDDF00125(RuleTemplate):
             "Attributes must be included as defined in the USDM schema based on the API specification (i.e., all required properties are present and no additional attributes are present).",
         )
 
+    # TODO: implement. HIGH_CT_MEMBER with class='All' attr='validator' — likely a schema-conformance rule, not CT lookup. Needs hand-authoring.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00125: not yet implemented")

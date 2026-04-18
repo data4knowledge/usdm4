@@ -16,5 +16,6 @@ class RuleDDF00096(RuleTemplate):
             "All primary endpoints must be referenced by a primary objective.",
         )
 
+    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00096: not yet implemented")

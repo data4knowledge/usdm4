@@ -16,5 +16,6 @@ class RuleDDF00072(RuleTemplate):
             "A study cell must only reference an epoch that is defined within the same study design as the study cell.",
         )
 
+    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00072: not yet implemented")

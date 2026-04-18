@@ -16,5 +16,6 @@ class RuleDDF00084(RuleTemplate):
             "Within a study design there must be exactly one objective with level 'Primary Objective'.",
         )
 
+    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00084: not yet implemented")

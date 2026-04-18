@@ -16,5 +16,6 @@ class RuleDDF00022(RuleTemplate):
             "An instance of a class must not refer to itself as its next instance.",
         )
 
+    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00022: not yet implemented")

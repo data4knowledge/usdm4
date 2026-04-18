@@ -16,5 +16,6 @@ class RuleDDF00047(RuleTemplate):
             "A study cell must only reference elements that are defined within the same study design as the study cell.",
         )
 
+    # TODO: implement. HIGH_CT_MEMBER with no CT codelist registered for ('StudyElement', 'parent_id'). Update ct_config.yaml or revise the rule's class/attribute before implementing.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00047: not yet implemented")

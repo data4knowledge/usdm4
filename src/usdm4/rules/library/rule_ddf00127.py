@@ -16,5 +16,6 @@ class RuleDDF00127(RuleTemplate):
             "An encounter must only be scheduled at a timing that is defined within the same study design as the encounter.",
         )
 
+    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00127: not yet implemented")

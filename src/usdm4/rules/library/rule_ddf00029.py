@@ -16,5 +16,6 @@ class RuleDDF00029(RuleTemplate):
             "An encounter must only reference encounters that are specified within the same study design.",
         )
 
+    # TODO: implement. HIGH_CT_MEMBER with no CT codelist registered for ('Encounter', 'previousId'). Update ct_config.yaml or revise the rule's class/attribute before implementing.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00029: not yet implemented")

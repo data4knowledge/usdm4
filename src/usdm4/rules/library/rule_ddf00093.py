@@ -16,5 +16,6 @@ class RuleDDF00093(RuleTemplate):
             "Date values associated to a study version must be unique regarding the combination of type and geographic scopes of the date.",
         )
 
+    # TODO: implement. HIGH_UNIQUE_WITHIN_SCOPE without scope info — ambiguous (global vs per-parent vs intra-attribute). Review rule text.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00093: not yet implemented")

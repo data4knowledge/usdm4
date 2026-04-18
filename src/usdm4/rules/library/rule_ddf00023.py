@@ -16,5 +16,6 @@ class RuleDDF00023(RuleTemplate):
             "To ensure consistent ordering, when both previous and next attributes are available within an entity the previous id value must match the next id value of the referred instance.",
         )
 
+    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00023: not yet implemented")

@@ -16,5 +16,6 @@ class RuleDDF00027(RuleTemplate):
             "To ensure consistent ordering, the same instance must not be referenced more than once as previous or next.",
         )
 
+    # TODO: implement. HIGH_UNIQUE_WITHIN_SCOPE without scope info — ambiguous (global vs per-parent vs intra-attribute). Review rule text.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00027: not yet implemented")

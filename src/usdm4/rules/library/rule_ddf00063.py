@@ -12,9 +12,10 @@ class RuleDDF00063(RuleTemplate):
     def __init__(self):
         super().__init__(
             "DDF00063",
-            RuleTemplate.ERROR,
+            RuleTemplate.WARNING,
             "A standard code alias is not expected to be equal to the standard code (e.g. no equal code or decode for the same coding system version is expected).",
         )
 
+    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00063: not yet implemented")

@@ -17,4 +17,13 @@ class RuleDDF00037(RuleTemplate):
         )
 
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        data = config["data"]
+        for item in data.instances_by_klass("ScheduleTimeline"):
+            if not item.get("$timeline_exits"):
+                self._add_failure(
+                    "Required attribute '$timeline_exits' is missing or empty",
+                    "ScheduleTimeline",
+                    "$timeline_exits",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

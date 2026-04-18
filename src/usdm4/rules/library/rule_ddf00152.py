@@ -16,5 +16,6 @@ class RuleDDF00152(RuleTemplate):
             "An activity must only reference timelines that are specified within the same study design.",
         )
 
+    # TODO: implement. HIGH_CT_MEMBER with no CT codelist registered for ('Activity', 'timelineId'). Update ct_config.yaml or revise the rule's class/attribute before implementing.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00152: not yet implemented")

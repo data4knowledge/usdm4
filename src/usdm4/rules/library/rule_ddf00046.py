@@ -16,5 +16,6 @@ class RuleDDF00046(RuleTemplate):
             "A timing must only be specified as being relative to/from a scheduled activity/decision instance that is defined within the same timeline as the timing.",
         )
 
+    # TODO: implement. HIGH_CT_MEMBER with no CT codelist registered for ('ScheduledDecisionInstance', 'parent_id'). Update ct_config.yaml or revise the rule's class/attribute before implementing.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00046: not yet implemented")

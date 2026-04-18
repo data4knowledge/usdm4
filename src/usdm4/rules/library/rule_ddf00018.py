@@ -5,7 +5,7 @@ class RuleDDF00018(RuleTemplate):
     """
     DDF00018: An instance of a class must not reference itself as one of its own children.
 
-    Applies to: BiomedicalConceptCategory, StudyProtocolDocumentVersion, StudyDefinitionDocumentVersion, NarrativeContent, Activity
+    Applies to: BiomedicalConceptCategory, StudyProtocolDocumentVersion, StudyDefinitionDocument, NarrativeContent, Activity
     Attributes: children
     """
 
@@ -16,5 +16,6 @@ class RuleDDF00018(RuleTemplate):
             "An instance of a class must not reference itself as one of its own children.",
         )
 
+    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00018: not yet implemented")

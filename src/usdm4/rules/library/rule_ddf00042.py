@@ -12,9 +12,10 @@ class RuleDDF00042(RuleTemplate):
     def __init__(self):
         super().__init__(
             "DDF00042",
-            RuleTemplate.ERROR,
+            RuleTemplate.WARNING,
             "The range specified for a planned age is not expected to be approximate.",
         )
 
+    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00042: not yet implemented")

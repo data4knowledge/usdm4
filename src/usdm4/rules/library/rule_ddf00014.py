@@ -12,9 +12,10 @@ class RuleDDF00014(RuleTemplate):
     def __init__(self):
         super().__init__(
             "DDF00014",
-            RuleTemplate.ERROR,
+            RuleTemplate.WARNING,
             "A biomedical concept category is expected to have at least a member or a child.",
         )
 
+    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00014: not yet implemented")

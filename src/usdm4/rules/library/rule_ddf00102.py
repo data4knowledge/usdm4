@@ -16,5 +16,6 @@ class RuleDDF00102(RuleTemplate):
             "A scheduled activity instance must only reference a timeline exit that is defined within the same schedule timeline as the scheduled activity instance.",
         )
 
+    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00102: not yet implemented")

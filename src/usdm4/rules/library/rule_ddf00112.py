@@ -17,4 +17,4 @@ class RuleDDF00112(RuleTemplate):
         )
 
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        return self._ct_check(config, "StudyIntervention", "role")

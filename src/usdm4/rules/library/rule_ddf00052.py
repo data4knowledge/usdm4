@@ -17,4 +17,19 @@ class RuleDDF00052(RuleTemplate):
         )
 
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        data = config["data"]
+        for item in data.instances_by_klass("AliasCode"):
+            values = []
+            for sub in item.get("standardCodeAliases") or []:
+                v = sub.get("code") if isinstance(sub, dict) else sub
+                if v not in (None, ""):
+                    values.append(v)
+            if len(values) != len(set(values)):
+                dupes = sorted(set(v for v in values if values.count(v) > 1))
+                self._add_failure(
+                    f"Duplicate standardCodeAliases entries: {dupes!r}",
+                    "AliasCode",
+                    "standardCodeAliases",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

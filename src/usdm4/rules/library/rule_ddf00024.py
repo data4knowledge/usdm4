@@ -16,5 +16,6 @@ class RuleDDF00024(RuleTemplate):
             "An epoch must only reference epochs that are specified within the same study design.",
         )
 
+    # TODO: implement. HIGH_CT_MEMBER with no CT codelist registered for ('StudyEpoch', 'previousId'). Update ct_config.yaml or revise the rule's class/attribute before implementing.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00024: not yet implemented")

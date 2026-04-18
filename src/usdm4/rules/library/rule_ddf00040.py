@@ -16,5 +16,6 @@ class RuleDDF00040(RuleTemplate):
             "Each study element must be referenced by at least one study cell.",
         )
 
+    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00040: not yet implemented")

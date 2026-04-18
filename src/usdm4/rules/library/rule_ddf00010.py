@@ -16,5 +16,22 @@ class RuleDDF00010(RuleTemplate):
             "The names of all child instances of the same parent class must be unique.",
         )
 
+    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
+    # Reference — CORE JSONata condition (semantics, not executed):
+    #     **.*[id and instanceType and name].$
+    #         {
+    #             instanceType: {
+    #                 name: [$.{"id": id, "path": _path, "name": name}]
+    #             } ~> $sift(function($v,$k){$count($v)>1})
+    #         }
+    #         ~> $each(function($v,$k){
+    #             $v.*.{
+    #                 "instanceType":$k,
+    #                 "id": id,
+    #                 "path": path,
+    #                 "name": name
+    #             }})
+    #         ~> $reduce($append)
+
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00010: not yet implemented")

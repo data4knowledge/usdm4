@@ -16,5 +16,6 @@ class RuleDDF00013(RuleTemplate):
             "If a biomedical concept property is required then it must also be enabled, while if it is not enabled then it must not be required.",
         )
 
+    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00013: not yet implemented")

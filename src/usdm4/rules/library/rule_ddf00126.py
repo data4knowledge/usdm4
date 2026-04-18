@@ -16,5 +16,6 @@ class RuleDDF00126(RuleTemplate):
             "Cardinalities must be as defined in the USDM schema based on the API specification (i.e., required properties have at least one value and single-value properties are not lists).",
         )
 
+    # TODO: implement. HIGH_CT_MEMBER with class='All' attr='validator' — likely a schema-conformance rule, not CT lookup. Needs hand-authoring.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00126: not yet implemented")

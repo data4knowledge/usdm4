@@ -16,5 +16,6 @@ class RuleDDF00114(RuleTemplate):
             "If specified, the context of a condition must point to a valid instance in the activity or scheduled activity instance class.",
         )
 
+    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00114: not yet implemented")

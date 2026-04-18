@@ -16,5 +16,6 @@ class RuleDDF00098(RuleTemplate):
             "Within a study design, the planned sex must be specified either in the study population or in all cohorts.",
         )
 
+    # TODO: implement. MED_TEXT: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00098: not yet implemented")

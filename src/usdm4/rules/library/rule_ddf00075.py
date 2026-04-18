@@ -12,9 +12,10 @@ class RuleDDF00075(RuleTemplate):
     def __init__(self):
         super().__init__(
             "DDF00075",
-            RuleTemplate.ERROR,
+            RuleTemplate.WARNING,
             "An activity is expected to refer to at least one procedure, biomedical concept, biomedical concept category or biomedical concept surrogate.",
         )
 
+    # TODO: implement. STUB: rule not present in CORE catalogue
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00075: not yet implemented")

@@ -12,9 +12,10 @@ class RuleDDF00080(RuleTemplate):
     def __init__(self):
         super().__init__(
             "DDF00080",
-            RuleTemplate.ERROR,
+            RuleTemplate.WARNING,
             "All scheduled activity instances are expected to refer to an epoch.",
         )
 
+    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        raise NotImplementedError("DDF00080: not yet implemented")
