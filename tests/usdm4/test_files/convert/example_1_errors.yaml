@@ -1,1 +1,343 @@
-[]
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'Before', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[0]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'Before', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[1]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'Fixed Reference', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[2]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[3]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[4]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[5]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[6]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[7]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[8]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[9]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[10]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[11]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[12]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[13]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[14]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[15]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'Fixed Reference', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[1].Timing[0]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'Fixed Reference', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[2].Timing[0]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'Fixed Reference', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[3].Timing[0]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[3].Timing[1]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[3].Timing[2]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[3].Timing[3]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[3].Timing[4]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[3].Timing[5]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: StudyDefinitionDocument
+  level: Error
+  message: Invalid decode 'Protocol', the decode is not in the codelist
+  path: $.Study.StudyDefinitionDocument[0]
+  rule: DDF00166
+  rule_id: DDF00166
+  rule_text: A study definition document type must be specified according to the extensible
+    study definition document type (C215477) DDF codelist (e.g. an entry with a code
+    or decode used from the codelist should be consistent with the full entry in the
+    codelist).
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00166
+- attribute: blindingSchema
+  exception: null
+  klass: InterventionalStudyDesign
+  level: Error
+  message: Invalid code and decode 'None' and 'None', neither the code and decode
+    are in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0]
+  rule: DDF00217
+  rule_id: DDF00217
+  rule_text: A study design's blinding schema must be specified according to the extensible
+    Trial Blinding Schema Response (C66735) SDTM codelist (e.g. an entry with a code
+    or decode used from the codelist should be consistent with the full entry in the
+    codelist).
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00217

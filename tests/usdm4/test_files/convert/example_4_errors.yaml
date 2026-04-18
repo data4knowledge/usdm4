@@ -1,1 +1,202 @@
-[]
+- attribute: timelineExitId
+  exception: null
+  klass: ScheduleTimeline
+  level: Error
+  message: No scheduled activity instance in this timeline points to a timeline exit
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0]
+  rule: DDF00037
+  rule_id: DDF00037
+  rule_text: At least one scheduled activity instance within a timeline must point
+    to a timeline exit.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00037
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'Fixed Reference', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[0]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[1]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[2]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[3]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[4]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: type
+  exception: null
+  klass: Timing
+  level: Error
+  message: Invalid decode 'After', the decode is not in the codelist
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[5]
+  rule: DDF00051
+  rule_id: DDF00051
+  rule_text: A timing's type must be specified using the Timing Type Value Set Terminology
+    (C201264) DDF codelist.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00051
+- attribute: value
+  exception: null
+  klass: Timing
+  level: Error
+  message: '''TBD'' is not a non-negative ISO 8601 duration'
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[0]
+  rule: DDF00060
+  rule_id: DDF00060
+  rule_text: The value for each timing must be a non-negative duration specified in
+    ISO 8601 format.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00060
+- attribute: value
+  exception: null
+  klass: Timing
+  level: Error
+  message: '''TBD'' is not a non-negative ISO 8601 duration'
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[1]
+  rule: DDF00060
+  rule_id: DDF00060
+  rule_text: The value for each timing must be a non-negative duration specified in
+    ISO 8601 format.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00060
+- attribute: value
+  exception: null
+  klass: Timing
+  level: Error
+  message: '''TBD'' is not a non-negative ISO 8601 duration'
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[2]
+  rule: DDF00060
+  rule_id: DDF00060
+  rule_text: The value for each timing must be a non-negative duration specified in
+    ISO 8601 format.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00060
+- attribute: value
+  exception: null
+  klass: Timing
+  level: Error
+  message: '''TBD'' is not a non-negative ISO 8601 duration'
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[3]
+  rule: DDF00060
+  rule_id: DDF00060
+  rule_text: The value for each timing must be a non-negative duration specified in
+    ISO 8601 format.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00060
+- attribute: value
+  exception: null
+  klass: Timing
+  level: Error
+  message: '''TBD'' is not a non-negative ISO 8601 duration'
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[4]
+  rule: DDF00060
+  rule_id: DDF00060
+  rule_text: The value for each timing must be a non-negative duration specified in
+    ISO 8601 format.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00060
+- attribute: value
+  exception: null
+  klass: Timing
+  level: Error
+  message: '''TBD'' is not a non-negative ISO 8601 duration'
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[5]
+  rule: DDF00060
+  rule_id: DDF00060
+  rule_text: The value for each timing must be a non-negative duration specified in
+    ISO 8601 format.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00060
+- attribute: type
+  exception: null
+  klass: StudyDefinitionDocument
+  level: Error
+  message: Invalid decode 'Protocol', the decode is not in the codelist
+  path: $.Study.StudyDefinitionDocument[0]
+  rule: DDF00166
+  rule_id: DDF00166
+  rule_text: A study definition document type must be specified according to the extensible
+    study definition document type (C215477) DDF codelist (e.g. an entry with a code
+    or decode used from the codelist should be consistent with the full entry in the
+    codelist).
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00166
+- attribute: ''
+  exception: "argument of type 'NoneType' is not iterable\n\nTraceback (most recent\
+    \ call last):\n  File \"/sessions/lucid-eager-euler/mnt/github/usdm4/src/usdm4/rules/engine.py\"\
+    , line 84, in _execute_rules\n    passed = rule.validate(config)\n  File \"/sessions/lucid-eager-euler/mnt/github/usdm4/src/usdm4/rules/library/rule_ddf00217.py\"\
+    , line 20, in validate\n    return self._ct_check(config, \"InterventionalStudyDesign\"\
+    , \"blindingSchema\")\n  File \"/sessions/lucid-eager-euler/mnt/github/usdm4/src/usdm4/rules/rule_template.py\"\
+    , line 79, in _ct_check\n    code = item[\"code\"] if \"code\" in item else None\n\
+    TypeError: argument of type 'NoneType' is not iterable\n"
+  klass: ''
+  level: Error
+  message: ''
+  path: ''
+  rule: ''
+  rule_id: DDF00217
+  rule_text: ''
+  status: Exception
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00217

@@ -469,8 +469,14 @@ def emit_rule_and_test(
     else:
         body_content, is_implemented = render_rule_body(data)
 
-    # Rule file
-    if write_rule:
+    # Manual-rule sentinel: if the current file contains the marker, treat it
+    # as a hand-authored override. Stage 2 preserves it; the test file
+    # template assumes the rule is implemented.
+    manual_sentinel = "# MANUAL: do not regenerate"
+    if rule_path.exists() and manual_sentinel in rule_path.read_text():
+        report["rule_skipped"] = "manual override preserved"
+        is_implemented = True
+    elif write_rule:
         if cls == "HAS_IMPLEMENTATION":
             report["rule_skipped"] = "existing implementation preserved"
         else:
