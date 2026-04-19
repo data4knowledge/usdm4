@@ -62,6 +62,7 @@ code_lists:
 - C215484
 - C215485
 - C215486
+- C66781  # Age Unit — used by DDF00237 for plannedAge.unit. Requires cache refresh to populate.
 klass_attribute_mapping:
   Study: {}
   StudyProtocolVersion:

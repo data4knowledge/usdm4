@@ -1,17 +1,16 @@
 # USDM4 validation engine — next steps
 
-Written 2026-04-19, refreshed after Stage 1 (the tractable-stubs push)
-and the DDF00082-delegation pass. Read alongside
-`docs/lessons_learned.md` which captures the *how*. This file captures
-the *what next*.
+Written 2026-04-19, refreshed after Stage 2 (the CT / prev-next /
+ref-format batch). Read alongside `docs/lessons_learned.md` which
+captures the *how*. This file captures the *what next*.
 
 ## Current state
 
-**Rule coverage:** 200 of 210 V4 DDF rules are either implemented
-or delegated (~95 %). 10 V4 rules remain as genuine stubs
-(6 moderately-harder + 4 genuinely-hard).
+**Rule coverage:** 206 of 210 V4 DDF rules are either implemented or
+delegated (~98 %). 4 V4 rules remain as genuine stubs, all in the
+Stage 3 interactive bucket.
 
-Note: three rules (DDF00081, 00125, 00126) are deliberate no-ops that
+Three rules (DDF00081, 00125, 00126) are deliberate no-ops that
 delegate to DDF00082's JSON-schema validation. Counting them as
 "covered" (rather than "stubbed") reflects that the check runs
 end-to-end; the per-rule file simply doesn't duplicate it. See §10
@@ -27,22 +26,21 @@ for f in src/usdm4/rules/intermediate/rule_ddf*.yaml; do
 done
 ```
 
-Cross-references the intermediate YAMLs (which correspond to V4 rules
-only). A plain `grep -l NotImplementedError rule_ddf*.py` returns more
-hits (~60) because some non-V4 DDF IDs also have stub files.
+Plain `grep -l NotImplementedError rule_ddf*.py` returns more hits
+(~60) because some non-V4 DDF IDs also have stub files.
 
 The YAML `classification` field is stale for rules where the
 biconditional / implication predicate was hand-filled — don't trust
 it as a stub signal (§13 of lessons_learned.md).
 
-**Committed so far this session** (77 hand-authored + 3 no-op
-delegates = 80 rule files touched across multiple commits): see the
-§10 progression table in `lessons_learned.md` for the full
+**Committed so far this session** (83 hand-authored + 3 no-op
+delegates = 86 rule files touched across multiple commits):
+see the §10 progression table in `lessons_learned.md` for the full
 cluster breakdown.
 
 **Uncommitted changes** (if any): check `git status`. Latest work
-added the 15 Stage-1 rules, 3 delegated no-ops (DDF00081/125/126),
-and the doc refresh.
+added the 6 Stage-2 rules + 1 ct_config.yaml addition (C66781) +
+doc refresh.
 
 **`test_package.py` baseline** — same 2 pre-existing failures:
 
@@ -76,64 +74,53 @@ by the pre-existing blockers (see §14 of lessons_learned.md):
 
 None change pass/fail because DDF00166 / DDF00217 are blocking.
 
-## Remaining 10 V4 stubs — triage
+Stage 2 added no new fixture findings (0 hits across DDF00023, 27,
+137, 210, 237, 246). DDF00237 is in a "skip gracefully" state until
+the CT cache is refreshed to pull C66781 — see §19 of
+`lessons_learned.md`.
 
-### Moderately-harder (6) — possible but heavier lift
+## Remaining 4 V4 stubs — all Stage 3 (interactive)
 
-- **DDF00023** — "previous id value must match the next id value" —
-  ordering consistency across paired attrs. For each pair (A, B)
-  where A.nextId = B.id, require B.previousId = A.id (and mirror).
-  Group across scope classes (Activity, EligibilityCriterion,
-  Encounter, etc. — see YAML entity list).
-- **DDF00027** — Same instance not referenced more than once as
-  previous or next. Group-by across the same scope classes;
-  `Counter(prev_ids + next_ids)` and flag any count > 1.
-- **DDF00137** — ParameterMap reference format check. Sister of
-  DDF00162 but scoped to ParameterMap.reference. Reuse
-  `_find_malformed` helpers from DDF00162 / DDF00124 / DDF00244.
-- **DDF00210** — Product designation CT codelist. Need a
-  `ct_config.yaml` entry binding `(AdministrableProduct,
-  productDesignation)` to the right codelist (probably C207xxx —
-  verify via USDM_CT.xlsx).
-- **DDF00237** — Planned age unit CT codelist (C66781 Age Unit).
-  Same shape as DDF00210 — ct_config binding for
-  `(Quantity, unit)` nested under plannedAge, or a scoped override.
-- **DDF00246** — Parameter names in text must appear in data
-  dictionary parameter maps. Cross-class regex+lookup — combine
-  the DDF00162 regex with a StudyVersion-scoped ParameterMap.tag
-  lookup.
+These genuinely benefit from per-rule discussion. Answers depend on
+Dave's domain judgment more than Python skill — "what does
+'consistent with SAI ordering' actually mean in USDM v4?", "is
+parent-before-child a topological requirement or can it be violated
+for amendments?" — and decisions may surface spec ambiguity rather
+than implementation gaps.
 
-### Delegated to DDF00082 (already covered; no-ops on purpose)
+### Ordering-graph rules (3)
 
-- **DDF00081 / DDF00125 / DDF00126** — Class relationships / attribute
-  presence / cardinalities per the USDM API spec. DDF00082 runs full
-  JSON-schema validation against `src/usdm4/rules/library/schema/
-  usdm_v4-0-0.json`, which covers all three. The rule files are
-  `validate()`-no-ops (return True) with a module-level comment
-  pointing at DDF00082. No further work needed.
+- **DDF00087** — Encounter prev-next ordering must match the order
+  of corresponding ScheduledActivityInstances that reference those
+  encounters via `encounterId`. Need to define "corresponding
+  SAI" precisely, then decide: strict positional match? Or a
+  topological property that allows multiple SAIs per encounter?
+- **DDF00088** — same shape for StudyEpoch prev-next vs. SAI
+  ordering via `epochId`.
+- **DDF00161** — Activity prev-next ordering must include parents
+  preceding children — a topological ordering of the childIds tree
+  relative to the prev-next chain.
 
-### Genuinely hard (4 rules — likely skip or punt to interactive
-prompt/response)
+### Multi-class cardinality (1)
 
-- **DDF00087 / DDF00088 / DDF00161** — prev-next ordering must match
-  SAI ordering / activity parent-child ordering. Cross-class graph
-  alignment. Need a topological walk.
-- **DDF00091** — Condition `appliesTo` multi-class cardinality with
-  conditional logic based on target class.
+- **DDF00091** — "When a condition applies to a procedure, activity,
+  biomedical concept, biomedical concept category, or biomedical
+  concept surrogate then ..." (rule text is cut off in the YAML).
+  Needs the full rule text from USDM_CORE_Rules.xlsx, then a
+  conditional-cardinality check per target class.
+
+### Delegated to DDF00082 (already covered; no further work)
+
+- **DDF00081 / DDF00125 / DDF00126** — Class relationships /
+  attribute presence / cardinalities per USDM API spec. Schema
+  validation runs in DDF00082.
 
 ## Path to 100 %
 
-**Stage 2 (6 rules, 1-2 hours):** the moderately-harder set above.
-Adds CT config work for DDF00210 and DDF00237 (two new codelist
-bindings). Brings coverage to **206/210 ≈ 98 %**.
-
-**Stage 3 (4 rules, interactive prompt/response):** the genuinely-hard
-set benefits from per-rule discussion. Answers will depend on Dave's
-domain judgment — "what does 'consistent with SAI ordering' actually
-mean in USDM v4?" "Is parent-before-child a topological requirement
-or can it be violated for amendments?" — more than Python skill.
-Could land all 4 with targeted clarification, or land some and
-explicitly mark the rest as "spec ambiguous / out of scope".
+**Stage 3 (4 rules, interactive):** per-rule discussion. Could land
+all 4 with targeted clarification, or land some and explicitly mark
+the rest as "spec ambiguous / out of scope". Realistic end state:
+**210/210** or **208/210 with 2 marked out-of-scope**.
 
 **Stage 4 (real-file regression):** once coverage is ~100 %, run the
 full library against the 21 protocols in udp_prism and compare
@@ -143,16 +130,20 @@ data issues in some protocols, and (c) a handful of rule-interpretation
 bugs that only show up on real data. Each category needs a separate
 reconciliation pass.
 
+Ahead of Stage 4 it would be high-leverage to finally **unblock
+DDF00166 / DDF00217**: converts `test_package.py` into a live
+regression detector. The latent-findings list is at 13 items now —
+each is a legitimate rule firing that's hiding behind the pre-existing
+failures.
+
 ## Immediate next steps — ordered
 
-1. **Commit the Stage 1 batch + delegation pass + doc refresh** (clean
-   checkpoint).
-2. **Unblock DDF00166 / DDF00217 fixture failures** so `test_package.py`
-   becomes a live regression detector before adding more rules. The
-   "latent findings" list has grown to 13 now — this is becoming
-   high-leverage.
-3. **Stage 2 hand-authoring + CT config** — 6 moderately-harder rules,
-   including two new CT codelist registrations.
+1. **Commit the Stage 2 batch + ct_config.yaml update + doc refresh**
+   (clean checkpoint).
+2. **Unblock DDF00166 / DDF00217** — unmasks the latent findings and
+   makes further work self-verifying.
+3. **CT cache refresh** — activates DDF00237 once the Age Unit codelist
+   (C66781) is pulled from the CDISC API. Requires network access.
 4. **Stage 3 interactive** — talk through the 4 hard rules, decide
    scope per rule.
 5. **Stage 4 real-file regression** — run against udp_prism protocols.
@@ -174,9 +165,15 @@ reconciliation pass.
   divergence in a comment. See §16.4 of lessons_learned.md.
 - **When a real schema validator already covers a rule, delegate**
   rather than re-implementing. Keep the rule file registered, return
-  True, point at the canonical check in a module-level comment.
-  See §10 (DDF00082 delegation) and DDF00081/00125/00126 rule files
-  for the pattern.
+  True, point at the canonical check in a module-level comment. See
+  §10 (DDF00082 delegation).
+- **Trust ct_config bindings over the YAML's `class` field.** Stage-1
+  class extraction sometimes gets the class wrong when CORE walks
+  through a parent — ct_config has the authoritative binding. See
+  §19.4 of lessons_learned.md and DDF00210 for an example.
+- **When a CT codelist is registered but cache is stale, skip
+  gracefully** rather than raising CTException. See §19.2 of
+  lessons_learned.md and DDF00237 for the pattern.
 - **CT cache drift** breaks tests that pin specific dates. Not a code
   regression.
 
@@ -189,7 +186,7 @@ tests/usdm4/test_package.py
   14 passed
   2 failed (DDF00166 / DDF00217 — pre-existing)
 
-80 rule tests touched this session (77 hand-authored + 3 delegated no-ops)
-  80 passed (metadata + delegated behaviour)
-  154 skipped (positive/negative fixture TODOs on hand-authored rules)
+86 rule tests touched this session (83 hand-authored + 3 delegated no-ops)
+  86 passed (metadata + delegated behaviour)
+  166 skipped (positive/negative fixture TODOs on hand-authored rules)
 ```

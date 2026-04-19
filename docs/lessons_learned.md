@@ -454,17 +454,18 @@ A follow-up day pushed the total further via six hand-authored clusters:
          185/198/231/243/245)
  200  + DDF00081/125/126 marked as no-op delegates to DDF00082 (not new
          implementations; the schema validation has always been there)
+ 206  + Stage 2 batch — doubly-linked-list consistency / sibling-dup /
+         ref-format / CT-codelist (6: DDF00023/27/137/210/237/246)
 ```
 
-**200 of 210 ≈ 95 % coverage** (counting delegated rules as covered).
-10 rules remain, in two buckets:
+**206 of 210 ≈ 98 % coverage** (counting delegated rules as covered).
+4 rules remain — the genuinely-hard set that benefits from interactive
+domain discussion:
 
-- **5 moderately-harder** — DDF00023 / 00027 (prev-next ordering
-  consistency), DDF00137 / 00210 / 00237 / 00246 (CT-codelist
-  additions or regex-heavy parse). Tractable with more effort.
-- **5 genuinely-hard** — DDF00087 / 00088 / 00161 (cross-class graph
-  alignment with topological walks), DDF00091 (condition appliesTo
-  multi-class cardinality).
+- **DDF00087 / DDF00088 / DDF00161** — cross-class prev-next ordering
+  must match SAI / parent-child graph alignment. Topological walks.
+- **DDF00091** — Condition appliesTo multi-class cardinality with
+  conditional logic.
 
 ### Noting the DDF00082 delegation
 
@@ -1082,3 +1083,101 @@ than three separate re-implementations, make 00081/125/126
 rule files stay registered for coverage accounting; the test files
 assert the no-op behaviour explicitly so a future refactor can't
 silently turn them into real checks.
+
+## 19. Patterns from Stage 2 (the 98 % push)
+
+Six rules that leaned on existing idioms plus a few new wrinkles.
+Most are straightforward; flagging three that are worth a separate
+note.
+
+### Doubly-linked-list consistency in both directions
+
+DDF00023 checks back-links: for each instance I, `I.previousId` must
+point at an A where `A.nextId = I.id` (if A has a nextId at all).
+Symmetric for `I.nextId` → B, require `B.previousId = I.id`. The
+rule text says "the previous id value must match the next id value
+of the referred instance" — slightly ambiguous but CORE's conditions
+spell out both directions.
+
+The idiom is terse once you trust the structure:
+
+```python
+for instance in data.instances_by_klass(klass):
+    self_id = instance["id"]
+    for forward, backward in [("previousId", "nextId"), ("nextId", "previousId")]:
+        target_id = instance.get(forward)
+        if not target_id:
+            continue
+        target = data.instance_by_id(target_id)
+        if isinstance(target, dict) and target.get(backward):
+            if target[backward] != self_id:
+                fail(...)
+```
+
+Missing back-links (A has no nextId at all) aren't flagged — that's
+a different rule's concern. Only *mismatched* back-links fail.
+
+### CT codelist registered but not yet in cache
+
+DDF00237 needs the Age Unit codelist (C66781), which is SDTM CT —
+not in the default USDM cache. Three-layer situation:
+
+1. Add C66781 to `ct_config.yaml` `code_lists:` so a future cache
+   refresh will pull it.
+2. Don't count on the cache being fresh *right now* — the
+   `library_cache_usdm.yaml` snapshot was taken before we added the
+   codelist.
+3. Make the rule defensive: if
+   `config["ct"]._by_code_list.get("C66781") is None`, return True.
+   The rule will silently re-activate when the cache is refreshed.
+
+```python
+codelist = ct._by_code_list.get(AGE_UNIT_CODELIST)
+if codelist is None:
+    # C66781 is registered in ct_config.yaml but only populates
+    # after a CT cache refresh. Skip rather than crash.
+    return True
+```
+
+This is a "ship the config change now, the functionality activates
+after refresh" pattern. The alternative — raising CTException — is
+the pattern used by `_ct_check` (which assumes the codelist
+*should* be present). Use the raising behaviour when the codelist
+is expected to be there; use the defensive skip when a cache
+refresh is the enabling step.
+
+### When `klass_attribute_mapping` can't express the path
+
+`ct_config.yaml`'s `klass_attribute_mapping` is flat: `Class: { attr:
+codelist }`. For DDF00237 the target is `plannedAge.unit` — two
+levels deep from StudyDesignPopulation. Can't be encoded in the
+flat mapping.
+
+Two options:
+
+- Use `cl_by_term()` or `_by_code_list[code_id]` to fetch the
+  codelist directly, then do the membership check inline.
+- Register the nested class.attribute (here, `Quantity.unit`) and
+  rely on context — but Quantity.unit serves many different
+  codelists depending on context (age, percent, mass, etc.), so a
+  blanket mapping would be wrong.
+
+DDF00237 chose option 1. Keep the codelist ID as a module-level
+constant so the rule is self-documenting; fetch via `_by_code_list`
+(accepting the private-attribute access — same caveat as `_parent`
+and `_ids` in §11).
+
+### When stage-1 gets the class wrong
+
+DDF00210's YAML lists `class=StudyIntervention`, but the rule is
+actually about `AdministrableProduct.productDesignation` (per
+ct_config.yaml's existing binding and the CORE conditions). Stage-1
+has a recurring class-extraction weakness documented in §7 — when
+CORE's walk traverses through a parent to reach the actual scoped
+class, stage-1 may record the walk's origin rather than the target.
+
+**When this shows up,** the fix is a one-line override in the
+`validate()` body: just point `_ct_check` (or the equivalent) at
+the correct class. Don't try to fix it upstream in stage-1 — the
+surface area is too broad. Note the correction in a comment so a
+future reader doesn't trust the YAML's class field.

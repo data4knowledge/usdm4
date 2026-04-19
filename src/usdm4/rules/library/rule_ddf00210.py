@@ -1,3 +1,10 @@
+# MANUAL: do not regenerate
+#
+# YAML's class=StudyIntervention is a stage-1 extraction bug — the
+# rule is actually about AdministrableProduct.productDesignation
+# (see lessons_learned.md §7). ct_config.yaml already binds
+# AdministrableProduct.productDesignation → C207418, so a direct
+# _ct_check against the correct class is sufficient.
 from usdm4.rules.rule_template import RuleTemplate
 
 
@@ -5,7 +12,7 @@ class RuleDDF00210(RuleTemplate):
     """
     DDF00210: An administrable product's product designation must be specified using the product designation (C207418) DDF codelist.
 
-    Applies to: StudyIntervention
+    Applies to: AdministrableProduct (YAML listed StudyIntervention in error)
     Attributes: productDesignation
     """
 
@@ -16,6 +23,5 @@ class RuleDDF00210(RuleTemplate):
             "An administrable product's product designation must be specified using the product designation (C207418) DDF codelist.",
         )
 
-    # TODO: implement. HIGH_CT_MEMBER with no CT codelist registered for ('StudyIntervention', 'productDesignation'). Update ct_config.yaml or revise the rule's class/attribute before implementing.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00210: not yet implemented")
+        return self._ct_check(config, "AdministrableProduct", "productDesignation")
