@@ -1372,3 +1372,60 @@ a richer fixture exercises the rule's precondition. When sweeping
 up remaining stubs, read the rule body, not just whether the file
 has `NotImplementedError`. Cross-check against the rule text and
 CORE JSONata.
+
+## 24. `RulesValidationResults.to_dict()` row shape is a downstream contract
+
+`usdm4.rules.results.RulesValidationResults` was rewritten in April
+2026 as a `RuleStatus` enum plus a `RuleOutcome` dataclass, mirroring
+the shape of `usdm4.core.core_validation_result.CoreValidationResult`.
+The two sibling engines (CDISC CORE JSONata, usdm4 Python library)
+now expose a consistent contract: dataclass results, `Errors` only as
+an edge-serialisation target via `to_errors()`.
+
+What's worth recording here is the **implicit contract on `to_dict()`
+row keys** — one that lives in a Jinja template in a different repo,
+so the coupling is invisible from this codebase.
+
+**The contract.** `study_definitions_workbench` at
+`app/templates/validate/partials/results.html` iterates the
+`to_dict()` list and reads these row keys by name:
+
+```
+rule_id, status, message, level, klass, attribute, path, exception
+```
+
+It also filters with `{% if item['status'] not in ['Not Implemented',
+'Success'] %}`, so the status string values (`"Failure"`,
+`"Exception"`, etc.) are contract too. `RuleStatus(str, Enum)` keeps
+bare-string equality working, so the template doesn't need to change.
+
+**Why this lives in two places.** The row shape is produced by
+`_row()` in `results.py` and consumed by the template in the
+workbench repo. Neither file references the other. The `tests/usdm4/
+test_files/convert/*_errors.yaml` baselines also pin the shape, but
+those will regenerate silently if row keys change — the workbench
+template won't. It'll just render blank cells.
+
+**How to apply.**
+
+- Do not simplify `_row()`'s key set until usdm3 retires and the
+  workbench cuts over to a v4-only path (at which point both engines
+  produce the same row shape and the template can be reconsidered).
+- Adding new keys to rows is safe; removing or renaming existing ones
+  is not.
+- If you ever replace ValidationLocation with a richer location type,
+  keep the five `ValidationLocation.headers()` keys populated in the
+  row (even if empty strings) for back-compat. `_row()` does this by
+  default — don't remove the initialisation loop without also
+  checking the template.
+- `to_dict()` takes `include_success` / `include_not_implemented`
+  flags. Default is False for both, which matches what every current
+  caller wants (template filters phantom rows anyway; tests filter by
+  status). Flipping the defaults is a behavioural change to every
+  caller — don't.
+
+**Warning-level findings.** A second subtle trap: `Errors.to_dict()`
+defaults to `level=ERROR`, which drops warnings. `_row()` calls it
+with `level=Errors.DEBUG` explicitly so rules constructed at
+`RuleTemplate.WARNING` (e.g. `rule_ddf00088.py`) still surface. Don't
+remove the level argument.
