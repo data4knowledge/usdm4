@@ -356,14 +356,43 @@ class Encoder:
         )
         return self._builder.cdisc_code(scope["code"], scope["decode"])
 
-    def to_date(self, text: str) -> datetime.datetime | None:
+    def to_date(
+        self, text: str, element: str | None = None
+    ) -> datetime.datetime | None:
+        """Parse an arbitrary date string and return a datetime.
+
+        When ``element`` is provided, the method also emits an M11
+        normalisation record whenever the parsed ISO-8601 representation
+        differs from the trimmed source (source-fidelity finding) or when
+        the source can't be parsed at all. Pass ``element=None`` to skip
+        the record — preserves backward compat for any caller that doesn't
+        want to participate in normalisation reporting.
+        """
         if not text:
+            if element is not None:
+                record_normalisation(
+                    self._errors,
+                    element=element,
+                    source=text or "",
+                    normalised="",
+                    kind=KIND_UNMAPPED,
+                    location=KlassMethodLocation(self.MODULE, "to_date"),
+                )
             return None
         input_text = text.strip()
         if not input_text:
+            if element is not None:
+                record_normalisation(
+                    self._errors,
+                    element=element,
+                    source=text,
+                    normalised="",
+                    kind=KIND_UNMAPPED,
+                    location=KlassMethodLocation(self.MODULE, "to_date"),
+                )
             return None
         try:
-            return parser.parse(input_text)
+            parsed = parser.parse(input_text)
         except (ValueError, TypeError, OverflowError):
             # Unparseable is a normal case — the docx often carries non-date
             # text here (e.g. "Not applicable", "Refer to electronic
@@ -373,6 +402,15 @@ class Encoder:
                 f"No date detected for '{preview}'; treating as absent.",
                 location=KlassMethodLocation(self.MODULE, "to_date"),
             )
+            if element is not None:
+                record_normalisation(
+                    self._errors,
+                    element=element,
+                    source=text,
+                    normalised="",
+                    kind=KIND_UNMAPPED,
+                    location=KlassMethodLocation(self.MODULE, "to_date"),
+                )
             return None
         except Exception as e:
             # Unexpected — keep the full traceback for these.
@@ -382,6 +420,19 @@ class Encoder:
                 location=KlassMethodLocation(self.MODULE, "to_date"),
             )
             return None
+        if element is not None:
+            # ISO-8601 date-only form is the canonical representation. If
+            # the source already matches (e.g. "2023-11-15"), the helper
+            # suppresses the record automatically.
+            record_normalisation(
+                self._errors,
+                element=element,
+                source=text,
+                normalised=parsed.strftime("%Y-%m-%d"),
+                kind=KIND_COERCED,
+                location=KlassMethodLocation(self.MODULE, "to_date"),
+            )
+        return parsed
 
     def iso8601_duration(self, value: int, unit: str) -> str:
         try:
@@ -414,5 +465,55 @@ class Encoder:
             )
             return self.ZERO_DURATION
 
-    def to_boolean(self, text: str) -> bool:
-        return False if text is None else self.BOOLEAN_MAP.get(text.lower(), False)
+    def to_boolean(self, text: str, element: str | None = None) -> bool:
+        """Decode yes/no-like text to bool.
+
+        ``BOOLEAN_MAP`` accepts ``yes``/``no``/``y``/``n``/``true``/
+        ``false``/``1``/``0``. The canonical M11 codelist term is ``Yes``
+        or ``No``, so any other form (including case variants) is a
+        source-fidelity issue worth flagging.
+
+        When ``element`` is provided, emits an M11 normalisation record:
+
+        - ``coerced`` when the source mapped successfully but wasn't in
+          canonical form (case or token variant).
+        - ``unmapped`` when the source is absent or unrecognised — we fall
+          back to ``False`` (i.e. ``"No"``) which is the existing
+          behaviour and may not reflect the user's intent.
+        """
+        if text is None:
+            if element is not None:
+                record_normalisation(
+                    self._errors,
+                    element=element,
+                    source="",
+                    normalised="No",
+                    kind=KIND_UNMAPPED,
+                    location=KlassMethodLocation(self.MODULE, "to_boolean"),
+                )
+            return False
+        result = self.BOOLEAN_MAP.get(text.lower())
+        if result is None:
+            if element is not None:
+                record_normalisation(
+                    self._errors,
+                    element=element,
+                    source=text,
+                    normalised="No",
+                    kind=KIND_UNMAPPED,
+                    location=KlassMethodLocation(self.MODULE, "to_boolean"),
+                )
+            return False
+        canonical = "Yes" if result else "No"
+        if element is not None:
+            # Let record_normalisation's equivalence check handle the
+            # no-normalisation case (source already "Yes"/"No" in any case).
+            record_normalisation(
+                self._errors,
+                element=element,
+                source=text,
+                normalised=canonical,
+                kind=KIND_COERCED,
+                location=KlassMethodLocation(self.MODULE, "to_boolean"),
+            )
+        return result

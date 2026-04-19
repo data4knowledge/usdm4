@@ -266,7 +266,9 @@ class DocumentAssembler(BaseAssembler):
             is later combined with other dates in the study assembler.
         """
         try:
-            if actual_date := self._encoder.to_date(data["version_date"]):
+            if actual_date := self._encoder.to_date(
+                data["version_date"], element="Version Date"
+            ):
                 protocol_date_code = self._builder.cdisc_code(
                     "C71476",
                     "Approval Date",

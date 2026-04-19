@@ -128,7 +128,8 @@ class StudyAssembler(BaseAssembler):
                         {
                             "url": OV_EXT_URL,
                             "valueBoolean": self._encoder.to_boolean(
-                                data["original_protocol"]
+                                data["original_protocol"],
+                                element="Original Protocol Indicator",
                             ),
                         },
                     )
@@ -226,7 +227,10 @@ class StudyAssembler(BaseAssembler):
     def _create_date(self, data: dict) -> bool:
         result = False
         try:
-            if actual_date := self._encoder.to_date(data["sponsor_approval_date"]):
+            if actual_date := self._encoder.to_date(
+                data["sponsor_approval_date"],
+                element="Sponsor Approval Date",
+            ):
                 sponsor_approval_date_code = self._builder.cdisc_code(
                     "C71476", "Approval Date"
                 )
