@@ -456,16 +456,16 @@ A follow-up day pushed the total further via six hand-authored clusters:
          implementations; the schema validation has always been there)
  206  + Stage 2 batch — doubly-linked-list consistency / sibling-dup /
          ref-format / CT-codelist (6: DDF00023/27/137/210/237/246)
+ 210  + Stage 3 batch — cross-class prev/next vs. SAI flow / Condition
+         appliesTo / Activity preorder walk (4: DDF00087/88/91/161)
 ```
 
-**206 of 210 ≈ 98 % coverage** (counting delegated rules as covered).
-4 rules remain — the genuinely-hard set that benefits from interactive
-domain discussion:
-
-- **DDF00087 / DDF00088 / DDF00161** — cross-class prev-next ordering
-  must match SAI / parent-child graph alignment. Topological walks.
-- **DDF00091** — Condition appliesTo multi-class cardinality with
-  conditional logic.
+**210 of 210 = 100 % coverage** (207 implemented + 3 delegated to
+DDF00082). Stage 3 was the "interactive" batch where Dave's domain
+answers unblocked each rule. Key clarification: prev/next on Activity
+is a **display order** (preorder walk of the childIds tree) for SoA
+rendering — not a graph-topology constraint. Once that was said,
+DDF00161 collapsed into three short FK checks.
 
 ### Noting the DDF00082 delegation
 
@@ -1181,3 +1181,128 @@ class, stage-1 may record the walk's origin rather than the target.
 the correct class. Don't try to fix it upstream in stage-1 — the
 surface area is too broad. Note the correction in a comment so a
 future reader doesn't trust the YAML's class field.
+
+## 20. Patterns from Stage 3 (the 100 % push)
+
+Four rules that needed a paragraph of domain context each before the
+Python became obvious. The context mattered more than the code. Three
+patterns worth recording.
+
+### Dual-graph comparison with consecutive-dedup
+
+DDF00087 and DDF00088 both compare two linked-list orderings derived
+from the same underlying structure:
+
+- Graph A: a simple prev/next walk through a flat list (encounters,
+  epochs).
+- Graph B: a walk through a different structure (SAIs via
+  `defaultConditionId`), collecting an FK (`encounterId`, `epochId`)
+  at each hop, then **deduping consecutive repeats** because one
+  encounter / epoch can span multiple adjacent SAIs.
+
+```python
+def _walk_chain(by_id, head_id, next_attr):
+    visited, order = set(), []
+    cur = head_id
+    while cur:
+        if cur in visited:
+            return order, True  # cycle
+        visited.add(cur)
+        order.append(cur)
+        node = by_id.get(cur)
+        cur = node.get(next_attr) if isinstance(node, dict) else None
+    return order, False
+
+def _dedupe_consecutive(seq):
+    out = []
+    for item in seq:
+        if not out or out[-1] != item:
+            out.append(item)
+    return out
+```
+
+Both checks ship cycle detection via a visited set (Dave: "yes, allow
+for looping and detect if we can"). Multiple chain heads — more than
+one node with no `previousId` — are flagged as a separate warning;
+they indicate a fragmented chain, which is a setup problem even if
+the orderings technically align on the first head.
+
+### Domain context collapses spec ambiguity
+
+DDF00161's rule text reads like a graph-theory problem: "parents
+preceding their children in the prev/next ordering." CORE's JSONata
+is three interlocking predicates. But Dave's one-sentence context —
+"prev/next is the display order for the SoA; parent row, then child
+rows, then next parent row" — reframes it as preorder traversal of
+the childIds tree. The three CORE predicates become three cheap FK
+checks:
+
+1. If I have children, my `nextId` must be one of them (step into
+   the first child).
+2. If I'm a child, my `previousId` must be within my parent's
+   subtree (transitively — includes descendants of older siblings).
+3. If my `previousId` points at a node that has children, I must
+   be one of those children (symmetric of 1).
+
+No topological sort; no graph algorithm; just three lookups per
+Activity. Total implementation: ~40 lines.
+
+**Lesson.** When a rule reads as "topology / ordering / consistency"
+and CORE's JSONata has three nested `not-any-of` clauses, ask the
+domain owner *what the attribute is actually used for in practice*.
+The answer often reduces the implementation dramatically.
+
+### Reuse the DDF00114 / DDF00212 shape for "FK must resolve to one
+of these classes"
+
+DDF00091 is the fourth instance of this pattern in the session.
+Shape is stable enough to template:
+
+```python
+ALLOWED_CLASSES = {"Procedure", "Activity", "BiomedicalConcept", ...}
+
+for source in data.instances_by_klass(SCOPE):
+    for target_id in source.get("<fk list attr>") or []:
+        if not target_id:
+            continue
+        target = data.instance_by_id(target_id)
+        target_type = target.get("instanceType") if isinstance(target, dict) else None
+        if target_type not in ALLOWED_CLASSES:
+            self._add_failure(...)
+```
+
+Four callers (DDF00091, DDF00114, DDF00189's variant, DDF00212). Not
+yet worth a shared utility — each has a different ALLOWED_CLASSES
+set, a different attribute name, and a slightly different failure
+message. Promote when the fifth arrives.
+
+## 21. Stage-by-stage session retrospective
+
+Looking back at the seven batches that took coverage from 64 % to
+100 %:
+
+| Stage | Rules | Dominant pattern | Time per rule |
+|-------|-------|------------------|---------------|
+| Early batches | 29 | Direct CORE translation (self-ref, mutex, at-least-one) | 3-5 min |
+| Cross-design / CT / at-least-one | 16 | `parent_by_klass` + FK resolution | 5 min |
+| Stage 1 | 15 | Same-design twins + dateValues dedup + grid | 4-5 min |
+| Stage 2 | 6 | Doubly-linked-list + CT cache work | 8-10 min |
+| Stage 3 | 4 | Domain discussion first, Python second | 5-15 min |
+
+**Observations.**
+
+- Pattern libraries compound. Stage 1 was faster per rule than the
+  earlier batches because `parent_by_klass` / `Counter` / defaultdict
+  idioms were already locked in.
+- The last 10 % of rules took ~40 % of the time. The "easy 90 / hard
+  10" intuition holds.
+- Interactive domain input was the unlock for Stage 3. Without
+  Dave's "prev/next is display order" sentence, DDF00161 would have
+  been a half-day of wrong topology implementations.
+- The `classification` field in the intermediate YAMLs is unreliable
+  as a difficulty signal. Six rules classed MED_TEXT/HIGH_CT_MEMBER
+  turned out to be one-line fixes once the pattern was recognised.
+  Use `NotImplementedError` grep + rule-text reading instead.
+- No new generator features needed after the first ~150 rules.
+  Hand-authoring from stage-1 YAMLs was more productive than
+  extending stage-2 for ever-more-specific predicate shapes.
