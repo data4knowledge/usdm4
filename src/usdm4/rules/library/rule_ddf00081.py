@@ -1,3 +1,10 @@
+# MANUAL: do not regenerate
+#
+# Delegated to DDF00082. The full USDM API specification is enforced
+# there via jsonschema against src/usdm4/rules/library/schema/
+# usdm_v4-0-0.json, which covers class relationships as part of the
+# schema. Running a separate check here would duplicate DDF00082's
+# findings with different framing. No-op on purpose.
 from usdm4.rules.rule_template import RuleTemplate
 
 
@@ -16,6 +23,6 @@ class RuleDDF00081(RuleTemplate):
             "Class relationships must conform with the USDM schema based on the API specification.",
         )
 
-    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00081: not yet implemented")
+        # Covered by DDF00082 schema validation. See module docstring.
+        return True

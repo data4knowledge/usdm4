@@ -449,13 +449,39 @@ A follow-up day pushed the total further via six hand-authored clusters:
  168  + cluster harder-after-all (5: DDF00006/7/10/160/162)
  182  + cluster cross-design / CT / at-least-one (16: DDF00017/26/35/75/
          76/101/107/115/127/153/163/203/206/212/213/232)
+ 197  + Stage 1 batch — same-design / dateValues / mutex / conditional /
+         grid / uniqueness (15: DDF00019/24/28/29/46/47/73/93/152/181/
+         185/198/231/243/245)
+ 200  + DDF00081/125/126 marked as no-op delegates to DDF00082 (not new
+         implementations; the schema validation has always been there)
 ```
 
-**182 of 210 ≈ 87 % coverage.** 28 V4 stubs remain; the rest sit in the
-genuinely-harder territory (cross-class prev/next ordering consistency
-— DDF00087/88/161, condition-context multi-class cardinality —
-DDF00091, USDM-schema conformance — DDF00081, and a handful of
-CT-scoped / fixture-only edge cases).
+**200 of 210 ≈ 95 % coverage** (counting delegated rules as covered).
+10 rules remain, in two buckets:
+
+- **5 moderately-harder** — DDF00023 / 00027 (prev-next ordering
+  consistency), DDF00137 / 00210 / 00237 / 00246 (CT-codelist
+  additions or regex-heavy parse). Tractable with more effort.
+- **5 genuinely-hard** — DDF00087 / 00088 / 00161 (cross-class graph
+  alignment with topological walks), DDF00091 (condition appliesTo
+  multi-class cardinality).
+
+### Noting the DDF00082 delegation
+
+DDF00081 ("class relationships conform to USDM schema"), DDF00125
+("required/additional properties"), and DDF00126 ("cardinalities")
+are all already enforced by DDF00082, which runs full `jsonschema`
+validation against `src/usdm4/rules/library/schema/usdm_v4-0-0.json`.
+The per-rule files for 00081/00125/00126 are deliberate no-ops that
+`return True` with a module-level comment pointing at DDF00082. This
+avoids duplicating the same schema violation as three separate rule
+failures with different wording.
+
+**Lesson.** When a CORE rule's English is "matches the reference
+schema" and a real schema validator already exists in the codebase,
+wire the rule to delegate rather than re-implementing the check.
+Keep the rule registered (so coverage accounting is complete) and
+document the delegation inline.
 
 **Stub-count caveat.** `grep -l NotImplementedError src/usdm4/rules/library/rule_ddf*.py`
 returns ~75 files, but many of those correspond to DDF IDs outside
@@ -960,3 +986,99 @@ C207616  Official Study Title         (StudyTitle.type)
 
 Same rule as before: keep the codes as module-level constants in
 the rule file; promote to shared only if a third caller shows up.
+
+## 18. Patterns from Stage 1 (the 95 % push)
+
+Stage 1 (15 rules) mostly applied existing patterns but surfaced three
+worth lifting to their own sections.
+
+### `frozenset` as part of the group key for set-equivalence
+
+When grouping by "this entry's *set* of scope codes" (rather than an
+ordered list), use `frozenset` in the key so equivalent sets compare
+equal regardless of order:
+
+```python
+def _date_key(date):
+    type_code = (date.get("type") or {}).get("code")
+    scopes = date.get("geographicScopes") or []
+    scope_codes = frozenset(
+        (s.get("type") or {}).get("code")
+        for s in scopes
+        if isinstance(s, dict) and isinstance(s.get("type"), dict)
+    )
+    return (type_code, scope_codes)
+
+groups = defaultdict(list)
+for date in parent.get("dateValues", []):
+    groups[_date_key(date)].append(date)
+for key, entries in groups.items():
+    if len(entries) > 1:
+        fail(...)
+```
+
+Used by DDF00093 and DDF00181 (dateValues uniqueness by type + scope
+set). Without `frozenset` — say, sorting into a tuple — the key
+construction is more verbose and less obvious about intent.
+
+### Grid coverage: Cartesian product vs. observed set
+
+DDF00243 requires "one StudyCell per (StudyArm, StudyEpoch) pair" —
+that is, the full Cartesian product must be covered with multiplicity
+exactly 1. Three-step check:
+
+```python
+arm_ids = {a["id"] for a in design["arms"]}
+epoch_ids = {e["id"] for e in design["epochs"]}
+expected = {(a, e) for a in arm_ids for e in epoch_ids}
+
+cell_counts = Counter(
+    (c["armId"], c["epochId"])
+    for c in design["studyCells"]
+    if c["armId"] in arm_ids and c["epochId"] in epoch_ids
+)
+
+missing = expected - set(cell_counts)
+duplicated = {pair for pair, n in cell_counts.items() if n > 1}
+if missing or duplicated:
+    fail(...)
+```
+
+Report both missing and duplicated in the same message — the rule is
+really "exactly one per pair", so both directions of deviation matter.
+Filtering the Counter input to valid arm/epoch ids avoids polluting
+the report with cells that point at non-existent arms/epochs.
+
+### Iterate-then-filter-by-ancestor for scoped cross-cutting checks
+
+When a rule scopes to "X within Y" and X instances are scattered
+deep in the tree, it's ergonomic to iterate X globally then filter
+by ancestor rather than walking down from Y:
+
+```python
+for code_inst in data.instances_by_klass("Code"):
+    code_sv = data.parent_by_klass(code_inst["id"], "StudyVersion")
+    if code_sv is None or code_sv["id"] != sv_id:
+        continue
+    # ...collect this Code for the current SV...
+```
+
+DDF00073 uses this to collect all Codes within each StudyVersion.
+Walking down from StudyVersion would mean enumerating every field
+that can hold a Code — tedious and fragile. The filter-by-ancestor
+approach doesn't care about shape.
+
+**Trade-off:** O(|Code| × |StudyVersion|) instead of O(|Code|). Fine
+at clinical-trial scale. If a future rule scales worse, invert to
+build a Code-by-SV index once up front.
+
+### Delegation as a coverage strategy
+
+See §10 for the broader framing. The specific case: DDF00081 /
+DDF00125 / DDF00126 each cite "USDM schema" as the check. DDF00082
+runs full `jsonschema` validation against the same schema. Rather
+than three separate re-implementations, make 00081/125/126
+`return True` with a module-level comment pointing at DDF00082. The
+rule files stay registered for coverage accounting; the test files
+assert the no-op behaviour explicitly so a future refactor can't
+silently turn them into real checks.

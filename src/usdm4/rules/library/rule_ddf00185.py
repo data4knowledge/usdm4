@@ -1,3 +1,12 @@
+# MANUAL: do not regenerate
+#
+# Biconditional at the Administration level:
+#   has_dose          ↔   has_admin_product (direct or embedded)
+# where has_admin_product =
+#   administrableProductId is set
+#   OR  medicalDeviceId points to a MedicalDevice whose
+#       embeddedProductId is set
+# Iterate StudyVersion so medicalDevices lookup stays local.
 from usdm4.rules.rule_template import RuleTemplate
 
 
@@ -6,7 +15,7 @@ class RuleDDF00185(RuleTemplate):
     DDF00185: If a dose is specified, then a corresponding administrable product must also be specified either directly or embedded in the medical device and vice versa.
 
     Applies to: Administration
-    Attributes: dose, administrableProduct
+    Attributes: dose, administrableProductId, medicalDeviceId
     """
 
     def __init__(self):
@@ -16,45 +25,35 @@ class RuleDDF00185(RuleTemplate):
             "If a dose is specified, then a corresponding administrable product must also be specified either directly or embedded in the medical device and vice versa.",
         )
 
-    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     (study.versions)@$sv.
-    #       $sv.studyInterventions@$si.
-    #       $si.administrations@$sa.
-    #           [(
-    #               $ValU:=function($v){$v.value&($v.unit? " " & $v.unit.standardCode.decode & " ("&$v.unit.standardCode.code&")")};
-    #               $FValU:=function($n)
-    #                   {
-    #                       (
-    #                           $exists($n)
-    #                               ?   $type($n)="object"
-    #                                   ?   $exists($n.value)
-    #                                       ? $ValU($n)
-    #                                       : $exists($n.minValue) or $exists($n.maxValue)
-    #                                           ? $ValU($n.minValue)&" to "&$ValU($n.maxValue)
-    #                                           : "Missing"
-    #                                   : $string($n)
-    #                               : "Missing"
-    #                       )              
-    #                   };
-    #               $MedProduct:=(($exists($sa.administrableProductId) and $sa.administrableProductId!=null) or ($exists($sv.medicalDevices[id=$sa.medicalDeviceId].embeddedProductId ) and $sv.medicalDevices[id=$sa.medicalDeviceId].embeddedProductId !=null));
-    #                   {
-    #                       "instanceType": $sa.instanceType,
-    #                       "id": $sa.id,
-    #                       "path": $sa._path,
-    #                       "StudyIntervention.id": $si.id,
-    #                       "StudyIntervention.name": $si.name,
-    #                       "name": $sa.name,
-    #                       "dose.id": $sa.dose.id,
-    #                       "dose(value/range)": $FValU($sa.dose),
-    #                       "administrableProductId": $sa.administrableProductId,
-    #                       "medicalDeviceId": $sa.medicalDeviceId,
-    #                       "MedicalDevice.name": $sv.medicalDevices[id=$sa.medicalDeviceId].name,
-    #                       "MedicalDevice.embeddedProductId": $sv.medicalDevices[id=$sa.medicalDeviceId].embeddedProductId ,
-    #                       "AdministrableProduct.name": $sv.administrableProducts[id in $append($sa.administrableProductId, $sv.medicalDevices[id=$sa.medicalDeviceId].embeddedProductId)].name,
-    #                       "check": ($exists($sa.dose.id) != $MedProduct)
-    #                   }
-    #           )][check=true]
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00185: not yet implemented")
+        data = config["data"]
+        for sv in data.instances_by_klass("StudyVersion"):
+            device_embedded = {
+                d.get("id"): d.get("embeddedProductId")
+                for d in sv.get("medicalDevices") or []
+                if isinstance(d, dict)
+            }
+            for intervention in sv.get("studyInterventions") or []:
+                if not isinstance(intervention, dict):
+                    continue
+                for admin in intervention.get("administrations") or []:
+                    if not isinstance(admin, dict):
+                        continue
+                    has_dose = bool(admin.get("dose"))
+                    ap_id = admin.get("administrableProductId")
+                    md_id = admin.get("medicalDeviceId")
+                    embedded_ap_id = device_embedded.get(md_id) if md_id else None
+                    has_product = bool(ap_id or embedded_ap_id)
+                    if has_dose != has_product:
+                        direction = (
+                            "dose specified but no administrable product (direct or embedded)"
+                            if has_dose
+                            else "administrable product specified but no dose"
+                        )
+                        self._add_failure(
+                            f"Administration: {direction}",
+                            "Administration",
+                            "dose, administrableProductId, medicalDeviceId",
+                            data.path_by_id(admin["id"]),
+                        )
+        return self._result()

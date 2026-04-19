@@ -1,3 +1,9 @@
+# MANUAL: do not regenerate
+#
+# Delegated to DDF00082. Required-property presence and additionalProperties
+# rejection are enforced by the USDM JSON schema that DDF00082 runs against
+# the input file. Running a separate check here would duplicate DDF00082's
+# findings. No-op on purpose.
 from usdm4.rules.rule_template import RuleTemplate
 
 
@@ -16,6 +22,6 @@ class RuleDDF00125(RuleTemplate):
             "Attributes must be included as defined in the USDM schema based on the API specification (i.e., all required properties are present and no additional attributes are present).",
         )
 
-    # TODO: implement. HIGH_CT_MEMBER with class='All' attr='validator' — likely a schema-conformance rule, not CT lookup. Needs hand-authoring.
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00125: not yet implemented")
+        # Covered by DDF00082 schema validation. See module docstring.
+        return True

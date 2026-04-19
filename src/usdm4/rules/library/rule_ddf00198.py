@@ -1,12 +1,24 @@
+# MANUAL: do not regenerate
+#
+# Build the set of StudyDefinitionDocumentVersion ids referenced from
+# any StudyVersion.documentVersionIds or {Interventional,Observational}
+# StudyDesign.documentVersionIds. Every SDDV not in that set fails.
 from usdm4.rules.rule_template import RuleTemplate
+
+
+REFERRING_CLASSES = [
+    "StudyVersion",
+    "InterventionalStudyDesign",
+    "ObservationalStudyDesign",
+]
 
 
 class RuleDDF00198(RuleTemplate):
     """
     DDF00198: Each study definition document version is expected to be referenced by either a study version or a study design.
 
-    Applies to: StudyVersion, ObservationalStudyDesign, InterventionalStudyDesign
-    Attributes: documentVersions
+    Applies to: StudyDefinitionDocumentVersion (referenced from StudyVersion or StudyDesign)
+    Attributes: documentVersionIds
     """
 
     def __init__(self):
@@ -16,19 +28,20 @@ class RuleDDF00198(RuleTemplate):
             "Each study definition document version is expected to be referenced by either a study version or a study design.",
         )
 
-    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     study@$s.
-    #       $s.documentedBy@$sdd.
-    #         $sdd.versions[$not(id in $append($s.versions.documentVersionIds,$s.versions.studyDesigns.documentVersionIds))].
-    #         {
-    #           "instanceType": instanceType,
-    #           "id": id,
-    #           "path": _path,
-    #           "StudyDefinitionDocument.id": $sdd.id,
-    #           "StudyDefinitionDocument.name": $sdd.name,
-    #           "version": version
-    #         }
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00198: not yet implemented")
+        data = config["data"]
+        referenced_ids: set = set()
+        for klass in REFERRING_CLASSES:
+            for instance in data.instances_by_klass(klass):
+                for dv_id in instance.get("documentVersionIds") or []:
+                    if dv_id:
+                        referenced_ids.add(dv_id)
+        for sddv in data.instances_by_klass("StudyDefinitionDocumentVersion"):
+            if sddv.get("id") not in referenced_ids:
+                self._add_failure(
+                    "StudyDefinitionDocumentVersion is not referenced by any StudyVersion or StudyDesign",
+                    "StudyDefinitionDocumentVersion",
+                    "documentVersionIds",
+                    data.path_by_id(sddv["id"]),
+                )
+        return self._result()
