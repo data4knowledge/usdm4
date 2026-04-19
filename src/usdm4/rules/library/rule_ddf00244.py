@@ -1,4 +1,42 @@
+# MANUAL: do not regenerate
+#
+# Same <usdm:ref> validation as DDF00124 but against
+# NarrativeContentItem.text. Shared helpers live inline to avoid pulling
+# in a new module for two callers; if a third rule needs this, promote
+# to a tiny utility.
+import re
+
 from usdm4.rules.rule_template import RuleTemplate
+
+
+USDM_REF_RE = re.compile(r"<usdm:ref\b([^>]*)(?:/>|>\s*</usdm:ref>)")
+ATTR_RE = {
+    "klass": re.compile(r'klass="([a-zA-Z]+)"'),
+    "id": re.compile(r'id="([\w-]+)"'),
+    "attribute": re.compile(r'attribute="([a-zA-Z]+)"'),
+}
+
+
+def _parse_ref(raw_attrs):
+    out = {}
+    for name, regex in ATTR_RE.items():
+        m = regex.search(raw_attrs)
+        if m:
+            out[name] = m.group(1)
+    return out
+
+
+def _check_ref(data, ref):
+    if not {"klass", "id", "attribute"}.issubset(ref):
+        return "ref is missing klass / id / attribute"
+    target = data.instance_by_id(ref["id"])
+    if not isinstance(target, dict):
+        return f"id {ref['id']!r} does not resolve to an instance"
+    if target.get("instanceType") != ref["klass"]:
+        return f"id {ref['id']!r} resolves to {target.get('instanceType')} (expected {ref['klass']})"
+    if ref["attribute"] not in target:
+        return f"attribute {ref['attribute']!r} not present on {ref['klass']} {ref['id']!r}"
+    return None
 
 
 class RuleDDF00244(RuleTemplate):
@@ -16,51 +54,20 @@ class RuleDDF00244(RuleTemplate):
             "Referenced items in the narrative content item texts must be available elsewhere in the data model.",
         )
 
-    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     (
-    #       $lkp:=**[id and instanceType].$each(function($v,$k){{$join([instanceType,id,$k],"|"):$v}})~>$merge;
-    #       ($.study.versions.narrativeContentItems[$type(text)="string" and $contains(text,/usdm:ref/)])@$nci.
-    #         $match( $nci.text,
-    #                 /<usdm:ref([^>]*)(\/>|><\/usdm:ref>)/
-    #         )@$ref.
-    #         (
-    #           $g0_or_null := function($m){$m ? $m.groups[0] : ""};
-    #           {
-    #             "instanceType": $nci.instanceType,
-    #             "id": $nci.id,
-    #             "path": $nci._path,                     
-    #             "name": $nci.name,
-    #             "text": $nci.text,
-    #             "usdm_ref": {
-    #                           "match": $ref.match,
-    #                           "klass": $match($ref.groups[0],/klass=\"([a-zA-Z]+)\"/) ~> $g0_or_null(),
-    #                           "id": $match($ref.groups[0],/id=\"(\w+)\"/) ~> $g0_or_null(),
-    #                           "attribute": $match($ref.groups[0],/attribute=\"([a-zA-Z]+)\"/) ~> $g0_or_null()
-    #                         }
-    #           }
-    #         )
-    #         ~>  $map(function($v)
-    #               {
-    #                 (
-    #                   $ref_val := "usdm_ref" in $keys($v)
-    #                               ? (
-    #                                   $k := $join([$v.usdm_ref.klass,$v.usdm_ref.id,$v.usdm_ref.attribute],"|");
-    #                                   $k in $keys($lkp)
-    #                                   ? $lookup($lkp,$k)
-    #                                   : "!!NOT FOUND!!"
-    #                                 )
-    #                               : $v.value;
-    #                   $v ~> |$|{"Invalid Reference": $v.usdm_ref.match, "Referenced Value": $ref_val},['usdm_ref']|
-    #                 )
-    #               }
-    #             )
-    #         ~>  $filter(function($v)
-    #               {
-    #                 $v.`Referenced Value` = "!!NOT FOUND!!"
-    #               }
-    #             )
-    #     )
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00244: not yet implemented")
+        data = config["data"]
+        for nci in data.instances_by_klass("NarrativeContentItem"):
+            text = nci.get("text")
+            if not isinstance(text, str) or "usdm:ref" not in text:
+                continue
+            for match in USDM_REF_RE.finditer(text):
+                ref = _parse_ref(match.group(1))
+                problem = _check_ref(data, ref)
+                if problem:
+                    self._add_failure(
+                        f"NarrativeContentItem reference problem: {problem}",
+                        "NarrativeContentItem",
+                        "text",
+                        data.path_by_id(nci["id"]),
+                    )
+        return self._result()

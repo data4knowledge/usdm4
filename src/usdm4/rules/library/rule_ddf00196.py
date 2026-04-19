@@ -1,3 +1,13 @@
+# MANUAL: do not regenerate
+#
+# Within each StudyAmendment, collect all DocumentContentReference
+# instances (StudyAmendment.changes[].changedSections[]) grouped by
+# appliesToId. For each (appliesToId, sectionNumber) the set of
+# distinct sectionTitles must have size <= 1, and vice versa for
+# (appliesToId, sectionTitle) → sectionNumbers. A violation in either
+# direction is a failure, reported against the offending reference.
+from collections import defaultdict
+
 from usdm4.rules.rule_template import RuleTemplate
 
 
@@ -16,46 +26,39 @@ class RuleDDF00196(RuleTemplate):
             "There must be a one-to-one relationship between referenced section number and title within a study amendment.",
         )
 
-    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     study@$s.
-    #       $s.versions@$sv.
-    #         $sv.amendments@$a.
-    #           $a.changes@$sc.
-    #             $sc.changedSections.
-    #               (
-    #                 $this:=$;
-    #                 $t4n:=$distinct($a.changes.changedSections[sectionNumber = $this.sectionNumber and appliesToId = $this.appliesToId].sectionTitle)~>$sort;
-    #                 $n4t:=$distinct($a.changes.changedSections[sectionTitle = $this.sectionTitle and appliesToId = $this.appliesToId].sectionNumber)~>$sort;
-    #                 {
-    #                   "instanceType": instanceType,
-    #                   "id": id,
-    #                   "path": _path,
-    #                   "StudyAmendment.id": $a.id,
-    #                   "StudyAmendment.name": $a.name,
-    #                   "StudyChange.id": $sc.id,
-    #                   "StudyChange.name": $sc.name,
-    #                   "appliesToId": appliesToId &": "&
-    #                     (
-    #                       appliesToId in $s.documentedBy.id
-    #                       ? $s.documentedBy[id=$this.appliesToId].name
-    #                       : "Invalid appliesToId"
-    #                     ),
-    #                   "sectionNumber": sectionNumber,
-    #                   "n4t": "["&$join($n4t,"; ")&"]",
-    #                   "sectionTitle": sectionTitle,
-    #                   "t4n": "["&$join($t4n,"; ")&"]",
-    #                   "check": ($count($t4n)!=1 or $count($n4t)!=1)
-    #                 }
-    #               )[check=true] ~>
-    #               $sort(function($l,$r)
-    #                 {
-    #                     $l.`StudyAmendment.id` >= $r.`StudyAmendment.id` and
-    #                     $l.appliesToId >= $r.appliesToId and
-    #                     $l.n4t >= $r.n4t and
-    #                     $l.t4n > $r.t4n
-    #                 }
-    #               )
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00196: not yet implemented")
+        data = config["data"]
+        for amendment in data.instances_by_klass("StudyAmendment"):
+            refs = []
+            for change in amendment.get("changes") or []:
+                if not isinstance(change, dict):
+                    continue
+                for ref in change.get("changedSections") or []:
+                    if isinstance(ref, dict):
+                        refs.append(ref)
+            # (appliesToId, sectionNumber) → set of sectionTitles
+            num_to_titles: dict = defaultdict(set)
+            # (appliesToId, sectionTitle) → set of sectionNumbers
+            title_to_nums: dict = defaultdict(set)
+            for ref in refs:
+                applies = ref.get("appliesToId")
+                num = ref.get("sectionNumber")
+                title = ref.get("sectionTitle")
+                if num is not None:
+                    num_to_titles[(applies, num)].add(title)
+                if title is not None:
+                    title_to_nums[(applies, title)].add(num)
+            for ref in refs:
+                applies = ref.get("appliesToId")
+                num = ref.get("sectionNumber")
+                title = ref.get("sectionTitle")
+                bad_numbers = num is not None and len(num_to_titles[(applies, num)]) > 1
+                bad_titles = title is not None and len(title_to_nums[(applies, title)]) > 1
+                if bad_numbers or bad_titles:
+                    self._add_failure(
+                        "DocumentContentReference has an inconsistent sectionNumber↔sectionTitle mapping within the amendment",
+                        "DocumentContentReference",
+                        "sectionNumber, sectionTitle",
+                        data.path_by_id(ref["id"]),
+                    )
+        return self._result()

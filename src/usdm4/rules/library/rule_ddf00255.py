@@ -1,11 +1,20 @@
+# MANUAL: do not regenerate
+#
+# For each StudyAmendment, its primaryReason must not have code.code
+# == C48660 ("Not Applicable"). Iterates StudyAmendment to reach the
+# primaryReason directly rather than filtering all StudyAmendmentReason
+# instances (secondary reasons may legitimately be "not applicable").
 from usdm4.rules.rule_template import RuleTemplate
+
+
+NOT_APPLICABLE_CODE = "C48660"
 
 
 class RuleDDF00255(RuleTemplate):
     """
     DDF00255: A primary study amendment reason is not expected to be 'not applicable'.
 
-    Applies to: StudyAmendmentReason
+    Applies to: StudyAmendmentReason (when reached via StudyAmendment.primaryReason)
     Attributes: code
     """
 
@@ -16,22 +25,20 @@ class RuleDDF00255(RuleTemplate):
             "A primary study amendment reason is not expected to be 'not applicable'.",
         )
 
-    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     (study.versions.amendments)@$am.
-    #       $am.primaryReason@$pr.
-    #       $pr.
-    #           [(
-    #               {
-    #                   "instanceType": instanceType,
-    #                   "id": id,
-    #                   "path": _path,
-    #                   "StudyAmendment.id": $am.id,
-    #                   "StudyAmendment.name": $am.name,
-    #                   "code": code.decode & " ("&code.code&")",
-    #                   "check": code.code="C48660"
-    #               }
-    #           )][check=true]
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00255: not yet implemented")
+        data = config["data"]
+        for amendment in data.instances_by_klass("StudyAmendment"):
+            primary = amendment.get("primaryReason")
+            if not isinstance(primary, dict):
+                continue
+            code_obj = primary.get("code")
+            if not isinstance(code_obj, dict):
+                continue
+            if code_obj.get("code") == NOT_APPLICABLE_CODE:
+                self._add_failure(
+                    "Primary StudyAmendmentReason has code 'Not Applicable' (C48660)",
+                    "StudyAmendmentReason",
+                    "code",
+                    data.path_by_id(primary["id"]),
+                )
+        return self._result()
