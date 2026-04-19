@@ -1,4 +1,23 @@
+# MANUAL: do not regenerate
+#
+# For each ObservationalStudyDesign, studyPhase must be present and
+# its AliasCode.standardCode.decode must equal "NOT APPLICABLE"
+# (case-insensitive — CDISC preferred term is "Not Applicable" but
+# the rule text upper-cases it).
 from usdm4.rules.rule_template import RuleTemplate
+
+
+NOT_APPLICABLE_DECODE = "NOT APPLICABLE"
+
+
+def _phase_decode(design):
+    phase = design.get("studyPhase")
+    if not isinstance(phase, dict):
+        return None
+    standard = phase.get("standardCode")
+    if not isinstance(standard, dict):
+        return None
+    return standard.get("decode")
 
 
 class RuleDDF00232(RuleTemplate):
@@ -16,21 +35,23 @@ class RuleDDF00232(RuleTemplate):
             'An observational study (including patient registries) is expected to have a study phase decode value of "NOT APPLICABLE".',
         )
 
-    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     (study.versions)@$sv.
-    #              $sv.studyDesigns@$sd.
-    #              $sd.    
-    #              [({
-    #                     "instanceType": instanceType,
-    #                     "id": id,
-    #                     "path": _path,
-    #                     "name": name,
-    #                     "studyType": studyType ? studyType.decode & " (" & studyType.code & ")",
-    #                     "studyPhase": studyPhase ? studyPhase.standardCode.decode & " (" & studyPhase.standardCode.code & ")",
-    #                     "check": studyType.code in ["C16084","C129000"] and studyPhase.standardCode.code !="C48660"
-    #                 }
-    #               )][check=true]
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00232: not yet implemented")
+        data = config["data"]
+        for design in data.instances_by_klass("ObservationalStudyDesign"):
+            decode = _phase_decode(design)
+            if decode is None:
+                self._add_failure(
+                    "ObservationalStudyDesign has no studyPhase decode",
+                    "ObservationalStudyDesign",
+                    "studyPhase",
+                    data.path_by_id(design["id"]),
+                )
+                continue
+            if decode.strip().upper() != NOT_APPLICABLE_DECODE:
+                self._add_failure(
+                    f"ObservationalStudyDesign studyPhase decode is {decode!r}, expected 'NOT APPLICABLE'",
+                    "ObservationalStudyDesign",
+                    "studyPhase",
+                    data.path_by_id(design["id"]),
+                )
+        return self._result()

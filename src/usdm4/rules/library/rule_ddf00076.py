@@ -1,3 +1,9 @@
+# MANUAL: do not regenerate
+#
+# For each Activity: build the set of BCs it directly references
+# (biomedicalConceptIds) and the set of BCs it transitively references
+# through bcCategoryIds (union of memberIds over each BCCategory).
+# The intersection of the two sets must be empty.
 from usdm4.rules.rule_template import RuleTemplate
 
 
@@ -6,7 +12,7 @@ class RuleDDF00076(RuleTemplate):
     DDF00076: If a biomedical concept is referenced from an activity then it is not expected to be referenced as well by a biomedical concept category that is referenced from the same activity.
 
     Applies to: Activity, BiomedicalConceptCategory
-    Attributes: biomedicalConcepts, members
+    Attributes: biomedicalConceptIds, bcCategoryIds
     """
 
     def __init__(self):
@@ -16,53 +22,24 @@ class RuleDDF00076(RuleTemplate):
             "If a biomedical concept is referenced from an activity then it is not expected to be referenced as well by a biomedical concept category that is referenced from the same activity.",
         )
 
-    # TODO: implement. MED_TEXT predicate='conditional': no template — typically a rule-specific conditional. Hand-author using the JSONata reference below.
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     ($.study.versions)@$sv.
-    #       [
-    #         (
-    #           $flatten:=function($tree) 
-    #             {
-    #               (
-    #                 $iter:=function($t, $p)
-    #                   {
-    #                     $type($t) = "array"
-    #                     ? [$map($t,function($v){$iter($v,$p)})]
-    #                     : $type($t) = "object"
-    #                       ? (
-    #                           $pfx := ($p?($p & ">")) & $t.id & ($t.name?("["&$t.name&"]"));
-    #                           $t ~> 
-    #                           $sift(function($v, $k){$not($k in ["id","name"])}) ~>
-    #                           $each(function($v){$iter($v,$pfx)})
-    #                         )
-    #                       : $join([$p,$t],">")
-    #                   };
-    #                 $iter($tree,"")
-    #               )                        
-    #             };
-    #           $pcats := $utils.parse_refs("childIds","children",$sv.bcCategories);                
-    #           ($sv.studyDesigns)@$sd.($sd.activities)@$a.
-    #             ($a.biomedicalConceptIds)
-    #               [
-    #                 $count($a.bcCategoryIds) > 0 and
-    #                 $ in [$a.bcCategoryIds.$lookup($pcats{id: **.memberIds},$)]
-    #               ].
-    #               (
-    #                 $this := $;
-    #                 {
-    #                   "instanceType": $a.instanceType,
-    #                   "id": $a.id,
-    #                   "path": $a._path,
-    #                   "StudyDesign.id": $sd.id,
-    #                   "StudyDesign.name": $sd.name,
-    #                   "name": $a.name,
-    #                   "biomedicalConceptId": $this,
-    #                   "bcCategoryId(s) containing BC": 
-    #                     $utils.sift_tree($pcats[id in $a.bcCategoryIds],$this,["id","name"])~>$flatten
-    #                 }
-    #               )     
-    #         )
-    #       ]
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00076: not yet implemented")
+        data = config["data"]
+        for activity in data.instances_by_klass("Activity"):
+            direct = set(activity.get("biomedicalConceptIds") or [])
+            if not direct:
+                continue
+            via_category: set = set()
+            for cat_id in activity.get("bcCategoryIds") or []:
+                cat = data.instance_by_id(cat_id)
+                if isinstance(cat, dict):
+                    for member_id in cat.get("memberIds") or []:
+                        via_category.add(member_id)
+            overlap = direct & via_category
+            if overlap:
+                self._add_failure(
+                    f"Activity references BC(s) {sorted(overlap)} both directly and through a BC Category it also references",
+                    "Activity",
+                    "biomedicalConceptIds, bcCategoryIds",
+                    data.path_by_id(activity["id"]),
+                )
+        return self._result()

@@ -1,3 +1,7 @@
+# MANUAL: do not regenerate
+#
+# Every ScheduleTimeline with mainTimeline=true must have a non-empty
+# plannedDuration (embedded Duration).
 from usdm4.rules.rule_template import RuleTemplate
 
 
@@ -5,7 +9,7 @@ class RuleDDF00153(RuleTemplate):
     """
     DDF00153: A planned duration is expected for the main timeline.
 
-    Applies to: ScheduleTimeline
+    Applies to: ScheduleTimeline (mainTimeline only)
     Attributes: plannedDuration
     """
 
@@ -16,20 +20,16 @@ class RuleDDF00153(RuleTemplate):
             "A planned duration is expected for the main timeline.",
         )
 
-    # TODO: implement. MED_TEXT format: no specific format kind identified
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     (study.versions.studyDesigns)@$sd.
-    #       $sd.scheduleTimelines@$st.
-    #       $st.
-    #           [(  {
-    #                   "instanceType": instanceType,
-    #                   "id": id,
-    #                   "path": _path,
-    #                   "name": name,
-    #                   "mainTimeline": mainTimeline,
-    #                   "check":  mainTimeline=true and ($exists(plannedDuration)=false or plannedDuration=null)
-    #               }
-    #           )][check=true]
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00153: not yet implemented")
+        data = config["data"]
+        for timeline in data.instances_by_klass("ScheduleTimeline"):
+            if not timeline.get("mainTimeline"):
+                continue
+            if not timeline.get("plannedDuration"):
+                self._add_failure(
+                    "Main ScheduleTimeline has no plannedDuration",
+                    "ScheduleTimeline",
+                    "plannedDuration",
+                    data.path_by_id(timeline["id"]),
+                )
+        return self._result()

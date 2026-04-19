@@ -1,4 +1,11 @@
+# MANUAL: do not regenerate
+#
+# For each StudyVersion, any role with code.code == C70793 ("Sponsor")
+# must have the StudyVersion's id in its appliesToIds.
 from usdm4.rules.rule_template import RuleTemplate
+
+
+SPONSOR_ROLE_CODE = "C70793"
 
 
 class RuleDDF00203(RuleTemplate):
@@ -6,7 +13,7 @@ class RuleDDF00203(RuleTemplate):
     DDF00203: The sponsor study role must be applicable to a study version.
 
     Applies to: StudyRole
-    Attributes: appliesTo
+    Attributes: appliesToIds
     """
 
     def __init__(self):
@@ -16,20 +23,22 @@ class RuleDDF00203(RuleTemplate):
             "The sponsor study role must be applicable to a study version.",
         )
 
-    # TODO: implement. LOW_CUSTOM: JSONata translator did not match a known pattern
-    # Reference — CORE JSONata condition (semantics, not executed):
-    #     study.versions@$sv.
-    #       ($sv.roles[code.code = "C70793" and $not($sv.id in appliesToIds)])@$r.
-    #         {
-    #           "instanceType": $r.instanceType,
-    #           "id": $r.id,
-    #           "path": $r._path,
-    #           "name": $r.name,
-    #           "code.code": $r.code.code,
-    #           "code.decode": $r.code.decode,
-    #           "appliesToIds": $r.appliesToIds[],
-    #           "StudyVersion.id": $sv.id
-    #         }
-
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("DDF00203: not yet implemented")
+        data = config["data"]
+        for sv in data.instances_by_klass("StudyVersion"):
+            sv_id = sv.get("id")
+            for role in sv.get("roles") or []:
+                if not isinstance(role, dict):
+                    continue
+                code = role.get("code")
+                if not (isinstance(code, dict) and code.get("code") == SPONSOR_ROLE_CODE):
+                    continue
+                applies = role.get("appliesToIds") or []
+                if sv_id not in applies:
+                    self._add_failure(
+                        "Sponsor StudyRole is not applicable to the StudyVersion",
+                        "StudyRole",
+                        "appliesToIds",
+                        data.path_by_id(role["id"]),
+                    )
+        return self._result()

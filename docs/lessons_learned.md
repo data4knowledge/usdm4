@@ -446,11 +446,32 @@ A follow-up day pushed the total further via six hand-authored clusters:
        + cluster masking/blinding (2: DDF00191/192)
        + cluster scoped uniqueness (2: DDF00173/174)
        + cluster context/reference (3: DDF00114/124/244)
+ 168  + cluster harder-after-all (5: DDF00006/7/10/160/162)
+ 182  + cluster cross-design / CT / at-least-one (16: DDF00017/26/35/75/
+         76/101/107/115/127/153/163/203/206/212/213/232)
 ```
 
-**163 of 210 ≈ 78 % coverage.** ~47 stubs remain; the rest sit in the
-genuinely-harder territory (timing state machines, cross-class ordering
-consistency, CT-scoped cardinality, USDM-schema conformance).
+**182 of 210 ≈ 87 % coverage.** 28 V4 stubs remain; the rest sit in the
+genuinely-harder territory (cross-class prev/next ordering consistency
+— DDF00087/88/161, condition-context multi-class cardinality —
+DDF00091, USDM-schema conformance — DDF00081, and a handful of
+CT-scoped / fixture-only edge cases).
+
+**Stub-count caveat.** `grep -l NotImplementedError src/usdm4/rules/library/rule_ddf*.py`
+returns ~75 files, but many of those correspond to DDF IDs outside
+the V4 subset (no intermediate YAML). The authoritative "remaining
+V4 stubs" count is:
+
+```bash
+for f in src/usdm4/rules/intermediate/rule_ddf*.yaml; do
+    rid=$(basename "$f" .yaml)
+    py="src/usdm4/rules/library/${rid}.py"
+    [ -f "$py" ] && grep -q NotImplementedError "$py" && echo "$rid"
+done | wc -l
+```
+
+Cross-referencing against the intermediate YAMLs is the only way to
+get the V4-specific figure.
 
 A day of focused work can add ~40 rules when patterns emerge; hand-authoring
 alone is ~10 rules/hour once the workflow is clean.
@@ -703,3 +724,239 @@ for ref in refs:
 ```
 
 This is the clean idiom whenever "1:1 within a scope" shows up.
+
+## 16. Patterns from the "harder after all" batch
+
+Five rules originally flagged as harder (DDF00006/7/10/160/162) turned
+out to be tractable with the toolkit the session built up. The patterns
+are worth a separate entry because the rule texts read harder than the
+implementations actually are.
+
+### All-or-nothing across N attributes
+
+"If any of {A, B, C} is defined then all must be defined." Filter the
+input through a uniform "is specified" helper, count, and flag when
+0 < specified < N:
+
+```python
+def _is_specified(value):
+    if value is None:                 return False
+    if isinstance(value, str):        return value.strip() != ""
+    if isinstance(value, (list, dict)): return bool(value)
+    return True
+
+specified = [attr for attr in WINDOW_ATTRS if _is_specified(timing.get(attr))]
+if specified and len(specified) < len(WINDOW_ATTRS):
+    fail(...)
+```
+
+The helper is necessary because "specified" across embedded Duration
+objects, strings, and primitives needs a single definition. DDF00006
+uses this; the same helper serves any "all-or-nothing" rule.
+
+### CT-code-gated implication
+
+Several rules are "if `type.code == Cxxxxx` then ...". Pull the
+constant to a module-level name for readability, guard on the code
+early, then run the consequent check:
+
+```python
+FIXED_REFERENCE_CODE = "C201358"
+
+for timing in data.instances_by_klass("Timing"):
+    type_obj = timing.get("type")
+    if not isinstance(type_obj, dict):
+        continue
+    if type_obj.get("code") != FIXED_REFERENCE_CODE:
+        continue
+    # consequent check here
+```
+
+Constants for known CT codes accumulated this session:
+
+```
+C15228   Double Blind Study           (blinding)
+C17649   Other (reason)
+C20197   Male                         (plannedSex)
+C15228   Double Blind Study
+C16576   Female                       (plannedSex)
+C46079   Randomized
+C48660   Not Applicable               (amendment reason)
+C49636   Both                         (plannedSex — disallowed encoding)
+C49659   Open Label                   (blinding)
+C68846   Global                       (geographic scope)
+C70793   Sponsor                      (study role)
+C85826   Trial Primary Objective
+C94496   Primary                      (endpoint level)
+C25689   Stratification
+C147145  Stratified Randomisation
+C201358  Fixed Reference              (timing)
+C207605  (used as a primary amendment reason code in fixtures)
+```
+
+Keep these inline in the rule file rather than a shared constants
+module — the CT rule binding already lives in `ct_config.yaml` and
+introducing a second constants surface invites drift. When a code is
+referenced from >2 rules we can promote.
+
+### Mutex "has X implies not any of Y1..Yn"
+
+DDF00160: an Activity with `childIds` populated must not populate any
+of five leaf-reference attributes. Same helper as §16.1 applies:
+
+```python
+LEAF_REF_ATTRS = ["biomedicalConceptIds", "bcCategoryIds", "bcSurrogateIds", "timelineId", "definedProcedures"]
+if activity.get("childIds"):
+    populated = [a for a in LEAF_REF_ATTRS if _is_populated(activity.get(a))]
+    if populated:
+        fail(...)
+```
+
+Shorthand: "when the parent flag is set, each of the children-flags
+must be empty."
+
+### Rule-text vs CORE-JSONata when they disagree
+
+DDF00010's rule text says "names of child instances of the **same
+parent class**" — which reads as "per-parent uniqueness". CORE's
+JSONata ignores the parent entirely and does global uniqueness per
+(instanceType, name). When these two primary sources disagree:
+
+- **Mirror CORE.** It's the authoritative reference implementation.
+  Hand-authors are trying to match its behaviour, not reinterpret
+  the English.
+- **Note the disagreement in the code comment** so a later reader
+  understands the stricter behaviour was intentional, not sloppy.
+- If the stricter behaviour is wrong in practice, the fix is a
+  spec/CORE change, not a behavioural divergence in the Python.
+
+### Iterator-returning malformed-tag detector
+
+DDF00162 needed "find every malformed `<usdm:ref>` tag in a string
+and report each". Cleanest shape is a generator that yields
+`(matched_text, reason)` pairs — keeps the rule's `validate()` body
+tight and makes the detection reusable / testable in isolation:
+
+```python
+def _find_malformed(text: str):
+    idx = 0
+    while True:
+        start = text.find("<usdm:ref", idx)
+        if start < 0:
+            return
+        idx = start + len("<usdm:ref")
+        # ...parse, decide, yield or fallthrough...
+
+for tag, reason in _find_malformed(nci.get("text", "")):
+    self._add_failure(f"... {reason} — {tag[:80]}", ...)
+```
+
+For strict-format validation (value character classes), keep the
+regexes per-attribute rather than trying to build one giant regex
+covering all permutations — attribute order is arbitrary.
+
+## 17. Patterns from the 88 % push
+
+A 16-rule batch spanning CT-code gating, at-least-one-of, cross-class
+FK validation, and cross-design walks — the long tail beyond the first
+80 %. Few new patterns per se; mostly combinations of the existing
+idioms. Worth noting where combinations matter.
+
+### Same-study-design cross-walk
+
+Idiom for "X must reference Y where Y lives in the same StudyDesign
+as X":
+
+```python
+STUDY_DESIGN_KLASSES = ["InterventionalStudyDesign", "ObservationalStudyDesign"]
+
+x_design = data.parent_by_klass(x_id, STUDY_DESIGN_KLASSES)
+y_design = data.parent_by_klass(y_id, STUDY_DESIGN_KLASSES)
+if x_design and y_design and x_design["id"] != y_design["id"]:
+    fail(...)
+```
+
+Shared by DDF00107 (SAI → sub-timeline) and DDF00127 (Encounter →
+scheduledAt Timing). `parent_by_klass` takes a list so the same call
+handles Interventional and Observational without branching.
+
+### "Only-X" via set difference
+
+DDF00206: an AP is "only embedded" if it appears in
+embeddedProductIds but not in any Administration's
+administrableProductId. Build both sets from a StudyVersion in one
+pass, check each AP for membership:
+
+```python
+embedded_ids = {d["embeddedProductId"] for d in sv["medicalDevices"] if d.get("embeddedProductId")}
+administered_ids = {a["administrableProductId"] for i in sv["studyInterventions"] for a in i.get("administrations", [])}
+
+for ap in sv["administrableProducts"]:
+    if ap["id"] in embedded_ids and ap["id"] not in administered_ids:
+        # "only embedded" AP
+        check_constraint(ap)
+```
+
+Companion to the intersection idiom from DDF00250
+(`pop_refs & cohort_refs`). The two read similarly in code, so pick
+based on what the rule is counting.
+
+### Wrapper-vs-leaf exclusion on the same attribute
+
+Activity carries both `childIds` (if it's a container) and a set of
+leaf-reference attributes (for direct-referencing activities). Rules
+that check the leaf attrs should skip activities with `childIds` —
+they delegate to children:
+
+```python
+for activity in data.instances_by_klass("Activity"):
+    if activity.get("childIds"):
+        continue  # wrapper; children do the referencing
+    if not any(activity.get(a) for a in LEAF_REF_ATTRS):
+        fail(...)
+```
+
+DDF00075 uses this exclusion; DDF00160 inverts it (if you have
+children, leaf attrs must be empty). Keep the two consistent.
+
+### FK filtering before threshold counts
+
+DDF00213 filters studyInterventionIds against the set of known
+StudyIntervention ids before counting:
+
+```python
+known = {si["id"] for si in sv.get("studyInterventions", [])}
+referenced = {i for i in design.get("studyInterventionIds", []) if i in known}
+if len(referenced) <= 1:
+    fail(...)
+```
+
+Without the filter, a dangling id in studyInterventionIds would
+inflate the count and mask a real "too few interventions" failure.
+Same trick applies wherever a cardinality check reads from an FK list.
+
+### Polymorphic "acceptable" helpers for CT-qualified fields
+
+DDF00017's `_is_acceptable_unit` accepts four shapes: None, False,
+empty dict, dict with `standardCode.code == PERCENT_CODE`. CORE has
+several rules of this shape ("attribute must be empty or match these
+specific CT codes"). The helper reads cleanly when the acceptable
+set is expressed as a sequence of narrowing checks — short-circuit
+on each.
+
+### More CT codes that landed this batch
+
+Append to the table in §16.2:
+
+```
+C25613   Percent                      (SubjectEnrollment.quantity.unit)
+C70793   Sponsor                      (study role, reused from earlier)
+C82637   Parallel Group Design        (intervention model)
+C82638   Crossover Design
+C82639   Factorial Design
+C98388   Interventional Study Type
+C207616  Official Study Title         (StudyTitle.type)
+```
+
+Same rule as before: keep the codes as module-level constants in
+the rule file; promote to shared only if a third caller shows up.
