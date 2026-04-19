@@ -5,6 +5,11 @@ from simple_error_log.error_location import KlassMethodLocation
 from usdm4.builder.builder import Builder
 from usdm4.api.alias_code import AliasCode
 from usdm4.api.code import Code
+from usdm4.assembler.normalisation import (
+    KIND_COERCED,
+    KIND_UNMAPPED,
+    record_normalisation,
+)
 
 
 class Encoder:
@@ -186,7 +191,11 @@ class Encoder:
         self._errors: Errors = errors
 
     def phase(self, text: str) -> AliasCode:
-        phase = text
+        # Preserve the raw input for normalisation reporting; the decoded
+        # value is reported alongside so downstream consumers can show the
+        # user exactly what was coerced.
+        source = text or ""
+        phase = source
         for word in ["PHASE", "TRIAL"]:
             phase = phase.upper().replace(word, "").strip() if phase else ""
         for tuple in self.PHASE_MAP:
@@ -204,6 +213,18 @@ class Encoder:
                     self._errors.warning(
                         f"Could not find M11 decode for phase '{phase}'"
                     )
+                # Structured trace for the M11 validator. record_normalisation
+                # suppresses the entry when source already matches the canonical
+                # value (case/whitespace insensitive) so well-formed inputs
+                # don't generate noise.
+                record_normalisation(
+                    self._errors,
+                    element="Trial Phase",
+                    source=source,
+                    normalised=decode,
+                    kind=KIND_COERCED,
+                    location=KlassMethodLocation(self.MODULE, "phase"),
+                )
                 return self._builder.alias_code(phase_code)
         cdisc_phase_code = self._builder.cdisc_code(
             "C48660",
@@ -213,10 +234,19 @@ class Encoder:
             f"Trial phase '{phase}' not decoded",
             location=KlassMethodLocation(self.MODULE, "phase"),
         )
+        record_normalisation(
+            self._errors,
+            element="Trial Phase",
+            source=source,
+            normalised="[Trial Phase] Not Applicable",
+            kind=KIND_UNMAPPED,
+            location=KlassMethodLocation(self.MODULE, "phase"),
+        )
         return self._builder.alias_code(cdisc_phase_code)
 
     def document_status(self, text: str) -> Code:
-        status = text.upper().strip() if text else ""
+        source = text or ""
+        status = source.upper().strip() if source else ""
         for tuple in self.STATUS_MAP:
             if status in tuple[0]:
                 entry = tuple[1]
@@ -228,15 +258,32 @@ class Encoder:
                     f"Document status '{status}' decoded as '{entry['code']}', '{entry['decode']}'",
                     location=KlassMethodLocation(self.MODULE, "document_status"),
                 )
+                record_normalisation(
+                    self._errors,
+                    element="Document Status",
+                    source=source,
+                    normalised=entry["decode"],
+                    kind=KIND_COERCED,
+                    location=KlassMethodLocation(self.MODULE, "document_status"),
+                )
                 return cdisc_code
         cdisc_code = self._builder.cdisc_code("C85255", "Draft")
         self._errors.warning(
             f"Document status '{status}' not decoded",
             location=KlassMethodLocation(self.MODULE, "document_status"),
         )
+        record_normalisation(
+            self._errors,
+            element="Document Status",
+            source=source,
+            normalised="Draft",
+            kind=KIND_UNMAPPED,
+            location=KlassMethodLocation(self.MODULE, "document_status"),
+        )
         return cdisc_code
 
     def amendment_reason(self, reason_str: str):
+        source = reason_str or ""
         if reason_str:
             parts = reason_str.split(":")
             if len(parts) >= 2:
@@ -249,12 +296,30 @@ class Encoder:
                         code = self._builder.cdisc_code(
                             reason["code"], reason["decode"]
                         )
+                        record_normalisation(
+                            self._errors,
+                            element="Amendment Reason",
+                            source=reason_text,
+                            normalised=reason["decode"],
+                            kind=KIND_COERCED,
+                            location=KlassMethodLocation(
+                                self.MODULE, "amendment_reason"
+                            ),
+                        )
                         return {"code": code, "other_reason": ""}
             self._errors.warning(
                 f"Unable to decode amendment reason '{reason_str}'",
                 location=KlassMethodLocation(self.MODULE, "amendment_reason"),
             )
             code = self._builder.cdisc_code("C17649", "Other")
+            record_normalisation(
+                self._errors,
+                element="Amendment Reason",
+                source=source,
+                normalised="Other",
+                kind=KIND_UNMAPPED,
+                location=KlassMethodLocation(self.MODULE, "amendment_reason"),
+            )
             return {"code": code, "other_reason": parts[-1].strip()}
         self._errors.warning(
             "Amendment reason not decoded, missing text",
@@ -264,14 +329,31 @@ class Encoder:
         return {"code": code, "other_reason": "No reason text found"}
 
     def geographic_scope(self, type: str) -> Code:
-        if type.upper() in self.SCOPE_MAP:
+        source = type or ""
+        if type and type.upper() in self.SCOPE_MAP:
             scope = self.SCOPE_MAP[type.upper()]
+            record_normalisation(
+                self._errors,
+                element="Geographic Scope",
+                source=source,
+                normalised=scope["decode"],
+                kind=KIND_COERCED,
+                location=KlassMethodLocation(self.MODULE, "geographic_scope"),
+            )
             return self._builder.cdisc_code(scope["code"], scope["decode"])
         self._errors.warning(
             f"Geographic scope not set for '{type}', setting global scope",
             location=KlassMethodLocation(self.MODULE, "geographic_scope"),
         )
         scope = self.SCOPE_MAP["GLOBAL"]
+        record_normalisation(
+            self._errors,
+            element="Geographic Scope",
+            source=source,
+            normalised=scope["decode"],
+            kind=KIND_UNMAPPED,
+            location=KlassMethodLocation(self.MODULE, "geographic_scope"),
+        )
         return self._builder.cdisc_code(scope["code"], scope["decode"])
 
     def to_date(self, text: str) -> datetime.datetime | None:
