@@ -431,7 +431,7 @@ effort for diminishing returns.
  123  + global-scope batch (3 hand-authored)
 ```
 
-A follow-up day pushed the total further via five more hand-authored clusters:
+A follow-up day pushed the total further via six hand-authored clusters:
 
 ```
  135  + cluster A self-reference (4: DDF00021/22/184/253)
@@ -441,10 +441,15 @@ A follow-up day pushed the total further via five more hand-authored clusters:
        + cluster F mutex scope (4: DDF00189/195/205/250)
  151  + cluster G orphan / reverse-FK (3: DDF00080/96/99)
        + cluster one-offs (5: DDF00018/42/186/236/241)
+ 163  + cluster amendment / reason (3: DDF00196/255/258)
+       + cluster XHTML well-formedness (2: DDF00187/247)
+       + cluster masking/blinding (2: DDF00191/192)
+       + cluster scoped uniqueness (2: DDF00173/174)
+       + cluster context/reference (3: DDF00114/124/244)
 ```
 
-**151 of 210 ≈ 72 % coverage.** Roughly 60 stubs remain; the rest sit in
-genuinely hard territory (timing state machines, cross-class ordering
+**163 of 210 ≈ 78 % coverage.** ~47 stubs remain; the rest sit in the
+genuinely-harder territory (timing state machines, cross-class ordering
 consistency, CT-scoped cardinality, USDM-schema conformance).
 
 A day of focused work can add ~40 rules when patterns emerge; hand-authoring
@@ -607,3 +612,94 @@ the rule firings to the expected baseline.
 `test_example_2` are green, the package tests become a live regression
 detector for every new rule addition; today any new firing hides
 behind the existing failure.
+
+## 15. Patterns from the amendment / masking / reference batch
+
+A further batch across amendment, XHTML well-formedness, masking, and
+reference-validation domains surfaced four small patterns worth a
+separate entry.
+
+### XHTML well-formedness via wrap-and-parse
+
+`NarrativeContentItem.text` and `EligibilityCriterionItem.text` /
+`Characteristic.text` / etc. are supposed to be XHTML. The CORE text
+says "HTML formatted" but a practical check is **is it parseable as
+XML once we declare the ambient namespaces?**
+
+```python
+WRAPPER_OPEN = '<root xmlns="http://www.w3.org/1999/xhtml" xmlns:usdm="http://example.com/usdm">'
+WRAPPER_CLOSE = "</root>"
+
+def _is_well_formed(text):
+    try:
+        ET.fromstring(WRAPPER_OPEN + text + WRAPPER_CLOSE)
+        return True
+    except ET.ParseError:
+        return False
+```
+
+The declared `usdm` prefix is a placeholder — we only care that the
+parser tolerates `<usdm:ref>` tags. This caught real issues in
+`example_2.json`: `<table "="" class="...">` (bare `""=""` attribute),
+unescaped ampersands, and unclosed elements. Used by DDF00187 and DDF00247.
+
+### `<usdm:ref>` validation via regex + instance lookup
+
+Several rules need to parse `<usdm:ref klass="X" id="Y" attribute="Z"/>`
+markers out of a string and resolve each to a live instance. The
+attributes come in arbitrary order, so don't hard-code position:
+
+```python
+USDM_REF_RE = re.compile(r"<usdm:ref\b([^>]*)(?:/>|>\s*</usdm:ref>)")
+ATTR_RE = {
+    "klass": re.compile(r'klass="([a-zA-Z]+)"'),
+    "id": re.compile(r'id="([\w-]+)"'),
+    "attribute": re.compile(r'attribute="([a-zA-Z]+)"'),
+}
+```
+
+For each match, run each attribute regex over the captured `([^>]*)`
+opening-tag innards and build a `{klass, id, attribute}` dict. Then
+validate: `instance_by_id(id)` resolves, its `instanceType == klass`,
+and `attribute` is in the instance dict. DDF00124 and DDF00244 share
+this pattern; helpers are inlined in both rule files. Promote to a
+shared utility if a third caller lands.
+
+### Blinding-schema codes live on an AliasCode
+
+The blinding schema is an `AliasCode`:
+
+```
+StudyDesign.blindingSchema = AliasCode {
+    id, standardCode: Code { code, decode, ... }, standardCodeAliases: [...]
+}
+```
+
+So the check is
+`design.get("blindingSchema").get("standardCode").get("code")`, not
+`design.get("blindingSchema").get("code")`. Relevant CT codes:
+`C49659` open label, `C15228` double blind. DDF00191 and DDF00192 both
+use this lookup; extracted a `_blinding_code(design)` helper in each.
+
+### Inconsistent 1:1 via two dicts-of-sets
+
+DDF00196 wants a one-to-one mapping between `sectionNumber` and
+`sectionTitle` inside each StudyAmendment. The natural shape is two
+`defaultdict(set)` lookups (number → set of titles, title → set of
+numbers), populate both, then for each reference flag when either
+side's set has >1 entry:
+
+```python
+num_to_titles = defaultdict(set)
+title_to_nums = defaultdict(set)
+for ref in refs:
+    num_to_titles[(applies, ref["sectionNumber"])].add(ref["sectionTitle"])
+    title_to_nums[(applies, ref["sectionTitle"])].add(ref["sectionNumber"])
+
+for ref in refs:
+    if len(num_to_titles[(applies, ref["sectionNumber"])]) > 1 \
+       or len(title_to_nums[(applies, ref["sectionTitle"])]) > 1:
+        fail(ref)
+```
+
+This is the clean idiom whenever "1:1 within a scope" shows up.

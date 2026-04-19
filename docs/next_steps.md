@@ -1,211 +1,182 @@
 # USDM4 validation engine — next steps
 
-Written 2026-04-18 to hand off state between sessions. Read this alongside
-`docs/lessons_learned.md` which captures the *how*. This file captures
-the *what next*.
+Written 2026-04-18, refreshed after the amendment / masking / reference
+batch committed. Read alongside `docs/lessons_learned.md` which captures
+the *how*. This file captures the *what next*.
 
 ## Current state
 
-**Rule coverage:** 151 of 210 V4 DDF rules have real `validate()` bodies
-(~72 %). 59 remain as stubs.
+**Rule coverage:** 163 of 210 V4 DDF rules have real `validate()` bodies
+(~78 %). 47 stubs remain.
 
-**Stub detection:** use `grep -l NotImplementedError src/usdm4/rules/library/rule_ddf*.py`.
+**Stub detection:** `grep -l NotImplementedError src/usdm4/rules/library/rule_ddf*.py`.
 The YAML `classification` field is stale for rules where the biconditional /
 implication predicate was hand-filled — don't trust it as a stub signal
 (§13 of lessons_learned.md).
 
-**Uncommitted changes** (as of this writeup): 29 hand-authored rules + 29
-test files across 5 clusters. All metadata tests pass (13 A/B/C + 4 E +
-4 F + 3 G + 5 one-offs = 29 pairs). `test_package.py` is at its
-pre-existing baseline — same 2 failures as before the session started:
+**Committed so far** (41 hand-authored rules this session): clusters A/B/C
+self-reference/quantity-unit/mixed (13), E distinct-within-scope (4),
+F mutex scope (4), G orphan/reverse-FK (3), one-offs (5), amendment/reason
+(3), XHTML well-formedness (2), masking/blinding (2), scoped uniqueness (2),
+context/reference (3).
+
+**`test_package.py` baseline** — same 2 pre-existing failures:
 
 - `test_validate` (blocked by pre-existing DDF00166 fixture issue)
 - `test_example_2` (blocked by pre-existing DDF00217 placeholder issue)
 
-New rules firing against `example_2.json` that are *legitimate findings*,
-not bugs (see §14 of lessons_learned.md):
+**Legitimate fixture findings** from new rules that fire but are masked
+by the pre-existing blockers (see §14 of lessons_learned.md):
 
+- **DDF00187** / **DDF00247** — `example_2.json` has malformed XHTML in
+  several NCItems and one EligibilityCriterionItem (bare `""=""`
+  attribute on a `<table>`, unescaped ampersands, etc.).
 - **DDF00188** — fixture has `plannedSex: [{code: C49636 "Both"}]` which
   the rule rejects (must be Male + Female separate entries).
 - **DDF00189** — fixture has a StudyRole with empty `appliesToIds`.
 - **DDF00236** — fixture has a BC whose synonym equals its label
-  (case-insensitive). Warning-severity.
+  (case-insensitive).
 
-These surface in the package test output but don't change pass/fail
-because the pre-existing failures are already blocking the assertion.
+None of these change pass/fail because DDF00166 / DDF00217 are already
+blocking.
 
 ## Immediate next steps — ordered
 
-### 1. Commit the 29 new rules
-
-Single commit, scope obvious from the diff. Suggested message:
-
-> Hand-author 29 LOW_CUSTOM / MED_TEXT / STUB rules
->
-> Clusters: self-reference (4), quantity/unit (4), mixed-simple (5),
-> distinct-within-scope (4), mutex-scope (4), orphan/reverse-FK (3),
-> one-offs (5).
->
-> All use the `# MANUAL: do not regenerate` sentinel. Coverage moves
-> from 64 % → 72 % (135 → 151 of 210).
->
-> test_package.py still at pre-existing baseline (DDF00166 / DDF00217
-> fixture blockers). Tests 4 passing rules now fire legit findings
-> against example_2.json: DDF00188, 189, 236. See lessons_learned.md §14.
-
-### 2. Unblock `test_validate` / `test_example_2`
+### 1. Unblock `test_validate` / `test_example_2`
 
 The two pre-existing test_package.py failures have been deferred through
 multiple sessions. Fixing them converts the package tests into a live
 regression detector — today any new rule firing hides behind these
-existing failures.
+existing failures (and the list above will grow).
 
 **DDF00166** (`test_validate.json`): fixture has literal string
 `"Protocol"` in a decode field where CORE expects a code from a
-specific codelist. Either the fixture needs a valid CT code, or the
-rule's acceptable-values list is wrong. Read the rule body and the
-fixture side-by-side; most likely it's the fixture.
+specific codelist.
 
 **DDF00217** (`test_example_2.json`): placeholder strings `"None"` and
-`"Decode"` appear in Code fields. Clearly fixture problem — real
-captures would use real C-codes.
+`"Decode"` appear in Code fields.
 
-Both are probably fixture regenerations, not code changes. Confirm by
-reading the offending paths printed in the test output, then either
-edit the fixture JSON or regenerate it via the assembler.
+Both are probably fixture regenerations, not code changes. Read the
+offending paths in the test output, edit the fixture JSON or regenerate
+it via the assembler.
 
-### 3. Keep hand-authoring — more tractable clusters remain
+### 2. Keep hand-authoring — tractable candidates remain
 
-Per §9 of lessons_learned.md, the per-rule cost is ~5 min. Remaining
-groups that look tractable without domain-deep interpretation, based on
-rule text scanning:
+After 41 rules this session, the hit rate per pattern is degrading and
+effort per rule creeping up. Still tractable with the toolkit now in
+place:
 
-**Amendment / reason (~3 rules)**
+**Still-tractable from the "harder" list** (re-evaluated with the new
+helpers):
 
-- **DDF00196** — one-to-one relationship between referenced section
-  number and title within a StudyAmendment. Sibling of DDF00245.
-- **DDF00255** — primary StudyAmendmentReason's code must not be "not
-  applicable" (needs a CT code lookup — check the CORE JSONata for
-  the code).
-- **DDF00258** — StudyDesign must not have >1 of a specific set of
-  characteristic codes ("Randomized", "Stratification",
-  "Stratified Randomisation", ...). Set intersection check, similar
-  shape to cluster E.
+- **DDF00006** — Timing windows: if any of {windowLabel, windowLower,
+  windowUpper} is set, all must be. All-or-nothing on 3 attrs.
+- **DDF00007** — Timing type "Fixed Reference" (code lookup needed) →
+  exactly one `relativeToScheduledInstance`. Singleton cardinality.
+- **DDF00010** — Names of sibling instances of the same parent class
+  must be unique. Group children via `data._parent`, by
+  (parent_id, child_class, name).
+- **DDF00160** — Activity with children must not refer to a timeline /
+  procedure / BC / BC-category / BC-surrogate. Mutex between childIds
+  being non-empty and 5 FK attrs.
+- **DDF00162** — NarrativeContentItem references must be in the correct
+  `<usdm:ref>` format. Regex check, reuses the helpers from
+  DDF00124/244.
 
-**Scoped uniqueness (~2 rules)**
+**Other easy-ish stubs** (not on the "harder" list but still left):
 
-- **DDF00173** — every identifier must be unique within the scope of
-  the organization that owns it. Group-by-organization pattern.
-- **DDF00174** — an organization has at most one StudyIdentifier for
-  the study. Sibling of DDF00173, same group-by shape.
+- **DDF00017** — SubjectEnrollment.quantity is number or % (unit empty
+  or %).
+- **DDF00026** — ScheduledActivityInstance must not name its own
+  timeline via `timelineId`. Self-reference pattern.
+- **DDF00035** — One-to-one relationship between `code` and `decode`
+  within the same (codeSystem, codeSystemVersion). Group-by with dict.
+- **DDF00076** — Transitive BC reference exclusion across activity /
+  BC category. Set-based check.
+- **DDF00101** — Interventional study must reference ≥1 intervention
+  from a procedure. Multi-class walk.
+- **DDF00107** — SAI sub-timeline must be in same study design. Parent
+  walk + comparison.
+- **DDF00127** — Encounter scheduled at timing within same study
+  design. Similar.
+- **DDF00153** — Main timeline must have `plannedDuration`. Required
+  attribute when `mainTimeline=true`. Twin of DDF00080.
+- **DDF00163** — NarrativeContent → `childIds` and/or `contentItemId`.
+  At-least-one.
+- **DDF00203** — Sponsor StudyRole must apply to a StudyVersion.
+  Subset check with a role-type CT code lookup.
+- **DDF00205** — already done (this session)
+- **DDF00206** — AdministrableProduct sourcing check when only embedded.
+  Multi-class FK traversal.
+- **DDF00212** — ProductOrganizationRole `appliesTo` constraint. Might
+  need reading rule text carefully.
+- **DDF00213** — Interventional single-group → one intervention. Needs
+  intervention-model CT code lookup.
+- **DDF00232** — Observational study phase = "NOT APPLICABLE". Simple
+  CT code check.
+- **DDF00255** — already done (this session)
+- **DDF00258** — already done (this session)
 
-**Cross-reference integrity (~3 rules)**
+**Estimated aggregate:** ~15 more rules within reach without crossing
+into schema-conformance or cross-class-ordering territory. Would push
+coverage past 85 %.
 
-- **DDF00114** — Condition.context points to a valid Activity or SAI
-  instance. FK-resolution check via `instance_by_id`.
-- **DDF00124** — ParameterMap referenced items must be available
-  elsewhere. Similar FK shape.
-- **DDF00244** — NarrativeContentItem referenced items must resolve.
+### 3. Harder — skip unless specifically needed
 
-**At-least-one / multi-relationship (~2 rules)**
+- **DDF00081** — USDM schema conformance. Either no-op (schema enforced
+  elsewhere) or a massive refactor. Skip.
+- **DDF00087 / DDF00088** — Encounter / epoch prev-next ordering must
+  match SAI ordering. Cross-class graph alignment.
+- **DDF00091** — Condition context cardinality across several classes.
+  Needs careful multi-class FK traversal with conditional logic.
+- **DDF00161** — Activity ordering: parents must precede children in
+  prev/next chain. Topological-ordering-ish.
+- **DDF00115 / DDF00191-related** — CT-scoped cardinality and title
+  lookups. Need CT config extensions.
 
-- **DDF00075** — Activity must refer to ≥1 of procedure / BC / BCCat /
-  BCSurrogate. `any()` across 4 id list attrs.
-- **DDF00163** — NarrativeContent → child and/or content-item text.
-  Similar shape.
+### 4. Write real fixtures for a few of the 41 rules
 
-**Masking / blinding (~2 rules, need CT code)**
+All 41 have `@pytest.mark.skip` on positive/negative fixture tests. A
+minimal JSON blob for 4-5 of the structurally-interesting rules would
+catch future regressions in rule *behavior* rather than just metadata.
+~15 min per fixture pair. Good candidates: DDF00037 family, DDF00189,
+DDF00196 (dict-of-sets logic), DDF00253 (one-step chain), DDF00124
+(regex-based ref validation).
 
-- **DDF00191** — open-label blinding → no masking on any StudyRole.
-- **DDF00192** — double-blind → masking on ≥2 StudyRoles.
+### 5. M11 docx-side plan (usdm4_protocol)
 
-Both need to identify "open label" and "double blind" codes from the
-CDISC Blinding Schema codelist — grep the rule text and CORE JSONata
-for `(C\d+)` to pull them out.
-
-**Observational phase (~1 rule, CT code)**
-
-- **DDF00232** — observational study must have study phase decode
-  "NOT APPLICABLE". Check CT code.
-
-**Estimated aggregate:** ~13 rules if all of the above land cleanly.
-Would push coverage to roughly 78 %.
-
-### 4. Harder — consider skipping or batching separately
-
-- **Timing state machines:** DDF00006 (window fully-defined), DDF00007
-  (Fixed Reference → one instance). Need genuine domain interpretation.
-- **Cross-class ordering consistency:** DDF00087, DDF00088 — encounter /
-  epoch ordering must match SAI ordering. Cross-class graph walk.
-- **Activity children / ordering:** DDF00160, DDF00161 — similar
-  cross-walk logic.
-- **Duration state:** DDF00010 (unique names of child instances of the
-  same parent class — model-wide).
-- **Schema conformance:** DDF00081 — this one is "class relationships
-  must conform to USDM schema via API spec". Almost certainly either
-  a no-op (schema is enforced elsewhere) or a massive refactor. Skip.
-- **HTML formatting:** DDF00187, DDF00247 — "expected to be HTML
-  formatted". Could ship a weak heuristic (contains `<` or `&`) but
-  that's not really a validation. Skip or ship as pure format check.
-- **Reference format regex:** DDF00162 — parse-and-validate format of
-  references in narrative text. Needs regex spec from somewhere.
-
-### 5. Regenerate expected error baselines for the rules that fire
-
-Running `test_package.py` to see which of the 29 new rules fire on the
-current fixtures would prove each rule's behavior beyond just metadata.
-After fixing the DDF00166/00217 blockers in step 2, re-run the package
-tests, and for any rule that consistently fires the same way, lock in
-the output as a baseline (via `SAVE=True` pattern where available).
-
-### 6. Update `usdm4_protocol` — M11 docx-side plan
-
-The next big chunk per `usdm4_protocol/docs/m11_validation_plan.md`:
-
-- **RuleM11S###** (structural): docx template conformance
-- **RuleM11T###** (technical): typography, cross-refs, numbering
-- **RuleM11C###** (content): semantic checks against M11 sections
-
-Still code-gen from `m11_specification` at authoring time, no runtime
-dependency. Needs its own planning pass — scope, rule source, which
-M11 version, how to integrate into `step_0_m11` in the udp_prism pipeline.
-
-Don't start this inside the usdm4 engine work — keep it as a follow-on
-repository.
+Per `usdm4_protocol/docs/m11_validation_plan.md`: `RuleM11S###`
+(structural), `RuleM11T###` (technical), `RuleM11C###` (content).
+Generated from `m11_specification` at authoring time, no runtime
+dependency. Needs its own planning pass. Don't start inside the usdm4
+engine work.
 
 ## Session-to-session reminders
 
 - **Never implement without explicit authorization.** Planning is not
-  authorization. Wait for a clear "do it" / "go ahead" before writing
-  to the repo. Questions about clusters, scope, etc. are still planning.
-- **Severity from the YAML, not memory.** RuleTemplate.ERROR is the
-  muscle-memory default but many rules are WARNING. The metadata test
-  catches mismatches but costs a regen cycle.
-- **xlsx attribute name ≠ JSON field name.** `members`/`children`/`dose`
-  in the YAML usually become `memberIds`/`childIds`/`doseId` or
-  embedded dicts in USDM JSON. Always verify via `dataStructure.yml`
-  or by grepping a fixture before coding.
-- **`# MANUAL: do not regenerate` sentinel on every hand-authored
-  rule.** Without it, stage-2 will overwrite the work.
-- **CT cache drift** breaks tests that pin specific dates. If you see
-  `"2025-09-26" != "2026-03-27"`-type diffs, that's cache refresh, not
-  code regression.
+  authorization.
+- **Severity from the YAML, not memory.** The metadata test catches
+  mismatches but costs a regen cycle.
+- **xlsx attribute name ≠ JSON field name.** Always verify via
+  `dataStructure.yml` or by grepping a fixture before coding.
+- **`# MANUAL: do not regenerate` sentinel** on every hand-authored
+  rule. Without it, stage-2 will overwrite the work.
+- **"Specified" can mean "has an id"** in CORE semantics — mirror the
+  `$exists(...)` guard in the JSONata rather than defaulting to
+  Python truthiness. See §12 of lessons_learned.md.
+- **CT cache drift** breaks tests that pin specific dates. Not a code
+  regression.
 
 ## Baseline reference
 
-Last known good test summary from the session end:
+Last known good test summary:
 
 ```
 tests/usdm4/test_package.py
   14 passed
-  2 failed (DDF00166 "Protocol" decode, DDF00217 "Decode" placeholder — pre-existing)
+  2 failed (DDF00166 / DDF00217 — pre-existing)
 
-29 new hand-authored rule tests
-  29 passed (metadata)
-  58 skipped (positive/negative fixture TODOs)
-
-Full rule library on PYTHONPATH=src python -m pytest
-  (not run end-to-end this session; presumed clean modulo the above)
+41 hand-authored rule tests (this session)
+  41 passed (metadata)
+  82 skipped (positive/negative fixture TODOs)
 ```
-
-Run the full suite before the next commit to confirm no drift.
