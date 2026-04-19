@@ -81,8 +81,15 @@ class RuleTemplate:
                     # TypeError when item isn't iterable.
                     if not isinstance(item, dict):
                         continue
-                    code = item["code"] if "code" in item else None
-                    decode = item["decode"] if "decode" in item else None
+                    # AliasCode-shaped attributes (blindingSchema, studyPhase,
+                    # etc.) carry the code/decode on `standardCode`, not
+                    # directly on the item. Dive into standardCode when
+                    # present; fall back to the item itself for plain Code.
+                    target = item
+                    if "standardCode" in item and isinstance(item["standardCode"], dict):
+                        target = item["standardCode"]
+                    code = target.get("code")
+                    decode = target.get("decode")
                     code_index = self._find_index(codes, code)
                     decode_index = self._find_index(decodes, decode)
                     if code_index is None and decode_index is not None:

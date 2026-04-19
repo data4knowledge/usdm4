@@ -167,6 +167,402 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00060
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[0]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[1]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[2]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[3]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[4]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[5]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[6]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[7]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[8]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[9]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[10]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[11]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[12]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[13]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[14]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[15]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[16]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[17]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[18]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[19]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[20]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[21]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[22]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+  exception: null
+  klass: Activity
+  level: Warning
+  message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[23]
+  rule: DDF00075
+  rule_id: DDF00075
+  rule_text: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category or biomedical concept surrogate.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00075
+- attribute: epochId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Warning
+  message: ScheduledActivityInstance in the main timeline does not refer to an epoch
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[0]
+  rule: DDF00080
+  rule_id: DDF00080
+  rule_text: All scheduled activity instances are expected to refer to an epoch.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00080
+- attribute: epochId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Warning
+  message: ScheduledActivityInstance in the main timeline does not refer to an epoch
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[1]
+  rule: DDF00080
+  rule_id: DDF00080
+  rule_text: All scheduled activity instances are expected to refer to an epoch.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00080
+- attribute: epochId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Warning
+  message: ScheduledActivityInstance in the main timeline does not refer to an epoch
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[2]
+  rule: DDF00080
+  rule_id: DDF00080
+  rule_text: All scheduled activity instances are expected to refer to an epoch.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00080
+- attribute: epochId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Warning
+  message: ScheduledActivityInstance in the main timeline does not refer to an epoch
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[3]
+  rule: DDF00080
+  rule_id: DDF00080
+  rule_text: All scheduled activity instances are expected to refer to an epoch.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00080
+- attribute: epochId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Warning
+  message: ScheduledActivityInstance in the main timeline does not refer to an epoch
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[4]
+  rule: DDF00080
+  rule_id: DDF00080
+  rule_text: All scheduled activity instances are expected to refer to an epoch.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00080
+- attribute: epochId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Warning
+  message: ScheduledActivityInstance in the main timeline does not refer to an epoch
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[5]
+  rule: DDF00080
+  rule_id: DDF00080
+  rule_text: All scheduled activity instances are expected to refer to an epoch.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00080
+- attribute: epochId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Warning
+  message: ScheduledActivityInstance in the main timeline does not refer to an epoch
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[6]
+  rule: DDF00080
+  rule_id: DDF00080
+  rule_text: All scheduled activity instances are expected to refer to an epoch.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00080
 - attribute: objectives
   exception: null
   klass: InterventionalStudyDesign
@@ -180,6 +576,21 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00084
+- attribute: previousId, nextId
+  exception: null
+  klass: Encounter
+  level: Warning
+  message: Encounter prev/next order ['Encounter_1', 'enc-002'] does not match order
+    derived from SAI flow []
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0]
+  rule: DDF00087
+  rule_id: DDF00087
+  rule_text: Encounter ordering using previous and next attributes is expected to
+    be consistent with the order of corresponding scheduled activity instances according
+    to their specified default conditions.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00087
 - attribute: plannedAge
   exception: null
   klass: StudyDesignPopulation
@@ -232,6 +643,18 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00133
+- attribute: plannedDuration
+  exception: null
+  klass: ScheduleTimeline
+  level: Warning
+  message: Main ScheduleTimeline has no plannedDuration
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0]
+  rule: DDF00153
+  rule_id: DDF00153
+  rule_text: A planned duration is expected for the main timeline.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00153
 - attribute: type
   exception: null
   klass: StudyDefinitionDocument

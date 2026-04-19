@@ -1306,3 +1306,69 @@ Looking back at the seven batches that took coverage from 64 % to
 - No new generator features needed after the first ~150 rules.
   Hand-authoring from stage-1 YAMLs was more productive than
   extending stage-2 for ever-more-specific predicate shapes.
+
+## 22. `_ct_check` must dive into `standardCode` for AliasCode attrs
+
+The CT membership helper in `RuleTemplate._ct_check` originally
+read `item["code"]` / `item["decode"]` directly from whatever
+landed in the CT-bound attribute slot. That works for plain `Code`
+attributes (like Encounter.type) but silently returns `None` for
+AliasCode-shaped ones — where the real code/decode lives on
+`item.standardCode`, not on `item`. AliasCode-bound attrs include
+`blindingSchema`, `studyPhase`, etc.
+
+Symptom: rules like DDF00217 ("blindingSchema must be a Trial
+Blinding Schema code") would report `"None"/"None"` against valid
+data because the lookup was pointed at the wrong level of the
+embedded structure.
+
+The fix is three lines in `_ct_check`:
+
+```python
+target = item
+if "standardCode" in item and isinstance(item["standardCode"], dict):
+    target = item["standardCode"]
+code = target.get("code")
+decode = target.get("decode")
+```
+
+**Lesson.** USDM has two parallel Code shapes — plain `Code` and
+`AliasCode` (wrapping a `standardCode` plus `standardCodeAliases`).
+Any generic helper that reads code/decode from a Code-valued
+attribute must handle both. This trap surfaces silently: the rule
+fires with a `None`/`None` error that *looks* like placeholder
+data, not like a helper bug. When you see a CT finding reporting
+the literal string `'None'` for both code and decode, check
+whether the attribute is AliasCode-shaped before you go looking
+at the fixture.
+
+## 23. Auto-stubbed rule bodies are landmines
+
+Most of this session's rule library was real hand-authored logic.
+But a few rules (notably DDF00193 before it was rewritten) shipped
+with auto-generated stub bodies that don't raise
+`NotImplementedError` — they return a result but the check is
+wrong. Example:
+
+```python
+# Auto-stub for DDF00193 — wrong shape
+for item in data.instances_by_klass("StudyRole"):
+    if not item.get("masking"):
+        self._add_failure("Required attribute 'masking' is missing or empty", ...)
+```
+
+Rule text: "A masking is **expected for at least one study role** in
+a study design with a blinding schema that is **not open label or
+double blind**." The auto-stub enforced masking on every role,
+regardless of blinding schema. It only got caught once the
+`test_package.py` blockers were cleared and the engine started
+running every rule against real fixtures.
+
+**Lesson.** `NotImplementedError` stubs are honest — they fail
+loudly and get counted as "not implemented" rather than "passing".
+Rule bodies that ship a plausible-looking but wrong check are
+worse: they quietly succeed on some fixtures and surface only when
+a richer fixture exercises the rule's precondition. When sweeping
+up remaining stubs, read the rule body, not just whether the file
+has `NotImplementedError`. Cross-check against the rule text and
+CORE JSONata.
