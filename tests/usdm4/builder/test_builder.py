@@ -46,7 +46,7 @@ def test_cdisc_code_basic(builder):
     assert result.code == "C12345"
     assert result.decode == "Test Code"
     assert result.codeSystem == builder._cdisc_code_system
-    assert result.codeSystemVersion == "2025-09-26"
+    assert result.codeSystemVersion == "2026-03-27"
 
 
 def test_cdisc_code_missing(builder):
@@ -64,7 +64,7 @@ def test_alias_code_basic(builder):
     assert result.standardCode.code == "C12345"
     assert result.standardCode.decode == "Test Code"
     assert result.standardCode.codeSystem == builder._cdisc_code_system
-    assert result.standardCode.codeSystemVersion == "2025-09-26"
+    assert result.standardCode.codeSystemVersion == "2026-03-27"
     assert result.standardCodeAliases == []
 
 

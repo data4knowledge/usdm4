@@ -1,0 +1,64 @@
+# MANUAL: do not regenerate
+# Biconditional side specs hand-completed for stage-2 renderer.
+# Stage-1 will detect predicate=biconditional from 'vice versa' in rule
+# text but leaves side_a / side_b for a human to fill in.
+id: DDF00034
+check_id: CHK0308
+severity: ERROR
+classification: MED_TEXT
+confidence: medium
+source: rule-text
+review_required: false
+predicate: biconditional
+class: Duration
+entity: Duration
+attributes: durationWillVary, reasonDurationWillVary
+text: If duration will vary (attribute durationWillVary is True) then a reason (attribute reasonDurationWillVary) must be given and vice versa.
+message: The duration will vary (durationWillVary is not 'false' or reasonDurationWillVary is populated), but it is not fully defined (durationWillVary is not 'true' or reasonDurationWillVary is missing).
+_core_conditions_reference:
+  all:
+  - name: get_dataset
+    operator: equal_to
+    value:
+      comparator: Duration
+      target: instanceType
+  - any:
+    - name: get_dataset
+      operator: not_equal_to
+      value:
+        comparator: false
+        target: durationWillVary
+    - all:
+      - name: get_dataset
+        operator: exists
+        value:
+          comparator: null
+          target: reasonDurationWillVary
+      - name: get_dataset
+        operator: non_empty
+        value:
+          comparator: null
+          target: reasonDurationWillVary
+  - any:
+    - name: get_dataset
+      operator: not_equal_to
+      value:
+        comparator: true
+        target: durationWillVary
+    - name: get_dataset
+      operator: not_exists
+      value:
+        comparator: null
+        target: reasonDurationWillVary
+    - name: get_dataset
+      operator: empty
+      value:
+        comparator: null
+        target: reasonDurationWillVary
+side_a:
+  attr: durationWillVary
+  check: equal_to_bool
+  value: true
+side_b:
+  attr: reasonDurationWillVary
+  check: non_empty

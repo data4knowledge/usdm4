@@ -1,0 +1,59 @@
+# MANUAL: do not regenerate
+# Biconditional side specs hand-completed for stage-2 renderer.
+# Stage-1 will detect predicate=biconditional from 'vice versa' in rule
+# text but leaves side_a / side_b for a human to fill in.
+id: DDF00020
+check_id: CHK0028
+severity: ERROR
+classification: MED_TEXT
+confidence: medium
+source: rule-text
+review_required: false
+predicate: biconditional
+class: StudyAmendmentReason
+entity: StudyAmendmentReason
+attributes: code, otherReason
+text: If the reason for a study amendment is 'Other' then this must be specified (attribute reasonOther must be completed), and vice versa.
+message: Population of otherReason is not consistent with code - code.code is C17649 ('Other') but otherReason is blank, or otherReason is present but code.code is not C17649 ('Other').
+_core_conditions_reference:
+  any:
+  - all:
+    - name: get_dataset
+      operator: equal_to
+      value:
+        comparator: C17649
+        target: code.code
+    - any:
+      - name: get_dataset
+        operator: not_exists
+        value:
+          comparator: null
+          target: otherReason
+      - name: get_dataset
+        operator: empty
+        value:
+          comparator: null
+          target: otherReason
+  - all:
+    - name: get_dataset
+      operator: not_equal_to
+      value:
+        comparator: C17649
+        target: code.code
+    - name: get_dataset
+      operator: exists
+      value:
+        comparator: null
+        target: otherReason
+    - name: get_dataset
+      operator: non_empty
+      value:
+        comparator: null
+        target: otherReason
+side_a:
+  attr: code
+  check: code_equals
+  value: C17649
+side_b:
+  attr: otherReason
+  check: non_empty

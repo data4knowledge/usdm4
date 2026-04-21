@@ -5,7 +5,7 @@ from typing_extensions import deprecated
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.rules.rules_validation import RulesValidation4
-from usdm3.rules.rules_validation_results import RulesValidationResults
+from usdm4.rules.results import RulesValidationResults
 from usdm4.api.wrapper import Wrapper
 from usdm4.convert.convert import Convert
 from usdm4.builder.builder import Builder

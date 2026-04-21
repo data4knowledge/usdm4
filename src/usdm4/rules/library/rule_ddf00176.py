@@ -1,0 +1,20 @@
+from usdm4.rules.rule_template import RuleTemplate
+
+
+class RuleDDF00176(RuleTemplate):
+    """
+    DDF00176: An administration's route must be specified according to the extensible Route of Administration Response (C66729) SDTM codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist).
+
+    Applies to: Administration
+    Attributes: route
+    """
+
+    def __init__(self):
+        super().__init__(
+            "DDF00176",
+            RuleTemplate.ERROR,
+            "An administration's route must be specified according to the extensible Route of Administration Response (C66729) SDTM codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist).",
+        )
+
+    def validate(self, config: dict) -> bool:
+        return self._ct_check(config, "Administration", "route")

@@ -22,7 +22,7 @@
           "code": "C70817",
           "codeSystem": "cdisc.org",
           "codeSystemVersion": "2023-12-15",
-          "decode": "Protocol",
+          "decode": "Study Protocol",
           "id": "Code_5",
           "instanceType": "Code"
         },
@@ -70,7 +70,7 @@
               "code": "C25425",
               "codeSystem": "cdisc.org",
               "codeSystemVersion": "2023-12-15",
-              "decode": "Approved",
+              "decode": "Approval",
               "id": "Code_4",
               "instanceType": "Code"
             },
@@ -123,7 +123,9 @@
             }
           }
         ],
-        "documentVersionIds": [],
+        "documentVersionIds": [
+          "StudyDefinitionDocumentVersion_1"
+        ],
         "id": "StudyVersion_1",
         "instanceType": "StudyVersion",
         "narrativeContentItems": [],
@@ -150,7 +152,32 @@
         ],
         "rationale": "To be provided",
         "referenceIdentifiers": [],
-        "roles": [],
+        "roles": [
+          {
+            "id": "StudyRole_1",
+            "instanceType": "StudyRole",
+            "name": "SPONSOR_ROLE",
+            "extensionAttributes": [],
+            "notes": [],
+            "code": {
+              "id": "Code_8",
+              "instanceType": "Code",
+              "extensionAttributes": [],
+              "code": "C70793",
+              "codeSystem": "cdisc.org",
+              "codeSystemVersion": "2023-12-15",
+              "decode": "Clinical Study Sponsor"
+            },
+            "appliesToIds": [
+              "StudyVersion_1"
+            ],
+            "organizationIds": [
+              "Organization_1"
+            ],
+            "assignedPersons": [],
+            "masking": null
+          }
+        ],
         "studyDesigns": [],
         "studyIdentifiers": [
           {

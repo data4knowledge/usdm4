@@ -32,6 +32,7 @@ code_lists:
 - C99079
 - C123650
 - C124309
+- C127259
 - C127260
 - C127261
 - C127262
@@ -54,10 +55,14 @@ code_lists:
 - C207419
 - C215477
 - C215478
+- C215479
 - C215480
 - C215481
 - C215483
+- C215484
 - C215485
+- C215486
+- C66781  # Age Unit — used by DDF00237 for plannedAge.unit. Requires cache refresh to populate.
 klass_attribute_mapping:
   Study: {}
   StudyProtocolVersion:
@@ -89,11 +94,16 @@ klass_attribute_mapping:
     model: C99076
     intentTypes: C66736
     blindingSchema: C66735
+    # Duplicated from StudyDesign — CT lookup doesn't walk inheritance, so
+    # rules dispatched against the concrete subclass need an explicit entry.
+    characteristics: C207416
   ObservationalStudyDesign:
     subTypes: C215486
     model: C127259
     timePerspective: C127261
     samplingMethod: C127260
+    studyPhase: C66737
+    studyType: C99077
   StudyDesignPopulation:
     plannedSex: C66732
   StudyCohort:
@@ -131,3 +141,14 @@ klass_attribute_mapping:
     sourcing: C215483
   ProductOrganizationRole:
     code: C215485
+  EligibilityCriterion:
+    # Note: existing 'EligibilityCriteria' entry above is a typo for this class.
+    category: C66797
+  StudyDefinitionDocumentVersion:
+    status: C188723
+  AdministrableProductProperty:
+    type: C215479
+  MedicalDeviceIdentifier:
+    type: C215484
+  Quantity:
+    unit: C71620

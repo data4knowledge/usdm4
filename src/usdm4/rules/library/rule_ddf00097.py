@@ -1,4 +1,4 @@
-from usdm3.rules.library.rule_template import RuleTemplate
+from usdm4.rules.rule_template import RuleTemplate
 
 
 class RuleDDF00097(RuleTemplate):
@@ -17,4 +17,13 @@ class RuleDDF00097(RuleTemplate):
         )
 
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        data = config["data"]
+        for item in data.instances_by_klass("StudyDesignPopulation"):
+            if not item.get("plannedAge"):
+                self._add_failure(
+                    "Required attribute 'plannedAge' is missing or empty",
+                    "StudyDesignPopulation",
+                    "plannedAge",
+                    data.path_by_id(item["id"]),
+                )
+        return self._result()

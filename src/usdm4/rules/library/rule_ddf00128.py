@@ -1,4 +1,4 @@
-from usdm3.rules.library.rule_template import RuleTemplate
+from usdm4.rules.rule_template import RuleTemplate
 
 
 class RuleDDF00128(RuleTemplate):
@@ -17,4 +17,4 @@ class RuleDDF00128(RuleTemplate):
         )
 
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        return self._ct_check(config, "StudyIntervention", "type")

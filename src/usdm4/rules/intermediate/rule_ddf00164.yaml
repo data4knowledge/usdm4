@@ -1,0 +1,29 @@
+# MANUAL: do not regenerate
+# Biconditional side specs hand-completed for stage-2 renderer.
+# Stage-1 will detect predicate=biconditional from 'vice versa' in rule
+# text but leaves side_a / side_b for a human to fill in.
+id: DDF00164
+check_id: CHK0183
+severity: ERROR
+classification: MED_TEXT
+confidence: medium
+source: rule-text
+review_required: false
+predicate: biconditional
+class: NarrativeContent
+entity: NarrativeContent
+attributes: sectionNumber, displaySectionNumber
+text: If a section number is to be displayed then a number must be specified and vice versa.
+message: A section number is indicated to be displayed (displaySectionNumber=true) but not specified.
+_core_jsonata_reference: "($.**.documentedBy)@$db.\n  $db.versions@$sv.\n  $sv.contents@$nc.\n  $nc.\n    [\n      (\n        $NoSectNo:=function(){$type($nc.sectionNumber)=\"null\" or sectionNumber=\"\"\
+  \ or $exists(sectionNumber)=false} ;\n        $ChkX:=function()\n          {\n            ($NoSectNo()=true and displaySectionNumber=true)\n          };\n          {\n            \"instanceType\": $nc.instanceType,\n\
+  \            \"id\": $nc.id,\n            \"path\": $nc._path,\n            \"StudyDefinitionDocument.id\": $db.id,\n            \"StudyDefinitionDocument.name\": $db.name,\n            \"StudyDefinitionDocumentVersion.id\"\
+  : $sv.id,\n            \"StudyDefinitionDocumentVersion.version\": $sv.version,\n            \"name\": $nc.name,\n            \"displaySectionNumber\": $nc.displaySectionNumber,\n            \"sectionNumber\"\
+  : $nc.sectionNumber,\n            \"check\": $ChkX()\n          }\n      )\n    ]\n    [check=true]"
+side_a:
+  attr: displaySectionNumber
+  check: equal_to_bool
+  value: true
+side_b:
+  attr: sectionNumber
+  check: non_empty

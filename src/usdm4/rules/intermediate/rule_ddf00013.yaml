@@ -1,0 +1,53 @@
+# MANUAL: do not regenerate
+# Predicate side specs hand-completed for stage-2 renderer.
+id: DDF00013
+check_id: CHK0025
+severity: ERROR
+classification: MED_TEXT
+confidence: medium
+source: rule-text
+review_required: false
+predicate: implication
+class: BiomedicalConceptProperty
+entity: BiomedicalConceptProperty
+attributes: isRequired, isEnabled
+text: If a biomedical concept property is required then it must also be enabled, while if it is not enabled then it must not be required.
+message: A required biomedical concept property (isRequired=true) is not enabled (isEnabled is not true), or a disabled biomedical concept property (isEnabled=false) is required (isRequired is not false).
+_core_conditions_reference:
+  all:
+  - name: get_dataset
+    operator: equal_to
+    value:
+      comparator: BiomedicalConceptProperty
+      target: instanceType
+  - any:
+    - all:
+      - name: get_dataset
+        operator: equal_to
+        value:
+          comparator: true
+          target: isRequired
+      - name: get_dataset
+        operator: not_equal_to
+        value:
+          comparator: true
+          target: isEnabled
+    - all:
+      - name: get_dataset
+        operator: equal_to
+        value:
+          comparator: false
+          target: isEnabled
+      - name: get_dataset
+        operator: not_equal_to
+        value:
+          comparator: false
+          target: isRequired
+antecedent:
+  attr: isRequired
+  check: equal_to_bool
+  value: true
+consequent:
+  attr: isEnabled
+  check: equal_to_bool
+  value: true
