@@ -32,6 +32,10 @@ class CohortInput(BaseModel):
     Each free-text ``characteristic`` becomes a ``Characteristic``
     (``SyntaxTemplate``) object at assembly time, mirroring how
     ``EligibilityCriterion`` wraps inclusion/exclusion text.
+
+    ``arm_names`` expresses cohort -> arm linkage by label-based reference into
+    ``StudyDesignInput.arms[*].name``. The subset invariant is enforced at the
+    ``AssemblerInput`` level (cohorts and arms live on sibling models).
     """
 
     model_config = ConfigDict(strict=False)
@@ -41,6 +45,7 @@ class CohortInput(BaseModel):
     description: str = ""
     planned_enrollment: Optional[int] = None
     characteristics: list[str] = []
+    arm_names: list[str] = []
 
 
 class PopulationInput(BaseModel):

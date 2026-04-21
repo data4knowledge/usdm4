@@ -130,3 +130,55 @@ class TestCellInput:
     def test_elements_default_empty(self):
         c = CellInput.model_validate({"arm": "A1", "epoch": "Treatment"})
         assert c.elements == []
+
+
+class TestCellElementCrossReference:
+    """StudyDesignInput enforces that cell.elements names resolve to
+    declared ElementInput.name values (Step 5 invariant: elements cannot be
+    synthesised; if cells reference them, they must be declared)."""
+
+    def test_cells_with_empty_elements_do_not_trigger_validator(self):
+        sd = StudyDesignInput.model_validate(
+            {
+                "cells": [
+                    {"arm": "A1", "epoch": "Treatment"},
+                    {"arm": "A2", "epoch": "Treatment", "elements": []},
+                ],
+            }
+        )
+        assert sd.cells[0].elements == []
+
+    def test_resolved_element_reference_passes(self):
+        sd = StudyDesignInput.model_validate(
+            {
+                "elements": [{"name": "EL1"}, {"name": "EL2"}],
+                "cells": [
+                    {"arm": "A1", "epoch": "Treatment", "elements": ["EL1", "EL2"]},
+                ],
+            }
+        )
+        assert sd.cells[0].elements == ["EL1", "EL2"]
+
+    def test_unresolved_element_reference_raises(self):
+        with pytest.raises(ValidationError) as exc_info:
+            StudyDesignInput.model_validate(
+                {
+                    "elements": [{"name": "EL1"}],
+                    "cells": [
+                        {"arm": "A1", "epoch": "Treatment", "elements": ["EL_TYPO"]},
+                    ],
+                }
+            )
+        assert "undeclared element" in str(exc_info.value)
+        assert "EL_TYPO" in str(exc_info.value)
+
+    def test_cell_elements_without_any_declared_elements_raises(self):
+        with pytest.raises(ValidationError) as exc_info:
+            StudyDesignInput.model_validate(
+                {
+                    "cells": [
+                        {"arm": "A1", "epoch": "Treatment", "elements": ["EL1"]},
+                    ],
+                }
+            )
+        assert "undeclared element" in str(exc_info.value)

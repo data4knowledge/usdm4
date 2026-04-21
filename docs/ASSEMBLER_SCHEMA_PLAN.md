@@ -714,7 +714,12 @@ Phase A can begin immediately. Phase B is the prerequisite for `usdm4_protocol` 
 
 ## 11. Next Steps (post schema extension)
 
-Branch `31-schema` extended `StudyDesignInput` and `PopulationInput` with arms / interventions / cells / elements and demographics / cohorts / planned_enrollment. The schema changes are backward-compatible and inert — every new field has a default, so today's `AssemblerInput(**existing_data)` still validates. Existing assembler tests pass unchanged.
+Branch `31-schema` extended `StudyDesignInput` and `PopulationInput` with arms / interventions / cells / elements and demographics / cohorts (with `arm_names`) / planned_enrollment. The schema changes are backward-compatible and inert — every new field has a default, so today's `AssemblerInput(**existing_data)` still validates. Existing assembler tests pass unchanged.
+
+Two cross-reference invariants are now enforced at schema validation time (folded in from protocol_corpus Step 5 findings):
+
+- **Cell -> element resolution** (on `StudyDesignInput`): every `CellInput.elements[*]` must appear in `StudyDesignInput.elements[*].name`. Captures the Step 5 invariant that elements carry load-bearing regimen information and cannot be synthesised.
+- **Cohort -> arm subset** (on `AssemblerInput`): every `PopulationInput.cohorts[*].arm_names[*]` must appear in `StudyDesignInput.arms[*].name`. Cross-model check; lives on `AssemblerInput` because cohorts and arms are siblings.
 
 The following follow-up work is deliberately **not** on `31-schema` and is tracked as a separate issue:
 

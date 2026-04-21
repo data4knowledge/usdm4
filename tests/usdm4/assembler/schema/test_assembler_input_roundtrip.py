@@ -96,6 +96,7 @@ def extended_dict(legacy_minimal_dict):
                 "label": "Main cohort",
                 "planned_enrollment": 200,
                 "characteristics": ["treatment-naive"],
+                "arm_names": ["A1", "A2"],
             },
         ],
         "planned_enrollment": 200,
@@ -150,6 +151,7 @@ class TestExtendedRoundtrip:
         assert result.population.demographics.sex == "ALL"
         assert len(result.population.cohorts) == 1
         assert result.population.cohorts[0].name == "Main"
+        assert result.population.cohorts[0].arm_names == ["A1", "A2"]
         assert result.population.planned_enrollment == 200
 
     def test_roundtrip_via_model_dump(self, extended_dict):
@@ -196,6 +198,46 @@ class TestValidationBoundaries:
         extended_dict["unexpected"] = "data"
         result = AssemblerInput.model_validate(extended_dict)
         assert result.study.version == "1.0"
+
+
+class TestCrossModelReferences:
+    """Folded-in Step 5 findings: cross-reference invariants are enforced at
+    schema-validation time, not pushed out to runtime.
+    """
+
+    def test_cohort_arm_names_resolve_to_declared_arms(self, extended_dict):
+        # Extended fixture uses arm_names ["A1", "A2"] which match declared
+        # arms; validation should succeed.
+        result = AssemblerInput.model_validate(extended_dict)
+        assert result.population.cohorts[0].arm_names == ["A1", "A2"]
+
+    def test_cohort_arm_names_unresolved_raises(self, extended_dict):
+        extended_dict["population"]["cohorts"][0]["arm_names"] = ["A1", "A_TYPO"]
+        with pytest.raises(ValidationError) as exc_info:
+            AssemblerInput.model_validate(extended_dict)
+        assert "undeclared arm" in str(exc_info.value)
+        assert "A_TYPO" in str(exc_info.value)
+
+    def test_cohort_with_empty_arm_names_allowed(self, extended_dict):
+        extended_dict["population"]["cohorts"][0]["arm_names"] = []
+        result = AssemblerInput.model_validate(extended_dict)
+        assert result.population.cohorts[0].arm_names == []
+
+    def test_cohort_arm_names_without_any_arms_raises(self, legacy_minimal_dict):
+        legacy_minimal_dict["population"]["cohorts"] = [
+            {"name": "C1", "arm_names": ["A1"]}
+        ]
+        with pytest.raises(ValidationError) as exc_info:
+            AssemblerInput.model_validate(legacy_minimal_dict)
+        assert "undeclared arm" in str(exc_info.value)
+
+    def test_cell_element_reference_enforced_at_study_design_level(self, extended_dict):
+        # Add a cell that references an element name not declared at top level.
+        extended_dict["study_design"]["cells"][0]["elements"] = ["EL_TYPO"]
+        extended_dict["study_design"]["elements"] = [{"name": "EL1"}]
+        with pytest.raises(ValidationError) as exc_info:
+            AssemblerInput.model_validate(extended_dict)
+        assert "undeclared element" in str(exc_info.value)
 
 
 class TestEmptyListsAndOptionalFields:

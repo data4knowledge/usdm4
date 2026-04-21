@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
 
 from usdm4.assembler.schema.identification_schema import IdentificationInput
 from usdm4.assembler.schema.document_schema import DocumentInput
@@ -19,6 +19,25 @@ class AssemblerInput(BaseModel):
     study: StudyInput
     amendments: AmendmentsInput = AmendmentsInput()
     soa: TimelineInput | None = None
+
+    @model_validator(mode="after")
+    def _check_cohort_arm_references(self) -> "AssemblerInput":
+        """Every ``cohort.arm_names`` entry must resolve to a declared arm.
+
+        Cross-model invariant: cohorts live on ``PopulationInput`` while arms
+        live on ``StudyDesignInput``, so the subset check only makes sense
+        here at the top-level where both are visible.
+        """
+        arm_names = {a.name for a in self.study_design.arms}
+        for cohort in self.population.cohorts:
+            for ref in cohort.arm_names:
+                if ref not in arm_names:
+                    declared = sorted(arm_names) if arm_names else "(none)"
+                    raise ValueError(
+                        f"cohort {cohort.name!r} references undeclared arm "
+                        f"{ref!r}; declared arms: {declared}"
+                    )
+        return self
 
     @classmethod
     def validate_strict(cls, data: dict) -> tuple["AssemblerInput", list[str]]:

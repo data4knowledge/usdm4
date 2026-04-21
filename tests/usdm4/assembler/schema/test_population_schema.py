@@ -104,3 +104,10 @@ class TestCohortInput:
         assert c.description == ""
         assert c.planned_enrollment is None
         assert c.characteristics == []
+        assert c.arm_names == []
+
+    def test_arm_names_accepts_list(self):
+        c = CohortInput.model_validate(
+            {"name": "GBM", "arm_names": ["PHASE2_D1", "PHASE2_D2"]}
+        )
+        assert c.arm_names == ["PHASE2_D1", "PHASE2_D2"]

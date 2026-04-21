@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
 
 
 class InterventionInput(BaseModel):
@@ -41,8 +41,11 @@ class ArmInput(BaseModel):
 class ElementInput(BaseModel):
     """Maps to usdm4.api.study_element.StudyElement.
 
-    Optional — if omitted, the assembler synthesises one default element per
-    cell.
+    Elements typically carry load-bearing regimen information (dose schedules
+    that vary across cycles, combination vs. monotherapy, de-escalation
+    doses). Cells reference elements by name via ``CellInput.elements``; the
+    ``StudyDesignInput`` validator enforces that every cell reference
+    resolves to a declared element.
     """
 
     model_config = ConfigDict(strict=False)
@@ -79,3 +82,23 @@ class StudyDesignInput(BaseModel):
     interventions: list[InterventionInput] = []
     cells: list[CellInput] = []
     elements: list[ElementInput] = []
+
+    @model_validator(mode="after")
+    def _check_cell_element_references(self) -> "StudyDesignInput":
+        """Every ``CellInput.elements`` entry must resolve to an
+        ``ElementInput.name`` declared on this model.
+
+        Captures the Step 5 invariant that elements carry load-bearing design
+        information and cannot be synthesised from cells: when any cell lists
+        element names, those names must refer to explicitly declared elements.
+        """
+        element_names = {e.name for e in self.elements}
+        for cell in self.cells:
+            for ref in cell.elements:
+                if ref not in element_names:
+                    declared = sorted(element_names) if element_names else "(none)"
+                    raise ValueError(
+                        f"cell ({cell.arm!r}, {cell.epoch!r}) references "
+                        f"undeclared element {ref!r}; declared elements: {declared}"
+                    )
+        return self
