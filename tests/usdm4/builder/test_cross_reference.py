@@ -106,6 +106,17 @@ def test_get_by_path():
     assert attribute == "value"
 
 
+def test_get_by_path_single_part():
+    """Covers the single-attribute path branch (line 57): when the path has
+    exactly one part, the start instance is returned with the stripped attribute."""
+    cross_references = CrossReference()
+    item = CRTest(id="1234", name="only")
+    cross_references.add(item, "only")
+    instance, attribute = cross_references.get_by_path("CRTest", "only", "@value")
+    assert instance is item
+    assert attribute == "value"
+
+
 def test_get_by_path_errors():
     cross_references = CrossReference()
     item1 = CRTest(id="1234", name="name1")

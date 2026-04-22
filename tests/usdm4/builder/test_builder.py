@@ -267,10 +267,8 @@ def test_iso3166_code_valid(builder):
     """Test that the iso3166_code method returns the correct Code object for a valid country code."""
     # Mock the decode method to return a known value for testing
     original_decode = builder.iso3166_library.decode
-    builder.iso3166_library.decode = (
-        lambda code: ("USA", "United States of America")
-        if code == "US"
-        else (None, None)
+    builder.iso3166_library.decode = lambda code: (
+        ("USA", "United States of America") if code == "US" else (None, None)
     )
 
     # Also need to mock the actual iso3166_code method to handle the tuple correctly
@@ -309,10 +307,8 @@ def test_iso3166_code_invalid(builder):
     """Test that the iso3166_code method handles invalid country codes correctly."""
     # Mock the decode method to return None for invalid codes
     original_decode = builder.iso3166_library.decode
-    builder.iso3166_library.decode = (
-        lambda code: (None, None)
-        if code == "XX"
-        else ("USA", "United States of America")
+    builder.iso3166_library.decode = lambda code: (
+        (None, None) if code == "XX" else ("USA", "United States of America")
     )
 
     # Also need to mock the actual iso3166_code method to handle the tuple correctly

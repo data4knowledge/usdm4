@@ -898,6 +898,28 @@ class TestAssemblerModuleConstant:
         assert isinstance(assembler.MODULE, str)
 
 
+class TestAssemblerExecuteExceptionHandling:
+    """Test execute() try/except handler covers lines 138-140."""
+
+    def test_execute_exception_during_assembly_is_logged(self, minimal_study_data):
+        """When a sub-assembler raises during assembly, the outer try/except
+        should catch it and log via errors.exception — covering lines 138-140."""
+        errors = Errors()
+        assembler = Assembler(root_path(), errors)
+
+        # Sabotage the identification sub-assembler to raise. Schema
+        # validation of minimal_study_data passes, so we reach the
+        # assembly try block.
+        def raise_error(data):
+            raise RuntimeError("Simulated assembler failure")
+
+        assembler._identification_assembler.execute = raise_error
+
+        assembler.execute(minimal_study_data)
+
+        assert errors.error_count() > 0
+
+
 class TestAssemblerWrapperExceptionHandling:
     """Test wrapper method exception handling (covers lines 157-160)."""
 

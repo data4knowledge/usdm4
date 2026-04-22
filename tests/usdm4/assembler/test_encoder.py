@@ -726,6 +726,24 @@ class TestEncoderToDate:
         assert result.year == 2024
         assert result.month == 1
 
+    def test_to_date_unexpected_exception_is_logged(self, encoder):
+        """Covers the fallback except Exception branch (lines 531-538) of to_date.
+
+        Dateutil's parser normally raises ValueError/TypeError/OverflowError —
+        those go down the warning branch. Any other exception (e.g. an
+        environment issue) should take the exception/traceback branch.
+        """
+        from unittest.mock import patch
+
+        with patch(
+            "src.usdm4.assembler.encoder.parser.parse",
+            side_effect=RuntimeError("boom"),
+        ):
+            result = encoder.to_date("2024-01-15")
+
+        assert result is None
+        encoder._errors.exception.assert_called()
+
 
 class TestEncoderISO8601Duration:
     """Test iso8601_duration encoding method"""
