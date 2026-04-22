@@ -14,6 +14,7 @@ tests target the lower-traffic branches:
 
 import os
 import pathlib
+from unittest.mock import patch
 
 import pytest
 from simple_error_log.errors import Errors
@@ -196,3 +197,81 @@ def test_non_dict_cohort_is_skipped(assembler):
     assembler.execute(data)
     assert assembler.population is not None
     assert len(assembler.cohorts) == 1
+
+
+# ---------------------------------------------------------------------------
+# Builder-create returning None — defensive branches
+# ---------------------------------------------------------------------------
+
+
+def test_planned_age_returns_none_when_quantity_builder_fails(assembler):
+    """_build_planned_age returns None when the builder can't create its
+    Quantity objects — exercises the `if min_qty is None or max_qty is None`
+    guard (lines 192-193)."""
+    original_create = assembler._builder.create
+
+    def maybe_none(cls, params):
+        if cls.__name__ == "Quantity":
+            return None
+        return original_create(cls, params)
+
+    with patch.object(assembler._builder, "create", side_effect=maybe_none):
+        assembler.execute(_base_data(demographics={"age_min": 18, "age_max": 65}))
+
+    assert assembler.population is not None
+    assert assembler.population.plannedAge is None
+
+
+def test_build_cohorts_exception_handler(assembler):
+    """A cohort whose StudyCohort.create raises should be logged via
+    _build_cohorts' except (lines 281-286) and the loop continues."""
+    errors_before = assembler._errors.count()
+    original_create = assembler._builder.create
+
+    def maybe_raise(cls, params):
+        if cls.__name__ == "StudyCohort":
+            raise RuntimeError("forced cohort failure")
+        return original_create(cls, params)
+
+    with patch.object(assembler._builder, "create", side_effect=maybe_raise):
+        assembler.execute(_base_data(cohorts=[{"name": "BadCohort"}]))
+
+    assert assembler._errors.count() > errors_before
+
+
+def test_build_characteristics_exception_handler(assembler):
+    """A characteristic whose create raises is logged by
+    _build_characteristics (lines 306-311)."""
+    errors_before = assembler._errors.count()
+    original_create = assembler._builder.create
+
+    def maybe_raise(cls, params):
+        if cls.__name__ == "Characteristic":
+            raise RuntimeError("forced characteristic failure")
+        return original_create(cls, params)
+
+    with patch.object(assembler._builder, "create", side_effect=maybe_raise):
+        assembler.execute(
+            _base_data(
+                cohorts=[{"name": "A", "characteristics": ["c1", "c2"]}],
+            )
+        )
+
+    assert assembler._errors.count() > errors_before
+
+
+def test_build_cohorts_filters_none_results(assembler):
+    """When builder.create returns None for a StudyCohort, the cohort is
+    silently dropped (the `if cohort is not None` branch)."""
+    original_create = assembler._builder.create
+
+    def maybe_none(cls, params):
+        if cls.__name__ == "StudyCohort":
+            return None
+        return original_create(cls, params)
+
+    with patch.object(assembler._builder, "create", side_effect=maybe_none):
+        assembler.execute(_base_data(cohorts=[{"name": "A"}, {"name": "B"}]))
+
+    # No cohorts collected despite being present in input.
+    assert len(assembler.cohorts) == 0
