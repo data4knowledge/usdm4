@@ -10,7 +10,10 @@ class TestRuleDDF00017:
         rule = RuleDDF00017()
         assert rule._rule == "DDF00017"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'Within subject enrollment, the quantity must be a number or a percentage (i.e. the unit must be empty or %).'
+        assert (
+            rule._rule_text
+            == "Within subject enrollment, the quantity must be a number or a percentage (i.e. the unit must be empty or %)."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

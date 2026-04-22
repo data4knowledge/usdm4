@@ -10,7 +10,10 @@ class TestRuleDDF00010:
         rule = RuleDDF00010()
         assert rule._rule == "DDF00010"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'The names of all child instances of the same parent class must be unique.'
+        assert (
+            rule._rule_text
+            == "The names of all child instances of the same parent class must be unique."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

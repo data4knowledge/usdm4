@@ -10,7 +10,10 @@ class TestRuleDDF00174:
         rule = RuleDDF00174()
         assert rule._rule == "DDF00174"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == 'An identified organization is not expected to have more than 1 identifier for the study.'
+        assert (
+            rule._rule_text
+            == "An identified organization is not expected to have more than 1 identifier for the study."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

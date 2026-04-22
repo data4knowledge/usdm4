@@ -10,7 +10,10 @@ class TestRuleDDF00204:
         rule = RuleDDF00204()
         assert rule._rule == "DDF00204"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "Narrative content must only reference narrative content that is specified within the same study definition document version."
+        assert (
+            rule._rule_text
+            == "Narrative content must only reference narrative content that is specified within the same study definition document version."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

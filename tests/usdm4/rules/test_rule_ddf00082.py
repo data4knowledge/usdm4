@@ -10,7 +10,10 @@ class TestRuleDDF00082:
         rule = RuleDDF00082()
         assert rule._rule == "DDF00082"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "Data types of attributes (string, number, boolean) must conform with the USDM schema based on the API specification."
+        assert (
+            rule._rule_text
+            == "Data types of attributes (string, number, boolean) must conform with the USDM schema based on the API specification."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

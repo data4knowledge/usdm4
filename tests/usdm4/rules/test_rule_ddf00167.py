@@ -10,7 +10,10 @@ class TestRuleDDF00167:
         rule = RuleDDF00167()
         assert rule._rule == "DDF00167"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "A study definition document version must not be referenced more than once by the same study version."
+        assert (
+            rule._rule_text
+            == "A study definition document version must not be referenced more than once by the same study version."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

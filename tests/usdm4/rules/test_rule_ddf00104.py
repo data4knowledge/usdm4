@@ -10,7 +10,10 @@ class TestRuleDDF00104:
         rule = RuleDDF00104()
         assert rule._rule == "DDF00104"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "A timing's relative to/from property must be specified using the Timing Relative To From Value Set Terminology (C201265) SDTM codelist."
+        assert (
+            rule._rule_text
+            == "A timing's relative to/from property must be specified using the Timing Relative To From Value Set Terminology (C201265) SDTM codelist."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

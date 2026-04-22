@@ -10,7 +10,10 @@ class TestRuleDDF00143:
         rule = RuleDDF00143()
         assert rule._rule == "DDF00143"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "A study amendment reason must be coded using the study amendment reason (C207415) DDF codelist."
+        assert (
+            rule._rule_text
+            == "A study amendment reason must be coded using the study amendment reason (C207415) DDF codelist."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

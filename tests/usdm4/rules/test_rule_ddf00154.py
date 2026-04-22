@@ -10,7 +10,10 @@ class TestRuleDDF00154:
         rule = RuleDDF00154()
         assert rule._rule == "DDF00154"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'A study design must not be characterized as both "Single-Centre" and "Multicentre".'
+        assert (
+            rule._rule_text
+            == 'A study design must not be characterized as both "Single-Centre" and "Multicentre".'
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

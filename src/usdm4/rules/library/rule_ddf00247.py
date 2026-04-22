@@ -16,7 +16,9 @@ SCOPE_CLASSES = [
     "IntercurrentEvent",
 ]
 
-WRAPPER_OPEN = '<root xmlns="http://www.w3.org/1999/xhtml" xmlns:usdm="http://example.com/usdm">'
+WRAPPER_OPEN = (
+    '<root xmlns="http://www.w3.org/1999/xhtml" xmlns:usdm="http://example.com/usdm">'
+)
 WRAPPER_CLOSE = "</root>"
 
 

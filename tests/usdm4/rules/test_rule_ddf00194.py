@@ -10,7 +10,10 @@ class TestRuleDDF00194:
         rule = RuleDDF00194()
         assert rule._rule == "DDF00194"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "At least one attribute must be specified for an address."
+        assert (
+            rule._rule_text
+            == "At least one attribute must be specified for an address."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

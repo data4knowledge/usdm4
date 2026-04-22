@@ -10,7 +10,10 @@ class TestRuleDDF00024:
         rule = RuleDDF00024()
         assert rule._rule == "DDF00024"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'An epoch must only reference epochs that are specified within the same study design.'
+        assert (
+            rule._rule_text
+            == "An epoch must only reference epochs that are specified within the same study design."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

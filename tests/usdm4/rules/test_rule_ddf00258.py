@@ -10,7 +10,10 @@ class TestRuleDDF00258:
         rule = RuleDDF00258()
         assert rule._rule == "DDF00258"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == 'A study design is not expected to have more than one of the following characteristics: "Randomized", "Stratification", "Stratified Randomisation".'
+        assert (
+            rule._rule_text
+            == 'A study design is not expected to have more than one of the following characteristics: "Randomized", "Stratification", "Stratified Randomisation".'
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

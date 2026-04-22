@@ -10,7 +10,10 @@ class TestRuleDDF00198:
         rule = RuleDDF00198()
         assert rule._rule == "DDF00198"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == 'Each study definition document version is expected to be referenced by either a study version or a study design.'
+        assert (
+            rule._rule_text
+            == "Each study definition document version is expected to be referenced by either a study version or a study design."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

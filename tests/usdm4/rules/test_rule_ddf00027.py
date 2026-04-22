@@ -10,7 +10,10 @@ class TestRuleDDF00027:
         rule = RuleDDF00027()
         assert rule._rule == "DDF00027"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'To ensure consistent ordering, the same instance must not be referenced more than once as previous or next.'
+        assert (
+            rule._rule_text
+            == "To ensure consistent ordering, the same instance must not be referenced more than once as previous or next."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

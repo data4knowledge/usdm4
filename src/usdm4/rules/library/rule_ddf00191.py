@@ -41,7 +41,8 @@ class RuleDDF00191(RuleTemplate):
         for sv in data.instances_by_klass("StudyVersion"):
             sv_id = sv.get("id")
             open_label_designs = [
-                d for d in (sv.get("studyDesigns") or [])
+                d
+                for d in (sv.get("studyDesigns") or [])
                 if isinstance(d, dict) and _blinding_code(d) == OPEN_LABEL_CODE
             ]
             if not open_label_designs:

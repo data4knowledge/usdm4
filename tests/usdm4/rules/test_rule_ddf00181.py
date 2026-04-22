@@ -10,7 +10,10 @@ class TestRuleDDF00181:
         rule = RuleDDF00181()
         assert rule._rule == "DDF00181"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'Date values associated to a study protocol document version must be unique regarding the combination of type and geographic scopes of the date.'
+        assert (
+            rule._rule_text
+            == "Date values associated to a study protocol document version must be unique regarding the combination of type and geographic scopes of the date."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

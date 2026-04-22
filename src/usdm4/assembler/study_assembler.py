@@ -181,6 +181,10 @@ class StudyAssembler(BaseAssembler):
                 "bcSurrogates": timeline_assembler.biomedical_concept_surrogates,
                 "roles": identification_assembler.roles,
                 "extensionAttributes": extensions,
+                # Interventions live on StudyVersion, not StudyDesign —
+                # StudyDesign only holds the id references in
+                # studyInterventionIds.
+                "studyInterventions": study_design_assembler.study_interventions,
             }
             study_version = self._builder.create(StudyVersion, params)
 

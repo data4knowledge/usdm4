@@ -10,7 +10,10 @@ class TestRuleDDF00036:
         rule = RuleDDF00036()
         assert rule._rule == "DDF00036"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'If timing type is "Fixed Reference" then the corresponding attribute relativeToFrom must be filled with "Start to Start".'
+        assert (
+            rule._rule_text
+            == 'If timing type is "Fixed Reference" then the corresponding attribute relativeToFrom must be filled with "Start to Start".'
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

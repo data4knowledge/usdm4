@@ -10,7 +10,10 @@ class TestRuleDDF00255:
         rule = RuleDDF00255()
         assert rule._rule == "DDF00255"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == "A primary study amendment reason is not expected to be 'not applicable'."
+        assert (
+            rule._rule_text
+            == "A primary study amendment reason is not expected to be 'not applicable'."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

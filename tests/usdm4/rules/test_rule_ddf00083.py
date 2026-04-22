@@ -10,7 +10,9 @@ class TestRuleDDF00083:
         rule = RuleDDF00083()
         assert rule._rule == "DDF00083"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "Within a study version, all id values must be unique."
+        assert (
+            rule._rule_text == "Within a study version, all id values must be unique."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

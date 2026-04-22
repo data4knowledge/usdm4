@@ -10,7 +10,10 @@ class TestRuleDDF00075:
         rule = RuleDDF00075()
         assert rule._rule == "DDF00075"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == 'An activity is expected to refer to at least one procedure, biomedical concept, biomedical concept category or biomedical concept surrogate.'
+        assert (
+            rule._rule_text
+            == "An activity is expected to refer to at least one procedure, biomedical concept, biomedical concept category or biomedical concept surrogate."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

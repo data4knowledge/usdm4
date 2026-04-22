@@ -19,10 +19,14 @@ class RuleDDF00154(RuleTemplate):
     def validate(self, config: dict) -> bool:
         data = config["data"]
         for item in data.instances_by_klass("InterventionalStudyDesign"):
-            codes = [c.get("code") for c in (item.get("characteristics") or []) if isinstance(c, dict)]
+            codes = [
+                c.get("code")
+                for c in (item.get("characteristics") or [])
+                if isinstance(c, dict)
+            ]
             if "C217004" in codes and "C217005" in codes:
                 self._add_failure(
-                    f"Incompatible codes C217004 and C217005 both present in characteristics",
+                    "Incompatible codes C217004 and C217005 both present in characteristics",
                     "InterventionalStudyDesign",
                     "characteristics",
                     data.path_by_id(item["id"]),

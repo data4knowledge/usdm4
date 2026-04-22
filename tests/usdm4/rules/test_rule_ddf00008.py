@@ -10,7 +10,10 @@ class TestRuleDDF00008:
         rule = RuleDDF00008()
         assert rule._rule == "DDF00008"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "A scheduled activity instance must refer to either a default condition or a timeline exit, but not both."
+        assert (
+            rule._rule_text
+            == "A scheduled activity instance must refer to either a default condition or a timeline exit, but not both."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

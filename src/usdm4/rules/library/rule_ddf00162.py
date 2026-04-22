@@ -39,10 +39,10 @@ def _find_malformed(text: str):
         # Find the closing `>` that completes the opening tag.
         end = text.find(">", idx)
         if end < 0:
-            yield text[start:start + 40], "opening tag not closed with '>'"
+            yield text[start : start + 40], "opening tag not closed with '>'"
             return
-        opener = text[start:end + 1]
-        body_between = text[start:end + 1]
+        opener = text[start : end + 1]
+        # body_between = text[start : end + 1] # Not used
         # Must end with either "/>" or have a closing "</usdm:ref>" right after.
         self_closing = opener.endswith("/>")
         paired_closing = text.startswith("</usdm:ref>", end + 1)
@@ -50,8 +50,10 @@ def _find_malformed(text: str):
             yield opener, "does not end with '/>' or '></usdm:ref>'"
             continue
         # Extract the inner attribute text.
-        inner = opener[len("<usdm:ref"):-2 if self_closing else -1].strip()
-        missing = [name for name, regex in STRICT_ATTRS.items() if not regex.search(inner)]
+        inner = opener[len("<usdm:ref") : -2 if self_closing else -1].strip()
+        missing = [
+            name for name, regex in STRICT_ATTRS.items() if not regex.search(inner)
+        ]
         if missing:
             yield opener, f"missing or malformed attribute(s): {', '.join(missing)}"
 

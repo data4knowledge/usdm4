@@ -10,7 +10,10 @@ class TestRuleDDF00215:
         rule = RuleDDF00215()
         assert rule._rule == "DDF00215"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "An interventional study design's sub types must be specified according to the extensible Trial Type Response (C66739) SDTM codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist)."
+        assert (
+            rule._rule_text
+            == "An interventional study design's sub types must be specified according to the extensible Trial Type Response (C66739) SDTM codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist)."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

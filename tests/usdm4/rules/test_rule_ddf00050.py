@@ -10,7 +10,10 @@ class TestRuleDDF00050:
         rule = RuleDDF00050()
         assert rule._rule == "DDF00050"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "A study arm must only reference study populations or cohorts that are defined within the same study design as the study arm."
+        assert (
+            rule._rule_text
+            == "A study arm must only reference study populations or cohorts that are defined within the same study design as the study arm."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

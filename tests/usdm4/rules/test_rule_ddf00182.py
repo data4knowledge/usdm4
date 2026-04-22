@@ -10,7 +10,10 @@ class TestRuleDDF00182:
         rule = RuleDDF00182()
         assert rule._rule == "DDF00182"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == "Within a study protocol document version, if a date of a specific type exists with a global geographic scope then no other dates are expected with the same type."
+        assert (
+            rule._rule_text
+            == "Within a study protocol document version, if a date of a specific type exists with a global geographic scope then no other dates are expected with the same type."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

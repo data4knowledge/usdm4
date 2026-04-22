@@ -10,7 +10,10 @@ class TestRuleDDF00171:
         rule = RuleDDF00171()
         assert rule._rule == "DDF00171"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == "The expanded text for all abbreviations defined for a study version are expected to be unique."
+        assert (
+            rule._rule_text
+            == "The expanded text for all abbreviations defined for a study version are expected to be unique."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

@@ -10,7 +10,10 @@ class TestRuleDDF00196:
         rule = RuleDDF00196()
         assert rule._rule == "DDF00196"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'There must be a one-to-one relationship between referenced section number and title within a study amendment.'
+        assert (
+            rule._rule_text
+            == "There must be a one-to-one relationship between referenced section number and title within a study amendment."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

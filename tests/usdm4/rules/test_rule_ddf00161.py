@@ -10,7 +10,10 @@ class TestRuleDDF00161:
         rule = RuleDDF00161()
         assert rule._rule == "DDF00161"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "The ordering of activities (using the previous and next attributes) must include the parents (e.g. activities referring to children) preceding their children."
+        assert (
+            rule._rule_text
+            == "The ordering of activities (using the previous and next attributes) must include the parents (e.g. activities referring to children) preceding their children."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

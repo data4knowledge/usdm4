@@ -10,7 +10,10 @@ class TestRuleDDF00160:
         rule = RuleDDF00160()
         assert rule._rule == "DDF00160"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'An activity with children must not refer to a timeline, procedure, biomedical concept, biomedical concept category or biomedical concept surrogate.'
+        assert (
+            rule._rule_text
+            == "An activity with children must not refer to a timeline, procedure, biomedical concept, biomedical concept category or biomedical concept surrogate."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

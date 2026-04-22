@@ -10,7 +10,10 @@ class TestRuleDDF00041:
         rule = RuleDDF00041()
         assert rule._rule == "DDF00041"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "Within a study design, there must be at least one endpoint with level primary."
+        assert (
+            rule._rule_text
+            == "Within a study design, there must be at least one endpoint with level primary."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

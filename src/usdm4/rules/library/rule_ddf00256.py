@@ -30,14 +30,20 @@ class RuleDDF00256(RuleTemplate):
             secondaries = amendment.get("secondaryReasons") or []
             if not isinstance(primary, dict):
                 continue
-            primary_code = (primary.get("code") or {}).get("code") if isinstance(primary.get("code"), dict) else None
+            primary_code = (
+                (primary.get("code") or {}).get("code")
+                if isinstance(primary.get("code"), dict)
+                else None
+            )
             if primary_code is None:
                 continue
             for secondary in secondaries:
                 if not isinstance(secondary, dict):
                     continue
                 sec_code_obj = secondary.get("code")
-                sec_code = sec_code_obj.get("code") if isinstance(sec_code_obj, dict) else None
+                sec_code = (
+                    sec_code_obj.get("code") if isinstance(sec_code_obj, dict) else None
+                )
                 if sec_code == primary_code:
                     self._add_failure(
                         "StudyAmendmentReason given as a secondary reason has the same code as the primary reason",

@@ -10,7 +10,10 @@ class TestRuleDDF00218:
         rule = RuleDDF00218()
         assert rule._rule == "DDF00218"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "A study design's characteristics must be specified according to the extensible study design characteristics (C207416) DDF codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist)."
+        assert (
+            rule._rule_text
+            == "A study design's characteristics must be specified according to the extensible study design characteristics (C207416) DDF codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist)."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

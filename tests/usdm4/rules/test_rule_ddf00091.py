@@ -10,7 +10,10 @@ class TestRuleDDF00091:
         rule = RuleDDF00091()
         assert rule._rule == "DDF00091"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "When a condition applies to a procedure, activity, biomedical concept, biomedical concept category, or biomedical concept surrogate then an instance must be available in the corresponding class with the specified id."
+        assert (
+            rule._rule_text
+            == "When a condition applies to a procedure, activity, biomedical concept, biomedical concept category, or biomedical concept surrogate then an instance must be available in the corresponding class with the specified id."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

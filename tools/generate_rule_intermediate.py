@@ -32,10 +32,8 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import re
 import sys
-from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Optional
@@ -54,7 +52,14 @@ XLSX_PATH = (
 
 # Default CORE cache location. Can be overridden via --core-json.
 DEFAULT_CORE_JSON = (
-    Path.home() / "Library" / "Caches" / "usdm4" / "core" / "rules" / "usdm" / "4-0.json"
+    Path.home()
+    / "Library"
+    / "Caches"
+    / "usdm4"
+    / "core"
+    / "rules"
+    / "usdm"
+    / "4-0.json"
 )
 # When running inside the Cowork sandbox, the Mac's Library cache is mounted at:
 SANDBOX_CORE_JSON = Path("/sessions/lucid-eager-euler/mnt/core/rules/usdm/4-0.json")
@@ -71,9 +76,9 @@ LIBRARY_DIR = REPO_ROOT / "src" / "usdm4" / "rules" / "library"
 class XlsxRow:
     rule_id: str
     text: str
-    severity: str          # "ERROR" | "WARNING"
-    entity: str            # e.g. "Timing" or "Activity, Procedure"
-    attrs: str             # e.g. "relativeToFrom"
+    severity: str  # "ERROR" | "WARNING"
+    entity: str  # e.g. "Timing" or "Activity, Procedure"
+    attrs: str  # e.g. "relativeToFrom"
     applies_v3: bool
     applies_v4: bool
     check_id: str
@@ -140,8 +145,9 @@ def first_attr(attrs_field: str) -> str:
 @dataclass
 class WalkedConditions:
     """What we extract from a CORE conditions tree."""
-    instance_type: Optional[str] = None      # e.g. "Timing"
-    rel_type: Optional[str] = None            # e.g. "definition"
+
+    instance_type: Optional[str] = None  # e.g. "Timing"
+    rel_type: Optional[str] = None  # e.g. "definition"
     # List of (operator, target, comparator) tuples for non-filter checks
     checks: list[tuple[str, str, Any]] = field(default_factory=list)
     # Structural flags
@@ -178,10 +184,18 @@ def walk_core_conditions(cond: Any) -> WalkedConditions:
                 target = val.get("target")
                 comparator = val.get("comparator")
                 # Filter conditions that set context
-                if op == "equal_to" and target == "instanceType" and isinstance(comparator, str):
+                if (
+                    op == "equal_to"
+                    and target == "instanceType"
+                    and isinstance(comparator, str)
+                ):
                     w.instance_type = comparator
                     return
-                if op == "equal_to" and target == "rel_type" and isinstance(comparator, str):
+                if (
+                    op == "equal_to"
+                    and target == "rel_type"
+                    and isinstance(comparator, str)
+                ):
                     w.rel_type = comparator
                     return
                 # Everything else is a real check
@@ -212,7 +226,7 @@ def is_stub_body(validate_body: str) -> bool:
     if "raise NotImplementedError" not in validate_body:
         return False
     # Allow a one-or-two-line body that raises NotImplementedError.
-    non_blank = [l for l in validate_body.splitlines() if l.strip()]
+    non_blank = [line for line in validate_body.splitlines() if line.strip()]
     # Stubs are ~3 lines: signature, optional comment, raise
     return len(non_blank) <= 4
 
@@ -259,7 +273,7 @@ def introspect_implementation(path: Path) -> Optional[dict]:
             extracted["also_iterates"] = distinct[1:]
 
     # Scope: parent_by_klass(id, ["X", "Y", ...]) — the scope-list form
-    parent_list = re.search(r'parent_by_klass\([^,]+,\s*\[([^\]]+)\]', text)
+    parent_list = re.search(r"parent_by_klass\([^,]+,\s*\[([^\]]+)\]", text)
     if parent_list:
         scope_klasses = re.findall(r'"(\w+)"', parent_list.group(1))
         if scope_klasses:
@@ -269,12 +283,15 @@ def introspect_implementation(path: Path) -> Optional[dict]:
         if "parent_by_klass" in text:
             # Pull the default scope from validate() -> self._validate(..., [...])
             default_scope = re.search(
-                r'return self\._validate\(\s*config,\s*\[([^\]]+)\]', text
+                r"return self\._validate\(\s*config,\s*\[([^\]]+)\]", text
             )
             if default_scope:
                 scope_klasses = re.findall(r'"(\w+)"', default_scope.group(1))
                 if scope_klasses:
-                    extracted["scope"] = {"type": "parent-of-class", "klasses": scope_klasses}
+                    extracted["scope"] = {
+                        "type": "parent-of-class",
+                        "klasses": scope_klasses,
+                    }
 
     # Failure messages (useful preview for the reviewer)
     msgs = re.findall(r'_add_failure\(\s*f?"([^"]+)"', text)
@@ -285,17 +302,25 @@ def introspect_implementation(path: Path) -> Optional[dict]:
     # Use the whole file text so helpers in _validate() are considered.
     if "SchemaValidation" in text or "schema_path" in text:
         extracted["predicate"] = "schema-conformance"
-    elif "parent_by_klass" in text and ("item_parent" in text or 'parent["id"]' in text or "parent['id']" in text):
+    elif "parent_by_klass" in text and (
+        "item_parent" in text or 'parent["id"]' in text or "parent['id']" in text
+    ):
         extracted["predicate"] = "cross-reference-same-scope"
-    elif re.search(r'if\s+"\w+"\s+not\s+in\s+item', text) and re.search(r'item\["type"\]|item\[.type.\]', text):
+    elif re.search(r'if\s+"\w+"\s+not\s+in\s+item', text) and re.search(
+        r'item\["type"\]|item\[.type.\]', text
+    ):
         extracted["predicate"] = "conditional-required-attribute"
     elif re.search(r'if\s+"\w+"\s+not\s+in\s+item', text):
         extracted["predicate"] = "required-attribute"
-    elif "both" in text.lower() and re.search(r'instance_by_id\([^)]+\).*instance_by_id\(', text, re.S):
+    elif "both" in text.lower() and re.search(
+        r"instance_by_id\([^)]+\).*instance_by_id\(", text, re.S
+    ):
         extracted["predicate"] = "mutual-exclusion"
     elif "_validate_version" in text:
         extracted["predicate"] = "version-check"
-    elif "address_valid" in text or re.search(r'attribute\s+in\s+\[.*"text".*"line"', text, re.S):
+    elif "address_valid" in text or re.search(
+        r'attribute\s+in\s+\[.*"text".*"line"', text, re.S
+    ):
         extracted["predicate"] = "at-least-one-of"
     else:
         extracted["predicate"] = "custom"
@@ -316,15 +341,26 @@ def introspect_implementation(path: Path) -> Optional[dict]:
 
 
 # Rule-text idioms (used when CORE conditions are a JSONata string).
-RE_CT            = re.compile(r"must be specified (using|according to).*codelist|must conform (to|with) the .*codelist", re.I)
-RE_UNIQUE        = re.compile(r"must be unique|must not (have|contain) duplicate|must not be referenced more than once|expected to be unique", re.I)
-RE_REQUIRED      = re.compile(r"must be (defined|specified|given|provided|included)|at least one|must have (at least|exactly)", re.I)
-RE_MUTEX         = re.compile(r"but not both|must not be defined|mutually exclusive", re.I)
+RE_CT = re.compile(
+    r"must be specified (using|according to).*codelist|must conform (to|with) the .*codelist",
+    re.I,
+)
+RE_UNIQUE = re.compile(
+    r"must be unique|must not (have|contain) duplicate|must not be referenced more than once|expected to be unique",
+    re.I,
+)
+RE_REQUIRED = re.compile(
+    r"must be (defined|specified|given|provided|included)|at least one|must have (at least|exactly)",
+    re.I,
+)
+RE_MUTEX = re.compile(r"but not both|must not be defined|mutually exclusive", re.I)
 RE_BICONDITIONAL = re.compile(r"\bvice versa\b|\bwhile if\b", re.I)
-RE_IMPLICATION   = re.compile(r"\bif\b[^.]*\bthen\b", re.I)   # checked after biconditional
-RE_CONDITIONAL   = re.compile(r"\bif\b.*\bthen\b|when .*must|and vice versa", re.I)
-RE_IDREF         = re.compile(r"must reference|must refer to|must only reference", re.I)
-RE_FORMAT        = re.compile(r"iso 8601|must be formatted|non-negative|duration|must match the pattern", re.I)
+RE_IMPLICATION = re.compile(r"\bif\b[^.]*\bthen\b", re.I)  # checked after biconditional
+RE_CONDITIONAL = re.compile(r"\bif\b.*\bthen\b|when .*must|and vice versa", re.I)
+RE_IDREF = re.compile(r"must reference|must refer to|must only reference", re.I)
+RE_FORMAT = re.compile(
+    r"iso 8601|must be formatted|non-negative|duration|must match the pattern", re.I
+)
 
 
 def infer_from_core(walked: WalkedConditions) -> Optional[dict]:
@@ -343,7 +379,11 @@ def infer_from_core(walked: WalkedConditions) -> Optional[dict]:
     # CT-codelist: has is_contained_by or is_not_contained_by
     if {"is_contained_by", "is_not_contained_by"} & unique_ops:
         # Target usually looks like "attr.code" or "attr.decode" — strip suffix for the attribute
-        targets = [c[1] for c in walked.checks if c[0] in ("is_contained_by", "is_not_contained_by")]
+        targets = [
+            c[1]
+            for c in walked.checks
+            if c[0] in ("is_contained_by", "is_not_contained_by")
+        ]
         tgt = targets[0] if targets else None
         attr = tgt.split(".")[0] if tgt else None
         # comparator in CORE is often a JSONata variable ($valid_versions etc.),
@@ -375,27 +415,41 @@ def infer_from_core(walked: WalkedConditions) -> Optional[dict]:
 
     # Mutual exclusion: multiple non_empty/exists on different attrs (all conjunction)
     if not walked.has_any and not walked.has_not:
-        nonempty_targets = [c[1] for c in walked.checks if c[0] in ("non_empty", "exists")]
+        nonempty_targets = [
+            c[1] for c in walked.checks if c[0] in ("non_empty", "exists")
+        ]
         if len(set(nonempty_targets)) >= 2:
-            return {"predicate": "mutual-exclusion", "attributes": sorted(set(nonempty_targets))}
+            return {
+                "predicate": "mutual-exclusion",
+                "attributes": sorted(set(nonempty_targets)),
+            }
 
     return None
 
 
 def infer_from_text(text: str) -> Optional[str]:
     """Fallback classifier when CORE is a JSONata string. Returns predicate or None."""
-    if RE_CT.search(text):           return "ct-member"
-    if RE_UNIQUE.search(text):       return "unique-within-scope"
-    if RE_MUTEX.search(text):        return "mutual-exclusion"
-    if RE_IDREF.search(text):        return "id-reference-resolves"
+    if RE_CT.search(text):
+        return "ct-member"
+    if RE_UNIQUE.search(text):
+        return "unique-within-scope"
+    if RE_MUTEX.search(text):
+        return "mutual-exclusion"
+    if RE_IDREF.search(text):
+        return "id-reference-resolves"
     # Biconditional is a more specific case of conditional — check it first.
-    if RE_BICONDITIONAL.search(text): return "biconditional"
+    if RE_BICONDITIONAL.search(text):
+        return "biconditional"
     # Plain "if X then Y" (one-way) — the template fills in when side specs
     # are provided in the YAML, otherwise falls through to a stub.
-    if RE_IMPLICATION.search(text):   return "implication"
-    if RE_CONDITIONAL.search(text):  return "conditional"
-    if RE_FORMAT.search(text):       return "format"
-    if RE_REQUIRED.search(text):     return "required-attribute"
+    if RE_IMPLICATION.search(text):
+        return "implication"
+    if RE_CONDITIONAL.search(text):
+        return "conditional"
+    if RE_FORMAT.search(text):
+        return "format"
+    if RE_REQUIRED.search(text):
+        return "required-attribute"
     return None
 
 
@@ -405,12 +459,30 @@ def infer_from_text(text: str) -> Optional[str]:
 
 # Common phrases that imply a parent-of-class scope.
 SCOPE_PATTERNS = [
-    (re.compile(r"within (?:a|each|the same) study design", re.I),  ("parent-of-class", ["InterventionalStudyDesign", "ObservationalStudyDesign"])),
-    (re.compile(r"within (?:a|each|the) study version",    re.I),   ("parent-of-class", ["StudyVersion"])),
-    (re.compile(r"within (?:a|each|the same) activity",    re.I),   ("parent-of-class", ["Activity"])),
-    (re.compile(r"within (?:a|each|the same) encounter",   re.I),   ("parent-of-class", ["Encounter"])),
-    (re.compile(r"within (?:a|each|the same) timeline",    re.I),   ("parent-of-class", ["ScheduleTimeline"])),
-    (re.compile(r"for (?:a|each|the) study version",       re.I),   ("parent-of-class", ["StudyVersion"])),
+    (
+        re.compile(r"within (?:a|each|the same) study design", re.I),
+        ("parent-of-class", ["InterventionalStudyDesign", "ObservationalStudyDesign"]),
+    ),
+    (
+        re.compile(r"within (?:a|each|the) study version", re.I),
+        ("parent-of-class", ["StudyVersion"]),
+    ),
+    (
+        re.compile(r"within (?:a|each|the same) activity", re.I),
+        ("parent-of-class", ["Activity"]),
+    ),
+    (
+        re.compile(r"within (?:a|each|the same) encounter", re.I),
+        ("parent-of-class", ["Encounter"]),
+    ),
+    (
+        re.compile(r"within (?:a|each|the same) timeline", re.I),
+        ("parent-of-class", ["ScheduleTimeline"]),
+    ),
+    (
+        re.compile(r"for (?:a|each|the) study version", re.I),
+        ("parent-of-class", ["StudyVersion"]),
+    ),
 ]
 
 
@@ -480,7 +552,9 @@ def build_intermediate(xlsx: XlsxRow, core_rule: Optional[dict]) -> dict:
             action_msg = extract_action_message(core_rule)
             if action_msg:
                 data["core_message"] = action_msg
-            if core_pred is not None and core_pred.get("predicate") != impl_info.get("predicate"):
+            if core_pred is not None and core_pred.get("predicate") != impl_info.get(
+                "predicate"
+            ):
                 data["core_inference_mismatch"] = {
                     "core_says": core_pred.get("predicate"),
                     "code_says": impl_info.get("predicate"),
@@ -514,7 +588,9 @@ def build_intermediate(xlsx: XlsxRow, core_rule: Optional[dict]) -> dict:
             if k == "predicate":
                 continue
             data[k] = v
-        data["classification"] = f"HIGH_{predicate_info['predicate'].replace('-','_').upper()}"
+        data["classification"] = (
+            f"HIGH_{predicate_info['predicate'].replace('-', '_').upper()}"
+        )
         data["confidence"] = "high"
         data["review_required"] = False
         # For CT-member, extract the C##### codelist id from the rule text
@@ -562,15 +638,30 @@ def render_yaml(data: dict) -> str:
     """Emit YAML with a stable, review-friendly key order and a header comment."""
     # Preferred key order
     order = [
-        "id", "check_id", "severity", "classification", "confidence", "source",
+        "id",
+        "check_id",
+        "severity",
+        "classification",
+        "confidence",
+        "source",
         "review_required",
         "implementation_file",
-        "predicate", "class", "entity", "attribute", "attributes",
-        "also_iterates", "codelist_ref", "format", "scope",
-        "text", "message", "core_message",
+        "predicate",
+        "class",
+        "entity",
+        "attribute",
+        "attributes",
+        "also_iterates",
+        "codelist_ref",
+        "format",
+        "scope",
+        "text",
+        "message",
+        "core_message",
         "failure_messages",
         "core_inference_mismatch",
-        "_core_jsonata_reference", "_core_conditions_reference",
+        "_core_jsonata_reference",
+        "_core_conditions_reference",
     ]
     ordered = {}
     for k in order:
@@ -585,7 +676,13 @@ def render_yaml(data: dict) -> str:
         f"# {data['id']} — {data.get('classification', '?')} — auto-generated by tools/generate_rule_intermediate.py\n"
         f"# Source: {data.get('source', '?')}\n"
     )
-    body = yaml.safe_dump(ordered, sort_keys=False, default_flow_style=False, width=200, allow_unicode=True)
+    body = yaml.safe_dump(
+        ordered,
+        sort_keys=False,
+        default_flow_style=False,
+        width=200,
+        allow_unicode=True,
+    )
     return header + body
 
 
@@ -596,11 +693,22 @@ def render_yaml(data: dict) -> str:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--core-json", default=None,
-                    help=f"Path to CORE rules JSON (default: tries {SANDBOX_CORE_JSON} then {DEFAULT_CORE_JSON})")
-    ap.add_argument("--dry-run", action="store_true", help="Write to /tmp/usdm4_intermediate instead of the real output dir")
-    ap.add_argument("--only", default="", help="Only process the listed DDF ids (comma-separated)")
-    ap.add_argument("--xlsx", default=str(XLSX_PATH), help=f"Path to xlsx (default: {XLSX_PATH})")
+    ap.add_argument(
+        "--core-json",
+        default=None,
+        help=f"Path to CORE rules JSON (default: tries {SANDBOX_CORE_JSON} then {DEFAULT_CORE_JSON})",
+    )
+    ap.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Write to /tmp/usdm4_intermediate instead of the real output dir",
+    )
+    ap.add_argument(
+        "--only", default="", help="Only process the listed DDF ids (comma-separated)"
+    )
+    ap.add_argument(
+        "--xlsx", default=str(XLSX_PATH), help=f"Path to xlsx (default: {XLSX_PATH})"
+    )
     args = ap.parse_args()
 
     # Resolve CORE JSON path
@@ -611,8 +719,14 @@ def main() -> int:
     elif DEFAULT_CORE_JSON.exists():
         core_path = DEFAULT_CORE_JSON
     else:
-        print(f"ERROR: no CORE rules JSON found. Tried {SANDBOX_CORE_JSON} and {DEFAULT_CORE_JSON}.", file=sys.stderr)
-        print("Pass --core-json <path> or run tools/prepare_core_cache.py first.", file=sys.stderr)
+        print(
+            f"ERROR: no CORE rules JSON found. Tried {SANDBOX_CORE_JSON} and {DEFAULT_CORE_JSON}.",
+            file=sys.stderr,
+        )
+        print(
+            "Pass --core-json <path> or run tools/prepare_core_cache.py first.",
+            file=sys.stderr,
+        )
         return 1
 
     xlsx_path = Path(args.xlsx)
@@ -633,6 +747,7 @@ def main() -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     from collections import Counter
+
     cls_counter: Counter = Counter()
     written = 0
     preserved = 0
@@ -653,7 +768,10 @@ def main() -> int:
 
     print(f"\nWrote {written} intermediate YAML(s) to {out_dir}", file=sys.stderr)
     if preserved:
-        print(f"Preserved {preserved} YAML(s) with MANUAL sentinel (hand-edited, not regenerated)", file=sys.stderr)
+        print(
+            f"Preserved {preserved} YAML(s) with MANUAL sentinel (hand-edited, not regenerated)",
+            file=sys.stderr,
+        )
     print("By classification:", file=sys.stderr)
     for cls, n in sorted(cls_counter.items(), key=lambda kv: (-kv[1], kv[0])):
         print(f"  {n:4d}  {cls}", file=sys.stderr)

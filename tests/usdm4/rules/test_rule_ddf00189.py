@@ -10,7 +10,10 @@ class TestRuleDDF00189:
         rule = RuleDDF00189()
         assert rule._rule == "DDF00189"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "Every study role must apply to either a study version or at least one study design, but not both."
+        assert (
+            rule._rule_text
+            == "Every study role must apply to either a study version or at least one study design, but not both."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

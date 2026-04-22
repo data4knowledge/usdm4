@@ -10,7 +10,10 @@ class TestRuleDDF00039:
         rule = RuleDDF00039()
         assert rule._rule == "DDF00039"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == "If the duration will vary, a quantity is not expected for the duration and vice versa."
+        assert (
+            rule._rule_text
+            == "If the duration will vary, a quantity is not expected for the duration and vice versa."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

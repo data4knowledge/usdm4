@@ -10,7 +10,9 @@ class TestRuleDDF00153:
         rule = RuleDDF00153()
         assert rule._rule == "DDF00153"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == 'A planned duration is expected for the main timeline.'
+        assert (
+            rule._rule_text == "A planned duration is expected for the main timeline."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

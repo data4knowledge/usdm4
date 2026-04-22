@@ -10,7 +10,10 @@ class TestRuleDDF00096:
         rule = RuleDDF00096()
         assert rule._rule == "DDF00096"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "All primary endpoints must be referenced by a primary objective."
+        assert (
+            rule._rule_text
+            == "All primary endpoints must be referenced by a primary objective."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

@@ -10,7 +10,10 @@ class TestRuleDDF00179:
         rule = RuleDDF00179()
         assert rule._rule == "DDF00179"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "An administrable dose form must be specified according to the extensible Pharmaceutical Dosage Form (C66726) SDTM codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist)."
+        assert (
+            rule._rule_text
+            == "An administrable dose form must be specified according to the extensible Pharmaceutical Dosage Form (C66726) SDTM codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist)."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

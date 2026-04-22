@@ -10,7 +10,10 @@ class TestRuleDDF00108:
         rule = RuleDDF00108()
         assert rule._rule == "DDF00108"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "There must be at least one exit defined for each timeline (i.e., at least one instance of StudyTimelineExit linked via the 'exits' relationship)."
+        assert (
+            rule._rule_text
+            == "There must be at least one exit defined for each timeline (i.e., at least one instance of StudyTimelineExit linked via the 'exits' relationship)."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

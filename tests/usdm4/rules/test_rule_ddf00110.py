@@ -10,7 +10,10 @@ class TestRuleDDF00110:
         rule = RuleDDF00110()
         assert rule._rule == "DDF00110"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "An eligibility criterion's category must be specified using the Category of Inclusion/Exclusion (C66797) SDTM codelist."
+        assert (
+            rule._rule_text
+            == "An eligibility criterion's category must be specified using the Category of Inclusion/Exclusion (C66797) SDTM codelist."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

@@ -10,7 +10,10 @@ class TestRuleDDF00246:
         rule = RuleDDF00246()
         assert rule._rule == "DDF00246"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'Any parameter name referenced in a tag in the text should be specified in the data dictionary parameter maps.'
+        assert (
+            rule._rule_text
+            == "Any parameter name referenced in a tag in the text should be specified in the data dictionary parameter maps."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

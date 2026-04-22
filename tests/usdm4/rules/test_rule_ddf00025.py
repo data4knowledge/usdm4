@@ -10,7 +10,10 @@ class TestRuleDDF00025:
         rule = RuleDDF00025()
         assert rule._rule == "DDF00025"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'A window must not be defined for an anchor timing (i.e., type is "Fixed Reference").'
+        assert (
+            rule._rule_text
+            == 'A window must not be defined for an anchor timing (i.e., type is "Fixed Reference").'
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

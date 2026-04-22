@@ -10,7 +10,10 @@ class TestRuleDDF00090:
         rule = RuleDDF00090()
         assert rule._rule == "DDF00090"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "The same Biomedical Concept Category must not be referenced more than once from the same activity."
+        assert (
+            rule._rule_text
+            == "The same Biomedical Concept Category must not be referenced more than once from the same activity."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

@@ -10,7 +10,10 @@ class TestRuleDDF00195:
         rule = RuleDDF00195()
         assert rule._rule == "DDF00195"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "Each study enrollment must apply to either a geographic scope, a study site, or a study cohort."
+        assert (
+            rule._rule_text
+            == "Each study enrollment must apply to either a geographic scope, a study site, or a study cohort."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

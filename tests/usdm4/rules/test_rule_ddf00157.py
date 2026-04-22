@@ -10,7 +10,10 @@ class TestRuleDDF00157:
         rule = RuleDDF00157()
         assert rule._rule == "DDF00157"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "An encounter's environmental settings must be specified according to the extensible Environmental Setting (C127262) SDTM codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist)."
+        assert (
+            rule._rule_text
+            == "An encounter's environmental settings must be specified according to the extensible Environmental Setting (C127262) SDTM codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist)."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

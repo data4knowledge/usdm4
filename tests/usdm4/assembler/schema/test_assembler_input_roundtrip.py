@@ -10,6 +10,7 @@ Exercises StudyDesignInput and PopulationInput end-to-end via
 3. Required sub-fields (``ArmInput.name``, ``CellInput.arm``/``epoch``,
    ``DemographicsInput.sex`` literal) validate as expected.
 """
+
 import pytest
 from pydantic import ValidationError
 

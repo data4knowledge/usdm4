@@ -10,7 +10,10 @@ class TestRuleDDF00136:
         rule = RuleDDF00136()
         assert rule._rule == "DDF00136"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "An encounter's contact modes must be specified according to the Mode of Subject Contact (C171445) SDTM codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist)."
+        assert (
+            rule._rule_text
+            == "An encounter's contact modes must be specified according to the Mode of Subject Contact (C171445) SDTM codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist)."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

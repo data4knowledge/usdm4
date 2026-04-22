@@ -10,7 +10,10 @@ class TestRuleDDF00040:
         rule = RuleDDF00040()
         assert rule._rule == "DDF00040"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "Each study element must be referenced by at least one study cell."
+        assert (
+            rule._rule_text
+            == "Each study element must be referenced by at least one study cell."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

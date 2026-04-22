@@ -10,7 +10,10 @@ class TestRuleDDF00245:
         rule = RuleDDF00245()
         assert rule._rule == "DDF00245"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'Within a document version, the specified section numbers for narrative content must be unique.'
+        assert (
+            rule._rule_text
+            == "Within a document version, the specified section numbers for narrative content must be unique."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

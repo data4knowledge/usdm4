@@ -10,7 +10,10 @@ class TestRuleDDF00155:
         rule = RuleDDF00155()
         assert rule._rule == "DDF00155"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "For CDISC codelist references (where the code system is 'http://www.cdisc.org'), the code system version must be a valid CDISC terminology release date in ISO 8601 date format."
+        assert (
+            rule._rule_text
+            == "For CDISC codelist references (where the code system is 'http://www.cdisc.org'), the code system version must be a valid CDISC terminology release date in ISO 8601 date format."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

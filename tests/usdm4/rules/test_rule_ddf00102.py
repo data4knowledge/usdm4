@@ -10,7 +10,10 @@ class TestRuleDDF00102:
         rule = RuleDDF00102()
         assert rule._rule == "DDF00102"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "A scheduled activity instance must only reference a timeline exit that is defined within the same schedule timeline as the scheduled activity instance."
+        assert (
+            rule._rule_text
+            == "A scheduled activity instance must only reference a timeline exit that is defined within the same schedule timeline as the scheduled activity instance."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

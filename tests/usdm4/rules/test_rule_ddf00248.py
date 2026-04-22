@@ -10,7 +10,10 @@ class TestRuleDDF00248:
         rule = RuleDDF00248()
         assert rule._rule == "DDF00248"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "An eligibility criterion item must not be used more than once within a study design."
+        assert (
+            rule._rule_text
+            == "An eligibility criterion item must not be used more than once within a study design."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

@@ -10,7 +10,10 @@ class TestRuleDDF00098:
         rule = RuleDDF00098()
         assert rule._rule == "DDF00098"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "Within a study design, the planned sex must be specified either in the study population or in all cohorts."
+        assert (
+            rule._rule_text
+            == "Within a study design, the planned sex must be specified either in the study population or in all cohorts."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

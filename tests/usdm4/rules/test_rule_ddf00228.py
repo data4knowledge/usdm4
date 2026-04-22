@@ -10,7 +10,10 @@ class TestRuleDDF00228:
         rule = RuleDDF00228()
         assert rule._rule == "DDF00228"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "An observational study (including patient registries) must be specified using the ObservationalStudyDesign class."
+        assert (
+            rule._rule_text
+            == "An observational study (including patient registries) must be specified using the ObservationalStudyDesign class."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

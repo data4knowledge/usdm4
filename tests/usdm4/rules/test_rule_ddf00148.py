@@ -10,7 +10,10 @@ class TestRuleDDF00148:
         rule = RuleDDF00148()
         assert rule._rule == "DDF00148"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "An endpoint level must be specified using the endpoint level (C188726) DDF codelist."
+        assert (
+            rule._rule_text
+            == "An endpoint level must be specified using the endpoint level (C188726) DDF codelist."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

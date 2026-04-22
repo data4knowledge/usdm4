@@ -10,7 +10,10 @@ class TestRuleDDF00231:
         rule = RuleDDF00231()
         assert rule._rule == "DDF00231"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'If a biospecimen retention indicates that a type of biospecimen is retained, then there must be an indication of whether the type of biospecimen includes DNA.'
+        assert (
+            rule._rule_text
+            == "If a biospecimen retention indicates that a type of biospecimen is retained, then there must be an indication of whether the type of biospecimen includes DNA."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

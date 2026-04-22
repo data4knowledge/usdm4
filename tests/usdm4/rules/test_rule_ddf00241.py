@@ -10,7 +10,10 @@ class TestRuleDDF00241:
         rule = RuleDDF00241()
         assert rule._rule == "DDF00241"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "If the unit is the same (or missing) for both the minimum and maximum value, then the minimum value must be less than the maximum value."
+        assert (
+            rule._rule_text
+            == "If the unit is the same (or missing) for both the minimum and maximum value, then the minimum value must be less than the maximum value."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

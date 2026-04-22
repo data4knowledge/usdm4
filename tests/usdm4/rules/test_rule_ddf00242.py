@@ -10,7 +10,10 @@ class TestRuleDDF00242:
         rule = RuleDDF00242()
         assert rule._rule == "DDF00242"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "For each range, a unit must be specified either for both the minimum and the maximum value, or for neither of them."
+        assert (
+            rule._rule_text
+            == "For each range, a unit must be specified either for both the minimum and the maximum value, or for neither of them."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

@@ -32,8 +32,16 @@ class RuleDDF00243(RuleTemplate):
         data = config["data"]
         for klass in SCOPE_CLASSES:
             for design in data.instances_by_klass(klass):
-                arm_ids = {a.get("id") for a in design.get("arms") or [] if isinstance(a, dict) and a.get("id")}
-                epoch_ids = {e.get("id") for e in design.get("epochs") or [] if isinstance(e, dict) and e.get("id")}
+                arm_ids = {
+                    a.get("id")
+                    for a in design.get("arms") or []
+                    if isinstance(a, dict) and a.get("id")
+                }
+                epoch_ids = {
+                    e.get("id")
+                    for e in design.get("epochs") or []
+                    if isinstance(e, dict) and e.get("id")
+                }
                 if not (arm_ids and epoch_ids):
                     continue
                 cell_counts: Counter = Counter()

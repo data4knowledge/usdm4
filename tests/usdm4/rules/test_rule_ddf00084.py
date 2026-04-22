@@ -10,7 +10,10 @@ class TestRuleDDF00084:
         rule = RuleDDF00084()
         assert rule._rule == "DDF00084"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "Within a study design there must be exactly one objective with level 'Primary Objective'."
+        assert (
+            rule._rule_text
+            == "Within a study design there must be exactly one objective with level 'Primary Objective'."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

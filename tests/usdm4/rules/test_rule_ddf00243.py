@@ -10,7 +10,10 @@ class TestRuleDDF00243:
         rule = RuleDDF00243()
         assert rule._rule == "DDF00243"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == 'Each StudyArm is expected to have one StudyCell for each StudyEpoch.'
+        assert (
+            rule._rule_text
+            == "Each StudyArm is expected to have one StudyCell for each StudyEpoch."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

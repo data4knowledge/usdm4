@@ -10,7 +10,10 @@ class TestRuleDDF00210:
         rule = RuleDDF00210()
         assert rule._rule == "DDF00210"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "An administrable product's product designation must be specified using the product designation (C207418) DDF codelist."
+        assert (
+            rule._rule_text
+            == "An administrable product's product designation must be specified using the product designation (C207418) DDF codelist."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

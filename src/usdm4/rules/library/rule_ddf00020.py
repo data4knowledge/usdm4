@@ -19,7 +19,10 @@ class RuleDDF00020(RuleTemplate):
     def validate(self, config: dict) -> bool:
         data = config["data"]
         for item in data.instances_by_klass("StudyAmendmentReason"):
-            a = (isinstance(item.get("code"), dict) and item["code"].get("code") == "C17649")
+            a = (
+                isinstance(item.get("code"), dict)
+                and item["code"].get("code") == "C17649"
+            )
             b = bool(item.get("otherReason"))
             if a != b:
                 if a and not b:

@@ -10,7 +10,10 @@ class TestRuleDDF00220:
         rule = RuleDDF00220()
         assert rule._rule == "DDF00220"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "Within a study design, if more sub types are defined, they must be distinct."
+        assert (
+            rule._rule_text
+            == "Within a study design, if more sub types are defined, they must be distinct."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

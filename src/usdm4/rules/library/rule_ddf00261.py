@@ -19,8 +19,11 @@ class RuleDDF00261(RuleTemplate):
     def validate(self, config: dict) -> bool:
         data = config["data"]
         for item in data.instances_by_klass("GeographicScope"):
-            a = (isinstance(item.get("type"), dict) and item["type"].get("code") == "C68846")
-            b = (not bool(item.get("code")))
+            a = (
+                isinstance(item.get("type"), dict)
+                and item["type"].get("code") == "C68846"
+            )
+            b = not bool(item.get("code"))
             if a != b:
                 if a and not b:
                     msg = "type is set but code is missing"

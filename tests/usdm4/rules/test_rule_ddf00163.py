@@ -10,7 +10,10 @@ class TestRuleDDF00163:
         rule = RuleDDF00163()
         assert rule._rule == "DDF00163"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == 'Narrative content is expected to point to a child and/or to a content item text.'
+        assert (
+            rule._rule_text
+            == "Narrative content is expected to point to a child and/or to a content item text."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

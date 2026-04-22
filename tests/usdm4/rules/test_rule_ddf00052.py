@@ -10,7 +10,10 @@ class TestRuleDDF00052:
         rule = RuleDDF00052()
         assert rule._rule == "DDF00052"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "All standard code aliases referenced by an instance of the alias code class must be unique."
+        assert (
+            rule._rule_text
+            == "All standard code aliases referenced by an instance of the alias code class must be unique."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

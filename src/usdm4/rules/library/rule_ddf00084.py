@@ -33,7 +33,10 @@ class RuleDDF00084(RuleTemplate):
                 count = 0
                 for obj in sd.get("objectives") or []:
                     level = obj.get("level") or {}
-                    if isinstance(level, dict) and level.get("code") == PRIMARY_OBJECTIVE_CODE:
+                    if (
+                        isinstance(level, dict)
+                        and level.get("code") == PRIMARY_OBJECTIVE_CODE
+                    ):
                         count += 1
                 if count != 1:
                     self._add_failure(

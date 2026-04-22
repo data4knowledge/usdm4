@@ -10,7 +10,10 @@ class TestRuleDDF00261:
         rule = RuleDDF00261()
         assert rule._rule == "DDF00261"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == "If a geographic scope type is global then no code is expected to specify the specific area within scope while if it is not global then a code is expected to specify the specific area within scope."
+        assert (
+            rule._rule_text
+            == "If a geographic scope type is global then no code is expected to specify the specific area within scope while if it is not global then a code is expected to specify the specific area within scope."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

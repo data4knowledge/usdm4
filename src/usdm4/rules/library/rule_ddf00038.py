@@ -19,6 +19,7 @@ class RuleDDF00038(RuleTemplate):
     # GENERATED — predicate inferred from rule text, please review.
     def validate(self, config: dict) -> bool:
         from usdm4.rules.primitives import any_ids_unresolved
+
         data = config["data"]
         for item in data.instances_by_klass("ScheduledDecisionInstance"):
             raw = item.get("defaultCondition")

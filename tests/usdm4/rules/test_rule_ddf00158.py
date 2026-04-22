@@ -10,7 +10,10 @@ class TestRuleDDF00158:
         rule = RuleDDF00158()
         assert rule._rule == "DDF00158"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "Each defined eligibility criterion must be used by at least one study population or cohort within the same study design."
+        assert (
+            rule._rule_text
+            == "Each defined eligibility criterion must be used by at least one study population or cohort within the same study design."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

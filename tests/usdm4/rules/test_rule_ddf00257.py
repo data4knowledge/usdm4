@@ -10,7 +10,10 @@ class TestRuleDDF00257:
         rule = RuleDDF00257()
         assert rule._rule == "DDF00257"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'A study design must not be characterized as both "Single Country" and "Multiple Countries".'
+        assert (
+            rule._rule_text
+            == 'A study design must not be characterized as both "Single Country" and "Multiple Countries".'
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

@@ -10,7 +10,10 @@ class TestRuleDDF00020:
         rule = RuleDDF00020()
         assert rule._rule == "DDF00020"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "If the reason for a study amendment is 'Other' then this must be specified (attribute reasonOther must be completed), and vice versa."
+        assert (
+            rule._rule_text
+            == "If the reason for a study amendment is 'Other' then this must be specified (attribute reasonOther must be completed), and vice versa."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

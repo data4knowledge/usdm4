@@ -10,7 +10,10 @@ class TestRuleDDF00222:
         rule = RuleDDF00222()
         assert rule._rule == "DDF00222"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "Within a study design, if more intent types are defined, they must be distinct."
+        assert (
+            rule._rule_text
+            == "Within a study design, if more intent types are defined, they must be distinct."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

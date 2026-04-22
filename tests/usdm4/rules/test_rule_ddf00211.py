@@ -10,7 +10,10 @@ class TestRuleDDF00211:
         rule = RuleDDF00211()
         assert rule._rule == "DDF00211"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == "A product organization role is expected to apply to at least one medical device or administrable product."
+        assert (
+            rule._rule_text
+            == "A product organization role is expected to apply to at least one medical device or administrable product."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

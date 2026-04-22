@@ -10,7 +10,10 @@ class TestRuleDDF00044:
         rule = RuleDDF00044()
         assert rule._rule == "DDF00044"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "The target for a condition must not be equal to its parent."
+        assert (
+            rule._rule_text
+            == "The target for a condition must not be equal to its parent."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

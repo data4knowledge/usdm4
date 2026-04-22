@@ -10,7 +10,10 @@ class TestRuleDDF00147:
         rule = RuleDDF00147()
         assert rule._rule == "DDF00147"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "An objective level must be specified using the objective level (C188725) DDF codelist."
+        assert (
+            rule._rule_text
+            == "An objective level must be specified using the objective level (C188725) DDF codelist."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

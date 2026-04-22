@@ -10,7 +10,10 @@ class TestRuleDDF00031:
         rule = RuleDDF00031()
         assert rule._rule == "DDF00031"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'If timing type is not "Fixed Reference" then it must point to two scheduled instances (e.g. the relativeFromScheduledInstance and relativeToScheduledInstance attributes must not be missing and must not be equal to each other).'
+        assert (
+            rule._rule_text
+            == 'If timing type is not "Fixed Reference" then it must point to two scheduled instances (e.g. the relativeFromScheduledInstance and relativeToScheduledInstance attributes must not be missing and must not be equal to each other).'
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

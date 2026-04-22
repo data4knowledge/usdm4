@@ -18,6 +18,7 @@ class RuleDDF00167(RuleTemplate):
 
     def validate(self, config: dict) -> bool:
         from usdm4.rules.primitives import duplicate_values
+
         data = config["data"]
         for item in data.instances_by_klass("StudyVersion"):
             dupes = duplicate_values(item.get("documentVersionIds") or [])

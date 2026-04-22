@@ -10,7 +10,10 @@ class TestRuleDDF00178:
         rule = RuleDDF00178()
         assert rule._rule == "DDF00178"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "If a dose is specified then a corresponding frequency must also be specified."
+        assert (
+            rule._rule_text
+            == "If a dose is specified then a corresponding frequency must also be specified."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

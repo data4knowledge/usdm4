@@ -10,7 +10,10 @@ class TestRuleDDF00073:
         rule = RuleDDF00073()
         assert rule._rule == "DDF00073"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == 'Only one version of any code system is expected to be used within a study version.'
+        assert (
+            rule._rule_text
+            == "Only one version of any code system is expected to be used within a study version."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

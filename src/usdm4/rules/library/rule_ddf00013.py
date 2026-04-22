@@ -19,7 +19,7 @@ class RuleDDF00013(RuleTemplate):
     def validate(self, config: dict) -> bool:
         data = config["data"]
         for item in data.instances_by_klass("BiomedicalConceptProperty"):
-            if (item.get("isRequired") is True) and not (item.get("isEnabled") is True):
+            if (item.get("isRequired") is True) and item.get("isEnabled") is not True:
                 self._add_failure(
                     "isRequired is set but required isEnabled is missing",
                     "BiomedicalConceptProperty",

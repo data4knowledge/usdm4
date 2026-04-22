@@ -39,7 +39,9 @@ class RuleDDF00006(RuleTemplate):
     def validate(self, config: dict) -> bool:
         data = config["data"]
         for timing in data.instances_by_klass("Timing"):
-            specified = [attr for attr in WINDOW_ATTRS if _is_specified(timing.get(attr))]
+            specified = [
+                attr for attr in WINDOW_ATTRS if _is_specified(timing.get(attr))
+            ]
             # If any are set, all three must be set
             if specified and len(specified) < len(WINDOW_ATTRS):
                 missing = [a for a in WINDOW_ATTRS if a not in specified]

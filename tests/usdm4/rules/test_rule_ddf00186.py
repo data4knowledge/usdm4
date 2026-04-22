@@ -10,7 +10,10 @@ class TestRuleDDF00186:
         rule = RuleDDF00186()
         assert rule._rule == "DDF00186"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "If a strength denominator is specified, it must have a unit."
+        assert (
+            rule._rule_text
+            == "If a strength denominator is specified, it must have a unit."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

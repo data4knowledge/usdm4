@@ -19,7 +19,7 @@ class RuleDDF00164(RuleTemplate):
     def validate(self, config: dict) -> bool:
         data = config["data"]
         for item in data.instances_by_klass("NarrativeContent"):
-            a = (item.get("displaySectionNumber") is True)
+            a = item.get("displaySectionNumber") is True
             b = bool(item.get("sectionNumber"))
             if a != b:
                 if a and not b:

@@ -85,7 +85,8 @@ class RuleDDF00088(RuleTemplate):
                     )
 
                 timelines = [
-                    t for t in design.get("scheduleTimelines") or []
+                    t
+                    for t in design.get("scheduleTimelines") or []
                     if isinstance(t, dict) and t.get("mainTimeline")
                 ]
                 for timeline in timelines:
@@ -93,12 +94,15 @@ class RuleDDF00088(RuleTemplate):
                     if not entry_id:
                         continue
                     sais = [
-                        s for s in timeline.get("instances") or []
+                        s
+                        for s in timeline.get("instances") or []
                         if isinstance(s, dict)
                         and s.get("instanceType") == "ScheduledActivityInstance"
                     ]
                     sais_by_id = {s.get("id"): s for s in sais if s.get("id")}
-                    sai_order, cycle_b = _walk_chain(sais_by_id, entry_id, "defaultConditionId")
+                    sai_order, cycle_b = _walk_chain(
+                        sais_by_id, entry_id, "defaultConditionId"
+                    )
                     if cycle_b:
                         self._add_failure(
                             "Cycle detected while walking ScheduledActivityInstance defaultConditionId chain",

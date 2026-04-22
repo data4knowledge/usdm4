@@ -86,7 +86,9 @@ class RuleTemplate:
                     # directly on the item. Dive into standardCode when
                     # present; fall back to the item itself for plain Code.
                     target = item
-                    if "standardCode" in item and isinstance(item["standardCode"], dict):
+                    if "standardCode" in item and isinstance(
+                        item["standardCode"], dict
+                    ):
                         target = item["standardCode"]
                     code = target.get("code")
                     decode = target.get("decode")

@@ -10,7 +10,10 @@ class TestRuleDDF00252:
         rule = RuleDDF00252()
         assert rule._rule == "DDF00252"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "A study element must only reference study interventions that are referenced by the same study design as the study element."
+        assert (
+            rule._rule_text
+            == "A study element must only reference study interventions that are referenced by the same study design as the study element."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

@@ -20,7 +20,7 @@ class RuleDDF00171(RuleTemplate):
         data = config["data"]
         seen: dict = {}
         for item in data.instances_by_klass("Abbreviation"):
-            scope = data.parent_by_klass(item["id"], ['StudyVersion'])
+            scope = data.parent_by_klass(item["id"], ["StudyVersion"])
             if scope is None:
                 continue
             value = item.get("expandedText")

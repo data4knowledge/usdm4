@@ -10,7 +10,10 @@ class TestRuleDDF00006:
         rule = RuleDDF00006()
         assert rule._rule == "DDF00006"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'Timing windows must be fully defined, if one of the window attributes (i.e., window label, window lower, and window upper) is defined then all must be specified.'
+        assert (
+            rule._rule_text
+            == "Timing windows must be fully defined, if one of the window attributes (i.e., window label, window lower, and window upper) is defined then all must be specified."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

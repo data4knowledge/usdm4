@@ -10,7 +10,10 @@ class TestRuleDDF00213:
         rule = RuleDDF00213()
         assert rule._rule == "DDF00213"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == 'If the intervention model indicates a single group design then only one intervention is expected. In all other cases more interventions are expected.'
+        assert (
+            rule._rule_text
+            == "If the intervention model indicates a single group design then only one intervention is expected. In all other cases more interventions are expected."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

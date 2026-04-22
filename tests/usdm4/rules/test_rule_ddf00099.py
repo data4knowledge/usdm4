@@ -10,7 +10,10 @@ class TestRuleDDF00099:
         rule = RuleDDF00099()
         assert rule._rule == "DDF00099"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == "All epochs are expected to be referred to from a scheduled Activity Instance."
+        assert (
+            rule._rule_text
+            == "All epochs are expected to be referred to from a scheduled Activity Instance."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

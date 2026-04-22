@@ -10,7 +10,10 @@ class TestRuleDDF00009:
         rule = RuleDDF00009()
         assert rule._rule == "DDF00009"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "Each schedule timeline must contain at least one anchor (fixed time) - i.e., at least one scheduled activity instance that is referenced by a Fixed Reference timing."
+        assert (
+            rule._rule_text
+            == "Each schedule timeline must contain at least one anchor (fixed time) - i.e., at least one scheduled activity instance that is referenced by a Fixed Reference timing."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

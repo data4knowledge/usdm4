@@ -10,7 +10,10 @@ class TestRuleDDF00124:
         rule = RuleDDF00124()
         assert rule._rule == "DDF00124"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'Referenced items in a parameter map must be available elsewhere in the data model.'
+        assert (
+            rule._rule_text
+            == "Referenced items in a parameter map must be available elsewhere in the data model."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

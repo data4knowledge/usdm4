@@ -540,3 +540,137 @@ class TestPopulationAssembler:
         assert hasattr(exclusion_criterion, "category")
         assert isinstance(inclusion_criterion.category, Code)
         assert isinstance(exclusion_criterion.category, Code)
+
+
+# ---------------------------------------------------------------------------
+# Scope C — demographics + cohorts wiring
+# ---------------------------------------------------------------------------
+
+
+class TestPopulationAssemblerWiring:
+    """Integration tests covering the demographics + cohorts wiring."""
+
+    def test_full_demographics_and_two_cohorts(self, population_assembler):
+        """Demographics + cohorts produce populated plannedSex / plannedAge /
+        plannedEnrollmentNumber / cohorts."""
+        data = {
+            "label": "Adult Population",
+            "inclusion_exclusion": {"inclusion": [], "exclusion": []},
+            "demographics": {
+                "age_min": 18,
+                "age_max": 65,
+                "age_unit": "Years",
+                "sex": "ALL",
+                "healthy_volunteers": False,
+            },
+            "cohorts": [
+                {
+                    "name": "Naive",
+                    "planned_enrollment": 40,
+                    "characteristics": ["treatment-naive"],
+                    "arm_names": ["Active"],
+                },
+                {
+                    "name": "Experienced",
+                    "planned_enrollment": 60,
+                    "characteristics": ["prior-treatment"],
+                    "arm_names": ["Active"],
+                },
+            ],
+        }
+
+        population_assembler.execute(data)
+
+        population = population_assembler.population
+        assert population is not None
+        assert population.includesHealthySubjects is False
+
+        # plannedAge is a Range with min/max Quantities.
+        assert population.plannedAge is not None
+        assert population.plannedAge.minValue.value == 18.0
+        assert population.plannedAge.maxValue.value == 65.0
+
+        # Sex = "ALL" → two entries.
+        assert len(population.plannedSex) == 2
+
+        # Two cohorts with per-cohort planned enrollment.
+        assert len(population.cohorts) == 2
+        assert population.cohorts[0].label == "Naive"
+        assert population.cohorts[0].plannedEnrollmentNumber.value == 40.0
+        assert population.cohorts[0].characteristics[0].text == "treatment-naive"
+
+        # Overall plannedEnrollmentNumber defaults to the sum of cohort values.
+        assert population.plannedEnrollmentNumber is not None
+        assert population.plannedEnrollmentNumber.value == 100.0
+
+    def test_partial_demographics_sex_only(self, population_assembler):
+        """sex-only demographics → plannedSex set, plannedAge = None."""
+        data = {
+            "label": "Female Only",
+            "inclusion_exclusion": {"inclusion": [], "exclusion": []},
+            "demographics": {"sex": "FEMALE"},
+        }
+
+        population_assembler.execute(data)
+
+        population = population_assembler.population
+        assert population is not None
+        assert len(population.plannedSex) == 1
+        assert population.plannedSex[0].code == "C16576"  # Female
+        assert population.plannedAge is None
+        # Default healthy_volunteers defaults to True in our assembler when
+        # the input dict doesn't carry it.
+        assert population.includesHealthySubjects is True
+
+    def test_explicit_planned_enrollment_wins_over_cohort_sum(
+        self, population_assembler
+    ):
+        """planned_enrollment at the population level overrides cohort sum."""
+        data = {
+            "label": "Pop",
+            "inclusion_exclusion": {"inclusion": [], "exclusion": []},
+            "planned_enrollment": 999,
+            "cohorts": [
+                {"name": "C1", "planned_enrollment": 10},
+                {"name": "C2", "planned_enrollment": 20},
+            ],
+        }
+
+        population_assembler.execute(data)
+
+        population = population_assembler.population
+        assert population.plannedEnrollmentNumber.value == 999.0
+
+    def test_raw_cohorts_exposed_for_cross_wiring(self, population_assembler):
+        """raw_cohorts preserves arm_names for StudyDesignAssembler."""
+        data = {
+            "label": "Pop",
+            "inclusion_exclusion": {"inclusion": [], "exclusion": []},
+            "cohorts": [
+                {"name": "C1", "arm_names": ["A1", "A2"]},
+            ],
+        }
+
+        population_assembler.execute(data)
+
+        raw = population_assembler.raw_cohorts
+        assert len(raw) == 1
+        assert raw[0]["arm_names"] == ["A1", "A2"]
+
+    def test_legacy_payload_without_demographics(self, population_assembler):
+        """Pre-scope-C payloads (no demographics, no cohorts) keep the old
+        defaults: includesHealthySubjects=True, empty plannedSex/Age/cohorts."""
+        data = {
+            "label": "Legacy Pop",
+            "inclusion_exclusion": {"inclusion": [], "exclusion": []},
+        }
+
+        population_assembler.execute(data)
+
+        population = population_assembler.population
+        assert population is not None
+        assert population.includesHealthySubjects is True
+        assert population.plannedAge is None
+        assert population.plannedEnrollmentNumber is None
+        assert population.cohorts == []
+        assert population_assembler.raw_cohorts == []

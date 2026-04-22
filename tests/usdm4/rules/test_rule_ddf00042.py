@@ -10,7 +10,10 @@ class TestRuleDDF00042:
         rule = RuleDDF00042()
         assert rule._rule == "DDF00042"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == "The range specified for a planned age is not expected to be approximate."
+        assert (
+            rule._rule_text
+            == "The range specified for a planned age is not expected to be approximate."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

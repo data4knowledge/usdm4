@@ -10,7 +10,10 @@ class TestRuleDDF00035:
         rule = RuleDDF00035()
         assert rule._rule == "DDF00035"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == 'Within a code system and corresponding version, a one-to-one relationship between code and decode is expected.'
+        assert (
+            rule._rule_text
+            == "Within a code system and corresponding version, a one-to-one relationship between code and decode is expected."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

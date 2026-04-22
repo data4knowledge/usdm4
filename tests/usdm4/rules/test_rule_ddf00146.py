@@ -10,7 +10,10 @@ class TestRuleDDF00146:
         rule = RuleDDF00146()
         assert rule._rule == "DDF00146"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "A study title type must be specified using the study title type (C207419) DDF codelist."
+        assert (
+            rule._rule_text
+            == "A study title type must be specified using the study title type (C207419) DDF codelist."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

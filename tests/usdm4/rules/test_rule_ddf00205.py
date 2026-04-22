@@ -10,7 +10,10 @@ class TestRuleDDF00205:
         rule = RuleDDF00205()
         assert rule._rule == "DDF00205"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "An administrable product must not be referenced as both the administrable product for an administration and the embedded product of a medical device that is referenced by the same administration."
+        assert (
+            rule._rule_text
+            == "An administrable product must not be referenced as both the administrable product for an administration and the embedded product of a medical device that is referenced by the same administration."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

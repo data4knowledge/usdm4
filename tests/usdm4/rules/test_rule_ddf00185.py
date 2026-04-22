@@ -10,7 +10,10 @@ class TestRuleDDF00185:
         rule = RuleDDF00185()
         assert rule._rule == "DDF00185"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'If a dose is specified, then a corresponding administrable product must also be specified either directly or embedded in the medical device and vice versa.'
+        assert (
+            rule._rule_text
+            == "If a dose is specified, then a corresponding administrable product must also be specified either directly or embedded in the medical device and vice versa."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

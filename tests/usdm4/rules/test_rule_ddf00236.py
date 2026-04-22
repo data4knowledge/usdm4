@@ -10,7 +10,10 @@ class TestRuleDDF00236:
         rule = RuleDDF00236()
         assert rule._rule == "DDF00236"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == "If a synonym is specified then it is not expected to be equal to the label of the biomedical concept (case insensitive)."
+        assert (
+            rule._rule_text
+            == "If a synonym is specified then it is not expected to be equal to the label of the biomedical concept (case insensitive)."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

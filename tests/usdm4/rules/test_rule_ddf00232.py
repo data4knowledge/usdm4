@@ -10,7 +10,10 @@ class TestRuleDDF00232:
         rule = RuleDDF00232()
         assert rule._rule == "DDF00232"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == 'An observational study (including patient registries) is expected to have a study phase decode value of "NOT APPLICABLE".'
+        assert (
+            rule._rule_text
+            == 'An observational study (including patient registries) is expected to have a study phase decode value of "NOT APPLICABLE".'
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

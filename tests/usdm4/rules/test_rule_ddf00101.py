@@ -10,7 +10,10 @@ class TestRuleDDF00101:
         rule = RuleDDF00101()
         assert rule._rule == "DDF00101"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == 'Within a study design, if study type is Interventional then at least one intervention is expected to be referenced from a procedure.'
+        assert (
+            rule._rule_text
+            == "Within a study design, if study type is Interventional then at least one intervention is expected to be referenced from a procedure."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

@@ -10,7 +10,10 @@ class TestRuleDDF00187:
         rule = RuleDDF00187()
         assert rule._rule == "DDF00187"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == 'Narrative content item text is expected to be HTML formatted.'
+        assert (
+            rule._rule_text
+            == "Narrative content item text is expected to be HTML formatted."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

@@ -10,7 +10,10 @@ class TestRuleDDF00256:
         rule = RuleDDF00256()
         assert rule._rule == "DDF00256"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == "The same reason is not expected to be given as a primary and secondary reason."
+        assert (
+            rule._rule_text
+            == "The same reason is not expected to be given as a primary and secondary reason."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

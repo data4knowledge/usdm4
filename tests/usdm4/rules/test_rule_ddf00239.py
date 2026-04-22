@@ -10,7 +10,10 @@ class TestRuleDDF00239:
         rule = RuleDDF00239()
         assert rule._rule == "DDF00239"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "If a strength numerator range is specified, both the minValue and maxValue must have a unit."
+        assert (
+            rule._rule_text
+            == "If a strength numerator range is specified, both the minValue and maxValue must have a unit."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

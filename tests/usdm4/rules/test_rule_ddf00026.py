@@ -10,7 +10,10 @@ class TestRuleDDF00026:
         rule = RuleDDF00026()
         assert rule._rule == "DDF00026"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'A scheduled activity instance must not point (via the "timeline" relationship) to the timeline in which it is specified.'
+        assert (
+            rule._rule_text
+            == 'A scheduled activity instance must not point (via the "timeline" relationship) to the timeline in which it is specified.'
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

@@ -10,7 +10,10 @@ class TestRuleDDF00011:
         rule = RuleDDF00011()
         assert rule._rule == "DDF00011"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'Anchor timings (e.g. type is "Fixed Reference") must be related to a scheduled activity instance via a relativeFromScheduledInstance relationship.'
+        assert (
+            rule._rule_text
+            == 'Anchor timings (e.g. type is "Fixed Reference") must be related to a scheduled activity instance via a relativeFromScheduledInstance relationship.'
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

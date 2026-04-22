@@ -10,7 +10,10 @@ class TestRuleDDF00058:
         rule = RuleDDF00058()
         assert rule._rule == "DDF00058"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "Within an indication, if more indication codes are defined, they must be distinct."
+        assert (
+            rule._rule_text
+            == "Within an indication, if more indication codes are defined, they must be distinct."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

@@ -10,7 +10,10 @@ class TestRuleDDF00203:
         rule = RuleDDF00203()
         assert rule._rule == "DDF00203"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'The sponsor study role must be applicable to a study version.'
+        assert (
+            rule._rule_text
+            == "The sponsor study role must be applicable to a study version."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

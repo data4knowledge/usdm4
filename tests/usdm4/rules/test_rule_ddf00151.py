@@ -10,7 +10,10 @@ class TestRuleDDF00151:
         rule = RuleDDF00151()
         assert rule._rule == "DDF00151"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "If geographic scope type is global then there must be only one geographic scope specified."
+        assert (
+            rule._rule_text
+            == "If geographic scope type is global then there must be only one geographic scope specified."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

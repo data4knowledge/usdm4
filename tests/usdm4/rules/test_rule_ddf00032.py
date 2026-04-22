@@ -10,7 +10,10 @@ class TestRuleDDF00032:
         rule = RuleDDF00032()
         assert rule._rule == "DDF00032"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "Within a study version, if more than 1 business therapeutic area is defined then they must be distinct."
+        assert (
+            rule._rule_text
+            == "Within a study version, if more than 1 business therapeutic area is defined then they must be distinct."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

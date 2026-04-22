@@ -31,7 +31,10 @@ class RuleDDF00239(RuleTemplate):
             max_value = numerator.get("maxValue")
             if not (isinstance(min_value, dict) or isinstance(max_value, dict)):
                 continue  # not a Range
-            for endpoint_name, endpoint in (("minValue", min_value), ("maxValue", max_value)):
+            for endpoint_name, endpoint in (
+                ("minValue", min_value),
+                ("maxValue", max_value),
+            ):
                 if not isinstance(endpoint, dict):
                     continue
                 if endpoint.get("value") is not None and not endpoint.get("unit"):

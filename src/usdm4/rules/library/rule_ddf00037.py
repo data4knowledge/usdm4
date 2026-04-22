@@ -26,8 +26,10 @@ class RuleDDF00037(RuleTemplate):
         data = config["data"]
         for timeline in data.instances_by_klass("ScheduleTimeline"):
             activities = [
-                sai for sai in data.instances_by_klass("ScheduledActivityInstance")
-                if (p := data.parent_by_klass(sai["id"], ["ScheduleTimeline"])) is not None
+                sai
+                for sai in data.instances_by_klass("ScheduledActivityInstance")
+                if (p := data.parent_by_klass(sai["id"], ["ScheduleTimeline"]))
+                is not None
                 and p["id"] == timeline["id"]
             ]
             if not activities:

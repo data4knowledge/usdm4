@@ -31,7 +31,9 @@ class RuleDDF00212(RuleTemplate):
                 if not target_id:
                     continue
                 target = data.instance_by_id(target_id)
-                target_type = target.get("instanceType") if isinstance(target, dict) else None
+                target_type = (
+                    target.get("instanceType") if isinstance(target, dict) else None
+                )
                 if target_type not in ALLOWED_CLASSES:
                     reason = (
                         "does not resolve to any instance"

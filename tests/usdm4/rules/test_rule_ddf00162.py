@@ -10,7 +10,10 @@ class TestRuleDDF00162:
         rule = RuleDDF00162()
         assert rule._rule == "DDF00162"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'When included in text, references to items stored elsewhere in the data model must be specified in the correct format. They must start with \'<usdm:ref\', end with either \'/>\' or \'></usdm:ref>\', and must contain \'klass="KlassName"\',  \'id="idValue"\', and \'attribute="attributeName"/>\' in any order (where "KlassName" and "attributeName" contain only letters in upper or lower case).'
+        assert (
+            rule._rule_text
+            == "When included in text, references to items stored elsewhere in the data model must be specified in the correct format. They must start with '<usdm:ref', end with either '/>' or '></usdm:ref>', and must contain 'klass=\"KlassName\"',  'id=\"idValue\"', and 'attribute=\"attributeName\"/>' in any order (where \"KlassName\" and \"attributeName\" contain only letters in upper or lower case)."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

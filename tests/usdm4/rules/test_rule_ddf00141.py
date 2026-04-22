@@ -10,7 +10,10 @@ class TestRuleDDF00141:
         rule = RuleDDF00141()
         assert rule._rule == "DDF00141"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "A planned sex must be specified using the Sex of Participants (C66732) SDTM codelist."
+        assert (
+            rule._rule_text
+            == "A planned sex must be specified using the Sex of Participants (C66732) SDTM codelist."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

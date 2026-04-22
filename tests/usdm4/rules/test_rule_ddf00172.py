@@ -10,7 +10,10 @@ class TestRuleDDF00172:
         rule = RuleDDF00172()
         assert rule._rule == "DDF00172"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "There must be exactly one sponsor study identifier (i.e., a study identifier whose scope is an organization that is identified as the organization for the sponsor study role)."
+        assert (
+            rule._rule_text
+            == "There must be exactly one sponsor study identifier (i.e., a study identifier whose scope is an organization that is identified as the organization for the sponsor study role)."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

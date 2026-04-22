@@ -38,6 +38,8 @@ class RuleDDF00042(RuleTemplate):
                         f"{klass}.plannedAge is marked as approximate",
                         "Range",
                         "isApproximate",
-                        data.path_by_id(age["id"]) if age.get("id") else data.path_by_id(instance["id"]),
+                        data.path_by_id(age["id"])
+                        if age.get("id")
+                        else data.path_by_id(instance["id"]),
                     )
         return self._result()

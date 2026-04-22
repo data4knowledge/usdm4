@@ -10,7 +10,10 @@ class TestRuleDDF00076:
         rule = RuleDDF00076()
         assert rule._rule == "DDF00076"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == 'If a biomedical concept is referenced from an activity then it is not expected to be referenced as well by a biomedical concept category that is referenced from the same activity.'
+        assert (
+            rule._rule_text
+            == "If a biomedical concept is referenced from an activity then it is not expected to be referenced as well by a biomedical concept category that is referenced from the same activity."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

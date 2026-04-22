@@ -10,7 +10,10 @@ class TestRuleDDF00012:
         rule = RuleDDF00012()
         assert rule._rule == "DDF00012"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "Within a study design, there must be exactly one scheduled timeline which identifies as the main Timeline."
+        assert (
+            rule._rule_text
+            == "Within a study design, there must be exactly one scheduled timeline which identifies as the main Timeline."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

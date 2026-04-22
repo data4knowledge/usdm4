@@ -10,7 +10,10 @@ class TestRuleDDF00191:
         rule = RuleDDF00191()
         assert rule._rule == "DDF00191"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == 'A masking is not expected to be defined for any study role in a study design with an open label blinding schema.'
+        assert (
+            rule._rule_text
+            == "A masking is not expected to be defined for any study role in a study design with an open label blinding schema."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

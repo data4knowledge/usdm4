@@ -10,7 +10,10 @@ class TestRuleDDF00165:
         rule = RuleDDF00165()
         assert rule._rule == "DDF00165"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "If a section title is to be displayed then a title must be specified and vice versa."
+        assert (
+            rule._rule_text
+            == "If a section title is to be displayed then a title must be specified and vice versa."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

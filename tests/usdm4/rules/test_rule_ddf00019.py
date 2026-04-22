@@ -10,7 +10,10 @@ class TestRuleDDF00019:
         rule = RuleDDF00019()
         assert rule._rule == "DDF00019"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'A scheduled activity/decision instance must not refer to itself as its default condition.'
+        assert (
+            rule._rule_text
+            == "A scheduled activity/decision instance must not refer to itself as its default condition."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

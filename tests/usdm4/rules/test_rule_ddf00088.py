@@ -10,7 +10,10 @@ class TestRuleDDF00088:
         rule = RuleDDF00088()
         assert rule._rule == "DDF00088"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == "Epoch ordering using previous and next attributes is expected to be consistent with the order of corresponding scheduled activity instances according to their specified default conditions."
+        assert (
+            rule._rule_text
+            == "Epoch ordering using previous and next attributes is expected to be consistent with the order of corresponding scheduled activity instances according to their specified default conditions."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

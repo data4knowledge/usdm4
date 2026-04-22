@@ -10,7 +10,10 @@ class TestRuleDDF00253:
         rule = RuleDDF00253()
         assert rule._rule == "DDF00253"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "A reference substance must not have a reference substance."
+        assert (
+            rule._rule_text
+            == "A reference substance must not have a reference substance."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

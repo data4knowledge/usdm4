@@ -10,7 +10,10 @@ class TestRuleDDF00190:
         rule = RuleDDF00190()
         assert rule._rule == "DDF00190"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "A study role must not reference both assigned persons and organizations."
+        assert (
+            rule._rule_text
+            == "A study role must not reference both assigned persons and organizations."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

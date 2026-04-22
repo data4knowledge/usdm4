@@ -10,7 +10,10 @@ class TestRuleDDF00107:
         rule = RuleDDF00107()
         assert rule._rule == "DDF00107"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'A scheduled activity instance must only have a sub-timeline that is defined within the same study design as the scheduled activity instance.'
+        assert (
+            rule._rule_text
+            == "A scheduled activity instance must only have a sub-timeline that is defined within the same study design as the scheduled activity instance."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

@@ -10,7 +10,10 @@ class TestRuleDDF00156:
         rule = RuleDDF00156()
         assert rule._rule == "DDF00156"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "Within an encounter, if more environmental settings are defined, they must be distinct."
+        assert (
+            rule._rule_text
+            == "Within an encounter, if more environmental settings are defined, they must be distinct."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

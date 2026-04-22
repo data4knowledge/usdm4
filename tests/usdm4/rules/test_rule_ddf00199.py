@@ -10,7 +10,10 @@ class TestRuleDDF00199:
         rule = RuleDDF00199()
         assert rule._rule == "DDF00199"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "An study impact type must be specified according to the extensible study amendment impact type (C215481) DDF codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist)."
+        assert (
+            rule._rule_text
+            == "An study impact type must be specified according to the extensible study amendment impact type (C215481) DDF codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist)."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

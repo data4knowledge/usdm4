@@ -10,7 +10,10 @@ class TestRuleDDF00237:
         rule = RuleDDF00237()
         assert rule._rule == "DDF00237"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'The unit of a planned age is expected to be specified using terms from the Age Unit (C66781) SDTM codelist.'
+        assert (
+            rule._rule_text
+            == "The unit of a planned age is expected to be specified using terms from the Age Unit (C66781) SDTM codelist."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

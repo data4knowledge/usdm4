@@ -10,7 +10,10 @@ class TestRuleDDF00114:
         rule = RuleDDF00114()
         assert rule._rule == "DDF00114"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'If specified, the context of a condition must point to a valid instance in the activity or scheduled activity instance class.'
+        assert (
+            rule._rule_text
+            == "If specified, the context of a condition must point to a valid instance in the activity or scheduled activity instance class."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

@@ -30,7 +30,10 @@ class RuleDDF00096(RuleTemplate):
         data = config["data"]
         for endpoint in data.instances_by_klass("Endpoint"):
             level = endpoint.get("level")
-            if not isinstance(level, dict) or level.get("code") != PRIMARY_ENDPOINT_CODE:
+            if (
+                not isinstance(level, dict)
+                or level.get("code") != PRIMARY_ENDPOINT_CODE
+            ):
                 continue
             objective = data.parent_by_klass(endpoint.get("id"), "Objective")
             if not isinstance(objective, dict):
@@ -42,7 +45,10 @@ class RuleDDF00096(RuleTemplate):
                 )
                 continue
             obj_level = objective.get("level")
-            if not isinstance(obj_level, dict) or obj_level.get("code") != PRIMARY_OBJECTIVE_CODE:
+            if (
+                not isinstance(obj_level, dict)
+                or obj_level.get("code") != PRIMARY_OBJECTIVE_CODE
+            ):
                 self._add_failure(
                     "Primary Endpoint is under an Objective that is not a primary objective",
                     "Endpoint",

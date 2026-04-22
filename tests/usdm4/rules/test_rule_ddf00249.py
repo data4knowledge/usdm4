@@ -10,7 +10,10 @@ class TestRuleDDF00249:
         rule = RuleDDF00249()
         assert rule._rule == "DDF00249"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == "An eligibility criterion item is expected to be used in at least one study design."
+        assert (
+            rule._rule_text
+            == "An eligibility criterion item is expected to be used in at least one study design."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

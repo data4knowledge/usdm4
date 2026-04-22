@@ -10,7 +10,10 @@ class TestRuleDDF00235:
         rule = RuleDDF00235()
         assert rule._rule == "DDF00235"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "A unit must not be specified for a planned completion number."
+        assert (
+            rule._rule_text
+            == "A unit must not be specified for a planned completion number."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

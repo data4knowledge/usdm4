@@ -10,7 +10,10 @@ class TestRuleDDF00069:
         rule = RuleDDF00069()
         assert rule._rule == "DDF00069"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "Each combination of arm and epoch must occur no more than once within a study design."
+        assert (
+            rule._rule_text
+            == "Each combination of arm and epoch must occur no more than once within a study design."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

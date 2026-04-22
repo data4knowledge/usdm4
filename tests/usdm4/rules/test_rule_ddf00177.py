@@ -10,7 +10,10 @@ class TestRuleDDF00177:
         rule = RuleDDF00177()
         assert rule._rule == "DDF00177"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == "If an administration's dose is specified then a corresponding route is expected and vice versa."
+        assert (
+            rule._rule_text
+            == "If an administration's dose is specified then a corresponding route is expected and vice versa."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

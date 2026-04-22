@@ -10,7 +10,10 @@ class TestRuleDDF00169:
         rule = RuleDDF00169()
         assert rule._rule == "DDF00169"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "A study definition document version's status must be specified using the status Value Set Terminology (C188723) DDF codelist."
+        assert (
+            rule._rule_text
+            == "A study definition document version's status must be specified using the status Value Set Terminology (C188723) DDF codelist."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

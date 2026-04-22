@@ -10,7 +10,10 @@ class TestRuleDDF00061:
         rule = RuleDDF00061()
         assert rule._rule == "DDF00061"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "When specified, the lower limit of a timing window must be a non-negative duration in ISO 8601 format."
+        assert (
+            rule._rule_text
+            == "When specified, the lower limit of a timing window must be a non-negative duration in ISO 8601 format."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

@@ -31,7 +31,9 @@ class RuleDDF00203(RuleTemplate):
                 if not isinstance(role, dict):
                     continue
                 code = role.get("code")
-                if not (isinstance(code, dict) and code.get("code") == SPONSOR_ROLE_CODE):
+                if not (
+                    isinstance(code, dict) and code.get("code") == SPONSOR_ROLE_CODE
+                ):
                     continue
                 applies = role.get("appliesToIds") or []
                 if sv_id not in applies:

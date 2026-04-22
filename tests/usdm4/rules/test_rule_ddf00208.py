@@ -10,7 +10,10 @@ class TestRuleDDF00208:
         rule = RuleDDF00208()
         assert rule._rule == "DDF00208"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "An administrable product sourcing must be specified using the extensible administrable product sourcing (C215483) DDF codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist)."
+        assert (
+            rule._rule_text
+            == "An administrable product sourcing must be specified using the extensible administrable product sourcing (C215483) DDF codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist)."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

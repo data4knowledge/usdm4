@@ -33,7 +33,11 @@ class RuleDDF00221(RuleTemplate):
             for design in data.instances_by_klass(klass):
                 entries = design.get("therapeuticAreas") or []
                 keys = [
-                    (entry.get("codeSystem"), entry.get("codeSystemVersion"), entry.get("code"))
+                    (
+                        entry.get("codeSystem"),
+                        entry.get("codeSystemVersion"),
+                        entry.get("code"),
+                    )
                     for entry in entries
                     if isinstance(entry, dict) and entry.get("code")
                 ]

@@ -28,7 +28,10 @@ class RuleDDF00046(RuleTemplate):
             timing_tl = data.parent_by_klass(timing.get("id"), "ScheduleTimeline")
             if timing_tl is None:
                 continue
-            for attr in ("relativeFromScheduledInstanceId", "relativeToScheduledInstanceId"):
+            for attr in (
+                "relativeFromScheduledInstanceId",
+                "relativeToScheduledInstanceId",
+            ):
                 target_id = timing.get(attr)
                 if not target_id:
                     continue

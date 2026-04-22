@@ -20,7 +20,9 @@ class RuleDDF00069(RuleTemplate):
         data = config["data"]
         seen: dict = {}
         for item in data.instances_by_klass("StudyCell"):
-            scope = data.parent_by_klass(item["id"], ['InterventionalStudyDesign', 'ObservationalStudyDesign'])
+            scope = data.parent_by_klass(
+                item["id"], ["InterventionalStudyDesign", "ObservationalStudyDesign"]
+            )
             if scope is None:
                 continue
             key = (scope["id"], (item.get("armId"), item.get("epochId")))

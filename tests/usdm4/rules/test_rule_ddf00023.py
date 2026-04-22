@@ -10,7 +10,10 @@ class TestRuleDDF00023:
         rule = RuleDDF00023()
         assert rule._rule == "DDF00023"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'To ensure consistent ordering, when both previous and next attributes are available within an entity the previous id value must match the next id value of the referred instance.'
+        assert (
+            rule._rule_text
+            == "To ensure consistent ordering, when both previous and next attributes are available within an entity the previous id value must match the next id value of the referred instance."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

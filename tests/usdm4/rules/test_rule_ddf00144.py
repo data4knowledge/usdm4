@@ -10,7 +10,10 @@ class TestRuleDDF00144:
         rule = RuleDDF00144()
         assert rule._rule == "DDF00144"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "A study geographic scope type must be specified using the geographic scope type (C207412) DDF codelist."
+        assert (
+            rule._rule_text
+            == "A study geographic scope type must be specified using the geographic scope type (C207412) DDF codelist."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

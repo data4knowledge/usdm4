@@ -10,7 +10,10 @@ class TestRuleDDF00030:
         rule = RuleDDF00030()
         assert rule._rule == "DDF00030"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "At least the text or the family name must be specified for a person name."
+        assert (
+            rule._rule_text
+            == "At least the text or the family name must be specified for a person name."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

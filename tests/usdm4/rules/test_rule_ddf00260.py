@@ -10,7 +10,10 @@ class TestRuleDDF00260:
         rule = RuleDDF00260()
         assert rule._rule == "DDF00260"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == "Id values are expected not to have spaces in their string values."
+        assert (
+            rule._rule_text
+            == "Id values are expected not to have spaces in their string values."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

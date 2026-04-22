@@ -10,7 +10,10 @@ class TestRuleDDF00225:
         rule = RuleDDF00225()
         assert rule._rule == "DDF00225"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "An observational study design's sampling method must be specified according to the extensible Observational Study Sampling Method (C127260) SDTM codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist)."
+        assert (
+            rule._rule_text
+            == "An observational study design's sampling method must be specified according to the extensible Observational Study Sampling Method (C127260) SDTM codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist)."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

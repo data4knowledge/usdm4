@@ -10,7 +10,10 @@ class TestRuleDDF00033:
         rule = RuleDDF00033()
         assert rule._rule == "DDF00033"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "At least the text or the quantity must be specified for a duration."
+        assert (
+            rule._rule_text
+            == "At least the text or the quantity must be specified for a duration."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

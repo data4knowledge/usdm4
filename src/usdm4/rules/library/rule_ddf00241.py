@@ -47,11 +47,13 @@ class RuleDDF00241(RuleTemplate):
                 continue
             min_val = min_endpoint.get("value")
             max_val = max_endpoint.get("value")
-            if not isinstance(min_val, (int, float)) or not isinstance(max_val, (int, float)):
+            if not isinstance(min_val, (int, float)) or not isinstance(
+                max_val, (int, float)
+            ):
                 continue
             min_unit_code = _unit_code(min_endpoint)
             max_unit_code = _unit_code(max_endpoint)
-            same_unit = (min_unit_code == max_unit_code)
+            same_unit = min_unit_code == max_unit_code
             if not same_unit:
                 continue
             if max_val <= min_val:

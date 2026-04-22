@@ -10,7 +10,10 @@ class TestRuleDDF00233:
         rule = RuleDDF00233()
         assert rule._rule == "DDF00233"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "A unit must be coded according to the extensible unit (C71620) SDTM codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist)."
+        assert (
+            rule._rule_text
+            == "A unit must be coded according to the extensible unit (C71620) SDTM codelist (e.g. an entry with a code or decode used from the codelist should be consistent with the full entry in the codelist)."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

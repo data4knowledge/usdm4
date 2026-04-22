@@ -10,7 +10,10 @@ class TestRuleDDF00014:
         rule = RuleDDF00014()
         assert rule._rule == "DDF00014"
         assert rule._level == RuleTemplate.WARNING
-        assert rule._rule_text == "A biomedical concept category is expected to have at least a member or a child."
+        assert (
+            rule._rule_text
+            == "A biomedical concept category is expected to have at least a member or a child."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

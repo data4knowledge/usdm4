@@ -48,7 +48,9 @@ class RuleDDF00160(RuleTemplate):
             children = activity.get("childIds") or []
             if not children:
                 continue
-            populated_refs = [a for a in LEAF_REF_ATTRS if _is_populated(activity.get(a))]
+            populated_refs = [
+                a for a in LEAF_REF_ATTRS if _is_populated(activity.get(a))
+            ]
             if populated_refs:
                 self._add_failure(
                     f"Activity has children but also references: {', '.join(populated_refs)}",

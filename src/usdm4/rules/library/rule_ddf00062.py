@@ -18,6 +18,7 @@ class RuleDDF00062(RuleTemplate):
 
     def validate(self, config: dict) -> bool:
         import re
+
         # ISO 8601 duration — optional leading "-" (negative), but CORE convention
         # requires non-negative here. Anchors at start/end.
         pat = re.compile(

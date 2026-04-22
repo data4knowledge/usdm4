@@ -10,7 +10,10 @@ class TestRuleDDF00022:
         rule = RuleDDF00022()
         assert rule._rule == "DDF00022"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "An instance of a class must not refer to itself as its next instance."
+        assert (
+            rule._rule_text
+            == "An instance of a class must not refer to itself as its next instance."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

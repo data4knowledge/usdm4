@@ -19,14 +19,22 @@ class RuleDDF00254(RuleTemplate):
     def validate(self, config: dict) -> bool:
         data = config["data"]
         for item in data.instances_by_klass("Activity"):
-            scope = data.parent_by_klass(item["id"], ['InterventionalStudyDesign', 'ObservationalStudyDesign'])
+            scope = data.parent_by_klass(
+                item["id"], ["InterventionalStudyDesign", "ObservationalStudyDesign"]
+            )
             if scope is None:
                 continue
             # Collect ids of same-class siblings within this scope
             sibling_ids = {
                 sib["id"]
                 for sib in data.instances_by_klass("Activity")
-                if (sp := data.parent_by_klass(sib["id"], ['InterventionalStudyDesign', 'ObservationalStudyDesign'])) is not None
+                if (
+                    sp := data.parent_by_klass(
+                        sib["id"],
+                        ["InterventionalStudyDesign", "ObservationalStudyDesign"],
+                    )
+                )
+                is not None
                 and sp["id"] == scope["id"]
             }
             for ref_id in item.get("childIds") or []:

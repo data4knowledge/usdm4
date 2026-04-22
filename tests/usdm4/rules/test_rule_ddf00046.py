@@ -10,7 +10,10 @@ class TestRuleDDF00046:
         rule = RuleDDF00046()
         assert rule._rule == "DDF00046"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'A timing must only be specified as being relative to/from a scheduled activity/decision instance that is defined within the same timeline as the timing.'
+        assert (
+            rule._rule_text
+            == "A timing must only be specified as being relative to/from a scheduled activity/decision instance that is defined within the same timeline as the timing."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

@@ -10,7 +10,10 @@ class TestRuleDDF00054:
         rule = RuleDDF00054()
         assert rule._rule == "DDF00054"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == "Within an encounter there must be no duplicate contact modes."
+        assert (
+            rule._rule_text
+            == "Within an encounter there must be no duplicate contact modes."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

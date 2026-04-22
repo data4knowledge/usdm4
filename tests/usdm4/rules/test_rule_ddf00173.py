@@ -10,7 +10,10 @@ class TestRuleDDF00173:
         rule = RuleDDF00173()
         assert rule._rule == "DDF00173"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'Every identifier must be unique within the scope of an identified organization.'
+        assert (
+            rule._rule_text
+            == "Every identifier must be unique within the scope of an identified organization."
+        )
 
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):

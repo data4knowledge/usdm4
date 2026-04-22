@@ -76,7 +76,9 @@ class RuleDDF00087(RuleTemplate):
         data = config["data"]
         for klass in STUDY_DESIGN_KLASSES:
             for design in data.instances_by_klass(klass):
-                encounters = [e for e in design.get("encounters") or [] if isinstance(e, dict)]
+                encounters = [
+                    e for e in design.get("encounters") or [] if isinstance(e, dict)
+                ]
                 if not encounters:
                     continue
                 encounters_by_id = {e.get("id"): e for e in encounters if e.get("id")}
@@ -104,7 +106,8 @@ class RuleDDF00087(RuleTemplate):
 
                 # (B) SAI flow in the main timeline
                 timelines = [
-                    t for t in design.get("scheduleTimelines") or []
+                    t
+                    for t in design.get("scheduleTimelines") or []
                     if isinstance(t, dict) and t.get("mainTimeline")
                 ]
                 for timeline in timelines:
@@ -112,7 +115,8 @@ class RuleDDF00087(RuleTemplate):
                     if not entry_id:
                         continue
                     sais = [
-                        s for s in timeline.get("instances") or []
+                        s
+                        for s in timeline.get("instances") or []
                         if isinstance(s, dict)
                         and s.get("instanceType") == "ScheduledActivityInstance"
                     ]

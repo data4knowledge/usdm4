@@ -30,11 +30,15 @@ class RuleDDF00202(RuleTemplate):
         data = config["data"]
         for sv in data.instances_by_klass("StudyVersion"):
             sv_org_ids = {
-                o["id"] for o in sv.get("organizations") or [] if isinstance(o, dict) and "id" in o
+                o["id"]
+                for o in sv.get("organizations") or []
+                if isinstance(o, dict) and "id" in o
             }
             for role in sv.get("roles") or []:
                 code = role.get("code") or {}
-                if not (isinstance(code, dict) and code.get("code") == SPONSOR_ROLE_CODE):
+                if not (
+                    isinstance(code, dict) and code.get("code") == SPONSOR_ROLE_CODE
+                ):
                     continue
                 org_ids = role.get("organizationIds") or []
                 matching = [oid for oid in org_ids if oid in sv_org_ids]
