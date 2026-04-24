@@ -1,4 +1,4 @@
-"""Tests for RuleDDF00097 — plannedAge consistency (pop vs cohorts)."""
+"""Tests for RuleDDF00097 — plannedAge required on pop or all cohorts."""
 
 from unittest.mock import MagicMock
 
@@ -29,6 +29,11 @@ class TestRuleDDF00097:
         )
         assert rule.validate({"data": data}) is True
 
+    def test_population_only_no_cohorts_passes(self):
+        rule = RuleDDF00097()
+        data = _data([{"id": "P1", ATTR: {"minValue": 18}, "cohorts": []}])
+        assert rule.validate({"data": data}) is True
+
     def test_all_cohorts_only_passes(self):
         rule = RuleDDF00097()
         data = _data(
@@ -44,10 +49,18 @@ class TestRuleDDF00097:
         )
         assert rule.validate({"data": data}) is True
 
-    def test_nothing_specified_passes(self):
+    def test_nothing_anywhere_fails(self):
+        """Regression: DDF00097 has no 'if defined' clause (unlike 132/133).
+        Not specifying the value anywhere is itself a failure."""
         rule = RuleDDF00097()
-        data = _data([{"id": "P1", "cohorts": [{"id": "C1"}]}])
-        assert rule.validate({"data": data}) is True
+        data = _data([{"id": "P1", "cohorts": [{"id": "C1"}, {"id": "C2"}]}])
+        assert rule.validate({"data": data}) is False
+        assert "not specified on the study population" in rule.errors().dump()
+
+    def test_nothing_anywhere_no_cohorts_fails(self):
+        rule = RuleDDF00097()
+        data = _data([{"id": "P1", "cohorts": []}])
+        assert rule.validate({"data": data}) is False
 
     def test_population_and_some_cohorts_fails(self):
         rule = RuleDDF00097()
@@ -83,12 +96,8 @@ class TestRuleDDF00097:
         assert rule.validate({"data": data}) is False
         assert "specified on only 1 of 3" in rule.errors().dump()
 
-    def test_no_cohorts_population_only_passes(self):
-        rule = RuleDDF00097()
-        data = _data([{"id": "P1", ATTR: {"minValue": 18}, "cohorts": []}])
-        assert rule.validate({"data": data}) is True
-
     def test_empty_dict_value_treated_as_not_specified(self):
         rule = RuleDDF00097()
         data = _data([{"id": "P1", ATTR: {}, "cohorts": []}])
-        assert rule.validate({"data": data}) is True
+        # Empty dict on pop and no cohorts → nothing anywhere → FAIL
+        assert rule.validate({"data": data}) is False

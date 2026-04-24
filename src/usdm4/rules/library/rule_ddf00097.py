@@ -1,21 +1,14 @@
 # MANUAL: do not regenerate
 #
-# Consistency check, not a simple presence check. Same shape as
-# DDF00132/DDF00133; see rule_ddf00132.py for the full rationale. The
-# previous implementation unconditionally required plannedAge on every
-# StudyDesignPopulation, which is stricter than the DDF text and over-
-# reports when the value is specified on cohorts instead.
-#
-# Semantics:
-#   pop_has     = population.plannedAge is set
-#   cohort_has  = count of cohorts whose plannedAge is set
-#   cohort_tot  = total number of cohorts
-#
-#   FAIL if (pop_has AND cohort_has > 0)
-#       — specified in both places
-#   FAIL if (NOT pop_has AND 0 < cohort_has < cohort_tot)
-#       — specified on only a subset of cohorts
-#   PASS otherwise
+# Required consistency check. Unlike DDF00132/DDF00133 ("if a planned
+# number is defined …"), DDF00097 has no "if defined" clause — the
+# planned age range MUST be specified somewhere. Failure cases:
+#   1. Both pop AND some cohort → specified in two places
+#   2. pop missing AND only SOME cohorts have it → subset
+#   3. pop missing AND NO cohorts have it → not specified anywhere
+#      (also catches the no-cohorts case)
+# Passes when exactly one axis carries it — pop-only (no cohort overlap),
+# or all-cohorts-only (and at least one cohort exists).
 from usdm4.rules.rule_template import RuleTemplate
 
 
@@ -55,6 +48,8 @@ class RuleDDF00097(RuleTemplate):
                 1 for c in cohorts if isinstance(c, dict) and _is_specified(c.get(ATTR))
             )
 
+            path = data.path_by_id(population["id"])
+
             if pop_has and cohort_has > 0:
                 self._add_failure(
                     f"{ATTR} is specified on the study population and on "
@@ -62,15 +57,24 @@ class RuleDDF00097(RuleTemplate):
                     f"in one place only",
                     "StudyDesignPopulation",
                     ATTR,
-                    data.path_by_id(population["id"]),
+                    path,
                 )
-            elif not pop_has and 0 < cohort_has < cohort_total:
+            elif not pop_has and cohort_total > 0 and 0 < cohort_has < cohort_total:
                 self._add_failure(
                     f"{ATTR} is specified on only {cohort_has} of "
                     f"{cohort_total} cohort(s); specify it on all cohorts "
                     f"or on the study population",
                     "StudyDesignPopulation",
                     ATTR,
-                    data.path_by_id(population["id"]),
+                    path,
+                )
+            elif not pop_has and cohort_has == 0:
+                self._add_failure(
+                    f"{ATTR} is not specified on the study population and "
+                    f"not specified on any of the {cohort_total} cohort(s); "
+                    f"specify it on the study population or on all cohorts",
+                    "StudyDesignPopulation",
+                    ATTR,
+                    path,
                 )
         return self._result()
