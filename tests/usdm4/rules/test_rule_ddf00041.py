@@ -12,9 +12,10 @@ class TestRuleDDF00041:
         assert rule._rule == "DDF00041"
         assert rule._level == RuleTemplate.ERROR
 
-    def _data(self, interventional=None, observational=None):
+    def _data(self, study_design=None, interventional=None, observational=None):
         data = MagicMock()
         data.instances_by_klass.side_effect = lambda k: {
+            "StudyDesign": study_design or [],
             "InterventionalStudyDesign": interventional or [],
             "ObservationalStudyDesign": observational or [],
         }.get(k, [])
@@ -108,3 +109,26 @@ class TestRuleDDF00041:
         rule = RuleDDF00041()
         data = self._data()
         assert rule.validate({"data": data}) is True
+
+    def test_base_study_design_iterated(self):
+        """USDM V4 'StudyDesign' is a concrete type alongside its subclasses."""
+        rule = RuleDDF00041()
+        data = self._data(
+            study_design=[
+                {
+                    "id": "SD1",
+                    "objectives": [
+                        {
+                            "id": "O1",
+                            "endpoints": [{"id": "E1", "level": {"code": "C94496"}}],
+                        }
+                    ],
+                }
+            ]
+        )
+        assert rule.validate({"data": data}) is True
+
+    def test_base_study_design_no_primary_fails(self):
+        rule = RuleDDF00041()
+        data = self._data(study_design=[{"id": "SD1", "objectives": []}])
+        assert rule.validate({"data": data}) is False

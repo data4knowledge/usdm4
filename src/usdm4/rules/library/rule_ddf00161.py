@@ -17,7 +17,7 @@
 from usdm4.rules.rule_template import RuleTemplate
 
 
-STUDY_DESIGN_KLASSES = ["InterventionalStudyDesign", "ObservationalStudyDesign"]
+STUDY_DESIGN_KLASSES = ["StudyDesign", "InterventionalStudyDesign", "ObservationalStudyDesign"]
 
 
 def _descendants(activity_id, children_map, visited=None):

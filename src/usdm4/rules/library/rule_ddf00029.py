@@ -5,7 +5,7 @@
 from usdm4.rules.rule_template import RuleTemplate
 
 
-STUDY_DESIGN_KLASSES = ["InterventionalStudyDesign", "ObservationalStudyDesign"]
+STUDY_DESIGN_KLASSES = ["StudyDesign", "InterventionalStudyDesign", "ObservationalStudyDesign"]
 
 
 class RuleDDF00029(RuleTemplate):
