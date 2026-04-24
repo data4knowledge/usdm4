@@ -1,9 +1,19 @@
-"""Tests for RuleDDF00097 — plannedAge must be populated."""
+"""Tests for RuleDDF00097 — plannedAge consistency (pop vs cohorts)."""
 
 from unittest.mock import MagicMock
 
 from usdm4.rules.library.rule_ddf00097 import RuleDDF00097
 from usdm4.rules.rule_template import RuleTemplate
+
+
+def _data(populations):
+    data = MagicMock()
+    data.instances_by_klass.return_value = populations
+    data.path_by_id.return_value = "$.path"
+    return data
+
+
+ATTR = "plannedAge"
 
 
 class TestRuleDDF00097:
@@ -12,19 +22,73 @@ class TestRuleDDF00097:
         assert rule._rule == "DDF00097"
         assert rule._level == RuleTemplate.ERROR
 
-    def _data(self, items):
-        data = MagicMock()
-        data.instances_by_klass.return_value = items
-        data.path_by_id.return_value = "$.path"
-        return data
-
-    def test_populated_passes(self):
+    def test_population_only_passes(self):
         rule = RuleDDF00097()
-        data = self._data([{"id": "P1", "plannedAge": {"minValue": 18}}])
+        data = _data(
+            [{"id": "P1", ATTR: {"minValue": 18}, "cohorts": [{"id": "C1"}]}]
+        )
         assert rule.validate({"data": data}) is True
 
-    def test_missing_fails(self):
+    def test_all_cohorts_only_passes(self):
         rule = RuleDDF00097()
-        data = self._data([{"id": "P1"}])
+        data = _data(
+            [
+                {
+                    "id": "P1",
+                    "cohorts": [
+                        {"id": "C1", ATTR: {"minValue": 18}},
+                        {"id": "C2", ATTR: {"minValue": 65}},
+                    ],
+                }
+            ]
+        )
+        assert rule.validate({"data": data}) is True
+
+    def test_nothing_specified_passes(self):
+        rule = RuleDDF00097()
+        data = _data([{"id": "P1", "cohorts": [{"id": "C1"}]}])
+        assert rule.validate({"data": data}) is True
+
+    def test_population_and_some_cohorts_fails(self):
+        rule = RuleDDF00097()
+        data = _data(
+            [
+                {
+                    "id": "P1",
+                    ATTR: {"minValue": 18},
+                    "cohorts": [
+                        {"id": "C1", ATTR: {"minValue": 21}},
+                        {"id": "C2"},
+                    ],
+                }
+            ]
+        )
         assert rule.validate({"data": data}) is False
-        assert "missing or empty" in rule.errors().dump()
+        assert "specified on the study population and on" in rule.errors().dump()
+
+    def test_subset_of_cohorts_only_fails(self):
+        rule = RuleDDF00097()
+        data = _data(
+            [
+                {
+                    "id": "P1",
+                    "cohorts": [
+                        {"id": "C1", ATTR: {"minValue": 18}},
+                        {"id": "C2"},
+                        {"id": "C3"},
+                    ],
+                }
+            ]
+        )
+        assert rule.validate({"data": data}) is False
+        assert "specified on only 1 of 3" in rule.errors().dump()
+
+    def test_no_cohorts_population_only_passes(self):
+        rule = RuleDDF00097()
+        data = _data([{"id": "P1", ATTR: {"minValue": 18}, "cohorts": []}])
+        assert rule.validate({"data": data}) is True
+
+    def test_empty_dict_value_treated_as_not_specified(self):
+        rule = RuleDDF00097()
+        data = _data([{"id": "P1", ATTR: {}, "cohorts": []}])
+        assert rule.validate({"data": data}) is True

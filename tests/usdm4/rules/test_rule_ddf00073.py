@@ -25,11 +25,7 @@ class TestRuleDDF00073:
             {
                 "StudyVersion": [{"id": "SV1"}],
                 "Code": [
-                    {
-                        "id": "C1",
-                        "codeSystem": "X",
-                        "codeSystemVersion": "1",
-                    }
+                    {"id": "C1", "codeSystem": "X", "codeSystemVersion": "1"}
                 ],
             },
             parent_map={"C1": None},
@@ -50,7 +46,12 @@ class TestRuleDDF00073:
         )
         assert rule.validate({"data": data}) is True
 
-    def test_multiple_versions_fail(self):
+    def test_multiple_versions_emit_one_failure_per_version(self):
+        """One failure per (codeSystem, codeSystemVersion) group, not per Code.
+
+        With 2 versions in use (one used by 1 code, another by 1 code), we
+        expect exactly 2 failures — matching CORE-000808's granularity.
+        """
         rule = RuleDDF00073()
         data = self._data(
             {
@@ -63,6 +64,72 @@ class TestRuleDDF00073:
             parent_map={"C1": {"id": "SV1"}, "C2": {"id": "SV1"}},
         )
         assert rule.validate({"data": data}) is False
+        assert rule.errors().count() == 2
+
+    def test_many_codes_still_collapse_to_one_per_version(self):
+        """20 codes split 15/5 across two versions should yield 2 failures."""
+        rule = RuleDDF00073()
+        codes = []
+        parents = {}
+        for i in range(15):
+            cid = f"C{i}"
+            codes.append({"id": cid, "codeSystem": "X", "codeSystemVersion": "1"})
+            parents[cid] = {"id": "SV1"}
+        for i in range(15, 20):
+            cid = f"C{i}"
+            codes.append({"id": cid, "codeSystem": "X", "codeSystemVersion": "2"})
+            parents[cid] = {"id": "SV1"}
+        data = self._data(
+            {"StudyVersion": [{"id": "SV1"}], "Code": codes},
+            parent_map=parents,
+        )
+        assert rule.validate({"data": data}) is False
+        assert rule.errors().count() == 2
+        dump = rule.errors().dump(level=RuleTemplate.WARNING)
+        # The count-of-codes per version should appear in the message.
+        assert "15 Code(s)" in dump
+        assert "5 Code(s)" in dump
+
+    def test_three_versions_yield_three_failures(self):
+        rule = RuleDDF00073()
+        data = self._data(
+            {
+                "StudyVersion": [{"id": "SV1"}],
+                "Code": [
+                    {"id": "C1", "codeSystem": "X", "codeSystemVersion": "1"},
+                    {"id": "C2", "codeSystem": "X", "codeSystemVersion": "2"},
+                    {"id": "C3", "codeSystem": "X", "codeSystemVersion": "3"},
+                ],
+            },
+            parent_map={
+                "C1": {"id": "SV1"},
+                "C2": {"id": "SV1"},
+                "C3": {"id": "SV1"},
+            },
+        )
+        assert rule.validate({"data": data}) is False
+        assert rule.errors().count() == 3
+
+    def test_different_code_systems_independent(self):
+        """Version spread per codeSystem — different systems shouldn't cross-pollute."""
+        rule = RuleDDF00073()
+        data = self._data(
+            {
+                "StudyVersion": [{"id": "SV1"}],
+                "Code": [
+                    {"id": "C1", "codeSystem": "X", "codeSystemVersion": "1"},
+                    {"id": "C2", "codeSystem": "X", "codeSystemVersion": "2"},
+                    {"id": "C3", "codeSystem": "Y", "codeSystemVersion": "1"},
+                ],
+            },
+            parent_map={
+                "C1": {"id": "SV1"},
+                "C2": {"id": "SV1"},
+                "C3": {"id": "SV1"},
+            },
+        )
+        assert rule.validate({"data": data}) is False
+        # X has 2 versions (2 failures); Y has 1 version (0 failures)
         assert rule.errors().count() == 2
 
     def test_missing_cs_csv_skipped(self):
