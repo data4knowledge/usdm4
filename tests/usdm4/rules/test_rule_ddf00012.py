@@ -75,7 +75,5 @@ class TestRuleDDF00012:
 
     def test_base_study_design_zero_main_fails(self):
         rule = RuleDDF00012()
-        data = self._data(
-            study_design=[{"id": "SD1", "scheduleTimelines": []}]
-        )
+        data = self._data(study_design=[{"id": "SD1", "scheduleTimelines": []}])
         assert rule.validate({"data": data}) is False

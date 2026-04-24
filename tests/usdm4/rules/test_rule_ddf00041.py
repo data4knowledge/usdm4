@@ -51,9 +51,7 @@ class TestRuleDDF00041:
                     "objectives": [
                         {
                             "id": "O1",
-                            "endpoints": [
-                                {"id": "E1", "level": {"code": "OTHER"}}
-                            ],
+                            "endpoints": [{"id": "E1", "level": {"code": "OTHER"}}],
                         }
                     ],
                 }

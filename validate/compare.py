@@ -67,7 +67,14 @@ import yaml
 
 # Default locations to probe for the CORE rules JSON. Order matters.
 DEFAULT_CORE_JSON_CANDIDATES = [
-    Path.home() / "Library" / "Caches" / "usdm4" / "core" / "rules" / "usdm" / "4-0.json",
+    Path.home()
+    / "Library"
+    / "Caches"
+    / "usdm4"
+    / "core"
+    / "rules"
+    / "usdm"
+    / "4-0.json",
     Path.home() / ".cache" / "usdm4" / "core" / "rules" / "usdm" / "4-0.json",
 ]
 
@@ -133,8 +140,7 @@ def load_core_to_ddf_map(core_rules_json: Path | None) -> dict[str, str]:
         # Multiple or zero DDF mappings: leave this CORE id unmapped.
 
     print(
-        f"compare.py: loaded CORE->DDF id map ({len(mapping)} entries) "
-        f"from {path}",
+        f"compare.py: loaded CORE->DDF id map ({len(mapping)} entries) from {path}",
         file=sys.stderr,
     )
     return mapping
@@ -173,9 +179,7 @@ def load_core(path: Path, core_to_ddf: dict[str, str]) -> dict:
             existing = rules[effective_rid]
             existing["findings_count"] += row["findings_count"]
             prev_ids = existing.get("core_id", "")
-            existing["core_id"] = (
-                f"{prev_ids},{core_rid}" if prev_ids else core_rid
-            )
+            existing["core_id"] = f"{prev_ids},{core_rid}" if prev_ids else core_rid
         else:
             rules[effective_rid] = row
     return {
@@ -287,7 +291,11 @@ def build_report(core_data: dict, d4k_data: dict) -> dict:
         }
         # Preserve CORE id for traceability when the row came from a reconciled
         # CORE finding (i.e. core_row exists and its core_id differs from rid).
-        if core_row is not None and core_row.get("core_id") and core_row["core_id"] != rid:
+        if (
+            core_row is not None
+            and core_row.get("core_id")
+            and core_row["core_id"] != rid
+        ):
             row["core_id"] = core_row["core_id"]
         rows.append(row)
 
@@ -298,9 +306,7 @@ def build_report(core_data: dict, d4k_data: dict) -> dict:
             "core": core_data["summary"],
             "d4k": d4k_data["summary"],
             "rule_ids_total": len(rule_ids),
-            "rule_ids_shared": len(
-                set(core_data["rules"]) & set(d4k_data["rules"])
-            ),
+            "rule_ids_shared": len(set(core_data["rules"]) & set(d4k_data["rules"])),
             "rule_ids_d4k_only_in_library": len(
                 set(d4k_data["rules"]) - set(core_data["rules"])
             ),

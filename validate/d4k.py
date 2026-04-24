@@ -127,18 +127,25 @@ def main():
     if result.passed():
         print("Validation PASSED", file=sys.stderr)
     elif result.passed_or_not_implemented():
-        not_impl = len([o for o in result.outcomes.values()
-                        if o.status == RuleStatus.NOT_IMPLEMENTED])
+        not_impl = len(
+            [
+                o
+                for o in result.outcomes.values()
+                if o.status == RuleStatus.NOT_IMPLEMENTED
+            ]
+        )
         print(
             f"Validation PASSED (all implemented rules). "
             f"{not_impl} rule(s) not implemented.",
             file=sys.stderr,
         )
     else:
-        failures = [o for o in result.outcomes.values()
-                    if o.status == RuleStatus.FAILURE]
-        exceptions = [o for o in result.outcomes.values()
-                      if o.status == RuleStatus.EXCEPTION]
+        failures = [
+            o for o in result.outcomes.values() if o.status == RuleStatus.FAILURE
+        ]
+        exceptions = [
+            o for o in result.outcomes.values() if o.status == RuleStatus.EXCEPTION
+        ]
         print(
             f"Validation FAILED: {result.finding_count} finding(s) across "
             f"{len(failures)} rule(s); {len(exceptions)} rule exception(s).",

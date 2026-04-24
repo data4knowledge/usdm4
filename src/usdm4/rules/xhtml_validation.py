@@ -93,7 +93,9 @@ class XhtmlValidator:
         if text is None:
             return []
         if not isinstance(text, str):
-            return [XhtmlError(None, f"text is not a string (type={type(text).__name__})")]
+            return [
+                XhtmlError(None, f"text is not a string (type={type(text).__name__})")
+            ]
         if text.strip() == "":
             return []
         wrapped = _WRAPPER_OPEN + text + _WRAPPER_CLOSE

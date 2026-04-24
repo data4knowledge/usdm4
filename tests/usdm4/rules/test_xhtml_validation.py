@@ -57,7 +57,7 @@ def test_parse_error_for_broken_markup():
 
 def test_parse_error_for_bad_attribute():
     v = XhtmlValidator()
-    errs = v.validate('<p class=>missing value</p>')
+    errs = v.validate("<p class=>missing value</p>")
     assert errs
 
 

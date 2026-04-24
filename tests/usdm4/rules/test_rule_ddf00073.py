@@ -24,9 +24,7 @@ class TestRuleDDF00073:
         data = self._data(
             {
                 "StudyVersion": [{"id": "SV1"}],
-                "Code": [
-                    {"id": "C1", "codeSystem": "X", "codeSystemVersion": "1"}
-                ],
+                "Code": [{"id": "C1", "codeSystem": "X", "codeSystemVersion": "1"}],
             },
             parent_map={"C1": None},
         )

@@ -9,9 +9,7 @@ from usdm4.rules.rule_template import RuleTemplate
 def _ct_with(codes_decodes):
     ct = MagicMock()
     ct.klass_and_attribute.return_value = {
-        "terms": [
-            {"conceptId": c, "preferredTerm": d} for c, d in codes_decodes
-        ]
+        "terms": [{"conceptId": c, "preferredTerm": d} for c, d in codes_decodes]
     }
     return ct
 

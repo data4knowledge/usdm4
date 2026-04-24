@@ -25,7 +25,13 @@ class TestRuleDDF00132:
     def test_population_only_passes(self):
         rule = RuleDDF00132()
         data = _data(
-            [{"id": "P1", ATTR: {"value": 100}, "cohorts": [{"id": "C1"}, {"id": "C2"}]}]
+            [
+                {
+                    "id": "P1",
+                    ATTR: {"value": 100},
+                    "cohorts": [{"id": "C1"}, {"id": "C2"}],
+                }
+            ]
         )
         assert rule.validate({"data": data}) is True
 

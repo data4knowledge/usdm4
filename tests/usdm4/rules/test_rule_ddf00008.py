@@ -31,9 +31,7 @@ class TestRuleDDF00008:
 
     def test_both_set_fails(self):
         rule = RuleDDF00008()
-        data = _data(
-            [{"id": "S1", "defaultConditionId": "C1", "timelineExitId": "T1"}]
-        )
+        data = _data([{"id": "S1", "defaultConditionId": "C1", "timelineExitId": "T1"}])
         assert rule.validate({"data": data}) is False
         assert "Both" in rule.errors().dump()
 
@@ -48,16 +46,12 @@ class TestRuleDDF00008:
 
     def test_both_null_fails(self):
         rule = RuleDDF00008()
-        data = _data(
-            [{"id": "S1", "defaultConditionId": None, "timelineExitId": None}]
-        )
+        data = _data([{"id": "S1", "defaultConditionId": None, "timelineExitId": None}])
         assert rule.validate({"data": data}) is False
 
     def test_both_empty_string_fails(self):
         rule = RuleDDF00008()
-        data = _data(
-            [{"id": "S1", "defaultConditionId": "", "timelineExitId": ""}]
-        )
+        data = _data([{"id": "S1", "defaultConditionId": "", "timelineExitId": ""}])
         assert rule.validate({"data": data}) is False
 
     def test_mix_of_instances_reports_all_failures(self):
