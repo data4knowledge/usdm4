@@ -1,23 +1,14 @@
 file: /Users/daveih/Documents/github/usdm4/validate/sample_usdm.json
 engine: d4k
 is_valid: false
-rules_executed: 260
+rules_executed: 213
 finding_count: 20
 counts:
   success: 202
   failure: 11
   exception: 0
-  not_implemented: 47
+  not_implemented: 0
 outcomes:
-- rule_id: DDF00003
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00004
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00005
-  status: Not Implemented
-  error_count: 0
 - rule_id: DDF00006
   status: Success
   error_count: 0
@@ -44,12 +35,6 @@ outcomes:
   error_count: 0
 - rule_id: DDF00014
   status: Success
-  error_count: 0
-- rule_id: DDF00015
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00016
-  status: Not Implemented
   error_count: 0
 - rule_id: DDF00017
   status: Success
@@ -129,9 +114,6 @@ outcomes:
 - rule_id: DDF00042
   status: Success
   error_count: 0
-- rule_id: DDF00043
-  status: Not Implemented
-  error_count: 0
 - rule_id: DDF00044
   status: Success
   error_count: 0
@@ -144,12 +126,6 @@ outcomes:
 - rule_id: DDF00047
   status: Success
   error_count: 0
-- rule_id: DDF00048
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00049
-  status: Not Implemented
-  error_count: 0
 - rule_id: DDF00050
   status: Success
   error_count: 0
@@ -159,20 +135,8 @@ outcomes:
 - rule_id: DDF00052
   status: Success
   error_count: 0
-- rule_id: DDF00053
-  status: Not Implemented
-  error_count: 0
 - rule_id: DDF00054
   status: Success
-  error_count: 0
-- rule_id: DDF00055
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00056
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00057
-  status: Not Implemented
   error_count: 0
 - rule_id: DDF00058
   status: Success
@@ -192,26 +156,8 @@ outcomes:
 - rule_id: DDF00063
   status: Success
   error_count: 0
-- rule_id: DDF00064
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00065
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00066
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00067
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00068
-  status: Not Implemented
-  error_count: 0
 - rule_id: DDF00069
   status: Success
-  error_count: 0
-- rule_id: DDF00070
-  status: Not Implemented
   error_count: 0
 - rule_id: DDF00071
   status: Success
@@ -222,23 +168,11 @@ outcomes:
 - rule_id: DDF00073
   status: Success
   error_count: 0
-- rule_id: DDF00074
-  status: Not Implemented
-  error_count: 0
 - rule_id: DDF00075
   status: Success
   error_count: 0
 - rule_id: DDF00076
   status: Success
-  error_count: 0
-- rule_id: DDF00077
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00078
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00079
-  status: Not Implemented
   error_count: 0
 - rule_id: DDF00080
   status: Success
@@ -264,20 +198,11 @@ outcomes:
 - rule_id: DDF00084
   status: Success
   error_count: 0
-- rule_id: DDF00085
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00086
-  status: Not Implemented
-  error_count: 0
 - rule_id: DDF00087
   status: Success
   error_count: 0
 - rule_id: DDF00088
   status: Success
-  error_count: 0
-- rule_id: DDF00089
-  status: Not Implemented
   error_count: 0
 - rule_id: DDF00090
   status: Success
@@ -285,17 +210,11 @@ outcomes:
 - rule_id: DDF00091
   status: Success
   error_count: 0
-- rule_id: DDF00092
-  status: Not Implemented
-  error_count: 0
 - rule_id: DDF00093
   status: Success
   error_count: 0
 - rule_id: DDF00094
   status: Success
-  error_count: 0
-- rule_id: DDF00095
-  status: Not Implemented
   error_count: 0
 - rule_id: DDF00096
   status: Success
@@ -334,9 +253,6 @@ outcomes:
 - rule_id: DDF00102
   status: Success
   error_count: 0
-- rule_id: DDF00103
-  status: Not Implemented
-  error_count: 0
 - rule_id: DDF00104
   status: Success
   error_count: 0
@@ -352,50 +268,17 @@ outcomes:
 - rule_id: DDF00108
   status: Success
   error_count: 0
-- rule_id: DDF00109
-  status: Not Implemented
-  error_count: 0
 - rule_id: DDF00110
   status: Success
   error_count: 0
-- rule_id: DDF00111
-  status: Not Implemented
-  error_count: 0
 - rule_id: DDF00112
   status: Success
-  error_count: 0
-- rule_id: DDF00113
-  status: Not Implemented
   error_count: 0
 - rule_id: DDF00114
   status: Success
   error_count: 0
 - rule_id: DDF00115
   status: Success
-  error_count: 0
-- rule_id: DDF00116
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00117
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00118
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00119
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00120
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00121
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00122
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00123
-  status: Not Implemented
   error_count: 0
 - rule_id: DDF00124
   status: Success
@@ -411,15 +294,6 @@ outcomes:
   error_count: 0
 - rule_id: DDF00128
   status: Success
-  error_count: 0
-- rule_id: DDF00129
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00130
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00131
-  status: Not Implemented
   error_count: 0
 - rule_id: DDF00132
   status: Failure
@@ -443,23 +317,11 @@ outcomes:
     path: $.Study.StudyVersion[0].StudyDesign[0].StudyDesignPopulation
     rule_text: Within a study design, if a planned enrollment number is defined, it
       must be specified either in the study population or in all cohorts.
-- rule_id: DDF00134
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00135
-  status: Not Implemented
-  error_count: 0
 - rule_id: DDF00136
   status: Success
   error_count: 0
 - rule_id: DDF00137
   status: Success
-  error_count: 0
-- rule_id: DDF00138
-  status: Not Implemented
-  error_count: 0
-- rule_id: DDF00139
-  status: Not Implemented
   error_count: 0
 - rule_id: DDF00140
   status: Success
@@ -475,9 +337,6 @@ outcomes:
   error_count: 0
 - rule_id: DDF00144
   status: Success
-  error_count: 0
-- rule_id: DDF00145
-  status: Not Implemented
   error_count: 0
 - rule_id: DDF00146
   status: Success
