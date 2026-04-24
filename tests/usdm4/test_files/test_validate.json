@@ -37,28 +37,28 @@
                 "geographicScopes": [
                   {
                     "code": null,
-                    "id": "GeographicScope_1",
+                    "id": "GeographicScope_2",
                     "instanceType": "GeographicScope",
                     "type": {
                       "code": "C68846",
                       "codeSystem": "cdisc.org",
                       "codeSystemVersion": "2023-12-15",
                       "decode": "Global",
-                      "id": "Code_6",
+                      "id": "Code_9",
                       "instanceType": "Code"
                     }
                   }
                 ],
-                "id": "GovernanceDate_1",
+                "id": "GovernanceDate_2",
                 "instanceType": "GovernanceDate",
-                "label": "Design Approval",
-                "name": "D_APPROVE",
+                "label": "Design Approval (document)",
+                "name": "D_APPROVE_DOC",
                 "type": {
                   "code": "C71476",
                   "codeSystem": "cdisc.org",
                   "codeSystemVersion": "2023-12-15",
                   "decode": "Approval Date",
-                  "id": "Code_7",
+                  "id": "Code_10",
                   "instanceType": "Code"
                 }
               }

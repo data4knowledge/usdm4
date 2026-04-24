@@ -4522,90 +4522,6 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00010
-- attribute: elements
-  exception: null
-  klass: StudyElement
-  level: Error
-  message: Required attribute 'elements' is missing or empty
-  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyElement[0]
-  rule: DDF00040
-  rule_id: DDF00040
-  rule_text: Each study element must be referenced by at least one study cell.
-  status: Failure
-  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
-  type: DDF00040
-- attribute: elements
-  exception: null
-  klass: StudyElement
-  level: Error
-  message: Required attribute 'elements' is missing or empty
-  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyElement[1]
-  rule: DDF00040
-  rule_id: DDF00040
-  rule_text: Each study element must be referenced by at least one study cell.
-  status: Failure
-  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
-  type: DDF00040
-- attribute: elements
-  exception: null
-  klass: StudyElement
-  level: Error
-  message: Required attribute 'elements' is missing or empty
-  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyElement[2]
-  rule: DDF00040
-  rule_id: DDF00040
-  rule_text: Each study element must be referenced by at least one study cell.
-  status: Failure
-  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
-  type: DDF00040
-- attribute: elements
-  exception: null
-  klass: StudyElement
-  level: Error
-  message: Required attribute 'elements' is missing or empty
-  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyElement[3]
-  rule: DDF00040
-  rule_id: DDF00040
-  rule_text: Each study element must be referenced by at least one study cell.
-  status: Failure
-  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
-  type: DDF00040
-- attribute: elements
-  exception: null
-  klass: StudyElement
-  level: Error
-  message: Required attribute 'elements' is missing or empty
-  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyElement[4]
-  rule: DDF00040
-  rule_id: DDF00040
-  rule_text: Each study element must be referenced by at least one study cell.
-  status: Failure
-  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
-  type: DDF00040
-- attribute: elements
-  exception: null
-  klass: StudyElement
-  level: Error
-  message: Required attribute 'elements' is missing or empty
-  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyElement[5]
-  rule: DDF00040
-  rule_id: DDF00040
-  rule_text: Each study element must be referenced by at least one study cell.
-  status: Failure
-  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
-  type: DDF00040
-- attribute: elements
-  exception: null
-  klass: StudyElement
-  level: Error
-  message: Required attribute 'elements' is missing or empty
-  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyElement[6]
-  rule: DDF00040
-  rule_id: DDF00040
-  rule_text: Each study element must be referenced by at least one study cell.
-  status: Failure
-  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
-  type: DDF00040
 - attribute: type
   exception: null
   klass: Timing
@@ -5256,6 +5172,78 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00075
+- attribute: id
+  exception: null
+  klass: Quantity
+  level: Error
+  message: id 'Range_3_Min' is not unique (2 occurrences)
+  path: $.study.versions[0].studyDesigns[0].population.plannedAge.minValue
+  rule: DDF00083
+  rule_id: DDF00083
+  rule_text: Within a study version, all id values must be unique.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00083
+- attribute: id
+  exception: null
+  klass: Quantity
+  level: Error
+  message: id 'Range_3_Min' is not unique (2 occurrences)
+  path: $.study.versions[0].studyDesigns[0].population.plannedAge.maxValue
+  rule: DDF00083
+  rule_id: DDF00083
+  rule_text: Within a study version, all id values must be unique.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00083
+- attribute: id
+  exception: null
+  klass: AliasCode
+  level: Error
+  message: id 'Code_548_Unit' is not unique (2 occurrences)
+  path: $.study.versions[0].studyDesigns[0].population.plannedAge.minValue.unit
+  rule: DDF00083
+  rule_id: DDF00083
+  rule_text: Within a study version, all id values must be unique.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00083
+- attribute: id
+  exception: null
+  klass: AliasCode
+  level: Error
+  message: id 'Code_548_Unit' is not unique (2 occurrences)
+  path: $.study.versions[0].studyDesigns[0].population.plannedAge.maxValue.unit
+  rule: DDF00083
+  rule_id: DDF00083
+  rule_text: Within a study version, all id values must be unique.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00083
+- attribute: id
+  exception: null
+  klass: Code
+  level: Error
+  message: id 'Code_548' is not unique (2 occurrences)
+  path: $.study.versions[0].studyDesigns[0].population.plannedAge.minValue.unit.standardCode
+  rule: DDF00083
+  rule_id: DDF00083
+  rule_text: Within a study version, all id values must be unique.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00083
+- attribute: id
+  exception: null
+  klass: Code
+  level: Error
+  message: id 'Code_548' is not unique (2 occurrences)
+  path: $.study.versions[0].studyDesigns[0].population.plannedAge.maxValue.unit.standardCode
+  rule: DDF00083
+  rule_id: DDF00083
+  rule_text: Within a study version, all id values must be unique.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00083
 - attribute: objectives
   exception: null
   klass: InterventionalStudyDesign
@@ -5282,32 +5270,6 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00101
-- attribute: plannedCompletionNumber
-  exception: null
-  klass: StudyDesignPopulation
-  level: Error
-  message: Required attribute 'plannedCompletionNumber' is missing or empty
-  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyDesignPopulation
-  rule: DDF00132
-  rule_id: DDF00132
-  rule_text: Within a study design, if a planned completion number is defined, it
-    must be specified either in the study population or in all cohorts.
-  status: Failure
-  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
-  type: DDF00132
-- attribute: plannedEnrollmentNumber
-  exception: null
-  klass: StudyDesignPopulation
-  level: Error
-  message: Required attribute 'plannedEnrollmentNumber' is missing or empty
-  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyDesignPopulation
-  rule: DDF00133
-  rule_id: DDF00133
-  rule_text: Within a study design, if a planned enrollment number is defined, it
-    must be specified either in the study population or in all cohorts.
-  status: Failure
-  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
-  type: DDF00133
 - attribute: plannedDuration
   exception: null
   klass: ScheduleTimeline
@@ -6116,6 +6078,102 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00172
+- attribute: text
+  exception: null
+  klass: NarrativeContentItem
+  level: Warning
+  message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 8: Element\
+    \ '{http://www.w3.org/1999/xhtml}img': The attribute 'alt' is required but missing."
+  path: $.Study.StudyVersion[0].NarrativeContentItem[7]
+  rule: DDF00187
+  rule_id: DDF00187
+  rule_text: Narrative content item text is expected to be HTML formatted.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00187
+- attribute: text
+  exception: null
+  klass: NarrativeContentItem
+  level: Warning
+  message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 2: Element\
+    \ '{http://www.w3.org/1999/xhtml}ol', attribute 'type': The attribute 'type' is\
+    \ not allowed."
+  path: $.Study.StudyVersion[0].NarrativeContentItem[27]
+  rule: DDF00187
+  rule_id: DDF00187
+  rule_text: Narrative content item text is expected to be HTML formatted.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00187
+- attribute: text
+  exception: null
+  klass: NarrativeContentItem
+  level: Warning
+  message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 3: Element\
+    \ '{http://www.w3.org/1999/xhtml}style': This element is not expected."
+  path: $.Study.StudyVersion[0].NarrativeContentItem[35]
+  rule: DDF00187
+  rule_id: DDF00187
+  rule_text: Narrative content item text is expected to be HTML formatted.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00187
+- attribute: text
+  exception: null
+  klass: NarrativeContentItem
+  level: Warning
+  message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 13: Element\
+    \ '{http://www.w3.org/1999/xhtml}ol', attribute 'type': The attribute 'type' is\
+    \ not allowed.; line 28: Element '{http://www.w3.org/1999/xhtml}li': This element\
+    \ is not expected."
+  path: $.Study.StudyVersion[0].NarrativeContentItem[36]
+  rule: DDF00187
+  rule_id: DDF00187
+  rule_text: Narrative content item text is expected to be HTML formatted.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00187
+- attribute: text
+  exception: null
+  klass: NarrativeContentItem
+  level: Warning
+  message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 7: Element\
+    \ '{http://www.w3.org/1999/xhtml}ul': This element is not expected. Expected is\
+    \ ( {http://www.w3.org/1999/xhtml}li )."
+  path: $.Study.StudyVersion[0].NarrativeContentItem[38]
+  rule: DDF00187
+  rule_id: DDF00187
+  rule_text: Narrative content item text is expected to be HTML formatted.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00187
+- attribute: text
+  exception: null
+  klass: NarrativeContentItem
+  level: Warning
+  message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 29: Element\
+    \ '{http://www.w3.org/1999/xhtml}style': This element is not expected."
+  path: $.Study.StudyVersion[0].NarrativeContentItem[39]
+  rule: DDF00187
+  rule_id: DDF00187
+  rule_text: Narrative content item text is expected to be HTML formatted.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00187
+- attribute: text
+  exception: null
+  klass: NarrativeContentItem
+  level: Warning
+  message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 2: Element\
+    \ '{http://www.w3.org/1999/xhtml}ol', attribute 'type': The attribute 'type' is\
+    \ not allowed."
+  path: $.Study.StudyVersion[0].NarrativeContentItem[46]
+  rule: DDF00187
+  rule_id: DDF00187
+  rule_text: Narrative content item text is expected to be HTML formatted.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00187
 - attribute: plannedSex
   exception: null
   klass: StudyDesignPopulation
@@ -6863,7 +6921,8 @@
   exception: null
   klass: EligibilityCriterionItem
   level: Warning
-  message: EligibilityCriterionItem.text is not well-formed XHTML
+  message: "EligibilityCriterionItem.text is not valid USDM-XHTML \u2014 line 33:\
+    \ Opening and ending tag mismatch: p line 30 and li, line 33, column 12"
   path: $.Study.StudyVersion[0].EligibilityCriterionItem[4]
   rule: DDF00247
   rule_id: DDF00247
@@ -6875,7 +6934,64 @@
   exception: null
   klass: EligibilityCriterionItem
   level: Warning
-  message: EligibilityCriterionItem.text is not well-formed XHTML
+  message: "EligibilityCriterionItem.text is not valid USDM-XHTML \u2014 line 2: Element\
+    \ '{http://www.w3.org/1999/xhtml}ol', attribute 'type': The attribute 'type' is\
+    \ not allowed."
+  path: $.Study.StudyVersion[0].EligibilityCriterionItem[11]
+  rule: DDF00247
+  rule_id: DDF00247
+  rule_text: Syntax template text is expected to be HTML formatted.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00247
+- attribute: text
+  exception: null
+  klass: EligibilityCriterionItem
+  level: Warning
+  message: "EligibilityCriterionItem.text is not valid USDM-XHTML \u2014 line 2: Element\
+    \ '{http://www.w3.org/1999/xhtml}ol', attribute 'type': The attribute 'type' is\
+    \ not allowed."
+  path: $.Study.StudyVersion[0].EligibilityCriterionItem[13]
+  rule: DDF00247
+  rule_id: DDF00247
+  rule_text: Syntax template text is expected to be HTML formatted.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00247
+- attribute: text
+  exception: null
+  klass: EligibilityCriterionItem
+  level: Warning
+  message: "EligibilityCriterionItem.text is not valid USDM-XHTML \u2014 line 2: Element\
+    \ '{http://www.w3.org/1999/xhtml}ol', attribute 'type': The attribute 'type' is\
+    \ not allowed."
+  path: $.Study.StudyVersion[0].EligibilityCriterionItem[15]
+  rule: DDF00247
+  rule_id: DDF00247
+  rule_text: Syntax template text is expected to be HTML formatted.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00247
+- attribute: text
+  exception: null
+  klass: EligibilityCriterionItem
+  level: Warning
+  message: "EligibilityCriterionItem.text is not valid USDM-XHTML \u2014 line 2: Element\
+    \ '{http://www.w3.org/1999/xhtml}ol', attribute 'type': The attribute 'type' is\
+    \ not allowed."
+  path: $.Study.StudyVersion[0].EligibilityCriterionItem[16]
+  rule: DDF00247
+  rule_id: DDF00247
+  rule_text: Syntax template text is expected to be HTML formatted.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00247
+- attribute: text
+  exception: null
+  klass: EligibilityCriterionItem
+  level: Warning
+  message: "EligibilityCriterionItem.text is not valid USDM-XHTML \u2014 line 9: Opening\
+    \ and ending tag mismatch: p line 1 and div, line 9, column 12"
   path: $.Study.StudyVersion[0].EligibilityCriterionItem[17]
   rule: DDF00247
   rule_id: DDF00247
@@ -6887,7 +7003,78 @@
   exception: null
   klass: EligibilityCriterionItem
   level: Warning
-  message: EligibilityCriterionItem.text is not well-formed XHTML
+  message: "EligibilityCriterionItem.text is not valid USDM-XHTML \u2014 line 2: Element\
+    \ '{http://www.w3.org/1999/xhtml}ol', attribute 'type': The attribute 'type' is\
+    \ not allowed."
+  path: $.Study.StudyVersion[0].EligibilityCriterionItem[18]
+  rule: DDF00247
+  rule_id: DDF00247
+  rule_text: Syntax template text is expected to be HTML formatted.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00247
+- attribute: text
+  exception: null
+  klass: EligibilityCriterionItem
+  level: Warning
+  message: "EligibilityCriterionItem.text is not valid USDM-XHTML \u2014 line 2: Element\
+    \ '{http://www.w3.org/1999/xhtml}ol', attribute 'type': The attribute 'type' is\
+    \ not allowed."
+  path: $.Study.StudyVersion[0].EligibilityCriterionItem[19]
+  rule: DDF00247
+  rule_id: DDF00247
+  rule_text: Syntax template text is expected to be HTML formatted.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00247
+- attribute: text
+  exception: null
+  klass: EligibilityCriterionItem
+  level: Warning
+  message: "EligibilityCriterionItem.text is not valid USDM-XHTML \u2014 line 2: Element\
+    \ '{http://www.w3.org/1999/xhtml}ol', attribute 'type': The attribute 'type' is\
+    \ not allowed."
+  path: $.Study.StudyVersion[0].EligibilityCriterionItem[20]
+  rule: DDF00247
+  rule_id: DDF00247
+  rule_text: Syntax template text is expected to be HTML formatted.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00247
+- attribute: text
+  exception: null
+  klass: EligibilityCriterionItem
+  level: Warning
+  message: "EligibilityCriterionItem.text is not valid USDM-XHTML \u2014 line 2: Element\
+    \ '{http://www.w3.org/1999/xhtml}ol', attribute 'type': The attribute 'type' is\
+    \ not allowed."
+  path: $.Study.StudyVersion[0].EligibilityCriterionItem[21]
+  rule: DDF00247
+  rule_id: DDF00247
+  rule_text: Syntax template text is expected to be HTML formatted.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00247
+- attribute: text
+  exception: null
+  klass: EligibilityCriterionItem
+  level: Warning
+  message: "EligibilityCriterionItem.text is not valid USDM-XHTML \u2014 line 2: Element\
+    \ '{http://www.w3.org/1999/xhtml}ol', attribute 'type': The attribute 'type' is\
+    \ not allowed."
+  path: $.Study.StudyVersion[0].EligibilityCriterionItem[23]
+  rule: DDF00247
+  rule_id: DDF00247
+  rule_text: Syntax template text is expected to be HTML formatted.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00247
+- attribute: text
+  exception: null
+  klass: EligibilityCriterionItem
+  level: Warning
+  message: "EligibilityCriterionItem.text is not valid USDM-XHTML \u2014 line 15:\
+    \ Opening and ending tag mismatch: li line 7 and ol, line 15, column 6"
   path: $.Study.StudyVersion[0].EligibilityCriterionItem[27]
   rule: DDF00247
   rule_id: DDF00247
@@ -6899,7 +7086,8 @@
   exception: null
   klass: EligibilityCriterionItem
   level: Warning
-  message: EligibilityCriterionItem.text is not well-formed XHTML
+  message: "EligibilityCriterionItem.text is not valid USDM-XHTML \u2014 line 179:\
+    \ Opening and ending tag mismatch: td line 172 and table, line 179, column 13"
   path: $.Study.StudyVersion[0].EligibilityCriterionItem[30]
   rule: DDF00247
   rule_id: DDF00247

@@ -1,3 +1,101 @@
+- attribute: defaultConditionId, timelineExitId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Neither defaultConditionId nor timelineExitId is specified; set exactly
+    one
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[0]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00008
+- attribute: defaultConditionId, timelineExitId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Neither defaultConditionId nor timelineExitId is specified; set exactly
+    one
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[1]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00008
+- attribute: defaultConditionId, timelineExitId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Neither defaultConditionId nor timelineExitId is specified; set exactly
+    one
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[2]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00008
+- attribute: defaultConditionId, timelineExitId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Neither defaultConditionId nor timelineExitId is specified; set exactly
+    one
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[3]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00008
+- attribute: defaultConditionId, timelineExitId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Neither defaultConditionId nor timelineExitId is specified; set exactly
+    one
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[4]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00008
+- attribute: defaultConditionId, timelineExitId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Neither defaultConditionId nor timelineExitId is specified; set exactly
+    one
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[5]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00008
+- attribute: defaultConditionId, timelineExitId
+  exception: null
+  klass: ScheduledActivityInstance
+  level: Error
+  message: Neither defaultConditionId nor timelineExitId is specified; set exactly
+    one
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].ScheduledActivityInstance[6]
+  rule: DDF00008
+  rule_id: DDF00008
+  rule_text: A scheduled activity instance must refer to either a default condition
+    or a timeline exit, but not both.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00008
 - attribute: timelineExitId
   exception: null
   klass: ScheduleTimeline
@@ -11,6 +109,19 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00037
+- attribute: objectives.endpoints.level
+  exception: null
+  klass: InterventionalStudyDesign
+  level: Error
+  message: Expected at least one Primary Endpoint in study design, found 0
+  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0]
+  rule: DDF00041
+  rule_id: DDF00041
+  rule_text: Within a study design, there must be at least one endpoint with level
+    primary.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00041
 - attribute: type
   exception: null
   klass: Timing
@@ -563,6 +674,90 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00080
+- attribute: id
+  exception: null
+  klass: Code
+  level: Error
+  message: id 'Code_24' is not unique (5 occurrences)
+  path: $.study.versions[0].studyDesigns[0].scheduleTimelines[0].timings[1].type
+  rule: DDF00083
+  rule_id: DDF00083
+  rule_text: Within a study version, all id values must be unique.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00083
+- attribute: id
+  exception: null
+  klass: Code
+  level: Error
+  message: id 'Code_24' is not unique (5 occurrences)
+  path: $.study.versions[0].studyDesigns[0].scheduleTimelines[0].timings[2].type
+  rule: DDF00083
+  rule_id: DDF00083
+  rule_text: Within a study version, all id values must be unique.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00083
+- attribute: id
+  exception: null
+  klass: Code
+  level: Error
+  message: id 'Code_24' is not unique (5 occurrences)
+  path: $.study.versions[0].studyDesigns[0].scheduleTimelines[0].timings[3].type
+  rule: DDF00083
+  rule_id: DDF00083
+  rule_text: Within a study version, all id values must be unique.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00083
+- attribute: id
+  exception: null
+  klass: Code
+  level: Error
+  message: id 'Code_24' is not unique (5 occurrences)
+  path: $.study.versions[0].studyDesigns[0].scheduleTimelines[0].timings[4].type
+  rule: DDF00083
+  rule_id: DDF00083
+  rule_text: Within a study version, all id values must be unique.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00083
+- attribute: id
+  exception: null
+  klass: Code
+  level: Error
+  message: id 'Code_24' is not unique (5 occurrences)
+  path: $.study.versions[0].studyDesigns[0].scheduleTimelines[0].timings[5].type
+  rule: DDF00083
+  rule_id: DDF00083
+  rule_text: Within a study version, all id values must be unique.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00083
+- attribute: id
+  exception: null
+  klass: Code
+  level: Error
+  message: id 'Code_3' is not unique (2 occurrences)
+  path: $.study.versions[0].studyDesigns[0].model
+  rule: DDF00083
+  rule_id: DDF00083
+  rule_text: Within a study version, all id values must be unique.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00083
+- attribute: id
+  exception: null
+  klass: Code
+  level: Error
+  message: id 'Code_3' is not unique (2 occurrences)
+  path: $.study.documentedBy[0].versions[0].status
+  rule: DDF00083
+  rule_id: DDF00083
+  rule_text: Within a study version, all id values must be unique.
+  status: Failure
+  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
+  type: DDF00083
 - attribute: objectives
   exception: null
   klass: InterventionalStudyDesign
@@ -595,7 +790,8 @@
   exception: null
   klass: StudyDesignPopulation
   level: Error
-  message: Required attribute 'plannedAge' is missing or empty
+  message: plannedAge is not specified on the study population and not specified on
+    any of the 0 cohort(s); specify it on the study population or on all cohorts
   path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyDesignPopulation
   rule: DDF00097
   rule_id: DDF00097
@@ -608,7 +804,8 @@
   exception: null
   klass: StudyDesignPopulation
   level: Error
-  message: Required attribute 'plannedSex' is missing or empty
+  message: plannedSex is not specified on the study population and not specified on
+    any of the 0 cohort(s); specify it on the study population or on all cohorts
   path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyDesignPopulation
   rule: DDF00098
   rule_id: DDF00098
@@ -617,32 +814,6 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00098
-- attribute: plannedCompletionNumber
-  exception: null
-  klass: StudyDesignPopulation
-  level: Error
-  message: Required attribute 'plannedCompletionNumber' is missing or empty
-  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyDesignPopulation
-  rule: DDF00132
-  rule_id: DDF00132
-  rule_text: Within a study design, if a planned completion number is defined, it
-    must be specified either in the study population or in all cohorts.
-  status: Failure
-  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
-  type: DDF00132
-- attribute: plannedEnrollmentNumber
-  exception: null
-  klass: StudyDesignPopulation
-  level: Error
-  message: Required attribute 'plannedEnrollmentNumber' is missing or empty
-  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyDesignPopulation
-  rule: DDF00133
-  rule_id: DDF00133
-  rule_text: Within a study design, if a planned enrollment number is defined, it
-    must be specified either in the study population or in all cohorts.
-  status: Failure
-  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
-  type: DDF00133
 - attribute: plannedDuration
   exception: null
   klass: ScheduleTimeline
