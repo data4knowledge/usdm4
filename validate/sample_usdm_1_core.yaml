@@ -20,13 +20,13 @@ findings:
   - instance_id: Quantity_2
     path: /study/versions/0/amendments/0/enrollments/0/quantity
     details:
-      parent_rel: quantity
       parent_entity: SubjectEnrollment
-      value: 0.0
       unit.standardCode.codeSystem: http://www.cdisc.org
+      parent_rel: quantity
       parent_id: SubjectEnrollment_2
-      unit.standardCode.code: C25613
+      value: 0.0
       unit.standardCode.decode: Percentage
+      unit.standardCode.code: C25613
 - rule_id: CORE-000973
   description: There must be exactly one study role with a code of sponsor.
   message: There is not exactly one study role with a code of sponsor (where code.code
@@ -70,95 +70,95 @@ findings:
     path: /study/versions/0/narrativeContentItems/4
     name: NCI-1.1.2
     details:
-      parent_rel: narrativeContentItems
       parent_entity: StudyVersion
       parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 78, col 49 [FATAL]: xmlParseEntityRef: no name'
+      parent_rel: narrativeContentItems
   - instance_id: NarrativeContentItem_9
     path: /study/versions/0/narrativeContentItems/8
     name: NCI-2.1
     details:
-      parent_rel: narrativeContentItems
       parent_entity: StudyVersion
       parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 4, col 32 [FATAL]: xmlParseEntityRef: no name'
+      parent_rel: narrativeContentItems
   - instance_id: NarrativeContentItem_11
     path: /study/versions/0/narrativeContentItems/10
     name: NCI-2.2.1
     details:
-      parent_rel: narrativeContentItems
       parent_entity: StudyVersion
       parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 1, col 247 [FATAL]: xmlParseEntityRef: no name'
+      parent_rel: narrativeContentItems
   - instance_id: NarrativeContentItem_23
     path: /study/versions/0/narrativeContentItems/22
     name: NCI-4.1.4
     details:
-      parent_rel: narrativeContentItems
       parent_entity: StudyVersion
       parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 10, col 49 [FATAL]: xmlParseEntityRef: no name'
+      parent_rel: narrativeContentItems
   - instance_id: NarrativeContentItem_36
     path: /study/versions/0/narrativeContentItems/35
     name: NCI-5.4.2
     details:
-      parent_rel: narrativeContentItems
       parent_entity: StudyVersion
       parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 1, col 213 [FATAL]: StartTag: invalid element name'
       - 'Invalid XHTML line 4, col 91 [FATAL]: StartTag: invalid element name'
       - 'Invalid XHTML line 11, col 84 [FATAL]: StartTag: invalid element name'
+      parent_rel: narrativeContentItems
   - instance_id: NarrativeContentItem_45
     path: /study/versions/0/narrativeContentItems/44
     name: NCI-6.2.2
     details:
-      parent_rel: narrativeContentItems
       parent_entity: StudyVersion
       parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 5, col 227 [FATAL]: StartTag: invalid element name'
       - 'Invalid XHTML line 39, col 435 [FATAL]: StartTag: invalid element name'
+      parent_rel: narrativeContentItems
   - instance_id: NarrativeContentItem_99
     path: /study/versions/0/narrativeContentItems/98
     name: NCI-8.4.4
     details:
-      parent_rel: narrativeContentItems
       parent_entity: StudyVersion
       parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 5, col 39 [FATAL]: StartTag: invalid element name'
+      parent_rel: narrativeContentItems
   - instance_id: NarrativeContentItem_196
     path: /study/versions/0/narrativeContentItems/195
     name: NCI-12.1.1.1
     details:
-      parent_rel: narrativeContentItems
       parent_entity: StudyVersion
       parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 20, col 138 [FATAL]: StartTag: invalid element name'
+      parent_rel: narrativeContentItems
   - instance_id: NarrativeContentItem_204
     path: /study/versions/0/narrativeContentItems/203
     name: NCI-13
     details:
-      parent_rel: narrativeContentItems
       parent_entity: StudyVersion
       parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 6, col 5 [FATAL]: StartTag: invalid element name'
+      parent_rel: narrativeContentItems
   - instance_id: NarrativeContentItem_205
     path: /study/versions/0/narrativeContentItems/204
     name: NCI-14
     details:
-      parent_rel: narrativeContentItems
       parent_entity: StudyVersion
       parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 8, col 285 [FATAL]: xmlParseEntityRef: no name'
+      parent_rel: narrativeContentItems
 - rule_id: CORE-000925
   description: A governance date type must be specified according to the extensible
     governance date type (C207413) DDF codelist (e.g. an entry with a code or decode
@@ -173,37 +173,37 @@ findings:
   - instance_id: GovernanceDate_1
     path: /study/versions/0/dateValues/0
     details:
-      type.decode: Approval Date
-      parent_rel: dateValues
-      description: null
+      type.codeSystem: http://www.cdisc.org
       parent_entity: StudyVersion
-      $codelist_code: C207413
+      type.code: C71476
+      type.decode: Approval Date
+      $codelist_extensible: null
       type.codeSystemVersion: '2023-12-15'
+      parent_id: StudyVersion_1
+      $code_for_decode_pref_term: null
+      description: null
       $pref_term_for_code: null
       $code_for_decode_value: null
-      type.codeSystem: http://www.cdisc.org
-      parent_id: StudyVersion_1
       $value_for_code: null
-      $codelist_extensible: null
-      type.code: C71476
-      $code_for_decode_pref_term: null
+      parent_rel: dateValues
+      $codelist_code: C207413
   - instance_id: GovernanceDate_2
     path: /study/versions/0/dateValues/1
     details:
-      type.decode: Effective Date
-      parent_rel: dateValues
-      description: null
+      type.codeSystem: http://www.cdisc.org
       parent_entity: StudyVersion
-      $codelist_code: C207413
+      type.code: C215663
+      type.decode: Effective Date
+      $codelist_extensible: null
       type.codeSystemVersion: '2023-12-15'
+      parent_id: StudyVersion_1
+      $code_for_decode_pref_term: null
+      description: null
       $pref_term_for_code: null
       $code_for_decode_value: null
-      type.codeSystem: http://www.cdisc.org
-      parent_id: StudyVersion_1
       $value_for_code: null
-      $codelist_extensible: null
-      type.code: C215663
-      $code_for_decode_pref_term: null
+      parent_rel: dateValues
+      $codelist_code: C207413
 - rule_id: CORE-000933
   description: A study title type must be specified using the study title type (C207419)
     DDF codelist.
@@ -218,55 +218,55 @@ findings:
   - instance_id: StudyTitle_1
     path: /study/versions/0/titles/0
     details:
-      type.decode: Official Study Title
-      parent_rel: titles
+      type.codeSystem: http://www.cdisc.org
       parent_entity: StudyVersion
+      type.code: C207616
+      type.decode: Official Study Title
+      $codelist_extensible: null
+      type.codeSystemVersion: '2023-12-15'
+      parent_id: StudyVersion_1
+      $code_for_decode_pref_term: null
+      $pref_term_for_code: null
+      $code_for_decode_value: null
+      $value_for_code: null
+      parent_rel: titles
       text: Proof of concept study (multicenter, phase II) on the efficacy of the
         selective TYK2 inhibitor Deucravacitinib in Lichen planus patients (DEUCRALIP)
       $codelist_code: C207419
-      type.codeSystemVersion: '2023-12-15'
-      $pref_term_for_code: null
-      $code_for_decode_value: null
-      type.codeSystem: http://www.cdisc.org
-      parent_id: StudyVersion_1
-      $value_for_code: null
-      $codelist_extensible: null
-      type.code: C207616
-      $code_for_decode_pref_term: null
   - instance_id: StudyTitle_2
     path: /study/versions/0/titles/1
     details:
-      type.decode: Study Acronym
-      parent_rel: titles
+      type.codeSystem: http://www.cdisc.org
       parent_entity: StudyVersion
-      text: DEUCRALIP
-      $codelist_code: C207419
+      type.code: C207646
+      type.decode: Study Acronym
+      $codelist_extensible: null
       type.codeSystemVersion: '2023-12-15'
+      parent_id: StudyVersion_1
+      $code_for_decode_pref_term: null
       $pref_term_for_code: null
       $code_for_decode_value: null
-      type.codeSystem: http://www.cdisc.org
-      parent_id: StudyVersion_1
       $value_for_code: null
-      $codelist_extensible: null
-      type.code: C207646
-      $code_for_decode_pref_term: null
+      parent_rel: titles
+      text: DEUCRALIP
+      $codelist_code: C207419
   - instance_id: StudyTitle_3
     path: /study/versions/0/titles/2
     details:
-      type.decode: Brief Study Title
-      parent_rel: titles
+      type.codeSystem: http://www.cdisc.org
       parent_entity: StudyVersion
-      text: DEUCRALIP
-      $codelist_code: C207419
+      type.code: C207615
+      type.decode: Brief Study Title
+      $codelist_extensible: null
       type.codeSystemVersion: '2023-12-15'
+      parent_id: StudyVersion_1
+      $code_for_decode_pref_term: null
       $pref_term_for_code: null
       $code_for_decode_value: null
-      type.codeSystem: http://www.cdisc.org
-      parent_id: StudyVersion_1
       $value_for_code: null
-      $codelist_extensible: null
-      type.code: C207615
-      $code_for_decode_pref_term: null
+      parent_rel: titles
+      text: DEUCRALIP
+      $codelist_code: C207419
 - rule_id: CORE-000815
   description: Within a study design, the planned age range must be specified either
     in the study population or in all cohorts.
@@ -278,19 +278,19 @@ findings:
     path: /study/versions/0/studyDesigns/0/population
     name: STUDY POP
     details:
-      plannedAge: null
-      parent_rel: population
       parent_entity: StudyDesign
+      plannedAge: null
       parent_id: StudyDesign_1
-      plannedAge.StudyCohort: Not in dataset
-      plannedAge.unit.decode.StudyCohort: Not in dataset
-      plannedAge.maxValue: Not in dataset
-      id.StudyCohort: Not in dataset
+      parent_rel: population
       plannedAge.minValue: Not in dataset
-      name.StudyCohort: Not in dataset
+      id.StudyCohort: Not in dataset
       plannedAge.maxValue.StudyCohort: Not in dataset
-      plannedAge.minValue.StudyCohort: Not in dataset
+      plannedAge.unit.decode.StudyCohort: Not in dataset
+      name.StudyCohort: Not in dataset
+      plannedAge.maxValue: Not in dataset
       plannedAge.unit.decode: Not in dataset
+      plannedAge.minValue.StudyCohort: Not in dataset
+      plannedAge.StudyCohort: Not in dataset
 - rule_id: CORE-000857
   description: A planned sex must be specified using the Sex of Participants (C66732)
     SDTM codelist.
@@ -318,15 +318,15 @@ findings:
     path: /study/versions/0/studyDesigns/0/population
     name: STUDY POP
     details:
-      parent_rel: population
       parent_entity: StudyDesign
-      plannedSex: false
       parent_id: StudyDesign_1
-      plannedSex.StudyCohort: Not in dataset
+      plannedSex: false
+      parent_rel: population
       id.StudyCohort: Not in dataset
-      plannedSex.decode.StudyCohort: Not in dataset
       name.StudyCohort: Not in dataset
       plannedSex.decode: Not in dataset
+      plannedSex.StudyCohort: Not in dataset
+      plannedSex.decode.StudyCohort: Not in dataset
 - rule_id: CORE-000943
   description: A study definition document type must be specified according to the
     extensible study definition document type (C215477) DDF codelist (e.g. an entry
@@ -344,19 +344,19 @@ findings:
     path: /study/documentedBy/0
     name: PROTOCOL V1
     details:
-      type.decode: Protocol
-      parent_rel: documentedBy
+      type.codeSystem: http://www.cdisc.org
       parent_entity: Study
-      $codelist_code: C215477
+      type.code: C70817
+      type.decode: Protocol
+      $codelist_extensible: null
       type.codeSystemVersion: '2023-12-15'
+      parent_id: 3fea818c-2f4f-4777-8a07-4b20bd2618ff
+      $code_for_decode_pref_term: null
       $pref_term_for_code: null
       $code_for_decode_value: null
-      type.codeSystem: http://www.cdisc.org
-      parent_id: 3fea818c-2f4f-4777-8a07-4b20bd2618ff
       $value_for_code: null
-      $codelist_extensible: null
-      type.code: C70817
-      $code_for_decode_pref_term: null
+      parent_rel: documentedBy
+      $codelist_code: C215477
 - rule_id: CORE-001054
   description: There must be exactly one sponsor study identifier (i.e., a study identifier
     whose scope is an organization that is identified as the organization for the
@@ -411,36 +411,36 @@ findings:
   - instance_id: StudyAmendmentReason_1
     path: /study/versions/0/amendments/0/primaryReason
     details:
-      parent_rel: primaryReason
+      parent_entity: StudyAmendment
       code.codeSystem: http://www.cdisc.org
       code.decode: Other
-      parent_entity: StudyAmendment
+      $codelist_extensible: null
+      parent_id: StudyAmendment_1
       code.code: C17649
-      $codelist_code: C207415
+      $code_for_decode_pref_term: null
       $pref_term_for_code: null
       $code_for_decode_value: null
-      parent_id: StudyAmendment_1
-      $value_for_code: null
-      $codelist_extensible: null
       code.codeSystemVersion: '2023-12-15'
-      $code_for_decode_pref_term: null
+      $value_for_code: null
+      parent_rel: primaryReason
+      $codelist_code: C207415
       description: Not in dataset
   - instance_id: StudyAmendmentReason_2
     path: /study/versions/0/amendments/0/secondaryReasons/0
     details:
-      parent_rel: secondaryReasons
+      parent_entity: StudyAmendment
       code.codeSystem: http://www.cdisc.org
       code.decode: Other
-      parent_entity: StudyAmendment
+      $codelist_extensible: null
+      parent_id: StudyAmendment_1
       code.code: C17649
-      $codelist_code: C207415
+      $code_for_decode_pref_term: null
       $pref_term_for_code: null
       $code_for_decode_value: null
-      parent_id: StudyAmendment_1
-      $value_for_code: null
-      $codelist_extensible: null
       code.codeSystemVersion: '2023-12-15'
-      $code_for_decode_pref_term: null
+      $value_for_code: null
+      parent_rel: secondaryReasons
+      $codelist_code: C207415
       description: Not in dataset
 - rule_id: CORE-000984
   description: Each study enrollment must apply to either a geographic scope, a study
@@ -600,32 +600,32 @@ findings:
   - instance_id: GeographicScope_1
     path: /study/versions/0/dateValues/0/geographicScopes/0
     details:
-      type.decode: Global
-      parent_rel: geographicScopes
+      type.codeSystem: http://www.cdisc.org
       parent_entity: GovernanceDate
-      $codelist_code: C207412
+      type.code: C68846
+      type.decode: Global
+      $codelist_extensible: null
       type.codeSystemVersion: '2023-12-15'
+      parent_id: GovernanceDate_1
+      $code_for_decode_pref_term: null
       $pref_term_for_code: null
       $code_for_decode_value: null
-      type.codeSystem: http://www.cdisc.org
-      parent_id: GovernanceDate_1
       $value_for_code: null
-      $codelist_extensible: null
-      type.code: C68846
-      $code_for_decode_pref_term: null
+      parent_rel: geographicScopes
+      $codelist_code: C207412
   - instance_id: GeographicScope_1
     path: /study/versions/0/dateValues/1/geographicScopes/0
     details:
-      type.decode: Global
-      parent_rel: geographicScopes
+      type.codeSystem: http://www.cdisc.org
       parent_entity: GovernanceDate
-      $codelist_code: C207412
+      type.code: C68846
+      type.decode: Global
+      $codelist_extensible: null
       type.codeSystemVersion: '2023-12-15'
+      parent_id: GovernanceDate_2
+      $code_for_decode_pref_term: null
       $pref_term_for_code: null
       $code_for_decode_value: null
-      type.codeSystem: http://www.cdisc.org
-      parent_id: GovernanceDate_2
       $value_for_code: null
-      $codelist_extensible: null
-      type.code: C68846
-      $code_for_decode_pref_term: null
+      parent_rel: geographicScopes
+      $codelist_code: C207412

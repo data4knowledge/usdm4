@@ -281,7 +281,8 @@ outcomes:
   status: Failure
   error_count: 1
   errors:
-  - message: Required attribute 'plannedAge' is missing or empty
+  - message: plannedAge is not specified on the study population and not specified
+      on any of the 0 cohort(s); specify it on the study population or on all cohorts
     level: Error
     klass: StudyDesignPopulation
     attribute: plannedAge
@@ -292,7 +293,8 @@ outcomes:
   status: Failure
   error_count: 1
   errors:
-  - message: Required attribute 'plannedSex' is missing or empty
+  - message: plannedSex is not specified on the study population and not specified
+      on any of the 0 cohort(s); specify it on the study population or on all cohorts
     level: Error
     klass: StudyDesignPopulation
     attribute: plannedSex
