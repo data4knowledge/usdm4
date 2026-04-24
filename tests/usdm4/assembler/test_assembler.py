@@ -536,6 +536,183 @@ class TestAssemblerIntegration:
         assert study2 is not None
         assert study1.name != study2.name
 
+    # ------------------------------------------------------------------
+    # End-to-end wiring: arms / interventions / elements / cells /
+    # demographics / cohorts driven through the top-level Assembler.
+    # Individual assemblers have their own unit tests; this test exists
+    # to catch regressions at the orchestration layer — specifically the
+    # cross-assembler hand-offs (cohort→arm linkage, studyInterventions
+    # threaded onto StudyVersion, elements resolved into cells).
+    # ------------------------------------------------------------------
+
+    def test_full_assembly_with_arms_interventions_and_cohorts(
+        self, minimal_study_data
+    ):
+        """Drive a fully populated AssemblerInput through Assembler.execute()
+        and assert every cross-reference introduced by the new wiring is
+        resolved in the output Study.
+        """
+        data = minimal_study_data.copy()
+
+        # Population: demographics + two cohorts, each pointing at a
+        # specific arm. Explicit planned_enrollment=None so the assembler
+        # falls back to summing the cohort enrollments.
+        data["population"] = {
+            "label": "Full Population",
+            "inclusion_exclusion": {
+                "inclusion": ["Age >= 18 years"],
+                "exclusion": ["Pregnant"],
+            },
+            "demographics": {
+                "age_min": 18,
+                "age_max": 65,
+                "age_unit": "Years",
+                "sex": "ALL",
+                "healthy_volunteers": False,
+            },
+            "cohorts": [
+                {
+                    "name": "CohortA",
+                    "label": "Cohort A",
+                    "description": "Active-arm cohort",
+                    "planned_enrollment": 40,
+                    "characteristics": ["Newly diagnosed"],
+                    "arm_names": ["Active"],
+                },
+                {
+                    "name": "CohortB",
+                    "label": "Cohort B",
+                    "description": "Control-arm cohort",
+                    "planned_enrollment": 40,
+                    "characteristics": ["Newly diagnosed"],
+                    "arm_names": ["Control"],
+                },
+            ],
+        }
+
+        # Study design: two arms, two interventions, two elements, two
+        # explicit cells wired to the "Treatment" epoch from soa below.
+        data["study_design"] = {
+            "label": "Full Study Design",
+            "rationale": "Evaluate two interventions head-to-head",
+            "trial_phase": "Phase II",
+            "intervention_model": "Parallel",
+            "interventions": [
+                {
+                    "name": "DrugX",
+                    "label": "Drug X",
+                    "type": "Drug",
+                    "role": "Investigational Treatment",
+                    "route": "Oral",
+                    "frequency": "Daily",
+                },
+                {
+                    "name": "Placebo",
+                    "label": "Placebo",
+                    "type": "Drug",
+                    "role": "Placebo Comparator",
+                    "route": "Oral",
+                    "frequency": "Daily",
+                },
+            ],
+            "elements": [
+                {"name": "ElemX", "intervention_names": ["DrugX"]},
+                {"name": "ElemP", "intervention_names": ["Placebo"]},
+            ],
+            "arms": [
+                {"name": "Active", "type": "Experimental"},
+                {"name": "Control", "type": "Placebo Comparator"},
+            ],
+            "cells": [
+                {"arm": "Active", "epoch": "Treatment", "elements": ["ElemX"]},
+                {"arm": "Control", "epoch": "Treatment", "elements": ["ElemP"]},
+            ],
+        }
+
+        # Minimal soa — just enough for the "Treatment" epoch to exist so
+        # cells can resolve epoch references. Matches the shape of the
+        # existing `complete_study_data_with_soa` fixture.
+        data["soa"] = {
+            "epochs": {"items": [{"text": "Screening"}, {"text": "Treatment"}]},
+            "visits": {
+                "items": [
+                    {"text": "Visit 1", "references": []},
+                    {"text": "Visit 2", "references": []},
+                ]
+            },
+            "timepoints": {
+                "items": [
+                    {"index": "0", "text": "Day 1", "value": "1", "unit": "days"},
+                    {"index": "1", "text": "Day 7", "value": "7", "unit": "days"},
+                ]
+            },
+            "windows": {
+                "items": [
+                    {"before": 0, "after": 0, "unit": "days"},
+                    {"before": 1, "after": 1, "unit": "days"},
+                ]
+            },
+            "activities": {"items": []},
+            "conditions": {"items": []},
+        }
+
+        assembler = get_global_assembler()
+        assembler.execute(data)
+
+        study = assembler.study
+        assert study is not None, "Study should be created"
+        assert len(study.versions) == 1
+
+        version = study.versions[0]
+        study_design = version.studyDesigns[0]
+
+        # StudyInterventions live on StudyVersion (USDM v4 canonical
+        # location), not on StudyDesign. StudyDesign carries just the id
+        # references.
+        assert len(version.studyInterventions) == 2
+        intervention_labels = {i.label for i in version.studyInterventions}
+        assert intervention_labels == {"Drug X", "Placebo"}
+        assert set(study_design.studyInterventionIds) == {
+            i.id for i in version.studyInterventions
+        }
+
+        # Arms and arm→cohort wiring.
+        assert len(study_design.arms) == 2
+        active_arm = next(a for a in study_design.arms if a.label == "Active")
+        control_arm = next(a for a in study_design.arms if a.label == "Control")
+        cohort_a = next(
+            c for c in study_design.population.cohorts if c.label == "Cohort A"
+        )
+        cohort_b = next(
+            c for c in study_design.population.cohorts if c.label == "Cohort B"
+        )
+        assert active_arm.populationIds == [cohort_a.id]
+        assert control_arm.populationIds == [cohort_b.id]
+
+        # Elements and cell wiring: each cell resolves to (arm, Treatment
+        # epoch, element).
+        assert len(study_design.elements) == 2
+        treatment_epoch = next(e for e in study_design.epochs if e.label == "Treatment")
+        assert len(study_design.studyCells) == 2
+        active_cell = next(
+            c for c in study_design.studyCells if c.armId == active_arm.id
+        )
+        elem_x = next(e for e in study_design.elements if e.label == "ElemX")
+        assert active_cell.epochId == treatment_epoch.id
+        assert active_cell.elementIds == [elem_x.id]
+
+        # Demographics flow through to StudyDesignPopulation.
+        population = study_design.population
+        assert len(population.plannedSex) == 2  # sex="ALL" yields both codes
+        assert {c.decode for c in population.plannedSex} == {"Male", "Female"}
+        assert population.plannedAge is not None
+        assert population.plannedAge.minValue.value == 18.0
+        assert population.plannedAge.maxValue.value == 65.0
+        # Cohort enrollments sum (40 + 40) — explicit planned_enrollment
+        # was not supplied, so the sum path is exercised.
+        assert population.plannedEnrollmentNumber is not None
+        assert population.plannedEnrollmentNumber.value == 80.0
+
 
 class TestAssemblerEdgeCases:
     """Test Assembler edge cases."""
@@ -719,6 +896,28 @@ class TestAssemblerModuleConstant:
         """Test that MODULE constant is a string."""
         assembler = get_global_assembler()
         assert isinstance(assembler.MODULE, str)
+
+
+class TestAssemblerExecuteExceptionHandling:
+    """Test execute() try/except handler covers lines 138-140."""
+
+    def test_execute_exception_during_assembly_is_logged(self, minimal_study_data):
+        """When a sub-assembler raises during assembly, the outer try/except
+        should catch it and log via errors.exception — covering lines 138-140."""
+        errors = Errors()
+        assembler = Assembler(root_path(), errors)
+
+        # Sabotage the identification sub-assembler to raise. Schema
+        # validation of minimal_study_data passes, so we reach the
+        # assembly try block.
+        def raise_error(data):
+            raise RuntimeError("Simulated assembler failure")
+
+        assembler._identification_assembler.execute = raise_error
+
+        assembler.execute(minimal_study_data)
+
+        assert errors.error_count() > 0
 
 
 class TestAssemblerWrapperExceptionHandling:

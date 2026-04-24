@@ -10,7 +10,9 @@ import xml.etree.ElementTree as ET
 from usdm4.rules.rule_template import RuleTemplate
 
 
-WRAPPER_OPEN = '<root xmlns="http://www.w3.org/1999/xhtml" xmlns:usdm="http://example.com/usdm">'
+WRAPPER_OPEN = (
+    '<root xmlns="http://www.w3.org/1999/xhtml" xmlns:usdm="http://example.com/usdm">'
+)
 WRAPPER_CLOSE = "</root>"
 
 

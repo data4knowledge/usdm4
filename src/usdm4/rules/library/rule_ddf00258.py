@@ -33,7 +33,8 @@ class RuleDDF00258(RuleTemplate):
                 hits = [
                     entry.get("code")
                     for entry in entries
-                    if isinstance(entry, dict) and entry.get("code") in RANDOMIZATION_CODES
+                    if isinstance(entry, dict)
+                    and entry.get("code") in RANDOMIZATION_CODES
                 ]
                 if len(hits) > 1:
                     self._add_failure(

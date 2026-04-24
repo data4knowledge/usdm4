@@ -27,7 +27,9 @@ class RuleDDF00073(RuleTemplate):
         data = config["data"]
         for sv in data.instances_by_klass("StudyVersion"):
             # Collect every Code descendant of this StudyVersion.
-            codes_by_system: dict = defaultdict(list)  # codeSystem -> list of (version, code instance)
+            codes_by_system: dict = defaultdict(
+                list
+            )  # codeSystem -> list of (version, code instance)
             sv_id = sv.get("id")
             # Iterate all Codes, filter by ancestor StudyVersion.
             for code_inst in data.instances_by_klass("Code"):

@@ -53,14 +53,17 @@ class RuleDDF00161(RuleTemplate):
         for klass in STUDY_DESIGN_KLASSES:
             for design in data.instances_by_klass(klass):
                 activities = [
-                    a for a in design.get("activities") or []
+                    a
+                    for a in design.get("activities") or []
                     if isinstance(a, dict) and a.get("id")
                 ]
                 if not activities:
                     continue
                 by_id = {a["id"]: a for a in activities}
                 # parent -> list of child ids, and child -> parent id
-                children_map = {a["id"]: list(a.get("childIds") or []) for a in activities}
+                children_map = {
+                    a["id"]: list(a.get("childIds") or []) for a in activities
+                }
                 parent_of = {}
                 for parent_id, child_ids in children_map.items():
                     for cid in child_ids:
@@ -84,7 +87,9 @@ class RuleDDF00161(RuleTemplate):
                     # Issue 2 — child's previousId must be parent or another descendant of parent
                     parent_id = parent_of.get(aid)
                     if parent_id is not None:
-                        allowed = {parent_id} | _descendants(parent_id, children_map) - {aid}
+                        allowed = {parent_id} | _descendants(
+                            parent_id, children_map
+                        ) - {aid}
                         if prev_id not in allowed:
                             self._add_failure(
                                 f"Activity {aid!r} is a child of {parent_id!r} but its previousId {prev_id!r} is neither the parent nor another descendant of the parent",

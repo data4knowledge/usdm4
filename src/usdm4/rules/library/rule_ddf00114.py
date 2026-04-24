@@ -32,7 +32,9 @@ class RuleDDF00114(RuleTemplate):
                 if not context_id:
                     continue
                 target = data.instance_by_id(context_id)
-                target_type = target.get("instanceType") if isinstance(target, dict) else None
+                target_type = (
+                    target.get("instanceType") if isinstance(target, dict) else None
+                )
                 if target_type not in ALLOWED_CONTEXT_CLASSES:
                     reason = (
                         "does not resolve to any instance"

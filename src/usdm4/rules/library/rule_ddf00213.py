@@ -31,20 +31,28 @@ class RuleDDF00213(RuleTemplate):
         data = config["data"]
         for sv in data.instances_by_klass("StudyVersion"):
             known_intervention_ids = {
-                si.get("id") for si in sv.get("studyInterventions") or []
+                si.get("id")
+                for si in sv.get("studyInterventions") or []
                 if isinstance(si, dict) and si.get("id")
             }
             for design in sv.get("studyDesigns") or []:
                 if not isinstance(design, dict):
                     continue
                 study_type = design.get("studyType")
-                if not (isinstance(study_type, dict) and study_type.get("code") == INTERVENTIONAL_CODE):
+                if not (
+                    isinstance(study_type, dict)
+                    and study_type.get("code") == INTERVENTIONAL_CODE
+                ):
                     continue
                 model = design.get("model")
                 model_code = model.get("code") if isinstance(model, dict) else None
                 if model_code not in MULTI_GROUP_MODEL_CODES:
                     continue
-                referenced = {i for i in design.get("studyInterventionIds") or [] if i in known_intervention_ids}
+                referenced = {
+                    i
+                    for i in design.get("studyInterventionIds") or []
+                    if i in known_intervention_ids
+                }
                 if len(referenced) <= 1:
                     self._add_failure(
                         f"Multi-group InterventionalStudyDesign (model {model_code}) references {len(referenced)} intervention(s); expected more than 1",

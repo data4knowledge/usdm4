@@ -9,7 +9,10 @@ class TestRuleDDF00126:
         rule = RuleDDF00126()
         assert rule._rule == "DDF00126"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'Cardinalities must be as defined in the USDM schema based on the API specification (i.e., required properties have at least one value and single-value properties are not lists).'
+        assert (
+            rule._rule_text
+            == "Cardinalities must be as defined in the USDM schema based on the API specification (i.e., required properties have at least one value and single-value properties are not lists)."
+        )
 
     def test_validate_is_noop(self):
         """This rule delegates to DDF00082's schema validation. validate() always passes."""

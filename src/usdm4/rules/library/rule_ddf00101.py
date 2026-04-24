@@ -44,7 +44,9 @@ class RuleDDF00101(RuleTemplate):
                     if not isinstance(activity, dict):
                         continue
                     for procedure in activity.get("definedProcedures") or []:
-                        if isinstance(procedure, dict) and procedure.get("studyInterventionId"):
+                        if isinstance(procedure, dict) and procedure.get(
+                            "studyInterventionId"
+                        ):
                             has_linked_procedure = True
                             break
                     if has_linked_procedure:

@@ -1,7 +1,7 @@
 """Tests for the USDM4 facade's CORE cache integration methods."""
 
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 
 from usdm4 import USDM4
@@ -94,6 +94,25 @@ class TestGetCoreValidator:
         # Get validator with method-level override
         validator = u._get_core_validator(cache_dir=method_dir)
         assert validator.cache_manager.cache_dir == Path(method_dir)
+
+
+class TestValidateCore:
+    """Test the validate_core facade method covers lines 67-68."""
+
+    def test_validate_core_delegates_to_validator(self, tmp_path):
+        """validate_core should obtain a CoreValidator and delegate .validate()."""
+        custom = str(tmp_path / "vc_cache")
+        u = USDM4(cache_dir=custom)
+
+        mock_validator = MagicMock()
+        mock_result = MagicMock()
+        mock_validator.validate.return_value = mock_result
+
+        with patch.object(u, "_get_core_validator", return_value=mock_validator):
+            result = u.validate_core("some/file.json", version="4-0")
+
+        mock_validator.validate.assert_called_once_with("some/file.json", version="4-0")
+        assert result is mock_result
 
 
 class TestCoreExports:

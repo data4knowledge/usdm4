@@ -53,7 +53,9 @@ class RuleDDF00196(RuleTemplate):
                 num = ref.get("sectionNumber")
                 title = ref.get("sectionTitle")
                 bad_numbers = num is not None and len(num_to_titles[(applies, num)]) > 1
-                bad_titles = title is not None and len(title_to_nums[(applies, title)]) > 1
+                bad_titles = (
+                    title is not None and len(title_to_nums[(applies, title)]) > 1
+                )
                 if bad_numbers or bad_titles:
                     self._add_failure(
                         "DocumentContentReference has an inconsistent sectionNumber↔sectionTitle mapping within the amendment",

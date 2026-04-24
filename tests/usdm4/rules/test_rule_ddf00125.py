@@ -9,7 +9,10 @@ class TestRuleDDF00125:
         rule = RuleDDF00125()
         assert rule._rule == "DDF00125"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'Attributes must be included as defined in the USDM schema based on the API specification (i.e., all required properties are present and no additional attributes are present).'
+        assert (
+            rule._rule_text
+            == "Attributes must be included as defined in the USDM schema based on the API specification (i.e., all required properties are present and no additional attributes are present)."
+        )
 
     def test_validate_is_noop(self):
         """This rule delegates to DDF00082's schema validation. validate() always passes."""

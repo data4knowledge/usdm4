@@ -18,7 +18,15 @@ class RuleDDF00194(RuleTemplate):
 
     def validate(self, config: dict) -> bool:
         data = config["data"]
-        required_any = ['text', 'lines', 'city', 'district', 'state', 'postalCode', 'country']
+        required_any = [
+            "text",
+            "lines",
+            "city",
+            "district",
+            "state",
+            "postalCode",
+            "country",
+        ]
         for item in data.instances_by_klass("LegalAddress"):
             if not any(item.get(a) for a in required_any):
                 self._add_failure(

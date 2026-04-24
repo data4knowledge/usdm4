@@ -46,7 +46,10 @@ class RuleDDF00035(RuleTemplate):
             decode = code_inst.get("decode")
             if None in (cs, csv, code, decode):
                 continue
-            if len(code_to_decodes[(cs, csv, code)]) > 1 or len(decode_to_codes[(cs, csv, decode)]) > 1:
+            if (
+                len(code_to_decodes[(cs, csv, code)]) > 1
+                or len(decode_to_codes[(cs, csv, decode)]) > 1
+            ):
                 self._add_failure(
                     f"Code {code!r}/{decode!r} participates in a non-1:1 mapping within {cs}@{csv}",
                     "Code",

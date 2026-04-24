@@ -181,6 +181,242 @@ class Encoder:
         "REGION": {"code": "C41129", "decode": "Region"},
     }
 
+    # CDISC CT C99076 — Intervention Model
+    INTERVENTION_MODEL_MAP = [
+        (["PARALLEL"], {"code": "C82639", "decode": "Parallel Study"}),
+        (
+            ["CROSSOVER", "CROSS-OVER", "CROSS OVER"],
+            {"code": "C82637", "decode": "Crossover Study"},
+        ),
+        (
+            ["SEQUENTIAL", "GROUP SEQUENTIAL"],
+            {"code": "C142568", "decode": "Group Sequential Design"},
+        ),
+        (["FACTORIAL"], {"code": "C82638", "decode": "Factorial Study"}),
+        (
+            ["SINGLE GROUP", "SINGLE-GROUP", "SINGLEGROUP"],
+            {"code": "C82640", "decode": "Single Group Study"},
+        ),
+    ]
+    INTERVENTION_MODEL_DEFAULT = {"code": "C82639", "decode": "Parallel Study"}
+
+    # CDISC CT C174222 — Study Arm Type
+    ARM_TYPE_MAP = [
+        (
+            [
+                "EXPERIMENTAL",
+                "EXPERIMENTAL ARM",
+                "INVESTIGATIONAL",
+                "INVESTIGATIONAL ARM",
+            ],
+            {"code": "C174266", "decode": "Investigational Arm"},
+        ),
+        (
+            [
+                "PLACEBO COMPARATOR",
+                "PLACEBO COMPARATOR ARM",
+                "PLACEBO CONTROL",
+                "PLACEBO CONTROL ARM",
+            ],
+            {"code": "C174268", "decode": "Placebo Control Arm"},
+        ),
+        (
+            ["ACTIVE COMPARATOR", "ACTIVE COMPARATOR ARM"],
+            {"code": "C174267", "decode": "Active Comparator Arm"},
+        ),
+        (
+            [
+                "SHAM COMPARATOR",
+                "SHAM COMPARATOR ARM",
+                "SHAM INTERVENTION",
+                "SHAM INTERVENTION ARM",
+            ],
+            {"code": "C174269", "decode": "Sham Comparator Arm"},
+        ),
+        (
+            ["NO INTERVENTION", "NO INTERVENTION ARM"],
+            {"code": "C174270", "decode": "No Intervention Arm"},
+        ),
+        (["CONTROL", "CONTROL ARM"], {"code": "C174226", "decode": "Control Arm"}),
+        (
+            [
+                "TREATMENT",
+                "TREATMENT ARM",
+                "PROTOCOL TREATMENT",
+                "PROTOCOL TREATMENT ARM",
+            ],
+            {"code": "C15538", "decode": "Protocol Treatment Arm"},
+        ),
+    ]
+    ARM_TYPE_DEFAULT = {"code": "C174266", "decode": "Investigational Arm"}
+
+    # CDISC CT C99078 — Intervention Type
+    INTERVENTION_TYPE_MAP = [
+        (
+            ["DRUG", "PHARMACOLOGIC SUBSTANCE"],
+            {"code": "C1909", "decode": "Pharmacologic Substance"},
+        ),
+        (["DEVICE", "MEDICAL DEVICE"], {"code": "C16830", "decode": "Medical Device"}),
+        (
+            [
+                "BEHAVIORAL",
+                "BEHAVIOURAL",
+                "BEHAVIORAL INTERVENTION",
+                "BEHAVIORAL THERAPY",
+            ],
+            {"code": "C15184", "decode": "Behavioral Intervention"},
+        ),
+        (
+            ["PROCEDURE", "PHYSICAL MEDICAL PROCEDURE", "MEDICAL PROCEDURE"],
+            {"code": "C98769", "decode": "Physical Medical Procedure"},
+        ),
+        (
+            ["BIOLOGICAL", "BIOLOGIC", "BIOLOGICAL AGENT"],
+            {"code": "C307", "decode": "Biological Agent"},
+        ),
+        (["VACCINE"], {"code": "C923", "decode": "Vaccine"}),
+        (
+            ["RADIATION", "RADIATION THERAPY"],
+            {"code": "C15313", "decode": "Radiation Therapy"},
+        ),
+        (["GENETIC", "GENE THERAPY"], {"code": "C15238", "decode": "Gene Therapy"}),
+    ]
+    INTERVENTION_TYPE_DEFAULT = {"code": "C1909", "decode": "Pharmacologic Substance"}
+
+    # CDISC CT C207417 — Study Intervention Role
+    INTERVENTION_ROLE_MAP = [
+        (
+            [
+                "INVESTIGATIONAL TREATMENT",
+                "EXPERIMENTAL INTERVENTION",
+                "INVESTIGATIONAL",
+                "PROTOCOL AGENT",
+            ],
+            {"code": "C41161", "decode": "Protocol Agent"},
+        ),
+        (["PLACEBO COMPARATOR", "PLACEBO"], {"code": "C753", "decode": "Placebo"}),
+        (
+            ["BACKGROUND TREATMENT", "BACKGROUND"],
+            {"code": "C165822", "decode": "Background Treatment"},
+        ),
+        (
+            ["ACTIVE COMPARATOR", "ACTIVE CONTROL"],
+            {"code": "C68609", "decode": "Active Comparator"},
+        ),
+        (
+            ["RESCUE MEDICINE", "RESCUE MEDICATION", "RESCUE MEDICATIONS"],
+            {"code": "C165835", "decode": "Rescue Medications"},
+        ),
+        (["CHALLENGE AGENT"], {"code": "C158128", "decode": "Challenge Agent"}),
+        (
+            ["DIAGNOSTIC", "DIAGNOSTIC PROCEDURE"],
+            {"code": "C18020", "decode": "Diagnostic Procedure"},
+        ),
+    ]
+    INTERVENTION_ROLE_DEFAULT = {"code": "C41161", "decode": "Protocol Agent"}
+
+    # CDISC CT C66781 — Age Unit
+    AGE_UNIT_MAP = [
+        (["YEARS", "YEAR", "YR", "YRS", "Y"], {"code": "C29848", "decode": "Year"}),
+        (["MONTHS", "MONTH", "MTH", "MTHS"], {"code": "C29846", "decode": "Month"}),
+        (["WEEKS", "WEEK", "WK", "WKS", "W"], {"code": "C29844", "decode": "Week"}),
+        (["DAYS", "DAY", "DY", "DYS", "D"], {"code": "C25301", "decode": "Day"}),
+        (["HOURS", "HOUR", "HR", "HRS", "H"], {"code": "C25529", "decode": "Hour"}),
+    ]
+    AGE_UNIT_DEFAULT = {"code": "C29848", "decode": "Year"}
+
+    # CDISC CT C66732 — Sex of Participants
+    SEX_MAP = [
+        (["MALE", "M"], {"code": "C20197", "decode": "Male"}),
+        (["FEMALE", "F"], {"code": "C16576", "decode": "Female"}),
+    ]
+    SEX_DEFAULT = {"code": "C16576", "decode": "Female"}
+
+    # CDISC CT C66729 — Route of Administration (AliasCode return)
+    ROUTE_MAP = [
+        (
+            ["ORAL", "PO", "BY MOUTH"],
+            {"code": "C38288", "decode": "Oral Route of Administration"},
+        ),
+        (
+            ["INTRAVENOUS", "IV"],
+            {"code": "C38276", "decode": "Intravenous Route of Administration"},
+        ),
+        (
+            ["INTRAMUSCULAR", "IM"],
+            {"code": "C28161", "decode": "Intramuscular Route of Administration"},
+        ),
+        (
+            ["SUBCUTANEOUS", "SC", "SUBDERMAL"],
+            {"code": "C38299", "decode": "Subcutaneous Route of Administration"},
+        ),
+        (
+            ["INHALATION", "INHALED", "RESPIRATORY", "RESPIRATORY (INHALATION)"],
+            {"code": "C38216", "decode": "Inhalation Route of Administration"},
+        ),
+        (
+            ["NASAL", "INTRANASAL"],
+            {"code": "C38284", "decode": "Nasal Route of Administration"},
+        ),
+        (
+            ["RECTAL", "PR"],
+            {"code": "C38295", "decode": "Rectal Route of Administration"},
+        ),
+        (
+            ["TOPICAL", "TOP"],
+            {"code": "C38304", "decode": "Topical Route of Administration"},
+        ),
+        (
+            ["SUBLINGUAL", "SL"],
+            {"code": "C38300", "decode": "Sublingual Route of Administration"},
+        ),
+        (["BUCCAL"], {"code": "C38193", "decode": "Buccal Route of Administration"}),
+    ]
+    ROUTE_DEFAULT = {"code": "C38288", "decode": "Oral Route of Administration"}
+
+    # CDISC CT C71113 — Frequency (AliasCode return)
+    FREQUENCY_MAP = [
+        (
+            [
+                "ONCE DAILY",
+                "DAILY",
+                "QD",
+                "ONCE PER DAY",
+                "ONE TIME PER DAY",
+                "PER DAY",
+            ],
+            {"code": "C25473", "decode": "Daily"},
+        ),
+        (
+            ["TWICE DAILY", "BID", "TWO TIMES PER DAY", "TWO TIMES DAILY"],
+            {"code": "C64496", "decode": "Twice Daily"},
+        ),
+        (
+            ["THREE TIMES DAILY", "TID", "THREE TIMES PER DAY"],
+            {"code": "C64527", "decode": "Three Times Daily"},
+        ),
+        (
+            ["FOUR TIMES DAILY", "QID", "FOUR TIMES PER DAY"],
+            {"code": "C64530", "decode": "Four Times Daily"},
+        ),
+        (
+            ["WEEKLY", "ONCE WEEKLY", "ONE TIME PER WEEK", "ONCE PER WEEK", "QW"],
+            {"code": "C64526", "decode": "Once Weekly"},
+        ),
+        (
+            ["MONTHLY", "QM", "EVERY MONTH", "ONCE MONTHLY", "PER MONTH"],
+            {"code": "C64498", "decode": "Monthly"},
+        ),
+        (
+            ["EVERY OTHER DAY", "QOD", "Q2D", "EVERY SECOND DAY"],
+            {"code": "C64525", "decode": "Every Other Day"},
+        ),
+        (["EVERY HOUR", "QH", "HOURLY"], {"code": "C64510", "decode": "Every Hour"}),
+        (["AS NEEDED", "PRN"], {"code": "C64499", "decode": "As Needed"}),
+        (["ONCE", "ONE TIME", "SINGLE DOSE"], {"code": "C64576", "decode": "Once"}),
+    ]
+    FREQUENCY_DEFAULT = {"code": "C25473", "decode": "Daily"}
+
     def __init__(self, builder: Builder, errors: Errors):
         self._builder: Builder = builder
         self._errors: Errors = errors
@@ -334,3 +570,129 @@ class Encoder:
 
     def to_boolean(self, text: str) -> bool:
         return False if text is None else self.BOOLEAN_MAP.get(text.lower(), False)
+
+    def intervention_model(self, text: str) -> Code:
+        """Decode an intervention model label to a CDISC Code (codelist C99076).
+
+        Accepts human-readable labels (Parallel, Crossover, Sequential,
+        Factorial, Single Group). Empty or unknown input defaults to Parallel
+        with a warning, matching how ``phase()`` degrades.
+        """
+        return self._lookup_code(
+            text,
+            self.INTERVENTION_MODEL_MAP,
+            self.INTERVENTION_MODEL_DEFAULT,
+            "intervention_model",
+            "Intervention model",
+        )
+
+    def arm_type(self, text: str) -> Code:
+        """Decode an arm type label to a CDISC Code (codelist C174222)."""
+        return self._lookup_code(
+            text,
+            self.ARM_TYPE_MAP,
+            self.ARM_TYPE_DEFAULT,
+            "arm_type",
+            "Arm type",
+        )
+
+    def intervention_type(self, text: str) -> Code:
+        """Decode an intervention type label to a CDISC Code (codelist C99078)."""
+        return self._lookup_code(
+            text,
+            self.INTERVENTION_TYPE_MAP,
+            self.INTERVENTION_TYPE_DEFAULT,
+            "intervention_type",
+            "Intervention type",
+        )
+
+    def intervention_role(self, text: str) -> Code:
+        """Decode an intervention role label to a CDISC Code (codelist C207417)."""
+        return self._lookup_code(
+            text,
+            self.INTERVENTION_ROLE_MAP,
+            self.INTERVENTION_ROLE_DEFAULT,
+            "intervention_role",
+            "Intervention role",
+        )
+
+    def age_unit(self, text: str) -> Code:
+        """Decode an age unit label to a CDISC Code (codelist C66781)."""
+        return self._lookup_code(
+            text,
+            self.AGE_UNIT_MAP,
+            self.AGE_UNIT_DEFAULT,
+            "age_unit",
+            "Age unit",
+        )
+
+    def sex(self, text: str) -> Code:
+        """Decode a sex label to a CDISC Code (codelist C66732).
+
+        Accepts ``"MALE"`` / ``"FEMALE"`` (or ``"M"``/``"F"``). The encoder
+        does not handle the composite ``"ALL"`` value — callers that need
+        both sex codes should invoke this method twice.
+        """
+        return self._lookup_code(
+            text,
+            self.SEX_MAP,
+            self.SEX_DEFAULT,
+            "sex",
+            "Sex",
+        )
+
+    def route(self, text: str) -> AliasCode:
+        """Decode a route-of-administration label to an AliasCode (codelist C66729).
+
+        Returns an ``AliasCode`` so Administration.route can hold the decoded
+        value directly, mirroring how ``phase()`` returns an AliasCode.
+        """
+        code = self._lookup_code(
+            text,
+            self.ROUTE_MAP,
+            self.ROUTE_DEFAULT,
+            "route",
+            "Route of administration",
+        )
+        return self._builder.alias_code(code)
+
+    def frequency(self, text: str) -> AliasCode:
+        """Decode a frequency label to an AliasCode (codelist C71113)."""
+        code = self._lookup_code(
+            text,
+            self.FREQUENCY_MAP,
+            self.FREQUENCY_DEFAULT,
+            "frequency",
+            "Frequency",
+        )
+        return self._builder.alias_code(code)
+
+    def _lookup_code(
+        self,
+        text: str,
+        table: list,
+        default: dict,
+        method_name: str,
+        label: str,
+    ) -> Code:
+        """Shared lookup driver for the simple MAP-based encoder methods.
+
+        Mirrors the phase()/document_status() pattern: normalise input, scan
+        the table, emit an info on hit and a warning on miss (or empty
+        input), fall back to the supplied default.
+        """
+        value = text.upper().strip() if text else ""
+        for keys, entry in table:
+            if value in keys:
+                code = self._builder.cdisc_code(entry["code"], entry["decode"])
+                self._errors.info(
+                    f"{label} '{value}' decoded as '{entry['code']}', '{entry['decode']}'",
+                    location=KlassMethodLocation(self.MODULE, method_name),
+                )
+                return code
+        default_code = self._builder.cdisc_code(default["code"], default["decode"])
+        self._errors.warning(
+            f"{label} '{value}' not decoded; defaulting to '{default['decode']}'",
+            location=KlassMethodLocation(self.MODULE, method_name),
+        )
+        return default_code

@@ -1267,6 +1267,89 @@ class TestStudyAssemblerExtensions:
         assert "www.d4k.dk/usdm/extensions/006" not in ext_urls
 
 
+class TestStudyAssemblerMedicalExpertContactDetailsLocation:
+    """Cover study_assembler line 153 — MECDL_EXT_URL extension creation path."""
+
+    def test_execute_with_medical_expert_reference_creates_extension(
+        self, builder, errors
+    ):
+        """When identification has medical_expert.reference (no name), the
+        MECDL extension should be created on StudyVersion — covers line 153."""
+        builder.clear()
+        sa = StudyAssembler(builder, errors)
+        ia = IdentificationAssembler(builder, errors)
+        sda = StudyDesignAssembler(builder, errors)
+        da = DocumentAssembler(builder, errors)
+        pa = PopulationAssembler(builder, errors)
+        aa = AmendmentsAssembler(builder, errors)
+        ta = TimelineAssembler(builder, errors)
+
+        ia.execute(
+            {
+                "titles": {"brief": "Test"},
+                "identifiers": [
+                    {"identifier": "NCT12345678", "scope": {"standard": "nct"}}
+                ],
+                "other": {
+                    "sponsor_signatory": "Dr. Smith",
+                    # reference (not name) — triggers the contact details
+                    # location path
+                    "medical_expert": {
+                        "reference": ["Protocol Section 1.2", "Contact info page"]
+                    },
+                    "compound_names": "CompoundA",
+                    "compound_codes": "CODE-123",
+                },
+            }
+        )
+        pa.execute(
+            {
+                "label": "Pop",
+                "inclusion_exclusion": {
+                    "inclusion": ["Age >= 18"],
+                    "exclusion": ["Pregnant"],
+                },
+            }
+        )
+        ta._timelines = []
+        ta._epochs = []
+        ta._encounters = []
+        ta._activities = []
+        ta._conditions = []
+        sda.execute(
+            {"label": "Design", "rationale": "Rat", "trial_phase": "phase-1"}, pa, ta
+        )
+        da.execute(
+            {
+                "document": {
+                    "label": "Doc",
+                    "version": "1.0",
+                    "status": "final",
+                    "template": "T",
+                    "version_date": "2024-01-01",
+                },
+                "sections": [
+                    {"section_number": "1", "section_title": "Intro", "text": "Text"}
+                ],
+            }
+        )
+        aa.execute(None, da)
+
+        data = {
+            "name": {"acronym": "TST"},
+            "label": "Test",
+            "version": "1.0",
+            "rationale": "Test",
+        }
+        sa.execute(data, ia, sda, da, pa, aa, ta)
+
+        assert sa.study is not None
+        study_version = sa.study.versions[0]
+        ext_urls = [e.url for e in study_version.extensionAttributes]
+        # MECDL_EXT_URL — medical expert contact details location extension
+        assert "www.d4k.dk/usdm/extensions/006" in ext_urls
+
+
 class TestStudyAssemblerCreateExtensionException:
     """Test _create_extension exception handler (covers lines 213-214)."""
 

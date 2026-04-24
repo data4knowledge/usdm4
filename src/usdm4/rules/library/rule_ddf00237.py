@@ -73,7 +73,9 @@ class RuleDDF00237(RuleTemplate):
                         continue
                     code = standard.get("code")
                     decode = standard.get("decode")
-                    if code not in valid_codes or (decode is not None and decode not in valid_decodes):
+                    if code not in valid_codes or (
+                        decode is not None and decode not in valid_decodes
+                    ):
                         self._add_failure(
                             f"{klass}.plannedAge unit {code!r}/{decode!r} is not in the Age Unit codelist ({AGE_UNIT_CODELIST})",
                             klass,

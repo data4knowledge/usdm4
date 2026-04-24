@@ -9,7 +9,10 @@ class TestRuleDDF00081:
         rule = RuleDDF00081()
         assert rule._rule == "DDF00081"
         assert rule._level == RuleTemplate.ERROR
-        assert rule._rule_text == 'Class relationships must conform with the USDM schema based on the API specification.'
+        assert (
+            rule._rule_text
+            == "Class relationships must conform with the USDM schema based on the API specification."
+        )
 
     def test_validate_is_noop(self):
         """This rule delegates to DDF00082's schema validation. validate() always passes."""

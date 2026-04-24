@@ -56,10 +56,10 @@ from typing import Optional
 @dataclass
 class TranslationResult:
     success: bool
-    pattern: str                 # e.g. "CROSS_INSTANCE_UNIQUE", "NO_MATCH"
-    python_body: str = ""        # full validate() body when success=True
+    pattern: str  # e.g. "CROSS_INSTANCE_UNIQUE", "NO_MATCH"
+    python_body: str = ""  # full validate() body when success=True
     python_imports: list = None  # additional imports beyond RuleTemplate
-    notes: str = ""              # human-readable commentary for the reviewer
+    notes: str = ""  # human-readable commentary for the reviewer
 
     def __post_init__(self):
         if self.python_imports is None:
@@ -125,7 +125,10 @@ INTRA_ATTR_RE = re.compile(
 # the rule's entity/attribute context).
 SCOPE_PATH_TO_CLASS = {
     "study.versions": ["StudyVersion"],
-    "study.versions.studyDesigns": ["InterventionalStudyDesign", "ObservationalStudyDesign"],
+    "study.versions.studyDesigns": [
+        "InterventionalStudyDesign",
+        "ObservationalStudyDesign",
+    ],
     "study.documentedBy": ["StudyDefinitionDocument"],
     "study": ["Study"],
 }
@@ -188,7 +191,9 @@ def try_cross_instance_unique(
         return None
 
     collection = m.group("collection")
-    key_result = key_expr_to_python(m.group("key_predicate"), m.group("scope_var") or "")
+    key_result = key_expr_to_python(
+        m.group("key_predicate"), m.group("scope_var") or ""
+    )
     if key_result is None:
         return None
     key_expr, key_attrs = key_result
@@ -307,7 +312,9 @@ def try_intra_attribute_unique(
 # ──────────────────────────────────────────────────────────────────────────
 
 
-def try_subset_check(jsonata: str, ddf_id: str, text: str, attribute_hint: str) -> Optional[TranslationResult]:
+def try_subset_check(
+    jsonata: str, ddf_id: str, text: str, attribute_hint: str
+) -> Optional[TranslationResult]:
     """
     Pattern: "X must only reference ids that resolve within the same <scope>."
     JSONata shape:
@@ -377,7 +384,9 @@ def try_subset_check(jsonata: str, ddf_id: str, text: str, attribute_hint: str) 
     )
 
 
-def try_incompat_codes(jsonata: str, ddf_id: str, text: str, attribute_hint: str) -> Optional[TranslationResult]:
+def try_incompat_codes(
+    jsonata: str, ddf_id: str, text: str, attribute_hint: str
+) -> Optional[TranslationResult]:
     """
     Pattern: "<class> must not have both <code1> and <code2> in a coded list attribute."
     JSONata shape:
@@ -429,7 +438,9 @@ def try_incompat_codes(jsonata: str, ddf_id: str, text: str, attribute_hint: str
     )
 
 
-def try_at_least_one(jsonata: str, ddf_id: str, text: str, attribute_hint: str) -> Optional[TranslationResult]:
+def try_at_least_one(
+    jsonata: str, ddf_id: str, text: str, attribute_hint: str
+) -> Optional[TranslationResult]:
     """
     Pattern: "at least one of a set of attributes must be specified on an instance."
     JSONata shape:
@@ -510,9 +521,16 @@ def translate(
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--core-json", default="/sessions/lucid-eager-euler/mnt/core/rules/usdm/4-0.json")
+    ap.add_argument(
+        "--core-json",
+        default="/sessions/lucid-eager-euler/mnt/core/rules/usdm/4-0.json",
+    )
     ap.add_argument("--only", default="", help="Comma-separated DDF ids to translate")
-    ap.add_argument("--all-jsonata", action="store_true", help="Run on all 92 JSONata rules and report coverage")
+    ap.add_argument(
+        "--all-jsonata",
+        action="store_true",
+        help="Run on all 92 JSONata rules and report coverage",
+    )
     args = ap.parse_args()
 
     core_path = Path(args.core_json)
@@ -537,6 +555,7 @@ def main() -> int:
         return 1
 
     from collections import Counter
+
     counter: Counter = Counter()
     for ddf, cond, desc in jsonata_rules:
         result = translate(cond, ddf, desc)

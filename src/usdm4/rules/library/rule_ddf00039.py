@@ -19,8 +19,8 @@ class RuleDDF00039(RuleTemplate):
     def validate(self, config: dict) -> bool:
         data = config["data"]
         for item in data.instances_by_klass("Duration"):
-            a = (item.get("durationWillVary") is True)
-            b = (not bool(item.get("quantity")))
+            a = item.get("durationWillVary") is True
+            b = not bool(item.get("quantity"))
             if a != b:
                 if a and not b:
                     msg = "durationWillVary is set but quantity is missing"

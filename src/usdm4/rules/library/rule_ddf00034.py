@@ -19,13 +19,17 @@ class RuleDDF00034(RuleTemplate):
     def validate(self, config: dict) -> bool:
         data = config["data"]
         for item in data.instances_by_klass("Duration"):
-            a = (item.get("durationWillVary") is True)
+            a = item.get("durationWillVary") is True
             b = bool(item.get("reasonDurationWillVary"))
             if a != b:
                 if a and not b:
-                    msg = "durationWillVary is set but reasonDurationWillVary is missing"
+                    msg = (
+                        "durationWillVary is set but reasonDurationWillVary is missing"
+                    )
                 else:
-                    msg = "reasonDurationWillVary is set but durationWillVary is missing"
+                    msg = (
+                        "reasonDurationWillVary is set but durationWillVary is missing"
+                    )
                 self._add_failure(
                     msg,
                     "Duration",

@@ -28,8 +28,16 @@ class RuleDDF00195(RuleTemplate):
     def validate(self, config: dict) -> bool:
         data = config["data"]
         # Build id lookup sets once
-        site_ids = {s.get("id") for s in data.instances_by_klass("ManagedSite") if isinstance(s, dict)}
-        cohort_ids = {c.get("id") for c in data.instances_by_klass("StudyCohort") if isinstance(c, dict)}
+        site_ids = {
+            s.get("id")
+            for s in data.instances_by_klass("ManagedSite")
+            if isinstance(s, dict)
+        }
+        cohort_ids = {
+            c.get("id")
+            for c in data.instances_by_klass("StudyCohort")
+            if isinstance(c, dict)
+        }
         for enrollment in data.instances_by_klass("SubjectEnrollment"):
             gs = enrollment.get("forGeographicScope")
             site_id = enrollment.get("forStudySiteId")

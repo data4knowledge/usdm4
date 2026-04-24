@@ -132,6 +132,7 @@ def _ct_library():
         return _CT_LIBRARY
     sys.path.insert(0, str(REPO_ROOT / "src"))
     from usdm4.ct.cdisc.library import Library as CTLibrary  # noqa: E402
+
     lib = CTLibrary(str(REPO_ROOT / "src" / "usdm4"))
     lib.load()
     _CT_LIBRARY = lib
@@ -170,7 +171,7 @@ def render_body_ct(data: dict) -> tuple[str, bool]:
         return _stub_body(
             data,
             reason=f"HIGH_CT_MEMBER with class={cls!r} attr={attr!r} — likely a "
-                   "schema-conformance rule, not CT lookup. Needs hand-authoring.",
+            "schema-conformance rule, not CT lookup. Needs hand-authoring.",
         ), False
     # Narrow fallback for the codeSystemVersion mis-extraction. Try the xlsx
     # "Attributes" column's first entry as a replacement.
@@ -182,13 +183,16 @@ def render_body_ct(data: dict) -> tuple[str, bool]:
         return _stub_body(
             data,
             reason=f"HIGH_CT_MEMBER with no CT codelist registered for "
-                   f"({cls!r}, {attr!r}). Update ct_config.yaml or revise the "
-                   "rule's class/attribute before implementing.",
+            f"({cls!r}, {attr!r}). Update ct_config.yaml or revise the "
+            "rule's class/attribute before implementing.",
         ), False
-    return f'''
+    return (
+        f'''
     def validate(self, config: dict) -> bool:
         return self._ct_check(config, "{cls}", "{attr}")
-''', True
+''',
+        True,
+    )
 
 
 def render_body_required_attribute(data: dict) -> str:
@@ -238,7 +242,9 @@ def render_body_unique(data: dict) -> tuple[str, bool]:
         and not xlsx_attr.endswith("ss")
     )
     if entity and entity != cls and looks_plural and entity != "All":
-        key_attr = attr if attr != xlsx_attr else "code"  # CORE's attribute is the sub-field
+        key_attr = (
+            attr if attr != xlsx_attr else "code"
+        )  # CORE's attribute is the sub-field
         body = f'''
     def validate(self, config: dict) -> bool:
         data = config["data"]
@@ -294,7 +300,7 @@ def render_body_unique(data: dict) -> tuple[str, bool]:
     return _stub_body(
         data,
         reason="HIGH_UNIQUE_WITHIN_SCOPE without scope info — ambiguous "
-               "(global vs per-parent vs intra-attribute). Review rule text.",
+        "(global vs per-parent vs intra-attribute). Review rule text.",
     ), False
 
 
@@ -327,7 +333,9 @@ def render_body_format(data: dict) -> str:
         return self._result()
 '''
     # Generic regex — without a pattern, we can only stub.
-    return _stub_body(data, reason=f"HIGH_FORMAT with format={fmt!r} but no pattern available")
+    return _stub_body(
+        data, reason=f"HIGH_FORMAT with format={fmt!r} but no pattern available"
+    )
 
 
 def render_body_idref(data: dict) -> tuple[str, bool]:
@@ -434,9 +442,9 @@ def render_body_biconditional(data: dict) -> tuple[str, bool]:
         return _stub_body(
             data,
             reason="biconditional predicate missing complete side_a / side_b "
-                   "specs (required fields: attr, check; plus value for "
-                   "equal_to_bool / equal_to / code_equals). Fill them in "
-                   "the intermediate YAML and regenerate.",
+            "specs (required fields: attr, check; plus value for "
+            "equal_to_bool / equal_to / code_equals). Fill them in "
+            "the intermediate YAML and regenerate.",
         ), False
 
     a_attr = a["attr"]
@@ -492,9 +500,9 @@ def render_body_implication(data: dict) -> tuple[str, bool]:
         return _stub_body(
             data,
             reason="implication predicate missing complete antecedent / "
-                   "consequent specs (required: attr, check; plus value for "
-                   "equal_to_bool / equal_to / code_equals). Fill them in "
-                   "the intermediate YAML and regenerate.",
+            "consequent specs (required: attr, check; plus value for "
+            "equal_to_bool / equal_to / code_equals). Fill them in "
+            "the intermediate YAML and regenerate.",
         ), False
 
     a_attr = ante["attr"]
@@ -572,7 +580,7 @@ def _stub_body(data: dict, reason: str) -> str:
     return f'''
     # TODO: implement. {reason}{reference_block}
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("{data['id']}: not yet implemented")
+        raise NotImplementedError("{data["id"]}: not yet implemented")
 '''
 
 
@@ -630,8 +638,8 @@ def render_rule_body(data: dict) -> tuple[str, bool]:
         return _stub_body(
             data,
             reason=f"MED_TEXT predicate={predicate!r}: no template — typically a "
-                   "rule-specific conditional. Hand-author using the JSONata "
-                   "reference below.",
+            "rule-specific conditional. Hand-author using the JSONata "
+            "reference below.",
         ), False
 
     # LOW_CUSTOM — try the JSONata translator, else stub. LOW_CUSTOM rules
@@ -640,7 +648,9 @@ def render_rule_body(data: dict) -> tuple[str, bool]:
         translated = render_body_from_jsonata(data)
         if translated is not None:
             return translated, True
-        return _stub_body(data, reason="LOW_CUSTOM: JSONata translator did not match a known pattern"), False
+        return _stub_body(
+            data, reason="LOW_CUSTOM: JSONata translator did not match a known pattern"
+        ), False
 
     # STUB: xlsx-only, no CORE entry
     return _stub_body(data, reason="STUB: rule not present in CORE catalogue"), False
@@ -688,7 +698,7 @@ class Test{cls}:
         # Rule has a real validate() — either HAS_IMPLEMENTATION, a HIGH_*
         # generator template, or a translated JSONata body. Fixtures are a
         # human-authored job; mark the scenario tests skipped with TODOs.
-        body = '''
+        body = """
     @pytest.mark.skip(reason="TODO: craft positive fixture (valid USDM, rule accepts)")
     def test_valid_data_passes(self):
         pass
@@ -696,7 +706,7 @@ class Test{cls}:
     @pytest.mark.skip(reason="TODO: craft negative fixture (invalid USDM, rule flags)")
     def test_invalid_data_fails(self):
         pass
-'''
+"""
     else:
         # NotImplementedError stub — lock the behaviour in so the test fails
         # the moment someone implements the rule without writing real tests.
@@ -730,7 +740,13 @@ def emit_rule_and_test(
     cls = data.get("classification", "STUB")
     rule_path = rule_dir / f"rule_{rid}.py"
     test_path = test_dir / f"test_rule_{rid}.py"
-    report: dict[str, Any] = {"rid": data["id"], "classification": cls, "rule_written": False, "test_written": False, "test_skipped": None}
+    report: dict[str, Any] = {
+        "rid": data["id"],
+        "classification": cls,
+        "rule_written": False,
+        "test_written": False,
+        "test_skipped": None,
+    }
 
     # Compute the body once so we know whether it's a real implementation
     # or a stub — used by both the rule file and the test file.
@@ -783,15 +799,20 @@ def load_intermediate_yamls(intermediate_dir: Path) -> list[dict]:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--dry-run", action="store_true",
-                    help="Write to /tmp/usdm4_stage2_{lib,tests} instead of real paths.")
-    ap.add_argument("--only", default="",
-                    help="Comma-separated DDF ids to process.")
+    ap.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Write to /tmp/usdm4_stage2_{lib,tests} instead of real paths.",
+    )
+    ap.add_argument("--only", default="", help="Comma-separated DDF ids to process.")
     ap.add_argument("--no-rules", action="store_true", help="Skip rule file emission.")
     ap.add_argument("--no-tests", action="store_true", help="Skip test file emission.")
-    ap.add_argument("--overwrite-tests", action="store_true",
-                    help="Overwrite existing test files. Default: preserve them "
-                         "(existing tests are often hand-authored with real fixtures).")
+    ap.add_argument(
+        "--overwrite-tests",
+        action="store_true",
+        help="Overwrite existing test files. Default: preserve them "
+        "(existing tests are often hand-authored with real fixtures).",
+    )
     args = ap.parse_args()
 
     if args.dry_run:
@@ -817,7 +838,9 @@ def main() -> int:
     tests_skipped = 0
     for rule in rules:
         r = emit_rule_and_test(
-            rule, rule_dir, test_dir,
+            rule,
+            rule_dir,
+            test_dir,
             write_rule=not args.no_rules,
             write_test=not args.no_tests,
             overwrite_tests=args.overwrite_tests,
@@ -828,10 +851,16 @@ def main() -> int:
 
     print("\n=== Summary by classification ===")
     for cls, n in sorted(counter.items(), key=lambda kv: (-kv[1], kv[0])):
-        note = "(rule skipped — existing impl preserved)" if cls == "HAS_IMPLEMENTATION" else ""
+        note = (
+            "(rule skipped — existing impl preserved)"
+            if cls == "HAS_IMPLEMENTATION"
+            else ""
+        )
         print(f"  {n:4d}  {cls:30s}  {note}")
     if tests_skipped:
-        print(f"\n  {tests_skipped} test file(s) preserved (already exist; use --overwrite-tests to replace)")
+        print(
+            f"\n  {tests_skipped} test file(s) preserved (already exist; use --overwrite-tests to replace)"
+        )
     return 0
 
 

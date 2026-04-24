@@ -10,7 +10,11 @@ from usdm4.rules.rule_template import RuleTemplate
 
 
 def _date_key(date):
-    type_code = (date.get("type") or {}).get("code") if isinstance(date.get("type"), dict) else None
+    type_code = (
+        (date.get("type") or {}).get("code")
+        if isinstance(date.get("type"), dict)
+        else None
+    )
     scopes = date.get("geographicScopes") or []
     scope_codes = frozenset(
         (s.get("type") or {}).get("code")

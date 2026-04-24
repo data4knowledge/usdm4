@@ -30,7 +30,9 @@ class RuleDDF00260(RuleTemplate):
             if not isinstance(iid, str) or " " not in iid:
                 continue
             instance_type = (
-                item.get("instanceType", "Unknown") if isinstance(item, dict) else "Unknown"
+                item.get("instanceType", "Unknown")
+                if isinstance(item, dict)
+                else "Unknown"
             )
             self._add_failure(
                 f"id value {iid!r} contains a space",

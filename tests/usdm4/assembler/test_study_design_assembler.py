@@ -2,6 +2,14 @@ import os
 import pathlib
 import pytest
 from simple_error_log.errors import Errors
+
+# Import via the `usdm4.*` path (not `src.usdm4.*`). The assembler and
+# Builder modules internally import `from usdm4.api...`, so every API
+# class the runtime uses lives under that module path. Importing via
+# `src.usdm4.*` instead would load a second, parallel copy of the class,
+# and pydantic would reject instances of it because their runtime type
+# doesn't match the one the assembler is validating against.
+from usdm4.api.study_epoch import StudyEpoch
 from src.usdm4.assembler.study_design_assembler import StudyDesignAssembler
 from src.usdm4.assembler.population_assembler import PopulationAssembler
 from src.usdm4.assembler.timeline_assembler import TimelineAssembler
@@ -1057,3 +1065,220 @@ class TestStudyDesignAssemblerAdditionalCoverage:
             assert isinstance(study_design.encounters, list)
             assert isinstance(study_design.activities, list)
             assert isinstance(study_design.scheduleTimelines, list)
+
+
+# ---------------------------------------------------------------------------
+# Scope B — full wiring: arms / interventions / elements / cells / cohorts
+# ---------------------------------------------------------------------------
+
+
+def _make_epoch(builder, label):
+    """Build a StudyEpoch with the given label.
+
+    TimelineAssembler's real epochs carry a 'Treatment Epoch' type; mirror
+    that here without spinning up the full timeline so the test focuses on
+    the study-design wiring, not on timeline assembly internals.
+    """
+    return builder.create(
+        StudyEpoch,
+        {
+            "name": f"EPOCH-{label.upper()}",
+            "label": label,
+            "description": f"Epoch {label}",
+            "type": builder.klass_and_attribute_value(
+                StudyEpoch, "type", "Treatment Epoch"
+            ),
+        },
+    )
+
+
+@pytest.fixture
+def timeline_with_epochs(builder, errors):
+    """Timeline assembler with two real StudyEpoch objects for cell tests."""
+    assembler = TimelineAssembler(builder, errors)
+    assembler._epochs = [
+        _make_epoch(builder, "Screening"),
+        _make_epoch(builder, "Treatment"),
+    ]
+    assembler._encounters = []
+    assembler._activities = []
+    assembler._timelines = []
+    return assembler
+
+
+class TestStudyDesignAssemblerWiring:
+    """Integration tests for the two-pass build introduced in Scope B."""
+
+    def test_multi_arm_multi_intervention(
+        self, study_design_assembler, population_assembler, timeline_with_epochs
+    ):
+        """2 arms × 2 interventions × 2 cells resolve into the expected shape.
+
+        Verifies: arms populated, interventions populated on the assembler
+        (not on the design — they live on StudyVersion), studyInterventionIds
+        reflect the built interventions, and the cells resolve arm / epoch /
+        element references correctly.
+        """
+        data = {
+            "label": "Multi-arm Study",
+            "rationale": "Evaluate two interventions",
+            "trial_phase": "Phase II",
+            "intervention_model": "Parallel",
+            "interventions": [
+                {"name": "DrugX", "type": "Drug", "role": "Investigational Treatment"},
+                {"name": "Placebo", "type": "Drug", "role": "Placebo Comparator"},
+            ],
+            "elements": [
+                {"name": "ElemX", "intervention_names": ["DrugX"]},
+                {"name": "ElemP", "intervention_names": ["Placebo"]},
+            ],
+            "arms": [
+                {"name": "Active", "type": "Experimental"},
+                {"name": "Control", "type": "Placebo Comparator"},
+            ],
+            "cells": [
+                {"arm": "Active", "epoch": "Treatment", "elements": ["ElemX"]},
+                {"arm": "Control", "epoch": "Treatment", "elements": ["ElemP"]},
+            ],
+        }
+
+        study_design_assembler.execute(data, population_assembler, timeline_with_epochs)
+
+        study_design = study_design_assembler.study_design
+        assert study_design is not None
+
+        # Arms built and ordered as specified.
+        assert len(study_design.arms) == 2
+        assert [a.label for a in study_design.arms] == ["Active", "Control"]
+
+        # Interventions live on the assembler (destined for StudyVersion),
+        # and their ids appear on the design's studyInterventionIds.
+        interventions = study_design_assembler.study_interventions
+        assert len(interventions) == 2
+        assert set(study_design.studyInterventionIds) == {i.id for i in interventions}
+
+        # Role code for the Investigational Treatment intervention uses the
+        # CDISC code pulled in through encoder.intervention_role().
+        drug_x = next(i for i in interventions if i.label == "DrugX")
+        assert drug_x.role.code == "C41161"  # Protocol Agent
+
+        # Cells resolve arm + epoch + element references.
+        assert len(study_design.studyCells) == 2
+        active_cell = next(
+            c for c in study_design.studyCells if c.armId == study_design.arms[0].id
+        )
+        assert active_cell.epochId == timeline_with_epochs.epochs[1].id  # Treatment
+        assert len(active_cell.elementIds) == 1
+
+    def test_intervention_model_from_input(
+        self, study_design_assembler, population_assembler, timeline_with_epochs
+    ):
+        """intervention_model in the input overrides the default C82639."""
+        data = {
+            "label": "Crossover Study",
+            "rationale": "rationale",
+            "trial_phase": "Phase II",
+            "intervention_model": "Crossover",
+        }
+
+        study_design_assembler.execute(data, population_assembler, timeline_with_epochs)
+
+        study_design = study_design_assembler.study_design
+        # Encoder maps Crossover → C82637 (per CDISC CT C99076).
+        assert study_design.model.code == "C82637"
+
+    def test_empty_cells_synthesises_arm_epoch_grid(
+        self, study_design_assembler, population_assembler, timeline_with_epochs
+    ):
+        """When cells=[] but arms and epochs exist, build the full grid."""
+        data = {
+            "label": "Grid Synthesis",
+            "rationale": "rationale",
+            "trial_phase": "Phase II",
+            "arms": [
+                {"name": "A1", "type": "Experimental"},
+                {"name": "A2", "type": "Experimental"},
+            ],
+            # cells omitted → synthesis kicks in
+        }
+
+        study_design_assembler.execute(data, population_assembler, timeline_with_epochs)
+
+        study_design = study_design_assembler.study_design
+        # 2 arms × 2 epochs = 4 synthesised cells.
+        assert len(study_design.studyCells) == 4
+        # Every cell has an empty element list (synthesis has no element input).
+        assert all(c.elementIds == [] for c in study_design.studyCells)
+        # Every arm is paired with every epoch.
+        arm_epoch_pairs = {(c.armId, c.epochId) for c in study_design.studyCells}
+        expected = {
+            (arm.id, epoch.id)
+            for arm in study_design.arms
+            for epoch in timeline_with_epochs.epochs
+        }
+        assert arm_epoch_pairs == expected
+
+    def test_cohort_to_arm_wiring(
+        self,
+        study_design_assembler,
+        builder,
+        errors,
+        timeline_with_epochs,
+    ):
+        """cohort.arm_names entries are resolved onto StudyArm.populationIds.
+
+        Builds a population assembler with a cohort that references an arm
+        by name, then runs StudyDesignAssembler and confirms the arm picks
+        up the cohort's id in populationIds.
+        """
+        population_assembler = PopulationAssembler(builder, errors)
+        population_data = {
+            "label": "Pop",
+            "inclusion_exclusion": {"inclusion": [], "exclusion": []},
+            "cohorts": [
+                {"name": "CohortA", "arm_names": ["Active"]},
+            ],
+        }
+        population_assembler.execute(population_data)
+
+        data = {
+            "label": "Cohort Wiring Study",
+            "rationale": "rationale",
+            "trial_phase": "Phase II",
+            "arms": [
+                {"name": "Active", "type": "Experimental"},
+                {"name": "Control", "type": "Placebo Comparator"},
+            ],
+        }
+
+        study_design_assembler.execute(data, population_assembler, timeline_with_epochs)
+
+        study_design = study_design_assembler.study_design
+        active = next(a for a in study_design.arms if a.label == "Active")
+        control = next(a for a in study_design.arms if a.label == "Control")
+
+        cohort = population_assembler.cohorts[0]
+        assert active.populationIds == [cohort.id]
+        assert control.populationIds == []
+
+    def test_legacy_empty_payload_degrades_gracefully(
+        self, study_design_assembler, population_assembler, timeline_with_epochs
+    ):
+        """Minimal input (no arms/interventions/cells) still produces a
+        valid design — this is the back-compat contract with PR-31 callers.
+        """
+        data = {
+            "label": "Legacy",
+            "rationale": "rationale",
+            "trial_phase": "Phase II",
+        }
+
+        study_design_assembler.execute(data, population_assembler, timeline_with_epochs)
+
+        study_design = study_design_assembler.study_design
+        assert study_design is not None
+        assert study_design.arms == []
+        assert study_design.studyCells == []
+        assert study_design.elements == []
+        assert study_design.studyInterventionIds == []
+        assert study_design_assembler.study_interventions == []
