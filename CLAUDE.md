@@ -54,17 +54,41 @@ For web-server deployments, pass an explicit `cache_dir` to `USDM4(cache_dir=...
 
 **Important:** Tests must be run in VSCode (or a local terminal), NOT in Cowork. The test suite depends on installed packages (`cdisc-rules-engine`, `usdm3`, etc.) and the project's virtual environment, which are not available in the Cowork sandbox. When writing or modifying tests, create the files but do not attempt to execute them in Cowork.
 
-## CORE CLI tool
+## Validation CLI tools (`validate/`)
 
-`core.py` is a standalone CLI for running CDISC CORE validation:
+The `validate/` directory holds standalone CLIs for the two engines plus an alignment tool. Invoke all of them from the repo root.
+
+### CORE engine — `validate/core.py`
 
 ```bash
-python core.py study.json [-o output.yaml] [--cache-dir /path/to/cache]
+python validate/core.py study.json [-o output.yaml] [--cache-dir /path/to/cache]
 ```
 
-Output is a structured YAML file with findings grouped by rule, each error showing entity, instance_id, path, and relevant details. Execution errors (rules that don't apply to a given entity type) are counted but excluded from findings.
+Output is a structured YAML file with findings grouped by rule, each error showing entity, instance_id, path, and relevant details. Execution errors (rules that don't apply to a given entity type) are counted but excluded from findings. Uses `CoreValidator` directly (not the `USDM4` facade) to preserve the full `CoreValidationResult` structure.
 
-The validator uses `CoreValidator` directly (not the `USDM4` facade) to preserve the full `CoreValidationResult` structure in the output.
+### d4k engine — `validate/d4k.py`
+
+```bash
+python validate/d4k.py study.json [-o output.yaml]
+```
+
+Runs the usdm4 Python rule library (`USDM4.validate`). YAML emits every rule's outcome (Success / Failure / Exception / Not Implemented), not just failures, so it can be diffed against the CORE YAML.
+
+### Alignment — `validate/compare.py`
+
+```bash
+python validate/compare.py <core.yaml> <d4k.yaml> [-o alignment.yaml] [--text]
+```
+
+Produces a rule-by-rule alignment report. Classifications per rule: `aligned_pass`, `aligned_fail`, `count_mismatch`, `d4k_only`, `core_only`, `d4k_exception`, `d4k_not_impl`, `core_only_rule`. CORE YAML only lists failing rules, so "CORE passed" and "CORE did not run this rule" collapse into `Pass-or-NA` at the rule-id level.
+
+### One-shot wrapper — `validate/run.sh`
+
+```bash
+./validate/run.sh study.json [output_dir]
+```
+
+Runs all three scripts end-to-end on a single JSON file. Honours `PYTHON` (interpreter) and `CACHE_DIR` (passed to core.py) environment overrides.
 
 ### Execution error filtering
 
