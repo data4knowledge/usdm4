@@ -21,6 +21,7 @@ setuptools.setup(
         "cdisc-rules-engine>=0.15.0",
         "platformdirs>=3.0",
         "jsonschema>=4.0",
+        "lxml>=4.9",
         "pyyaml>=6.0",
         "requests>=2.31",
         "pydantic>=2.0",
@@ -36,6 +37,10 @@ setuptools.setup(
             "ct/iso/iso3166/iso3166.json",
             "bc/cdisc/library_cache/library_cache.yaml",
             "rules/library/schema/usdm_v4-0-0.json",
+            # USDM-XHTML 1.0 schema (bundled from the CORE cache) —
+            # required by rules/xhtml_validation.py for DDF00187 / DDF00247.
+            "rules/library/schema/xml/cdisc-usdm-xhtml-1.0/*.xsd",
+            "rules/library/schema/xml/xhtml-1.1/*.xsd",
         ]
     },
     tests_require=["pytest", "pytest-cov", "pytest-mock", "python-dotenv"],

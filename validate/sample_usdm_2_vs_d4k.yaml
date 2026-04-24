@@ -12,10 +12,10 @@ summary:
     file: /Users/daveih/Documents/github/usdm4/validate/sample_usdm_2.json
     is_valid: false
     rules_executed: 213
-    finding_count: 279
+    finding_count: 286
     counts:
-      success: 194
-      failure: 19
+      success: 193
+      failure: 20
       exception: 0
       not_implemented: 0
   rule_ids_total: 213
@@ -25,8 +25,8 @@ summary:
   classifications:
     aligned_pass: 191
     d4k_only: 8
-    aligned_fail: 10
-    core_only: 3
+    aligned_fail: 11
+    core_only: 2
     count_mismatch: 1
 rows:
 - rule_id: DDF00006
@@ -862,9 +862,9 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00187
-  classification: core_only
-  d4k_status: Success
-  d4k_findings: 0
+  classification: count_mismatch
+  d4k_status: Failure
+  d4k_findings: 5
   core_status: Fail
   core_findings: 6
   core_id: CORE-001069
@@ -1225,9 +1225,9 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00247
-  classification: count_mismatch
+  classification: aligned_fail
   d4k_status: Failure
-  d4k_findings: 3
+  d4k_findings: 5
   core_status: Fail
   core_findings: 5
   core_id: CORE-000945

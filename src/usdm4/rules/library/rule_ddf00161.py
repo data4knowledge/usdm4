@@ -8,16 +8,24 @@
 #   1. If an Activity has childIds, its own nextId must be one of
 #      those childIds (stepping into the first child of the subtree).
 #   2. If an Activity is a child (some parent has it in childIds),
-#      its previousId must be within {parent.id, all OTHER descendants
-#      of that parent}. First child → parent; later children → the
-#      tail of the preceding sibling's subtree (transitively deep).
+#      its previousId must be within { parent.id, OTHER children of
+#      that parent, and their deep descendants } for at least one of
+#      its parents. Multi-parent activities satisfy the check if the
+#      previousId is allowed under ANY parent's context (matches the
+#      flattening CORE's JSONata does via `$pacts[...].[id,...].*`).
 #   3. If an Activity's previousId resolves to an Activity with
 #      childIds, this Activity must be one of those childIds.
 #      (Reverse of Issue 1: caught from the child's perspective.)
+from collections import defaultdict
+
 from usdm4.rules.rule_template import RuleTemplate
 
 
-STUDY_DESIGN_KLASSES = ["StudyDesign", "InterventionalStudyDesign", "ObservationalStudyDesign"]
+STUDY_DESIGN_KLASSES = [
+    "StudyDesign",
+    "InterventionalStudyDesign",
+    "ObservationalStudyDesign",
+]
 
 
 def _descendants(activity_id, children_map, visited=None):
@@ -60,14 +68,16 @@ class RuleDDF00161(RuleTemplate):
                 if not activities:
                     continue
                 by_id = {a["id"]: a for a in activities}
-                # parent -> list of child ids, and child -> parent id
+                # parent -> list of child ids, and child -> list of parent ids
+                # (an Activity can appear in childIds of multiple parents —
+                # e.g. shared activities across different branches).
                 children_map = {
                     a["id"]: list(a.get("childIds") or []) for a in activities
                 }
-                parent_of = {}
+                parents_of: dict = defaultdict(list)
                 for parent_id, child_ids in children_map.items():
                     for cid in child_ids:
-                        parent_of[cid] = parent_id
+                        parents_of[cid].append(parent_id)
 
                 for activity in activities:
                     aid = activity["id"]
@@ -75,7 +85,7 @@ class RuleDDF00161(RuleTemplate):
                     prev_id = activity.get("previousId")
                     next_id = activity.get("nextId")
 
-                    # Issue 1 — parent must step into its first child via nextId
+                    # Issue 1 — parent must step into a child via nextId
                     if child_ids and next_id not in child_ids:
                         self._add_failure(
                             f"Activity {aid!r} has childIds but its nextId {next_id!r} is not one of them",
@@ -84,21 +94,33 @@ class RuleDDF00161(RuleTemplate):
                             data.path_by_id(aid),
                         )
 
-                    # Issue 2 — child's previousId must be parent or another descendant of parent
-                    parent_id = parent_of.get(aid)
-                    if parent_id is not None:
-                        allowed = {parent_id} | _descendants(
-                            parent_id, children_map
-                        ) - {aid}
+                    # Issue 2 — child's previousId must be in the allowed set
+                    # for AT LEAST one of its parents.
+                    parent_list = parents_of.get(aid) or []
+                    if parent_list:
+                        allowed: set = set()
+                        for parent_id in parent_list:
+                            allowed.add(parent_id)
+                            # Siblings + their deep descendants, excluding self.
+                            allowed |= _descendants(parent_id, children_map)
+                        allowed.discard(aid)
                         if prev_id not in allowed:
+                            parents_str = (
+                                parent_list[0]
+                                if len(parent_list) == 1
+                                else f"parents {parent_list!r}"
+                            )
                             self._add_failure(
-                                f"Activity {aid!r} is a child of {parent_id!r} but its previousId {prev_id!r} is neither the parent nor another descendant of the parent",
+                                f"Activity {aid!r} is a child of {parents_str} "
+                                f"but its previousId {prev_id!r} is neither a "
+                                f"parent nor another descendant of a parent",
                                 "Activity",
                                 "previousId",
                                 data.path_by_id(aid),
                             )
 
-                    # Issue 3 — if previousId is a parent (has children), we must be one of them
+                    # Issue 3 — if previousId is a parent (has children), we
+                    # must be one of them.
                     if prev_id and prev_id in by_id:
                         prev_children = children_map.get(prev_id) or []
                         if prev_children and aid not in prev_children:

@@ -1,18 +1,9 @@
-"""Tests for RuleDDF00187 — NarrativeContentItem.text well-formed XHTML."""
+"""Tests for RuleDDF00187 — NarrativeContentItem.text valid USDM-XHTML (schema)."""
 
 from unittest.mock import MagicMock
 
-from usdm4.rules.library.rule_ddf00187 import RuleDDF00187, _is_well_formed
+from usdm4.rules.library.rule_ddf00187 import RuleDDF00187
 from usdm4.rules.rule_template import RuleTemplate
-
-
-def test_is_well_formed_accepts_plain_and_xhtml():
-    assert _is_well_formed("<p>ok</p>") is True
-    assert _is_well_formed("plain text") is True
-
-
-def test_is_well_formed_rejects_broken():
-    assert _is_well_formed("<p>unterminated") is False
 
 
 class TestRuleDDF00187:
@@ -39,13 +30,39 @@ class TestRuleDDF00187:
         )
         assert rule.validate({"data": data}) is True
 
-    def test_well_formed_passes(self):
+    def test_valid_xhtml_passes(self):
         rule = RuleDDF00187()
-        data = self._data([{"id": "N1", "text": "<p>Well-formed</p>"}])
+        data = self._data([{"id": "N1", "text": "<p>Valid</p>"}])
         assert rule.validate({"data": data}) is True
 
-    def test_malformed_fails(self):
+    def test_malformed_xml_fails(self):
         rule = RuleDDF00187()
-        data = self._data([{"id": "N1", "text": "<p>oops"}])
+        data = self._data([{"id": "N1", "text": "<p>unclosed"}])
         assert rule.validate({"data": data}) is False
         assert rule.errors().count() == 1
+
+    def test_schema_violation_fails(self):
+        """Well-formed XML but invalid USDM-XHTML — <p> directly inside <ul>.
+
+        Regression: the previous xml.etree-based implementation only
+        checked well-formedness and let this through. CORE-001069 flags
+        it as an XHTML schema violation, and d4k now matches.
+        """
+        rule = RuleDDF00187()
+        data = self._data(
+            [{"id": "N1", "text": "<ul><p>should be li</p><li>ok</li></ul>"}]
+        )
+        assert rule.validate({"data": data}) is False
+        assert rule.errors().count() == 1
+
+    def test_usdm_ref_extension_is_allowed(self):
+        rule = RuleDDF00187()
+        data = self._data(
+            [
+                {
+                    "id": "N1",
+                    "text": '<p>See <usdm:ref klass="X" id="Y" attribute="name"/></p>',
+                }
+            ]
+        )
+        assert rule.validate({"data": data}) is True

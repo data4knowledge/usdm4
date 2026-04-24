@@ -1,25 +1,9 @@
-"""Tests for RuleDDF00247 — Syntax template text must be well-formed XHTML."""
+"""Tests for RuleDDF00247 — Syntax template text valid USDM-XHTML (schema)."""
 
 from unittest.mock import MagicMock
 
-from usdm4.rules.library.rule_ddf00247 import (
-    RuleDDF00247,
-    SCOPE_CLASSES,
-    _is_well_formed,
-)
+from usdm4.rules.library.rule_ddf00247 import RuleDDF00247, SCOPE_CLASSES
 from usdm4.rules.rule_template import RuleTemplate
-
-
-def test_is_well_formed_true_for_simple():
-    assert _is_well_formed("<p>hello</p>") is True
-
-
-def test_is_well_formed_true_for_plain_text():
-    assert _is_well_formed("plain text") is True
-
-
-def test_is_well_formed_false_for_broken():
-    assert _is_well_formed("<p>unclosed") is False
 
 
 class TestRuleDDF00247:
@@ -48,16 +32,48 @@ class TestRuleDDF00247:
         )
         assert rule.validate({"data": data}) is True
 
-    def test_well_formed_passes(self):
+    def test_valid_xhtml_passes(self):
         rule = RuleDDF00247()
         data = self._data({"Endpoint": [{"id": "E1", "text": "<p>Safe content</p>"}]})
         assert rule.validate({"data": data}) is True
 
-    def test_malformed_fails(self):
+    def test_malformed_xml_fails(self):
         rule = RuleDDF00247()
         data = self._data({"Condition": [{"id": "C1", "text": "<p>unclosed"}]})
         assert rule.validate({"data": data}) is False
         assert rule.errors().count() == 1
+
+    def test_schema_violation_fails(self):
+        """<p> directly inside <ul> is well-formed XML but invalid XHTML.
+
+        Regression: previous xml.etree-based impl let it through. The
+        INC1/INC3 eligibility texts in sample 2 are of this shape — CORE
+        flagged them, d4k missed them until this rewrite.
+        """
+        rule = RuleDDF00247()
+        data = self._data(
+            {
+                "EligibilityCriterionItem": [
+                    {
+                        "id": "I1",
+                        "text": "<p>intro</p><ul><p>bad</p><li>ok</li></ul>",
+                    }
+                ]
+            }
+        )
+        assert rule.validate({"data": data}) is False
+        assert rule.errors().count() == 1
+
+    def test_each_scope_class_iterated(self):
+        """Bad text under each of the six scope classes must be caught."""
+        rule = RuleDDF00247()
+        by_klass = {
+            klass: [{"id": f"{klass}_1", "text": "<p>unclosed"}]
+            for klass in SCOPE_CLASSES
+        }
+        data = self._data(by_klass)
+        assert rule.validate({"data": data}) is False
+        assert rule.errors().count() == len(SCOPE_CLASSES)
 
     def test_scope_classes_constant(self):
         assert "Objective" in SCOPE_CLASSES

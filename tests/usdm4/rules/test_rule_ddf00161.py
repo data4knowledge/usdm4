@@ -117,3 +117,31 @@ class TestRuleDDF00161:
         # C: issue 3 fires because A has childIds [B] but C is not among them.
         # Issue 2 also fires because C has no parent so issue 2 skipped.
         assert rule.errors().count() >= 1
+
+    def test_multi_parent_child_uses_union_of_parent_allowed_sets(self):
+        """An Activity listed as a child of TWO parents (shared node in the
+        tree) must have its previousId allowed under at least one parent.
+
+        Previously the parent_of map only recorded the last parent seen,
+        which could flip the outcome depending on iteration order. The
+        new impl takes the union across all parents.
+        """
+        rule = RuleDDF00161()
+        design = {
+            "id": "D1",
+            "activities": [
+                # Shared child X has parents P1 and P2. P1's other child is S1.
+                # X's previousId is S1 (a sibling of X under P1 only).
+                {"id": "P1", "childIds": ["X", "S1"], "nextId": "X"},
+                {"id": "P2", "childIds": ["X"], "nextId": "X"},
+                {"id": "X", "previousId": "S1"},
+                {"id": "S1", "previousId": "X"},
+            ],
+        }
+        data = self._data({"InterventionalStudyDesign": [design]})
+        rule.validate({"data": data})
+        # X's previousId is S1. Under parent P1, S1 is a sibling — allowed.
+        # Under parent P2, S1 is not a sibling — would fail if we only looked
+        # at P2. Union logic means X's issue 2 check passes.
+        dump = rule.errors().dump()
+        assert "Activity 'X'" not in dump or "neither a parent" not in dump

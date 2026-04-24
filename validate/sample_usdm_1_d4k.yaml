@@ -528,61 +528,71 @@ outcomes:
   status: Failure
   error_count: 10
   errors:
-  - message: NarrativeContentItem.text is not well-formed XHTML
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 78: xmlParseEntityRef:\
+      \ no name, line 78, column 49"
     level: Warning
     klass: NarrativeContentItem
     attribute: text
     path: $.Study.StudyVersion[0].NarrativeContentItem[4]
     rule_text: Narrative content item text is expected to be HTML formatted.
-  - message: NarrativeContentItem.text is not well-formed XHTML
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 4: xmlParseEntityRef:\
+      \ no name, line 4, column 32"
     level: Warning
     klass: NarrativeContentItem
     attribute: text
     path: $.Study.StudyVersion[0].NarrativeContentItem[8]
     rule_text: Narrative content item text is expected to be HTML formatted.
-  - message: NarrativeContentItem.text is not well-formed XHTML
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 1: xmlParseEntityRef:\
+      \ no name, line 1, column 383"
     level: Warning
     klass: NarrativeContentItem
     attribute: text
     path: $.Study.StudyVersion[0].NarrativeContentItem[10]
     rule_text: Narrative content item text is expected to be HTML formatted.
-  - message: NarrativeContentItem.text is not well-formed XHTML
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 10: xmlParseEntityRef:\
+      \ no name, line 10, column 49"
     level: Warning
     klass: NarrativeContentItem
     attribute: text
     path: $.Study.StudyVersion[0].NarrativeContentItem[22]
     rule_text: Narrative content item text is expected to be HTML formatted.
-  - message: NarrativeContentItem.text is not well-formed XHTML
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 1: StartTag:\
+      \ invalid element name, line 1, column 349"
     level: Warning
     klass: NarrativeContentItem
     attribute: text
     path: $.Study.StudyVersion[0].NarrativeContentItem[35]
     rule_text: Narrative content item text is expected to be HTML formatted.
-  - message: NarrativeContentItem.text is not well-formed XHTML
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 5: StartTag:\
+      \ invalid element name, line 5, column 227"
     level: Warning
     klass: NarrativeContentItem
     attribute: text
     path: $.Study.StudyVersion[0].NarrativeContentItem[44]
     rule_text: Narrative content item text is expected to be HTML formatted.
-  - message: NarrativeContentItem.text is not well-formed XHTML
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 5: StartTag:\
+      \ invalid element name, line 5, column 39"
     level: Warning
     klass: NarrativeContentItem
     attribute: text
     path: $.Study.StudyVersion[0].NarrativeContentItem[98]
     rule_text: Narrative content item text is expected to be HTML formatted.
-  - message: NarrativeContentItem.text is not well-formed XHTML
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 20: StartTag:\
+      \ invalid element name, line 20, column 138"
     level: Warning
     klass: NarrativeContentItem
     attribute: text
     path: $.Study.StudyVersion[0].NarrativeContentItem[195]
     rule_text: Narrative content item text is expected to be HTML formatted.
-  - message: NarrativeContentItem.text is not well-formed XHTML
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 6: StartTag:\
+      \ invalid element name, line 6, column 5"
     level: Warning
     klass: NarrativeContentItem
     attribute: text
     path: $.Study.StudyVersion[0].NarrativeContentItem[203]
     rule_text: Narrative content item text is expected to be HTML formatted.
-  - message: NarrativeContentItem.text is not well-formed XHTML
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 8: xmlParseEntityRef:\
+      \ no name, line 8, column 285"
     level: Warning
     klass: NarrativeContentItem
     attribute: text

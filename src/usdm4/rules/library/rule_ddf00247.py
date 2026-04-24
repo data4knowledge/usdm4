@@ -1,10 +1,10 @@
 # MANUAL: do not regenerate
 #
-# XHTML well-formedness check across the 6 classes that carry a syntax
-# template `text` attribute. Same wrapper-and-parse approach as DDF00187.
-import xml.etree.ElementTree as ET
-
+# Syntax template text across six classes must be valid USDM-XHTML.
+# Delegates to the shared `xhtml_validation` module that wraps lxml +
+# the bundled XML Schema (see rule_ddf00187.py for the same rationale).
 from usdm4.rules.rule_template import RuleTemplate
+from usdm4.rules.xhtml_validation import get_validator
 
 
 SCOPE_CLASSES = [
@@ -15,19 +15,6 @@ SCOPE_CLASSES = [
     "Endpoint",
     "IntercurrentEvent",
 ]
-
-WRAPPER_OPEN = (
-    '<root xmlns="http://www.w3.org/1999/xhtml" xmlns:usdm="http://example.com/usdm">'
-)
-WRAPPER_CLOSE = "</root>"
-
-
-def _is_well_formed(text: str) -> bool:
-    try:
-        ET.fromstring(WRAPPER_OPEN + text + WRAPPER_CLOSE)
-        return True
-    except ET.ParseError:
-        return False
 
 
 class RuleDDF00247(RuleTemplate):
@@ -47,16 +34,25 @@ class RuleDDF00247(RuleTemplate):
 
     def validate(self, config: dict) -> bool:
         data = config["data"]
+        validator = get_validator()
         for klass in SCOPE_CLASSES:
             for instance in data.instances_by_klass(klass):
                 text = instance.get("text")
                 if not isinstance(text, str) or text.strip() == "":
                     continue
-                if not _is_well_formed(text):
-                    self._add_failure(
-                        f"{klass}.text is not well-formed XHTML",
-                        klass,
-                        "text",
-                        data.path_by_id(instance["id"]),
-                    )
+                errors = validator.validate(text)
+                if not errors:
+                    continue
+                summary = "; ".join(
+                    f"line {e.line}: {e.message[:160]}" if e.line else e.message[:160]
+                    for e in errors[:3]
+                )
+                if len(errors) > 3:
+                    summary += f"; ... and {len(errors) - 3} more"
+                self._add_failure(
+                    f"{klass}.text is not valid USDM-XHTML — {summary}",
+                    klass,
+                    "text",
+                    data.path_by_id(instance["id"]),
+                )
         return self._result()

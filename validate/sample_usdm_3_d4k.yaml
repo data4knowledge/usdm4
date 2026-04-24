@@ -2,10 +2,10 @@ file: /Users/daveih/Documents/github/usdm4/validate/sample_usdm_3.json
 engine: d4k
 is_valid: false
 rules_executed: 213
-finding_count: 508
+finding_count: 509
 counts:
-  success: 186
-  failure: 27
+  success: 184
+  failure: 29
   exception: 0
   not_implemented: 0
 outcomes:
@@ -215,8 +215,18 @@ outcomes:
     rule_text: A scheduled activity instance must refer to either a default condition
       or a timeline exit, but not both.
 - rule_id: DDF00009
-  status: Success
-  error_count: 0
+  status: Failure
+  error_count: 1
+  errors:
+  - message: "ScheduleTimeline has no anchor \u2014 no instance is the target of a\
+      \ Fixed Reference timing within this timeline"
+    level: Error
+    klass: ScheduleTimeline
+    attribute: timings.type, instances
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[3]
+    rule_text: Each schedule timeline must contain at least one anchor (fixed time)
+      - i.e., at least one scheduled activity instance that is referenced by a Fixed
+      Reference timing.
 - rule_id: DDF00010
   status: Failure
   error_count: 9
@@ -3662,17 +3672,8 @@ outcomes:
   error_count: 0
 - rule_id: DDF00161
   status: Failure
-  error_count: 3
+  error_count: 2
   errors:
-  - message: Activity 'Activity_23' is a child of 'Activity_34' but its previousId
-      'Activity_22' is neither the parent nor another descendant of the parent
-    level: Error
-    klass: Activity
-    attribute: previousId
-    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[22]
-    rule_text: The ordering of activities (using the previous and next attributes)
-      must include the parents (e.g. activities referring to children) preceding their
-      children.
   - message: Activity 'Activity_34' has childIds but its nextId 'Activity_35' is not
       one of them
     level: Error
@@ -3830,8 +3831,22 @@ outcomes:
   status: Success
   error_count: 0
 - rule_id: DDF00187
-  status: Success
-  error_count: 0
+  status: Failure
+  error_count: 1
+  errors:
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 96: Element\
+      \ '{http://www.w3.org/1999/xhtml}tr': Missing child element(s). Expected is\
+      \ one of ( {http://www.w3.org/1999/xhtml}th, {http://www.w3.org/1999/xhtml}td\
+      \ ).; line 98: Element '{http://www.w3.org/1999/xhtml}tr': Missing child element(s).\
+      \ Expected is one of ( {http://www.w3.org/1999/xhtml}th, {http://www.w3.org/1999/xhtml}td\
+      \ ).; line 100: Element '{http://www.w3.org/1999/xhtml}tr': Missing child element(s).\
+      \ Expected is one of ( {http://www.w3.org/1999/xhtml}th, {http://www.w3.org/1999/xhtml}td\
+      \ ).; ... and 1 more"
+    level: Warning
+    klass: NarrativeContentItem
+    attribute: text
+    path: $.Study.StudyVersion[0].NarrativeContentItem[112]
+    rule_text: Narrative content item text is expected to be HTML formatted.
 - rule_id: DDF00188
   status: Success
   error_count: 0
@@ -4102,31 +4117,36 @@ outcomes:
   status: Failure
   error_count: 5
   errors:
-  - message: Condition.text is not well-formed XHTML
+  - message: "Condition.text is not valid USDM-XHTML \u2014 line 1: StartTag: invalid\
+      \ element name, line 1, column 142"
     level: Warning
     klass: Condition
     attribute: text
     path: $.Study.StudyVersion[0].Condition[3]
     rule_text: Syntax template text is expected to be HTML formatted.
-  - message: Condition.text is not well-formed XHTML
+  - message: "Condition.text is not valid USDM-XHTML \u2014 line 1: xmlParseEntityRef:\
+      \ no name, line 1, column 184"
     level: Warning
     klass: Condition
     attribute: text
     path: $.Study.StudyVersion[0].Condition[18]
     rule_text: Syntax template text is expected to be HTML formatted.
-  - message: Condition.text is not well-formed XHTML
+  - message: "Condition.text is not valid USDM-XHTML \u2014 line 1: expected '>',\
+      \ line 1, column 209"
     level: Warning
     klass: Condition
     attribute: text
     path: $.Study.StudyVersion[0].Condition[20]
     rule_text: Syntax template text is expected to be HTML formatted.
-  - message: Endpoint.text is not well-formed XHTML
+  - message: "Endpoint.text is not valid USDM-XHTML \u2014 line 2: Opening and ending\
+      \ tag mismatch: br line 1 and p, line 2, column 70"
     level: Warning
     klass: Endpoint
     attribute: text
     path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Objective[7].Endpoint[0]
     rule_text: Syntax template text is expected to be HTML formatted.
-  - message: Endpoint.text is not well-formed XHTML
+  - message: "Endpoint.text is not valid USDM-XHTML \u2014 line 1: Opening and ending\
+      \ tag mismatch: br line 1 and p, line 1, column 260"
     level: Warning
     klass: Endpoint
     attribute: text

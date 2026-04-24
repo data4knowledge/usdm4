@@ -2,7 +2,7 @@ file: /Users/daveih/Documents/github/usdm4/validate/sample_usdm_4.json
 engine: d4k
 is_valid: false
 rules_executed: 213
-finding_count: 560
+finding_count: 566
 counts:
   success: 190
   failure: 23
@@ -4556,33 +4556,87 @@ outcomes:
   error_count: 0
 - rule_id: DDF00187
   status: Failure
-  error_count: 5
+  error_count: 11
   errors:
-  - message: NarrativeContentItem.text is not well-formed XHTML
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 5: error\
+      \ parsing attribute name, line 5, column 8"
     level: Warning
     klass: NarrativeContentItem
     attribute: text
     path: $.Study.StudyVersion[0].NarrativeContentItem[2]
     rule_text: Narrative content item text is expected to be HTML formatted.
-  - message: NarrativeContentItem.text is not well-formed XHTML
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 3: error\
+      \ parsing attribute name, line 3, column 8"
     level: Warning
     klass: NarrativeContentItem
     attribute: text
     path: $.Study.StudyVersion[0].NarrativeContentItem[9]
     rule_text: Narrative content item text is expected to be HTML formatted.
-  - message: NarrativeContentItem.text is not well-formed XHTML
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 11: Element\
+      \ '{http://www.w3.org/1999/xhtml}li': This element is not expected."
+    level: Warning
+    klass: NarrativeContentItem
+    attribute: text
+    path: $.Study.StudyVersion[0].NarrativeContentItem[11]
+    rule_text: Narrative content item text is expected to be HTML formatted.
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 1: error\
+      \ parsing attribute name, line 1, column 186"
     level: Warning
     klass: NarrativeContentItem
     attribute: text
     path: $.Study.StudyVersion[0].NarrativeContentItem[13]
     rule_text: Narrative content item text is expected to be HTML formatted.
-  - message: NarrativeContentItem.text is not well-formed XHTML
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 17: error\
+      \ parsing attribute name, line 17, column 8"
     level: Warning
     klass: NarrativeContentItem
     attribute: text
     path: $.Study.StudyVersion[0].NarrativeContentItem[15]
     rule_text: Narrative content item text is expected to be HTML formatted.
-  - message: NarrativeContentItem.text is not well-formed XHTML
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 266: Element\
+      \ '{http://www.w3.org/1999/xhtml}p': This element is not expected."
+    level: Warning
+    klass: NarrativeContentItem
+    attribute: text
+    path: $.Study.StudyVersion[0].NarrativeContentItem[33]
+    rule_text: Narrative content item text is expected to be HTML formatted.
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 14: Element\
+      \ '{http://www.w3.org/1999/xhtml}p': This element is not expected."
+    level: Warning
+    klass: NarrativeContentItem
+    attribute: text
+    path: $.Study.StudyVersion[0].NarrativeContentItem[92]
+    rule_text: Narrative content item text is expected to be HTML formatted.
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 52: Element\
+      \ '{http://www.w3.org/1999/xhtml}ul': This element is not expected. Expected\
+      \ is ( {http://www.w3.org/1999/xhtml}li ).; line 93: Element '{http://www.w3.org/1999/xhtml}ul':\
+      \ This element is not expected. Expected is ( {http://www.w3.org/1999/xhtml}li\
+      \ )."
+    level: Warning
+    klass: NarrativeContentItem
+    attribute: text
+    path: $.Study.StudyVersion[0].NarrativeContentItem[96]
+    rule_text: Narrative content item text is expected to be HTML formatted.
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 10: Element\
+      \ '{http://www.w3.org/1999/xhtml}p': This element is not expected. Expected\
+      \ is ( {http://www.w3.org/1999/xhtml}li )."
+    level: Warning
+    klass: NarrativeContentItem
+    attribute: text
+    path: $.Study.StudyVersion[0].NarrativeContentItem[97]
+    rule_text: Narrative content item text is expected to be HTML formatted.
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 18: Element\
+      \ '{http://www.w3.org/1999/xhtml}ul': This element is not expected.; line 26:\
+      \ Element '{http://www.w3.org/1999/xhtml}ul': This element is not expected.\
+      \ Expected is ( {http://www.w3.org/1999/xhtml}li ).; line 50: Element '{http://www.w3.org/1999/xhtml}li':\
+      \ This element is not expected."
+    level: Warning
+    klass: NarrativeContentItem
+    attribute: text
+    path: $.Study.StudyVersion[0].NarrativeContentItem[99]
+    rule_text: Narrative content item text is expected to be HTML formatted.
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 11: error\
+      \ parsing attribute name, line 11, column 5"
     level: Warning
     klass: NarrativeContentItem
     attribute: text

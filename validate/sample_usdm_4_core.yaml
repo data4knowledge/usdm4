@@ -7,10 +7,10 @@ finding_count: 40
 execution_error_count: 6747
 ct_packages_available: 200
 ct_packages_loaded:
-- sdtmct-2024-09-27
-- ddfct-2024-09-27
 - sdtmct-2025-09-26
 - ddfct-2025-09-26
+- sdtmct-2024-09-27
+- ddfct-2024-09-27
 findings:
 - rule_id: CORE-000996
   description: A planned sex must either include a single entry of male or female
@@ -36,23 +36,23 @@ findings:
   - instance_id: Code_368
     path: /study/versions/0/biomedicalConcepts/12/properties/2/code/standardCode
     details:
-      parent_id: AliasCode_13
       decode: AEHLGT
       code: No Concept Code
-      codeSystemVersion: '2024-09-27'
-      parent_rel: standardCode
       codeSystem: http://www.cdisc.org
+      parent_rel: standardCode
       parent_entity: AliasCode
+      parent_id: AliasCode_13
+      codeSystemVersion: '2024-09-27'
   - instance_id: Code_369
     path: /study/versions/0/biomedicalConcepts/12/properties/3/code/standardCode
     details:
-      parent_id: AliasCode_14
       decode: AEHLGTCD
       code: No Concept Code
-      codeSystemVersion: '2024-09-27'
-      parent_rel: standardCode
       codeSystem: http://www.cdisc.org
+      parent_rel: standardCode
       parent_entity: AliasCode
+      parent_id: AliasCode_14
+      codeSystemVersion: '2024-09-27'
 - rule_id: CORE-001070
   description: A masking is not expected to be defined for any study role in a study
     design with an open label blinding schema.
@@ -82,66 +82,66 @@ findings:
     path: /study/documentedBy/0/versions/0
     name: P_APPROVE_ORG
     details:
-      parent_id: StudyDefinitionDocument_1
-      id.GovernanceDate: GovernanceDate_1
       type.code.GeographicScope: C68846
-      version: '3.1'
-      parent_entity: StudyDefinitionDocument
-      type.code: C71476
-      type.decode: Approval Date
-      parent_rel: versions
-      dateValue: '2020-05-12'
       code.standardCode.code: null
+      version: '3.1'
+      id.GovernanceDate: GovernanceDate_1
+      parent_rel: versions
+      parent_entity: StudyDefinitionDocument
       code.standardCode.decode: null
+      parent_id: StudyDefinitionDocument_1
+      type.decode: Approval Date
+      type.code: C71476
       type.decode.GeographicScope: Global
+      dateValue: '2020-05-12'
   - instance_id: StudyDefinitionDocumentVersion_1
     path: /study/documentedBy/0/versions/0
     name: P_APPROVE_A1
     details:
-      parent_id: StudyDefinitionDocument_1
-      id.GovernanceDate: GovernanceDate_2
       type.code.GeographicScope: C68846
-      version: '3.1'
-      parent_entity: StudyDefinitionDocument
-      type.code: C71476
-      type.decode: Approval Date
-      parent_rel: versions
-      dateValue: '2020-08-18'
       code.standardCode.code: null
+      version: '3.1'
+      id.GovernanceDate: GovernanceDate_2
+      parent_rel: versions
+      parent_entity: StudyDefinitionDocument
       code.standardCode.decode: null
+      parent_id: StudyDefinitionDocument_1
+      type.decode: Approval Date
+      type.code: C71476
       type.decode.GeographicScope: Global
+      dateValue: '2020-08-18'
   - instance_id: StudyDefinitionDocumentVersion_1
     path: /study/documentedBy/0/versions/0
     name: P_APPROVE_A2
     details:
-      parent_id: StudyDefinitionDocument_1
-      id.GovernanceDate: GovernanceDate_3
       type.code.GeographicScope: C68846
-      version: '3.1'
-      parent_entity: StudyDefinitionDocument
-      type.code: C71476
-      type.decode: Approval Date
-      parent_rel: versions
-      dateValue: '2021-03-19'
       code.standardCode.code: null
+      version: '3.1'
+      id.GovernanceDate: GovernanceDate_3
+      parent_rel: versions
+      parent_entity: StudyDefinitionDocument
       code.standardCode.decode: null
+      parent_id: StudyDefinitionDocument_1
+      type.decode: Approval Date
+      type.code: C71476
       type.decode.GeographicScope: Global
+      dateValue: '2021-03-19'
   - instance_id: StudyDefinitionDocumentVersion_1
     path: /study/documentedBy/0/versions/0
     name: P_APPROVE_A3
     details:
-      parent_id: StudyDefinitionDocument_1
-      id.GovernanceDate: GovernanceDate_4
       type.code.GeographicScope: C68846
-      version: '3.1'
-      parent_entity: StudyDefinitionDocument
-      type.code: C71476
-      type.decode: Approval Date
-      parent_rel: versions
-      dateValue: '2021-08-31'
       code.standardCode.code: null
+      version: '3.1'
+      id.GovernanceDate: GovernanceDate_4
+      parent_rel: versions
+      parent_entity: StudyDefinitionDocument
       code.standardCode.decode: null
+      parent_id: StudyDefinitionDocument_1
+      type.decode: Approval Date
+      type.code: C71476
       type.decode.GeographicScope: Global
+      dateValue: '2021-08-31'
 - rule_id: CORE-001065
   description: Within a study design, if study type is Interventional then at least
     one intervention is expected to be referenced from a procedure.
@@ -208,8 +208,9 @@ findings:
     path: /study/versions/0/narrativeContentItems/2
     name: NCI_3
     details:
-      parent_id: StudyVersion_1
       parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 5, col 8 [FATAL]: error parsing attribute name'
       - 'Invalid XHTML line 5, col 8 [FATAL]: internal error: xmlParseStartTag: problem
@@ -226,13 +227,13 @@ findings:
         (wrapper start) and body'
       - 'Invalid XHTML line 2 [ERROR]: Element ''p'': This element is not expected.'
       - 'Invalid XHTML line 98 [ERROR]: Element ''u'': This element is not expected.'
-      parent_entity: StudyVersion
   - instance_id: NarrativeContentItem_10
     path: /study/versions/0/narrativeContentItems/9
     name: NCI_10
     details:
-      parent_id: StudyVersion_1
       parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 3, col 8 [FATAL]: error parsing attribute name'
       - 'Invalid XHTML line 3, col 8 [FATAL]: internal error: xmlParseStartTag: problem
@@ -248,22 +249,22 @@ findings:
       - 'Invalid XHTML line 3 [ERROR]: Element ''table'': Missing child element(s).
         Expected is one of ( caption, col, colgroup, thead, tfoot, tbody, tr ).'
       - 'Invalid XHTML line 4 [ERROR]: Element ''tr'': This element is not expected.'
-      parent_entity: StudyVersion
   - instance_id: NarrativeContentItem_12
     path: /study/versions/0/narrativeContentItems/11
     name: NCI_12
     details:
-      parent_id: StudyVersion_1
       parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 11 [ERROR]: Element ''li'': This element is not expected.'
-      parent_entity: StudyVersion
   - instance_id: NarrativeContentItem_14
     path: /study/versions/0/narrativeContentItems/13
     name: NCI_14
     details:
-      parent_id: StudyVersion_1
       parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 1, col 50 [FATAL]: error parsing attribute name'
       - 'Invalid XHTML line 1, col 50 [FATAL]: internal error: xmlParseStartTag: problem
@@ -279,13 +280,13 @@ findings:
       - 'Invalid XHTML line 1 [ERROR]: Element ''table'': Missing child element(s).
         Expected is one of ( caption, col, colgroup, thead, tfoot, tbody, tr ).'
       - 'Invalid XHTML line 2 [ERROR]: Element ''tr'': This element is not expected.'
-      parent_entity: StudyVersion
   - instance_id: NarrativeContentItem_16
     path: /study/versions/0/narrativeContentItems/15
     name: NCI_16
     details:
-      parent_id: StudyVersion_1
       parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 17, col 8 [FATAL]: error parsing attribute name'
       - 'Invalid XHTML line 17, col 8 [FATAL]: internal error: xmlParseStartTag: problem
@@ -301,65 +302,65 @@ findings:
       - 'Invalid XHTML line 17 [ERROR]: Element ''table'': Missing child element(s).
         Expected is one of ( caption, col, colgroup, thead, tfoot, tbody, tr ).'
       - 'Invalid XHTML line 18 [ERROR]: Element ''tr'': This element is not expected.'
-      parent_entity: StudyVersion
   - instance_id: NarrativeContentItem_34
     path: /study/versions/0/narrativeContentItems/33
     name: NCI_34
     details:
-      parent_id: StudyVersion_1
       parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 266 [ERROR]: Element ''p'': This element is not expected.'
-      parent_entity: StudyVersion
   - instance_id: NarrativeContentItem_93
     path: /study/versions/0/narrativeContentItems/92
     name: NCI_93
     details:
-      parent_id: StudyVersion_1
       parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 14 [ERROR]: Element ''p'': This element is not expected.'
-      parent_entity: StudyVersion
   - instance_id: NarrativeContentItem_97
     path: /study/versions/0/narrativeContentItems/96
     name: NCI_97
     details:
-      parent_id: StudyVersion_1
       parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 52 [ERROR]: Element ''ul'': This element is not expected.
         Expected is ( li ).'
       - 'Invalid XHTML line 93 [ERROR]: Element ''ul'': This element is not expected.
         Expected is ( li ).'
-      parent_entity: StudyVersion
   - instance_id: NarrativeContentItem_98
     path: /study/versions/0/narrativeContentItems/97
     name: NCI_98
     details:
-      parent_id: StudyVersion_1
       parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 10 [ERROR]: Element ''p'': This element is not expected.
         Expected is ( li ).'
-      parent_entity: StudyVersion
   - instance_id: NarrativeContentItem_100
     path: /study/versions/0/narrativeContentItems/99
     name: NCI_100
     details:
-      parent_id: StudyVersion_1
       parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 18 [ERROR]: Element ''ul'': This element is not expected.'
       - 'Invalid XHTML line 26 [ERROR]: Element ''ul'': This element is not expected.
         Expected is ( li ).'
       - 'Invalid XHTML line 50 [ERROR]: Element ''li'': This element is not expected.'
-      parent_entity: StudyVersion
   - instance_id: NarrativeContentItem_102
     path: /study/versions/0/narrativeContentItems/101
     name: NCI_102
     details:
-      parent_id: StudyVersion_1
       parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
       $xhtml_errors:
       - 'Invalid XHTML line 11, col 5 [FATAL]: error parsing attribute name'
       - 'Invalid XHTML line 11, col 5 [FATAL]: internal error: xmlParseStartTag: problem
@@ -383,7 +384,6 @@ findings:
         (wrapper start) and body'
       - 'Invalid XHTML line 11 [ERROR]: Element ''p'': This element is not expected.'
       - 'Invalid XHTML line 13 [ERROR]: Element ''tr'': This element is not expected.'
-      parent_entity: StudyVersion
 - rule_id: CORE-000857
   description: A planned sex must be specified using the Sex of Participants (C66732)
     SDTM codelist.
@@ -495,12 +495,12 @@ findings:
     name: TIM53
     details:
       valueLabel: 30 minutes
-      parent_id: ScheduleTimeline_3
-      windowLower: null
-      windowLabel: 3..3 minutes
       windowUpper: null
+      windowLabel: 3..3 minutes
       parent_rel: timings
       parent_entity: ScheduleTimeline
+      parent_id: ScheduleTimeline_3
+      windowLower: null
 - rule_id: CORE-000995
   description: If the duration will vary, a quantity is not expected for the duration
     and vice versa.
@@ -531,12 +531,12 @@ findings:
   - instance_id: Code_1
     path: /study/versions/0/organizations/0/type
     details:
-      codeSystem: http://www.cdisc.org
       $record_count: 425
       codeSystemVersion: '2025-09-26'
+      codeSystem: http://www.cdisc.org
   - instance_id: Code_366
     path: /study/versions/0/biomedicalConcepts/12/properties/0/code/standardCode
     details:
-      codeSystem: http://www.cdisc.org
       $record_count: 181
       codeSystemVersion: '2024-09-27'
+      codeSystem: http://www.cdisc.org

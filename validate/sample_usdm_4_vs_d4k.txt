@@ -5,7 +5,7 @@ CORE file: /Users/daveih/Documents/github/usdm4/validate/sample_usdm_4.json
 d4k  file: /Users/daveih/Documents/github/usdm4/validate/sample_usdm_4.json
 
 CORE: rules_executed=205 findings=40 skipped=2 exec_errors=6747
-d4k : rules_executed=213 findings=560 counts={'success': 190, 'failure': 23, 'exception': 0, 'not_implemented': 0}
+d4k : rules_executed=213 findings=566 counts={'success': 190, 'failure': 23, 'exception': 0, 'not_implemented': 0}
 
 Rule ids total      : 213
 Rule ids shared     : 16
@@ -14,10 +14,9 @@ Rule ids CORE-only  : 0
 
 Classifications:
   aligned_pass       187
-  aligned_fail       12
+  aligned_fail       13
   d4k_only           10
   core_only          3
-  count_mismatch     1
 
 ------------------------------------------------------------------------------
 Divergent rules (most useful rows first):
@@ -36,7 +35,6 @@ DDF00155     d4k_only           Failure(425)   Pass-or-NA(0)
 DDF00164     d4k_only           Failure(1)     Pass-or-NA(0)                
 DDF00165     d4k_only           Failure(1)     Pass-or-NA(0)                
 DDF00166     d4k_only           Failure(1)     Pass-or-NA(0)                
-DDF00187     count_mismatch     Failure(5)     Fail(11)       CORE-001069   
 DDF00249     d4k_only           Failure(31)    Pass-or-NA(0)                
 
 ------------------------------------------------------------------------------
@@ -181,7 +179,7 @@ DDF00183     aligned_pass       Success(0)     Pass-or-NA(0)
 DDF00184     aligned_pass       Success(0)     Pass-or-NA(0)                
 DDF00185     aligned_fail       Failure(2)     Fail(2)        CORE-000969   
 DDF00186     aligned_pass       Success(0)     Pass-or-NA(0)                
-DDF00187     count_mismatch     Failure(5)     Fail(11)       CORE-001069   
+DDF00187     aligned_fail       Failure(11)    Fail(11)       CORE-001069   
 DDF00188     aligned_fail       Failure(1)     Fail(1)        CORE-000996   
 DDF00189     aligned_pass       Success(0)     Pass-or-NA(0)                
 DDF00190     aligned_pass       Success(0)     Pass-or-NA(0)                

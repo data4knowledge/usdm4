@@ -12,10 +12,10 @@ summary:
     file: /Users/daveih/Documents/github/usdm4/validate/sample_usdm_3.json
     is_valid: false
     rules_executed: 213
-    finding_count: 508
+    finding_count: 509
     counts:
-      success: 186
-      failure: 27
+      success: 184
+      failure: 29
       exception: 0
       not_implemented: 0
   rule_ids_total: 213
@@ -23,10 +23,10 @@ summary:
   rule_ids_d4k_only_in_library: 185
   rule_ids_core_only_in_library: 0
   classifications:
-    aligned_fail: 20
+    aligned_fail: 22
     aligned_pass: 180
-    core_only: 6
     d4k_only: 5
+    core_only: 4
     count_mismatch: 2
 rows:
 - rule_id: DDF00006
@@ -50,9 +50,9 @@ rows:
   core_findings: 4
   core_id: CORE-000404
 - rule_id: DDF00009
-  classification: core_only
-  d4k_status: Success
-  d4k_findings: 0
+  classification: aligned_fail
+  d4k_status: Failure
+  d4k_findings: 1
   core_status: Fail
   core_findings: 1
   core_id: CORE-000868
@@ -716,7 +716,7 @@ rows:
 - rule_id: DDF00161
   classification: count_mismatch
   d4k_status: Failure
-  d4k_findings: 3
+  d4k_findings: 2
   core_status: Fail
   core_findings: 4
   core_id: CORE-001066
@@ -875,9 +875,9 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00187
-  classification: core_only
-  d4k_status: Success
-  d4k_findings: 0
+  classification: aligned_fail
+  d4k_status: Failure
+  d4k_findings: 1
   core_status: Fail
   core_findings: 1
   core_id: CORE-001069

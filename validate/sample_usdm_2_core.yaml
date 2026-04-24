@@ -72,18 +72,18 @@ findings:
     path: /study/versions/0/narrativeContentItems/1
     name: NCI_2
     details:
-      parent_id: StudyVersion_1
       parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
       $xhtml_errors:
       - 'Invalid XHTML (wrapper start) [ERROR]: Element ''body'': Character content
         other than whitespace is not allowed because the content type is ''element-only''.'
-      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
   - instance_id: NarrativeContentItem_7
     path: /study/versions/0/narrativeContentItems/6
     name: NCI_7
     details:
-      parent_id: StudyVersion_1
       parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
       $xhtml_errors:
       - 'Invalid XHTML line 14 [ERROR]: Element ''u'': This element is not expected.'
       - 'Invalid XHTML line 15 [ERROR]: Element ''u'': This element is not expected.'
@@ -91,49 +91,49 @@ findings:
       - 'Invalid XHTML line 20 [ERROR]: Element ''u'': This element is not expected.'
       - 'Invalid XHTML line 21 [ERROR]: Element ''u'': This element is not expected.'
       - 'Invalid XHTML line 23 [ERROR]: Element ''u'': This element is not expected.'
-      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
   - instance_id: NarrativeContentItem_104
     path: /study/versions/0/narrativeContentItems/103
     name: NCI_104
     details:
-      parent_id: StudyVersion_1
       parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
       $xhtml_errors:
       - 'Invalid XHTML line 242 [ERROR]: Element ''td'': This element is not expected.'
-      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
   - instance_id: NarrativeContentItem_105
     path: /study/versions/0/narrativeContentItems/104
     name: NCI_105
     details:
-      parent_id: StudyVersion_1
       parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
       $xhtml_errors:
       - 'Invalid XHTML line 7 [ERROR]: Element ''ul'': This element is not expected.'
       - 'Invalid XHTML line 25 [ERROR]: Element ''ul'': This element is not expected.'
       - 'Invalid XHTML line 44 [ERROR]: Element ''ul'': This element is not expected.'
-      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
   - instance_id: NarrativeContentItem_106
     path: /study/versions/0/narrativeContentItems/105
     name: NCI_106
     details:
-      parent_id: StudyVersion_1
       parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
       $xhtml_errors:
       - 'Invalid XHTML line 77 [ERROR]: Element ''ul'': This element is not expected.
         Expected is ( li ).'
-      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
   - instance_id: NarrativeContentItem_107
     path: /study/versions/0/narrativeContentItems/106
     name: NCI_107
     details:
-      parent_id: StudyVersion_1
       parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
       $xhtml_errors:
       - 'Invalid XHTML line 10 [ERROR]: Element ''ul'': This element is not expected.'
       - 'Invalid XHTML line 24 [ERROR]: Element ''ul'': This element is not expected.'
       - 'Invalid XHTML line 38 [ERROR]: Element ''ul'': This element is not expected.'
       - 'Invalid XHTML line 45 [ERROR]: Element ''ul'': This element is not expected.'
-      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
 - rule_id: CORE-000962
   description: Within a study design, if a planned completion number is defined, it
     must be specified either in the study population or in all cohorts.
@@ -270,14 +270,14 @@ findings:
   - instance_id: Code_1
     path: /study/versions/0/organizations/0/type
     details:
-      $record_count: 187
       codeSystemVersion: '2025-09-26'
+      $record_count: 187
       codeSystem: http://www.cdisc.org
   - instance_id: Code_135
     path: /study/versions/0/biomedicalConcepts/35/properties/0/code/standardCode
     details:
-      $record_count: 438
       codeSystemVersion: '2024-09-27'
+      $record_count: 438
       codeSystem: http://www.cdisc.org
 - rule_id: CORE-000945
   description: Syntax template text is expected to be HTML formatted.
@@ -288,48 +288,48 @@ findings:
     path: /study/versions/0/eligibilityCriterionItems/0
     name: INC1
     details:
-      parent_id: StudyVersion_1
       parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
       $xhtml_errors:
       - 'Invalid XHTML line 6 [ERROR]: Element ''p'': This element is not expected.
         Expected is ( li ).'
       - 'Invalid XHTML line 10 [ERROR]: Element ''p'': This element is not expected.
         Expected is ( li ).'
-      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
   - instance_id: EligibilityCriterionItem_3
     path: /study/versions/0/eligibilityCriterionItems/2
     name: INC3
     details:
-      parent_id: StudyVersion_1
       parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
       $xhtml_errors:
       - 'Invalid XHTML line 46 [ERROR]: Element ''ul'': This element is not expected.
         Expected is ( li ).'
-      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
   - instance_id: Condition_2
     path: /study/versions/0/conditions/1
     name: COND2
     details:
-      parent_id: StudyVersion_1
       parent_rel: conditions
+      parent_entity: StudyVersion
       $xhtml_errors:
       - 'Invalid XHTML line 1, col 29 [FATAL]: StartTag: invalid element name'
-      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
   - instance_id: Condition_3
     path: /study/versions/0/conditions/2
     name: COND3
     details:
-      parent_id: StudyVersion_1
       parent_rel: conditions
+      parent_entity: StudyVersion
       $xhtml_errors:
       - 'Invalid XHTML line 1, col 37 [FATAL]: StartTag: invalid element name'
-      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
   - instance_id: Condition_13
     path: /study/versions/0/conditions/12
     name: COND13
     details:
-      parent_id: StudyVersion_1
       parent_rel: conditions
+      parent_entity: StudyVersion
       $xhtml_errors:
       - 'Invalid XHTML line 1, col 136 [FATAL]: StartTag: invalid element name'
-      parent_entity: StudyVersion
+      parent_id: StudyVersion_1

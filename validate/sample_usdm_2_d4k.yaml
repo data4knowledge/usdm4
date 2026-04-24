@@ -2,10 +2,10 @@ file: /Users/daveih/Documents/github/usdm4/validate/sample_usdm_2.json
 engine: d4k
 is_valid: false
 rules_executed: 213
-finding_count: 279
+finding_count: 286
 counts:
-  success: 194
-  failure: 19
+  success: 193
+  failure: 20
   exception: 0
   not_implemented: 0
 outcomes:
@@ -2305,8 +2305,53 @@ outcomes:
   status: Success
   error_count: 0
 - rule_id: DDF00187
-  status: Success
-  error_count: 0
+  status: Failure
+  error_count: 5
+  errors:
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 14: Element\
+      \ '{http://www.w3.org/1999/xhtml}u': This element is not expected.; line 15:\
+      \ Element '{http://www.w3.org/1999/xhtml}u': This element is not expected.;\
+      \ line 18: Element '{http://www.w3.org/1999/xhtml}u': This element is not expected.;\
+      \ ... and 3 more"
+    level: Warning
+    klass: NarrativeContentItem
+    attribute: text
+    path: $.Study.StudyVersion[0].NarrativeContentItem[6]
+    rule_text: Narrative content item text is expected to be HTML formatted.
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 242: Element\
+      \ '{http://www.w3.org/1999/xhtml}td': This element is not expected."
+    level: Warning
+    klass: NarrativeContentItem
+    attribute: text
+    path: $.Study.StudyVersion[0].NarrativeContentItem[103]
+    rule_text: Narrative content item text is expected to be HTML formatted.
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 7: Element\
+      \ '{http://www.w3.org/1999/xhtml}ul': This element is not expected.; line 25:\
+      \ Element '{http://www.w3.org/1999/xhtml}ul': This element is not expected.;\
+      \ line 44: Element '{http://www.w3.org/1999/xhtml}ul': This element is not expected."
+    level: Warning
+    klass: NarrativeContentItem
+    attribute: text
+    path: $.Study.StudyVersion[0].NarrativeContentItem[104]
+    rule_text: Narrative content item text is expected to be HTML formatted.
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 77: Element\
+      \ '{http://www.w3.org/1999/xhtml}ul': This element is not expected. Expected\
+      \ is ( {http://www.w3.org/1999/xhtml}li )."
+    level: Warning
+    klass: NarrativeContentItem
+    attribute: text
+    path: $.Study.StudyVersion[0].NarrativeContentItem[105]
+    rule_text: Narrative content item text is expected to be HTML formatted.
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 10: Element\
+      \ '{http://www.w3.org/1999/xhtml}ul': This element is not expected.; line 24:\
+      \ Element '{http://www.w3.org/1999/xhtml}ul': This element is not expected.;\
+      \ line 38: Element '{http://www.w3.org/1999/xhtml}ul': This element is not expected.;\
+      \ ... and 1 more"
+    level: Warning
+    klass: NarrativeContentItem
+    attribute: text
+    path: $.Study.StudyVersion[0].NarrativeContentItem[106]
+    rule_text: Narrative content item text is expected to be HTML formatted.
 - rule_id: DDF00188
   status: Failure
   error_count: 1
@@ -2502,21 +2547,42 @@ outcomes:
   error_count: 0
 - rule_id: DDF00247
   status: Failure
-  error_count: 3
+  error_count: 5
   errors:
-  - message: Condition.text is not well-formed XHTML
+  - message: "EligibilityCriterionItem.text is not valid USDM-XHTML \u2014 line 6:\
+      \ Element '{http://www.w3.org/1999/xhtml}p': This element is not expected. Expected\
+      \ is ( {http://www.w3.org/1999/xhtml}li ).; line 10: Element '{http://www.w3.org/1999/xhtml}p':\
+      \ This element is not expected. Expected is ( {http://www.w3.org/1999/xhtml}li\
+      \ )."
+    level: Warning
+    klass: EligibilityCriterionItem
+    attribute: text
+    path: $.Study.StudyVersion[0].EligibilityCriterionItem[0]
+    rule_text: Syntax template text is expected to be HTML formatted.
+  - message: "EligibilityCriterionItem.text is not valid USDM-XHTML \u2014 line 46:\
+      \ Element '{http://www.w3.org/1999/xhtml}ul': This element is not expected.\
+      \ Expected is ( {http://www.w3.org/1999/xhtml}li )."
+    level: Warning
+    klass: EligibilityCriterionItem
+    attribute: text
+    path: $.Study.StudyVersion[0].EligibilityCriterionItem[2]
+    rule_text: Syntax template text is expected to be HTML formatted.
+  - message: "Condition.text is not valid USDM-XHTML \u2014 line 1: StartTag: invalid\
+      \ element name, line 1, column 165"
     level: Warning
     klass: Condition
     attribute: text
     path: $.Study.StudyVersion[0].Condition[1]
     rule_text: Syntax template text is expected to be HTML formatted.
-  - message: Condition.text is not well-formed XHTML
+  - message: "Condition.text is not valid USDM-XHTML \u2014 line 1: StartTag: invalid\
+      \ element name, line 1, column 173"
     level: Warning
     klass: Condition
     attribute: text
     path: $.Study.StudyVersion[0].Condition[2]
     rule_text: Syntax template text is expected to be HTML formatted.
-  - message: Condition.text is not well-formed XHTML
+  - message: "Condition.text is not valid USDM-XHTML \u2014 line 1: StartTag: invalid\
+      \ element name, line 1, column 272"
     level: Warning
     klass: Condition
     attribute: text
