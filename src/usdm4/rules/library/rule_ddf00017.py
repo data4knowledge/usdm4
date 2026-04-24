@@ -1,15 +1,24 @@
 # MANUAL: do not regenerate
 #
 # SubjectEnrollment.quantity is an embedded Quantity. Its unit must be
-# absent/empty OR a Percent code (C25613). CORE accepts false / null /
-# missing for the unit and an embedded Code with code == "C25613".
+# absent/empty OR exactly the Percent AliasCode (standardCode with
+# codeSystem=http://www.cdisc.org, code=C25613, decode="%").
+#
+# CORE-000806 is strict on all three: codeSystem, code, AND decode must
+# match. A unit with code C25613 but decode="Percentage" (the preferred
+# term rather than the "%" submission value) is not acceptable. Earlier
+# implementation checked only the code, letting decode="Percentage"
+# through — a real sample in validate/sample_usdm.json exhibited this.
 from usdm4.rules.rule_template import RuleTemplate
 
 
 PERCENT_CODE = "C25613"
+PERCENT_DECODE = "%"
+CDISC_CODE_SYSTEM = "http://www.cdisc.org"
 
 
 def _is_acceptable_unit(unit):
+    # Missing / false / empty-dict unit all count as "no unit specified".
     if unit is None or unit is False:
         return True
     if not isinstance(unit, dict):
@@ -17,9 +26,13 @@ def _is_acceptable_unit(unit):
     if not unit:
         return True
     standard = unit.get("standardCode")
-    if isinstance(standard, dict) and standard.get("code") == PERCENT_CODE:
-        return True
-    return False
+    if not isinstance(standard, dict):
+        return False
+    return (
+        standard.get("codeSystem") == CDISC_CODE_SYSTEM
+        and standard.get("code") == PERCENT_CODE
+        and standard.get("decode") == PERCENT_DECODE
+    )
 
 
 class RuleDDF00017(RuleTemplate):
@@ -45,7 +58,9 @@ class RuleDDF00017(RuleTemplate):
                 continue
             if not _is_acceptable_unit(quantity.get("unit")):
                 self._add_failure(
-                    "SubjectEnrollment.quantity has a unit that is neither empty nor Percent (C25613)",
+                    "SubjectEnrollment.quantity has a unit that is neither "
+                    "empty nor the Percent AliasCode "
+                    "(codeSystem=http://www.cdisc.org, code=C25613, decode='%')",
                     "SubjectEnrollment",
                     "quantity",
                     data.path_by_id(enrollment["id"]),

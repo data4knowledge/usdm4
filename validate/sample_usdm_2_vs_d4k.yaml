@@ -1,32 +1,33 @@
-core_file: /Users/daveih/Documents/github/usdm4/validate/sample_usdm.json
-d4k_file: /Users/daveih/Documents/github/usdm4/validate/sample_usdm.json
+core_file: /Users/daveih/Documents/github/usdm4/validate/sample_usdm_2.json
+d4k_file: /Users/daveih/Documents/github/usdm4/validate/sample_usdm_2.json
 summary:
   core:
-    file: /Users/daveih/Documents/github/usdm4/validate/sample_usdm.json
+    file: /Users/daveih/Documents/github/usdm4/validate/sample_usdm_2.json
     is_valid: false
     rules_executed: 205
     rules_skipped: 2
-    finding_count: 60
-    execution_error_count: 2578
+    finding_count: 25
+    execution_error_count: 5447
   d4k:
-    file: /Users/daveih/Documents/github/usdm4/validate/sample_usdm.json
+    file: /Users/daveih/Documents/github/usdm4/validate/sample_usdm_2.json
     is_valid: false
     rules_executed: 213
-    finding_count: 20
+    finding_count: 906
     counts:
-      success: 202
-      failure: 11
+      success: 192
+      failure: 21
       exception: 0
       not_implemented: 0
   rule_ids_total: 213
-  rule_ids_shared: 20
-  rule_ids_d4k_only_in_library: 193
+  rule_ids_shared: 14
+  rule_ids_d4k_only_in_library: 199
   rule_ids_core_only_in_library: 0
   classifications:
-    aligned_pass: 190
-    core_only: 12
-    d4k_only: 3
-    aligned_fail: 8
+    aligned_pass: 189
+    d4k_only: 10
+    count_mismatch: 2
+    aligned_fail: 9
+    core_only: 3
 rows:
 - rule_id: DDF00006
   classification: aligned_pass
@@ -65,12 +66,11 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00012
-  classification: core_only
+  classification: aligned_pass
   d4k_status: Success
   d4k_findings: 0
-  core_status: Fail
-  core_findings: 1
-  core_id: CORE-000407
+  core_status: Pass-or-NA
+  core_findings: 0
 - rule_id: DDF00013
   classification: aligned_pass
   d4k_status: Success
@@ -84,12 +84,11 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00017
-  classification: core_only
+  classification: aligned_pass
   d4k_status: Success
   d4k_findings: 0
-  core_status: Fail
-  core_findings: 1
-  core_id: CORE-000806
+  core_status: Pass-or-NA
+  core_findings: 0
 - rule_id: DDF00018
   classification: aligned_pass
   d4k_status: Success
@@ -223,18 +222,17 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00040
+  classification: d4k_only
+  d4k_status: Failure
+  d4k_findings: 5
+  core_status: Pass-or-NA
+  core_findings: 0
+- rule_id: DDF00041
   classification: aligned_pass
   d4k_status: Success
   d4k_findings: 0
   core_status: Pass-or-NA
   core_findings: 0
-- rule_id: DDF00041
-  classification: core_only
-  d4k_status: Success
-  d4k_findings: 0
-  core_status: Fail
-  core_findings: 1
-  core_id: CORE-001036
 - rule_id: DDF00042
   classification: aligned_pass
   d4k_status: Success
@@ -272,9 +270,9 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00051
-  classification: aligned_pass
-  d4k_status: Success
-  d4k_findings: 0
+  classification: d4k_only
+  d4k_status: Failure
+  d4k_findings: 35
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00052
@@ -344,15 +342,16 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00073
-  classification: aligned_pass
-  d4k_status: Success
-  d4k_findings: 0
-  core_status: Pass-or-NA
-  core_findings: 0
+  classification: count_mismatch
+  d4k_status: Failure
+  d4k_findings: 623
+  core_status: Fail
+  core_findings: 2
+  core_id: CORE-000808
 - rule_id: DDF00075
-  classification: aligned_pass
-  d4k_status: Success
-  d4k_findings: 0
+  classification: d4k_only
+  d4k_status: Failure
+  d4k_findings: 2
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00076
@@ -374,37 +373,37 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00082
+  classification: aligned_pass
+  d4k_status: Success
+  d4k_findings: 0
+  core_status: Pass-or-NA
+  core_findings: 0
+- rule_id: DDF00083
+  classification: aligned_pass
+  d4k_status: Success
+  d4k_findings: 0
+  core_status: Pass-or-NA
+  core_findings: 0
+- rule_id: DDF00084
   classification: d4k_only
   d4k_status: Failure
   d4k_findings: 1
   core_status: Pass-or-NA
   core_findings: 0
-- rule_id: DDF00083
-  classification: core_only
-  d4k_status: Success
-  d4k_findings: 0
-  core_status: Fail
-  core_findings: 4
-  core_id: CORE-001015
-- rule_id: DDF00084
-  classification: core_only
-  d4k_status: Success
-  d4k_findings: 0
+- rule_id: DDF00087
+  classification: aligned_fail
+  d4k_status: Failure
+  d4k_findings: 1
   core_status: Fail
   core_findings: 1
-  core_id: CORE-000871
-- rule_id: DDF00087
-  classification: aligned_pass
-  d4k_status: Success
-  d4k_findings: 0
-  core_status: Pass-or-NA
-  core_findings: 0
+  core_id: CORE-000961
 - rule_id: DDF00088
-  classification: aligned_pass
-  d4k_status: Success
-  d4k_findings: 0
-  core_status: Pass-or-NA
-  core_findings: 0
+  classification: aligned_fail
+  d4k_status: Failure
+  d4k_findings: 1
+  core_status: Fail
+  core_findings: 1
+  core_id: CORE-001048
 - rule_id: DDF00090
   classification: aligned_pass
   d4k_status: Success
@@ -436,19 +435,17 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00097
-  classification: aligned_fail
+  classification: d4k_only
   d4k_status: Failure
   d4k_findings: 1
-  core_status: Fail
-  core_findings: 1
-  core_id: CORE-000815
+  core_status: Pass-or-NA
+  core_findings: 0
 - rule_id: DDF00098
-  classification: aligned_fail
-  d4k_status: Failure
-  d4k_findings: 1
-  core_status: Fail
-  core_findings: 1
-  core_id: CORE-000875
+  classification: aligned_pass
+  d4k_status: Success
+  d4k_findings: 0
+  core_status: Pass-or-NA
+  core_findings: 0
 - rule_id: DDF00099
   classification: aligned_pass
   d4k_status: Success
@@ -462,11 +459,12 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00101
-  classification: aligned_pass
-  d4k_status: Success
-  d4k_findings: 0
-  core_status: Pass-or-NA
-  core_findings: 0
+  classification: aligned_fail
+  d4k_status: Failure
+  d4k_findings: 1
+  core_status: Fail
+  core_findings: 1
+  core_id: CORE-001065
 - rule_id: DDF00102
   classification: aligned_pass
   d4k_status: Success
@@ -516,12 +514,11 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00114
-  classification: core_only
+  classification: aligned_pass
   d4k_status: Success
   d4k_findings: 0
-  core_status: Fail
-  core_findings: 24
-  core_id: CORE-000878
+  core_status: Pass-or-NA
+  core_findings: 0
 - rule_id: DDF00115
   classification: aligned_pass
   d4k_status: Success
@@ -559,15 +556,16 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00132
-  classification: d4k_only
+  classification: aligned_fail
   d4k_status: Failure
   d4k_findings: 1
-  core_status: Pass-or-NA
-  core_findings: 0
+  core_status: Fail
+  core_findings: 1
+  core_id: CORE-000962
 - rule_id: DDF00133
-  classification: d4k_only
-  d4k_status: Failure
-  d4k_findings: 1
+  classification: aligned_pass
+  d4k_status: Success
+  d4k_findings: 0
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00136
@@ -596,33 +594,29 @@ rows:
   core_findings: 1
   core_id: CORE-000857
 - rule_id: DDF00142
-  classification: core_only
+  classification: aligned_pass
   d4k_status: Success
   d4k_findings: 0
-  core_status: Fail
-  core_findings: 2
-  core_id: CORE-000925
+  core_status: Pass-or-NA
+  core_findings: 0
 - rule_id: DDF00143
-  classification: core_only
+  classification: aligned_pass
   d4k_status: Success
   d4k_findings: 0
-  core_status: Fail
-  core_findings: 2
-  core_id: CORE-000930
+  core_status: Pass-or-NA
+  core_findings: 0
 - rule_id: DDF00144
-  classification: core_only
+  classification: aligned_pass
   d4k_status: Success
   d4k_findings: 0
-  core_status: Fail
-  core_findings: 2
-  core_id: CORE-000931
+  core_status: Pass-or-NA
+  core_findings: 0
 - rule_id: DDF00146
-  classification: core_only
+  classification: aligned_pass
   d4k_status: Success
   d4k_findings: 0
-  core_status: Fail
-  core_findings: 3
-  core_id: CORE-000933
+  core_status: Pass-or-NA
+  core_findings: 0
 - rule_id: DDF00147
   classification: aligned_pass
   d4k_status: Success
@@ -660,11 +654,12 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00153
-  classification: aligned_pass
-  d4k_status: Success
-  d4k_findings: 0
-  core_status: Pass-or-NA
-  core_findings: 0
+  classification: aligned_fail
+  d4k_status: Failure
+  d4k_findings: 1
+  core_status: Fail
+  core_findings: 1
+  core_id: CORE-001016
 - rule_id: DDF00154
   classification: aligned_pass
   d4k_status: Success
@@ -672,9 +667,9 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00155
-  classification: aligned_pass
-  d4k_status: Success
-  d4k_findings: 0
+  classification: d4k_only
+  d4k_status: Failure
+  d4k_findings: 187
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00156
@@ -726,24 +721,23 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00164
-  classification: aligned_pass
-  d4k_status: Success
-  d4k_findings: 0
+  classification: d4k_only
+  d4k_status: Failure
+  d4k_findings: 1
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00165
-  classification: aligned_pass
-  d4k_status: Success
-  d4k_findings: 0
+  classification: d4k_only
+  d4k_status: Failure
+  d4k_findings: 1
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00166
-  classification: aligned_fail
+  classification: d4k_only
   d4k_status: Failure
   d4k_findings: 1
-  core_status: Fail
-  core_findings: 1
-  core_id: CORE-000943
+  core_status: Pass-or-NA
+  core_findings: 0
 - rule_id: DDF00167
   classification: aligned_pass
   d4k_status: Success
@@ -855,11 +849,12 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00185
-  classification: aligned_pass
-  d4k_status: Success
-  d4k_findings: 0
-  core_status: Pass-or-NA
-  core_findings: 0
+  classification: aligned_fail
+  d4k_status: Failure
+  d4k_findings: 2
+  core_status: Fail
+  core_findings: 2
+  core_id: CORE-000969
 - rule_id: DDF00186
   classification: aligned_pass
   d4k_status: Success
@@ -867,18 +862,19 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00187
-  classification: aligned_fail
-  d4k_status: Failure
-  d4k_findings: 10
-  core_status: Fail
-  core_findings: 10
-  core_id: CORE-001069
-- rule_id: DDF00188
-  classification: aligned_pass
+  classification: core_only
   d4k_status: Success
   d4k_findings: 0
-  core_status: Pass-or-NA
-  core_findings: 0
+  core_status: Fail
+  core_findings: 6
+  core_id: CORE-001069
+- rule_id: DDF00188
+  classification: aligned_fail
+  d4k_status: Failure
+  d4k_findings: 1
+  core_status: Fail
+  core_findings: 1
+  core_id: CORE-000996
 - rule_id: DDF00189
   classification: aligned_pass
   d4k_status: Success
@@ -916,12 +912,11 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00195
-  classification: aligned_fail
-  d4k_status: Failure
-  d4k_findings: 1
-  core_status: Fail
-  core_findings: 1
-  core_id: CORE-000984
+  classification: aligned_pass
+  d4k_status: Success
+  d4k_findings: 0
+  core_status: Pass-or-NA
+  core_findings: 0
 - rule_id: DDF00196
   classification: aligned_pass
   d4k_status: Success
@@ -1230,11 +1225,12 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00247
-  classification: aligned_pass
-  d4k_status: Success
-  d4k_findings: 0
-  core_status: Pass-or-NA
-  core_findings: 0
+  classification: count_mismatch
+  d4k_status: Failure
+  d4k_findings: 3
+  core_status: Fail
+  core_findings: 5
+  core_id: CORE-000945
 - rule_id: DDF00248
   classification: aligned_pass
   d4k_status: Success
@@ -1242,9 +1238,9 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00249
-  classification: aligned_pass
-  d4k_status: Success
-  d4k_findings: 0
+  classification: d4k_only
+  d4k_status: Failure
+  d4k_findings: 36
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00250
@@ -1284,12 +1280,11 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00256
-  classification: aligned_fail
-  d4k_status: Failure
-  d4k_findings: 1
-  core_status: Fail
-  core_findings: 1
-  core_id: CORE-001031
+  classification: aligned_pass
+  d4k_status: Success
+  d4k_findings: 0
+  core_status: Pass-or-NA
+  core_findings: 0
 - rule_id: DDF00257
   classification: aligned_pass
   d4k_status: Success

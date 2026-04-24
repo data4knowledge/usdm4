@@ -1,11 +1,11 @@
-file: /Users/daveih/Documents/github/usdm4/validate/sample_usdm.json
+file: /Users/daveih/Documents/github/usdm4/validate/sample_usdm_1.json
 engine: d4k
 is_valid: false
 rules_executed: 213
-finding_count: 20
+finding_count: 26
 counts:
-  success: 202
-  failure: 11
+  success: 199
+  failure: 14
   exception: 0
   not_implemented: 0
 outcomes:
@@ -28,8 +28,16 @@ outcomes:
   status: Success
   error_count: 0
 - rule_id: DDF00012
-  status: Success
-  error_count: 0
+  status: Failure
+  error_count: 1
+  errors:
+  - message: Expected exactly one main ScheduleTimeline in study design, found 0
+    level: Error
+    klass: StudyDesign
+    attribute: scheduleTimelines
+    path: $.Study.StudyVersion[0].StudyDesign[0]
+    rule_text: Within a study design, there must be exactly one scheduled timeline
+      which identifies as the main Timeline.
 - rule_id: DDF00013
   status: Success
   error_count: 0
@@ -37,8 +45,17 @@ outcomes:
   status: Success
   error_count: 0
 - rule_id: DDF00017
-  status: Success
-  error_count: 0
+  status: Failure
+  error_count: 1
+  errors:
+  - message: SubjectEnrollment.quantity has a unit that is neither empty nor the Percent
+      AliasCode (codeSystem=http://www.cdisc.org, code=C25613, decode='%')
+    level: Error
+    klass: SubjectEnrollment
+    attribute: quantity
+    path: $.Study.StudyVersion[0].StudyAmendment[0].SubjectEnrollment[0]
+    rule_text: Within subject enrollment, the quantity must be a number or a percentage
+      (i.e. the unit must be empty or %).
 - rule_id: DDF00018
   status: Success
   error_count: 0
@@ -109,8 +126,16 @@ outcomes:
   status: Success
   error_count: 0
 - rule_id: DDF00041
-  status: Success
-  error_count: 0
+  status: Failure
+  error_count: 1
+  errors:
+  - message: Expected at least one Primary Endpoint in study design, found 0
+    level: Error
+    klass: StudyDesign
+    attribute: objectives.endpoints.level
+    path: $.Study.StudyVersion[0].StudyDesign[0]
+    rule_text: Within a study design, there must be at least one endpoint with level
+      primary.
 - rule_id: DDF00042
   status: Success
   error_count: 0
@@ -193,11 +218,44 @@ outcomes:
     path: $.study.versions[0].amendments[0]
     rule_text: ''
 - rule_id: DDF00083
-  status: Success
-  error_count: 0
+  status: Failure
+  error_count: 4
+  errors:
+  - message: id 'GeographicScope_1' is not unique (2 occurrences)
+    level: Error
+    klass: GeographicScope
+    attribute: id
+    path: $.study.versions[0].dateValues[0].geographicScopes[0]
+    rule_text: Within a study version, all id values must be unique.
+  - message: id 'GeographicScope_1' is not unique (2 occurrences)
+    level: Error
+    klass: GeographicScope
+    attribute: id
+    path: $.study.versions[0].dateValues[1].geographicScopes[0]
+    rule_text: Within a study version, all id values must be unique.
+  - message: id 'Code_11' is not unique (2 occurrences)
+    level: Error
+    klass: Code
+    attribute: id
+    path: $.study.versions[0].dateValues[0].geographicScopes[0].type
+    rule_text: Within a study version, all id values must be unique.
+  - message: id 'Code_11' is not unique (2 occurrences)
+    level: Error
+    klass: Code
+    attribute: id
+    path: $.study.versions[0].dateValues[1].geographicScopes[0].type
+    rule_text: Within a study version, all id values must be unique.
 - rule_id: DDF00084
-  status: Success
-  error_count: 0
+  status: Failure
+  error_count: 1
+  errors:
+  - message: Expected exactly one Primary Objective in study design, found 0
+    level: Error
+    klass: StudyDesign
+    attribute: objectives
+    path: $.Study.StudyVersion[0].StudyDesign[0]
+    rule_text: Within a study design there must be exactly one objective with level
+      'Primary Objective'.
 - rule_id: DDF00087
   status: Success
   error_count: 0
@@ -296,27 +354,11 @@ outcomes:
   status: Success
   error_count: 0
 - rule_id: DDF00132
-  status: Failure
-  error_count: 1
-  errors:
-  - message: Required attribute 'plannedCompletionNumber' is missing or empty
-    level: Error
-    klass: StudyDesignPopulation
-    attribute: plannedCompletionNumber
-    path: $.Study.StudyVersion[0].StudyDesign[0].StudyDesignPopulation
-    rule_text: Within a study design, if a planned completion number is defined, it
-      must be specified either in the study population or in all cohorts.
+  status: Success
+  error_count: 0
 - rule_id: DDF00133
-  status: Failure
-  error_count: 1
-  errors:
-  - message: Required attribute 'plannedEnrollmentNumber' is missing or empty
-    level: Error
-    klass: StudyDesignPopulation
-    attribute: plannedEnrollmentNumber
-    path: $.Study.StudyVersion[0].StudyDesign[0].StudyDesignPopulation
-    rule_text: Within a study design, if a planned enrollment number is defined, it
-      must be specified either in the study population or in all cohorts.
+  status: Success
+  error_count: 0
 - rule_id: DDF00136
   status: Success
   error_count: 0
