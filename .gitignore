@@ -180,3 +180,7 @@ cython_debug/
 # Python test programs
 xxx*.*
 ~$*.xlsx
+
+# Validation check
+validate/corpus_out/*.yaml
+validate/corpus_out/*.txt

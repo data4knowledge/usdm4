@@ -92,7 +92,7 @@ Runs all three scripts end-to-end on a single JSON file. Honours `PYTHON` (inter
 
 ### Execution error filtering
 
-The CDISC Rules Engine reports three types of non-finding errors that are filtered to `execution_errors`: "Column not found in data", "Error occurred during dataset preprocessing", and "Outside scope". These indicate a rule doesn't apply to the entity being checked — they are not data quality issues.
+The CDISC Rules Engine reports four types of non-finding errors that are filtered to `execution_errors`: "Column not found in data", "Error occurred during dataset preprocessing", "Error occurred during operation execution", and "Outside scope". The first and last indicate a rule doesn't apply to the entity being checked; the two "Error occurred during ..." variants indicate the engine itself failed mid-rule (e.g. a pandas merge bug on `codeSystemVersion` surfaced repeatedly in a 234-protocol corpus run). None are data quality issues.
 
 ## Notes
 

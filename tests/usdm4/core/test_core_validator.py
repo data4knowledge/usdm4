@@ -861,6 +861,27 @@ class TestClassifyErrorsEdgeCases:
         assert len(real) == 0
         assert len(exec_) == 1
 
+    def test_operation_execution_error_is_execution_error(self):
+        """'Error occurred during operation execution' should be classified as
+        execution error.
+
+        Added after a corpus run surfaced thousands of false 'findings' caused
+        by a pandas merge bug inside the rules engine — those errors are not
+        validation findings and must not surface as such.
+        """
+        from usdm4.core.core_validator import CoreValidator
+
+        results = {
+            "ds": {
+                "errors": [
+                    {"error": "Error occurred during operation execution"},
+                ]
+            }
+        }
+        real, exec_ = CoreValidator._classify_errors(results)
+        assert len(real) == 0
+        assert len(exec_) == 1
+
     def test_non_dict_errors_are_real(self):
         """Non-dict error entries should be treated as real errors."""
         from usdm4.core.core_validator import CoreValidator

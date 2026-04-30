@@ -6190,6 +6190,26 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00213
+- attribute: ''
+  exception: "Failed to find code list for 'InterventionalStudyDesign' and 'studyPhase'\n\
+    \nTraceback (most recent call last):\n  File \"/Users/daveih/Documents/github/usdm4/src/usdm4/rules/engine.py\"\
+    , line 84, in _execute_rules\n    passed = rule.validate(config)\n           \
+    \  ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/daveih/Documents/github/usdm4/src/usdm4/rules/library/rule_ddf00229.py\"\
+    , line 79, in validate\n    codes, decodes = self._check_codelist(ct, klass, \"\
+    studyPhase\")\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\
+    \  File \"/Users/daveih/Documents/github/usdm4/src/usdm4/rules/rule_template.py\"\
+    , line 139, in _check_codelist\n    raise self.CTException(\nusdm4.rules.rule_template.RuleTemplate.CTException:\
+    \ Failed to find code list for 'InterventionalStudyDesign' and 'studyPhase'\n"
+  klass: ''
+  level: ''
+  message: ''
+  path: ''
+  rule: ''
+  rule_id: DDF00229
+  rule_text: ''
+  status: Exception
+  timestamp: ''
+  type: ''
 - attribute: synonyms
   exception: null
   klass: BiomedicalConcept

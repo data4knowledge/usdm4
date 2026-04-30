@@ -150,20 +150,23 @@ post-install step / CLI command that fetches them.
 **Severity:** Low-Medium — noisy output, requires filtering
 
 When a rule is executed against an entity type it does not apply to, the engine
-returns error records rather than an empty result. Three error types fall into
+returns error records rather than an empty result. Four error types fall into
 this category:
 
 - `"Column not found in data"`
 - `"Error occurred during dataset preprocessing"`
+- `"Error occurred during operation execution"`
 - `"Outside scope"`
 
-These are not data quality issues — they simply mean the rule's preconditions
-were not met for that entity. However, they are returned in the same `errors`
-list as real validation findings, requiring callers to inspect the `error` field
-and filter them out.
+The first and last indicate that the rule's preconditions were not met for the
+entity. The two `"Error occurred during ..."` variants indicate the engine
+itself failed mid-rule (e.g. a pandas merge bug on `codeSystemVersion` — see
+issue 7). None are data quality issues, but they are returned in the same
+`errors` list as real validation findings, requiring callers to inspect the
+`error` field and filter them out.
 
 **Workaround:** We classify errors by checking the `error` field against the
-three known strings and separate them into an `execution_errors` list.
+four known strings and separate them into an `execution_errors` list.
 
 **Suggested fix:** Either skip rules whose preconditions are not met (return an
 empty result), or return execution errors in a separate field / with a distinct
@@ -189,6 +192,204 @@ rules as disabled/draft in the rule catalogue so they are not returned by
 `get_rules_by_catalog`.
 
 
+## 7. `codelist_extensible` operation crashes with pandas merge type mismatch
+
+**Severity:** Medium — silent inflation of finding counts
+
+When the engine evaluates rules backed by the `codelist_extensible` operation,
+the underlying pandas merge can fail with:
+
+```
+Failed to execute rule operation. Operation: codelist_extensible, Target: None,
+Domain: <DomainName>, Error: You are trying to merge on object and float64
+columns for key 'codeSystemVersion'. If you wish to proceed you should use
+pd.concat
+```
+
+The crash is reported as an entry in the rule's `errors` list with
+`error: "Error occurred during operation execution"` and the message above.
+Because it occupies the same `errors` list as real findings, naïve consumers
+will count it as a finding.
+
+In a 234-file run of the protocol_corpus, this single failure mode produced
+**6792** spurious "findings" across five rules — every one of them with **zero**
+real findings on the same data:
+
+| CORE id    | DDF id    | Spurious errors |
+|------------|-----------|----------------:|
+| CORE-000840 | DDF00152 |               3 |
+| CORE-000857 | DDF00141 |             234 |
+| CORE-000871 | DDF00084 |             234 |
+| CORE-000878 | DDF00114 |            6099 |
+| CORE-001061 | DDF00237 |             222 |
+
+Likely root cause: `codeSystemVersion` is being held as `object` dtype in one
+DataFrame and `float64` (most likely because of `NaN` from missing values) in
+the other. Pandas refuses the merge.
+
+**Workaround:** We added `"Error occurred during operation execution"` to the
+execution-error sentinel set (issue 5). Affected rules now correctly report no
+findings on the corpus instead of false positives.
+
+**Suggested fix:** In the `codelist_extensible` operation, coerce the
+`codeSystemVersion` column to a common dtype (string) on both DataFrames before
+merging. As a defence-in-depth measure, fail the rule cleanly (Exception status,
+empty findings) when an internal merge raises rather than emitting the failure
+as a finding-shaped error record.
+
+
+## 8. Cross-reference traversal: shared instances counted twice across containers
+
+**Severity:** Medium — affects five rules so far in the corpus, producing
+phantom findings (DDF00181, DDF00010, DDF00151) and inflated counts on real
+findings (DDF00093, DDF00094). No caller workaround possible against the
+engine itself.
+
+The `dateValues` relationship is the same `GovernanceDate` collection
+referenced from two different containers in USDM:
+
+- `StudyVersion.dateValues`
+- `StudyDefinitionDocumentVersion.dateValues` ("SDDV")
+
+Five separate rules trip on this shape:
+
+- `CORE-001068` (DDF00181) — uniqueness *within* `SDDV.dateValues`
+- `CORE-000873` (DDF00093) — uniqueness *within* `StudyVersion.dateValues`
+- `CORE-001013` (DDF00010) — name uniqueness across instances of the same class
+- `CORE-000814` (DDF00094) — within a study version, if any date of a given
+  type has global geographic scope, no other date of that type is expected
+- `CORE-000834` (DDF00151) — if any geographic scope on a `GovernanceDate`
+  is global, the date must have exactly one geographic scope
+
+In a 234-file protocol_corpus run, all five rules disagreed with the d4k
+implementation in a way that points at the same root cause: when a single
+`GovernanceDate` instance (and any nested children, such as its
+`geographicScopes`) is referenced from **both** lists, the engine visits it
+twice during data traversal. Each rule then sees the second visit as a
+separate instance and reports a duplicate or extra entry.
+
+The per-rule counts that result:
+
+### CORE-001068 / DDF00181 — phantom findings
+
+| `SDDV.dateValues` count | `StudyVersion.dateValues` count | shared id with SDDV? | files | CORE finds | actually duplicated? |
+|------------------------:|--------------------------------:|----------------------|------:|-----------:|----------------------|
+|                       1 |                               2 | yes                  |   203 |          2 | no                   |
+|                       0 |                               0 | n/a                  |    29 |          0 | no                   |
+|                       1 |                               1 | yes                  |     1 |          0 | no                   |
+|                       0 |                               1 | n/a                  |     1 |          0 | no                   |
+
+Across all 234 files **zero** have any real duplicate `(type.code,
+geographicScopes)` group inside `SDDV.dateValues`. The 231 failing CORE
+findings are all phantom.
+
+### CORE-000873 / DDF00093 — inflated counts on real findings
+
+| classification | files | d4k count | CORE count | true count |
+|---|---:|---:|---:|---:|
+| `count_mismatch`  (real dup, inflated) | 203 |  2 |  3 |  2 |
+| `core_only`       (no dup, phantom)    |  26 |  0 |  1 |  0 |
+| `core_only`       (no dup, phantom)    |   1 |  0 |  2 |  0 |
+| `aligned_pass`    (empty dateValues)   |   4 |  0 |  0 |  0 |
+
+The d4k count matches the ground-truth violation count on **all 234 files**.
+The CORE count for any file equals d4k_count + (number of `GovernanceDate`
+ids appearing in both `SDDV.dateValues` and `StudyVersion.dateValues`).
+
+### CORE-001013 / DDF00010 — phantom name-uniqueness findings
+
+| classification | files | d4k count | CORE count | true count |
+|---|---:|---:|---:|---:|
+| `core_only`       (phantom)            | 204 |  0 |  2 |  0 |
+| `aligned_pass`    (no shared dateValue) |  30 |  0 |  0 |  0 |
+
+Across all 234 files **zero** have any genuine cross-instance name collision.
+On the 204 affected files every CORE finding is two error rows for the **same
+instance_id** (e.g. `GovernanceDate_1`) seen at two different paths
+(`/study/versions/0/dateValues/1` and
+`/study/documentedBy/0/versions/0/dateValues/0`). CORE's group-by-name logic
+treats those as two distinct GovernanceDates, then complains that they share
+the same `name`. The d4k rule iterates `data._ids` (id-keyed), so the shared
+instance appears once and no false collision arises.
+
+### CORE-000814 / DDF00094 — inflated counts on global-scope uniqueness
+
+| classification | files | d4k count | CORE count | true count |
+|---|---:|---:|---:|---:|
+| `count_mismatch`  (real violation, inflated) | 203 |  2 |  3 |  2 |
+| `core_only`       (no violation, phantom)    |   1 |  0 |  2 |  0 |
+| `aligned_pass`    (empty/unshared)           |  30 |  0 |  0 |  0 |
+
+Identical fingerprint to DDF00093: d4k count matches the ground-truth
+violation count on **all 234 files**, and the CORE count is exactly d4k_count
++ (number of cross-referenced `GovernanceDate` ids whose scope feeds the
+violation). The shared `GovernanceDate.geographicScopes[*]` is visited via
+both `StudyVersion.dateValues[*].geographicScopes[*]` and
+`SDDV.dateValues[*].geographicScopes[*]`, so the global-scope condition fires
+once per visit instead of once per real GovernanceDate.
+
+### CORE-000834 / DDF00151 — phantom "more than one scope" findings
+
+| classification | files | d4k count | CORE count | true count |
+|---|---:|---:|---:|---:|
+| `core_only`       (phantom)         | 204 |  0 |  2 |  0 |
+| `aligned_pass`    (empty/unshared)  |  30 |  0 |  0 |  0 |
+
+Across all 234 files **zero** `GovernanceDate` instances have more than one
+geographic scope when one of those scopes is global. On the 204 affected
+files every `GovernanceDate` has exactly one (global) scope, but CORE
+reaches that single scope via both `StudyVersion.dateValues[*]` and
+`SDDV.dateValues[*]`, sees it twice, and concludes the date has "2 scopes"
+when global expects 1. Both error rows on each file cite the same
+`instance_id` (the shared `GovernanceDate`).
+
+### Mechanism
+
+In the typical protocol_corpus shape (203/234 files), `SDDV.dateValues =
+[GovernanceDate_1]` and `StudyVersion.dateValues = [GovernanceDate_1,
+GovernanceDate_2]`. The shared id `GovernanceDate_1` is being counted twice
+within whichever container's rule is running, because the engine's data
+traversal visits it via both containers' `dateValues` references rather than
+restricting to the rule's own container.
+
+- DDF00181 (1 direct entry → counts as 2): the result is a phantom finding.
+- DDF00093 (2 direct entries with a real `(type, scope)` collision → counts
+  as 3): the violation is real but the count is off by the number of
+  cross-referenced ids.
+- DDF00010 (one shared `GovernanceDate` reached via two paths → counts as 2
+  instances with the same `name`): phantom name-uniqueness violation. This
+  rule's data scope is "all instances", so anything that surfaces an instance
+  twice in the engine's traversal is enough to manufacture a false finding.
+- DDF00094 (one shared `GovernanceDate` whose scope is reached via two
+  paths → its global-scope condition fires twice): same shape as DDF00093
+  but at the geographic-scope layer; same off-by-cross-reference count
+  inflation.
+- DDF00151 (one global geographic scope reached via two paths → counted
+  as 2 scopes when global expects exactly 1): purely phantom; the
+  `GovernanceDate` actually has one scope, but the engine sees it twice.
+
+**Workaround:** None at the engine level — the false positives and inflated
+counts are emitted as genuine findings, not execution errors, so issue 5's
+sentinel mechanism cannot filter them. The d4k Python rules
+(`src/usdm4/rules/library/rule_ddf00181.py`,
+`src/usdm4/rules/library/rule_ddf00093.py`,
+`src/usdm4/rules/library/rule_ddf00010.py`,
+`src/usdm4/rules/library/rule_ddf00094.py`, and
+`src/usdm4/rules/library/rule_ddf00151.py`) each work from id-keyed structures
+(direct list iteration for the dateValues rules, `data._ids` for the
+name-uniqueness rule, and `instances_by_klass` for the per-`GovernanceDate`
+rules), so a shared instance is visited exactly once.
+
+**Suggested fix:** Make the engine's traversal id-aware so a single instance
+visited via multiple parent references is treated as a single instance, not
+multiple. For the dateValues uniqueness rules specifically, the JSONata /
+Record Data condition should also restrict the rule's data scope to the
+container's *direct* `dateValues` entries. Verifying both layers — engine-wide
+de-duplication of cross-referenced instances **and** per-rule scope discipline
+— should surface the same bug at all three points (and likely others not yet
+exercised by the corpus).
+
+
 ## Summary of workarounds in usdm4
 
 All workarounds are implemented in `src/usdm4/core/core_validator.py` and
@@ -202,5 +403,7 @@ All workarounds are implemented in `src/usdm4/core/core_validator.py` and
 | Stdout pollution | `_run_validation()` | Redirect sys.stdout/stderr to StringIO |
 | JList in results | `CoreRuleFinding._sanitise_value()` | Recursive type normalisation |
 | Missing resource files | `CoreCacheManager.ensure_resources()` | Download from GitHub, disk-cache |
-| Execution error noise | `_classify_errors()` | Filter by known error type strings |
+| Execution error noise | `_classify_errors()` | Filter by known error type strings (4 sentinels) |
+| `codelist_extensible` pandas crash | `_classify_errors()` | Sentinel `"Error occurred during operation execution"` added — see issue 7 |
+| Cross-reference traversal (DDF00181, DDF00093, DDF00010, DDF00094, DDF00151) | n/a (CRE-side bug) | d4k rules `rule_ddf00181.py`, `rule_ddf00093.py`, `rule_ddf00010.py`, `rule_ddf00094.py`, `rule_ddf00151.py` work from id-keyed structures — see issue 8 |
 | Crashing rules | `_run_validation_inner()` | Skip rules in `_EXCLUDED_RULES` set |

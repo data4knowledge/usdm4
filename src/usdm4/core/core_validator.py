@@ -37,9 +37,18 @@ _EXCLUDED_RULES = {
 # Sentinel for execution errors (not real data issues).
 # The CDISC Rules Engine reports these when a rule doesn't apply to a
 # particular entity type — they are not validation findings.
+#
+# "Error occurred during operation execution" was added after a corpus run
+# (validate/corpus.py against protocol_corpus) showed 6792 such errors
+# across rules that produced zero real findings — most originating from a
+# pandas merge bug inside the engine ("merge on object and float64 columns
+# for key 'codeSystemVersion'"). These were being miscounted as findings
+# and surfacing as false "d4k under-reporting" cases against rules where
+# d4k was actually correct (e.g. DDF00141, DDF00114, DDF00237, DDF00152).
 _EXECUTION_ERROR_TYPES = {
     "Column not found in data",
     "Error occurred during dataset preprocessing",
+    "Error occurred during operation execution",
     "Outside scope",
 }
 
