@@ -69,6 +69,7 @@ from usdm4.rules.results import RuleStatus  # noqa: E402
 # (no package context) or as ``python -m validate.eval_corpus``.
 sys.path.insert(0, os.path.dirname(__file__))
 from corpus_adapter import adapt as adapt_corpus  # noqa: E402
+from d4k import results_to_dict as d4k_results_to_dict  # noqa: E402
 
 
 def _root_path() -> str:
@@ -219,6 +220,7 @@ def evaluate_protocol(
     usdm: USDM4,
     asm: Assembler,
     errors: Errors,
+    per_engine_dir: pathlib.Path | None,
     *,
     run_core: bool,
     cache_dir: str | None,
@@ -289,6 +291,16 @@ def evaluate_protocol(
         try:
             d4k_result = usdm.validate(json_path)
             res.d4k = _summarise_d4k(d4k_result)
+            # Per-engine YAML in the shape ``compare.py`` / ``engine_diff.py``
+            # consume — same schema as ``validate/d4k.py``'s output.
+            if per_engine_dir is not None:
+                with (per_engine_dir / f"{pid}_d4k.yaml").open("w") as fh:
+                    yaml.safe_dump(
+                        d4k_results_to_dict(d4k_result, json_path),
+                        fh,
+                        default_flow_style=False,
+                        sort_keys=False,
+                    )
         except Exception as e:
             res.bucket = "d4k_failed"
             res.error = f"d4k: {type(e).__name__}"
@@ -301,6 +313,16 @@ def evaluate_protocol(
             try:
                 core_result = usdm.validate_core(json_path, cache_dir=cache_dir)
                 res.core = _summarise_core(core_result)
+                # Per-engine YAML in the shape ``compare.py`` consumes —
+                # same schema as ``validate/core.py``'s output.
+                if per_engine_dir is not None:
+                    with (per_engine_dir / f"{pid}_core.yaml").open("w") as fh:
+                        yaml.safe_dump(
+                            core_result.to_dict(),
+                            fh,
+                            default_flow_style=False,
+                            sort_keys=False,
+                        )
             except Exception as e:
                 res.bucket = "core_failed"
                 res.error = f"core: {type(e).__name__}"
@@ -466,6 +488,12 @@ def main():
     output_dir = args.output_dir.resolve()
     per_proto_dir = output_dir / "per_protocol"
     per_proto_dir.mkdir(parents=True, exist_ok=True)
+    # Per-engine YAMLs in the shapes that ``validate/compare.py`` and
+    # ``validate/engine_diff.py`` consume. Always emitted alongside the
+    # consolidated record so the cross-engine corpus aggregate can be
+    # produced by chaining: compare.py per file, then engine_diff.py.
+    per_engine_dir = output_dir / "per_engine"
+    per_engine_dir.mkdir(parents=True, exist_ok=True)
 
     explicit_ids = [s.strip() for s in args.ids.split(",")] if args.ids else None
     pids = _list_protocols(corpus_root, explicit_ids, args.limit)
@@ -495,6 +523,7 @@ def main():
             usdm,
             shared_asm,
             shared_errors,
+            per_engine_dir,
             run_core=not args.no_core,
             cache_dir=args.cache_dir,
             strip_soa=args.strip_soa,

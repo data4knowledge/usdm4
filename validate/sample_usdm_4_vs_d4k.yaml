@@ -6,27 +6,27 @@ summary:
     is_valid: false
     rules_executed: 205
     rules_skipped: 2
-    finding_count: 40
-    execution_error_count: 6747
+    finding_count: 38
+    execution_error_count: 6749
   d4k:
     file: /Users/daveih/Documents/github/usdm4/validate/sample_usdm_4.json
     is_valid: false
     rules_executed: 213
-    finding_count: 566
+    finding_count: 535
     counts:
-      success: 190
-      failure: 23
+      success: 191
+      failure: 22
       exception: 0
       not_implemented: 0
   rule_ids_total: 213
-  rule_ids_shared: 16
-  rule_ids_d4k_only_in_library: 197
+  rule_ids_shared: 14
+  rule_ids_d4k_only_in_library: 199
   rule_ids_core_only_in_library: 0
   classifications:
     aligned_fail: 13
-    aligned_pass: 187
-    d4k_only: 10
-    core_only: 3
+    aligned_pass: 190
+    d4k_only: 9
+    core_only: 1
 rows:
 - rule_id: DDF00006
   classification: aligned_fail
@@ -425,12 +425,11 @@ rows:
   core_findings: 1
   core_id: CORE-000873
 - rule_id: DDF00094
-  classification: core_only
+  classification: aligned_pass
   d4k_status: Success
   d4k_findings: 0
-  core_status: Fail
-  core_findings: 1
-  core_id: CORE-000814
+  core_status: Pass-or-NA
+  core_findings: 0
 - rule_id: DDF00096
   classification: aligned_pass
   d4k_status: Success
@@ -589,12 +588,11 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00141
-  classification: core_only
+  classification: aligned_pass
   d4k_status: Success
   d4k_findings: 0
-  core_status: Fail
-  core_findings: 1
-  core_id: CORE-000857
+  core_status: Pass-or-NA
+  core_findings: 0
 - rule_id: DDF00142
   classification: aligned_pass
   d4k_status: Success
@@ -1239,9 +1237,9 @@ rows:
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00249
-  classification: d4k_only
-  d4k_status: Failure
-  d4k_findings: 31
+  classification: aligned_pass
+  d4k_status: Success
+  d4k_findings: 0
   core_status: Pass-or-NA
   core_findings: 0
 - rule_id: DDF00250

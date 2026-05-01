@@ -150,6 +150,65 @@ population:
 
 ---
 
+## Multi-arm trials collapse to one intervention — 21 protocols
+
+**No adapter transform** — surfaces as DDF00213 ("multi-group designs are expected to have more than one intervention") on 21 / 215 corpus protocols (also previously masked by the missing `studyType`).
+
+**Corpus output today** (sample NCT04004611):
+
+```yaml
+study_design:
+  intervention_model: Parallel        # multi-group
+  arms:
+    - {name: "OL Induction: 5 mg/kg Miri IV",  intervention_names: [Mirikizumab]}
+    - {name: "OL Induction: 10 mg/kg Miri IV", intervention_names: [Mirikizumab]}
+    - {name: "OL Induction: 300 mg Miri IV",   intervention_names: [Mirikizumab]}
+    ...                                  # 9 arms total, all naming "Mirikizumab"
+  interventions:
+    - {name: Mirikizumab, dose: null, route: Intravenous, frequency: null}
+                                         # 1 intervention covering all dose levels
+```
+
+The corpus is collapsing every dose / regimen of the same compound into one `intervention` entry. CDISC / USDM expects one `StudyIntervention` per distinct administration regimen — the dose / schedule / route trio.
+
+**Schema-correct output:** one intervention per distinct `(compound, dose, route, schedule)` combination, matched 1:1 (or 1:N) to arms via `intervention_names`. Two-arm placebo-vs-active becomes 2 interventions; nine-arm dose-finding becomes 9 (or however many distinct regimens).
+
+**Affected protocols:** 21 (sample list grep-able from `eval_output/per_protocol/*.yaml` for `DDF00213`).
+
+**Where to fix:** `protocol_corpus/scripts/extractors/study_design.py` — when iterating CTG arms, key the intervention dictionary on `(name, dose, route, frequency)` rather than just `name`.
+
+---
+
+## Activities have no Procedures — 215 protocols miss intervention linkage
+
+**No adapter transform** — surfaces as DDF00101 ("at least one Procedure must reference a StudyIntervention") on 215 / 215 corpus protocols (was previously masked by the empty `InterventionalStudyDesign.studyType`; now visible after USDM4 set studyType correctly).
+
+**Corpus output today:** SoA activity items carry `{name, visits, children, actions.bcs, references}` and nothing else. There is no `procedures` slot on `ActivityActions` (`scripts/extractors/soa.py` schema). The protocol document has procedures — they aren't being extracted.
+
+**Schema-correct output:** activities should carry a `procedures` (or equivalent) list, with each procedure naming the `StudyIntervention` it executes. The USDM4 model expects `Activity.definedProcedures: list[Procedure]` with each `Procedure.studyInterventionId` populated — at least one such linkage per Interventional study design.
+
+**Where to fix:** `protocol_corpus/scripts/extractors/soa.py` — extend the activity extractor to recognise procedures associated with study interventions, and add a corresponding adapter pass so the procedure data flows into `AssemblerInput.soa.activities[*].actions` (or a new field). The downstream USDM4 `TimelineAssembler` then needs to wire `Procedure.studyInterventionId` from that data.
+
+**Why not patched in USDM4:** synthesising a default Procedure-to-Intervention link in the assembler would invent data — every protocol would get a fake "default procedure" pointing at the sponsor's intervention, which is misleading. The rule is correctly flagging missing extractor coverage.
+
+---
+
+## SoA-extraction gaps — 49 protocols have no schedule timeline
+
+**No adapter transform** — surfaces as DDF00012 ("exactly one main scheduled timeline per study design") on 49 / 215 corpus protocols.
+
+**Corpus output today:**
+- 46 protocols emit `soa: []` (empty list — the SoA extractor hasn't run on these PDFs).
+- 3 protocols emit `soa: [{table_type: main_soa, epochs: {items: []}, visits: {items: []}, ...}]` (the scaffold but no actual content).
+
+**Schema-correct output:** at minimum a non-empty `soa` block with epochs/visits populated. The USDM4 assembler builds the `ScheduleTimeline(mainTimeline=True)` only when there's at least one scheduled instance to anchor it to (`_add_timeline` requires non-empty instances).
+
+**Where to fix:** `protocol_corpus/scripts/extractors/soa.py` — re-run the SoA vision extractor on the 49 affected protocols. The IDs are recoverable from `eval_output/per_protocol/*.yaml` by grepping for DDF00012 failures.
+
+**Why not patched in USDM4:** synthesising an empty placeholder timeline in the assembler would silence DDF00012 but produce a USDM document with a meaningless empty timeline that fails any downstream consumer expecting real schedule data. The rule is correctly flagging real missing data.
+
+---
+
 ## 7. `study.name.identifier` is empty although the protocol_id is right there
 
 **No adapter transform yet** — surfaces as a Pydantic `min_length=1` ValidationError on the top-level `Study` for protocols where `name.identifier`, `name.acronym`, and `name.compound` are all empty (CORP* protocols).

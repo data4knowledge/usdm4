@@ -390,6 +390,71 @@ de-duplication of cross-referenced instances **and** per-rule scope discipline
 exercised by the corpus).
 
 
+## 9. Missing relation reported as a blank instance (no identity)
+
+**Severity:** Low — false positive when an optional relation is null
+
+When a rule scoped to a relation type encounters a `null` reference, the engine
+emits a finding shaped as if the relation existed but had every attribute
+blank. The finding has no `path`, no `instance_id`, no `entity` — only a
+`details` dict listing each declared attribute as `Missing`.
+
+### Example — CORE-000971 / DDF00194
+
+DDF text: *"At least one attribute must be specified for an address."*
+
+Run against `validate/sample_usdm_3.json` (re-run 2026-05-01 17:40 with the
+issue 5 + 7 leak fix in place). The file has six `Organization` instances —
+five with a populated `legalAddress`, one (`Organization_5` / "WHO") with
+`legalAddress: null`. There are five Address instances, none of them blank.
+
+CORE emits:
+
+```yaml
+- rule_id: CORE-000971
+  description: At least one attribute must be specified for an address.
+  message: All attributes of the address are blank.
+  errors:
+  - details:
+      city: Missing
+      country: Missing
+      district: Missing
+      lines: Missing
+      postalCode: Missing
+      state: Missing
+      text: Missing
+```
+
+No `path`, no `instance_id`, no `entity`. The "all-blank Address" being
+reported does not exist — it's the absence of `legalAddress` on
+`Organization_5`.
+
+The V4 API model (`src/usdm4/api/organization.py`) declares the relation as
+optional:
+
+```python
+legalAddress: Union[Address, None] = None
+```
+
+The DDF text scopes the rule to addresses, not to organizations that ought to
+have one. d4k's mirror rule (`src/usdm4/rules/library/rule_ddf00194.py`)
+iterates `data.instances_by_klass("Address")` and never visits a null
+reference, so the rule is correctly silent. The same pattern applies to the V3
+twin `DDF00045`.
+
+**Workaround:** None at the engine level — the finding is shaped like a real
+validation result, not an execution error, so the issue 5 sentinel mechanism
+cannot filter it. Callers must recognise findings that lack instance identity
+as the missing-relation case.
+
+**Suggested fix:** Either (a) skip the rule when its scope target resolves to
+null and rely on a separate cardinality rule for "Organization must have a
+legalAddress" if that semantic is intended, or (b) emit the finding against
+the parent (`Organization`) so it carries a real instance_id and path. The
+current shape is ambiguous between "bug in the data" and "the rule didn't
+have anything to evaluate".
+
+
 ## Summary of workarounds in usdm4
 
 All workarounds are implemented in `src/usdm4/core/core_validator.py` and
@@ -406,4 +471,5 @@ All workarounds are implemented in `src/usdm4/core/core_validator.py` and
 | Execution error noise | `_classify_errors()` | Filter by known error type strings (4 sentinels) |
 | `codelist_extensible` pandas crash | `_classify_errors()` | Sentinel `"Error occurred during operation execution"` added — see issue 7 |
 | Cross-reference traversal (DDF00181, DDF00093, DDF00010, DDF00094, DDF00151) | n/a (CRE-side bug) | d4k rules `rule_ddf00181.py`, `rule_ddf00093.py`, `rule_ddf00010.py`, `rule_ddf00094.py`, `rule_ddf00151.py` work from id-keyed structures — see issue 8 |
+| Missing relation reported as blank instance (CORE-000971 / DDF00194) | n/a (CRE-side bug) | d4k iterates real `Address` instances; null `legalAddress` on `Organization` is correctly skipped — see issue 9 |
 | Crashing rules | `_run_validation_inner()` | Skip rules in `_EXCLUDED_RULES` set |
