@@ -131,8 +131,8 @@ def test_d4k_finding_count_at_or_below_baseline(
 @pytest.mark.xfail(
     reason=(
         "Minimum fixture fails 14 d4k rules with 25 findings as of 2026-05-01 "
-        "(post Bug 2+3 fixes: canonical CT decodes + dynamic version list "
-        "killed ~40 findings); "
+        "(post sponsor / org-wiring fixes: Bug 1 sponsor.appliesToIds wiring, "
+        "Bug 2 canonical CT decodes, Bug 3 dynamic version list); "
         "see docs/assembler_validation_findings.md. Flip this to a regular "
         "test (drop xfail) once the assembler is fixed and the baseline test "
         "is no longer needed."
