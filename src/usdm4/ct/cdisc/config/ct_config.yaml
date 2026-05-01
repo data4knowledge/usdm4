@@ -97,6 +97,8 @@ klass_attribute_mapping:
     # Duplicated from StudyDesign — CT lookup doesn't walk inheritance, so
     # rules dispatched against the concrete subclass need an explicit entry.
     characteristics: C207416
+    studyPhase: C66737
+    studyType: C99077
   ObservationalStudyDesign:
     subTypes: C215486
     model: C127259

@@ -169,9 +169,6 @@ class PopulationAssembler(BaseAssembler):
         if age_min is None and age_max is None:
             return None
 
-        unit_code = self._encoder.age_unit(demographics.get("age_unit", "Years"))
-        unit_alias = self._builder.alias_code(unit_code)
-
         # Range requires both minValue and maxValue; fill any missing bound
         # with the other (a zero-width range) and log the compromise.
         effective_min = age_min if age_min is not None else age_max
@@ -183,11 +180,22 @@ class PopulationAssembler(BaseAssembler):
                 KlassMethodLocation(self.MODULE, "_build_planned_age"),
             )
 
+        # Build separate unit Code+AliasCode pairs for min and max. Sharing
+        # one AliasCode (and its standardCode) between min and max
+        # Quantities produces the same ``id`` at both paths, which
+        # DDF00083 / CORE-001015 flag as a uniqueness violation.
+        min_unit_alias = self._builder.alias_code(
+            self._encoder.age_unit(demographics.get("age_unit", "Years"))
+        )
+        max_unit_alias = self._builder.alias_code(
+            self._encoder.age_unit(demographics.get("age_unit", "Years"))
+        )
+
         min_qty = self._builder.create(
-            Quantity, {"value": float(effective_min), "unit": unit_alias}
+            Quantity, {"value": float(effective_min), "unit": min_unit_alias}
         )
         max_qty = self._builder.create(
-            Quantity, {"value": float(effective_max), "unit": unit_alias}
+            Quantity, {"value": float(effective_max), "unit": max_unit_alias}
         )
         if min_qty is None or max_qty is None:
             return None

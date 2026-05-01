@@ -156,13 +156,18 @@ class StudyAssembler(BaseAssembler):
                     identification_assembler.medical_expert_contact_details_location,
                 )
 
-            # Create StudyVersion parameters by combining data from all assemblers
+            # Create StudyVersion parameters by combining data from all assemblers.
+            #
+            # ``StudyVersion.dateValues`` holds dates *about the study version*
+            # (e.g. sponsor approval); ``StudyDefinitionDocumentVersion.dateValues``
+            # holds dates *about the document version* (when the document was
+            # signed off). They are different scopes — document_assembler's
+            # dates stay on the document version and are not re-attached here.
             params = {
                 "versionIdentifier": data["version"],  # Version ID from input data
                 "rationale": data["rationale"],  # Version rationale from input data
                 "titles": identification_assembler.titles,  # Study titles from identification
-                "dateValues": self._dates
-                + document_assembler.dates,  # Combined governance dates
+                "dateValues": self._dates,  # Study-version-scoped governance dates
                 "studyDesigns": [
                     study_design_assembler.study_design
                 ],  # Study design structure

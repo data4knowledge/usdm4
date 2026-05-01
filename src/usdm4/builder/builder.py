@@ -92,6 +92,32 @@ class Builder:
             )
             return None
 
+    def duplicate(self, instance: ApiBaseModelWithId) -> ApiBaseModelWithId | None:
+        """Return a deep copy of ``instance`` with fresh ids throughout.
+
+        Use when the same logical content (e.g. an approval ``GovernanceDate``,
+        a default ``dataOriginType`` ``Code``) needs to live at more than one
+        path in the assembled study. Sharing the same Python instance produces
+        the same ``id`` at multiple paths after ``model_dump`` serialisation,
+        which DDF00083 (and CORE-001015) flag as a uniqueness violation.
+
+        The returned model is fully validated and has been registered with
+        the cross-reference index, so it can be used anywhere the original
+        could be.
+        """
+        if instance is None:
+            return None
+        klass = instance.__class__
+        params = instance.model_dump(by_alias=True)
+        # Walk the dict assigning a fresh id to every dict that carries an
+        # ``instanceType``. ``_set_ids`` already does this — same mechanism
+        # used by ``bc()`` for biomedical-concept loading.
+        self._set_ids(params)
+        # Skip the cross-reference index — the duplicate shares its
+        # ``name`` with the original, which the index rejects as a
+        # collision. ``bc()`` does the same for the same reason.
+        return self.create(klass, params, cross_reference=False)
+
     def _check_object(self, object) -> bool:
         return True if object and hasattr(object, "id") else False
 
@@ -436,12 +462,18 @@ class Builder:
         self._id_manager.add_id(data["instanceType"], data["id"])
 
     def _set_ids(self, parent):
-        if isinstance(parent, str) or isinstance(parent, bool) or (parent is None):
+        # Walk an instance-shaped dict, assigning a fresh ``id`` to every
+        # nested dict that has an ``instanceType``. Anything that isn't an
+        # instance dict (scalars, datetime values, plain configuration
+        # dicts) is treated as a leaf — we don't mint ids for non-USDM
+        # entities and we don't fail on field types like ``datetime.date``
+        # that turn up inside Pydantic dumps.
+        if not isinstance(parent, dict) or "instanceType" not in parent:
             return
         parent["id"] = self._id_manager.build_id(parent["instanceType"])
         for _, value in parent.items():
             if isinstance(value, list):
                 for child in value:
                     self._set_ids(child)
-            else:
+            elif isinstance(value, dict):
                 self._set_ids(value)

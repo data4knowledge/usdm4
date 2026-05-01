@@ -96,7 +96,7 @@
               "code": "C54149",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2026-03-27",
-              "decode": "Pharmaceutical Company",
+              "decode": "Drug Company",
               "instanceType": "Code"
             },
             "identifierScheme": "To be provided",
@@ -141,7 +141,7 @@
           "code": "C70817",
           "codeSystem": "http://www.cdisc.org",
           "codeSystemVersion": "2026-03-27",
-          "decode": "Protocol",
+          "decode": "Study Protocol",
           "instanceType": "Code"
         },
         "templateName": "Sponsor",
@@ -156,7 +156,7 @@
               "code": "C25425",
               "codeSystem": "http://www.cdisc.org",
               "codeSystemVersion": "2026-03-27",
-              "decode": "Approved",
+              "decode": "Approval",
               "instanceType": "Code"
             },
             "dateValues": [

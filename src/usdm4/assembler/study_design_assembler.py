@@ -124,6 +124,13 @@ class StudyDesignAssembler(BaseAssembler):
             )
 
             # Create the InterventionalStudyDesign object.
+            #
+            # ``studyType`` is required by DDF00227 ("an interventional study
+            # must be specified using the InterventionalStudyDesign class").
+            # We always set the SDTM ``Interventional Study`` code (C98388);
+            # there's no ``observational`` branch in this assembler today, so
+            # the choice is unambiguous. The decode is overridden by Bug 2's
+            # canonical-CT-decode lookup at Code-creation time.
             self._study_design = self._builder.create(
                 InterventionalStudyDesign,
                 {
@@ -132,6 +139,9 @@ class StudyDesignAssembler(BaseAssembler):
                     "description": "A study design",
                     "rationale": data["rationale"],
                     "model": intervention_model_code,
+                    "studyType": self._builder.cdisc_code(
+                        "C98388", "Interventional Study"
+                    ),
                     "arms": list(arms_by_name.values()),
                     "studyCells": cells_list,
                     "elements": list(elements_by_name.values()),
@@ -303,11 +313,15 @@ class StudyDesignAssembler(BaseAssembler):
         ``_wire_cohorts_to_arms`` once cohort ids are known.
         """
         result: dict[str, StudyArm] = {}
-        data_origin_type = self._builder.cdisc_code(
-            self.DATA_ORIGIN_TYPE_CODE, self.DATA_ORIGIN_TYPE_DECODE
-        )
         for item in items:
             try:
+                # Build a fresh dataOriginType Code per arm. Sharing one
+                # Code instance across arms produces the same ``id`` at
+                # every arm's ``dataOriginType`` path, which DDF00083 /
+                # CORE-001015 flag as a uniqueness violation.
+                data_origin_type = self._builder.cdisc_code(
+                    self.DATA_ORIGIN_TYPE_CODE, self.DATA_ORIGIN_TYPE_DECODE
+                )
                 params = {
                     "name": self._label_to_name(item["name"]),
                     "label": item.get("label") or item["name"],

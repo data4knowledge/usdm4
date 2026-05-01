@@ -40,8 +40,8 @@ from usdm4.rules.results import RuleStatus
 # These numbers reflect *current* assembler output, not desired conformance.
 # When the assembler is fixed to satisfy more rules, lower these.
 BASELINE_D4K_FAILING_RULE_COUNT = 14
-BASELINE_D4K_FINDING_COUNT = 25
-BASELINE_D4K_EXCEPTION_RULE_COUNT = 1
+BASELINE_D4K_FINDING_COUNT = 18
+BASELINE_D4K_EXCEPTION_RULE_COUNT = 0
 
 
 def test_assembled_json_is_well_formed(
@@ -130,9 +130,9 @@ def test_d4k_finding_count_at_or_below_baseline(
 
 @pytest.mark.xfail(
     reason=(
-        "Minimum fixture fails 14 d4k rules with 25 findings as of 2026-05-01 "
-        "(post sponsor / org-wiring fixes: Bug 1 sponsor.appliesToIds wiring, "
-        "Bug 2 canonical CT decodes, Bug 3 dynamic version list); "
+        "Minimum fixture fails 14 d4k rules with 19 findings as of 2026-05-01 "
+        "(post sponsor/org-wiring + DDF00229 CT config + DDF00083 id-uniqueness "
+        "fixes); "
         "see docs/assembler_validation_findings.md. Flip this to a regular "
         "test (drop xfail) once the assembler is fixed and the baseline test "
         "is no longer needed."
