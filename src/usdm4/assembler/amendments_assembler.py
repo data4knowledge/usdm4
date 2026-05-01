@@ -258,7 +258,12 @@ class AmendmentsAssembler(BaseAssembler):
                 "code": None,
             }
             geo_scope = self._builder.create(GeographicScope, params)
-            if "enrollment" in data:
+            # Truthy check, not key presence: ``enrollment`` is always a key
+            # on ``data`` (Pydantic-injected default) but its value is ``None``
+            # when no enrollment was supplied, which would TypeError on the
+            # subscript below. Falsy ``enrollment`` (None, missing, empty)
+            # falls through to the default-quantity branch.
+            if data.get("enrollment"):
                 unit_alias = None
                 if data["enrollment"]["unit"] in ("%", "percent", "percentage"):
                     unit_code = self._builder.cdisc_code("C25613", "Percentage")

@@ -402,8 +402,12 @@ class IdentificationAssembler(BaseAssembler):
         for id_details in identifiers:
             try:
                 scope = id_details["scope"]
-                if "standard" in scope:
-                    scope_key = scope["standard"]
+                # Test for a truthy ``standard`` value, not just key presence.
+                # After Pydantic normalisation, ``scope`` always carries both
+                # keys with one set to ``None``; the ``in`` test would lie.
+                standard_key = scope.get("standard")
+                if standard_key:
+                    scope_key = standard_key
                     # Cache by org name so scopes that share an org
                     # (e.g. fda-ind and fda-ide both use "FDA") reuse
                     # it instead of hitting a duplicate-name rejection.
@@ -416,24 +420,24 @@ class IdentificationAssembler(BaseAssembler):
                     # organisations stay separate while same-named ones
                     # (e.g. two "other" identifiers on the same sponsor)
                     # still share correctly.
-                    cache_key = scope.get("non_standard", {}).get("name", "other")
+                    cache_key = (scope.get("non_standard") or {}).get("name", "other")
 
                 # Reuse a previously created org for this scope, or create one
                 org = scope_org_cache.get(cache_key)
                 if org is None:
                     organization: dict = (
-                        copy.deepcopy(self.STANDARD_ORGS[scope["standard"]])
-                        if "standard" in scope
+                        copy.deepcopy(self.STANDARD_ORGS[standard_key])
+                        if standard_key
                         else scope["non_standard"]
                     )
 
-                    # Address
-                    if organization["legalAddress"]:
-                        organization["legalAddress"] = self._create_address(
-                            organization["legalAddress"]
-                        )
-                    else:
-                        organization["legalAddress"] = None
+                    # Address — non_standard orgs from raw input may not
+                    # carry a ``legalAddress`` key at all. Treat missing as
+                    # absent rather than KeyError-ing.
+                    legal_address = organization.get("legalAddress")
+                    organization["legalAddress"] = (
+                        self._create_address(legal_address) if legal_address else None
+                    )
 
                     org = self._create_organization(organization)
                     if org:
@@ -470,10 +474,23 @@ class IdentificationAssembler(BaseAssembler):
                 )
                 if info is None:
                     continue
-                organization = copy.deepcopy(self.ROLE_ORGS[role])
+                # Sponsor is created via the identifiers loop above (the
+                # protocol identifier's organisation IS the sponsor). Other
+                # role keys not in ROLE_ORGS aren't templated here either —
+                # warn and skip rather than crash so unknown / future role
+                # names don't take the whole assembler down.
+                role_key = role.replace("-", "_")
+                if role_key not in self.ROLE_ORGS:
+                    self._errors.warning(
+                        f"Skipping role '{role}' — no template in ROLE_ORGS "
+                        f"(sponsor is wired through the identifier scope)",
+                        KlassMethodLocation(self.MODULE, "execute"),
+                    )
+                    continue
+                organization = copy.deepcopy(self.ROLE_ORGS[role_key])
                 organization["label"] = info["name"]
                 organization["legalAddress"] = (
-                    self._create_address(info["address"]) if "address" in info else None
+                    self._create_address(info.get("address"))
                 )
                 org = self._create_organization(organization)
                 if org:
@@ -493,29 +510,31 @@ class IdentificationAssembler(BaseAssembler):
                     e,
                     KlassMethodLocation(self.MODULE, "execute"),
                 )
-        if "other" in data:
-            if "medical_expert" in data["other"]:
-                me: dict
-                me = data["other"]["medical_expert"]
-                if me:
-                    if me.get("name"):
-                        ap: AssignedPerson = self._create_assigned_person(me)
-                        if ap:
-                            role: StudyRole = self._create_role("medical expert")
-                            if role:
-                                role.assignedPersons = [ap]
-                    elif me.get("reference"):
-                        self._medical_expert_contact_details_location = ("/n").join(
-                            me["reference"]
-                        )
-                    else:
-                        self._errors.warning(
-                            "No medical expert contact information detected",
-                            KlassMethodLocation(self.MODULE, "execute"),
-                        )
-            self._sponsor_signatory = data["other"]["sponsor_signatory"]
-            self._compound_names = data["other"]["compound_names"]
-            self._compound_codes = data["other"]["compound_codes"]
+        # ``other`` is optional on the schema and every field inside it
+        # defaults to ``None``. Use ``.get`` so the assembler tolerates either
+        # the schema-default shape (key present, values None) or a raw dict
+        # the user supplied with the block omitted entirely.
+        other = data.get("other") or {}
+        me = other.get("medical_expert")
+        if me:
+            if me.get("name"):
+                ap: AssignedPerson = self._create_assigned_person(me)
+                if ap:
+                    role: StudyRole = self._create_role("medical expert")
+                    if role:
+                        role.assignedPersons = [ap]
+            elif me.get("reference"):
+                self._medical_expert_contact_details_location = ("/n").join(
+                    me["reference"]
+                )
+            else:
+                self._errors.warning(
+                    "No medical expert contact information detected",
+                    KlassMethodLocation(self.MODULE, "execute"),
+                )
+        self._sponsor_signatory = other.get("sponsor_signatory")
+        self._compound_names = other.get("compound_names")
+        self._compound_codes = other.get("compound_codes")
 
     @property
     def titles(self):
@@ -549,7 +568,11 @@ class IdentificationAssembler(BaseAssembler):
     def compound_codes(self) -> str:
         return self._compound_codes
 
-    def _create_address(self, address: dict) -> Address | None:
+    def _create_address(self, address: dict | None) -> Address | None:
+        # Tolerate falsy input — schema-injected ``None`` for missing addresses
+        # is the common case, and there's nothing to build from.
+        if not address:
+            return None
         try:
             self._errors.debug(
                 f"Creating address, source data: {address}",

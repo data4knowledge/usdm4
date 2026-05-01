@@ -1949,13 +1949,21 @@ class TestIdentificationAssemblerRolesProcessing:
         # Should not create any organizations since info is None
         assert len(identification_assembler.organizations) == 0
 
-    def test_execute_with_role_exception_is_caught(self, builder, errors):
-        """Test exception during role processing is caught (covers lines 342-347)."""
+    def test_execute_with_unknown_role_key_logs_warning(self, builder, errors):
+        """Unknown role keys are skipped with a warning, not an error.
+
+        Sponsor (and any role not in ROLE_ORGS) is wired through the
+        identifier scope, not the role loop. The role loop should keep going
+        rather than terminate the assembler when it sees a role name it
+        doesn't have a template for.
+        """
+        from simple_error_log.errors import Errors as _Errors
+
         assembler = IdentificationAssembler(builder, errors)
         builder.clear()
         initial_error_count = errors.error_count()
+        initial_dump = errors.dump(level=_Errors.WARNING)
 
-        # Use an invalid role key that doesn't exist in ROLE_ORGS
         data = {
             "roles": {
                 "nonexistent_role": {"name": "Bad Role"},
@@ -1964,7 +1972,11 @@ class TestIdentificationAssemblerRolesProcessing:
 
         assembler.execute(data)
 
-        assert errors.error_count() > initial_error_count
+        # No new errors — the role is skipped gracefully.
+        assert errors.error_count() == initial_error_count
+        # But a warning is recorded so the unknown role is visible.
+        new_dump = errors.dump(level=_Errors.WARNING)
+        assert "nonexistent_role" in new_dump and new_dump != initial_dump
 
     def test_execute_with_multiple_roles(self, identification_assembler):
         """Test execute with multiple roles."""

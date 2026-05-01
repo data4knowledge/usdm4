@@ -177,6 +177,12 @@ class DocumentAssembler(BaseAssembler):
     def _section_to_narrative(
         self, parent: NarrativeContent, sections: list[dict], index: int, level: int
     ) -> int:
+        # Guard against empty input — the schema permits ``sections: []`` and
+        # the corpus exercises that branch on protocols with no extracted
+        # narrative content. Without this check, the ``sections[local_index]``
+        # below IndexErrors before the loop's existing length check kicks in.
+        if not sections or index >= len(sections):
+            return index
         process = True
         previous = None
         local_index = index

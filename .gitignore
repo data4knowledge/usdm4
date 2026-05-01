@@ -184,3 +184,8 @@ xxx*.*
 # Validation check
 validate/corpus_out/*.yaml
 validate/corpus_out/*.txt
+
+# Assembler eval
+eval_output/*.*
+eval_output/
+

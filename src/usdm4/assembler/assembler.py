@@ -62,11 +62,16 @@ class Assembler:
         """
         Executes the assembly process to build a complete Study object from structured data.
 
-        Accepts either an ``AssemblerInput`` Pydantic model or a raw ``dict``.  When a
-        dict is supplied it is validated against the ``AssemblerInput`` schema; structural
-        errors are reported via the shared ``Errors`` instance and the method returns
-        early.  After validation the **original** dict is forwarded to the sub-assemblers
-        so that their existing key-access patterns are preserved unchanged.
+        Accepts either an ``AssemblerInput`` Pydantic model or a raw ``dict``.
+        In both cases the input is validated against ``AssemblerInput`` and
+        the **fully-defaulted** dict (schema-injected defaults included) is
+        forwarded to the sub-assemblers. This means a sub-assembler can rely
+        on every optional key being present (with its declared default value)
+        rather than having to ``"key" in data`` everywhere.
+
+        ``by_alias=True`` is kept on the dump so any aliased fields (e.g.
+        ``amendments.impact.global`` aliased from ``global_``) are emitted
+        under their alias names — sub-assemblers index by alias.
 
         Args:
             data: A dict (or ``AssemblerInput``) with the top-level keys
@@ -76,10 +81,10 @@ class Assembler:
         Returns:
             None
         """
-        # --- input validation ------------------------------------------------
+        # --- input validation + normalisation --------------------------------
         if isinstance(data, dict):
             try:
-                AssemblerInput.model_validate(data)
+                validated = AssemblerInput.model_validate(data)
             except ValidationError as e:
                 location = KlassMethodLocation(self.MODULE, "execute")
                 for error in e.errors():
@@ -87,8 +92,9 @@ class Assembler:
                     msg = f"Schema validation: {field_path} — {error['msg']}"
                     self._errors.error(msg, location)
                 return
+            data = validated.model_dump(by_alias=True)
         elif isinstance(data, AssemblerInput):
-            data = data.model_dump(by_alias=True, exclude_unset=True)
+            data = data.model_dump(by_alias=True)
         else:
             location = KlassMethodLocation(self.MODULE, "execute")
             self._errors.error(
@@ -114,8 +120,12 @@ class Assembler:
                 data["amendments"], self._document_assembler
             )
 
-            # Timelines data
-            if "soa" in data:
+            # Timelines data — truthy check, not key presence: ``soa`` is
+            # always a key on the validated dict (Pydantic-injected default)
+            # but its value is ``None`` when no SoA was supplied. The timeline
+            # assembler indexes ``data["epochs"]["items"]`` etc. unconditionally
+            # and can't take ``None``.
+            if data.get("soa"):
                 self._timeline_assembler.execute(data["soa"])
 
             # Process study design data - requires population assembler for cross-references
