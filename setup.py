@@ -18,7 +18,7 @@ setuptools.setup(
     install_requires=[
         "simple_error_log>=0.8.0",
         "python-dateutil==2.9.0.post0",
-        "cdisc-rules-engine>=0.15.0",
+        "cdisc-rules-engine>=0.16.0",
         "platformdirs>=3.0",
         "jsonschema>=4.0",
         "lxml>=4.9",

@@ -315,7 +315,6 @@ class CoreValidator:
             dataset_paths=[abs_path],
             library_metadata=library_metadata,
         )
-        datasets = rules_engine.data_service.get_datasets()
 
         # --- Load Rules ---
         rules = self._load_rules(
@@ -349,7 +348,7 @@ class CoreValidator:
                 action_message = params.get("message", "")
 
             try:
-                rule_results = rules_engine.validate_single_rule(rule, datasets)
+                rule_results = rules_engine.validate_single_rule(rule)
                 real_errors, exec_errors = self._classify_errors(rule_results)
 
                 if real_errors:
@@ -363,10 +362,14 @@ class CoreValidator:
                     )
                 result.execution_errors.extend(exec_errors)
 
-            except Exception:
+            except Exception as exc:
                 # Rule crashed - treat as execution error
                 result.execution_errors.append(
-                    {"rule_id": rule_id, "error": "Rule execution crashed"}
+                    {
+                        "rule_id": rule_id,
+                        "error": "Rule execution crashed",
+                        "detail": repr(exc),
+                    }
                 )
 
         result.rules_executed = len(rules) - skipped

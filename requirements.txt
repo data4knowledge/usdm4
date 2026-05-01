@@ -1,7 +1,7 @@
 usdm3>=0.12.3
 pydantic>=2.0
 simple_error_log>=0.8.0
-cdisc-rules-engine>=0.15.0
+cdisc-rules-engine>=0.16.0
 platformdirs>=3.0
 python-dateutil==2.9.0.post0
 pytest==8.2.2
