@@ -150,23 +150,36 @@ post-install step / CLI command that fetches them.
 **Severity:** Low-Medium — noisy output, requires filtering
 
 When a rule is executed against an entity type it does not apply to, the engine
-returns error records rather than an empty result. Four error types fall into
-this category:
+returns error records rather than an empty result. Six error types fall into
+this category, four originally observed in CRE 0.15.x and two added after CRE
+0.16.0:
 
-- `"Column not found in data"`
-- `"Error occurred during dataset preprocessing"`
-- `"Error occurred during operation execution"`
-- `"Outside scope"`
+- `"Column not found in data"`           (CRE 0.15.x)
+- `"Error occurred during dataset preprocessing"`  (CRE 0.15.x)
+- `"Error occurred during operation execution"`    (CRE 0.15.x — see issue 7)
+- `"Outside scope"`                      (CRE 0.15.x)
+- `"Domain not found"`                   (CRE 0.16.0)
+- `"Empty dataset"`                      (CRE 0.16.0)
 
-The first and last indicate that the rule's preconditions were not met for the
-entity. The two `"Error occurred during ..."` variants indicate the engine
+The first and last group indicate that the rule's preconditions were not met for
+the entity. The two `"Error occurred during ..."` variants indicate the engine
 itself failed mid-rule (e.g. a pandas merge bug on `codeSystemVersion` — see
-issue 7). None are data quality issues, but they are returned in the same
-`errors` list as real validation findings, requiring callers to inspect the
-`error` field and filter them out.
+issue 7). `"Domain not found"` indicates the rule queries a domain (like
+`Condition`) that has zero instances in the protocol. `"Empty dataset"`
+indicates a dataset became empty after the engine's preprocessing. None are
+data quality issues, but they are returned in the same `errors` list as real
+validation findings, requiring callers to inspect the `error` field and filter
+them out.
+
+In a 234-file corpus run against CRE 0.16.0, the new sentinel strings produced
+6336 `"Domain not found"` entries (across CORE-000840/871/878) and 235
+`"Empty dataset"` entries (across CORE-000857/001068). Without filtering, these
+masquerade as `d4k_under_reporting` on rules where d4k correctly produces zero
+findings (DDF00114, DDF00141, DDF00152).
 
 **Workaround:** We classify errors by checking the `error` field against the
-four known strings and separate them into an `execution_errors` list.
+six known strings and separate them into an `execution_errors` list. The set
+lives in `_EXECUTION_ERROR_TYPES` in `src/usdm4/core/core_validator.py`.
 
 **Suggested fix:** Either skip rules whose preconditions are not met (return an
 empty result), or return execution errors in a separate field / with a distinct
@@ -194,28 +207,46 @@ rules as disabled/draft in the rule catalogue so they are not returned by
 
 ## 7. `codelist_extensible` operation crashes with pandas merge type mismatch
 
-> **Status (CRE 0.16.0): resolved upstream.** A 234-file corpus run against
-> 0.16.0 (May 2026) shows the four `codelist_extensible`-backed rules have all
-> moved out of the broken bucket:
+> **Status (CRE 0.16.0): symptom changed, outcome unchanged.** A 234-file
+> corpus run against 0.16.0 (May 2026) shows that what looked at first like an
+> upstream fix is actually a relabelling: the engine no longer crashes on the
+> pandas merge but reports the same rules as `"Domain not found"` or
+> `"Empty dataset"` execution errors instead. Once the issue 5 sentinel set was
+> extended with both new strings, every per-rule outcome reverted to its 0.15.x
+> baseline.
 >
-> | CORE id     | DDF id    | 0.15.x state                  | 0.16.0 state                                       |
-> |-------------|-----------|-------------------------------|----------------------------------------------------|
-> | CORE-000871 | DDF00084  | over=234 (d4k_over_reporting) | aligned_fail=234 (both engines find — d4k vindicated) |
-> | CORE-000878 | DDF00114  | aligned (CORE silent — bug)   | under=224 (CORE now fires; d4k has no rule)        |
-> | CORE-000857 | DDF00141  | aligned (CORE silent — bug)   | under=234 (CORE now fires; d4k has no rule)        |
-> | CORE-000840 | DDF00152  | aligned (CORE silent — bug)   | under=3   (CORE now fires; d4k has no rule)        |
-> | CORE-001061 | DDF00237  | aligned (CORE silent — bug)   | aligned_pass=234 (no real findings on this corpus) |
+> | CORE id     | DDF id    | 0.15.x state             | 0.16.0 state (after issue 5 sentinels updated) |
+> |-------------|-----------|--------------------------|------------------------------------------------|
+> | CORE-000871 | DDF00084  | over=234                 | over=234 (unchanged; pre-filter-update CORE emitted 234 phantom `"Domain not found"` entries, mis-classified as `aligned_fail`) |
+> | CORE-000878 | DDF00114  | aligned_pass=234         | aligned_pass=234 (pre-filter-update an apparent under=224 was 6099 phantom `"Domain not found"` entries) |
+> | CORE-000857 | DDF00141  | aligned_pass=234         | aligned_pass=234 (pre-filter-update an apparent under=234 was 234 phantom `"Empty dataset"` entries) |
+> | CORE-000840 | DDF00152  | aligned_pass=234         | aligned_pass=234 (pre-filter-update an apparent under=3 was 3 phantom `"Domain not found"` entries) |
+> | CORE-001061 | DDF00237  | aligned_pass=234         | aligned_pass=234 (no findings either way on this corpus) |
 >
-> The `_EXECUTION_ERROR_TYPES` sentinel `"Error occurred during operation
-> execution"` (added as the workaround below) is no longer load-bearing for
-> these rules and is left in place only as defence-in-depth against any other
-> rule throwing the same shape. The d4k library does not yet implement
-> counterparts for DDF00114, DDF00141, or DDF00152 — these are now real
-> `d4k_under_reporting` cases and are tracked as follow-up work, not as engine
-> bugs.
+> Net read of CRE 0.16.0 for this issue:
 >
-> The historical analysis below is preserved as an audit trail for the original
-> 0.15.x diagnosis.
+> - The pandas merge on `codeSystemVersion` no longer crashes — that part is
+>   genuinely fixed. The engine now correctly recognises empty-input
+>   conditions instead of raising mid-rule.
+> - However, CRE 0.16.0 still emits the empty-input recognition as an entry
+>   in the rule's `errors` list rather than skipping the rule with no
+>   findings. From a consumer's perspective, the leak shape is identical to
+>   issue 5; only the sentinel string changed.
+> - DDF00084 stays in `d4k_over_reporting` exactly as in 0.15.x. d4k still
+>   catches 234 real failures CORE does not. This is a long-standing
+>   divergence, not a 0.16 regression and not a 0.16 fix.
+> - The `_EXECUTION_ERROR_TYPES` sentinel `"Error occurred during operation
+>   execution"` (the original 0.15-era workaround below) is left in place as
+>   defence-in-depth against any other rule still hitting the merge path.
+>
+> Net work required of usdm4 for the upgrade: the two new sentinels
+> (`"Domain not found"`, `"Empty dataset"`) added to issue 5's set, plus the
+> wrapper-side fix to `validate_single_rule`'s signature change (see
+> `core_validator.py` line ~351). No new d4k rules are required for the five
+> rules in the table.
+>
+> The historical analysis below is preserved as an audit trail for the
+> original 0.15.x diagnosis.
 
 When the engine evaluates rules backed by the `codelist_extensible` operation,
 the underlying pandas merge can fail with:
@@ -489,8 +520,73 @@ All workarounds are implemented in `src/usdm4/core/core_validator.py` and
 | Stdout pollution | `_run_validation()` | Redirect sys.stdout/stderr to StringIO |
 | JList in results | `CoreRuleFinding._sanitise_value()` | Recursive type normalisation |
 | Missing resource files | `CoreCacheManager.ensure_resources()` | Download from GitHub, disk-cache |
-| Execution error noise | `_classify_errors()` | Filter by known error type strings (4 sentinels) |
-| `codelist_extensible` pandas crash | `_classify_errors()` | Resolved upstream in CRE 0.16.0 (see issue 7); sentinel `"Error occurred during operation execution"` retained as defence-in-depth |
+| Execution error noise | `_classify_errors()` | Filter by known error type strings (6 sentinels — 4 from 0.15.x, 2 added for 0.16.0) |
+| `codelist_extensible` pandas crash | `_classify_errors()` | CRE 0.16.0 stopped crashing but reports the same condition via `"Domain not found"` / `"Empty dataset"` sentinels (see issue 7); original `"Error occurred during operation execution"` sentinel retained as defence-in-depth |
 | Cross-reference traversal (DDF00181, DDF00093, DDF00010, DDF00094, DDF00151) | n/a (CRE-side bug) | d4k rules `rule_ddf00181.py`, `rule_ddf00093.py`, `rule_ddf00010.py`, `rule_ddf00094.py`, `rule_ddf00151.py` work from id-keyed structures — see issue 8 |
 | Missing relation reported as blank instance (CORE-000971 / DDF00194) | n/a (CRE-side bug) | d4k iterates real `Address` instances; null `legalAddress` on `Organization` is correctly skipped — see issue 9 |
 | Crashing rules | `_run_validation_inner()` | Skip rules in `_EXCLUDED_RULES` set |
+
+
+## CRE 0.16.0 upgrade notes (May 2026)
+
+### What broke when 0.16.0 was first installed
+
+`RulesEngine.validate_single_rule` lost its `datasets` positional argument (now
+takes only `(self, rule)` — datasets are reached internally via
+`self.data_service`). Our wrapper at `core_validator.py` line ~352 still passed
+`datasets`, raising `TypeError: validate_single_rule() takes 2 positional
+arguments but 3 were given` on every rule. The bare `except Exception:` in the
+same loop swallowed the TypeError and recorded it as `"Rule execution
+crashed"`, then issue 5's filter promoted it to a non-finding execution error,
+producing 0 findings on every protocol — including the well-formed CDISC Pilot
+— while reporting `is_valid: true`. Symptom looked like a deep upstream
+regression; root cause was a 1-line API change.
+
+### Wrapper changes made for the upgrade
+
+1. **`core_validator.py` line ~352** — drop the `datasets` argument:
+   `rules_engine.validate_single_rule(rule)`.
+2. **`core_validator.py` line 318** — remove the now-unused
+   `datasets = rules_engine.data_service.get_datasets()` local.
+3. **`core_validator.py` lines ~365–372** — bind the swallowed exception as
+   `exc` and store `repr(exc)` under a new `detail` key on the execution
+   error record, so the next CRE upgrade reveals problems immediately.
+4. **`core_validator.py` `_EXECUTION_ERROR_TYPES`** — add `"Domain not found"`
+   and `"Empty dataset"` (issue 5).
+
+### Net behaviour change vs CRE 0.15.x (234-file corpus)
+
+After all four wrapper changes, three rules genuinely moved between buckets:
+
+| Rule | 0.15.x | 0.16.0 | Reading |
+|---|---|---|---|
+| DDF00025 | under=103 | aligned_fail=103 | CORE and d4k now agree on 103 failures |
+| DDF00229 | under=222 | aligned_fail=222 | CORE and d4k now agree on 222 failures |
+| DDF00249 | over=200 | aligned (0/0/0) | d4k stopped firing on 200 files; cause not yet investigated |
+
+All other 211 rules are in the same bucket as 0.15. In particular, issue 7
+DDF00084 stays in `over=234`, and the issue 8 cross-reference traversal rules
+(DDF00010/093/094/151/181) stay in their respective `under`/`over` buckets —
+0.16.0 did not address that bug.
+
+### Open follow-ups
+
+- **DDF00249 over → aligned (0/0/0) on 200 files.** d4k did not change in this
+  upgrade, yet stopped firing on 200 files where it previously did. Could be
+  CT cache differences, dict iteration order, or some other non-determinism.
+  Worth a targeted look (compare a single file's `_d4k.yaml` for DDF00249
+  between the old `validate/corpus_out/` baseline — if any per-file YAMLs
+  survive — and `validate/corpus_out_cre_0_16_v2/`) before deciding whether
+  this is a real change or noise.
+- **`_EXECUTION_ERROR_TYPES` is becoming a maintenance burden.** Issue 5's
+  set now has six entries; CRE keeps adding new strings for the same
+  conceptual category (rule-not-applicable / no-data-to-evaluate). Worth
+  raising upstream that these should be returned with a distinct status code
+  rather than as string-tagged entries in the same `errors` list as real
+  findings.
+- **Stdout/stderr suppression hides upstream errors.** The `_run_validation`
+  wrapper redirects both streams to a `StringIO`, which compounded today's
+  diagnosis: even when the engine logged tracebacks (which 0.16.0 does on
+  some failure paths), our wrapper swallowed them. Worth reconsidering as a
+  configurable option (e.g. an env var to surface engine output during
+  diagnostic runs).

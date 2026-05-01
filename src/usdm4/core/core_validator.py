@@ -45,11 +45,22 @@ _EXCLUDED_RULES = {
 # for key 'codeSystemVersion'"). These were being miscounted as findings
 # and surfacing as false "d4k under-reporting" cases against rules where
 # d4k was actually correct (e.g. DDF00141, DDF00114, DDF00237, DDF00152).
+#
+# "Domain not found" and "Empty dataset" were added when CRE 0.16.0 surfaced
+# them via the codelist_extensible fix (the 0.15 pandas merge bug previously
+# masked these). A 234-file corpus run showed 6336 "Domain not found" entries
+# (CORE-000840/871/878 — rules querying a domain like Condition that has no
+# instances in the protocol) and 235 "Empty dataset" entries (CORE-000857
+# /001068 — datasets emptied by preprocessing). Without filtering, these
+# inflate finding counts on DDF00114/141/152 and appear as spurious
+# `d4k_under_reporting`. See docs/cre_issues.md §5.
 _EXECUTION_ERROR_TYPES = {
     "Column not found in data",
     "Error occurred during dataset preprocessing",
     "Error occurred during operation execution",
     "Outside scope",
+    "Domain not found",
+    "Empty dataset",
 }
 
 
