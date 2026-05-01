@@ -194,7 +194,28 @@ rules as disabled/draft in the rule catalogue so they are not returned by
 
 ## 7. `codelist_extensible` operation crashes with pandas merge type mismatch
 
-**Severity:** Medium — silent inflation of finding counts
+> **Status (CRE 0.16.0): resolved upstream.** A 234-file corpus run against
+> 0.16.0 (May 2026) shows the four `codelist_extensible`-backed rules have all
+> moved out of the broken bucket:
+>
+> | CORE id     | DDF id    | 0.15.x state                  | 0.16.0 state                                       |
+> |-------------|-----------|-------------------------------|----------------------------------------------------|
+> | CORE-000871 | DDF00084  | over=234 (d4k_over_reporting) | aligned_fail=234 (both engines find — d4k vindicated) |
+> | CORE-000878 | DDF00114  | aligned (CORE silent — bug)   | under=224 (CORE now fires; d4k has no rule)        |
+> | CORE-000857 | DDF00141  | aligned (CORE silent — bug)   | under=234 (CORE now fires; d4k has no rule)        |
+> | CORE-000840 | DDF00152  | aligned (CORE silent — bug)   | under=3   (CORE now fires; d4k has no rule)        |
+> | CORE-001061 | DDF00237  | aligned (CORE silent — bug)   | aligned_pass=234 (no real findings on this corpus) |
+>
+> The `_EXECUTION_ERROR_TYPES` sentinel `"Error occurred during operation
+> execution"` (added as the workaround below) is no longer load-bearing for
+> these rules and is left in place only as defence-in-depth against any other
+> rule throwing the same shape. The d4k library does not yet implement
+> counterparts for DDF00114, DDF00141, or DDF00152 — these are now real
+> `d4k_under_reporting` cases and are tracked as follow-up work, not as engine
+> bugs.
+>
+> The historical analysis below is preserved as an audit trail for the original
+> 0.15.x diagnosis.
 
 When the engine evaluates rules backed by the `codelist_extensible` operation,
 the underlying pandas merge can fail with:
@@ -469,7 +490,7 @@ All workarounds are implemented in `src/usdm4/core/core_validator.py` and
 | JList in results | `CoreRuleFinding._sanitise_value()` | Recursive type normalisation |
 | Missing resource files | `CoreCacheManager.ensure_resources()` | Download from GitHub, disk-cache |
 | Execution error noise | `_classify_errors()` | Filter by known error type strings (4 sentinels) |
-| `codelist_extensible` pandas crash | `_classify_errors()` | Sentinel `"Error occurred during operation execution"` added — see issue 7 |
+| `codelist_extensible` pandas crash | `_classify_errors()` | Resolved upstream in CRE 0.16.0 (see issue 7); sentinel `"Error occurred during operation execution"` retained as defence-in-depth |
 | Cross-reference traversal (DDF00181, DDF00093, DDF00010, DDF00094, DDF00151) | n/a (CRE-side bug) | d4k rules `rule_ddf00181.py`, `rule_ddf00093.py`, `rule_ddf00010.py`, `rule_ddf00094.py`, `rule_ddf00151.py` work from id-keyed structures — see issue 8 |
 | Missing relation reported as blank instance (CORE-000971 / DDF00194) | n/a (CRE-side bug) | d4k iterates real `Address` instances; null `legalAddress` on `Organization` is correctly skipped — see issue 9 |
 | Crashing rules | `_run_validation_inner()` | Skip rules in `_EXCLUDED_RULES` set |
