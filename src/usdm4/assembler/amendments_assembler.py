@@ -104,7 +104,13 @@ class AmendmentsAssembler(BaseAssembler):
                 "summary": data["summary"],
                 "impacts": self._create_amendment_impact(data),
                 "primaryReason": reasons["primary"],
-                "secondaryReasons": [reasons["secondary"]],
+                # secondaryReasons stays empty when the corpus didn't
+                # supply a secondary reason — synthesising an "Other" code
+                # whenever the input is empty produces a primary == secondary
+                # pair that DDF00256 (correctly) flags.
+                "secondaryReasons": (
+                    [reasons["secondary"]] if reasons.get("secondary") else []
+                ),
                 "enrollments": [self._create_enrollment(data)],
                 "geographicScopes": geo_scopes,
                 "changes": self._create_changes(data),
@@ -119,8 +125,17 @@ class AmendmentsAssembler(BaseAssembler):
     def _create_primary_secondary_reasons(
         self, data: dict
     ) -> dict[str, StudyAmendmentReason]:
-        reasons = {}
-        for k, item in data["reasons"].items():
+        # Build the primary reason unconditionally — primaryReason is
+        # required on StudyAmendment and the encoder falls back to "Other"
+        # when no real reason was supplied. The secondary, however, is
+        # optional: only synthesise one when the corpus actually supplied
+        # a value, otherwise return an empty mapping for ``secondary`` and
+        # let the caller leave secondaryReasons as ``[]``.
+        reasons: dict[str, StudyAmendmentReason] = {}
+        raw = data.get("reasons") or {}
+        for k, item in raw.items():
+            if k == "secondary" and not item:
+                continue
             a_reason = self._encoder.amendment_reason(item)
             a_reason["otherReason"] = a_reason.pop("other_reason")
             reasons[k] = self._builder.create(StudyAmendmentReason, a_reason)
