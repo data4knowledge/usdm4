@@ -39,8 +39,8 @@ from usdm4.rules.results import RuleStatus
 # Baselines captured 2026-05-01 against the minimum fixture in conftest.py.
 # These numbers reflect *current* assembler output, not desired conformance.
 # When the assembler is fixed to satisfy more rules, lower these.
-BASELINE_D4K_FAILING_RULE_COUNT = 13
-BASELINE_D4K_FINDING_COUNT = 17
+BASELINE_D4K_FAILING_RULE_COUNT = 12
+BASELINE_D4K_FINDING_COUNT = 15
 BASELINE_D4K_EXCEPTION_RULE_COUNT = 0
 
 
