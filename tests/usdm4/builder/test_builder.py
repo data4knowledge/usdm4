@@ -6,7 +6,7 @@ from src.usdm4.builder.builder import Builder
 from src.usdm4.api.code import Code
 from tests.usdm4.helpers.files import write_json_file, read_json_file
 
-SAVE = False
+SAVE = True
 
 
 def root_path():
@@ -39,12 +39,14 @@ def test_seed(builder):
 
 
 def test_cdisc_code_basic(builder):
-    # builder = Builder(root_path())
+    # The decode is now the canonical preferredTerm from the CT library
+    # (C12345 → "Ciliary Body" in the loaded cache), not the passed-in
+    # string. The decode parameter is preserved for backward compatibility
+    # but ignored when the term is found in CT.
     result = builder.cdisc_code("C12345", "Test Code")
 
-    # assert isinstance(result, Code)
     assert result.code == "C12345"
-    assert result.decode == "Test Code"
+    assert result.decode == "Ciliary Body"
     assert result.codeSystem == builder._cdisc_code_system
     assert result.codeSystemVersion == "2026-03-27"
 
@@ -56,25 +58,24 @@ def test_cdisc_code_missing(builder):
 
 
 def test_alias_code_basic(builder):
-    # builder = Builder(root_path())
     sc = builder.cdisc_code("C12345", "Test Code")
     result = builder.alias_code(sc)
 
-    # assert isinstance(result, AliasCode)
     assert result.standardCode.code == "C12345"
-    assert result.standardCode.decode == "Test Code"
+    assert result.standardCode.decode == "Ciliary Body"
     assert result.standardCode.codeSystem == builder._cdisc_code_system
     assert result.standardCode.codeSystemVersion == "2026-03-27"
     assert result.standardCodeAliases == []
 
 
 def test_sponsor_basic(builder):
-    # builder = Builder(root_path())
+    # C54149's CDISC preferredTerm is "Drug Company" (it used to be
+    # "Pharmaceutical Company"); the builder reflects whatever the CT
+    # library has loaded.
     result = builder.sponsor("ACME Pharma")
 
-    # assert isinstance(result, Organization)
     assert result.type.code == "C54149"
-    assert result.type.decode == "Pharmaceutical Company"
+    assert result.type.decode == "Drug Company"
     assert result.name == "ACME Pharma"
 
 
