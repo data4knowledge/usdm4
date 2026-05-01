@@ -188,6 +188,24 @@ class StudyAssembler(BaseAssembler):
             }
             study_version = self._builder.create(StudyVersion, params)
 
+            # Wire each StudyRole back to the StudyVersion it lives under.
+            # ``StudyRole.appliesToIds`` is required by DDF00189 ("every role
+            # must apply to a version or to one-or-more designs") and, for
+            # the sponsor role specifically, by DDF00203 ("the sponsor role
+            # must be applicable to a study version"). It can only be set
+            # here — the StudyVersion id isn't known at the point the role
+            # is created in IdentificationAssembler.
+            #
+            # The version:design relationship is 1:1 today, so applying every
+            # role to the version is the correct choice. When multiple
+            # designs land per version, IdentificationAssembler should tag
+            # each role at creation time with whether it applies to the
+            # version or to specific designs, and this loop should resolve
+            # the right ids accordingly.
+            if study_version is not None:
+                for role in study_version.roles or []:
+                    role.appliesToIds = [study_version.id]
+
             # Create the top-level Study container object
             study_name, study_label = self._get_study_name_label(data["name"])
             self._study = self._builder.create(
