@@ -1,4 +1,10 @@
-"""Tests for RuleDDF00155 — CDISC Code.codeSystemVersion must be a valid release."""
+"""Tests for RuleDDF00155 — CDISC Code.codeSystemVersion must be a valid release.
+
+The rule no longer hardcodes the valid release-date list — it reads the
+effective dates from whatever CT library is loaded for the run. Tests pass
+a mock CT exposing ``effective_dates()`` so the assertions don't depend on
+which CDISC packages happen to be in the cache.
+"""
 
 from unittest.mock import MagicMock
 
@@ -18,12 +24,18 @@ class TestRuleDDF00155:
         data.path_by_id.return_value = "$.path"
         return data
 
+    def _ct(self, valid_dates):
+        ct = MagicMock()
+        ct.effective_dates.return_value = set(valid_dates)
+        return ct
+
     def test_non_cdisc_skipped(self):
         rule = RuleDDF00155()
         data = self._data(
             [{"id": "C1", "codeSystem": "http://other.org", "codeSystemVersion": "x"}]
         )
-        assert rule.validate({"data": data}) is True
+        ct = self._ct({"2025-03-28"})
+        assert rule.validate({"data": data, "ct": ct}) is True
 
     def test_valid_version_passes(self):
         rule = RuleDDF00155()
@@ -36,12 +48,14 @@ class TestRuleDDF00155:
                 }
             ]
         )
-        assert rule.validate({"data": data}) is True
+        ct = self._ct({"2025-03-28", "2026-03-27"})
+        assert rule.validate({"data": data, "ct": ct}) is True
 
     def test_missing_version_fails(self):
         rule = RuleDDF00155()
         data = self._data([{"id": "C1", "codeSystem": "http://www.cdisc.org"}])
-        assert rule.validate({"data": data}) is False
+        ct = self._ct({"2025-03-28"})
+        assert rule.validate({"data": data, "ct": ct}) is False
         assert "Missing" in rule.errors().dump()
 
     def test_invalid_version_fails(self):
@@ -55,5 +69,6 @@ class TestRuleDDF00155:
                 }
             ]
         )
-        assert rule.validate({"data": data}) is False
+        ct = self._ct({"2025-03-28", "2026-03-27"})
+        assert rule.validate({"data": data, "ct": ct}) is False
         assert "Invalid" in rule.errors().dump()

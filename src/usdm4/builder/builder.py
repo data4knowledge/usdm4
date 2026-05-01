@@ -228,21 +228,46 @@ class Builder:
             else None
         )
 
-    def cdisc_code(self, code: str, decode: str) -> Code:
+    def cdisc_code(self, code: str, decode: str = "") -> Code:
+        """Build a CDISC ``Code`` from a concept id.
+
+        The canonical ``preferredTerm`` for the concept is always read from
+        the loaded CT library and used as the ``decode``. The ``decode``
+        parameter is kept on the signature for backward compatibility with
+        existing call sites but is no longer consulted — passing a stale
+        decode (e.g. ``"Pharmaceutical Company"`` for ``C54149`` whose
+        current preferredTerm is ``"Drug Company"``) used to produce
+        DDF-rule decode-mismatch failures (DDF00140 / DDF00200 / DDF00259).
+
+        If the concept is not in the CT library the method returns ``None``
+        — same behaviour as before.
+        """
         self._ensure_ct_loaded()
         cl = self.cdisc_ct_library.cl_by_term(code)
-        return (
-            self.create(
-                Code,
-                {
-                    "code": code,
-                    "codeSystem": self._cdisc_code_system,
-                    "codeSystemVersion": cl["source"]["effective_date"],
-                    "decode": decode,
-                },
-            )
-            if cl
-            else None
+        if not cl:
+            return None
+        # Look up the canonical preferredTerm by conceptId within the
+        # codelist's terms array. Fall back to the passed-in decode only
+        # if the term isn't present in the codelist's terms list (which
+        # would be unexpected — cl_by_term resolved the codelist via this
+        # code — but keep the fallback so a misshapen CT entry doesn't
+        # silently emit Code(decode="").
+        preferred = next(
+            (
+                term["preferredTerm"]
+                for term in cl.get("terms", [])
+                if term.get("conceptId") == code
+            ),
+            decode,
+        )
+        return self.create(
+            Code,
+            {
+                "code": code,
+                "codeSystem": self._cdisc_code_system,
+                "codeSystemVersion": cl["source"]["effective_date"],
+                "decode": preferred,
+            },
         )
 
     def cdisc_unit_code(self, unit: str) -> Code:

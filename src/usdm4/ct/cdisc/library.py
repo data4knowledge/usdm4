@@ -84,6 +84,23 @@ class Library:
     def unit_code_list(self) -> dict:
         return self._by_code_list["C71620"]
 
+    def effective_dates(self) -> set[str]:
+        """Return the set of CDISC terminology effective dates loaded.
+
+        Each loaded codelist carries ``source.effective_date`` (e.g.
+        ``"2026-03-27"``); a single CT cache may span multiple package
+        releases when codelists from different terminology versions are
+        loaded together. Used by ``DDF00155`` to validate
+        ``Code.codeSystemVersion`` without a hand-maintained allowlist.
+        """
+        dates = set()
+        for cl in self._by_code_list.values():
+            source = cl.get("source") or {}
+            ed = source.get("effective_date")
+            if ed:
+                dates.add(ed)
+        return dates
+
     def cl_by_term(self, term_code: str) -> dict:
         try:
             concept_ids = self._by_term[term_code]

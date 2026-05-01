@@ -39,8 +39,8 @@ from usdm4.rules.results import RuleStatus
 # Baselines captured 2026-05-01 against the minimum fixture in conftest.py.
 # These numbers reflect *current* assembler output, not desired conformance.
 # When the assembler is fixed to satisfy more rules, lower these.
-BASELINE_D4K_FAILING_RULE_COUNT = 19
-BASELINE_D4K_FINDING_COUNT = 66
+BASELINE_D4K_FAILING_RULE_COUNT = 14
+BASELINE_D4K_FINDING_COUNT = 25
 BASELINE_D4K_EXCEPTION_RULE_COUNT = 1
 
 
@@ -130,9 +130,9 @@ def test_d4k_finding_count_at_or_below_baseline(
 
 @pytest.mark.xfail(
     reason=(
-        "Minimum fixture fails 19 d4k rules with 66 findings as of 2026-05-01 "
-        "(post-fix: assembler produces more output now, so more rules have "
-        "things to flag); "
+        "Minimum fixture fails 14 d4k rules with 25 findings as of 2026-05-01 "
+        "(post Bug 2+3 fixes: canonical CT decodes + dynamic version list "
+        "killed ~40 findings); "
         "see docs/assembler_validation_findings.md. Flip this to a regular "
         "test (drop xfail) once the assembler is fixed and the baseline test "
         "is no longer needed."
