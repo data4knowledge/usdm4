@@ -55,7 +55,7 @@ Synchronous validation. Returns a `CoreValidationResult`. Parameters:
 
 - `file_path` — Path to the USDM JSON file.
 - `version` — `"3-0"` or `"4-0"` (default `"4-0"`).
-- `cache_dir` — Optional path to the cache directory. Defaults to `~/.cache/usdm4/core/`.
+- `cache_dir` — Optional path to the cache directory. Defaults to a platform-appropriate location via `platformdirs` (see "Default Cache Location" below).
 - `api_key` — Optional CDISC Library API key. Falls back to `CDISC_LIBRARY_API_KEY` or `CDISC_API_KEY` environment variables.
 
 ### CoreValidationResult
@@ -114,7 +114,11 @@ The module uses a three-level caching strategy to avoid redundant downloads:
 
 ### Default Cache Location
 
-`~/.cache/usdm4/core/`
+The default location is platform-appropriate, resolved via `platformdirs`:
+
+- macOS: `~/Library/Caches/usdm4/core/`
+- Windows: `%LOCALAPPDATA%/usdm4/Cache/core/`
+- Linux: `~/.cache/usdm4/core/`
 
 Override by passing `cache_dir` to `validate_core()` or `CoreValidator()`:
 

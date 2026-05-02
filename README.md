@@ -23,7 +23,7 @@ pip install usdm4
 
 ### Requirements
 
-- Python 3.10 or higher
+- Python 3.12 or higher (required by the `cdisc-rules-engine` dependency)
 
 ## Quick Start
 
