@@ -105,6 +105,98 @@ USDM4().prepare_core()
 For running both engines and aligning their per-rule results from the
 command line, see `validate/README.md`.
 
+#### CORE validation API
+
+For more control, use `CoreValidator` directly without the `USDM4` facade:
+
+```python
+from usdm4.core import CoreValidator
+
+validator = CoreValidator(
+    cache_dir="/path/to/my/cache",
+    api_key="my-api-key",
+)
+result = validator.validate("study.json", version="4-0")
+```
+
+`validate_core(file_path, version="4-0", cache_dir=None, api_key=None)` parameters:
+
+- `file_path` — Path to the USDM JSON file.
+- `version` — `"3-0"` or `"4-0"` (default `"4-0"`).
+- `cache_dir` — Optional path to the cache directory. Defaults to a platform-appropriate location via `platformdirs` (see "CORE validation cache" below).
+- `api_key` — Optional CDISC Library API key. Falls back to `CDISC_LIBRARY_API_KEY` or `CDISC_API_KEY` environment variables.
+
+`CoreValidationResult` properties:
+
+- `is_valid` — `True` if no validation findings were reported.
+- `finding_count` — Total number of individual validation errors across all findings.
+- `execution_error_count` — Number of rule execution errors (rules that don't apply to this file).
+- `rules_executed` — Total rules that were run.
+- `rules_skipped` — Rules skipped due to known engine bugs (see `docs/cre_issues.md`).
+- `ct_packages_available` — Number of CT packages known to CDISC Library.
+- `ct_packages_loaded` — List of CT package names loaded for this file.
+- `findings` — List of `CoreRuleFinding` objects.
+
+`CoreValidationResult` methods:
+
+- `format_text()` — Human-readable text report.
+- `to_dict()` — JSON-serialisable dictionary.
+
+`CoreRuleFinding` — one rule that reported errors:
+
+- `rule_id` — The CORE rule identifier (e.g. `"CORE-000996"`).
+- `description` — Human-readable description of what the rule checks.
+- `message` — Error message template from the rule.
+- `errors` — List of error detail dicts.
+- `error_count` — Number of errors for this rule.
+
+`CoreCacheManager` — accessed via `validator.cache_manager`:
+
+- `cache_dir` — The root cache directory path.
+- `clear()` — Remove all cached resources; they will re-download on next use.
+- `ensure_resources()` — Download JSONata and XSD schema files if not already cached.
+
+#### CORE validation cache
+
+The module uses a three-level caching strategy: persistent disk cache, an in-memory cache used by the engine within a single process, and remote download from the CDISC Library on cache miss.
+
+| Resource | Location | Source on first run |
+|----------|----------|---------------------|
+| Validation rules | `{cache_dir}/rules/usdm/4-0.json` | CDISC Library API |
+| CT package list | `{cache_dir}/ct/published_packages.json` | CDISC Library API |
+| CT codelist data | `{cache_dir}/ct/data/{package}.json` | CDISC Library API |
+| JSONata functions | `{cache_dir}/resources/jsonata/` | GitHub (cdisc-rules-engine repo) |
+| XSD schemas | `{cache_dir}/resources/schema/xml/` | GitHub (cdisc-rules-engine repo) |
+
+The default `cache_dir` is platform-appropriate, resolved via `platformdirs`:
+
+- macOS: `~/Library/Caches/usdm4/core/`
+- Windows: `%LOCALAPPDATA%/usdm4/Cache/core/`
+- Linux: `~/.cache/usdm4/core/`
+
+For web-server deployments, pass an explicit `cache_dir` to `USDM4(cache_dir=...)` or `CoreValidator(cache_dir=...)`. To force a fresh download:
+
+```python
+from usdm4.core import CoreValidator
+CoreValidator().cache_manager.clear()
+```
+
+#### Troubleshooting CORE validation
+
+- **"No CDISC API key"** — Set `CDISC_API_KEY` or `CDISC_LIBRARY_API_KEY` in the environment.
+- **Slow first run** — The first validation downloads rules, CT packages, and schema files. Subsequent runs use the cache.
+- **CT validation failures** — Check that `codeSystemVersion` values in your USDM JSON correspond to published CT packages. `result.ct_packages_loaded` shows which packages were loaded.
+- **Stale cache** — If rules or CT packages have been updated upstream, clear the cache with `validator.cache_manager.clear()`.
+
+Engine bugs and workarounds are catalogued in `docs/cre_issues.md`.
+
+#### CORE validation references
+
+- [CDISC Rules Engine (CORE)](https://github.com/cdisc-org/cdisc-rules-engine)
+- [CDISC Library](https://www.cdisc.org/cdisc-library)
+- [USDM Specification](https://www.cdisc.org/standards/foundational/usdm)
+- [cdisc-rules-engine on PyPI](https://pypi.org/project/cdisc-rules-engine/)
+
 ### Building Studies
 
 Use the builder for programmatic study creation with access to controlled terminology:
@@ -509,7 +601,7 @@ expander = USDM4().expander(wrapper)
 
 ## API Classes
 
-USDM4 includes 73 domain model classes covering:
+Domain model classes are organised by area:
 
 | Domain | Classes |
 |--------|---------|
@@ -549,10 +641,6 @@ python3 -m build --sdist --wheel
 ```bash
 twine upload dist/*
 ```
-
-## Related Projects
-
-- [usdm3](https://pypi.org/project/usdm3/) - USDM Version 3 support
 
 ## License
 

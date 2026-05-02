@@ -1,8 +1,12 @@
 # CDISC Rules Engine — Known Issues and Workarounds
 
-Feedback notes for the CDISC Rules Engine (CRE) development team, based on
-integrating cdisc-rules-engine 0.15.x with USDM validation in the usdm4
-package (March 2026).
+**Current target version: cdisc-rules-engine 0.16.0.** All issues, workarounds,
+and corpus numbers below describe behaviour observed against 0.16.0 unless
+explicitly marked otherwise. Historical 0.15.x detail is retained where it
+explains how a workaround came to be — see Issue 7 for the most extensive
+example. The catalogue is maintained as feedback notes for the CDISC Rules
+Engine development team and as the authoritative record of usdm4's CRE
+interventions.
 
 
 ## 1. Singleton caching prevents sequential multi-file validation

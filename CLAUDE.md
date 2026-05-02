@@ -139,7 +139,7 @@ Outputs land alongside each input as `<stem>_core.yaml`, `<stem>_d4k.yaml`, `<st
 
 ### Execution error filtering
 
-The CDISC Rules Engine reports four types of non-finding errors that are filtered to `execution_errors`: "Column not found in data", "Error occurred during dataset preprocessing", "Error occurred during operation execution", and "Outside scope". The first and last indicate a rule doesn't apply to the entity being checked; the two "Error occurred during ..." variants indicate the engine itself failed mid-rule (e.g. a pandas merge bug on `codeSystemVersion` surfaced repeatedly in a 234-protocol corpus run). None are data quality issues.
+The wrapper at `src/usdm4/core/core_validator.py` filters a known set of CRE non-finding error strings out of the findings list and into `execution_errors`. The authoritative list of sentinels and the rationale for each is maintained in `docs/cre_issues.md` (Issue 5); do not duplicate it here.
 
 ## Notes
 
