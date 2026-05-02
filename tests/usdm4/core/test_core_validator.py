@@ -379,7 +379,7 @@ class TestRunValidationInner:
         ]
 
         # First rule returns a finding, second returns nothing
-        def validate_rule_side_effect(rule, datasets):
+        def validate_rule_side_effect(rule):
             if rule["core_id"] == "CORE-001":
                 return {"ds": {"errors": [{"value": "bad_data"}]}}
             return {}
