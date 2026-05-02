@@ -199,9 +199,7 @@ def adapt(
         # If validation fails, fall through to the raw dict — the harness
         # will then catch the schema rejection in its usual code path.
         try:
-            out = AssemblerInput.model_validate(out).model_dump(
-                by_alias=False
-            )
+            out = AssemblerInput.model_validate(out).model_dump(by_alias=False)
             report.pydantic_defaults_injected = True
         except Exception:
             pass

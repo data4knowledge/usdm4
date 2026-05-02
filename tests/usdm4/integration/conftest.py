@@ -30,7 +30,6 @@ from __future__ import annotations
 import json
 import os
 import pathlib
-import tempfile
 
 import pytest
 from simple_error_log.errors import Errors
@@ -178,12 +177,9 @@ def assembled_study_json_path(
         f"Errors:\n{errors.dump(level=Errors.ERROR)}"
     )
 
-    wrapper = assembler.wrapper(
-        name="usdm4-integration-tests", version="0.0.1"
-    )
+    wrapper = assembler.wrapper(name="usdm4-integration-tests", version="0.0.1")
     assert wrapper is not None, (
-        f"Assembler.wrapper returned None. "
-        f"Errors:\n{errors.dump(level=Errors.ERROR)}"
+        f"Assembler.wrapper returned None. Errors:\n{errors.dump(level=Errors.ERROR)}"
     )
 
     out_path = tmp_path / "assembled_minimum.json"

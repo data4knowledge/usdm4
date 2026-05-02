@@ -114,15 +114,11 @@ def test_d4k_finding_count_at_or_below_baseline(
         for rid, outcome in result.outcomes.items()
         if outcome.status == RuleStatus.FAILURE
     ]
-    assert (
-        result.finding_count <= BASELINE_D4K_FINDING_COUNT
-    ), (
+    assert result.finding_count <= BASELINE_D4K_FINDING_COUNT, (
         f"d4k finding count {result.finding_count} exceeds baseline "
         f"{BASELINE_D4K_FINDING_COUNT} ({len(failing_rules)} failing rule(s))"
     )
-    assert (
-        len(failing_rules) <= BASELINE_D4K_FAILING_RULE_COUNT
-    ), (
+    assert len(failing_rules) <= BASELINE_D4K_FAILING_RULE_COUNT, (
         f"d4k failing-rule count {len(failing_rules)} exceeds baseline "
         f"{BASELINE_D4K_FAILING_RULE_COUNT}"
     )

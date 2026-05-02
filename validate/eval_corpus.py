@@ -62,7 +62,7 @@ SCRIPT_DIR = pathlib.Path(__file__).resolve().parent
 DEFAULT_OUTPUT_DIR = SCRIPT_DIR / "eval_output"
 
 # usdm4 must import cleanly before we import anything from it.
-from simple_error_log.errors import Errors
+from simple_error_log.errors import Errors  # noqa: E402
 
 import usdm4 as _usdm4_pkg  # noqa: E402
 from usdm4 import USDM4  # noqa: E402
@@ -147,13 +147,9 @@ def _load_content(
                 "soa_list_collapsed": report.soa_list_collapsed,
                 "soa_subtimelines_dropped": report.soa_subtimelines_dropped,
                 # Tuples don't safe-dump cleanly — flatten to lists.
-                "role_keys_normalised": [
-                    list(t) for t in report.role_keys_normalised
-                ],
+                "role_keys_normalised": [list(t) for t in report.role_keys_normalised],
                 "role_keys_dropped": list(report.role_keys_dropped),
-                "non_standard_type_remapped": list(
-                    report.non_standard_type_remapped
-                ),
+                "non_standard_type_remapped": list(report.non_standard_type_remapped),
                 "enrollment_defaulted": report.enrollment_defaulted,
                 "placeholder_labels": list(report.placeholder_labels),
                 "pydantic_defaults_injected": report.pydantic_defaults_injected,
@@ -167,9 +163,7 @@ def _load_content(
     return content, adapter_info
 
 
-def _assemble(
-    content: dict, asm: Assembler, errors: Errors
-) -> dict | None:
+def _assemble(content: dict, asm: Assembler, errors: Errors) -> dict | None:
     """Assemble and return wrapper_dict. None on failure.
 
     The Assembler is expensive to construct (boots BC + CT libraries), so
@@ -507,17 +501,14 @@ def main():
     pids = _list_protocols(corpus_root, explicit_ids, args.limit)
 
     print(
-        f"Evaluating {len(pids)} protocol(s) "
-        f"(core={'no' if args.no_core else 'yes'})",
+        f"Evaluating {len(pids)} protocol(s) (core={'no' if args.no_core else 'yes'})",
         file=sys.stderr,
     )
 
     # Quiet down USDM4's per-call cache-populated INFO logs — they fire on
     # every CORE validation and dominate the output. WARNING and above
     # (genuine cache breakage, network failures) still surface.
-    logging.getLogger(
-        "usdm4.core.core_cache_manager"
-    ).setLevel(logging.WARNING)
+    logging.getLogger("usdm4.core.core_cache_manager").setLevel(logging.WARNING)
 
     usdm = USDM4(cache_dir=args.cache_dir)
     shared_errors = Errors()
@@ -539,9 +530,7 @@ def main():
         )
         results.append(res)
         with (per_proto_dir / f"{pid}.yaml").open("w") as fh:
-            yaml.safe_dump(
-                res.to_dict(), fh, default_flow_style=False, sort_keys=False
-            )
+            yaml.safe_dump(res.to_dict(), fh, default_flow_style=False, sort_keys=False)
         if args.progress:
             print(
                 f"[{i:>4}/{len(pids)}] {pid:<24} bucket={res.bucket:<18} "

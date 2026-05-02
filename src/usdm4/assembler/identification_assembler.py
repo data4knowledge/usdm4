@@ -489,9 +489,7 @@ class IdentificationAssembler(BaseAssembler):
                     continue
                 organization = copy.deepcopy(self.ROLE_ORGS[role_key])
                 organization["label"] = info["name"]
-                organization["legalAddress"] = (
-                    self._create_address(info.get("address"))
-                )
+                organization["legalAddress"] = self._create_address(info.get("address"))
                 org = self._create_organization(organization)
                 if org:
                     self._errors.debug(

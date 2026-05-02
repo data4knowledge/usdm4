@@ -51,35 +51,37 @@ pytestmark = [pytest.mark.slow]
 # assembled study, captured 2026-05-02. Update this set (in either
 # direction) when the assembler / fixture / CRE changes the set of rules
 # that fire — the test will tell you which to add or remove.
-_KNOWN_FAILING_RULES = frozenset({
-    "CORE-000815",
-    "CORE-000854",
-    "CORE-000856",
-    "CORE-000857",
-    "CORE-000858",
-    "CORE-000879",
-    "CORE-000904",
-    "CORE-000905",
-    "CORE-000925",
-    "CORE-000930",
-    "CORE-000931",
-    "CORE-000933",
-    "CORE-000942",
-    "CORE-000943",
-    "CORE-000951",
-    "CORE-000959",
-    "CORE-000972",
-    "CORE-000973",
-    "CORE-000988",
-    "CORE-001016",
-    "CORE-001036",
-    "CORE-001054",
-    "CORE-001058",
-    "CORE-001059",
-    "CORE-001065",
-    "CORE-001076",
-    "CORE-001077",
-})
+_KNOWN_FAILING_RULES = frozenset(
+    {
+        "CORE-000815",
+        "CORE-000854",
+        "CORE-000856",
+        "CORE-000857",
+        "CORE-000858",
+        "CORE-000879",
+        "CORE-000904",
+        "CORE-000905",
+        "CORE-000925",
+        "CORE-000930",
+        "CORE-000931",
+        "CORE-000933",
+        "CORE-000942",
+        "CORE-000943",
+        "CORE-000951",
+        "CORE-000959",
+        "CORE-000972",
+        "CORE-000973",
+        "CORE-000988",
+        "CORE-001016",
+        "CORE-001036",
+        "CORE-001054",
+        "CORE-001058",
+        "CORE-001059",
+        "CORE-001065",
+        "CORE-001076",
+        "CORE-001077",
+    }
+)
 
 
 def _cache_populated(usdm: USDM4) -> bool:
@@ -141,7 +143,5 @@ def test_core_minimum_assembled_study(
         f"{len(result.findings)} rule(s)"
     )
     if getattr(result, "execution_error_count", 0):
-        lines.append(
-            f"  ({result.execution_error_count} execution errors filtered)"
-        )
+        lines.append(f"  ({result.execution_error_count} execution errors filtered)")
     pytest.fail("\n".join(lines))
