@@ -85,49 +85,9 @@ The CT and BC caches are committed `library_cache_*.yaml` files under `src/usdm4
 
 ## Validation CLI tools (`validate/`)
 
-The `validate/` directory holds standalone CLIs for the two engines plus an alignment tool, the standard test set, and the corpus baseline of record. See `validate/README.md` for the directory-local guide and a full layout diagram. Invoke all CLIs from the repo root.
+Standalone CLIs for the two engines, the alignment tool, the standard test set (`validate/samples/`), and the frozen corpus baseline (`validate/corpus_cre_0_16/`) all live under `validate/`. See `validate/README.md` for layout, per-CLI usage, flags, and output conventions. Invoke from the repo root.
 
-### Layout (in brief)
-
-- `validate/samples/sample_usdm_1.json` … `sample_usdm_6.json` — standard test set; canonical inputs for day-to-day regression checks.
-- `validate/corpus_cre_0_16/` — frozen 234-protocol baseline (CRE 0.16.0). Read-only reference; cited from `docs/cre_issues.md`.
-- `validate/eval_corpus.py` + `validate/corpus_adapter.py` — assembler eval harness (different workflow — runs `Assembler.execute` over a protocol corpus, then validates the assembled JSON). See `docs/assembler_validation_findings.md`.
-
-### CORE engine — `validate/core.py`
-
-```bash
-python validate/core.py validate/samples/sample_usdm_1.json [-o output.yaml] [--cache-dir /path/to/cache]
-```
-
-Output is a structured YAML file with findings grouped by rule, each error showing entity, instance_id, path, and relevant details. Execution errors (rules that don't apply to a given entity type) are counted but excluded from findings. Uses `CoreValidator` directly (not the `USDM4` facade) to preserve the full `CoreValidationResult` structure.
-
-### d4k engine — `validate/d4k.py`
-
-```bash
-python validate/d4k.py validate/samples/sample_usdm_1.json [-o output.yaml]
-```
-
-Runs the usdm4 Python rule library (`USDM4.validate`). YAML emits every rule's outcome (Success / Failure / Exception / Not Implemented), not just failures, so it can be diffed against the CORE YAML.
-
-### Alignment — `validate/compare.py`
-
-```bash
-python validate/compare.py <core.yaml> <d4k.yaml> [-o alignment.yaml] [--text]
-```
-
-Produces a rule-by-rule alignment report. Classifications per rule: `aligned_pass`, `aligned_fail`, `count_mismatch`, `d4k_only`, `core_only`, `d4k_exception`, `d4k_not_impl`, `core_only_rule`. CORE YAML only lists failing rules, so "CORE passed" and "CORE did not run this rule" collapse into `Pass-or-NA` at the rule-id level.
-
-### One-shot wrapper — `validate/run.sh`
-
-```bash
-./validate/run.sh validate/samples/sample_usdm_1.json [output_dir]
-```
-
-Runs all three scripts end-to-end on a single JSON file. Honours `PYTHON` (interpreter) and `CACHE_DIR` (passed to core.py) environment overrides.
-
-### Standard test set — run all six samples
-
-The day-to-day regression check after a rule library change is to run `run.sh` over every sample and inspect the alignment outputs:
+The day-to-day regression check after a rule library change is to run `run.sh` over every sample:
 
 ```bash
 for f in validate/samples/sample_usdm_*.json; do
@@ -135,9 +95,7 @@ for f in validate/samples/sample_usdm_*.json; do
 done
 ```
 
-Outputs land alongside each input as `<stem>_core.yaml`, `<stem>_d4k.yaml`, `<stem>_vs_d4k.yaml`, and `<stem>_vs_d4k.txt`. The four output files per sample are gitignored — re-run to regenerate.
-
-### Execution error filtering
+## Execution error filtering
 
 The wrapper at `src/usdm4/core/core_validator.py` filters a known set of CRE non-finding error strings out of the findings list and into `execution_errors`. The authoritative list of sentinels and the rationale for each is maintained in `docs/cre_issues.md` (Issue 5); do not duplicate it here.
 

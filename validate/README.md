@@ -67,7 +67,8 @@ can be diffed against the CORE YAML.
 ### `compare.py` — alignment
 
 ```bash
-python validate/compare.py <core.yaml> <d4k.yaml> [-o alignment.yaml] [--text]
+python validate/compare.py <core.yaml> <d4k.yaml> [-o alignment.yaml] [--text] \
+    [--core-rules-json /path/to/rules/usdm/4-0.json]
 ```
 
 Produces a rule-by-rule alignment report. Per-rule classifications:
@@ -75,6 +76,10 @@ Produces a rule-by-rule alignment report. Per-rule classifications:
 `d4k_exception`, `d4k_not_impl`, `core_only_rule`. The CORE YAML lists only
 failing rules, so "CORE passed" and "CORE did not run this rule" collapse
 to `Pass-or-NA` at the rule-id level.
+
+`--core-rules-json` overrides the default path to the CDISC CORE rules JSON
+cache (default: `~/Library/Caches/usdm4/core/rules/usdm/4-0.json`); used to
+reconcile CORE-NNNNNN ids to DDF000NN ids.
 
 ### `run.sh` — one-shot wrapper
 
