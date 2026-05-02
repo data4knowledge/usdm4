@@ -376,16 +376,22 @@ session. Targets a ~5-minute cycle per rule.
    this before coding.
 4. **Write the `validate()` body** using DataStore primitives —
    `instances_by_klass`, `parent_by_klass`, `instance_by_id`,
-   `path_by_id`. Copy severity from YAML to avoid the ERROR-default
-   trap (§6).
-5. **Add the `# MANUAL: do not regenerate` sentinel at the top of the
-   file.** This prevents stage-2 from overwriting your work on the next
-   regeneration.
-6. **Regenerate the test file** via
-   `python3 tools/generate_rule_python.py --only DDF##### --overwrite-tests`.
-   The sentinel protects the rule; the test file is re-emitted as an
-   "implemented" skeleton (metadata check + two skipped TODO placeholders
-   for positive/negative fixture data).
+   `path_by_id`. Copy severity from the xlsx row (or a sibling rule
+   of the same severity) to avoid the ERROR-default trap (§6).
+5. **Optionally add the `# MANUAL: do not regenerate` sentinel at
+   the top of the file.** Historically this protected hand-authored
+   rules from the stage-2 generator; the generator has since been
+   retired (see `rule_generation_retrospective.md`), so the sentinel
+   is now informational only — a "this rule was authored
+   deliberately, don't reach for templated edits" signal for future
+   readers.
+6. **Author the test file by hand** at
+   `tests/usdm4/rules/test_rule_ddf#####.py`. Copy the structure
+   from a neighbouring test of the same predicate shape. The
+   `feedback_usdm4_rule_test_pattern` memory describes the
+   `MagicMock`-based DataStore pattern; the assertion patterns
+   memory covers WARNING-level rules (use `count()` not `dump()`
+   substring matching).
 
 Typical timings:
 - Cardinality / mutex / at-least-one-of / simple scoped check — 3 min each
@@ -486,19 +492,14 @@ document the delegation inline.
 
 **Stub-count caveat.** `grep -l NotImplementedError src/usdm4/rules/library/rule_ddf*.py`
 returns ~75 files, but many of those correspond to DDF IDs outside
-the V4 subset (no intermediate YAML). The authoritative "remaining
-V4 stubs" count is:
-
-```bash
-for f in src/usdm4/rules/intermediate/rule_ddf*.yaml; do
-    rid=$(basename "$f" .yaml)
-    py="src/usdm4/rules/library/${rid}.py"
-    [ -f "$py" ] && grep -q NotImplementedError "$py" && echo "$rid"
-done | wc -l
-```
-
-Cross-referencing against the intermediate YAMLs is the only way to
-get the V4-specific figure.
+the V4 subset — legacy rule files from pre-V4 catalogues. The
+authoritative V4 rule list is the `Version 4.0 = Y` rows in
+`DDF-RA/Deliverables/RULES/USDM_CORE_Rules.xlsx`; cross-reference
+the `grep` output against that catalogue to get the V4-specific
+figure. (Earlier in this project the intermediate YAMLs at
+`src/usdm4/rules/intermediate/` provided this filter cheaply, but
+those YAMLs and the generator that produced them were retired on
+2026-05-02 — see `rule_generation_retrospective.md`.)
 
 A day of focused work can add ~40 rules when patterns emerge; hand-authoring
 alone is ~10 rules/hour once the workflow is clean.

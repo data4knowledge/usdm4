@@ -562,7 +562,7 @@ After all four wrapper changes, three rules genuinely moved between buckets:
 |---|---|---|---|
 | DDF00025 | under=103 | aligned_fail=103 | CORE and d4k now agree on 103 failures |
 | DDF00229 | under=222 | aligned_fail=222 | CORE and d4k now agree on 222 failures |
-| DDF00249 | over=200 | aligned (0/0/0) | d4k stopped firing on 200 files; cause not yet investigated |
+| DDF00249 | over=200 | aligned (0/0/0) | d4k rule rewritten between baselines (not a CRE side-effect) — see follow-ups below |
 
 All other 211 rules are in the same bucket as 0.15. In particular, issue 7
 DDF00084 stays in `over=234`, and the issue 8 cross-reference traversal rules
@@ -571,13 +571,18 @@ DDF00084 stays in `over=234`, and the issue 8 cross-reference traversal rules
 
 ### Open follow-ups
 
-- **DDF00249 over → aligned (0/0/0) on 200 files.** d4k did not change in this
-  upgrade, yet stopped firing on 200 files where it previously did. Could be
-  CT cache differences, dict iteration order, or some other non-determinism.
-  Worth a targeted look (compare a single file's `_d4k.yaml` for DDF00249
-  between the old `validate/corpus_out/` baseline — if any per-file YAMLs
-  survive — and `validate/corpus_out_cre_0_16_v2/`) before deciding whether
-  this is a real change or noise.
+- **DDF00249 over → aligned (0/0/0) — resolved, not a CRE issue.** The d4k
+  rule was rewritten between the 0.15 and 0.16 baseline runs. The original
+  auto-generated stub iterated `EligibilityCriterion` and called
+  `.get("criterionItem")` — a non-existent field on the API model (the real
+  field is `criterionItemId`) — so it fired on every criterion regardless
+  of data, which is what the 0.15 corpus run captured. The current rule at
+  `src/usdm4/rules/library/rule_ddf00249.py` correctly walks
+  `criterionItemId` references and reports unused
+  `EligibilityCriterionItem` instances; on the 234-file corpus there are
+  zero. The 0.15 baseline's `over=200` was therefore the *buggy* number,
+  not a CRE-related signal, and 0.16's `aligned (0/0/0)` is the correct
+  one. The rule rewrite predates the v2 baseline run.
 - **`_EXECUTION_ERROR_TYPES` is becoming a maintenance burden.** Issue 5's
   set now has six entries; CRE keeps adding new strings for the same
   conceptual category (rule-not-applicable / no-data-to-evaluate). Worth
