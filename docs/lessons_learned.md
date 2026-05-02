@@ -858,6 +858,13 @@ JSONata ignores the parent entirely and does global uniqueness per
 - If the stricter behaviour is wrong in practice, the fix is a
   spec/CORE change, not a behavioural divergence in the Python.
 
+**Now lives as policy in `cre_issues.md`** ("Rule-text-vs-CORE-JSONata
+disagreement — policy" section) so a future reader investigating a
+divergence finds it on the catalogue side without having to dig into
+the lessons-learned narrative. The two known exceptions (DDF00164/165,
+DDF00187) are tracked in `next_steps.md` §4 and
+`docs/d4k_cre_divergence_index.md` under "Open d4k design calls".
+
 ### Iterator-returning malformed-tag detector
 
 DDF00162 needed "find every malformed `<usdm:ref>` tag in a string

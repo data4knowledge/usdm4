@@ -8,6 +8,33 @@ example. The catalogue is maintained as feedback notes for the CDISC Rules
 Engine development team and as the authoritative record of usdm4's CRE
 interventions.
 
+> **Looking for "is this divergence already known?"** — start at
+> `docs/d4k_cre_divergence_index.md`. That index has one row per rule that
+> diverges in the corpus baseline, each pointing back here, to
+> `next_steps.md`, or to `corpus_extractor_fixes.md`. This file remains the
+> authoritative explanation of CRE-side bugs; the index is the routing
+> layer. Add new rows there before adding new investigation here.
+
+
+## Rule-text-vs-CORE-JSONata disagreement — policy
+
+When a DDF rule's English text and CORE's JSONata implementation disagree
+about what the rule means, **mirror CORE in the d4k Python rule** and note
+the disagreement in the rule's source comment. CORE is the reference
+implementation; hand-authors are matching its behaviour, not reinterpreting
+the English. If the stricter behaviour turns out to be wrong in practice,
+the fix is a spec or CORE change — not a behavioural divergence in the
+Python.
+
+This policy was learned during the V4 build-out (originally captured in
+`lessons_learned.md` §16.4, where DDF00010 supplied the canonical
+example). It lives here because it's the meta-rule that prevents the same
+divergence being re-investigated each time a future reader notices the
+strict behaviour. Two cases where d4k legitimately departs from CORE — both
+because the DDF text is ambiguous and the spec hasn't picked a side — are
+catalogued in `next_steps.md` §4 (DDF00164/165 `"0"` treatment, DDF00187
+self-namespacing XHTML wrapper); those are exceptions, not precedents.
+
 
 ## 1. Singleton caching prevents sequential multi-file validation
 
