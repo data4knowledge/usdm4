@@ -1,9 +1,12 @@
-usdm3>=0.12.3
 pydantic>=2.0
 simple_error_log>=0.8.0
 cdisc-rules-engine>=0.16.0
 platformdirs>=3.0
 python-dateutil==2.9.0.post0
+jsonschema>=4.0
+lxml>=4.9
+pyyaml>=6.0
+requests>=2.31
 pytest==8.2.2
 pytest-cov==4.1.0
 pytest-mock==3.14.0

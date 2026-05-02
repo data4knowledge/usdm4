@@ -10,7 +10,7 @@ USDM4 provides tools for building, assembling, validating, converting, and expan
 
 - **Build** - Create USDM4 study structures programmatically with a fluent builder interface
 - **Assemble** - Orchestrate complete study assembly from structured input data
-- **Validate** - Validate USDM4 JSON files against defined rules
+- **Validate** - Validate USDM4 JSON files via two complementary engines (the bundled d4k Python rule library and the CDISC CORE engine)
 - **Load** - Load USDM4 data from JSON files or dictionaries
 - **Convert** - Transform USDM data structures between formats
 - **Expand** - Expand schedule timelines for study designs
@@ -62,6 +62,13 @@ wrapper = USDM4().loadd(data, errors)
 
 ### Validating Studies
 
+USDM4 provides two complementary validation engines, both invoked from the
+`USDM4` facade.
+
+The d4k engine — usdm4's own Python rule library — runs the V4 DDF rule
+catalogue. It is fast enough for tight feedback loops and has no external
+dependencies:
+
 ```python
 result = USDM4().validate("study.json")
 
@@ -70,6 +77,33 @@ if result.passed_or_not_implemented():
 else:
     print("Validation failed")
 ```
+
+The CDISC CORE engine — wrapping the `cdisc-rules-engine` package — runs the
+same catalogue in JSONata against authoritative CDISC sources. Use it as an
+independent cross-check; it needs a CDISC Library API key and downloads
+rule definitions on first use:
+
+```python
+import os
+os.environ["CDISC_LIBRARY_API_KEY"] = "your-api-key-here"
+
+result = USDM4().validate_core("study.json")
+
+if result.is_valid:
+    print("CORE validation passed")
+else:
+    print(result.format_text())
+```
+
+To pre-populate the CORE cache (useful at server startup or before running
+in offline environments):
+
+```python
+USDM4().prepare_core()
+```
+
+For running both engines and aligning their per-rule results from the
+command line, see `validate/README.md`.
 
 ### Building Studies
 

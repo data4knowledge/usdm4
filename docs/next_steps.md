@@ -4,7 +4,7 @@ What's still open. The rule library is feature-complete (210 of 210 V4
 DDF rules covered, 207 implemented + 3 delegated to DDF00082's schema
 validation). CRE-vs-d4k reconciliation is at the no-known-d4k-bugs
 state on CRE 0.16.0; the corpus baseline of record is
-`validate/corpus_out_cre_0_16_v2/` and the bug catalogue is in
+`validate/corpus_cre_0_16/` and the bug catalogue is in
 `docs/cre_issues.md`. Read this file alongside `lessons_learned.md`
 (the *how*) and `rule_generation_retrospective.md` (the as-built
 record of the rule generation process).
@@ -64,11 +64,35 @@ will surface:
 Each category needs a separate reconciliation pass. Expect the first
 run against real data to produce noise.
 
-## 4. Refresh `validation_followups.md`
+## 4. Open d4k design decisions
 
-The rule-by-rule reconciliation state table in `validation_followups.md`
-predates the CRE 0.16.0 upgrade. Compare against
-`validate/corpus_out_cre_0_16_v2/` and update.
+Two known divergences from CORE that aren't bugs in either engine —
+they're cases where the DDF text is ambiguous and d4k's reading is
+defensibly stricter than CORE's. Both are documented here so the
+question doesn't get re-litigated each time the divergence surfaces.
+
+**DDF00164 / DDF00165 — `"0"` as a section number.** d4k treats the rule
+symmetrically: `displayX=true` iff `X` is truthy. Python's `bool("0")` is
+`True`, so d4k sees `sectionNumber="0"` as "a number is specified" and
+flags the mismatch when `displaySectionNumber=false`. CORE treats `"0"`
+as "no section" and passes. The DDF text ("If a section number is to be
+displayed then a number must be specified and vice versa") is ambiguous.
+Decision: leave d4k as-is unless a canonical spec clarifies that `"0"`
+is "unset". The alternative — strip `"0"` to empty string before the
+truthy test — is data-specific hand-tuning.
+
+**DDF00187 — XHTML wrapping context for self-namespacing fragments.**
+A `NarrativeContentItem` whose text starts with its own nested
+`<div xmlns="http://www.w3.org/1999/xhtml">` wrapper passes d4k but is
+flagged by CORE ("body has non-whitespace character content"). The
+mechanism: d4k wraps the fragment as
+`<html>...<body><div>FRAGMENT</div></body></html>` so plain text, inline
+markup, and block markup all validate; CORE wraps directly in `<body>`,
+which produces a character-content error when the fragment itself
+declares a namespace-prefixed wrapper. Decision: aligning this case
+would need per-source heuristics (e.g. detect a top-level
+`<div xmlns=...>` and re-parent) and the cost probably exceeds the
+benefit for one outlier per protocol.
 
 ## 5. Upstream CRE asks
 

@@ -17,7 +17,8 @@ at ``validate/partials/results.html``. The row keys the template
 consumes are contract: ``rule_id``, ``status``, ``message``, ``level``,
 ``klass``, ``attribute``, ``path``, ``exception``. Any simplification
 of ``_row()`` must preserve these keys for as long as that template
-still renders rows from this engine (currently until usdm3 retires).
+still renders rows from this engine (currently until the workbench
+cuts over to a v4-only path).
 """
 
 from dataclasses import dataclass, field

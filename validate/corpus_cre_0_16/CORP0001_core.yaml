@@ -1,0 +1,405 @@
+file: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0001/results/usdm.json
+version: 4-0
+is_valid: false
+rules_executed: 205
+rules_skipped: 2
+finding_count: 30
+execution_error_count: 3362
+ct_packages_available: 200
+ct_packages_loaded:
+- sdtmct-2025-09-26
+- ddfct-2025-09-26
+findings:
+- rule_id: CORE-000407
+  description: Within a study design, there must be exactly one scheduled timeline
+    which identifies as the main Timeline.
+  message: The study design does not have exactly one main timeline.
+  error_count: 1
+  errors:
+  - instance_id: InterventionalStudyDesign_1
+    entity: InterventionalStudyDesign
+    path: /study/versions/0/studyDesigns/0
+    name: STUDY-DESIGN-1
+    details:
+      '# Main timelines': 0
+- rule_id: CORE-001068
+  description: Date values associated to a study definition document version must
+    be unique regarding the combination of type and geographic scopes of the date.
+  message: The study definition document version has more than one governance date
+    with the same type and geographic scope.
+  error_count: 2
+  errors:
+  - instance_id: StudyDefinitionDocumentVersion_1
+    path: /study/documentedBy/0/versions/0
+    name: PROTOCOL-DATE
+    details:
+      id.GovernanceDate: GovernanceDate_1
+      code.standardCode.code: null
+      version: null
+      type.decode: Approval Date
+      parent_rel: versions
+      code.standardCode.decode: null
+      type.decode.GeographicScope: Global
+      type.code.GeographicScope: C68846
+      parent_id: StudyDefinitionDocument_1
+      type.code: C71476
+      parent_entity: StudyDefinitionDocument
+      dateValue: '2020-07-30'
+  - instance_id: StudyDefinitionDocumentVersion_1
+    path: /study/documentedBy/0/versions/0
+    name: PROTOCOL-DATE
+    details:
+      id.GovernanceDate: GovernanceDate_1
+      code.standardCode.code: null
+      version: null
+      type.decode: Approval Date
+      parent_rel: versions
+      code.standardCode.decode: null
+      type.decode.GeographicScope: Global
+      type.code.GeographicScope: C68846
+      parent_id: StudyDefinitionDocument_1
+      type.code: C71476
+      parent_entity: StudyDefinitionDocument
+      dateValue: '2020-07-30'
+- rule_id: CORE-000814
+  description: Within a study version, if a date of a specific type exists with a
+    global geographic scope then no other dates are expected with the same type.
+  message: The study version has a type of governance date with a global geographic
+    scope and either another date of the same type or additional geographic scope(s)
+    defined for the date.
+  error_count: 3
+  errors:
+  - instance_id: GeographicScope_4
+    path: /study/versions/0/dateValues/0/geographicScopes/0
+    details:
+      parent_entity.StudyVersion: Study
+      type.decode: Global
+      $num_dates_of_this_type: 2
+      type.decode.GovernanceDate: Approval Date
+      versionIdentifier: '1.1'
+      type.code.GovernanceDate: C71476
+      parent_rel.StudyVersion: versions
+      type.code: C68846
+      parent_id.StudyVersion: 3b66290a-2225-49d7-b3b0-e1d25ff89e0e
+      id.StudyVersion: StudyVersion_1
+      dateValue: '2020-07-30'
+      $num_geographic_scopes_for_this_date: 1
+  - instance_id: GeographicScope_1
+    path: /study/versions/0/dateValues/1/geographicScopes/0
+    details:
+      parent_entity.StudyVersion: Study
+      type.decode: Global
+      $num_dates_of_this_type: 2
+      type.decode.GovernanceDate: Approval Date
+      versionIdentifier: '1.1'
+      type.code.GovernanceDate: C71476
+      parent_rel.StudyVersion: versions
+      type.code: C68846
+      parent_id.StudyVersion: 3b66290a-2225-49d7-b3b0-e1d25ff89e0e
+      id.StudyVersion: StudyVersion_1
+      dateValue: '2020-07-30'
+      $num_geographic_scopes_for_this_date: 2
+  - instance_id: GeographicScope_1
+    path: /study/documentedBy/0/versions/0/dateValues/0/geographicScopes/0
+    details:
+      parent_entity.StudyVersion: Study
+      type.decode: Global
+      $num_dates_of_this_type: 2
+      type.decode.GovernanceDate: Approval Date
+      versionIdentifier: '1.1'
+      type.code.GovernanceDate: C71476
+      parent_rel.StudyVersion: versions
+      type.code: C68846
+      parent_id.StudyVersion: 3b66290a-2225-49d7-b3b0-e1d25ff89e0e
+      id.StudyVersion: StudyVersion_1
+      dateValue: '2020-07-30'
+      $num_geographic_scopes_for_this_date: 2
+- rule_id: CORE-000873
+  description: Date values associated to a study version must be unique regarding
+    the combination of type and geographic scopes of the date.
+  message: The study version has more than one governance date with the same type
+    and geographic scope.
+  error_count: 3
+  errors:
+  - instance_id: StudyVersion_1
+    path: /study/versions/0
+    name: SPONSOR-APPORVAL-DATE
+    details:
+      id.GovernanceDate: GovernanceDate_2
+      code.standardCode.code: null
+      type.decode: Approval Date
+      parent_rel: versions
+      code.standardCode.decode: null
+      versionIdentifier: '1.1'
+      type.decode.GeographicScope: Global
+      type.code.GeographicScope: C68846
+      parent_id: 3b66290a-2225-49d7-b3b0-e1d25ff89e0e
+      type.code: C71476
+      parent_entity: Study
+      dateValue: '2020-07-30'
+  - instance_id: StudyVersion_1
+    path: /study/versions/0
+    name: PROTOCOL-DATE
+    details:
+      id.GovernanceDate: GovernanceDate_1
+      code.standardCode.code: null
+      type.decode: Approval Date
+      parent_rel: versions
+      code.standardCode.decode: null
+      versionIdentifier: '1.1'
+      type.decode.GeographicScope: Global
+      type.code.GeographicScope: C68846
+      parent_id: 3b66290a-2225-49d7-b3b0-e1d25ff89e0e
+      type.code: C71476
+      parent_entity: Study
+      dateValue: '2020-07-30'
+  - instance_id: StudyVersion_1
+    path: /study/versions/0
+    name: PROTOCOL-DATE
+    details:
+      id.GovernanceDate: GovernanceDate_1
+      code.standardCode.code: null
+      type.decode: Approval Date
+      parent_rel: versions
+      code.standardCode.decode: null
+      versionIdentifier: '1.1'
+      type.decode.GeographicScope: Global
+      type.code.GeographicScope: C68846
+      parent_id: 3b66290a-2225-49d7-b3b0-e1d25ff89e0e
+      type.code: C71476
+      parent_entity: Study
+      dateValue: '2020-07-30'
+- rule_id: CORE-001013
+  description: The names of all instances of the same class must be unique.
+  message: The same name has been used for more than one instance of the class.
+  error_count: 2
+  errors:
+  - instance_id: GovernanceDate_1
+    entity: GovernanceDate
+    path: /study/versions/0/dateValues/1
+    name: PROTOCOL-DATE
+  - instance_id: GovernanceDate_1
+    entity: GovernanceDate
+    path: /study/documentedBy/0/versions/0/dateValues/0
+    name: PROTOCOL-DATE
+- rule_id: CORE-000974
+  description: The sponsor study role must be applicable to a study version.
+  message: The study role is a sponsor role (code.code is C70793) but it is not applicable
+    to the study version (appliesToIds does not contain the id of the study version).
+  error_count: 1
+  errors:
+  - instance_id: StudyRole_1
+    entity: StudyRole
+    path: /study/versions/0/roles/0
+    name: ROLE_1
+    details:
+      code.code: C70793
+      code.decode: Sponsor
+      appliesToIds: []
+- rule_id: CORE-000815
+  description: Within a study design, the planned age range must be specified either
+    in the study population or in all cohorts.
+  message: Planned age has not been specified for either the study population or the
+    cohort, or it has been specified for both.
+  error_count: 1
+  errors:
+  - instance_id: StudyDesignPopulation_1
+    path: /study/versions/0/studyDesigns/0/population
+    name: DEFAULT-POPULATION
+    details:
+      parent_rel: population
+      plannedAge: null
+      parent_entity: InterventionalStudyDesign
+      parent_id: InterventionalStudyDesign_1
+      id.StudyCohort: Not in dataset
+      plannedAge.unit.decode.StudyCohort: Not in dataset
+      plannedAge.maxValue: Not in dataset
+      plannedAge.StudyCohort: Not in dataset
+      name.StudyCohort: Not in dataset
+      plannedAge.maxValue.StudyCohort: Not in dataset
+      plannedAge.unit.decode: Not in dataset
+      plannedAge.minValue: Not in dataset
+      plannedAge.minValue.StudyCohort: Not in dataset
+- rule_id: CORE-000875
+  description: Within a study design, the planned sex must be specified either in
+    the study population or in all cohorts.
+  message: Planned sex has not been specified for either the study population or the
+    cohort, or it has been specified for both.
+  error_count: 1
+  errors:
+  - instance_id: StudyDesignPopulation_1
+    path: /study/versions/0/studyDesigns/0/population
+    name: DEFAULT-POPULATION
+    details:
+      plannedSex: false
+      parent_rel: population
+      parent_entity: InterventionalStudyDesign
+      parent_id: InterventionalStudyDesign_1
+      plannedSex.decode.StudyCohort: Not in dataset
+      id.StudyCohort: Not in dataset
+      name.StudyCohort: Not in dataset
+      plannedSex.StudyCohort: Not in dataset
+      plannedSex.decode: Not in dataset
+- rule_id: CORE-000834
+  description: If geographic scope type is global then there must be only one geographic
+    scope specified.
+  message: The governance date has more than one geographic scope defined, at least
+    one of which has type of "Global" (type.code = C68846 or type.decode = "Global",
+    both case insensitive).
+  error_count: 2
+  errors:
+  - instance_id: GovernanceDate_1
+    path: /study/versions/0/dateValues/1
+    name: PROTOCOL-DATE
+    details:
+      $geographic_scope_type_codes:
+      - C68846
+      $num_of_geographic_scopes: 2
+      parent_rel: dateValues
+      parent_id: StudyVersion_1
+      $geographic_scope_type_decodes:
+      - Global
+      parent_entity: StudyVersion
+      dateValue: '2020-07-30'
+  - instance_id: GovernanceDate_1
+    path: /study/documentedBy/0/versions/0/dateValues/0
+    name: PROTOCOL-DATE
+    details:
+      $geographic_scope_type_codes:
+      - C68846
+      $num_of_geographic_scopes: 2
+      parent_rel: dateValues
+      parent_id: StudyDefinitionDocumentVersion_1
+      $geographic_scope_type_decodes:
+      - Global
+      parent_entity: StudyDefinitionDocumentVersion
+      dateValue: '2020-07-30'
+- rule_id: CORE-001058
+  description: A study design's study phase must be specified according to the extensible
+    Trial Phase Response (C66737) SDTM codelist (e.g. an entry with a code or decode
+    used from the codelist should be consistent with the full entry in the codelist).
+  message: The study design's study phase is not specified according to the extensible
+    Trial Phase Response (C66737) SDTM codelist - codeSystem is not "http://www.cdisc.org",
+    codeSystemVersion is not a valid terminology package date, and/or the code or
+    decode (either as preferred term or as submission value) is found in the codelist
+    (case insensitive) but the corresponding decode or code does not match the codelist
+    value (case sensitive).
+  error_count: 1
+  errors:
+  - instance_id: InterventionalStudyDesign_1
+    path: /study/versions/0/studyDesigns/0
+    name: STUDY-DESIGN-1
+    details:
+      $value_for_code: PHASE I TRIAL
+      $code_for_decode_value: null
+      parent_rel: studyDesigns
+      studyPhase.standardCode.codeSystem: http://www.cdisc.org
+      $codelist_code: C66737
+      parent_entity: StudyVersion
+      $codelist_extensible: true
+      studyPhase.standardCode.code: C15600
+      $code_for_decode_pref_term: null
+      studyPhase.standardCode.codeSystemVersion: '2025-09-26'
+      studyPhase.standardCode.decode: Phase 1
+      parent_id: StudyVersion_1
+      $pref_term_for_code: Phase I Trial
+- rule_id: CORE-001015
+  description: Within a study version, all id values must be unique.
+  message: The id value is not unique.
+  error_count: 8
+  errors:
+  - instance_id: GovernanceDate_1
+    entity: GovernanceDate
+    path: /study/versions/0/dateValues/1
+    name: PROTOCOL-DATE
+  - instance_id: GovernanceDate_1
+    entity: GovernanceDate
+    path: /study/documentedBy/0/versions/0/dateValues/0
+    name: PROTOCOL-DATE
+  - instance_id: Code_12
+    entity: Code
+    path: /study/versions/0/dateValues/1/type
+  - instance_id: Code_12
+    entity: Code
+    path: /study/documentedBy/0/versions/0/dateValues/0/type
+  - instance_id: Code_13
+    entity: Code
+    path: /study/versions/0/dateValues/1/geographicScopes/0/type
+  - instance_id: Code_13
+    entity: Code
+    path: /study/documentedBy/0/versions/0/dateValues/0/geographicScopes/0/type
+  - instance_id: GeographicScope_1
+    entity: GeographicScope
+    path: /study/versions/0/dateValues/1/geographicScopes/0
+  - instance_id: GeographicScope_1
+    entity: GeographicScope
+    path: /study/documentedBy/0/versions/0/dateValues/0/geographicScopes/0
+- rule_id: CORE-000970
+  description: Every study role must apply to either a study version or at least one
+    study design, but not both.
+  message: The study role does not only apply to the study version or at least one
+    study design - it does not apply to anything, it applies to both the study version
+    and at least one study design, or it applies to something that is not a study
+    version or a study design.
+  error_count: 2
+  errors:
+  - instance_id: StudyRole_1
+    entity: StudyRole
+    path: /study/versions/0/roles/0
+    name: ROLE_1
+    details:
+      code: Sponsor
+      appliesToIds: []
+  - instance_id: StudyRole_2
+    entity: StudyRole
+    path: /study/versions/0/roles/1
+    name: ROLE_2
+    details:
+      code: Regulatory Agency
+      appliesToIds: []
+- rule_id: CORE-001036
+  description: Within a study design, there must be at least one endpoint with level
+    primary.
+  message: There is not at least one endpoint with a level of primary within the study
+    design.
+  error_count: 1
+  errors:
+  - instance_id: InterventionalStudyDesign_1
+    entity: InterventionalStudyDesign
+    path: /study/versions/0/studyDesigns/0
+    name: STUDY-DESIGN-1
+    details:
+      '# Primary endpoints': 0
+- rule_id: CORE-000985
+  description: There must be a one-to-one relationship between referenced section
+    number and title within any study definition document affected by a study amendment.
+  message: There is not a one-to-one relationship between the referenced section number
+    and title within the study definition document affected by the study amendment.
+  error_count: 2
+  errors:
+  - instance_id: DocumentContentReference_4
+    entity: DocumentContentReference
+    path: /study/versions/0/amendments/0/changes/3/changedSections/0
+    sectionNumber: 7.2.8
+    sectionTitle: Continuous and Spot End Tidal Carbon Dioxide, Table 5, Established
+      Limits
+    details:
+      appliesToId: 'StudyDefinitionDocument_1: PROTOCOL-DOCUMENT'
+      n4t: '[7.2.8]'
+      t4n: '[Continuous and Spot End Tidal Carbon Dioxide, Table 5, Established Limits;
+        Continuous and Spot End Tidal Carbon Dioxide, Table 5, Established Limits
+        for End Tidal Carbon Dioxide]'
+      check: true
+  - instance_id: DocumentContentReference_3
+    entity: DocumentContentReference
+    path: /study/versions/0/amendments/0/changes/2/changedSections/0
+    sectionNumber: 7.2.8
+    sectionTitle: Continuous and Spot End Tidal Carbon Dioxide, Table 5, Established
+      Limits for End Tidal Carbon Dioxide
+    details:
+      appliesToId: 'StudyDefinitionDocument_1: PROTOCOL-DOCUMENT'
+      n4t: '[7.2.8]'
+      t4n: '[Continuous and Spot End Tidal Carbon Dioxide, Table 5, Established Limits;
+        Continuous and Spot End Tidal Carbon Dioxide, Table 5, Established Limits
+        for End Tidal Carbon Dioxide]'
+      check: true

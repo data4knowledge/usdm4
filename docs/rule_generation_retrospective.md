@@ -213,10 +213,9 @@ collapses to authoring Python directly:
   including the §10 batch progression table and §11 DataStore traversal
   patterns. Still current.
 - `docs/cre_issues.md` — the CDISC Rules Engine bug catalogue and
-  workarounds. Refers to issues encountered while running CORE
-  alongside our engine for cross-checks.
-- `docs/validation_followups.md` — rule-by-rule reconciliation state
-  between CORE and our engine. State table predates the CRE 0.16.0
-  upgrade and may need refreshing against
-  `validate/corpus_out_cre_0_16_v2/`.
-- `docs/next_steps.md` — open work items as of the last refresh.
+  workarounds. Includes the "Defensibly d4k-stricter" appendix listing
+  divergences that aren't bugs (DDF00082 schema scope, the
+  CT-membership family).
+- `docs/next_steps.md` — open work items, including open d4k design
+  decisions where the DDF text is ambiguous (DDF00164/165 `"0"`
+  treatment, DDF00187 XHTML wrapping).

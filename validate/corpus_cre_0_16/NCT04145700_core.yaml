@@ -1,0 +1,2233 @@
+file: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04145700/results/usdm.json
+version: 4-0
+is_valid: false
+rules_executed: 205
+rules_skipped: 2
+finding_count: 203
+execution_error_count: 2483
+ct_packages_available: 200
+ct_packages_loaded:
+- sdtmct-2025-09-26
+- ddfct-2025-09-26
+findings:
+- rule_id: CORE-000971
+  description: At least one attribute must be specified for an address.
+  message: All attributes of the address are blank.
+  error_count: 1
+  errors:
+  - instance_id: Address_2
+    entity: Address
+    path: /study/versions/0/organizations/1/legalAddress
+    details:
+      text: ''
+      lines: '[]'
+      city: ''
+      district: ''
+      state: ''
+      postalCode: ''
+      country: 'null'
+- rule_id: CORE-000407
+  description: Within a study design, there must be exactly one scheduled timeline
+    which identifies as the main Timeline.
+  message: The study design does not have exactly one main timeline.
+  error_count: 1
+  errors:
+  - instance_id: InterventionalStudyDesign_1
+    entity: InterventionalStudyDesign
+    path: /study/versions/0/studyDesigns/0
+    name: STUDY-DESIGN-1
+    details:
+      '# Main timelines': 0
+- rule_id: CORE-001068
+  description: Date values associated to a study definition document version must
+    be unique regarding the combination of type and geographic scopes of the date.
+  message: The study definition document version has more than one governance date
+    with the same type and geographic scope.
+  error_count: 2
+  errors:
+  - instance_id: StudyDefinitionDocumentVersion_1
+    path: /study/documentedBy/0/versions/0
+    name: PROTOCOL-DATE
+    details:
+      type.code: C71476
+      id.GovernanceDate: GovernanceDate_1
+      type.decode.GeographicScope: Global
+      parent_id: StudyDefinitionDocument_1
+      dateValue: '2021-12-13'
+      version: null
+      parent_rel: versions
+      parent_entity: StudyDefinitionDocument
+      type.decode: Approval Date
+      type.code.GeographicScope: C68846
+      code.standardCode.decode: Not in dataset
+      code.standardCode.code: Not in dataset
+  - instance_id: StudyDefinitionDocumentVersion_1
+    path: /study/documentedBy/0/versions/0
+    name: PROTOCOL-DATE
+    details:
+      type.code: C71476
+      id.GovernanceDate: GovernanceDate_1
+      type.decode.GeographicScope: Global
+      parent_id: StudyDefinitionDocument_1
+      dateValue: '2021-12-13'
+      version: null
+      parent_rel: versions
+      parent_entity: StudyDefinitionDocument
+      type.decode: Approval Date
+      type.code.GeographicScope: C68846
+      code.standardCode.decode: Not in dataset
+      code.standardCode.code: Not in dataset
+- rule_id: CORE-000814
+  description: Within a study version, if a date of a specific type exists with a
+    global geographic scope then no other dates are expected with the same type.
+  message: The study version has a type of governance date with a global geographic
+    scope and either another date of the same type or additional geographic scope(s)
+    defined for the date.
+  error_count: 3
+  errors:
+  - instance_id: GeographicScope_2
+    path: /study/versions/0/dateValues/0/geographicScopes/0
+    details:
+      type.code: C68846
+      id.StudyVersion: StudyVersion_1
+      parent_rel.StudyVersion: versions
+      versionIdentifier: '1'
+      parent_id.StudyVersion: 4e567ae6-98ee-40b8-a934-d000cc872810
+      dateValue: '2021-12-13'
+      $num_geographic_scopes_for_this_date: 1
+      parent_entity.StudyVersion: Study
+      type.decode.GovernanceDate: Approval Date
+      type.decode: Global
+      type.code.GovernanceDate: C71476
+      $num_dates_of_this_type: 2
+  - instance_id: GeographicScope_1
+    path: /study/versions/0/dateValues/1/geographicScopes/0
+    details:
+      type.code: C68846
+      id.StudyVersion: StudyVersion_1
+      parent_rel.StudyVersion: versions
+      versionIdentifier: '1'
+      parent_id.StudyVersion: 4e567ae6-98ee-40b8-a934-d000cc872810
+      dateValue: '2021-12-13'
+      $num_geographic_scopes_for_this_date: 2
+      parent_entity.StudyVersion: Study
+      type.decode.GovernanceDate: Approval Date
+      type.decode: Global
+      type.code.GovernanceDate: C71476
+      $num_dates_of_this_type: 2
+  - instance_id: GeographicScope_1
+    path: /study/documentedBy/0/versions/0/dateValues/0/geographicScopes/0
+    details:
+      type.code: C68846
+      id.StudyVersion: StudyVersion_1
+      parent_rel.StudyVersion: versions
+      versionIdentifier: '1'
+      parent_id.StudyVersion: 4e567ae6-98ee-40b8-a934-d000cc872810
+      dateValue: '2021-12-13'
+      $num_geographic_scopes_for_this_date: 2
+      parent_entity.StudyVersion: Study
+      type.decode.GovernanceDate: Approval Date
+      type.decode: Global
+      type.code.GovernanceDate: C71476
+      $num_dates_of_this_type: 2
+- rule_id: CORE-000873
+  description: Date values associated to a study version must be unique regarding
+    the combination of type and geographic scopes of the date.
+  message: The study version has more than one governance date with the same type
+    and geographic scope.
+  error_count: 3
+  errors:
+  - instance_id: StudyVersion_1
+    path: /study/versions/0
+    name: SPONSOR-APPORVAL-DATE
+    details:
+      type.code: C71476
+      id.GovernanceDate: GovernanceDate_2
+      type.decode.GeographicScope: Global
+      versionIdentifier: '1'
+      parent_id: 4e567ae6-98ee-40b8-a934-d000cc872810
+      dateValue: '2021-12-13'
+      parent_rel: versions
+      parent_entity: Study
+      type.decode: Approval Date
+      type.code.GeographicScope: C68846
+      code.standardCode.decode: Not in dataset
+      code.standardCode.code: Not in dataset
+  - instance_id: StudyVersion_1
+    path: /study/versions/0
+    name: PROTOCOL-DATE
+    details:
+      type.code: C71476
+      id.GovernanceDate: GovernanceDate_1
+      type.decode.GeographicScope: Global
+      versionIdentifier: '1'
+      parent_id: 4e567ae6-98ee-40b8-a934-d000cc872810
+      dateValue: '2021-12-13'
+      parent_rel: versions
+      parent_entity: Study
+      type.decode: Approval Date
+      type.code.GeographicScope: C68846
+      code.standardCode.decode: Not in dataset
+      code.standardCode.code: Not in dataset
+  - instance_id: StudyVersion_1
+    path: /study/versions/0
+    name: PROTOCOL-DATE
+    details:
+      type.code: C71476
+      id.GovernanceDate: GovernanceDate_1
+      type.decode.GeographicScope: Global
+      versionIdentifier: '1'
+      parent_id: 4e567ae6-98ee-40b8-a934-d000cc872810
+      dateValue: '2021-12-13'
+      parent_rel: versions
+      parent_entity: Study
+      type.decode: Approval Date
+      type.code.GeographicScope: C68846
+      code.standardCode.decode: Not in dataset
+      code.standardCode.code: Not in dataset
+- rule_id: CORE-001013
+  description: The names of all instances of the same class must be unique.
+  message: The same name has been used for more than one instance of the class.
+  error_count: 2
+  errors:
+  - instance_id: GovernanceDate_1
+    entity: GovernanceDate
+    path: /study/versions/0/dateValues/1
+    name: PROTOCOL-DATE
+  - instance_id: GovernanceDate_1
+    entity: GovernanceDate
+    path: /study/documentedBy/0/versions/0/dateValues/0
+    name: PROTOCOL-DATE
+- rule_id: CORE-001041
+  description: Within a document version, the specified displayed section numbers
+    for narrative content must be unique.
+  message: The displayed section number is not unique within the study definition
+    document version.
+  error_count: 73
+  errors:
+  - instance_id: NarrativeContent_4
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/3
+    name: NC-3
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_5
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/4
+    name: NC-4
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_6
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/5
+    name: NC-5
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_7
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/6
+    name: NC-6
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_8
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/7
+    name: NC-7
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_9
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/8
+    name: NC-8
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_10
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/9
+    name: NC-9
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_11
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/10
+    name: NC-10
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_12
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/11
+    name: NC-11
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_13
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/12
+    name: NC-12
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_14
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/13
+    name: NC-13
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_15
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/14
+    name: NC-14
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_16
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/15
+    name: NC-15
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_17
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/16
+    name: NC-16
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_18
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/17
+    name: NC-17
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_19
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/18
+    name: NC-18
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_20
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/19
+    name: NC-19
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_21
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/20
+    name: NC-20
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_22
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/21
+    name: NC-21
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_23
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/22
+    name: NC-22
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_24
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/23
+    name: NC-23
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_25
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/24
+    name: NC-24
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_26
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/25
+    name: NC-25
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_27
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/26
+    name: NC-26
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_29
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/28
+    name: NC-28
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_30
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/29
+    name: NC-29
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_31
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/30
+    name: NC-30
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_32
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/31
+    name: NC-31
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_33
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/32
+    name: NC-32
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_34
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/33
+    name: NC-33
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_35
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/34
+    name: NC-34
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_36
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/35
+    name: NC-35
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_37
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/36
+    name: NC-36
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_38
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/37
+    name: NC-37
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_39
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/38
+    name: NC-38
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_40
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/39
+    name: NC-39
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_41
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/40
+    name: NC-40
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_42
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/41
+    name: NC-41
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_43
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/42
+    name: NC-42
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_44
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/43
+    name: NC-43
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_45
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/44
+    name: NC-44
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_46
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/45
+    name: NC-45
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_47
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/46
+    name: NC-46
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_48
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/47
+    name: NC-47
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_49
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/48
+    name: NC-48
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_50
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/49
+    name: NC-49
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_51
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/50
+    name: NC-50
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_52
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/51
+    name: NC-51
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_53
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/52
+    name: NC-52
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_54
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/53
+    name: NC-53
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_55
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/54
+    name: NC-54
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_56
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/55
+    name: NC-55
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_57
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/56
+    name: NC-56
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_58
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/57
+    name: NC-57
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_59
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/58
+    name: NC-58
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_60
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/59
+    name: NC-59
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_61
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/60
+    name: NC-60
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_62
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/61
+    name: NC-61
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_63
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/62
+    name: NC-62
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_64
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/63
+    name: NC-63
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_65
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/64
+    name: NC-64
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_66
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/65
+    name: NC-65
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_67
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/66
+    name: NC-66
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_68
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/67
+    name: NC-67
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_69
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/68
+    name: NC-68
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_70
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/69
+    name: NC-69
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_71
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/70
+    name: NC-70
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_72
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/71
+    name: NC-71
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_73
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/72
+    name: NC-72
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_74
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/73
+    name: NC-73
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_75
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/74
+    name: NC-74
+    sectionNumber: '3'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_28
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/27
+    name: NC-27
+    sectionNumber: '4'
+    details:
+      displaySectionNumber: true
+  - instance_id: NarrativeContent_76
+    entity: NarrativeContent
+    path: /study/documentedBy/0/versions/0/contents/75
+    name: NC-75
+    sectionNumber: '4'
+    details:
+      displaySectionNumber: true
+- rule_id: CORE-001069
+  description: Narrative content item text is expected to be HTML formatted.
+  message: The narrative content item text contains non-conformant XHTML.
+  error_count: 6
+  errors:
+  - instance_id: NarrativeContentItem_6
+    path: /study/versions/0/narrativeContentItems/5
+    name: NCI-5
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''div'': This element is not expected.'
+      - 'Invalid XHTML line 1 [ERROR]: Element ''div'': This element is not expected.'
+      - 'Invalid XHTML line 1 [ERROR]: Element ''div'': This element is not expected.'
+      - 'Invalid XHTML line 1 [ERROR]: Element ''div'': This element is not expected.'
+      - 'Invalid XHTML line 1 [ERROR]: Element ''div'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+  - instance_id: NarrativeContentItem_13
+    path: /study/versions/0/narrativeContentItems/12
+    name: NCI-12
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''div'': This element is not expected.'
+      - 'Invalid XHTML line 1 [ERROR]: Element ''figure'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+  - instance_id: NarrativeContentItem_31
+    path: /study/versions/0/narrativeContentItems/30
+    name: NCI-30
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''div'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+  - instance_id: NarrativeContentItem_32
+    path: /study/versions/0/narrativeContentItems/31
+    name: NCI-31
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''div'': This element is not expected.'
+      - 'Invalid XHTML line 1 [ERROR]: Element ''div'': This element is not expected.'
+      - 'Invalid XHTML line 6 [ERROR]: Element ''div'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+  - instance_id: NarrativeContentItem_69
+    path: /study/versions/0/narrativeContentItems/68
+    name: NCI-68
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''div'': This element is not expected.'
+      - 'Invalid XHTML line 5 [ERROR]: Element ''div'': This element is not expected.'
+      - 'Invalid XHTML line 5 [ERROR]: Element ''div'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+  - instance_id: NarrativeContentItem_76
+    path: /study/versions/0/narrativeContentItems/75
+    name: NCI-75
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 59 [ERROR]: Element ''div'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+- rule_id: CORE-000974
+  description: The sponsor study role must be applicable to a study version.
+  message: The study role is a sponsor role (code.code is C70793) but it is not applicable
+    to the study version (appliesToIds does not contain the id of the study version).
+  error_count: 1
+  errors:
+  - instance_id: StudyRole_1
+    entity: StudyRole
+    path: /study/versions/0/roles/0
+    name: ROLE_1
+    details:
+      code.code: C70793
+      code.decode: Sponsor
+      appliesToIds: []
+- rule_id: CORE-000815
+  description: Within a study design, the planned age range must be specified either
+    in the study population or in all cohorts.
+  message: Planned age has not been specified for either the study population or the
+    cohort, or it has been specified for both.
+  error_count: 1
+  errors:
+  - instance_id: StudyDesignPopulation_1
+    path: /study/versions/0/studyDesigns/0/population
+    name: DEFAULT-POPULATION
+    details:
+      parent_id: InterventionalStudyDesign_1
+      plannedAge: null
+      parent_rel: population
+      parent_entity: InterventionalStudyDesign
+      plannedAge.minValue.StudyCohort: Not in dataset
+      plannedAge.unit.decode.StudyCohort: Not in dataset
+      plannedAge.unit.decode: Not in dataset
+      name.StudyCohort: Not in dataset
+      plannedAge.maxValue.StudyCohort: Not in dataset
+      plannedAge.StudyCohort: Not in dataset
+      plannedAge.minValue: Not in dataset
+      plannedAge.maxValue: Not in dataset
+      id.StudyCohort: Not in dataset
+- rule_id: CORE-000875
+  description: Within a study design, the planned sex must be specified either in
+    the study population or in all cohorts.
+  message: Planned sex has not been specified for either the study population or the
+    cohort, or it has been specified for both.
+  error_count: 1
+  errors:
+  - instance_id: StudyDesignPopulation_1
+    path: /study/versions/0/studyDesigns/0/population
+    name: DEFAULT-POPULATION
+    details:
+      plannedSex: false
+      parent_id: InterventionalStudyDesign_1
+      parent_rel: population
+      parent_entity: InterventionalStudyDesign
+      name.StudyCohort: Not in dataset
+      plannedSex.decode.StudyCohort: Not in dataset
+      plannedSex.decode: Not in dataset
+      plannedSex.StudyCohort: Not in dataset
+      id.StudyCohort: Not in dataset
+- rule_id: CORE-000834
+  description: If geographic scope type is global then there must be only one geographic
+    scope specified.
+  message: The governance date has more than one geographic scope defined, at least
+    one of which has type of "Global" (type.code = C68846 or type.decode = "Global",
+    both case insensitive).
+  error_count: 2
+  errors:
+  - instance_id: GovernanceDate_1
+    path: /study/versions/0/dateValues/1
+    name: PROTOCOL-DATE
+    details:
+      $geographic_scope_type_codes:
+      - C68846
+      dateValue: '2021-12-13'
+      parent_id: StudyVersion_1
+      $geographic_scope_type_decodes:
+      - Global
+      parent_rel: dateValues
+      parent_entity: StudyVersion
+      $num_of_geographic_scopes: 2
+  - instance_id: GovernanceDate_1
+    path: /study/documentedBy/0/versions/0/dateValues/0
+    name: PROTOCOL-DATE
+    details:
+      $geographic_scope_type_codes:
+      - C68846
+      dateValue: '2021-12-13'
+      parent_id: StudyDefinitionDocumentVersion_1
+      $geographic_scope_type_decodes:
+      - Global
+      parent_rel: dateValues
+      parent_entity: StudyDefinitionDocumentVersion
+      $num_of_geographic_scopes: 2
+- rule_id: CORE-001058
+  description: A study design's study phase must be specified according to the extensible
+    Trial Phase Response (C66737) SDTM codelist (e.g. an entry with a code or decode
+    used from the codelist should be consistent with the full entry in the codelist).
+  message: The study design's study phase is not specified according to the extensible
+    Trial Phase Response (C66737) SDTM codelist - codeSystem is not "http://www.cdisc.org",
+    codeSystemVersion is not a valid terminology package date, and/or the code or
+    decode (either as preferred term or as submission value) is found in the codelist
+    (case insensitive) but the corresponding decode or code does not match the codelist
+    value (case sensitive).
+  error_count: 1
+  errors:
+  - instance_id: InterventionalStudyDesign_1
+    path: /study/versions/0/studyDesigns/0
+    name: STUDY-DESIGN-1
+    details:
+      $value_for_code: PHASE I/II TRIAL
+      studyPhase.standardCode.codeSystem: http://www.cdisc.org
+      $codelist_extensible: true
+      studyPhase.standardCode.code: C15693
+      studyPhase.standardCode.codeSystemVersion: '2025-09-26'
+      $pref_term_for_code: Phase I/II Trial
+      studyPhase.standardCode.decode: Phase 1/Phase 2
+      $codelist_code: C66737
+      parent_id: StudyVersion_1
+      parent_rel: studyDesigns
+      $code_for_decode_value: null
+      parent_entity: StudyVersion
+      $code_for_decode_pref_term: null
+- rule_id: CORE-001015
+  description: Within a study version, all id values must be unique.
+  message: The id value is not unique.
+  error_count: 8
+  errors:
+  - instance_id: GovernanceDate_1
+    entity: GovernanceDate
+    path: /study/versions/0/dateValues/1
+    name: PROTOCOL-DATE
+  - instance_id: GovernanceDate_1
+    entity: GovernanceDate
+    path: /study/documentedBy/0/versions/0/dateValues/0
+    name: PROTOCOL-DATE
+  - instance_id: Code_10
+    entity: Code
+    path: /study/versions/0/dateValues/1/type
+  - instance_id: Code_10
+    entity: Code
+    path: /study/documentedBy/0/versions/0/dateValues/0/type
+  - instance_id: Code_11
+    entity: Code
+    path: /study/versions/0/dateValues/1/geographicScopes/0/type
+  - instance_id: Code_11
+    entity: Code
+    path: /study/documentedBy/0/versions/0/dateValues/0/geographicScopes/0/type
+  - instance_id: GeographicScope_1
+    entity: GeographicScope
+    path: /study/versions/0/dateValues/1/geographicScopes/0
+  - instance_id: GeographicScope_1
+    entity: GeographicScope
+    path: /study/documentedBy/0/versions/0/dateValues/0/geographicScopes/0
+- rule_id: CORE-000970
+  description: Every study role must apply to either a study version or at least one
+    study design, but not both.
+  message: The study role does not only apply to the study version or at least one
+    study design - it does not apply to anything, it applies to both the study version
+    and at least one study design, or it applies to something that is not a study
+    version or a study design.
+  error_count: 1
+  errors:
+  - instance_id: StudyRole_1
+    entity: StudyRole
+    path: /study/versions/0/roles/0
+    name: ROLE_1
+    details:
+      code: Sponsor
+      appliesToIds: []
+- rule_id: CORE-001036
+  description: Within a study design, there must be at least one endpoint with level
+    primary.
+  message: There is not at least one endpoint with a level of primary within the study
+    design.
+  error_count: 1
+  errors:
+  - instance_id: InterventionalStudyDesign_1
+    entity: InterventionalStudyDesign
+    path: /study/versions/0/studyDesigns/0
+    name: STUDY-DESIGN-1
+    details:
+      '# Primary endpoints': 0
+- rule_id: CORE-001076
+  description: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category, biomedical concept surrogate, child activity,
+    or timeline.
+  message: The activity does not refer to any procedure, biomedical concept, biomedical
+    concept category, biomedical concept surrogate, child activity, or timeline.
+  error_count: 95
+  errors:
+  - instance_id: Activity_1
+    path: /study/versions/0/studyDesigns/0/activities/0
+    name: ACTIVITY-1
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_2
+    path: /study/versions/0/studyDesigns/0/activities/1
+    name: ACTIVITY-2
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_3
+    path: /study/versions/0/studyDesigns/0/activities/2
+    name: ACTIVITY-3
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_4
+    path: /study/versions/0/studyDesigns/0/activities/3
+    name: ACTIVITY-4
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_5
+    path: /study/versions/0/studyDesigns/0/activities/4
+    name: ACTIVITY-5
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_6
+    path: /study/versions/0/studyDesigns/0/activities/5
+    name: ACTIVITY-6
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_7
+    path: /study/versions/0/studyDesigns/0/activities/6
+    name: ACTIVITY-7
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_8
+    path: /study/versions/0/studyDesigns/0/activities/7
+    name: ACTIVITY-8
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_9
+    path: /study/versions/0/studyDesigns/0/activities/8
+    name: ACTIVITY-9
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_10
+    path: /study/versions/0/studyDesigns/0/activities/9
+    name: ACTIVITY-10
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_11
+    path: /study/versions/0/studyDesigns/0/activities/10
+    name: ACTIVITY-11
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_12
+    path: /study/versions/0/studyDesigns/0/activities/11
+    name: ACTIVITY-12
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_13
+    path: /study/versions/0/studyDesigns/0/activities/12
+    name: ACTIVITY-13
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_14
+    path: /study/versions/0/studyDesigns/0/activities/13
+    name: ACTIVITY-14
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_15
+    path: /study/versions/0/studyDesigns/0/activities/14
+    name: ACTIVITY-15
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_16
+    path: /study/versions/0/studyDesigns/0/activities/15
+    name: ACTIVITY-16
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_17
+    path: /study/versions/0/studyDesigns/0/activities/16
+    name: ACTIVITY-17
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_18
+    path: /study/versions/0/studyDesigns/0/activities/17
+    name: ACTIVITY-18
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_19
+    path: /study/versions/0/studyDesigns/0/activities/18
+    name: ACTIVITY-19
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_21
+    path: /study/versions/0/studyDesigns/0/activities/20
+    name: ACTIVITY-P H AR M A C O KI N ETI CS
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_22
+    path: /study/versions/0/studyDesigns/0/activities/21
+    name: ACTIVITY-I M M U N O G E NI CIT Y
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_23
+    path: /study/versions/0/studyDesigns/0/activities/22
+    name: ACTIVITY-G E N ETI CS
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_24
+    path: /study/versions/0/studyDesigns/0/activities/23
+    name: ACTIVITY-BI O M AR K ERS
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_25
+    path: /study/versions/0/studyDesigns/0/activities/24
+    name: ACTIVITY-P H Y SI C AL E X A MI N ATI O N (2)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_26
+    path: /study/versions/0/studyDesigns/0/activities/25
+    name: ACTIVITY-C O N C O MIT A NT M E DI C ATI O N (2)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_27
+    path: /study/versions/0/studyDesigns/0/activities/26
+    name: ACTIVITY-A E C OLL E CTI O N (2)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_28
+    path: /study/versions/0/studyDesigns/0/activities/27
+    name: ACTIVITY-E C O G/ L A NS K Y/ K AR N OFS K Y P ERF OR M A N C E ST AT US
+      (2)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_29
+    path: /study/versions/0/studyDesigns/0/activities/28
+    name: ACTIVITY-R A DI OL O GI C I M A GI N G OF K N O W N L ESI O NS A N D C H
+      EST C T, A N D M E AS UR E M E NT OF P AL P A BL E OR VISI BL E L ESI O NS
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_30
+    path: /study/versions/0/studyDesigns/0/activities/29
+    name: ACTIVITY-PL AI N A NT ER O P OST ERI OR R A DI O GR A P H OF A SI N GL E
+      PR O XI M AL TI BI AL GR O WT H PL AT E F OR P ATI E NTS R A N D O MI Z E D
+      T O R A M U CIR U M A B WIT H O P E N GR O WT H PL AT ES AT B AS ELI N E B EI
+      N G F OLL O W E D O N ST U D Y
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_31
+    path: /study/versions/0/studyDesigns/0/activities/30
+    name: ACTIVITY-C OLL E CTI O N OF S UR VI V AL I NF OR M ATI O N
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_32
+    path: /study/versions/0/studyDesigns/0/activities/31
+    name: ACTIVITY-C OLL E CTI O N OF P OSTST U D Y- TR E AT M E NT A NTI C A N C
+      ER T H ER A P Y I NF OR M ATI O N
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_33
+    path: /study/versions/0/studyDesigns/0/activities/32
+    name: ACTIVITY-H E M AT OL O G Y (2)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_34
+    path: /study/versions/0/studyDesigns/0/activities/33
+    name: ACTIVITY-C O A G UL ATI O N (2)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_35
+    path: /study/versions/0/studyDesigns/0/activities/34
+    name: ACTIVITY-CLI NI C AL C H E MISTR Y (2)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_36
+    path: /study/versions/0/studyDesigns/0/activities/35
+    name: ACTIVITY-UR I N AL YSIS (2)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_37
+    path: /study/versions/0/studyDesigns/0/activities/36
+    name: ACTIVITY-T S H A N D FR E E T 4 (2)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_39
+    path: /study/versions/0/studyDesigns/0/activities/38
+    name: ACTIVITY-P H AR M A C O D Y N A MI CS
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_40
+    path: /study/versions/0/studyDesigns/0/activities/39
+    name: ACTIVITY-P H AR M A C O KI N ETI CS (2)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_41
+    path: /study/versions/0/studyDesigns/0/activities/40
+    name: ACTIVITY-I M M U N O G E NI CIT Y (2)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_42
+    path: /study/versions/0/studyDesigns/0/activities/41
+    name: ACTIVITY-G E N ETI CS (2)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_43
+    path: /study/versions/0/studyDesigns/0/activities/42
+    name: ACTIVITY-BI O M AR K ERS (2)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_44
+    path: /study/versions/0/studyDesigns/0/activities/43
+    name: ACTIVITY-A E C OLL E CTI O N (3)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_46
+    path: /study/versions/0/studyDesigns/0/activities/45
+    name: ACTIVITY-A D MI NIST ER R A M U CIR U M A B (I N V ESTI G ATI O NAL AR M)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_47
+    path: /study/versions/0/studyDesigns/0/activities/46
+    name: ACTIVITY-A D MI NIST ER G E M CIT A BI N E
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_48
+    path: /study/versions/0/studyDesigns/0/activities/47
+    name: ACTIVITY-A D MI NIST ER D O C ET A X EL
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_49
+    path: /study/versions/0/studyDesigns/0/activities/48
+    name: ACTIVITY-L E U K O C YT ES ( W B C)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_50
+    path: /study/versions/0/studyDesigns/0/activities/49
+    name: ACTIVITY-N E UTR O P HILS B
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_51
+    path: /study/versions/0/studyDesigns/0/activities/50
+    name: ACTIVITY-L Y M P H O C Y T ES
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_52
+    path: /study/versions/0/studyDesigns/0/activities/51
+    name: ACTIVITY-M O N O C YT ES
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_53
+    path: /study/versions/0/studyDesigns/0/activities/52
+    name: ACTIVITY-E OSI N O P HILS
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_54
+    path: /study/versions/0/studyDesigns/0/activities/53
+    name: ACTIVITY-B AS O P HILS
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_55
+    path: /study/versions/0/studyDesigns/0/activities/54
+    name: ACTIVITY-ER Y T HR O C YT ES ( R B C)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_56
+    path: /study/versions/0/studyDesigns/0/activities/55
+    name: ACTIVITY-H E M O GL O BI N ( H G B)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_57
+    path: /study/versions/0/studyDesigns/0/activities/56
+    name: ACTIVITY-H E M AT O CRIT ( H C T)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_58
+    path: /study/versions/0/studyDesigns/0/activities/57
+    name: ACTIVITY-M E A N C OR P US C UL AR V OL U M E ( M C V)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_59
+    path: /study/versions/0/studyDesigns/0/activities/58
+    name: ACTIVITY-M E A N C OR P US C UL AR H E M O GL O BI N C O N C E NTR ATI O
+      N ( M C H C) AL
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_60
+    path: /study/versions/0/studyDesigns/0/activities/59
+    name: ACTIVITY-PL AT EL ETS ( P L T)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_61
+    path: /study/versions/0/studyDesigns/0/activities/60
+    name: ACTIVITY-M A N U AL DIFF E R E NTI AL - L A B OR AT OR Y N
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_62
+    path: /study/versions/0/studyDesigns/0/activities/61
+    name: ACTIVITY-C O A G UL ATI O N - L A B OR AT OR Y
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_63
+    path: /study/versions/0/studyDesigns/0/activities/62
+    name: ACTIVITY-A CTI V AT E D P ARTI AL T HR O M B O PL ASTI N TI M E ( A P T
+      T) OR P ARTI AL T HR O M B O PL ASTI N TI M E ( P T T) FI
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_64
+    path: /study/versions/0/studyDesigns/0/activities/63
+    name: ACTIVITY-I NT ER N ATI O N AL N OR M ALI Z E D R ATI O (I N R) OR PR OT
+      HR O M BI N TI M E ( P T)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_65
+    path: /study/versions/0/studyDesigns/0/activities/64
+    name: ACTIVITY-AL A NI N E A MI N OTR A NSF ER AS E ( A L T)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_66
+    path: /study/versions/0/studyDesigns/0/activities/65
+    name: ACTIVITY-AL B U MI N
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_67
+    path: /study/versions/0/studyDesigns/0/activities/66
+    name: ACTIVITY-AL K ALI N E P H OS P H AT AS E
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_68
+    path: /study/versions/0/studyDesigns/0/activities/67
+    name: ACTIVITY-AS P ART AT E A MI N OTR A NSF ER AS E ( A S T)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_69
+    path: /study/versions/0/studyDesigns/0/activities/68
+    name: ACTIVITY-BILIR U BI N, DIR E CT
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_70
+    path: /study/versions/0/studyDesigns/0/activities/69
+    name: ACTIVITY-BILIR U BI N, T OT AL
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_71
+    path: /study/versions/0/studyDesigns/0/activities/70
+    name: ACTIVITY-BL O O D UR E A NITR O G E N ( B U N) OR BL O O D UR E A
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_72
+    path: /study/versions/0/studyDesigns/0/activities/71
+    name: ACTIVITY-C AL CI U M
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_73
+    path: /study/versions/0/studyDesigns/0/activities/72
+    name: ACTIVITY-CR E ATI NI N E
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_74
+    path: /study/versions/0/studyDesigns/0/activities/73
+    name: ACTIVITY-GL U C OS E N O NF ASTI N G
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_75
+    path: /study/versions/0/studyDesigns/0/activities/74
+    name: ACTIVITY-M A G N ESI U M
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_76
+    path: /study/versions/0/studyDesigns/0/activities/75
+    name: ACTIVITY-P H OS P H AT E
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_77
+    path: /study/versions/0/studyDesigns/0/activities/76
+    name: ACTIVITY-P OT ASSI U M
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_78
+    path: /study/versions/0/studyDesigns/0/activities/77
+    name: ACTIVITY-PR OT EI N
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_79
+    path: /study/versions/0/studyDesigns/0/activities/78
+    name: ACTIVITY-S O DI U M
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_80
+    path: /study/versions/0/studyDesigns/0/activities/79
+    name: ACTIVITY-U RI N AL YSIS - L A B OR AT OR Y
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_81
+    path: /study/versions/0/studyDesigns/0/activities/80
+    name: ACTIVITY-BL O O D AL
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_82
+    path: /study/versions/0/studyDesigns/0/activities/81
+    name: ACTIVITY-GL U C OS E
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_83
+    path: /study/versions/0/studyDesigns/0/activities/82
+    name: ACTIVITY-K ET O N ES
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_84
+    path: /study/versions/0/studyDesigns/0/activities/83
+    name: ACTIVITY-P H N
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_85
+    path: /study/versions/0/studyDesigns/0/activities/84
+    name: ACTIVITY-PR OT EI N (2)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_86
+    path: /study/versions/0/studyDesigns/0/activities/85
+    name: ACTIVITY-S P E CIFI C GR A VIT Y
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_87
+    path: /study/versions/0/studyDesigns/0/activities/86
+    name: ACTIVITY-UR I N E L E U K O C YT E EST ER AS E
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_88
+    path: /study/versions/0/studyDesigns/0/activities/87
+    name: ACTIVITY-P R E G N A N C Y T EST (F OR F E M AL E P ATI E NTS OF C HIL D
+      B E ARI N G P OT E NTI AL) L A B OR AT OR Y FI
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_89
+    path: /study/versions/0/studyDesigns/0/activities/88
+    name: ACTIVITY-S ER U M / URI N E PR E G N A N C Y T EST
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_90
+    path: /study/versions/0/studyDesigns/0/activities/89
+    name: ACTIVITY-T S H A N D F R E E T 4 - L A B OR AT OR Y
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_91
+    path: /study/versions/0/studyDesigns/0/activities/90
+    name: ACTIVITY-H Y P E RS E NSITI VIT Y T ESTS - L A B OR AT OR Y
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_92
+    path: /study/versions/0/studyDesigns/0/activities/91
+    name: ACTIVITY-TR Y PT AS E C
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_93
+    path: /study/versions/0/studyDesigns/0/activities/92
+    name: ACTIVITY-UR I N E N- M ET H Y L HIST A MI N E
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_94
+    path: /study/versions/0/studyDesigns/0/activities/93
+    name: "ACTIVITY-C O M PL E M E NTS \uF0B7 C 3 A"
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_95
+    path: /study/versions/0/studyDesigns/0/activities/94
+    name: ACTIVITY-23
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_97
+    path: /study/versions/0/studyDesigns/0/activities/96
+    name: ACTIVITY-P K
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_98
+    path: /study/versions/0/studyDesigns/0/activities/97
+    name: ACTIVITY-I M M U N O G E NI CIT Y (3)
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+  - instance_id: Activity_99
+    path: /study/versions/0/studyDesigns/0/activities/98
+    name: ACTIVITY-H Y P ERS E NSITI VIT Y T ESTI N G
+    details:
+      definedProcedures: false
+      bcSurrogateIds: false
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_rel: activities
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      timelineId: null
+- rule_id: CORE-000816
+  description: All epochs are expected to be referred to from a scheduled Activity
+    Instance.
+  message: The epoch is not referenced by any scheduled activity instances.
+  error_count: 1
+  errors:
+  - instance_id: StudyEpoch_1
+    path: /study/versions/0/studyDesigns/0/epochs/0
+    name: EPOCH-1
+    details:
+      parent_id: InterventionalStudyDesign_1
+      parent_rel: epochs
+      parent_entity: InterventionalStudyDesign

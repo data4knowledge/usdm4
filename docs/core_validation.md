@@ -139,7 +139,7 @@ The usdm4 package now has two validation approaches:
 
 | Method | Engine | Rules | Use Case |
 |--------|--------|-------|----------|
-| `validate()` | usdm3 RulesValidationEngine | DDF/CHK rules (Python) | Fast, local checks |
+| `validate()` | usdm4 d4k rule library (`usdm4.rules`) | V4 DDF rules (Python) | Fast, local checks |
 | `validate_core()` | CDISC Rules Engine (CORE) | Full CORE rule set | Comprehensive CDISC conformance |
 
 Both can be used independently. `validate()` runs local Python rule implementations. `validate_core()` runs the official CDISC CORE rules which are downloaded from CDISC Library and executed by the CDISC Rules Engine.

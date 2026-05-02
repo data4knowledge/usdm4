@@ -181,10 +181,15 @@ cython_debug/
 xxx*.*
 ~$*.xlsx
 
-# Validation check
-validate/*
+# Validation working area — selective: tools, samples, baseline are tracked;
+# generated per-run outputs and runtime logs are not.
+validate/__pycache__/
+validate/samples/*_core.yaml
+validate/samples/*_d4k.yaml
+validate/samples/*_vs_d4k.yaml
+validate/samples/*_vs_d4k.txt
+validate/corpus_cre_0_16/logs/
 
-# Assembler eval
-eval_output/*.*
-eval_output/
+# Assembler eval output (eval_corpus.py default --output-dir)
+validate/eval_output/
 

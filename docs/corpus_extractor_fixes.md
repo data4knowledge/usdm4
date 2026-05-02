@@ -173,7 +173,7 @@ The corpus is collapsing every dose / regimen of the same compound into one `int
 
 **Schema-correct output:** one intervention per distinct `(compound, dose, route, schedule)` combination, matched 1:1 (or 1:N) to arms via `intervention_names`. Two-arm placebo-vs-active becomes 2 interventions; nine-arm dose-finding becomes 9 (or however many distinct regimens).
 
-**Affected protocols:** 21 (sample list grep-able from `eval_output/per_protocol/*.yaml` for `DDF00213`).
+**Affected protocols:** 21 (sample list grep-able from `validate/eval_output/per_protocol/*.yaml` for `DDF00213`).
 
 **Where to fix:** `protocol_corpus/scripts/extractors/study_design.py` — when iterating CTG arms, key the intervention dictionary on `(name, dose, route, frequency)` rather than just `name`.
 
@@ -203,7 +203,7 @@ The corpus is collapsing every dose / regimen of the same compound into one `int
 
 **Schema-correct output:** at minimum a non-empty `soa` block with epochs/visits populated. The USDM4 assembler builds the `ScheduleTimeline(mainTimeline=True)` only when there's at least one scheduled instance to anchor it to (`_add_timeline` requires non-empty instances).
 
-**Where to fix:** `protocol_corpus/scripts/extractors/soa.py` — re-run the SoA vision extractor on the 49 affected protocols. The IDs are recoverable from `eval_output/per_protocol/*.yaml` by grepping for DDF00012 failures.
+**Where to fix:** `protocol_corpus/scripts/extractors/soa.py` — re-run the SoA vision extractor on the 49 affected protocols. The IDs are recoverable from `validate/eval_output/per_protocol/*.yaml` by grepping for DDF00012 failures.
 
 **Why not patched in USDM4:** synthesising an empty placeholder timeline in the assembler would silence DDF00012 but produce a USDM document with a meaningless empty timeline that fails any downstream consumer expecting real schedule data. The rule is correctly flagging real missing data.
 

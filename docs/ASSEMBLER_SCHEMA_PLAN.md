@@ -669,7 +669,7 @@ All existing sub-assembler tests must continue to pass without modification. Sin
 pydantic>=2.0
 ```
 
-The project currently depends on `usdm3`, `simple_error_log`, and `python-dateutil`. Pydantic v2 is a well-established, widely-used library with no transitive dependency conflicts expected.
+The project's runtime dependencies (per `setup.py`) include `pydantic>=2.0`, `simple_error_log>=0.8.0`, `cdisc-rules-engine>=0.16.0`, `platformdirs>=3.0`, `python-dateutil`, `jsonschema`, `lxml`, `pyyaml`, and `requests`. Pydantic v2 is a well-established, widely-used library with no transitive dependency conflicts expected.
 
 ---
 

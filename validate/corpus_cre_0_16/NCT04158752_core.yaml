@@ -1,0 +1,390 @@
+file: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04158752/results/usdm.json
+version: 4-0
+is_valid: false
+rules_executed: 205
+rules_skipped: 2
+finding_count: 24
+execution_error_count: 2133
+ct_packages_available: 200
+ct_packages_loaded:
+- sdtmct-2025-09-26
+- ddfct-2025-09-26
+findings:
+- rule_id: CORE-000417
+  description: A window must not be defined for an anchor timing (i.e., type is "Fixed
+    Reference").
+  message: One or more of the window attributes (windowLabel, windowLower, windowUpper)
+    contains a value for a Fixed Reference timing (type.code=C201358).
+  error_count: 1
+  errors:
+  - instance_id: Timing_1
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/0
+    name: TIMING-0
+    details:
+      type.code: C201358
+      parent_entity: ScheduleTimeline
+      parent_id: ScheduleTimeline_1
+      type.decode: Fixed Reference Timing Type
+      windowLower: null
+      windowLabel: ???
+      parent_rel: timings
+      windowUpper: null
+- rule_id: CORE-000973
+  description: There must be exactly one study role with a code of sponsor.
+  message: There is not exactly one study role with a code of sponsor (where code.code
+    is C70793).
+  error_count: 1
+  errors:
+  - instance_id: StudyVersion_1
+    entity: StudyVersion
+    path: /study/versions/0
+    details:
+      versionIdentifier: '1'
+      '# Sponsor Roles': 0
+- rule_id: CORE-001068
+  description: Date values associated to a study definition document version must
+    be unique regarding the combination of type and geographic scopes of the date.
+  message: The study definition document version has more than one governance date
+    with the same type and geographic scope.
+  error_count: 1
+  errors:
+  - instance_id: StudyDefinitionDocumentVersion_1
+    path: /study/documentedBy/0/versions/0
+    name: Not in dataset
+    details:
+      parent_entity: StudyDefinitionDocument
+      parent_id: StudyDefinitionDocument_1
+      parent_rel: versions
+      version: null
+      code.standardCode.code: Not in dataset
+      type.code: Not in dataset
+      type.code.GeographicScope: Not in dataset
+      dateValue: Not in dataset
+      type.decode.GeographicScope: Not in dataset
+      id.GovernanceDate: Not in dataset
+      type.decode: Not in dataset
+      code.standardCode.decode: Not in dataset
+- rule_id: CORE-000873
+  description: Date values associated to a study version must be unique regarding
+    the combination of type and geographic scopes of the date.
+  message: The study version has more than one governance date with the same type
+    and geographic scope.
+  error_count: 1
+  errors:
+  - instance_id: StudyVersion_1
+    path: /study/versions/0
+    name: Not in dataset
+    details:
+      versionIdentifier: '1'
+      parent_entity: Study
+      parent_id: ddab983f-7d2b-4669-bcf7-f5c39eadf8fb
+      parent_rel: versions
+      code.standardCode.code: Not in dataset
+      type.code: Not in dataset
+      type.code.GeographicScope: Not in dataset
+      dateValue: Not in dataset
+      type.decode.GeographicScope: Not in dataset
+      id.GovernanceDate: Not in dataset
+      type.decode: Not in dataset
+      code.standardCode.decode: Not in dataset
+- rule_id: CORE-000815
+  description: Within a study design, the planned age range must be specified either
+    in the study population or in all cohorts.
+  message: Planned age has not been specified for either the study population or the
+    cohort, or it has been specified for both.
+  error_count: 1
+  errors:
+  - instance_id: StudyDesignPopulation_1
+    path: /study/versions/0/studyDesigns/0/population
+    name: DEFAULT-POPULATION
+    details:
+      parent_entity: InterventionalStudyDesign
+      plannedAge: null
+      parent_id: InterventionalStudyDesign_1
+      parent_rel: population
+      plannedAge.minValue.StudyCohort: Not in dataset
+      name.StudyCohort: Not in dataset
+      plannedAge.unit.decode: Not in dataset
+      id.StudyCohort: Not in dataset
+      plannedAge.maxValue.StudyCohort: Not in dataset
+      plannedAge.maxValue: Not in dataset
+      plannedAge.StudyCohort: Not in dataset
+      plannedAge.minValue: Not in dataset
+      plannedAge.unit.decode.StudyCohort: Not in dataset
+- rule_id: CORE-000875
+  description: Within a study design, the planned sex must be specified either in
+    the study population or in all cohorts.
+  message: Planned sex has not been specified for either the study population or the
+    cohort, or it has been specified for both.
+  error_count: 1
+  errors:
+  - instance_id: StudyDesignPopulation_1
+    path: /study/versions/0/studyDesigns/0/population
+    name: DEFAULT-POPULATION
+    details:
+      parent_entity: InterventionalStudyDesign
+      parent_id: InterventionalStudyDesign_1
+      parent_rel: population
+      plannedSex: false
+      plannedSex.decode: Not in dataset
+      plannedSex.decode.StudyCohort: Not in dataset
+      name.StudyCohort: Not in dataset
+      id.StudyCohort: Not in dataset
+      plannedSex.StudyCohort: Not in dataset
+- rule_id: CORE-001058
+  description: A study design's study phase must be specified according to the extensible
+    Trial Phase Response (C66737) SDTM codelist (e.g. an entry with a code or decode
+    used from the codelist should be consistent with the full entry in the codelist).
+  message: The study design's study phase is not specified according to the extensible
+    Trial Phase Response (C66737) SDTM codelist - codeSystem is not "http://www.cdisc.org",
+    codeSystemVersion is not a valid terminology package date, and/or the code or
+    decode (either as preferred term or as submission value) is found in the codelist
+    (case insensitive) but the corresponding decode or code does not match the codelist
+    value (case sensitive).
+  error_count: 1
+  errors:
+  - instance_id: InterventionalStudyDesign_1
+    path: /study/versions/0/studyDesigns/0
+    name: STUDY-DESIGN-1
+    details:
+      studyPhase.standardCode.code: C48660
+      $code_for_decode_value: null
+      studyPhase.standardCode.decode: '[Trial Phase] Not Applicable'
+      $pref_term_for_code: Not Applicable
+      parent_entity: StudyVersion
+      $value_for_code: NOT APPLICABLE
+      $codelist_extensible: true
+      studyPhase.standardCode.codeSystemVersion: '2025-09-26'
+      parent_id: StudyVersion_1
+      $codelist_code: C66737
+      parent_rel: studyDesigns
+      $code_for_decode_pref_term: null
+      studyPhase.standardCode.codeSystem: http://www.cdisc.org
+- rule_id: CORE-001054
+  description: There must be exactly one sponsor study identifier (i.e., a study identifier
+    whose scope is an organization that is identified as the organization for the
+    sponsor study role).
+  message: The study version does not have exactly one sponsor study identifier.
+  error_count: 1
+  errors:
+  - instance_id: StudyVersion_1
+    entity: StudyVersion
+    path: /study/versions/0
+    details:
+      versionIdentifier: '1'
+      '# Sponsor Identifiers': 0
+- rule_id: CORE-001016
+  description: A planned duration is expected for the main timeline.
+  message: The planned duration is not specified for the main timeline.
+  error_count: 1
+  errors:
+  - instance_id: ScheduleTimeline_1
+    entity: ScheduleTimeline
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0
+    name: TIMELINE-1
+    details:
+      mainTimeline: true
+      check: true
+- rule_id: CORE-001036
+  description: Within a study design, there must be at least one endpoint with level
+    primary.
+  message: There is not at least one endpoint with a level of primary within the study
+    design.
+  error_count: 1
+  errors:
+  - instance_id: InterventionalStudyDesign_1
+    entity: InterventionalStudyDesign
+    path: /study/versions/0/studyDesigns/0
+    name: STUDY-DESIGN-1
+    details:
+      '# Primary endpoints': 0
+- rule_id: CORE-001076
+  description: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category, biomedical concept surrogate, child activity,
+    or timeline.
+  message: The activity does not refer to any procedure, biomedical concept, biomedical
+    concept category, biomedical concept surrogate, child activity, or timeline.
+  error_count: 9
+  errors:
+  - instance_id: Activity_1
+    path: /study/versions/0/studyDesigns/0/activities/0
+    name: ACTIVITY-1
+    details:
+      bcSurrogateIds: false
+      timelineId: null
+      parent_entity: InterventionalStudyDesign
+      parent_id: InterventionalStudyDesign_1
+      bcCategoryIds: false
+      biomedicalConceptIds: false
+      parent_rel: activities
+      childIds: false
+      definedProcedures: false
+  - instance_id: Activity_2
+    path: /study/versions/0/studyDesigns/0/activities/1
+    name: ACTIVITY-2
+    details:
+      bcSurrogateIds: false
+      timelineId: null
+      parent_entity: InterventionalStudyDesign
+      parent_id: InterventionalStudyDesign_1
+      bcCategoryIds: false
+      biomedicalConceptIds: false
+      parent_rel: activities
+      childIds: false
+      definedProcedures: false
+  - instance_id: Activity_3
+    path: /study/versions/0/studyDesigns/0/activities/2
+    name: ACTIVITY-3
+    details:
+      bcSurrogateIds: false
+      timelineId: null
+      parent_entity: InterventionalStudyDesign
+      parent_id: InterventionalStudyDesign_1
+      bcCategoryIds: false
+      biomedicalConceptIds: false
+      parent_rel: activities
+      childIds: false
+      definedProcedures: false
+  - instance_id: Activity_4
+    path: /study/versions/0/studyDesigns/0/activities/3
+    name: ACTIVITY-4
+    details:
+      bcSurrogateIds: false
+      timelineId: null
+      parent_entity: InterventionalStudyDesign
+      parent_id: InterventionalStudyDesign_1
+      bcCategoryIds: false
+      biomedicalConceptIds: false
+      parent_rel: activities
+      childIds: false
+      definedProcedures: false
+  - instance_id: Activity_6
+    path: /study/versions/0/studyDesigns/0/activities/5
+    name: 'ACTIVITY-BASELINE: DAILY PAIN: VAS, MEDS SLEEP/ACTIVITY 2X/WEEK BP, HR,
+      BW'
+    details:
+      bcSurrogateIds: false
+      timelineId: null
+      parent_entity: InterventionalStudyDesign
+      parent_id: InterventionalStudyDesign_1
+      bcCategoryIds: false
+      biomedicalConceptIds: false
+      parent_rel: activities
+      childIds: false
+      definedProcedures: false
+  - instance_id: Activity_7
+    path: /study/versions/0/studyDesigns/0/activities/6
+    name: 'ACTIVITY-TX#1: DAILY PAIN: VAS, MEDS SLEEP/ACTIVITY 2X/WEEK BP, HR, BW'
+    details:
+      bcSurrogateIds: false
+      timelineId: null
+      parent_entity: InterventionalStudyDesign
+      parent_id: InterventionalStudyDesign_1
+      bcCategoryIds: false
+      biomedicalConceptIds: false
+      parent_rel: activities
+      childIds: false
+      definedProcedures: false
+  - instance_id: Activity_8
+    path: /study/versions/0/studyDesigns/0/activities/7
+    name: 'ACTIVITY-TX#2: DAILY PAIN: VAS, MEDS SLEEP/ACTIVITY 2X/WEEK BP, HR, BW'
+    details:
+      bcSurrogateIds: false
+      timelineId: null
+      parent_entity: InterventionalStudyDesign
+      parent_id: InterventionalStudyDesign_1
+      bcCategoryIds: false
+      biomedicalConceptIds: false
+      parent_rel: activities
+      childIds: false
+      definedProcedures: false
+  - instance_id: Activity_9
+    path: /study/versions/0/studyDesigns/0/activities/8
+    name: 'ACTIVITY-TX#3: DAILY PAIN: VAS, MEDS SLEEP/ACTIVITY 2X/WEEK BP, HR, BW'
+    details:
+      bcSurrogateIds: false
+      timelineId: null
+      parent_entity: InterventionalStudyDesign
+      parent_id: InterventionalStudyDesign_1
+      bcCategoryIds: false
+      biomedicalConceptIds: false
+      parent_rel: activities
+      childIds: false
+      definedProcedures: false
+  - instance_id: Activity_10
+    path: /study/versions/0/studyDesigns/0/activities/9
+    name: 'ACTIVITY-POST-TREATMENT: DAILY PAIN: VAS, MEDS SLEEP/ACTIVITY 2X/WEEK BP,
+      HR, BW'
+    details:
+      bcSurrogateIds: false
+      timelineId: null
+      parent_entity: InterventionalStudyDesign
+      parent_id: InterventionalStudyDesign_1
+      bcCategoryIds: false
+      biomedicalConceptIds: false
+      parent_rel: activities
+      childIds: false
+      definedProcedures: false
+- rule_id: CORE-000402
+  description: Timing windows must be fully defined, if one of the window attributes
+    (i.e., window label, window lower, and window upper) is defined then all must
+    be specified.
+  message: One or more of the window attributes (windowLabel, windowLower, windowUpper)
+    is missing.
+  error_count: 5
+  errors:
+  - instance_id: Timing_1
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/0
+    name: TIMING-0
+    details:
+      parent_entity: ScheduleTimeline
+      parent_id: ScheduleTimeline_1
+      windowLower: null
+      windowLabel: ???
+      parent_rel: timings
+      windowUpper: null
+      valueLabel: d0
+  - instance_id: Timing_2
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/1
+    name: TIMING-1
+    details:
+      parent_entity: ScheduleTimeline
+      parent_id: ScheduleTimeline_1
+      windowLower: null
+      windowLabel: ???
+      parent_rel: timings
+      windowUpper: null
+      valueLabel: d45
+  - instance_id: Timing_3
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/2
+    name: TIMING-2
+    details:
+      parent_entity: ScheduleTimeline
+      parent_id: ScheduleTimeline_1
+      windowLower: null
+      windowLabel: ???
+      parent_rel: timings
+      windowUpper: null
+      valueLabel: d75
+  - instance_id: Timing_4
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/3
+    name: TIMING-3
+    details:
+      parent_entity: ScheduleTimeline
+      parent_id: ScheduleTimeline_1
+      windowLower: null
+      windowLabel: ???
+      parent_rel: timings
+      windowUpper: null
+      valueLabel: d105
+  - instance_id: Timing_5
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/4
+    name: TIMING-4
+    details:
+      parent_entity: ScheduleTimeline
+      parent_id: ScheduleTimeline_1
+      windowLower: null
+      windowLabel: ???
+      parent_rel: timings
+      windowUpper: null
+      valueLabel: d135

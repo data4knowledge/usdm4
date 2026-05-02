@@ -1,0 +1,454 @@
+file: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT06176768/results/usdm.json
+version: 4-0
+is_valid: false
+rules_executed: 205
+rules_skipped: 2
+finding_count: 29
+execution_error_count: 3000
+ct_packages_available: 200
+ct_packages_loaded:
+- sdtmct-2025-09-26
+- ddfct-2025-09-26
+findings:
+- rule_id: CORE-001068
+  description: Date values associated to a study definition document version must
+    be unique regarding the combination of type and geographic scopes of the date.
+  message: The study definition document version has more than one governance date
+    with the same type and geographic scope.
+  error_count: 1
+  errors:
+  - instance_id: StudyDefinitionDocumentVersion_1
+    path: /study/documentedBy/0/versions/0
+    name: Not in dataset
+    details:
+      parent_entity: StudyDefinitionDocument
+      version: null
+      parent_rel: versions
+      parent_id: StudyDefinitionDocument_1
+      type.code.GeographicScope: Not in dataset
+      dateValue: Not in dataset
+      type.decode: Not in dataset
+      type.decode.GeographicScope: Not in dataset
+      code.standardCode.decode: Not in dataset
+      id.GovernanceDate: Not in dataset
+      type.code: Not in dataset
+      code.standardCode.code: Not in dataset
+- rule_id: CORE-000873
+  description: Date values associated to a study version must be unique regarding
+    the combination of type and geographic scopes of the date.
+  message: The study version has more than one governance date with the same type
+    and geographic scope.
+  error_count: 1
+  errors:
+  - instance_id: StudyVersion_1
+    path: /study/versions/0
+    name: Not in dataset
+    details:
+      versionIdentifier: '1'
+      parent_entity: Study
+      parent_rel: versions
+      parent_id: a9b5ae5c-7dcc-44ac-8e72-17f6f9ef5ae4
+      type.code.GeographicScope: Not in dataset
+      dateValue: Not in dataset
+      type.decode: Not in dataset
+      type.decode.GeographicScope: Not in dataset
+      code.standardCode.decode: Not in dataset
+      id.GovernanceDate: Not in dataset
+      type.code: Not in dataset
+      code.standardCode.code: Not in dataset
+- rule_id: CORE-000974
+  description: The sponsor study role must be applicable to a study version.
+  message: The study role is a sponsor role (code.code is C70793) but it is not applicable
+    to the study version (appliesToIds does not contain the id of the study version).
+  error_count: 1
+  errors:
+  - instance_id: StudyRole_1
+    entity: StudyRole
+    path: /study/versions/0/roles/0
+    name: ROLE_1
+    details:
+      code.code: C70793
+      code.decode: Sponsor
+      appliesToIds: []
+- rule_id: CORE-000815
+  description: Within a study design, the planned age range must be specified either
+    in the study population or in all cohorts.
+  message: Planned age has not been specified for either the study population or the
+    cohort, or it has been specified for both.
+  error_count: 1
+  errors:
+  - instance_id: StudyDesignPopulation_1
+    path: /study/versions/0/studyDesigns/0/population
+    name: DEFAULT-POPULATION
+    details:
+      parent_id: InterventionalStudyDesign_1
+      parent_entity: InterventionalStudyDesign
+      parent_rel: population
+      plannedAge: null
+      plannedAge.maxValue: Not in dataset
+      plannedAge.minValue.StudyCohort: Not in dataset
+      id.StudyCohort: Not in dataset
+      plannedAge.StudyCohort: Not in dataset
+      plannedAge.unit.decode.StudyCohort: Not in dataset
+      plannedAge.maxValue.StudyCohort: Not in dataset
+      name.StudyCohort: Not in dataset
+      plannedAge.minValue: Not in dataset
+      plannedAge.unit.decode: Not in dataset
+- rule_id: CORE-000875
+  description: Within a study design, the planned sex must be specified either in
+    the study population or in all cohorts.
+  message: Planned sex has not been specified for either the study population or the
+    cohort, or it has been specified for both.
+  error_count: 1
+  errors:
+  - instance_id: StudyDesignPopulation_1
+    path: /study/versions/0/studyDesigns/0/population
+    name: DEFAULT-POPULATION
+    details:
+      parent_id: InterventionalStudyDesign_1
+      plannedSex: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: population
+      id.StudyCohort: Not in dataset
+      name.StudyCohort: Not in dataset
+      plannedSex.decode: Not in dataset
+      plannedSex.decode.StudyCohort: Not in dataset
+      plannedSex.StudyCohort: Not in dataset
+- rule_id: CORE-001058
+  description: A study design's study phase must be specified according to the extensible
+    Trial Phase Response (C66737) SDTM codelist (e.g. an entry with a code or decode
+    used from the codelist should be consistent with the full entry in the codelist).
+  message: The study design's study phase is not specified according to the extensible
+    Trial Phase Response (C66737) SDTM codelist - codeSystem is not "http://www.cdisc.org",
+    codeSystemVersion is not a valid terminology package date, and/or the code or
+    decode (either as preferred term or as submission value) is found in the codelist
+    (case insensitive) but the corresponding decode or code does not match the codelist
+    value (case sensitive).
+  error_count: 1
+  errors:
+  - instance_id: InterventionalStudyDesign_1
+    path: /study/versions/0/studyDesigns/0
+    name: STUDY-DESIGN-1
+    details:
+      parent_id: StudyVersion_1
+      studyPhase.standardCode.codeSystem: http://www.cdisc.org
+      studyPhase.standardCode.codeSystemVersion: '2025-09-26'
+      studyPhase.standardCode.decode: '[Trial Phase] Not Applicable'
+      parent_entity: StudyVersion
+      $value_for_code: NOT APPLICABLE
+      studyPhase.standardCode.code: C48660
+      parent_rel: studyDesigns
+      $code_for_decode_pref_term: null
+      $pref_term_for_code: Not Applicable
+      $codelist_extensible: true
+      $code_for_decode_value: null
+      $codelist_code: C66737
+- rule_id: CORE-000970
+  description: Every study role must apply to either a study version or at least one
+    study design, but not both.
+  message: The study role does not only apply to the study version or at least one
+    study design - it does not apply to anything, it applies to both the study version
+    and at least one study design, or it applies to something that is not a study
+    version or a study design.
+  error_count: 1
+  errors:
+  - instance_id: StudyRole_1
+    entity: StudyRole
+    path: /study/versions/0/roles/0
+    name: ROLE_1
+    details:
+      code: Sponsor
+      appliesToIds: []
+- rule_id: CORE-001016
+  description: A planned duration is expected for the main timeline.
+  message: The planned duration is not specified for the main timeline.
+  error_count: 1
+  errors:
+  - instance_id: ScheduleTimeline_1
+    entity: ScheduleTimeline
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0
+    name: TIMELINE-1
+    details:
+      mainTimeline: true
+      check: true
+- rule_id: CORE-001036
+  description: Within a study design, there must be at least one endpoint with level
+    primary.
+  message: There is not at least one endpoint with a level of primary within the study
+    design.
+  error_count: 1
+  errors:
+  - instance_id: InterventionalStudyDesign_1
+    entity: InterventionalStudyDesign
+    path: /study/versions/0/studyDesigns/0
+    name: STUDY-DESIGN-1
+    details:
+      '# Primary endpoints': 0
+- rule_id: CORE-001076
+  description: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category, biomedical concept surrogate, child activity,
+    or timeline.
+  message: The activity does not refer to any procedure, biomedical concept, biomedical
+    concept category, biomedical concept surrogate, child activity, or timeline.
+  error_count: 20
+  errors:
+  - instance_id: Activity_1
+    path: /study/versions/0/studyDesigns/0/activities/0
+    name: ACTIVITY-1
+    details:
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: activities
+      definedProcedures: false
+      bcSurrogateIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+  - instance_id: Activity_2
+    path: /study/versions/0/studyDesigns/0/activities/1
+    name: ACTIVITY-2
+    details:
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: activities
+      definedProcedures: false
+      bcSurrogateIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+  - instance_id: Activity_3
+    path: /study/versions/0/studyDesigns/0/activities/2
+    name: ACTIVITY-3
+    details:
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: activities
+      definedProcedures: false
+      bcSurrogateIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+  - instance_id: Activity_4
+    path: /study/versions/0/studyDesigns/0/activities/3
+    name: ACTIVITY-4
+    details:
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: activities
+      definedProcedures: false
+      bcSurrogateIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+  - instance_id: Activity_5
+    path: /study/versions/0/studyDesigns/0/activities/4
+    name: ACTIVITY-5
+    details:
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: activities
+      definedProcedures: false
+      bcSurrogateIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+  - instance_id: Activity_6
+    path: /study/versions/0/studyDesigns/0/activities/5
+    name: ACTIVITY-6
+    details:
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: activities
+      definedProcedures: false
+      bcSurrogateIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+  - instance_id: Activity_7
+    path: /study/versions/0/studyDesigns/0/activities/6
+    name: ACTIVITY-7
+    details:
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: activities
+      definedProcedures: false
+      bcSurrogateIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+  - instance_id: Activity_8
+    path: /study/versions/0/studyDesigns/0/activities/7
+    name: ACTIVITY-8
+    details:
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: activities
+      definedProcedures: false
+      bcSurrogateIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+  - instance_id: Activity_9
+    path: /study/versions/0/studyDesigns/0/activities/8
+    name: ACTIVITY-9
+    details:
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: activities
+      definedProcedures: false
+      bcSurrogateIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+  - instance_id: Activity_11
+    path: /study/versions/0/studyDesigns/0/activities/10
+    name: ACTIVITY-STUDY J4H-MC-FVAA
+    details:
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: activities
+      definedProcedures: false
+      bcSurrogateIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+  - instance_id: Activity_12
+    path: /study/versions/0/studyDesigns/0/activities/11
+    name: ACTIVITY-VISIT NUMBER
+    details:
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: activities
+      definedProcedures: false
+      bcSurrogateIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+  - instance_id: Activity_13
+    path: /study/versions/0/studyDesigns/0/activities/12
+    name: ACTIVITY-WEEKS FROM RANDOMIZATION
+    details:
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: activities
+      definedProcedures: false
+      bcSurrogateIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+  - instance_id: Activity_14
+    path: /study/versions/0/studyDesigns/0/activities/13
+    name: ACTIVITY-VISIT INTERVAL TOLERANCE (DAYS)
+    details:
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: activities
+      definedProcedures: false
+      bcSurrogateIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+  - instance_id: Activity_15
+    path: /study/versions/0/studyDesigns/0/activities/14
+    name: ACTIVITY-FASTING VISIT (2)
+    details:
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: activities
+      definedProcedures: false
+      bcSurrogateIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+  - instance_id: Activity_16
+    path: /study/versions/0/studyDesigns/0/activities/15
+    name: ACTIVITY-CONCOMITANT MEDICATIONS (2)
+    details:
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: activities
+      definedProcedures: false
+      bcSurrogateIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+  - instance_id: Activity_17
+    path: /study/versions/0/studyDesigns/0/activities/16
+    name: ACTIVITY-ADVERSE EVENTS (AES)
+    details:
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: activities
+      definedProcedures: false
+      bcSurrogateIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+  - instance_id: Activity_19
+    path: /study/versions/0/studyDesigns/0/activities/18
+    name: ACTIVITY-WEIGHT
+    details:
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: activities
+      definedProcedures: false
+      bcSurrogateIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+  - instance_id: Activity_20
+    path: /study/versions/0/studyDesigns/0/activities/19
+    name: ACTIVITY-VITAL SIGNS
+    details:
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: activities
+      definedProcedures: false
+      bcSurrogateIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+  - instance_id: Activity_21
+    path: /study/versions/0/studyDesigns/0/activities/20
+    name: ACTIVITY-SYMPTOM-DIRECTED PHYSICAL ASSESSMENT
+    details:
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: activities
+      definedProcedures: false
+      bcSurrogateIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+  - instance_id: Activity_22
+    path: /study/versions/0/studyDesigns/0/activities/21
+    name: ACTIVITY-12-LEAD ECG (CENTRAL) (2)
+    details:
+      bcCategoryIds: false
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      parent_entity: InterventionalStudyDesign
+      parent_rel: activities
+      definedProcedures: false
+      bcSurrogateIds: false
+      timelineId: null
+      biomedicalConceptIds: false

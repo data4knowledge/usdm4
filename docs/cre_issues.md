@@ -507,6 +507,38 @@ current shape is ambiguous between "bug in the data" and "the rule didn't
 have anything to evaluate".
 
 
+## 10. JSONata `in` operator doesn't flatten nested arrays — affects DDF00161 on multi-parent activities
+
+**Affected rule:** DDF00161 (Activity preorder-walk consistency).
+
+**Symptom.** When an Activity appears as a child in two different parents'
+`childIds` lists, CORE produces extra `count_mismatch` findings for valid
+siblings. On a sample where Activity_23 and Activity_24 each have two
+parents, d4k reported 2 findings while CORE reported 4.
+
+**Mechanism.** CORE's JSONata predicate is shaped like:
+
+```text
+$pacts[self in children.id].[id, children[id!=self].id,
+                             children[id!=self].**.children.id]
+```
+
+For multi-parent activities this produces a nested array
+`[[id1, [siblings1], [deep1]], [id2, [siblings2], [deep2]]]`. JSONata's
+`in` operator does not flatten across the inner sibling arrays, so valid
+siblings that appear in CORE's own reported "Parent Activity's other
+descendants' ids" still fail the `in` check, generating spurious findings.
+
+**d4k workaround.** `rule_ddf00161.py` builds the parent-of map across
+all parents (not single-parent / last-writer-wins) and explicitly unions
+the allowed set across them. d4k handles multi-parent activities
+correctly; CORE does not.
+
+**Suggested fix (upstream).** Flatten the array before applying `in`, or
+restructure the predicate so each parent's allowed set is evaluated
+independently and unioned afterwards.
+
+
 ## Summary of workarounds in usdm4
 
 All workarounds are implemented in `src/usdm4/core/core_validator.py` and
@@ -524,6 +556,7 @@ All workarounds are implemented in `src/usdm4/core/core_validator.py` and
 | `codelist_extensible` pandas crash | `_classify_errors()` | CRE 0.16.0 stopped crashing but reports the same condition via `"Domain not found"` / `"Empty dataset"` sentinels (see issue 7); original `"Error occurred during operation execution"` sentinel retained as defence-in-depth |
 | Cross-reference traversal (DDF00181, DDF00093, DDF00010, DDF00094, DDF00151) | n/a (CRE-side bug) | d4k rules `rule_ddf00181.py`, `rule_ddf00093.py`, `rule_ddf00010.py`, `rule_ddf00094.py`, `rule_ddf00151.py` work from id-keyed structures — see issue 8 |
 | Missing relation reported as blank instance (CORE-000971 / DDF00194) | n/a (CRE-side bug) | d4k iterates real `Address` instances; null `legalAddress` on `Organization` is correctly skipped — see issue 9 |
+| JSONata `in` flattening (DDF00161 multi-parent activities) | n/a (CRE-side bug) | `rule_ddf00161.py` tracks all parents and unions allowed sets — see issue 10 |
 | Crashing rules | `_run_validation_inner()` | Skip rules in `_EXCLUDED_RULES` set |
 
 
@@ -582,7 +615,7 @@ DDF00084 stays in `over=234`, and the issue 8 cross-reference traversal rules
   `EligibilityCriterionItem` instances; on the 234-file corpus there are
   zero. The 0.15 baseline's `over=200` was therefore the *buggy* number,
   not a CRE-related signal, and 0.16's `aligned (0/0/0)` is the correct
-  one. The rule rewrite predates the v2 baseline run.
+  one. The rule rewrite predates the 0.16 baseline run.
 - **`_EXECUTION_ERROR_TYPES` is becoming a maintenance burden.** Issue 5's
   set now has six entries; CRE keeps adding new strings for the same
   conceptual category (rule-not-applicable / no-data-to-evaluate). Worth
@@ -595,3 +628,24 @@ DDF00084 stays in `over=234`, and the issue 8 cross-reference traversal rules
   some failure paths), our wrapper swallowed them. Worth reconsidering as a
   configurable option (e.g. an env var to surface engine output during
   diagnostic runs).
+
+
+## Defensibly d4k-stricter — won't change
+
+For the record, d4k is legitimately stricter than CORE on these cases —
+by design, not bug. Don't reach for a CRE-issue framing when investigating
+divergences on these rules.
+
+- **DDF00082** — d4k validates the JSON against
+  `src/usdm4/rules/library/schema/usdm_v4-0-0.json` (full JSON Schema). CORE
+  handles schema-shape checks outside its rule engine. d4k will surface
+  schema findings (missing required fields, wrong types, cardinality
+  violations) that CORE doesn't. Scope difference, not a divergence to fix.
+
+- **CT-membership family — DDF00051, 00075, 00084, 00155, 00166, 00249.**
+  d4k's `_ct_check` and the rule-side helpers complete correctly when
+  CORE's `codelist_extensible` dtype merge fails (see issue 7). On samples
+  where CORE drops into "no data" mode for these rules, d4k continues to
+  surface real CT-membership issues (invalid decode, invalid
+  `codeSystemVersion`, missing criterion item, etc.). Keep flagging — d4k
+  is doing real work CORE can't.

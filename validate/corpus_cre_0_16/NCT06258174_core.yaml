@@ -1,0 +1,181 @@
+file: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT06258174/results/usdm.json
+version: 4-0
+is_valid: false
+rules_executed: 205
+rules_skipped: 2
+finding_count: 9
+execution_error_count: 1406
+ct_packages_available: 200
+ct_packages_loaded:
+- sdtmct-2025-09-26
+- ddfct-2025-09-26
+findings:
+- rule_id: CORE-000973
+  description: There must be exactly one study role with a code of sponsor.
+  message: There is not exactly one study role with a code of sponsor (where code.code
+    is C70793).
+  error_count: 1
+  errors:
+  - instance_id: StudyVersion_1
+    entity: StudyVersion
+    path: /study/versions/0
+    details:
+      versionIdentifier: '1'
+      '# Sponsor Roles': 0
+- rule_id: CORE-000407
+  description: Within a study design, there must be exactly one scheduled timeline
+    which identifies as the main Timeline.
+  message: The study design does not have exactly one main timeline.
+  error_count: 1
+  errors:
+  - instance_id: InterventionalStudyDesign_1
+    entity: InterventionalStudyDesign
+    path: /study/versions/0/studyDesigns/0
+    name: STUDY-DESIGN-1
+    details:
+      '# Main timelines': 0
+- rule_id: CORE-001068
+  description: Date values associated to a study definition document version must
+    be unique regarding the combination of type and geographic scopes of the date.
+  message: The study definition document version has more than one governance date
+    with the same type and geographic scope.
+  error_count: 1
+  errors:
+  - instance_id: StudyDefinitionDocumentVersion_1
+    path: /study/documentedBy/0/versions/0
+    name: Not in dataset
+    details:
+      parent_entity: StudyDefinitionDocument
+      parent_id: StudyDefinitionDocument_1
+      parent_rel: versions
+      version: null
+      type.decode: Not in dataset
+      type.code.GeographicScope: Not in dataset
+      dateValue: Not in dataset
+      type.code: Not in dataset
+      code.standardCode.decode: Not in dataset
+      id.GovernanceDate: Not in dataset
+      type.decode.GeographicScope: Not in dataset
+      code.standardCode.code: Not in dataset
+- rule_id: CORE-000873
+  description: Date values associated to a study version must be unique regarding
+    the combination of type and geographic scopes of the date.
+  message: The study version has more than one governance date with the same type
+    and geographic scope.
+  error_count: 1
+  errors:
+  - instance_id: StudyVersion_1
+    path: /study/versions/0
+    name: Not in dataset
+    details:
+      parent_entity: Study
+      parent_id: aba9744e-1480-49ba-aa28-f887ade5f8f8
+      versionIdentifier: '1'
+      parent_rel: versions
+      type.decode: Not in dataset
+      type.code.GeographicScope: Not in dataset
+      dateValue: Not in dataset
+      type.code: Not in dataset
+      code.standardCode.decode: Not in dataset
+      id.GovernanceDate: Not in dataset
+      type.decode.GeographicScope: Not in dataset
+      code.standardCode.code: Not in dataset
+- rule_id: CORE-000815
+  description: Within a study design, the planned age range must be specified either
+    in the study population or in all cohorts.
+  message: Planned age has not been specified for either the study population or the
+    cohort, or it has been specified for both.
+  error_count: 1
+  errors:
+  - instance_id: StudyDesignPopulation_1
+    path: /study/versions/0/studyDesigns/0/population
+    name: DEFAULT-POPULATION
+    details:
+      parent_entity: InterventionalStudyDesign
+      parent_id: InterventionalStudyDesign_1
+      parent_rel: population
+      plannedAge: null
+      plannedAge.StudyCohort: Not in dataset
+      plannedAge.unit.decode: Not in dataset
+      plannedAge.maxValue.StudyCohort: Not in dataset
+      plannedAge.unit.decode.StudyCohort: Not in dataset
+      plannedAge.maxValue: Not in dataset
+      plannedAge.minValue: Not in dataset
+      plannedAge.minValue.StudyCohort: Not in dataset
+      id.StudyCohort: Not in dataset
+      name.StudyCohort: Not in dataset
+- rule_id: CORE-000875
+  description: Within a study design, the planned sex must be specified either in
+    the study population or in all cohorts.
+  message: Planned sex has not been specified for either the study population or the
+    cohort, or it has been specified for both.
+  error_count: 1
+  errors:
+  - instance_id: StudyDesignPopulation_1
+    path: /study/versions/0/studyDesigns/0/population
+    name: DEFAULT-POPULATION
+    details:
+      parent_entity: InterventionalStudyDesign
+      parent_id: InterventionalStudyDesign_1
+      plannedSex: false
+      parent_rel: population
+      plannedSex.StudyCohort: Not in dataset
+      plannedSex.decode: Not in dataset
+      plannedSex.decode.StudyCohort: Not in dataset
+      id.StudyCohort: Not in dataset
+      name.StudyCohort: Not in dataset
+- rule_id: CORE-001058
+  description: A study design's study phase must be specified according to the extensible
+    Trial Phase Response (C66737) SDTM codelist (e.g. an entry with a code or decode
+    used from the codelist should be consistent with the full entry in the codelist).
+  message: The study design's study phase is not specified according to the extensible
+    Trial Phase Response (C66737) SDTM codelist - codeSystem is not "http://www.cdisc.org",
+    codeSystemVersion is not a valid terminology package date, and/or the code or
+    decode (either as preferred term or as submission value) is found in the codelist
+    (case insensitive) but the corresponding decode or code does not match the codelist
+    value (case sensitive).
+  error_count: 1
+  errors:
+  - instance_id: InterventionalStudyDesign_1
+    path: /study/versions/0/studyDesigns/0
+    name: STUDY-DESIGN-1
+    details:
+      parent_entity: StudyVersion
+      parent_id: StudyVersion_1
+      studyPhase.standardCode.codeSystem: http://www.cdisc.org
+      $code_for_decode_value: null
+      studyPhase.standardCode.codeSystemVersion: '2025-09-26'
+      studyPhase.standardCode.code: C48660
+      $pref_term_for_code: Not Applicable
+      $code_for_decode_pref_term: null
+      studyPhase.standardCode.decode: '[Trial Phase] Not Applicable'
+      parent_rel: studyDesigns
+      $codelist_extensible: true
+      $codelist_code: C66737
+      $value_for_code: NOT APPLICABLE
+- rule_id: CORE-001054
+  description: There must be exactly one sponsor study identifier (i.e., a study identifier
+    whose scope is an organization that is identified as the organization for the
+    sponsor study role).
+  message: The study version does not have exactly one sponsor study identifier.
+  error_count: 1
+  errors:
+  - instance_id: StudyVersion_1
+    entity: StudyVersion
+    path: /study/versions/0
+    details:
+      versionIdentifier: '1'
+      '# Sponsor Identifiers': 0
+- rule_id: CORE-001036
+  description: Within a study design, there must be at least one endpoint with level
+    primary.
+  message: There is not at least one endpoint with a level of primary within the study
+    design.
+  error_count: 1
+  errors:
+  - instance_id: InterventionalStudyDesign_1
+    entity: InterventionalStudyDesign
+    path: /study/versions/0/studyDesigns/0
+    name: STUDY-DESIGN-1
+    details:
+      '# Primary endpoints': 0

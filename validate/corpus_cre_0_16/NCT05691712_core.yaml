@@ -1,0 +1,1310 @@
+file: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05691712/results/usdm.json
+version: 4-0
+is_valid: false
+rules_executed: 205
+rules_skipped: 2
+finding_count: 110
+execution_error_count: 3216
+ct_packages_available: 200
+ct_packages_loaded:
+- sdtmct-2025-09-26
+- ddfct-2025-09-26
+findings:
+- rule_id: CORE-001068
+  description: Date values associated to a study definition document version must
+    be unique regarding the combination of type and geographic scopes of the date.
+  message: The study definition document version has more than one governance date
+    with the same type and geographic scope.
+  error_count: 2
+  errors:
+  - instance_id: StudyDefinitionDocumentVersion_1
+    path: /study/documentedBy/0/versions/0
+    name: PROTOCOL-DATE
+    details:
+      parent_rel: versions
+      parent_id: StudyDefinitionDocument_1
+      type.code: C71476
+      version: null
+      dateValue: '2023-03-30'
+      type.decode: Approval Date
+      type.decode.GeographicScope: Global
+      id.GovernanceDate: GovernanceDate_1
+      type.code.GeographicScope: C68846
+      parent_entity: StudyDefinitionDocument
+      code.standardCode.code: Not in dataset
+      code.standardCode.decode: Not in dataset
+  - instance_id: StudyDefinitionDocumentVersion_1
+    path: /study/documentedBy/0/versions/0
+    name: PROTOCOL-DATE
+    details:
+      parent_rel: versions
+      parent_id: StudyDefinitionDocument_1
+      type.code: C71476
+      version: null
+      dateValue: '2023-03-30'
+      type.decode: Approval Date
+      type.decode.GeographicScope: Global
+      id.GovernanceDate: GovernanceDate_1
+      type.code.GeographicScope: C68846
+      parent_entity: StudyDefinitionDocument
+      code.standardCode.code: Not in dataset
+      code.standardCode.decode: Not in dataset
+- rule_id: CORE-000814
+  description: Within a study version, if a date of a specific type exists with a
+    global geographic scope then no other dates are expected with the same type.
+  message: The study version has a type of governance date with a global geographic
+    scope and either another date of the same type or additional geographic scope(s)
+    defined for the date.
+  error_count: 3
+  errors:
+  - instance_id: GeographicScope_2
+    path: /study/versions/0/dateValues/0/geographicScopes/0
+    details:
+      id.StudyVersion: StudyVersion_1
+      $num_geographic_scopes_for_this_date: 1
+      versionIdentifier: '1'
+      dateValue: '2023-03-30'
+      type.code: C68846
+      type.decode: Global
+      type.code.GovernanceDate: C71476
+      type.decode.GovernanceDate: Approval Date
+      $num_dates_of_this_type: 2
+      parent_rel.StudyVersion: versions
+      parent_entity.StudyVersion: Study
+      parent_id.StudyVersion: cf383c1c-de3b-4f4c-9352-ddbac9775529
+  - instance_id: GeographicScope_1
+    path: /study/versions/0/dateValues/1/geographicScopes/0
+    details:
+      id.StudyVersion: StudyVersion_1
+      $num_geographic_scopes_for_this_date: 2
+      versionIdentifier: '1'
+      dateValue: '2023-03-30'
+      type.code: C68846
+      type.decode: Global
+      type.code.GovernanceDate: C71476
+      type.decode.GovernanceDate: Approval Date
+      $num_dates_of_this_type: 2
+      parent_rel.StudyVersion: versions
+      parent_entity.StudyVersion: Study
+      parent_id.StudyVersion: cf383c1c-de3b-4f4c-9352-ddbac9775529
+  - instance_id: GeographicScope_1
+    path: /study/documentedBy/0/versions/0/dateValues/0/geographicScopes/0
+    details:
+      id.StudyVersion: StudyVersion_1
+      $num_geographic_scopes_for_this_date: 2
+      versionIdentifier: '1'
+      dateValue: '2023-03-30'
+      type.code: C68846
+      type.decode: Global
+      type.code.GovernanceDate: C71476
+      type.decode.GovernanceDate: Approval Date
+      $num_dates_of_this_type: 2
+      parent_rel.StudyVersion: versions
+      parent_entity.StudyVersion: Study
+      parent_id.StudyVersion: cf383c1c-de3b-4f4c-9352-ddbac9775529
+- rule_id: CORE-000873
+  description: Date values associated to a study version must be unique regarding
+    the combination of type and geographic scopes of the date.
+  message: The study version has more than one governance date with the same type
+    and geographic scope.
+  error_count: 3
+  errors:
+  - instance_id: StudyVersion_1
+    path: /study/versions/0
+    name: SPONSOR-APPORVAL-DATE
+    details:
+      parent_rel: versions
+      versionIdentifier: '1'
+      parent_id: cf383c1c-de3b-4f4c-9352-ddbac9775529
+      type.code: C71476
+      dateValue: '2023-03-30'
+      type.decode: Approval Date
+      type.decode.GeographicScope: Global
+      id.GovernanceDate: GovernanceDate_2
+      type.code.GeographicScope: C68846
+      parent_entity: Study
+      code.standardCode.code: Not in dataset
+      code.standardCode.decode: Not in dataset
+  - instance_id: StudyVersion_1
+    path: /study/versions/0
+    name: PROTOCOL-DATE
+    details:
+      parent_rel: versions
+      versionIdentifier: '1'
+      parent_id: cf383c1c-de3b-4f4c-9352-ddbac9775529
+      type.code: C71476
+      dateValue: '2023-03-30'
+      type.decode: Approval Date
+      type.decode.GeographicScope: Global
+      id.GovernanceDate: GovernanceDate_1
+      type.code.GeographicScope: C68846
+      parent_entity: Study
+      code.standardCode.code: Not in dataset
+      code.standardCode.decode: Not in dataset
+  - instance_id: StudyVersion_1
+    path: /study/versions/0
+    name: PROTOCOL-DATE
+    details:
+      parent_rel: versions
+      versionIdentifier: '1'
+      parent_id: cf383c1c-de3b-4f4c-9352-ddbac9775529
+      type.code: C71476
+      dateValue: '2023-03-30'
+      type.decode: Approval Date
+      type.decode.GeographicScope: Global
+      id.GovernanceDate: GovernanceDate_1
+      type.code.GeographicScope: C68846
+      parent_entity: Study
+      code.standardCode.code: Not in dataset
+      code.standardCode.decode: Not in dataset
+- rule_id: CORE-001013
+  description: The names of all instances of the same class must be unique.
+  message: The same name has been used for more than one instance of the class.
+  error_count: 2
+  errors:
+  - instance_id: GovernanceDate_1
+    entity: GovernanceDate
+    path: /study/versions/0/dateValues/1
+    name: PROTOCOL-DATE
+  - instance_id: GovernanceDate_1
+    entity: GovernanceDate
+    path: /study/documentedBy/0/versions/0/dateValues/0
+    name: PROTOCOL-DATE
+- rule_id: CORE-001069
+  description: Narrative content item text is expected to be HTML formatted.
+  message: The narrative content item text contains non-conformant XHTML.
+  error_count: 2
+  errors:
+  - instance_id: NarrativeContentItem_30
+    path: /study/versions/0/narrativeContentItems/29
+    name: NCI-29
+    details:
+      parent_rel: narrativeContentItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''div'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: NarrativeContentItem_41
+    path: /study/versions/0/narrativeContentItems/40
+    name: NCI-40
+    details:
+      parent_rel: narrativeContentItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 5 [ERROR]: Element ''div'': This element is not expected.'
+      parent_entity: StudyVersion
+- rule_id: CORE-000974
+  description: The sponsor study role must be applicable to a study version.
+  message: The study role is a sponsor role (code.code is C70793) but it is not applicable
+    to the study version (appliesToIds does not contain the id of the study version).
+  error_count: 1
+  errors:
+  - instance_id: StudyRole_1
+    entity: StudyRole
+    path: /study/versions/0/roles/0
+    name: ROLE_1
+    details:
+      code.code: C70793
+      code.decode: Sponsor
+      appliesToIds: []
+- rule_id: CORE-000815
+  description: Within a study design, the planned age range must be specified either
+    in the study population or in all cohorts.
+  message: Planned age has not been specified for either the study population or the
+    cohort, or it has been specified for both.
+  error_count: 1
+  errors:
+  - instance_id: StudyDesignPopulation_1
+    path: /study/versions/0/studyDesigns/0/population
+    name: DEFAULT-POPULATION
+    details:
+      parent_rel: population
+      parent_id: InterventionalStudyDesign_1
+      plannedAge: null
+      parent_entity: InterventionalStudyDesign
+      plannedAge.unit.decode: Not in dataset
+      id.StudyCohort: Not in dataset
+      plannedAge.maxValue.StudyCohort: Not in dataset
+      plannedAge.StudyCohort: Not in dataset
+      plannedAge.unit.decode.StudyCohort: Not in dataset
+      plannedAge.minValue: Not in dataset
+      name.StudyCohort: Not in dataset
+      plannedAge.maxValue: Not in dataset
+      plannedAge.minValue.StudyCohort: Not in dataset
+- rule_id: CORE-000875
+  description: Within a study design, the planned sex must be specified either in
+    the study population or in all cohorts.
+  message: Planned sex has not been specified for either the study population or the
+    cohort, or it has been specified for both.
+  error_count: 1
+  errors:
+  - instance_id: StudyDesignPopulation_1
+    path: /study/versions/0/studyDesigns/0/population
+    name: DEFAULT-POPULATION
+    details:
+      parent_rel: population
+      parent_id: InterventionalStudyDesign_1
+      plannedSex: false
+      parent_entity: InterventionalStudyDesign
+      plannedSex.StudyCohort: Not in dataset
+      id.StudyCohort: Not in dataset
+      plannedSex.decode: Not in dataset
+      plannedSex.decode.StudyCohort: Not in dataset
+      name.StudyCohort: Not in dataset
+- rule_id: CORE-000834
+  description: If geographic scope type is global then there must be only one geographic
+    scope specified.
+  message: The governance date has more than one geographic scope defined, at least
+    one of which has type of "Global" (type.code = C68846 or type.decode = "Global",
+    both case insensitive).
+  error_count: 2
+  errors:
+  - instance_id: GovernanceDate_1
+    path: /study/versions/0/dateValues/1
+    name: PROTOCOL-DATE
+    details:
+      parent_rel: dateValues
+      parent_id: StudyVersion_1
+      dateValue: '2023-03-30'
+      $geographic_scope_type_codes:
+      - C68846
+      $geographic_scope_type_decodes:
+      - Global
+      $num_of_geographic_scopes: 2
+      parent_entity: StudyVersion
+  - instance_id: GovernanceDate_1
+    path: /study/documentedBy/0/versions/0/dateValues/0
+    name: PROTOCOL-DATE
+    details:
+      parent_rel: dateValues
+      parent_id: StudyDefinitionDocumentVersion_1
+      dateValue: '2023-03-30'
+      $geographic_scope_type_codes:
+      - C68846
+      $geographic_scope_type_decodes:
+      - Global
+      $num_of_geographic_scopes: 2
+      parent_entity: StudyDefinitionDocumentVersion
+- rule_id: CORE-001058
+  description: A study design's study phase must be specified according to the extensible
+    Trial Phase Response (C66737) SDTM codelist (e.g. an entry with a code or decode
+    used from the codelist should be consistent with the full entry in the codelist).
+  message: The study design's study phase is not specified according to the extensible
+    Trial Phase Response (C66737) SDTM codelist - codeSystem is not "http://www.cdisc.org",
+    codeSystemVersion is not a valid terminology package date, and/or the code or
+    decode (either as preferred term or as submission value) is found in the codelist
+    (case insensitive) but the corresponding decode or code does not match the codelist
+    value (case sensitive).
+  error_count: 1
+  errors:
+  - instance_id: InterventionalStudyDesign_1
+    path: /study/versions/0/studyDesigns/0
+    name: STUDY-DESIGN-1
+    details:
+      studyPhase.standardCode.codeSystem: http://www.cdisc.org
+      parent_rel: studyDesigns
+      parent_id: StudyVersion_1
+      parent_entity: StudyVersion
+      studyPhase.standardCode.decode: '[Trial Phase] Not Applicable'
+      $codelist_extensible: true
+      studyPhase.standardCode.code: C48660
+      $value_for_code: NOT APPLICABLE
+      $code_for_decode_pref_term: null
+      $pref_term_for_code: Not Applicable
+      studyPhase.standardCode.codeSystemVersion: '2025-09-26'
+      $code_for_decode_value: null
+      $codelist_code: C66737
+- rule_id: CORE-001015
+  description: Within a study version, all id values must be unique.
+  message: The id value is not unique.
+  error_count: 8
+  errors:
+  - instance_id: GovernanceDate_1
+    entity: GovernanceDate
+    path: /study/versions/0/dateValues/1
+    name: PROTOCOL-DATE
+  - instance_id: GovernanceDate_1
+    entity: GovernanceDate
+    path: /study/documentedBy/0/versions/0/dateValues/0
+    name: PROTOCOL-DATE
+  - instance_id: Code_8
+    entity: Code
+    path: /study/versions/0/dateValues/1/type
+  - instance_id: Code_8
+    entity: Code
+    path: /study/documentedBy/0/versions/0/dateValues/0/type
+  - instance_id: Code_9
+    entity: Code
+    path: /study/versions/0/dateValues/1/geographicScopes/0/type
+  - instance_id: Code_9
+    entity: Code
+    path: /study/documentedBy/0/versions/0/dateValues/0/geographicScopes/0/type
+  - instance_id: GeographicScope_1
+    entity: GeographicScope
+    path: /study/versions/0/dateValues/1/geographicScopes/0
+  - instance_id: GeographicScope_1
+    entity: GeographicScope
+    path: /study/documentedBy/0/versions/0/dateValues/0/geographicScopes/0
+- rule_id: CORE-000970
+  description: Every study role must apply to either a study version or at least one
+    study design, but not both.
+  message: The study role does not only apply to the study version or at least one
+    study design - it does not apply to anything, it applies to both the study version
+    and at least one study design, or it applies to something that is not a study
+    version or a study design.
+  error_count: 1
+  errors:
+  - instance_id: StudyRole_1
+    entity: StudyRole
+    path: /study/versions/0/roles/0
+    name: ROLE_1
+    details:
+      code: Sponsor
+      appliesToIds: []
+- rule_id: CORE-001016
+  description: A planned duration is expected for the main timeline.
+  message: The planned duration is not specified for the main timeline.
+  error_count: 1
+  errors:
+  - instance_id: ScheduleTimeline_1
+    entity: ScheduleTimeline
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0
+    name: TIMELINE-1
+    details:
+      mainTimeline: true
+      check: true
+- rule_id: CORE-001036
+  description: Within a study design, there must be at least one endpoint with level
+    primary.
+  message: There is not at least one endpoint with a level of primary within the study
+    design.
+  error_count: 1
+  errors:
+  - instance_id: InterventionalStudyDesign_1
+    entity: InterventionalStudyDesign
+    path: /study/versions/0/studyDesigns/0
+    name: STUDY-DESIGN-1
+    details:
+      '# Primary endpoints': 0
+- rule_id: CORE-001076
+  description: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category, biomedical concept surrogate, child activity,
+    or timeline.
+  message: The activity does not refer to any procedure, biomedical concept, biomedical
+    concept category, biomedical concept surrogate, child activity, or timeline.
+  error_count: 45
+  errors:
+  - instance_id: Activity_1
+    path: /study/versions/0/studyDesigns/0/activities/0
+    name: ACTIVITY-1
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_3
+    path: /study/versions/0/studyDesigns/0/activities/2
+    name: ACTIVITY-INFORMED CONSENT
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_4
+    path: /study/versions/0/studyDesigns/0/activities/3
+    name: ACTIVITY-RANDOMIZATION
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_6
+    path: /study/versions/0/studyDesigns/0/activities/5
+    name: "ACTIVITY-MEDICAL HISTORY\xAE"
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_7
+    path: /study/versions/0/studyDesigns/0/activities/6
+    name: ACTIVITY-PHYSICAL EXAMINATION
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_9
+    path: /study/versions/0/studyDesigns/0/activities/8
+    name: ACTIVITY-WEIGHT
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_10
+    path: /study/versions/0/studyDesigns/0/activities/9
+    name: ACTIVITY-WAIST CIRCUMFERENCE
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_11
+    path: /study/versions/0/studyDesigns/0/activities/10
+    name: ACTIVITY-ELECTROCARDIOGRAM
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_12
+    path: /study/versions/0/studyDesigns/0/activities/11
+    name: 'ACTIVITY-VITAL SIGNS (2 SITTING BP AND PR):'
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_13
+    path: /study/versions/0/studyDesigns/0/activities/12
+    name: ACTIVITY-ADVERSE EVENTS
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_14
+    path: /study/versions/0/studyDesigns/0/activities/13
+    name: ACTIVITY-DILATED FUNDOSCOPIC EXAMINATION"
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_15
+    path: /study/versions/0/studyDesigns/0/activities/14
+    name: ACTIVITY-CONCOMITANT MEDICATIONS
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_16
+    path: /study/versions/0/studyDesigns/0/activities/15
+    name: "ACTIVITY-FASTING VISIT\xAE (2)"
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_17
+    path: /study/versions/0/studyDesigns/0/activities/16
+    name: ACTIVITY-TELEPHONE VISIT X
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_18
+    path: /study/versions/0/studyDesigns/0/activities/17
+    name: ACTIVITY-REVIEW HYPOGLYCEMIC EVENTS COLLECTED IN THE DIARY X
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_20
+    path: /study/versions/0/studyDesigns/0/activities/19
+    name: ACTIVITY-DIABETES EDUCATION I
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_21
+    path: /study/versions/0/studyDesigns/0/activities/20
+    name: ACTIVITY-BG METER, SMBG TRAINING
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_22
+    path: /study/versions/0/studyDesigns/0/activities/21
+    name: ACTIVITY-DISPENSE BG METER/SUPPLIES, AS NEEDED
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_24
+    path: /study/versions/0/studyDesigns/0/activities/23
+    name: ACTIVITY-HAND OUT DIARY, INSTRUCT IN USEL
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_25
+    path: /study/versions/0/studyDesigns/0/activities/24
+    name: ACTIVITY-REVIEW FASTING/4- POINT SMBG
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_26
+    path: /study/versions/0/studyDesigns/0/activities/25
+    name: ACTIVITY-REMIND PARTICIPANTS ABOUT 7-POINT SMBG
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_27
+    path: /study/versions/0/studyDesigns/0/activities/26
+    name: ACTIVITY-REVIEW 7-POINT SMBG VALUES COLLECTED IN THE DIARY
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_28
+    path: /study/versions/0/studyDesigns/0/activities/27
+    name: ACTIVITY-TELEPHONE VISIT (2)
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_29
+    path: /study/versions/0/studyDesigns/0/activities/28
+    name: ACTIVITY-DISPENSE STUDY DRUG AND INJECTION SUPPLIES
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_30
+    path: /study/versions/0/studyDesigns/0/activities/29
+    name: ACTIVITY-OBSERVE PARTICIPANT ADMINISTER STUDY DRUG"
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_31
+    path: /study/versions/0/studyDesigns/0/activities/30
+    name: ACTIVITY-PARTICIPANT RETURNS STUDY DRUGS AND INJECTION SUPPLIES
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_32
+    path: /study/versions/0/studyDesigns/0/activities/31
+    name: ACTIVITY-ASSESS STUDY DRUG COMPLIANCE
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_33
+    path: /study/versions/0/studyDesigns/0/activities/32
+    name: ACTIVITY-REVIEW INSULIN DOSE AND ADJUSTMENT PER TTT ALGORITHM
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_34
+    path: /study/versions/0/studyDesigns/0/activities/33
+    name: "ACTIVITY-ASSESS COMPLIANCE WITH INSULIN DOSE ADJUSTMENT PER TTT ALGORITHM\xB0"
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_35
+    path: /study/versions/0/studyDesigns/0/activities/34
+    name: ACTIVITY-7
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_37
+    path: /study/versions/0/studyDesigns/0/activities/36
+    name: ACTIVITY-CHEMISTRY PANEL
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_38
+    path: /study/versions/0/studyDesigns/0/activities/37
+    name: ACTIVITY-SERUM GLUCOSE
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_39
+    path: /study/versions/0/studyDesigns/0/activities/38
+    name: "ACTIVITY-FASTING VISIT\xB0"
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_40
+    path: /study/versions/0/studyDesigns/0/activities/39
+    name: ACTIVITY-TELEPHONE VISIT (3)
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_41
+    path: /study/versions/0/studyDesigns/0/activities/40
+    name: ACTIVITY-LIPID PANEL
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_42
+    path: /study/versions/0/studyDesigns/0/activities/41
+    name: ACTIVITY-URINARY ALBUMIN/CREATININE RATIO
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_43
+    path: /study/versions/0/studyDesigns/0/activities/42
+    name: ACTIVITY-EGFR (CKD-EPI)
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_44
+    path: /study/versions/0/studyDesigns/0/activities/43
+    name: ACTIVITY-CALCITONIN
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_45
+    path: /study/versions/0/studyDesigns/0/activities/44
+    name: ACTIVITY-HEMATOLOGY
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_46
+    path: /study/versions/0/studyDesigns/0/activities/45
+    name: ACTIVITY-HBALC
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_47
+    path: /study/versions/0/studyDesigns/0/activities/46
+    name: ACTIVITY-PANCREATIC AMYLASE
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_48
+    path: /study/versions/0/studyDesigns/0/activities/47
+    name: ACTIVITY-LIPASE
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_49
+    path: /study/versions/0/studyDesigns/0/activities/48
+    name: ACTIVITY-9
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_51
+    path: /study/versions/0/studyDesigns/0/activities/50
+    name: ACTIVITY-DTSQC
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+  - instance_id: Activity_52
+    path: /study/versions/0/studyDesigns/0/activities/51
+    name: ACTIVITY-EQ-5D-5L
+    details:
+      bcSurrogateIds: false
+      definedProcedures: false
+      parent_rel: activities
+      parent_id: InterventionalStudyDesign_1
+      childIds: false
+      timelineId: null
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+      bcCategoryIds: false
+- rule_id: CORE-000945
+  description: Syntax template text is expected to be HTML formatted.
+  message: The text attribute contains non-conformant XHTML.
+  error_count: 36
+  errors:
+  - instance_id: EligibilityCriterionItem_14
+    path: /study/versions/0/eligibilityCriterionItems/13
+    name: EXC-I1
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_15
+    path: /study/versions/0/eligibilityCriterionItems/14
+    name: EXC-I2
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_16
+    path: /study/versions/0/eligibilityCriterionItems/15
+    name: EXC-I3
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_17
+    path: /study/versions/0/eligibilityCriterionItems/16
+    name: EXC-I4
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_18
+    path: /study/versions/0/eligibilityCriterionItems/17
+    name: EXC-I5
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_19
+    path: /study/versions/0/eligibilityCriterionItems/18
+    name: EXC-I6
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_20
+    path: /study/versions/0/eligibilityCriterionItems/19
+    name: EXC-I7
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_21
+    path: /study/versions/0/eligibilityCriterionItems/20
+    name: EXC-I8
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_22
+    path: /study/versions/0/eligibilityCriterionItems/21
+    name: EXC-I9
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_23
+    path: /study/versions/0/eligibilityCriterionItems/22
+    name: EXC-I10
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_24
+    path: /study/versions/0/eligibilityCriterionItems/23
+    name: EXC-I11
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_25
+    path: /study/versions/0/eligibilityCriterionItems/24
+    name: EXC-I12
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_26
+    path: /study/versions/0/eligibilityCriterionItems/25
+    name: EXC-I13
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_27
+    path: /study/versions/0/eligibilityCriterionItems/26
+    name: EXC-I14
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_28
+    path: /study/versions/0/eligibilityCriterionItems/27
+    name: EXC-I15
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_29
+    path: /study/versions/0/eligibilityCriterionItems/28
+    name: EXC-I16
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_30
+    path: /study/versions/0/eligibilityCriterionItems/29
+    name: EXC-I17
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_31
+    path: /study/versions/0/eligibilityCriterionItems/30
+    name: EXC-I18
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_32
+    path: /study/versions/0/eligibilityCriterionItems/31
+    name: EXC-I19
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_33
+    path: /study/versions/0/eligibilityCriterionItems/32
+    name: EXC-I20
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_34
+    path: /study/versions/0/eligibilityCriterionItems/33
+    name: EXC-I21
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_35
+    path: /study/versions/0/eligibilityCriterionItems/34
+    name: EXC-I22
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_36
+    path: /study/versions/0/eligibilityCriterionItems/35
+    name: EXC-I23
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_37
+    path: /study/versions/0/eligibilityCriterionItems/36
+    name: EXC-I24
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_38
+    path: /study/versions/0/eligibilityCriterionItems/37
+    name: EXC-I25
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_39
+    path: /study/versions/0/eligibilityCriterionItems/38
+    name: EXC-I26
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_40
+    path: /study/versions/0/eligibilityCriterionItems/39
+    name: EXC-I27
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_41
+    path: /study/versions/0/eligibilityCriterionItems/40
+    name: EXC-I28
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_42
+    path: /study/versions/0/eligibilityCriterionItems/41
+    name: EXC-I29
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_43
+    path: /study/versions/0/eligibilityCriterionItems/42
+    name: EXC-I30
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_44
+    path: /study/versions/0/eligibilityCriterionItems/43
+    name: EXC-I31
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_45
+    path: /study/versions/0/eligibilityCriterionItems/44
+    name: EXC-I32
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_46
+    path: /study/versions/0/eligibilityCriterionItems/45
+    name: EXC-I33
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_47
+    path: /study/versions/0/eligibilityCriterionItems/46
+    name: EXC-I34
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_48
+    path: /study/versions/0/eligibilityCriterionItems/47
+    name: EXC-I35
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_49
+    path: /study/versions/0/eligibilityCriterionItems/48
+    name: EXC-I36
+    details:
+      parent_rel: eligibilityCriterionItems
+      parent_id: StudyVersion_1
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_entity: StudyVersion

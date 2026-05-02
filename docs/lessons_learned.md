@@ -1409,9 +1409,9 @@ template won't. It'll just render blank cells.
 
 **How to apply.**
 
-- Do not simplify `_row()`'s key set until usdm3 retires and the
-  workbench cuts over to a v4-only path (at which point both engines
-  produce the same row shape and the template can be reconsidered).
+- Do not simplify `_row()`'s key set until the workbench cuts over
+  to a v4-only path (at which point both engines produce the same
+  row shape and the template can be reconsidered).
 - Adding new keys to rows is safe; removing or renaming existing ones
   is not.
 - If you ever replace ValidationLocation with a richer location type,

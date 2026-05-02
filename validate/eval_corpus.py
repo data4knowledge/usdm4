@@ -56,6 +56,11 @@ from typing import Optional
 
 import yaml
 
+# Anchor the default output dir to this script's location, so the path
+# is `validate/eval_output/` regardless of where the harness is invoked from.
+SCRIPT_DIR = pathlib.Path(__file__).resolve().parent
+DEFAULT_OUTPUT_DIR = SCRIPT_DIR / "eval_output"
+
 # usdm4 must import cleanly before we import anything from it.
 from simple_error_log.errors import Errors
 
@@ -424,8 +429,11 @@ def main():
         "-o",
         "--output-dir",
         type=pathlib.Path,
-        default=pathlib.Path("eval_output"),
-        help="Directory where per-protocol records and summary.yaml go",
+        default=DEFAULT_OUTPUT_DIR,
+        help=(
+            "Directory where per-protocol records and summary.yaml go "
+            f"(default: {DEFAULT_OUTPUT_DIR})"
+        ),
     )
     parser.add_argument(
         "--no-core", action="store_true", help="Skip CDISC CORE validation"
