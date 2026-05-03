@@ -607,10 +607,16 @@ class IdentificationAssembler(BaseAssembler):
             organization["type"] = self._builder.cdisc_code(
                 self.ORG_CODES[org_type]["code"], self.ORG_CODES[org_type]["decode"]
             )
+            # Fall back to a label-derived name when ``name`` is missing OR
+            # an empty string. The Pydantic ``NonStandardOrganization`` schema
+            # defaults ``name`` to ``""``, so by the time the dict reaches us
+            # the key is always present even when the source data omitted it
+            # — a bare ``"name" in organization`` check would silently keep
+            # the empty string and trigger the ``min_length=1`` validator on
+            # ``Organization``.
             organization["name"] = (
-                organization["name"]
-                if "name" in organization
-                else self._label_to_name(organization["label"])
+                organization.get("name")
+                or self._label_to_name(organization.get("label", ""))
             )
             org = self._builder.create(Organization, organization)
             if role:

@@ -898,6 +898,96 @@ class TestIdentificationAssemblerPrivateMethods:
         # No role should have been created
         assert len(identification_assembler.roles) == 0
 
+    def test_create_organization_with_empty_name_falls_back_to_label(
+        self, identification_assembler
+    ):
+        """Empty ``name`` (string) must fall back to a label-derived name.
+
+        Regression test: the ``NonStandardOrganization`` Pydantic schema
+        defaults ``name`` to ``""``, so after ``model_validate``/``model_dump``
+        the assembler always sees the key — a bare ``"name" in organization``
+        check would silently keep the empty string and trip the
+        ``min_length=1`` validator on ``Organization.name``.
+        """
+        org_data = {
+            "type": "pharma",
+            "role": None,
+            "name": "",  # empty — must NOT be propagated as-is
+            "description": "Sponsor",
+            "label": "Astellas Pharma",
+            "identifier": "Not known",
+            "identifierScheme": "Not known",
+            "legalAddress": None,
+        }
+
+        organization = identification_assembler._create_organization(org_data)
+
+        assert organization is not None, (
+            "Organization creation must not fail when name is empty but label is set"
+        )
+        assert organization.name == "ASTELLAS-PHARMA"
+        assert organization.label == "Astellas Pharma"
+
+    def test_create_organization_with_missing_name_falls_back_to_label(
+        self, identification_assembler
+    ):
+        """Missing ``name`` key must also fall back to a label-derived name."""
+        org_data = {
+            "type": "pharma",
+            "role": None,
+            # no "name" key at all
+            "description": "Sponsor",
+            "label": "Some Pharma Co",
+            "identifier": "-",
+            "identifierScheme": "-",
+            "legalAddress": None,
+        }
+
+        organization = identification_assembler._create_organization(org_data)
+
+        assert organization is not None
+        assert organization.name == "SOME-PHARMA-CO"
+        assert organization.label == "Some Pharma Co"
+
+    def test_create_organization_after_pydantic_normalisation(
+        self, identification_assembler
+    ):
+        """End-to-end: extractor-style dict → schema → dump → assembler.
+
+        Mirrors the real M11 import path where ``title_page.py`` builds a
+        ``non_standard`` dict that omits ``name``, then ``assembler.execute``
+        runs it through ``AssemblerInput.model_validate(...).model_dump(...)``
+        before handing it to ``_create_organization``. After normalisation the
+        dict carries ``name=""``; the assembler must recover.
+        """
+        from src.usdm4.assembler.schema.identification_schema import (
+            NonStandardOrganization,
+        )
+
+        extractor_dict = {
+            "type": "pharma",
+            "role": None,
+            "description": "The sponsor organization",
+            "label": "Astellas Pharma",
+            "identifier": "Not known",
+            "identifierScheme": "Not known",
+            "legalAddress": None,
+        }
+        normalised = NonStandardOrganization.model_validate(
+            extractor_dict
+        ).model_dump(by_alias=True)
+        # Sanity-check the precondition the regression relies on.
+        assert normalised["name"] == "", (
+            "Schema must inject empty-string default — if this changes the "
+            "regression scenario is no longer reproduced; re-evaluate the test."
+        )
+
+        organization = identification_assembler._create_organization(normalised)
+
+        assert organization is not None
+        assert organization.name == "ASTELLAS-PHARMA"
+        assert organization.label == "Astellas Pharma"
+
 
 class TestIdentificationAssemblerStateManagement:
     """Test IdentificationAssembler state management."""
