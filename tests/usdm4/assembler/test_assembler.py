@@ -883,6 +883,50 @@ class TestAssemblerSchemaIntegration:
 
         assert global_errors.error_count() > initial_error_count
 
+    def test_execute_without_amendments_key_yields_no_amendment(
+        self, minimal_study_data
+    ):
+        """Original protocol path: an input with no ``amendments`` key must
+        produce a Study whose first version has no amendments.
+
+        Regression guard for the 0.24.0 → 0.25.0 fix. Before the fix the
+        Pydantic schema defaulted ``amendments`` to a fully-populated
+        ``AmendmentsInput()``, which after the assembler's ``model_dump``
+        was forwarded to ``AmendmentsAssembler.execute`` as a non-empty
+        dict — its ``if data:`` guard then synthesised a default
+        Global-scope ``StudyAmendment`` for every protocol that had none.
+        """
+        data = {k: v for k, v in minimal_study_data.items() if k != "amendments"}
+        assert "amendments" not in data
+
+        assembler = get_global_assembler()
+        assembler.execute(data)
+
+        assert assembler.study is not None
+        version = assembler.study.versions[0]
+        assert version.amendments == [], (
+            f"Expected no amendments for an input without an amendments key, "
+            f"but got {len(version.amendments)}: {version.amendments!r}"
+        )
+
+    def test_execute_with_explicit_none_amendments_yields_no_amendment(
+        self, minimal_study_data
+    ):
+        """Companion to the no-key test: an input that explicitly sets
+        ``amendments`` to ``None`` must also produce no amendments. The
+        schema's ``Optional`` typing means callers can disambiguate
+        "absent" and "explicitly null" identically.
+        """
+        data = dict(minimal_study_data)
+        data["amendments"] = None
+
+        assembler = get_global_assembler()
+        assembler.execute(data)
+
+        assert assembler.study is not None
+        version = assembler.study.versions[0]
+        assert version.amendments == []
+
 
 class TestAssemblerModuleConstant:
     """Test Assembler MODULE constant."""

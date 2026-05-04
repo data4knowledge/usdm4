@@ -115,10 +115,16 @@ class Assembler:
             # Process population data - defines subject populations and analysis sets
             self._population_assembler.execute(data["population"])
 
-            # Process amendments data
-            self._amendments_assembler.execute(
-                data["amendments"], self._document_assembler
-            )
+            # Process amendments data — truthy check, not key presence:
+            # ``amendments`` is always present on the validated dict (Pydantic
+            # default) but its value is ``None`` when no amendment was
+            # supplied. Mirrors the ``soa`` branch below — and prevents the
+            # sub-assembler from synthesising a default Global-scope amendment
+            # for every protocol that has none (regression hunted in 0.24.0).
+            if data.get("amendments"):
+                self._amendments_assembler.execute(
+                    data["amendments"], self._document_assembler
+                )
 
             # Timelines data — truthy check, not key presence: ``soa`` is
             # always a key on the validated dict (Pydantic-injected default)

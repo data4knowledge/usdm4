@@ -17,7 +17,14 @@ class AssemblerInput(BaseModel):
     population: PopulationInput
     study_design: StudyDesignInput
     study: StudyInput
-    amendments: AmendmentsInput = AmendmentsInput()
+    # ``amendments`` is treated as a presence-bearing optional, mirroring
+    # ``soa`` below: ``None`` means "no amendment supplied", a populated
+    # ``AmendmentsInput`` means "an amendment was supplied". A bare
+    # ``AmendmentsInput()`` default would be indistinguishable from a real
+    # but-empty input once dumped, which silently caused every original
+    # protocol to gain a synthetic global-scope amendment after the
+    # ``Assembler.execute`` change in 0.24.0.
+    amendments: AmendmentsInput | None = None
     soa: TimelineInput | None = None
 
     @model_validator(mode="after")

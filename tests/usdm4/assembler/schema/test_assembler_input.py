@@ -47,8 +47,23 @@ class TestAssemblerInputValidation:
             AssemblerInput.model_validate({})
         assert len(exc_info.value.errors()) >= 4
 
-    def test_amendments_defaults_when_missing(self, minimal_valid_dict):
+    def test_amendments_defaults_to_none(self, minimal_valid_dict):
+        # ``amendments`` is a presence-bearing optional (mirrors ``soa``);
+        # when absent from input it must come through as ``None`` so the
+        # assembler can distinguish "no amendment supplied" from "empty
+        # amendment supplied". Pre-0.25.0 it defaulted to a populated
+        # ``AmendmentsInput()`` which the assembler then synthesised into a
+        # spurious global-scope amendment for every original protocol.
         result = AssemblerInput.model_validate(minimal_valid_dict)
+        assert result.amendments is None
+
+    def test_amendments_accepted_when_provided(self, minimal_valid_dict):
+        # Companion to the no-key test: when amendments IS supplied as an
+        # empty dict, AmendmentsInput's own field defaults still apply
+        # (identifier/summary default to empty strings, etc.).
+        minimal_valid_dict["amendments"] = {}
+        result = AssemblerInput.model_validate(minimal_valid_dict)
+        assert result.amendments is not None
         assert result.amendments.identifier == ""
         assert result.amendments.summary == ""
 
