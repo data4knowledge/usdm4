@@ -614,9 +614,8 @@ class IdentificationAssembler(BaseAssembler):
             # — a bare ``"name" in organization`` check would silently keep
             # the empty string and trigger the ``min_length=1`` validator on
             # ``Organization``.
-            organization["name"] = (
-                organization.get("name")
-                or self._label_to_name(organization.get("label", ""))
+            organization["name"] = organization.get("name") or self._label_to_name(
+                organization.get("label", "")
             )
             org = self._builder.create(Organization, organization)
             if role:

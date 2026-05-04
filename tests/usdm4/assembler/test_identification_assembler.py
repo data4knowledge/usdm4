@@ -973,9 +973,9 @@ class TestIdentificationAssemblerPrivateMethods:
             "identifierScheme": "Not known",
             "legalAddress": None,
         }
-        normalised = NonStandardOrganization.model_validate(
-            extractor_dict
-        ).model_dump(by_alias=True)
+        normalised = NonStandardOrganization.model_validate(extractor_dict).model_dump(
+            by_alias=True
+        )
         # Sanity-check the precondition the regression relies on.
         assert normalised["name"] == "", (
             "Schema must inject empty-string default — if this changes the "
