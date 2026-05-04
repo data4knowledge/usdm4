@@ -6,7 +6,7 @@ from src.usdm4 import USDM4
 from simple_error_log.errors import Errors
 from tests.usdm4.helpers.files import write_json_file, read_json_file
 
-SAVE = True
+SAVE = False
 
 
 def dump_validation_result(result):
