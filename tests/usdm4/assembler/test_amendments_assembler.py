@@ -69,7 +69,7 @@ class TestAmendmentsAssemblerInitialization:
         assert assembler._errors is errors
         assert (
             assembler.MODULE
-            == "usdm4.assembler.amendments_assembler.AmenementsAssembler"
+            == "usdm4.assembler.amendments_assembler.AmendmentsAssembler"
         )
 
         # Test initial state
@@ -1076,7 +1076,7 @@ class TestAmendmentsAssemblerStateManagement:
         # Test that MODULE constant is properly set
         assert (
             amendments_assembler.MODULE
-            == "usdm4.assembler.amendments_assembler.AmenementsAssembler"
+            == "usdm4.assembler.amendments_assembler.AmendmentsAssembler"
         )
 
 
@@ -1642,7 +1642,7 @@ class TestAmendmentsAssemblerAdditionalCoverage:
 
 
 class TestAmendmentsAssemblerChanges:
-    """Test AmendmentsAssembler _create_changes and _extract_section_numer_and_title methods."""
+    """Test AmendmentsAssembler _create_changes and _extract_section_number_and_title methods."""
 
     def test_create_changes_with_valid_section_data(
         self, amendments_assembler, document_assembler
@@ -1776,7 +1776,7 @@ class TestAmendmentsAssemblerChanges:
     def test_extract_section_with_invalid_format(
         self, amendments_assembler, document_assembler, errors
     ):
-        """Test _extract_section_numer_and_title with invalid section format (covers line 150-151)."""
+        """Test _extract_section_number_and_title with invalid section format (covers line 150-151)."""
         initial_error_count = errors.error_count()
         data = {
             "identifier": "1",
@@ -1803,12 +1803,12 @@ class TestAmendmentsAssemblerChanges:
     def test_extract_section_direct_call(
         self, amendments_assembler, document_assembler
     ):
-        """Test _extract_section_numer_and_title directly with various formats."""
-        # Set up the _document_assembler attribute needed by _extract_section_numer_and_title
+        """Test _extract_section_number_and_title directly with various formats."""
+        # Set up the _document_assembler attribute needed by _extract_section_number_and_title
         amendments_assembler._document_assembler = document_assembler
 
         # Valid section number without prefix
-        result = amendments_assembler._extract_section_numer_and_title(
+        result = amendments_assembler._extract_section_number_and_title(
             "1.2.3 Title Here"
         )
         assert len(result) == 1
@@ -1816,7 +1816,7 @@ class TestAmendmentsAssemblerChanges:
         assert result[0].sectionTitle == "Title Here"
 
         # Valid section with 'Section' prefix
-        result = amendments_assembler._extract_section_numer_and_title(
+        result = amendments_assembler._extract_section_number_and_title(
             "Section 4.5 Another Title"
         )
         assert len(result) == 1
@@ -1824,7 +1824,7 @@ class TestAmendmentsAssemblerChanges:
         assert result[0].sectionTitle == "Another Title"
 
         # Section number with comma separator
-        result = amendments_assembler._extract_section_numer_and_title(
+        result = amendments_assembler._extract_section_number_and_title(
             "6.7, Some Title"
         )
         assert len(result) == 1
@@ -1834,14 +1834,14 @@ class TestAmendmentsAssemblerChanges:
     def test_extract_section_with_mixed_valid_invalid(
         self, amendments_assembler, document_assembler, errors
     ):
-        """Test _extract_section_numer_and_title with mix of valid and invalid lines."""
-        # Set up the _document_assembler attribute needed by _extract_section_numer_and_title
+        """Test _extract_section_number_and_title with mix of valid and invalid lines."""
+        # Set up the _document_assembler attribute needed by _extract_section_number_and_title
         amendments_assembler._document_assembler = document_assembler
 
         initial_error_count = errors.error_count()
 
         # Multiple lines with one invalid
-        result = amendments_assembler._extract_section_numer_and_title(
+        result = amendments_assembler._extract_section_number_and_title(
             "1.1 Valid Section\nNo number here\n2.2 Another Valid"
         )
 

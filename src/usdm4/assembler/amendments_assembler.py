@@ -33,7 +33,7 @@ class AmendmentsAssembler(BaseAssembler):
     region-specific scopes.
     """
 
-    MODULE = "usdm4.assembler.amendments_assembler.AmenementsAssembler"
+    MODULE = "usdm4.assembler.amendments_assembler.AmendmentsAssembler"
 
     def __init__(self, builder: Builder, errors: Errors):
         """
@@ -144,7 +144,7 @@ class AmendmentsAssembler(BaseAssembler):
     def _create_changes(self, data: dict) -> list[StudyChange]:
         results = []
         for index, item in enumerate(data["changes"]):
-            refs = self._extract_section_numer_and_title(item["section"])
+            refs = self._extract_section_number_and_title(item["section"])
             params = {
                 "name": f"CHANGE_{index + 1}",
                 "summary": item["description"].strip(),
@@ -156,7 +156,7 @@ class AmendmentsAssembler(BaseAssembler):
                 results.append(change)
         return results
 
-    def _extract_section_numer_and_title(self, text) -> list[DocumentContentReference]:
+    def _extract_section_number_and_title(self, text) -> list[DocumentContentReference]:
         results = []
         pattern = r"^(?:Section\s+)?(\d+(?:\.\d+)*),?\s*(.*)$"
         for line in text.strip().split("\n"):
@@ -173,14 +173,14 @@ class AmendmentsAssembler(BaseAssembler):
                     self._errors.info(
                         f"Extracted section ref from '{line}' -> {params}",
                         KlassMethodLocation(
-                            self.MODULE, "_extract_section_numer_and_title"
+                            self.MODULE, "_extract_section_number_and_title"
                         ),
                     )
             else:
                 self._errors.error(
                     f"Failed to extract section ref from '{line}'",
                     KlassMethodLocation(
-                        self.MODULE, "_extract_section_numer_and_title"
+                        self.MODULE, "_extract_section_number_and_title"
                     ),
                 )
         return results
