@@ -77,8 +77,19 @@ class RuleDDF00229(RuleTemplate):
             if not instances:
                 continue
             codes, decodes = self._check_codelist(ct, klass, "studyPhase")
+            # We also need the parallel preferredTerm list to report the
+            # SDTM PT in the M11/CPT warning message — `decodes` is now a
+            # union dict of (preferredTerm | submissionValue) → index and
+            # has lost the "which label was preferredTerm" distinction.
+            raw_codelist = ct.klass_and_attribute(klass, "studyPhase")
+            preferred_terms_by_code: dict[str, str] = {
+                term["conceptId"]: term.get("preferredTerm", "")
+                for term in raw_codelist.get("terms") or []
+            }
             for instance in instances:
-                self._check_one(instance, klass, codes, decodes, data)
+                self._check_one(
+                    instance, klass, codes, decodes, preferred_terms_by_code, data
+                )
         return self._result()
 
     def _check_one(
@@ -86,7 +97,8 @@ class RuleDDF00229(RuleTemplate):
         instance: dict,
         klass: str,
         codes: list[str],
-        decodes: list[str],
+        decodes: dict[str, int],
+        preferred_terms_by_code: dict[str, str],
         data,
     ) -> None:
         path = data.path_by_id(instance["id"])
@@ -106,7 +118,9 @@ class RuleDDF00229(RuleTemplate):
         code = target.get("code")
         decode = target.get("decode")
         code_index = self._find_index(codes, code)
-        decode_index = self._find_index(decodes, decode)
+        # `decodes` is a {label: term_index} dict accepting either
+        # preferredTerm or submissionValue (RuleTemplate._codes_and_decodes).
+        decode_index = decodes.get(decode) if decode is not None else None
 
         if code_index is None and decode_index is None:
             self._add_failure(
@@ -126,10 +140,10 @@ class RuleDDF00229(RuleTemplate):
             )
             return
         if decode_index is None:
-            # Code is in C66737 but decode isn't its SDTM PT.
+            # Code is in C66737 but decode isn't its SDTM PT or SV.
             # If the decode matches the M11 PT for this code, treat as a
             # cross-standard difference (warning); otherwise error.
-            sdtm_pt = decodes[code_index]
+            sdtm_pt = preferred_terms_by_code.get(code, code)
             m11_pt = _M11_TRIAL_PHASE_PTS.get(code)
             if m11_pt is not None and decode == m11_pt:
                 self._add_at_level(

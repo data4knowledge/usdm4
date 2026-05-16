@@ -259,3 +259,81 @@ def test_codelist_with_null_terms_falls_back_to_empty():
     )
     # No valid codes → any code is rejected
     assert rule.validate({"data": data, "ct": ct}) is False
+
+
+# ---------------------------------------------------------------------------
+# decode accepts BOTH preferredTerm and submissionValue (mirrors the
+# RuleTemplate._codes_and_decodes widening — same CDISC policy).
+# ---------------------------------------------------------------------------
+
+
+def _ct_with_both_labels():
+    """C66781 stub where preferredTerm and submissionValue differ for a
+    term, so we can confirm both forms are accepted independently."""
+    ct = MagicMock()
+    ct._by_code_list = {
+        AGE_UNIT_CODELIST: {
+            "terms": [
+                {
+                    "conceptId": "C29848",
+                    "preferredTerm": "Year",
+                    "submissionValue": "Years",
+                }
+            ]
+        }
+    }
+    return ct
+
+
+def test_quantity_with_decode_matching_preferred_term_passes():
+    rule = RuleDDF00237()
+    data = _data_with_instances(
+        pop_instances=[
+            {
+                "id": "p1",
+                "plannedAge": {
+                    "value": 18,
+                    "unit": {"standardCode": {"code": "C29848", "decode": "Year"}},
+                },
+            }
+        ]
+    )
+    assert rule.validate({"data": data, "ct": _ct_with_both_labels()}) is True
+    assert rule.errors().count() == 0
+
+
+def test_quantity_with_decode_matching_submission_value_passes():
+    """Regression: submissionValue must validate, not just preferredTerm."""
+    rule = RuleDDF00237()
+    data = _data_with_instances(
+        pop_instances=[
+            {
+                "id": "p1",
+                "plannedAge": {
+                    "value": 18,
+                    "unit": {"standardCode": {"code": "C29848", "decode": "Years"}},
+                },
+            }
+        ]
+    )
+    assert rule.validate({"data": data, "ct": _ct_with_both_labels()}) is True
+    assert rule.errors().count() == 0
+
+
+def test_quantity_with_decode_matching_neither_label_still_fails():
+    rule = RuleDDF00237()
+    data = _data_with_instances(
+        pop_instances=[
+            {
+                "id": "p1",
+                "plannedAge": {
+                    "value": 18,
+                    "unit": {
+                        "standardCode": {"code": "C29848", "decode": "Yr"}
+                    },  # neither preferredTerm nor submissionValue
+                },
+            }
+        ]
+    )
+    assert rule.validate({"data": data, "ct": _ct_with_both_labels()}) is False
+    assert rule.errors().count() == 1

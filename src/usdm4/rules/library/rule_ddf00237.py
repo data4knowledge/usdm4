@@ -54,7 +54,16 @@ class RuleDDF00237(RuleTemplate):
             # re-activates once the cache is refreshed.
             return True
         valid_codes = {term["conceptId"] for term in codelist.get("terms") or []}
-        valid_decodes = {term["preferredTerm"] for term in codelist.get("terms") or []}
+        # Accept either preferredTerm or submissionValue — both are valid
+        # CDISC encodings for the same term (mirrors RuleTemplate._codes_and_decodes).
+        valid_decodes: set[str] = set()
+        for term in codelist.get("terms") or []:
+            preferred = term.get("preferredTerm")
+            submission = term.get("submissionValue")
+            if preferred is not None:
+                valid_decodes.add(preferred)
+            if submission is not None:
+                valid_decodes.add(submission)
         for klass in SCOPE_CLASSES:
             for instance in data.instances_by_klass(klass):
                 planned_age = instance.get("plannedAge")

@@ -93,7 +93,13 @@ class RuleTemplate:
                     code = target.get("code")
                     decode = target.get("decode")
                     code_index = self._find_index(codes, code)
-                    decode_index = self._find_index(decodes, decode)
+                    # `decodes` is a {label: term_index} dict; a label maps to
+                    # the index of its term whether the input matches the
+                    # term's preferredTerm OR its submissionValue. CDISC
+                    # publishes both and sponsors legitimately use either.
+                    decode_index = (
+                        decodes.get(decode) if decode is not None else None
+                    )
                     if code_index is None and decode_index is not None:
                         self._add_failure(
                             f"Invalid code '{code}', the code is not in the codelist",
@@ -133,7 +139,7 @@ class RuleTemplate:
 
     def _check_codelist(
         self, ct: CTLibrary, klass: str, attribute: str
-    ) -> tuple[list[str], list[str]]:
+    ) -> tuple[list[str], dict[str, int]]:
         codelist = ct.klass_and_attribute(klass, attribute)
         if codelist is None:
             raise self.CTException(
@@ -146,11 +152,39 @@ class RuleTemplate:
             )
         return codes, decodes
 
-    def _codes_and_decodes(self, codelist: dict) -> tuple[list[str], list[str]]:
+    def _codes_and_decodes(
+        self, codelist: dict
+    ) -> tuple[list[str], dict[str, int]]:
+        """Split a codelist into (codes, decodes-by-label).
+
+        `codes` is the conventional list of conceptIds, indexed by term
+        position. `decodes` is a dict mapping each acceptable label
+        (preferredTerm OR submissionValue) to the index of its term.
+
+        Accepting both labels reflects CDISC's published codelists, where
+        preferredTerm is the NCI Thesaurus preferred term and
+        submissionValue is the value used in SDTM/CDASH submissions —
+        sponsors legitimately encode either (e.g. C54149 has
+        preferredTerm "Drug Company" and submissionValue
+        "Pharmaceutical Company"; both must validate). Synonyms are
+        deliberately NOT included; that would weaken the check.
+
+        The dict shape also preserves the pair-matching semantics:
+        because both labels for a term share the same index, the
+        `code_index != decode_index` mismatch check in `_ct_check` still
+        works when the code is from one term and the decode from another.
+        """
         if "terms" not in codelist or codelist["terms"] == []:
             return None, None
         codes = [x["conceptId"] for x in codelist["terms"]]
-        decodes = [x["preferredTerm"] for x in codelist["terms"]]
+        decodes: dict[str, int] = {}
+        for i, term in enumerate(codelist["terms"]):
+            preferred = term.get("preferredTerm")
+            submission = term.get("submissionValue")
+            if preferred is not None:
+                decodes[preferred] = i
+            if submission is not None:
+                decodes[submission] = i
         return codes, decodes
 
     def _find_index(self, items: list[str], value: str) -> int | None:
