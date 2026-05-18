@@ -354,9 +354,13 @@ class IdentificationAssembler(BaseAssembler):
                         }
                     ],
                     "roles": {
-                        "co_sponsor": {"name": [str], "legal_address": [address structure]},
-                        "local_sponsor": {"name": [str], "legal_address": [address structure]},
-                        "device_manufacturer": {"name": [str], "legal_address": [address structure]},
+                        # Address key is "address" (NOT "legal_address" or
+                        # "legalAddress"). The execute() loop reads
+                        # info.get("address") and converts it into the
+                        # Organization's legalAddress on the model side.
+                        "co_sponsor": {"name": str, "address": "<address structure>"},
+                        "local_sponsor": {"name": str, "address": "<address structure>"},
+                        "device_manufacturer": {"name": str, "address": "<address structure>"},
                     }
                 }
 
