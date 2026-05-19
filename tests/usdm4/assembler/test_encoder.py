@@ -290,6 +290,70 @@ class TestEncoderPhase:
         encoder._errors.warning.assert_called()
         assert result == mock_alias
 
+    @pytest.mark.parametrize(
+        "alias",
+        [
+            "1-2", "1/2", "I-II", "I/II",
+            "1/2/3", "1-2-3", "I/II/III", "I-II-III",
+            "1/3", "1-3", "I/III", "I-III",
+            "2-3", "2/3", "II-III", "II/III",
+            "2/3/4", "2-3-4", "II/III/IV", "II-III-IV",
+        ],
+    )
+    def test_phase_compound_aliases_resolve(self, encoder, alias):
+        """Every compound-phase alias maps to a CDISC code (not the
+        Not-Applicable fallback). Guards against the slash/Roman
+        synonyms regressing — the FHIR round-trip lands a Roman-numeral
+        form like ``"I/II"`` back in the encoder, and the assembler
+        must keep round-tripping it to the correct CDISC concept.
+        """
+        mock_code = Mock(spec=Code)
+        mock_alias = Mock(spec=AliasCode)
+        encoder._builder.cdisc_code.return_value = mock_code
+        encoder._builder.alias_code.return_value = mock_alias
+
+        encoder.phase(alias)
+
+        # Must NOT have fallen through to the Not-Applicable default.
+        call = encoder._builder.cdisc_code.call_args
+        assert call is not None, f"phase({alias!r}) made no cdisc_code call"
+        assert call[0][0] != "C48660", (
+            f"phase({alias!r}) fell through to Not-Applicable — "
+            "expected a compound-phase concept ID."
+        )
+
+
+class TestEncoderPhaseTextForCode:
+    """Encoder.phase_text_for_code — classmethod for code-first round-trip."""
+
+    @pytest.mark.parametrize(
+        "code,expected_first_alias",
+        [
+            ("C54721", "0"),
+            ("C15600", "1"),
+            ("C15601", "2"),
+            ("C15602", "3"),
+            ("C15603", "4"),
+            ("C15693", "1-2"),
+            ("C15694", "2-3"),
+            ("C198366", "1/2/3"),
+            ("C198367", "1/3"),
+            ("C217024", "2/3/4"),
+            ("C199990", "1A"),
+            ("C49689", "3B"),
+        ],
+    )
+    def test_known_codes_resolve(self, code, expected_first_alias):
+        """Returns the first alias from the matching PHASE_MAP tuple."""
+        assert Encoder.phase_text_for_code(code) == expected_first_alias
+
+    def test_unknown_code_returns_none(self):
+        """Unknown concept ID → None so the caller can fall back."""
+        assert Encoder.phase_text_for_code("C99999999") is None
+
+    def test_empty_code_returns_none(self):
+        assert Encoder.phase_text_for_code("") is None
+
 
 class TestEncoderDocumentStatus:
     """Test document_status encoding method"""

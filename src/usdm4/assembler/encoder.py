@@ -30,7 +30,13 @@ class Encoder:
             },
         ),
         (
-            ["1-2"],
+            # Phase 1/2 — accept digit (1/2, 1-2) and Roman (I/II, I-II)
+            # forms. The Roman aliases are what comes back through the
+            # FHIR round-trip: Builder.cdisc_code substitutes the CDISC
+            # preferredTerm "Phase I/II Trial" on export, and the
+            # importer strips PHASE/TRIAL to "I/II" before re-running
+            # phase().
+            ["1-2", "1/2", "I-II", "I/II"],
             {
                 "code": "C15693",
                 "m11_decode": "Phase 1/Phase 2",
@@ -38,15 +44,7 @@ class Encoder:
             },
         ),
         (
-            ["1/2"],
-            {
-                "code": "C15693",
-                "m11_decode": "Phase 1/Phase 2",
-                "cdisc_decode": "Phase I/II Trial",
-            },
-        ),
-        (
-            ["1/2/3"],
+            ["1/2/3", "1-2-3", "I/II/III", "I-II-III"],
             {
                 "code": "C198366",
                 "m11_decode": "Phase 1/Phase 2/Phase 3",
@@ -54,7 +52,7 @@ class Encoder:
             },
         ),
         (
-            ["1/3"],
+            ["1/3", "1-3", "I/III", "I-III"],
             {
                 "code": "C198367",
                 "m11_decode": "Phase 1/Phase 3",
@@ -78,7 +76,7 @@ class Encoder:
             },
         ),
         (
-            ["2-3", "II-III"],
+            ["2-3", "2/3", "II-III", "II/III"],
             {
                 "code": "C15694",
                 "m11_decode": "Phase 2/Phase 3",
@@ -122,7 +120,10 @@ class Encoder:
             {"code": "C47865", "m11_decode": None, "cdisc_decode": "Phase V Trial"},
         ),
         (
-            ["2/3/4", "V"],
+            # NB: the stray "V" alias that used to sit in this tuple
+            # was a copy-paste leftover from the Phase V entry above —
+            # unreachable because ("5", "V") matches first.
+            ["2/3/4", "2-3-4", "II/III/IV", "II-III-IV"],
             {
                 "code": "C217024",
                 "m11_decode": "Phase 2/Phase 3/Phase 4",
@@ -420,6 +421,27 @@ class Encoder:
     def __init__(self, builder: Builder, errors: Errors):
         self._builder: Builder = builder
         self._errors: Errors = errors
+
+    @classmethod
+    def phase_text_for_code(cls, code: str) -> str | None:
+        """Return a canonical phase input string for a CDISC phase concept ID.
+
+        Importers that hold a CDISC code (e.g. ``usdm4_fhir`` reading
+        ``ResearchStudy.phase.coding[0].code``) can use this to round-trip
+        back through ``Encoder.phase()`` without going through the
+        potentially ambiguous CDISC display string. For example,
+        ``"Phase I/II Trial"`` strips to ``"I/II"`` which only matches
+        PHASE_MAP after the Roman aliases were added; mapping the
+        ``C15693`` code directly avoids that fragility altogether.
+
+        Returns the first alias from the matching tuple, or ``None`` when
+        the code is unknown. Callers should fall back to the FHIR
+        ``display`` text in that case.
+        """
+        for aliases, entry in cls.PHASE_MAP:
+            if entry.get("code") == code and aliases:
+                return aliases[0]
+        return None
 
     def phase(self, text: str) -> AliasCode:
         phase = text
