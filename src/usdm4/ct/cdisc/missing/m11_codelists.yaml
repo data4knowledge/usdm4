@@ -1,0 +1,11 @@
+# Whole M11 codelists referenced by ICH M11 elements. The CDISC Library
+# API does not currently serve these (they live in NCIt under codes like
+# C217045 for the M11 Trial Phase codelist), so usdm4 loads them
+# directly from the m11_specification snapshot. Each entry uses the
+# `codelist:` shape — see Library._add_whole_codelist.
+#
+# All M11 codelists referenced from merged_elements.json are emitted
+# here, not just the ones consumed by current validator rules.
+#
+# DO NOT EDIT — regenerate via usdm4_protocol/tools/generate_m11_ct.py.
+[]

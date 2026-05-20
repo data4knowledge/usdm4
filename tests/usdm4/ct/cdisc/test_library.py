@@ -13,7 +13,7 @@ import pathlib
 
 import pytest
 
-from src.usdm4.ct.cdisc.library import Library
+from src.usdm4.ct.cdisc.library import ConfigurationError, Library
 
 
 ROOT = os.path.join(
@@ -333,16 +333,336 @@ def test_get_all_ct_populates_indexes(loaded_library):
 
 
 # ---------------------------------------------------------------------------
-# _add_missing_ct
+# _add_missing_ct — dispatch on shape + per-file invariant
 # ---------------------------------------------------------------------------
 
 
-def test_add_missing_ct_appends_lists(loaded_library):
+def _extension_entry(target="C66737", source="NCIt-M11", terms=None):
+    """Helper — produce an `extends:` entry as it would appear in missing_ct.yaml."""
+    return {
+        "extends": target,
+        "source": source,
+        "terms": terms or [
+            {
+                "conceptId": "C999001",
+                "preferredTerm": "Extension Term",
+                "definition": "An added term",
+                "submissionValue": "",
+                "synonyms": [],
+            }
+        ],
+    }
+
+
+def _whole_codelist_entry(codelist="C217045", source="NCIt-M11", terms=None):
+    """Helper — produce a `codelist:` entry as it would appear in m11_codelists.yaml."""
+    return {
+        "codelist": codelist,
+        "source": source,
+        "preferredTerm": "Whole Codelist",
+        "definition": "A whole codelist",
+        "extensible": False,
+        "submissionValue": "",
+        "synonyms": [],
+        "terms": terms or [
+            {
+                "conceptId": "C999100",
+                "preferredTerm": "Whole Term",
+                "definition": "A term in the whole codelist",
+                "submissionValue": "",
+                "synonyms": [],
+            }
+        ],
+    }
+
+
+def test_add_missing_ct_routes_extends_to_merge(loaded_library):
+    """An entry tagged 'missing_ct.yaml' with extends: triggers _merge_extension."""
+    loaded_library._by_code_list["C66737"] = {
+        **_sample_code_list("C66737"),
+        "extensible": "true",
+    }
     loaded_library._missing.code_lists = MagicMock(
-        return_value=[_sample_code_list("EXTRA")]
+        return_value=[(_extension_entry("C66737"), "missing_ct.yaml")]
     )
     loaded_library._add_missing_ct()
-    assert "EXTRA" in loaded_library._by_code_list
+    assert "C999001" in loaded_library._by_term
+
+
+def test_add_missing_ct_routes_codelist_to_whole(loaded_library):
+    """An entry tagged 'm11_codelists.yaml' with codelist: triggers _add_whole_codelist."""
+    loaded_library._missing.code_lists = MagicMock(
+        return_value=[(_whole_codelist_entry("C217045"), "m11_codelists.yaml")]
+    )
+    loaded_library._add_missing_ct()
+    assert "C217045" in loaded_library._by_code_list
+    assert "C999100" in loaded_library._by_term
+
+
+def test_add_missing_ct_rejects_codelist_in_missing_ct_file(loaded_library):
+    """codelist: shape is not allowed in missing_ct.yaml."""
+    loaded_library._missing.code_lists = MagicMock(
+        return_value=[(_whole_codelist_entry("C217045"), "missing_ct.yaml")]
+    )
+    with pytest.raises(ConfigurationError, match="missing_ct.yaml"):
+        loaded_library._add_missing_ct()
+
+
+def test_add_missing_ct_rejects_extends_in_m11_file(loaded_library):
+    """extends: shape is not allowed in m11_codelists.yaml."""
+    loaded_library._missing.code_lists = MagicMock(
+        return_value=[(_extension_entry("C66737"), "m11_codelists.yaml")]
+    )
+    with pytest.raises(ConfigurationError, match="m11_codelists.yaml"):
+        loaded_library._add_missing_ct()
+
+
+def test_add_missing_ct_rejects_entry_with_both_discriminators(loaded_library):
+    """An entry must have exactly one of extends: or codelist:."""
+    both = {"extends": "C66737", "codelist": "C217045", "terms": []}
+    loaded_library._missing.code_lists = MagicMock(
+        return_value=[(both, "missing_ct.yaml")]
+    )
+    with pytest.raises(ConfigurationError):
+        loaded_library._add_missing_ct()
+
+
+def test_add_missing_ct_rejects_unknown_source_file(loaded_library):
+    """Defensive check — Missing should never yield an unknown source name."""
+    loaded_library._missing.code_lists = MagicMock(
+        return_value=[(_extension_entry("C66737"), "unexpected.yaml")]
+    )
+    with pytest.raises(ConfigurationError, match="Unknown missing-CT source file"):
+        loaded_library._add_missing_ct()
+
+
+# ---------------------------------------------------------------------------
+# _merge_extension
+# ---------------------------------------------------------------------------
+
+
+def test_merge_extension_appends_term_to_target_codelist(loaded_library):
+    loaded_library._by_code_list["C66737"] = {
+        **_sample_code_list("C66737"),
+        "extensible": "true",
+    }
+    loaded_library._merge_extension(_extension_entry("C66737"))
+    target_terms = loaded_library._by_code_list["C66737"]["terms"]
+    assert any(t["conceptId"] == "C999001" for t in target_terms)
+
+
+def test_merge_extension_stamps_source_tag(loaded_library):
+    """Each merged-in term carries the entry's source tag."""
+    loaded_library._by_code_list["C66737"] = {
+        **_sample_code_list("C66737"),
+        "extensible": "true",
+    }
+    loaded_library._merge_extension(_extension_entry("C66737", source="NCIt-M11"))
+    new_term = next(
+        t for t in loaded_library._by_code_list["C66737"]["terms"]
+        if t["conceptId"] == "C999001"
+    )
+    assert new_term["source"] == "NCIt-M11"
+
+
+def test_merge_extension_defaults_source_when_missing(loaded_library):
+    """If the entry has no source tag, the loader stamps 'extension'."""
+    loaded_library._by_code_list["C66737"] = {
+        **_sample_code_list("C66737"),
+        "extensible": "true",
+    }
+    entry = _extension_entry("C66737")
+    del entry["source"]
+    loaded_library._merge_extension(entry)
+    new_term = next(
+        t for t in loaded_library._by_code_list["C66737"]["terms"]
+        if t["conceptId"] == "C999001"
+    )
+    assert new_term["source"] == "extension"
+
+
+def test_merge_extension_indexes_new_terms(loaded_library):
+    """New terms appear in _by_term, _by_submission, _by_pt indexes."""
+    loaded_library._by_code_list["C66737"] = {
+        **_sample_code_list("C66737"),
+        "extensible": "true",
+    }
+    loaded_library._merge_extension(
+        _extension_entry(
+            "C66737",
+            terms=[{
+                "conceptId": "C999001",
+                "preferredTerm": "Extension Term",
+                "submissionValue": "EXT_TERM",
+            }],
+        )
+    )
+    assert "C999001" in loaded_library._by_term
+    assert "EXT_TERM" in loaded_library._by_submission
+    assert "Extension Term" in loaded_library._by_pt
+
+
+def test_merge_extension_raises_when_target_not_loaded(loaded_library):
+    loaded_library._by_code_list.pop("C66737", None)
+    with pytest.raises(ConfigurationError, match="not loaded"):
+        loaded_library._merge_extension(_extension_entry("C66737"))
+
+
+def test_merge_extension_raises_when_target_not_extensible(loaded_library):
+    loaded_library._by_code_list["C66737"] = {
+        **_sample_code_list("C66737"),
+        "extensible": "false",
+    }
+    with pytest.raises(ConfigurationError, match="non-extensible"):
+        loaded_library._merge_extension(_extension_entry("C66737"))
+
+
+def test_merge_extension_accepts_extensible_true_as_bool(loaded_library):
+    """The extensible flag may be a bool True (CDISC API) or 'true' string (YAML)."""
+    loaded_library._by_code_list["C66737"] = {
+        **_sample_code_list("C66737"),
+        "extensible": True,
+    }
+    # Should not raise.
+    loaded_library._merge_extension(_extension_entry("C66737"))
+
+
+# ---------------------------------------------------------------------------
+# _add_whole_codelist
+# ---------------------------------------------------------------------------
+
+
+def test_add_whole_codelist_creates_entry(loaded_library):
+    loaded_library._add_whole_codelist(_whole_codelist_entry("C217045"))
+    assert "C217045" in loaded_library._by_code_list
+    assert loaded_library._by_code_list["C217045"]["conceptId"] == "C217045"
+
+
+def test_add_whole_codelist_stamps_source_on_terms(loaded_library):
+    loaded_library._add_whole_codelist(
+        _whole_codelist_entry("C217045", source="NCIt-M11")
+    )
+    terms = loaded_library._by_code_list["C217045"]["terms"]
+    assert all(t["source"] == "NCIt-M11" for t in terms)
+
+
+def test_add_whole_codelist_indexes_terms(loaded_library):
+    loaded_library._add_whole_codelist(
+        _whole_codelist_entry(
+            "C217045",
+            terms=[{
+                "conceptId": "C15600",
+                "preferredTerm": "Phase 1",
+                "submissionValue": "",
+            }],
+        )
+    )
+    assert "C15600" in loaded_library._by_term
+    assert "Phase 1" in loaded_library._by_pt
+
+
+def test_add_whole_codelist_raises_on_duplicate_id(loaded_library):
+    """If conceptId is already loaded, raise — use extends: to add terms."""
+    loaded_library._by_code_list["C217045"] = _sample_code_list("C217045")
+    with pytest.raises(ConfigurationError, match="already loaded"):
+        loaded_library._add_whole_codelist(_whole_codelist_entry("C217045"))
+
+
+def test_add_whole_codelist_preserves_extensible_flag(loaded_library):
+    """The extensible flag on the new codelist is preserved as-given."""
+    entry = _whole_codelist_entry("C217045")
+    entry["extensible"] = True
+    loaded_library._add_whole_codelist(entry)
+    assert loaded_library._by_code_list["C217045"]["extensible"] is True
+
+
+# ---------------------------------------------------------------------------
+# is_in_codelist / find_in_codelist — common membership predicate
+# ---------------------------------------------------------------------------
+
+
+def test_is_in_codelist_matches_by_concept_id(loaded_library):
+    assert loaded_library.is_in_codelist("T1", "C1", by="concept_id") is True
+
+
+def test_is_in_codelist_matches_by_preferred_term_case_insensitive(loaded_library):
+    assert loaded_library.is_in_codelist("term a", "C1", by="preferred_term") is True
+    assert loaded_library.is_in_codelist("TERM A", "C1", by="preferred_term") is True
+
+
+def test_is_in_codelist_matches_by_submission_value_case_insensitive(loaded_library):
+    assert loaded_library.is_in_codelist("term_a", "C1", by="submission_value") is True
+    assert loaded_library.is_in_codelist("TERM_A", "C1", by="submission_value") is True
+
+
+def test_is_in_codelist_any_mode_tries_all_three(loaded_library):
+    assert loaded_library.is_in_codelist("T1", "C1", by="any") is True
+    assert loaded_library.is_in_codelist("Term A", "C1", by="any") is True
+    assert loaded_library.is_in_codelist("TERM_A", "C1", by="any") is True
+
+
+def test_is_in_codelist_returns_false_on_miss(loaded_library):
+    assert loaded_library.is_in_codelist("Nope", "C1", by="any") is False
+
+
+def test_is_in_codelist_returns_false_when_codelist_unknown(loaded_library):
+    assert loaded_library.is_in_codelist("T1", "C_DOES_NOT_EXIST", by="any") is False
+
+
+def test_is_in_codelist_concept_id_is_case_sensitive(loaded_library):
+    """NCI conceptIds are uppercase; lowercase should not match."""
+    assert loaded_library.is_in_codelist("t1", "C1", by="concept_id") is False
+
+
+def test_is_in_codelist_by_concept_id_does_not_match_pt(loaded_library):
+    """Specifying by='concept_id' shouldn't fall through to PT/SV matches."""
+    assert loaded_library.is_in_codelist("Term A", "C1", by="concept_id") is False
+
+
+def test_find_in_codelist_returns_cdisc_source_for_loaded_terms(loaded_library):
+    term, source = loaded_library.find_in_codelist("T1", "C1", by="concept_id")
+    assert term["conceptId"] == "T1"
+    assert source == "cdisc"
+
+
+def test_find_in_codelist_returns_extension_source_after_merge(loaded_library):
+    """A term added via _merge_extension is returned with its source tag."""
+    loaded_library._by_code_list["C66737"] = {
+        **_sample_code_list("C66737"),
+        "extensible": "true",
+    }
+    loaded_library._merge_extension(
+        _extension_entry("C66737", source="NCIt-M11")
+    )
+    term, source = loaded_library.find_in_codelist("C999001", "C66737", by="concept_id")
+    assert term["conceptId"] == "C999001"
+    assert source == "NCIt-M11"
+
+
+def test_find_in_codelist_returns_extension_source_for_whole_codelist(loaded_library):
+    """A term in a whole codelist added via _add_whole_codelist carries the source tag."""
+    loaded_library._add_whole_codelist(
+        _whole_codelist_entry("C217045", source="NCIt-M11")
+    )
+    term, source = loaded_library.find_in_codelist("C999100", "C217045", by="concept_id")
+    assert term["conceptId"] == "C999100"
+    assert source == "NCIt-M11"
+
+
+def test_find_in_codelist_miss_returns_none_pair(loaded_library):
+    term, source = loaded_library.find_in_codelist("Nope", "C1", by="any")
+    assert term is None and source is None
+
+
+def test_find_in_codelist_unknown_codelist_returns_none_pair(loaded_library):
+    term, source = loaded_library.find_in_codelist("T1", "C_NONE", by="any")
+    assert term is None and source is None
+
+
+def test_find_in_codelist_handles_none_value(loaded_library):
+    """Defensive: a None or empty value should be a clean miss, not a crash."""
+    assert loaded_library.find_in_codelist(None, "C1", by="any") == (None, None)
+    assert loaded_library.find_in_codelist("", "C1", by="any") == (None, None)
 
 
 # ---------------------------------------------------------------------------

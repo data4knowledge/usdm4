@@ -5,6 +5,18 @@ from usdm4.ct.cdisc.missing.missing import Missing
 from usdm4.ct.cdisc.library_cache.library_cache import LibraryCache
 
 
+class ConfigurationError(Exception):
+    """Raised when a missing-CT YAML entry violates a loader constraint.
+
+    Examples: wrong shape for the file it's in, extension targeting a
+    codelist that isn't loaded, extension targeting a non-extensible
+    codelist, whole-codelist declaration whose conceptId is already
+    loaded. These are config-level mistakes, not user-facing findings;
+    they should surface as startup errors that block the Library from
+    coming up with a half-loaded state.
+    """
+
+
 class Library:
     """
     A class to manage CDISC controlled terminology (CT) data.
@@ -107,6 +119,57 @@ class Library:
             return self._by_code_list[concept_ids[0]]
         except Exception:
             return None
+
+    def is_in_codelist(
+        self, value: str, codelist_id: str, by: str = "any"
+    ) -> bool:
+        """True if ``value`` is a member of the codelist identified by ``codelist_id``.
+
+        ``by`` selects the match field:
+
+          - ``"concept_id"`` — case-sensitive match on ``term.conceptId``
+          - ``"preferred_term"`` — case-insensitive match on ``term.preferredTerm``
+          - ``"submission_value"`` — case-insensitive match on ``term.submissionValue``
+          - ``"any"`` (default) — try all three in that order
+
+        This is the single membership predicate that d4k rules and M11
+        validator rules should call instead of reaching into
+        ``_by_code_list`` directly. Extensions added via
+        ``_merge_extension`` and codelists added via
+        ``_add_whole_codelist`` are transparently included.
+        """
+        return self.find_in_codelist(value, codelist_id, by)[0] is not None
+
+    def find_in_codelist(
+        self, value: str, codelist_id: str, by: str = "any"
+    ) -> tuple[dict, str]:
+        """Return ``(term, source_tag)`` or ``(None, None)``.
+
+        ``source_tag`` is ``"cdisc"`` for terms loaded from the CDISC
+        Library, or the entry's ``source`` string (e.g. ``"NCIt-M11"``)
+        for terms added via ``_merge_extension`` / ``_add_whole_codelist``.
+        Callers that need to differentiate (e.g. DDF00229's warning-vs-
+        error decision) read this tag; callers that only care about
+        membership use :meth:`is_in_codelist`.
+
+        See :meth:`is_in_codelist` for the ``by`` parameter semantics.
+        """
+        cl = self._by_code_list.get(codelist_id)
+        if cl is None:
+            return (None, None)
+        needle = (value or "").casefold()
+        for term in cl.get("terms") or []:
+            if by in ("concept_id", "any") and term.get("conceptId", "") == value:
+                return (term, term.get("source") or "cdisc")
+            if by in ("preferred_term", "any") and (
+                term.get("preferredTerm") or ""
+            ).casefold() == needle:
+                return (term, term.get("source") or "cdisc")
+            if by in ("submission_value", "any") and (
+                term.get("submissionValue") or ""
+            ).casefold() == needle:
+                return (term, term.get("source") or "cdisc")
+        return (None, None)
 
     def submission(self, value, cl=None):
         if value in list(self._by_submission.keys()):
@@ -226,19 +289,110 @@ class Library:
                 self._check_in_and_add(self._by_pt, item["preferredTerm"], c_code)
 
     def _add_missing_ct(self) -> None:
-        for response in self._missing.code_lists():
-            self._by_code_list[response["conceptId"]] = response
-            for item in response["terms"]:
-                # Index the additional terms
-                self._check_in_and_add(
-                    self._by_term, item["conceptId"], response["conceptId"]
+        """Load entries from missing_ct.yaml and m11_codelists.yaml.
+
+        Dispatches on shape (``extends:`` vs ``codelist:``) and enforces
+        the per-file invariant: extensions only in ``missing_ct.yaml``,
+        whole codelists only in ``m11_codelists.yaml``. Wrong-file
+        entries raise :class:`ConfigurationError` so the mistake is
+        surfaced at startup rather than silently mis-handled.
+        """
+        for entry, source_file in self._missing.code_lists():
+            if source_file == "missing_ct.yaml":
+                if "extends" not in entry or "codelist" in entry:
+                    raise ConfigurationError(
+                        f"missing_ct.yaml entries must use the 'extends:' shape; "
+                        f"got keys {sorted(entry)}"
+                    )
+                self._merge_extension(entry)
+            elif source_file == "m11_codelists.yaml":
+                if "codelist" not in entry or "extends" in entry:
+                    raise ConfigurationError(
+                        f"m11_codelists.yaml entries must use the 'codelist:' shape; "
+                        f"got keys {sorted(entry)}"
+                    )
+                self._add_whole_codelist(entry)
+            else:
+                raise ConfigurationError(
+                    f"Unknown missing-CT source file {source_file!r}"
                 )
-                self._check_in_and_add(
-                    self._by_submission, item["submissionValue"], response["conceptId"]
-                )
-                self._check_in_and_add(
-                    self._by_pt, item["preferredTerm"], response["conceptId"]
-                )
+
+    def _merge_extension(self, entry: dict) -> None:
+        """Add the entry's terms to an already-loaded extensible codelist.
+
+        Raises :class:`ConfigurationError` if the target codelist isn't
+        loaded yet (load order should make this impossible — extensions
+        are processed after the CDISC cache) or if the target is marked
+        ``extensible: false``. Each merged term is stamped with the
+        entry's ``source`` tag so the membership predicate can
+        distinguish CDISC-published terms from extensions when callers
+        need provenance (e.g. DDF00229's warning vs error decision).
+        """
+        target_id = entry["extends"]
+        target = self._by_code_list.get(target_id)
+        if target is None:
+            raise ConfigurationError(
+                f"Extension in missing_ct.yaml targets codelist {target_id!r} "
+                f"which is not loaded from the CDISC cache"
+            )
+        if str(target.get("extensible", "")).lower() != "true":
+            raise ConfigurationError(
+                f"Cannot extend non-extensible codelist {target_id!r}"
+            )
+        source_tag = entry.get("source") or "extension"
+        for term in entry.get("terms") or []:
+            term_with_source = {**term, "source": source_tag}
+            target["terms"].append(term_with_source)
+            self._check_in_and_add(
+                self._by_term, term["conceptId"], target_id
+            )
+            self._check_in_and_add(
+                self._by_submission, term.get("submissionValue", ""), target_id
+            )
+            self._check_in_and_add(
+                self._by_pt, term.get("preferredTerm", ""), target_id
+            )
+
+    def _add_whole_codelist(self, entry: dict) -> None:
+        """Add a whole new codelist (e.g. M11 C217045) to the Library.
+
+        Used for codelists that the CDISC Library API does not serve.
+        Raises :class:`ConfigurationError` if the codelist's conceptId
+        is already loaded — duplicate codelist declarations are a
+        mistake; use ``extends:`` to add terms to an existing one.
+        Each term is stamped with the entry's ``source`` tag.
+        """
+        codelist_id = entry["codelist"]
+        if codelist_id in self._by_code_list:
+            raise ConfigurationError(
+                f"Codelist {codelist_id!r} declared in m11_codelists.yaml is "
+                f"already loaded — use 'extends:' to add terms to an existing codelist"
+            )
+        source_tag = entry.get("source") or "external"
+        terms = [{**t, "source": source_tag} for t in entry.get("terms") or []]
+        self._by_code_list[codelist_id] = {
+            "conceptId": codelist_id,
+            "preferredTerm": entry.get("preferredTerm", ""),
+            "definition": entry.get("definition", ""),
+            "extensible": entry.get("extensible", False),
+            "submissionValue": entry.get("submissionValue", ""),
+            "synonyms": entry.get("synonyms", []) or [],
+            "source": {
+                "effective_date": entry.get("effective_date", ""),
+                "package": source_tag,
+            },
+            "terms": terms,
+        }
+        for term in terms:
+            self._check_in_and_add(
+                self._by_term, term["conceptId"], codelist_id
+            )
+            self._check_in_and_add(
+                self._by_submission, term.get("submissionValue", ""), codelist_id
+            )
+            self._check_in_and_add(
+                self._by_pt, term.get("preferredTerm", ""), codelist_id
+            )
 
     def _check_in_and_add(self, collection: dict, id: str, item: str) -> None:
         if id not in collection:

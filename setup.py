@@ -34,6 +34,7 @@ setuptools.setup(
             "ct/cdisc/library_cache/library_cache_usdm.yaml",
             "ct/cdisc/config/ct_config.yaml",
             "ct/cdisc/missing/missing_ct.yaml",
+            "ct/cdisc/missing/m11_codelists.yaml",
             "ct/iso/iso3166/iso3166.json",
             "bc/cdisc/library_cache/library_cache.yaml",
             "rules/library/schema/usdm_v4-0-0.json",
