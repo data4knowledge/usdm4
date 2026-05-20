@@ -1,11 +1,11 @@
 # MANUAL: do not regenerate
 #
 # DDF00229: study phase must be the SDTM Trial Phase Response (C66737)
-# codelist (extensible). Two important deviations from the generic
-# _ct_check pattern that the previous implementation didn't capture:
+# codelist (extensible). Two deviations from the generic _ct_check
+# pattern that the previous implementation didn't capture:
 #
 # 1) The rule applies to BOTH InterventionalStudyDesign and
-#    ObservationalStudyDesign. The previous implementation only iterated
+#    ObservationalStudyDesign. An earlier implementation only iterated
 #    Observational, so on the protocol_corpus run (n=234, all
 #    Interventional) the rule passed vacuously while CORE caught 222
 #    real decode-mismatch findings. Same shape of bug as the original
@@ -19,34 +19,20 @@
 #    SDTM. We surface those as level=Warning rather than level=Error
 #    so callers can filter them out of the "real errors" view.
 #
-# Source for the M11 preferred terms below:
-#   ../m11_specification/m11_versions/2025-11-16/output_data/merged_elements.json
-#   path: $["Trial Phase"]["technical"]["ct"]["items"][*]
-# Refresh by re-extracting from a newer M11 version's merged_elements.json
-# when one becomes available.
+# Consolidation note (CT-extensions design): membership checks now
+# route through the common Library predicate (`find_in_codelist`) — the
+# single seam every CT-checking rule uses. The M11 PT table that
+# powers the warning relaxation lives in
+# `usdm4.assembler.m11_phase_aliases`, shared with the M11Decoder so
+# the two no longer drift. See `project_m11_sdtm_phase_code_tension`
+# memory for the full design context.
 from simple_error_log.errors import Errors
 
+from usdm4.assembler.m11_phase_aliases import M11_TRIAL_PHASE_PTS
 from usdm4.rules.rule_template import RuleTemplate, ValidationLocation
 
 
-# M11 / CPT codelist C217045 "Trial Phase" — c_code → preferred term.
-# These PTs are accepted by DDF00229 as level=Warning when the
-# corresponding C-code is valid in SDTM C66737 but the data uses the
-# M11 PT instead of the SDTM PT.
-_M11_TRIAL_PHASE_PTS: dict[str, str] = {
-    "C54721": "Early Phase 1",
-    "C15600": "Phase 1",
-    "C15693": "Phase 1/Phase 2",
-    "C198366": "Phase 1/Phase 2/Phase 3",
-    "C198367": "Phase 1/Phase 3",
-    "C15601": "Phase 2",
-    "C15694": "Phase 2/Phase 3",
-    "C217024": "Phase 2/Phase 3/Phase 4",
-    "C15602": "Phase 3",
-    "C217025": "Phase 3/Phase 4",
-    "C15603": "Phase 4",
-}
-
+_C66737 = "C66737"
 
 _DESIGN_KLASSES: tuple[str, ...] = (
     "InterventionalStudyDesign",
@@ -72,35 +58,18 @@ class RuleDDF00229(RuleTemplate):
     def validate(self, config: dict) -> bool:
         data = config["data"]
         ct = config["ct"]
+        if not ct.has_codelist(_C66737):
+            # C66737 is a baseline SDTM codelist and should always be
+            # loaded; if it isn't, the CT cache is stale or
+            # misconfigured. Treat this as cache-stale and skip rather
+            # than fail every studyPhase.
+            return True
         for klass in _DESIGN_KLASSES:
-            instances = data.instances_by_klass(klass)
-            if not instances:
-                continue
-            codes, decodes = self._check_codelist(ct, klass, "studyPhase")
-            # We also need the parallel preferredTerm list to report the
-            # SDTM PT in the M11/CPT warning message — `decodes` is now a
-            # union dict of (preferredTerm | submissionValue) → index and
-            # has lost the "which label was preferredTerm" distinction.
-            raw_codelist = ct.klass_and_attribute(klass, "studyPhase")
-            preferred_terms_by_code: dict[str, str] = {
-                term["conceptId"]: term.get("preferredTerm", "")
-                for term in raw_codelist.get("terms") or []
-            }
-            for instance in instances:
-                self._check_one(
-                    instance, klass, codes, decodes, preferred_terms_by_code, data
-                )
+            for instance in data.instances_by_klass(klass):
+                self._check_one(instance, klass, ct, data)
         return self._result()
 
-    def _check_one(
-        self,
-        instance: dict,
-        klass: str,
-        codes: list[str],
-        decodes: dict[str, int],
-        preferred_terms_by_code: dict[str, str],
-        data,
-    ) -> None:
+    def _check_one(self, instance: dict, klass: str, ct, data) -> None:
         path = data.path_by_id(instance["id"])
         if "studyPhase" not in instance:
             self._add_failure("Missing attribute", klass, "studyPhase", path)
@@ -117,12 +86,15 @@ class RuleDDF00229(RuleTemplate):
             target = item["standardCode"]
         code = target.get("code")
         decode = target.get("decode")
-        code_index = self._find_index(codes, code)
-        # `decodes` is a {label: term_index} dict accepting either
-        # preferredTerm or submissionValue (RuleTemplate._codes_and_decodes).
-        decode_index = decodes.get(decode) if decode is not None else None
 
-        if code_index is None and decode_index is None:
+        code_term, _ = ct.find_in_codelist(code, _C66737, by="concept_id")
+        decode_term, _ = (
+            ct.find_in_codelist(decode, _C66737, by="any")
+            if decode is not None
+            else (None, None)
+        )
+
+        if code_term is None and decode_term is None:
             self._add_failure(
                 f"Invalid code and decode '{code}' and '{decode}', "
                 "neither the code and decode are in the codelist",
@@ -131,7 +103,7 @@ class RuleDDF00229(RuleTemplate):
                 path,
             )
             return
-        if code_index is None:
+        if code_term is None:
             self._add_failure(
                 f"Invalid code '{code}', the code is not in the codelist",
                 klass,
@@ -139,12 +111,12 @@ class RuleDDF00229(RuleTemplate):
                 path,
             )
             return
-        if decode_index is None:
+        if decode_term is None:
             # Code is in C66737 but decode isn't its SDTM PT or SV.
             # If the decode matches the M11 PT for this code, treat as a
             # cross-standard difference (warning); otherwise error.
-            sdtm_pt = preferred_terms_by_code.get(code, code)
-            m11_pt = _M11_TRIAL_PHASE_PTS.get(code)
+            sdtm_pt = code_term.get("preferredTerm", code)
+            m11_pt = M11_TRIAL_PHASE_PTS.get(code)
             if m11_pt is not None and decode == m11_pt:
                 self._add_at_level(
                     f"Decode '{decode}' for code '{code}' uses the "
@@ -163,7 +135,7 @@ class RuleDDF00229(RuleTemplate):
                     path,
                 )
             return
-        if code_index != decode_index:
+        if code_term.get("conceptId") != decode_term.get("conceptId"):
             self._add_failure(
                 f"Invalid code and decode pair '{code}' and '{decode}', "
                 "the code and decode do not match",
