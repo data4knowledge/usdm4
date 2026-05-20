@@ -1,7 +1,23 @@
-# Extensions to existing extensible CDISC codelists. Entries appear here
-# when an M11 codelist has a code that the corresponding SDTM codelist
-# doesn't (yet). Each entry uses the `extends:` shape — see
-# Library._merge_extension. Whole new codelists live in m11_codelists.yaml.
+# Extensions to existing extensible CDISC codelists. Each entry is
+# derived by diffing an M11 codelist against its SDTM counterpart;
+# entries appear here when M11 has a code that SDTM hasn't (yet)
+# published. preferredTerm uses the NCIt/SDTM form via
+# NCIT_PT_OVERRIDES in the generator.
 #
-# DO NOT EDIT — regenerate via usdm4_protocol/tools/generate_m11_ct.py.
-[]
+# Generated from m11_specification by
+# usdm4_protocol/tools/generate_m11_ct.py — DO NOT EDIT.
+- extends: C66737
+  source: NCIt-M11
+  terms:
+  - conceptId: C217024
+    preferredTerm: Phase II/III/IV Trial
+    definition: A study that begins as a Phase II study and transitions into Phases
+      III and IV based upon successful completion of each previous portion.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217025
+    preferredTerm: Phase III/IV Trial
+    definition: A type of clinical study that combines elements characteristic of
+      traditional Phase III and Phase IV trials.
+    submissionValue: ''
+    synonyms: []

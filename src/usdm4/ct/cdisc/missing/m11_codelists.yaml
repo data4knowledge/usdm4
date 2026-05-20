@@ -1,11 +1,1029 @@
-# Whole M11 codelists referenced by ICH M11 elements. The CDISC Library
-# API does not currently serve these (they live in NCIt under codes like
-# C217045 for the M11 Trial Phase codelist), so usdm4 loads them
-# directly from the m11_specification snapshot. Each entry uses the
-# `codelist:` shape — see Library._add_whole_codelist.
+# Whole M11 codelists referenced by any ICH M11 element. The CDISC
+# Library API does not serve these (they live in NCIt only), so
+# usdm4 loads them directly from this file via Library._add_whole_codelist.
 #
-# All M11 codelists referenced from merged_elements.json are emitted
-# here, not just the ones consumed by current validator rules.
-#
-# DO NOT EDIT — regenerate via usdm4_protocol/tools/generate_m11_ct.py.
-[]
+# Generated from m11_specification by
+# usdm4_protocol/tools/generate_m11_ct.py — DO NOT EDIT.
+- codelist: C217045
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the trial phase value set codelist of the
+    ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C54721
+    preferredTerm: Early Phase 1
+    definition: A clinical trial that uses an investigational agent that is available
+      only in very limited quantities and which has never previously given to humans
+      or for which there is extremely limited human experience. Phase 0 clinical trials
+      are intended to enable researchers to understand the path of the drug in the
+      body and its efficacy. Adverse event reporting in Phase 0 trials is expedited.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C15600
+    preferredTerm: Phase 1
+    definition: A clinical research protocol designed to test a new biomedical intervention
+      in a small group of people for the first time. A Phase I trial can be to establish
+      the toxicity of a new treatment with escalating intensity of the treatment administered
+      and/or to determine the side effects of a new treatment for a particular indication
+      in subjects.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C15693
+    preferredTerm: Phase 1/Phase 2
+    definition: A clinical research protocol designed to study the safety, dosage
+      levels and response to new treatment. Phase I/II trials combine a Phase I and
+      a Phase II trial of the same treatment into a single protocol.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C198366
+    preferredTerm: Phase 1/Phase 2/Phase 3
+    definition: A study that begins as a Phase I study and transitions into Phases
+      II and III based upon successful completion of each previous portion.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C198367
+    preferredTerm: Phase 1/Phase 3
+    definition: A study that begins as a Phase I study and transitions into a Phase
+      III study upon successful completion of the Phase I portion.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C15601
+    preferredTerm: Phase 2
+    definition: A clinical research protocol designed to study a biomedical or behavioral
+      intervention in a larger group of people (several hundred), to evaluate the
+      drug's effectiveness for a particular indication in patients with the disease
+      or condition under study, and to determine the common short-term side effects
+      and risks associated with the intervention.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C15694
+    preferredTerm: Phase 2/Phase 3
+    definition: A type of clinical study that combines elements characteristic of
+      traditional Phase II and Phase III trials.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217024
+    preferredTerm: Phase 2/Phase 3/Phase 4
+    definition: A study that begins as a Phase II study and transitions into Phases
+      III and IV based upon successful completion of each previous portion.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C15602
+    preferredTerm: Phase 3
+    definition: A clinical research protocol designed to investigate the efficacy
+      of the biomedical or behavioral intervention in large groups of human subjects
+      (from several hundred to several thousand), to confirm efficacy, to monitor
+      adverse reactions to the new medication or treatment regimen with respect to
+      long-term use and by comparing the intervention to other standard or experimental
+      interventions as well as to a placebo.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217025
+    preferredTerm: Phase 3/Phase 4
+    definition: A type of clinical study that combines elements characteristic of
+      traditional Phase III and Phase IV trials.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C15603
+    preferredTerm: Phase 4
+    definition: A randomized, controlled trial that is designed to evaluate the long-term
+      safety and efficacy of a drug for a given indication. Often they are designed
+      to study side effects that may have become apparent after the phase III study
+      was completed.
+    submissionValue: ''
+    synonyms: []
+- codelist: C217046
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the no yes value set codelist of the ICH
+    M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C49488
+    preferredTerm: 'Yes'
+    definition: The affirmative response to a question.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C49487
+    preferredTerm: 'No'
+    definition: The non-affirmative response to a question.
+    submissionValue: ''
+    synonyms: []
+- codelist: C217047
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the amendment scope value set codelist of
+    the ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C68846
+    preferredTerm: Global
+    definition: Covering or affecting the whole of a system.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217026
+    preferredTerm: Not Global
+    definition: Covering or affecting only a portion of the entire system.
+    submissionValue: ''
+    synonyms: []
+- codelist: C217048
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the units of measure value set codelist
+    of the ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C25529
+    preferredTerm: Hours
+    definition: A unit measure of time equal to 3,600 seconds or 60 minutes. It is
+      approximately 1/24 of a median day.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C25301
+    preferredTerm: Days
+    definition: The time for Earth to make a complete rotation on its axis; ordinarily
+      divided into twenty-four hours, equal to 86400 seconds. This also refers to
+      a specific day.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C29844
+    preferredTerm: Weeks
+    definition: Any period of seven consecutive days.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C29846
+    preferredTerm: Months
+    definition: One of the 12 divisions of a year as determined by a calendar. It
+      corresponds to the unit of time of approximately to one cycle of the moon's
+      phases, about 30 days or 4 weeks.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C29848
+    preferredTerm: Years
+    definition: A period of time that it takes for Earth to make a complete revolution
+      around the sun, approximately 365 days; a specific one year period.
+    submissionValue: ''
+    synonyms: []
+- codelist: C217049
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the trial site distribution value set codelist
+    of the ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C217004
+    preferredTerm: Single-Centre
+    definition: A clinical study that is conducted at a single study site.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217005
+    preferredTerm: Multicentre
+    definition: A clinical trial conducted according to a single protocol but at more
+      than one site, and therefore, carried out by more than one investigator. (ICH
+      E6 1.40)
+    submissionValue: ''
+    synonyms: []
+- codelist: C217050
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the trial site geographic scope value set
+    codelist of the ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C217006
+    preferredTerm: Single Country
+    definition: Of, or pertaining to, an occurrence in one country.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217007
+    preferredTerm: Multiple Countries
+    definition: Of, or pertaining to, an occurrence in more than one country.
+    submissionValue: ''
+    synonyms: []
+- codelist: C217051
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the trial blind schema value set codelist
+    of the ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C15228
+    preferredTerm: Double Blind
+    definition: A study method in which neither the subjects nor the investigators
+      are permitted to know which subject is receiving which treatment.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C187674
+    preferredTerm: Observer Blind
+    definition: A study in which the study personnel who measure, record, or assess
+      the subject do not know which intervention the subject is receiving or, in the
+      context of observational studies, do not know the external factors to which
+      a subject has been exposed.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C49659
+    preferredTerm: Open Label
+    definition: A type of study that stipulates both the health provider and the subject
+      be aware of the drug or treatment assignment.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C28233
+    preferredTerm: Single Blind
+    definition: A type of study that stipulates the subject to be unaware of the drug
+      or treatment assignment.
+    submissionValue: ''
+    synonyms: []
+- codelist: C217052
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the sourcing value set codelist of the ICH
+    M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C215659
+    preferredTerm: Centrally Sourced
+    definition: An indication that the entity is obtained from a central source.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C215660
+    preferredTerm: Locally Sourced
+    definition: An indication that the entity is obtained from a local source.
+    submissionValue: ''
+    synonyms: []
+- codelist: C217272
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the protocol section name and number value
+    set codelist of the ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C217342
+    preferredTerm: Section 1
+    definition: Terminology associated with the data elements in section 1 of the
+      ICH M11 protocol template.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217343
+    preferredTerm: Section 2
+    definition: Terminology associated with the data elements in section 2 of the
+      ICH M11 protocol template.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217344
+    preferredTerm: Section 3
+    definition: Terminology associated with the data elements in section 3 of the
+      ICH M11 protocol template.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217345
+    preferredTerm: Section 4
+    definition: Terminology associated with the data elements in section 4 of the
+      ICH M11 protocol template.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217346
+    preferredTerm: Section 5
+    definition: Terminology associated with the data elements in section 5 of the
+      ICH M11 protocol template.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217347
+    preferredTerm: Section 6
+    definition: Terminology associated with the data elements in section 6 of the
+      ICH M11 protocol template.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217348
+    preferredTerm: Section 7
+    definition: Terminology associated with the data elements in section 7 of the
+      ICH M11 protocol template.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217349
+    preferredTerm: Section 8
+    definition: Terminology associated with the data elements in section 8 of the
+      ICH M11 protocol template.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217350
+    preferredTerm: Section 9
+    definition: Terminology associated with the data elements in section 9 of the
+      ICH M11 protocol template.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217351
+    preferredTerm: Section 10
+    definition: Terminology associated with the data elements in section 10 of the
+      ICH M11 protocol template.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217352
+    preferredTerm: Section 11
+    definition: Terminology associated with the data elements in section 11 of the
+      ICH M11 protocol template.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217353
+    preferredTerm: Section 12
+    definition: Terminology associated with the data elements in section 12 of the
+      ICH M11 protocol template.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217354
+    preferredTerm: Section 13
+    definition: Terminology associated with the data elements in section 13 of the
+      ICH M11 protocol template.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217355
+    preferredTerm: Section 14
+    definition: Terminology associated with the data elements in section 14 of the
+      ICH M11 protocol template.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217356
+    preferredTerm: Section Title Page
+    definition: Terminology associated with the data elements in the title page of
+      the ICH M11 protocol template.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C217357
+    preferredTerm: Section Amendment Details
+    definition: Terminology associated with the data elements in the amendment details
+      section of the ICH M11 protocol template.
+    submissionValue: ''
+    synonyms: []
+- codelist: C217274
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the amendment details statement value set
+    codelist of the ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C218485
+    preferredTerm: This protocol has not been amended.
+    definition: A statement indicating that the protocol has not been amended.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218486
+    preferredTerm: This is the first protocol amendment.
+    definition: A statement indicating that this is the first protocol amendment.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218487
+    preferredTerm: This protocol has been amended previously. Details of prior amendments
+      are presented in Section 12.3 Prior Protocol Amendment(s).
+    definition: A statement indicating that this protocol has been amended previously.
+      Details of prior amendments are presented in Section 12.3 Prior Protocol Amendments.
+    submissionValue: ''
+    synonyms: []
+- codelist: C217275
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the amendment scope enrollment description
+    value set codelist of the ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C68846
+    preferredTerm: Globally
+    definition: Covering or affecting the whole of a system.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C41065
+    preferredTerm: Locally
+    definition: To a restricted area (of the body).
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218489
+    preferredTerm: By Cohort
+    definition: Covering or affecting a cohort of individuals.
+    submissionValue: ''
+    synonyms: []
+- codelist: C217276
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the reason for amendment value set codelist
+    of the ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C218490
+    preferredTerm: Regulatory Agency Request To Amend
+    definition: A regulatory agency has expressed a need for a change(s) to, or formal
+      clarification of, the protocol.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218491
+    preferredTerm: New Regulatory Guidance
+    definition: A regulatory agency has published a guidance document that necessitates
+      a change(s) to, or formal clarification of, the protocol.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218492
+    preferredTerm: IRB/IEC Feedback
+    definition: Feedback from the institutional review board or independent ethics
+      committee necessitates a change(s) to, or formal clarification of, the protocol.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218493
+    preferredTerm: New Safety Information Available
+    definition: Previously unavailable safety data became available, which necessitates
+      a change(s) to, or formal clarification of, the protocol.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218494
+    preferredTerm: Manufacturing Change
+    definition: A change to manufacturing processes of the study agents necessitates
+      a change(s) to, or formal clarification of, the protocol.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218495
+    preferredTerm: IMP Addition
+    definition: The addition of an investigational medicinal product to a clinical
+      trial design necessitates a change(s) to, or formal clarification of, the protocol.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218496
+    preferredTerm: Change In Strategy
+    definition: A change in the study purpose or intent of the scientific plan necessitates
+      a change(s) to, or formal clarification of, the protocol.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218497
+    preferredTerm: Change In Standard Of Care
+    definition: A change in the standard of care necessitates a change(s) to, or formal
+      clarification of, the protocol.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218498
+    preferredTerm: New Data Available (Other Than Safety Data)
+    definition: Previously unavailable data (other than safety data) became available,
+      which necessitates a change(s) to, or formal clarification of, the protocol.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218499
+    preferredTerm: Investigator/Site Feedback
+    definition: Feedback from the investigator or study site necessitates a change(s)
+      to, or formal clarification of, the protocol.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218500
+    preferredTerm: Recruitment Difficulty
+    definition: Challenges with participant recruitment necessitates a change(s) to,
+      or formal clarification of, the protocol.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218501
+    preferredTerm: Inconsistency And/Or Error In The Protocol
+    definition: An error or inconsistency in the protocol necessitates a change(s)
+      to, or formal clarification of, the protocol.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218502
+    preferredTerm: Protocol Design Error
+    definition: A protocol design error necessitates a change(s) to, or formal clarification
+      of, a document.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C17649
+    preferredTerm: Other
+    definition: Different than the one(s) previously specified or mentioned.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C48660
+    preferredTerm: Not Applicable
+    definition: Determination of a value is not relevant in the current context.
+    submissionValue: ''
+    synonyms: []
+- codelist: C217277
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the intervention model value set codelist
+    of the ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C82640
+    preferredTerm: Single Group
+    definition: A type of clinical study in which there is only one treatment arm
+      available to all study participants.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C82639
+    preferredTerm: Parallel Group
+    definition: A type of clinical study in which subjects are assigned to one of
+      two treatment arms at the beginning of the trial and continue in that arm throughout
+      the length of the trial. Study subjects are only exposed to the treatment that
+      is assigned to the particular study arm they are enrolled in.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C82637
+    preferredTerm: Cross-over
+    definition: A type of clinical study in which each study subject receives the
+      same series of treatments but in a random order that differs across arms of
+      the study. Each subject serves as their own control in this type of study.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C82638
+    preferredTerm: Factorial
+    definition: A type of clinical study in which two or more treatments are given
+      alone and in combination, such that all possible combinations are represented
+      across the treatment arms, and are compared in parallel against the study control
+      group.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C142568
+    preferredTerm: Sequential
+    definition: A type of clinical investigation format that evaluates data at predefined
+      stages or after a specific number of patients have participated with specific
+      stopping criteria based on statistical significance.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C17649
+    preferredTerm: Other
+    definition: Different than the one(s) previously specified or mentioned.
+    submissionValue: ''
+    synonyms: []
+- codelist: C217278
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the population type value set codelist of
+    the ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C218503
+    preferredTerm: With Disease
+    definition: The individual or group of individuals has been diagnosed with the
+      disease of interest or under study.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218504
+    preferredTerm: Without Disease
+    definition: The individual or group of individuals has not been diagnosed with
+      the disease of interest or under study.
+    submissionValue: ''
+    synonyms: []
+- codelist: C217279
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the control type value set codelist of the
+    ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C49648
+    preferredTerm: Placebo
+    definition: Use of an inactive compound identical in appearance to drug or treatment
+      being tested in experimental research, which may or may not be known to the
+      physician and/or subject, administered to distinguish between drug action and
+      suggestive effect of the drug or treatment under study. The effects of the active
+      drug or treatment are compared to the effects of the placebo.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C49649
+    preferredTerm: Active Comparator
+    definition: The use of a pharmacologic substance as a control within a treatment
+      regimen where the pharmacologic properties of that substance are relevant to
+      the condition being treated.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C120841
+    preferredTerm: Dose Response
+    definition: A type of control using different doses or regimens of the same treatment
+      (fixed dose) among the study groups. [From ICH E10].
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218505
+    preferredTerm: Different Dose or Regimen
+    definition: A type of control that comprises a different dose or dosage regimen
+      in comparison to the investigational intervention dose or dosage regimen.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218506
+    preferredTerm: External
+    definition: The use of external control data as a control arm for those studies
+      where ethical concerns and/or underserved disease indications may make it difficult
+      to enroll participants.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C184727
+    preferredTerm: Sham Procedure
+    definition: A type of negative control in which a procedure is performed that
+      mimics the procedure under study but does not include investigational processes
+      or components.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C28280
+    preferredTerm: No Control
+    definition: null
+    submissionValue: ''
+    synonyms: []
+- codelist: C217280
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the trial intervention assignment method
+    value set codelist of the ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C25196
+    preferredTerm: Randomisation
+    definition: The allocation of individuals to groups by chance, especially in order
+      to control the variables in an experiment.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C222801
+    preferredTerm: No Intervention Assignment Method
+    definition: No specific methodology is used to assign trial participants to treatment
+      or control groups.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C17649
+    preferredTerm: Other
+    definition: Different than the one(s) previously specified or mentioned.
+    submissionValue: ''
+    synonyms: []
+- codelist: C217281
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the trial blinding role value set codelist
+    of the ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C142710
+    preferredTerm: Participant
+    definition: Any individiual that has a role in a study, including study personnel
+      and study subjects.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C17445
+    preferredTerm: Care Provider
+    definition: The primary person in charge of the care of a patient, usually a family
+      member or a designated health care professional.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C25936
+    preferredTerm: Investigator
+    definition: An individual who conducts scientific research. In a clinical setting
+      this individual actually conducts and/or supervises the clinical investigation
+      and study-related procedures.  The investigator monitors the safety of the trial
+      subjects and investigational staff (under whose immediate direction an agent
+      is administered or dispensed to a subject).  The investigator collects and analyses
+      data and study documents, and provides reports in compliance with applicable
+      requirements.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C207599
+    preferredTerm: Outcomes Assessor
+    definition: The individual who evaluates the outcome(s) of interest.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C70793
+    preferredTerm: Sponsor
+    definition: An entity such as an individual, company, institution, group, or organization
+      which takes responsibility for the initiation, management, and/or financing
+      of a clinical study. The sponsor does not actually conduct the investigation
+      unless the sponsor is a sponsor-investigator. A person other than an individual
+      (e.g., corporation or agency) that uses one or more of its own employees to
+      conduct research it has initiated is considered to be a sponsor, and the employees
+      are considered to be investigators. [21 CFR P.50.3(k)] [21 CFR P.50.102(j)]
+      [21 CFR P.312.3]
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C48660
+    preferredTerm: Not Applicable
+    definition: Determination of a value is not relevant in the current context.
+    submissionValue: ''
+    synonyms: []
+- codelist: C217282
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the independent committee name value set
+    codelist of the ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C142578
+    preferredTerm: Independent Data Monitoring Committee
+    definition: A committee established by the sponsor to assess at intervals the
+      progress of a clinical trial, safety data, and critical efficacy variables and
+      recommend to the sponsor whether to continue, modify, or terminate the trial.
+      (ICH)
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C215671
+    preferredTerm: Dose Escalation Committee
+    definition: A committee established to assess whether a dose adjustment is appropriate
+      and to determine whether the maximum-tolerated dose had been attained, based
+      on a review of available safety and efficacy data at specified time points.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C78726
+    preferredTerm: Endpoint Adjudication Committee
+    definition: An external committee whose purpose is to evaluate study data and
+      decide whether a study endpoint or other criterion has been met.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C17649
+    preferredTerm: Other
+    definition: Different than the one(s) previously specified or mentioned.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C41132
+    preferredTerm: None
+    definition: No person or thing, nobody, not any.
+    submissionValue: ''
+    synonyms: []
+- codelist: C217283
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the trial arm type value set codelist of
+    the ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C174267
+    preferredTerm: Active Comparator Arm
+    definition: An arm describing the active comparator.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C174226
+    preferredTerm: Control Arm
+    definition: A type of study arm that describes the intervention or treatment plan
+      for a group of participants in the study receiving a control.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C174266
+    preferredTerm: Experimental Arm
+    definition: An arm describing the intervention or treatment plan for a group of
+      participants in the study receiving test product(s).
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C174270
+    preferredTerm: No Intervention Arm
+    definition: A study arm without an intervention or treatment.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C174268
+    preferredTerm: Placebo Comparator Arm
+    definition: An arm describing the placebo comparator.
+    submissionValue: ''
+    synonyms: []
+- codelist: C217284
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the intervention type value set codelist
+    of the ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C1909
+    preferredTerm: Drug
+    definition: Any natural, endogenously-derived, synthetic or semi-synthetic compound
+      with pharmacologic activity. A pharmacologic substance has one or more specific
+      mechanism of action(s) through which it exerts one or more effect(s) on the
+      human or animal body. They can be used to potentially prevent, diagnose, treat
+      or relieve symptoms of a disease. Formulation specific agents and some combination
+      agents are also classified as pharmacologic substances.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C16830
+    preferredTerm: Medical Device
+    definition: Any physical object that is useful for prevention, diagnosis, monitoring,
+      or treatment of disease or other conditions.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C307
+    preferredTerm: Biologic
+    definition: Biotechnology-derived pharmaceutical agents made from living organisms
+      or their products. Includes recombinant proteins, monoclonal antibodies, and
+      nucleic acids.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C923
+    preferredTerm: Vaccine
+    definition: Preparations containing substances with antigenic properties administered
+      to activate the immune system, thereby inducing an immune response.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218507
+    preferredTerm: Non-Surgical Procedure
+    definition: A medical procedure that produces an effect, or that is intended to
+      alter the course of a disease in a patient or population, which is not considered
+      a surgical procedure.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C15329
+    preferredTerm: Surgery
+    definition: A diagnostic or treatment procedure performed by manual and/or instrumental
+      means, often involving an incision and the removal or replacement of a diseased
+      organ or tissue; of or relating to or involving or used in surgery or requiring
+      or amenable to treatment by surgery.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C15313
+    preferredTerm: Radiation
+    definition: Treatment of a disease by means of exposure of the target or the whole
+      body to radiation. Radiation therapy is often used as part of curative therapy
+      and occasionally as a component of palliative treatment for cancer. Other uses
+      include total body irradiation prior to transplantation.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C15184
+    preferredTerm: Behavioral
+    definition: The use of operant conditioning, including rewards and punishments,
+      in helping a person create an atmosphere where he or she does not contribute
+      to painful stimuli.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C15238
+    preferredTerm: Genetic
+    definition: Application of genetic material (usually DNA) into cells in order
+      to permanently correct an inherited disease or acquired disease.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C1505
+    preferredTerm: Dietary Supplement
+    definition: Oral preparations containing dietary ingredient(s) intended to supplement
+      the diet.  Dietary ingredients include vitamins, minerals, herbs, amino acids,
+      extracts and metabolites.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C54696
+    preferredTerm: Combination Product
+    definition: A product comprised of two or more regulated components, i.e., drug
+      and device, biologic and device, that are physically, chemically, or otherwise
+      combined or mixed and produced as a single entity; or two or more separate products
+      packaged together in a single package or as a unit and comprised of drug and
+      device products, device and biological products, or biological and drug products;
+      or a drug, device, or biological product packaged separately that according
+      to its investigational plan or proposed labeling is intended for use only with
+      an approved individually specified drug, device, or biological product where
+      both are required to achieve the intended use, indication, or effect and where
+      upon approval of the proposed product the labeling of the approved product would
+      need to be changed, e.g., to reflect a change in intended use, dosage form,
+      strength, route of administration, or significant change in dose; or any investigational
+      drug, device, or biological product packaged separately that according to its
+      proposed labeling is for use only with another individually specified investigational
+      drug, device, or biological product where both are required to achieve the intended
+      use, indication, or effect.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C18020
+    preferredTerm: Diagnostic
+    definition: Any procedure or test to diagnose a disease or disorder.
+    submissionValue: ''
+    synonyms: []
+- codelist: C217285
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the intervention use value set codelist
+    of the ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C41161
+    preferredTerm: Experimental Intervention
+    definition: A medical product, practice, or application that is tested in a clinical
+      trial.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C753
+    preferredTerm: Placebo
+    definition: An inactive substance, treatment or procedure that is intended to
+      provide baseline measurements for the experimental protocol of a clinical trial.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C165835
+    preferredTerm: Rescue Medicine
+    definition: Medicinal products identified in the protocol as those that may be
+      administered to subjects when the efficacy of the Investigational Medicinal
+      Product is not satisfactory, the effect of the IMP is too great and is likely
+      to cause a hazard to the patient, or to manage an emergency situation. (EU-CTR
+      Recommendations from the expert group on clinical trials for the implementation
+      of Regulation (EU) No 536/2014' dd 28 June 2017)
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C165822
+    preferredTerm: Background Treatment
+    definition: Medicinal products that are administered to each clinical trial subject,
+      regardless of randomization group, a) to treat the indication which is the object
+      of the study, or b) required in the protocol as part of standard care for a
+      condition that is not the indication under investigation, and is relevant for
+      the clinical trial design. (Recommendations from the expert group on clinical
+      trials for the implementation of Regulation (EU) No 536/2014' dd 28 June 2017)
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C158128
+    preferredTerm: Challenge Agent
+    definition: A type of substance that is given to healthy subjects in order to
+      induce a physiological response that the investigational medicinal product is
+      intended to counter or treat.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C18020
+    preferredTerm: Diagnostic
+    definition: Any procedure or test to diagnose a disease or disorder.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C207614
+    preferredTerm: Additional Required Treatment
+    definition: A medicinal product that must be administered along with the experimental
+      treatment (e.g., drug studies wherein opioid blockers are administered to prevent
+      overdose).
+    submissionValue: ''
+    synonyms: []
+- codelist: C217286
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the investigational medicinal product indicator
+    value set codelist of the ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C202579
+    preferredTerm: IMP
+    definition: A pharmaceutical form of an active ingredient being tested or used
+      as a reference in a clinical trial, including a product with a marketing authorization
+      when used or assembled (formulated or packaged) in a way different from the
+      approved form, or when used for an unapproved indication, or when used to gain
+      further information about an approved use. Reference products and placebos are
+      also considered investigational medicinal products in a clinical trial. [After
+      E6(R2) Good Clinical Practice (GCP) -- Step 4 (final), 9 November 2016 -- Glossary]
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C156473
+    preferredTerm: NIMP
+    definition: A medicinal product that is used in a clinical trial for purposes
+      other than as an investigational agent
+    submissionValue: ''
+    synonyms: []
+- codelist: C217287
+  source: NCIt-M11
+  preferredTerm: ''
+  definition: Terminology associated with the trial-related safety event type value
+    set codelist of the ICH M11 protocol template.
+  extensible: false
+  terms:
+  - conceptId: C41331
+    preferredTerm: Adverse Event
+    definition: Any unfavorable or unintended disease, sign, or symptom (including
+      an abnormal laboratory finding) that is temporally associated with the use of
+      a medical treatment or procedure, and that may or may not be considered related
+      to the medical treatment or procedure. Such events can be related to the intervention,
+      dose, route of administration, patient, or caused by an interaction with another
+      drug(s) or procedure(s).
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C41335
+    preferredTerm: Serious Adverse Event
+    definition: 'Any expected or unexpected adverse event, related or unrelated to
+      the intervention, occurring at any agent dose, any phase of product or procedure
+      testing, that results in any of the following outcomes: death, a life-threatening
+      adverse event, requires inpatient hospitalization (not required as part of the
+      treatment) or prolongation of existing hospitalization, a persistent or significant
+      disability or incapacity, or cancer, or a congenital anomaly or birth defect.
+      Important medical events that may not result in the listed outcomes may be considered
+      as serious when, based upon appropriate medical judgment, they represent significant
+      hazards or potentially serious harm to the research subject or others and may
+      require medical intervention to prevent one of the outcomes listed in this definition.'
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218508
+    preferredTerm: Trial Intervention Complaint
+    definition: Any concern about the safety and/or quality of any trial-related interventions.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C222331
+    preferredTerm: Drug/Device Combination Product Complaint
+    definition: Any concern about the safety, quality, and/or performance of a trial-related
+      drug-device combination.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C25742
+    preferredTerm: Pregnancy Event
+    definition: The state or condition of having a developing embryo or fetus in the
+      body (uterus), after union of an ovum and spermatozoon, during the period from
+      conception to birth.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218510
+    preferredTerm: Lactation Event
+    definition: Any event that occurs when the participant is lactating.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218511
+    preferredTerm: Post-Partum Event
+    definition: Any event that occurs when the participant is in the stages of recovery
+      post pregnancy and birth.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218512
+    preferredTerm: Reportable Adverse Event of Special Interest
+    definition: An adverse event of special interest that is deemed to be reportable
+      to the appropriate regulatory authority.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C218513
+    preferredTerm: Not Reportable Adverse Event of Special Interest
+    definition: An adverse event of special interest that is deemed to be not reportable
+      to the appropriate regulatory authority.
+    submissionValue: ''
+    synonyms: []
+  - conceptId: C17649
+    preferredTerm: Other
+    definition: Different than the one(s) previously specified or mentioned.
+    submissionValue: ''
+    synonyms: []

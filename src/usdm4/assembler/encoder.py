@@ -130,6 +130,19 @@ class Encoder:
                 "cdisc_decode": None,
             },
         ),
+        (
+            # Phase 3/4 — M11-only compound (C217025 is not in CDISC
+            # SDTM C66737; loaded as an extension via
+            # usdm4/.../missing_ct.yaml). Both slash and hyphen, both
+            # digit and Roman forms — the FHIR round-trip can land any
+            # of these back in the encoder.
+            ["3/4", "3-4", "III/IV", "III-IV"],
+            {
+                "code": "C217025",
+                "m11_decode": "Phase 3/Phase 4",
+                "cdisc_decode": None,
+            },
+        ),
     ]
     STATUS_MAP = [
         (["APPROVED"], {"code": "C25425", "decode": "Approved"}),

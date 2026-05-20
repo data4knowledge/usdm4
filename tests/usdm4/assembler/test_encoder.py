@@ -298,6 +298,7 @@ class TestEncoderPhase:
             "1/3", "1-3", "I/III", "I-III",
             "2-3", "2/3", "II-III", "II/III",
             "2/3/4", "2-3-4", "II/III/IV", "II-III-IV",
+            "3/4", "3-4", "III/IV", "III-IV",
         ],
     )
     def test_phase_compound_aliases_resolve(self, encoder, alias):
@@ -339,6 +340,7 @@ class TestEncoderPhaseTextForCode:
             ("C198366", "1/2/3"),
             ("C198367", "1/3"),
             ("C217024", "2/3/4"),
+            ("C217025", "3/4"),
             ("C199990", "1A"),
             ("C49689", "3B"),
         ],
