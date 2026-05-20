@@ -577,6 +577,24 @@ def test_add_whole_codelist_preserves_extensible_flag(loaded_library):
 
 
 # ---------------------------------------------------------------------------
+# has_codelist — companion to is_in_codelist for cache-stale detection
+# ---------------------------------------------------------------------------
+
+
+def test_has_codelist_true_when_loaded(loaded_library):
+    assert loaded_library.has_codelist("C1") is True
+
+
+def test_has_codelist_false_when_absent(loaded_library):
+    assert loaded_library.has_codelist("C_DOES_NOT_EXIST") is False
+
+
+def test_has_codelist_true_after_whole_codelist_added(loaded_library):
+    loaded_library._add_whole_codelist(_whole_codelist_entry("C217045"))
+    assert loaded_library.has_codelist("C217045") is True
+
+
+# ---------------------------------------------------------------------------
 # is_in_codelist / find_in_codelist — common membership predicate
 # ---------------------------------------------------------------------------
 

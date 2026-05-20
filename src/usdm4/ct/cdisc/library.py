@@ -120,6 +120,18 @@ class Library:
         except Exception:
             return None
 
+    def has_codelist(self, codelist_id: str) -> bool:
+        """True if ``codelist_id`` is loaded in the Library.
+
+        Companion to :meth:`is_in_codelist` for rules that need to
+        distinguish "codelist not loaded (skip the rule, the CT cache
+        is stale)" from "codelist loaded but value not a member
+        (emit a finding)". Without this distinction, an absent
+        codelist would cause :meth:`is_in_codelist` to return False for
+        every value, generating spurious findings.
+        """
+        return codelist_id in self._by_code_list
+
     def is_in_codelist(
         self, value: str, codelist_id: str, by: str = "any"
     ) -> bool:

@@ -2,7 +2,7 @@
 
 Covers:
 - metadata
-- C66781 missing from CT cache → rule skipped (returns True)
+- C66781 not loaded → rule skipped (returns True; predicate via has_codelist)
 - Quantity-shaped plannedAge (with 'value')
 - Range-shaped plannedAge (minValue/maxValue)
 - Non-dict plannedAge early-return
@@ -11,8 +11,9 @@ Covers:
 - unit without standardCode → failure
 - Invalid code → failure
 - Valid code but invalid decode → failure
-- Valid code + valid decode → pass
+- Valid code + valid decode → pass (matching preferredTerm or submissionValue)
 - Both StudyDesignPopulation and StudyCohort are scanned
+- Extensions (via source-tagged terms) transparently accepted
 """
 
 from unittest.mock import MagicMock
@@ -23,6 +24,78 @@ from src.usdm4.rules.library.rule_ddf00237 import (
     AGE_UNIT_CODELIST,
 )
 from src.usdm4.rules.rule_template import RuleTemplate
+
+
+# ---------------------------------------------------------------------------
+# FakeCT — minimal stand-in for Library exposing has_codelist + is_in_codelist
+#
+# The real Library is too heavy to construct in a unit test (loads YAML
+# caches, etc.). FakeCT replicates exactly the surface DDF00237 consumes,
+# so the rule's behaviour can be exercised in isolation.
+# ---------------------------------------------------------------------------
+
+
+class FakeCT:
+    """In-memory CT stub mirroring Library.has_codelist + is_in_codelist."""
+
+    def __init__(self, codelists: dict[str, list[dict]]):
+        # codelists is {codelist_id: [term_dict, ...]} where each term
+        # dict can carry conceptId, preferredTerm, submissionValue.
+        self._codelists = codelists
+
+    def has_codelist(self, codelist_id: str) -> bool:
+        return codelist_id in self._codelists
+
+    def is_in_codelist(self, value: str, codelist_id: str, by: str = "any") -> bool:
+        if codelist_id not in self._codelists:
+            return False
+        needle = (value or "").casefold()
+        for term in self._codelists[codelist_id]:
+            if by in ("concept_id", "any") and term.get("conceptId", "") == value:
+                return True
+            if by in ("preferred_term", "any") and (
+                term.get("preferredTerm") or ""
+            ).casefold() == needle:
+                return True
+            if by in ("submission_value", "any") and (
+                term.get("submissionValue") or ""
+            ).casefold() == needle:
+                return True
+        return False
+
+
+def _ct_with_age_unit() -> FakeCT:
+    return FakeCT({
+        AGE_UNIT_CODELIST: [
+            {"conceptId": "C29848", "preferredTerm": "Years", "submissionValue": "Years"},
+            {"conceptId": "C25301", "preferredTerm": "Months", "submissionValue": "Months"},
+        ]
+    })
+
+
+def _ct_with_both_labels() -> FakeCT:
+    """C66781 stub where preferredTerm and submissionValue differ for a
+    term, so we can confirm both forms are accepted independently."""
+    return FakeCT({
+        AGE_UNIT_CODELIST: [
+            {"conceptId": "C29848", "preferredTerm": "Year", "submissionValue": "Years"},
+        ]
+    })
+
+
+def _data_with_instances(pop_instances=None, cohort_instances=None):
+    data = MagicMock()
+
+    def _by_klass(klass):
+        if klass == "StudyDesignPopulation":
+            return pop_instances or []
+        if klass == "StudyCohort":
+            return cohort_instances or []
+        return []
+
+    data.instances_by_klass.side_effect = _by_klass
+    data.path_by_id.return_value = "$.x"
+    return data
 
 
 # ---------------------------------------------------------------------------
@@ -65,52 +138,23 @@ def test_iter_quantities_range_ignores_non_dict_endpoints():
 
 
 # ---------------------------------------------------------------------------
-# validate() — codelist missing
+# validate() — codelist not loaded
 # ---------------------------------------------------------------------------
 
 
-def test_validate_returns_true_when_codelist_missing():
+def test_validate_returns_true_when_codelist_not_loaded():
+    """When C66781 isn't loaded, rule skips (returns True) without
+    querying any instances. Preserves the original cache-stale tolerance."""
     rule = RuleDDF00237()
-    ct = MagicMock()
-    ct._by_code_list = {}  # C66781 absent
+    ct = FakeCT({})  # C66781 absent
     data = MagicMock()
     assert rule.validate({"data": data, "ct": ct}) is True
-    # No instances queried because we bail early
     data.instances_by_klass.assert_not_called()
 
 
 # ---------------------------------------------------------------------------
 # validate() — failure paths
 # ---------------------------------------------------------------------------
-
-
-def _ct_with_age_unit():
-    """CT stub with C66781 populated."""
-    ct = MagicMock()
-    ct._by_code_list = {
-        AGE_UNIT_CODELIST: {
-            "terms": [
-                {"conceptId": "C29848", "preferredTerm": "Years"},
-                {"conceptId": "C25301", "preferredTerm": "Months"},
-            ]
-        }
-    }
-    return ct
-
-
-def _data_with_instances(pop_instances=None, cohort_instances=None):
-    data = MagicMock()
-
-    def _by_klass(klass):
-        if klass == "StudyDesignPopulation":
-            return pop_instances or []
-        if klass == "StudyCohort":
-            return cohort_instances or []
-        return []
-
-    data.instances_by_klass.side_effect = _by_klass
-    data.path_by_id.return_value = "$.x"
-    return data
 
 
 def test_quantity_without_standard_code_raises_failure():
@@ -241,11 +285,11 @@ def test_planned_age_missing_is_skipped():
     assert rule.errors().count() == 0
 
 
-def test_codelist_with_null_terms_falls_back_to_empty():
-    """terms: None should not crash — treated as empty codelist."""
+def test_codelist_loaded_but_empty_rejects_any_code():
+    """If C66781 is loaded with zero terms, every code/decode is rejected.
+    Distinguished from the not-loaded case (which would skip)."""
     rule = RuleDDF00237()
-    ct = MagicMock()
-    ct._by_code_list = {AGE_UNIT_CODELIST: {"terms": None}}
+    ct = FakeCT({AGE_UNIT_CODELIST: []})
     data = _data_with_instances(
         pop_instances=[
             {
@@ -257,32 +301,15 @@ def test_codelist_with_null_terms_falls_back_to_empty():
             }
         ]
     )
-    # No valid codes → any code is rejected
     assert rule.validate({"data": data, "ct": ct}) is False
+    assert rule.errors().count() == 1
 
 
 # ---------------------------------------------------------------------------
-# decode accepts BOTH preferredTerm and submissionValue (mirrors the
-# RuleTemplate._codes_and_decodes widening — same CDISC policy).
+# decode accepts BOTH preferredTerm and submissionValue (same CDISC policy
+# as RuleTemplate._codes_and_decodes — preserved via the by="any" mode of
+# the predicate).
 # ---------------------------------------------------------------------------
-
-
-def _ct_with_both_labels():
-    """C66781 stub where preferredTerm and submissionValue differ for a
-    term, so we can confirm both forms are accepted independently."""
-    ct = MagicMock()
-    ct._by_code_list = {
-        AGE_UNIT_CODELIST: {
-            "terms": [
-                {
-                    "conceptId": "C29848",
-                    "preferredTerm": "Year",
-                    "submissionValue": "Years",
-                }
-            ]
-        }
-    }
-    return ct
 
 
 def test_quantity_with_decode_matching_preferred_term_passes():
@@ -337,3 +364,39 @@ def test_quantity_with_decode_matching_neither_label_still_fails():
     )
     assert rule.validate({"data": data, "ct": _ct_with_both_labels()}) is False
     assert rule.errors().count() == 1
+
+
+# ---------------------------------------------------------------------------
+# Extension transparency — proof that the predicate seam works for the
+# very reason we built it.
+# ---------------------------------------------------------------------------
+
+
+def test_extension_term_is_accepted_transparently():
+    """A term added to C66781 via the extension mechanism (carrying a
+    non-cdisc source tag) is accepted by DDF00237 with no rule change."""
+    rule = RuleDDF00237()
+    ct = FakeCT({
+        AGE_UNIT_CODELIST: [
+            # Standard CDISC term
+            {"conceptId": "C29848", "preferredTerm": "Years", "submissionValue": "Years"},
+            # Extension term (would be tagged with source: NCIt-M11 by
+            # Library._merge_extension; the rule doesn't care about the
+            # tag, only about membership).
+            {"conceptId": "C99999", "preferredTerm": "Femtoseconds",
+             "submissionValue": "Femtoseconds", "source": "NCIt-Something"},
+        ]
+    })
+    data = _data_with_instances(
+        pop_instances=[
+            {
+                "id": "p1",
+                "plannedAge": {
+                    "value": 1,
+                    "unit": {"standardCode": {"code": "C99999", "decode": "Femtoseconds"}},
+                },
+            }
+        ]
+    )
+    assert rule.validate({"data": data, "ct": ct}) is True
+    assert rule.errors().count() == 0

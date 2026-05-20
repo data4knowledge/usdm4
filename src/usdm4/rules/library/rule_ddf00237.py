@@ -3,9 +3,17 @@
 # plannedAge is a nested Quantity (or Range) on StudyDesignPopulation
 # / StudyCohort. Its `unit` (embedded Code) must come from codelist
 # C66781 ("Age Unit"). ct_config's klass_attribute_mapping can't
-# express "nested under plannedAge", so we fetch the codelist
-# directly via the CT library and compare codes in-line. C66781 is
-# registered in ct_config.code_lists so it will be loaded.
+# express "nested under plannedAge", so we route the membership check
+# through the common Library predicate (`is_in_codelist`) — same seam
+# every CT-checking rule uses, so extensions to C66781 (if any are ever
+# loaded) are honoured transparently.
+#
+# History: this rule previously built local valid_codes / valid_decodes
+# sets inline (~30 lines) by reaching into ct._by_code_list directly.
+# Consolidated onto the Library predicate as part of the CT-extensions
+# design (see project_m11_sdtm_phase_code_tension). Behaviour is
+# preserved exactly — including the "codelist not loaded, skip the
+# rule" path, which uses the companion Library.has_codelist predicate.
 from usdm4.rules.rule_template import RuleTemplate
 
 
@@ -46,24 +54,12 @@ class RuleDDF00237(RuleTemplate):
     def validate(self, config: dict) -> bool:
         data = config["data"]
         ct = config["ct"]
-        codelist = ct._by_code_list.get(AGE_UNIT_CODELIST)
-        if codelist is None:
+        if not ct.has_codelist(AGE_UNIT_CODELIST):
             # C66781 is registered in ct_config.yaml but only populates
             # after a CT cache refresh. If the cache is stale we skip
-            # the check rather than crash the engine; the rule
-            # re-activates once the cache is refreshed.
+            # the check rather than emit a finding for every unit; the
+            # rule re-activates once the cache is refreshed.
             return True
-        valid_codes = {term["conceptId"] for term in codelist.get("terms") or []}
-        # Accept either preferredTerm or submissionValue — both are valid
-        # CDISC encodings for the same term (mirrors RuleTemplate._codes_and_decodes).
-        valid_decodes: set[str] = set()
-        for term in codelist.get("terms") or []:
-            preferred = term.get("preferredTerm")
-            submission = term.get("submissionValue")
-            if preferred is not None:
-                valid_decodes.add(preferred)
-            if submission is not None:
-                valid_decodes.add(submission)
         for klass in SCOPE_CLASSES:
             for instance in data.instances_by_klass(klass):
                 planned_age = instance.get("plannedAge")
@@ -82,8 +78,18 @@ class RuleDDF00237(RuleTemplate):
                         continue
                     code = standard.get("code")
                     decode = standard.get("decode")
-                    if code not in valid_codes or (
-                        decode is not None and decode not in valid_decodes
+                    if code is None or not ct.is_in_codelist(
+                        code, AGE_UNIT_CODELIST, by="concept_id"
+                    ):
+                        self._add_failure(
+                            f"{klass}.plannedAge unit {code!r}/{decode!r} is not in the Age Unit codelist ({AGE_UNIT_CODELIST})",
+                            klass,
+                            "plannedAge",
+                            data.path_by_id(instance["id"]),
+                        )
+                        continue
+                    if decode is not None and not ct.is_in_codelist(
+                        decode, AGE_UNIT_CODELIST, by="any"
                     ):
                         self._add_failure(
                             f"{klass}.plannedAge unit {code!r}/{decode!r} is not in the Age Unit codelist ({AGE_UNIT_CODELIST})",
