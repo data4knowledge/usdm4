@@ -1,16 +1,20 @@
 """Tests for RuleDDF00229 — studyPhase against C66737 with M11 PT warning relaxation.
 
 The rule routes membership through the common Library predicate
-(``has_codelist`` + ``find_in_codelist``). These tests stub the CT
-library with a small FakeCT replicating the predicate surface — no
-real Library instance is constructed.
+(``find_in_codelist``). These tests stub the CT library with the shared
+``FakeCT`` from :mod:`tests.usdm4.rules.ct_helpers` — same stub used by
+test_rule_ddf00237, so the two can't drift from the Library contract.
 """
 
+import pytest
 from unittest.mock import MagicMock
 
 from simple_error_log.errors import Errors
+from usdm4.ct.cdisc.library import MissingCodelistError
 from usdm4.rules.library.rule_ddf00229 import RuleDDF00229
 from usdm4.rules.rule_template import RuleTemplate
+
+from tests.usdm4.rules.ct_helpers import FakeCT
 
 
 # C66737 SDTM Trial Phase Response — minimal subset that exercises the
@@ -24,35 +28,6 @@ _SDTM_C66737 = [
     # used to prove "no M11 fallback for SDTM-only codes".
     {"conceptId": "C49686", "preferredTerm": "Phase IIa Trial", "submissionValue": "PHASE IIA TRIAL"},
 ]
-
-
-class FakeCT:
-    """In-memory CT stub mirroring Library.has_codelist + find_in_codelist."""
-
-    def __init__(self, codelists: dict[str, list[dict]]):
-        self._codelists = codelists
-
-    def has_codelist(self, codelist_id: str) -> bool:
-        return codelist_id in self._codelists
-
-    def find_in_codelist(
-        self, value: str, codelist_id: str, by: str = "any"
-    ) -> tuple[dict, str]:
-        if codelist_id not in self._codelists:
-            return (None, None)
-        needle = (value or "").casefold()
-        for term in self._codelists[codelist_id]:
-            if by in ("concept_id", "any") and term.get("conceptId", "") == value:
-                return (term, term.get("source") or "cdisc")
-            if by in ("preferred_term", "any") and (
-                term.get("preferredTerm") or ""
-            ).casefold() == needle:
-                return (term, term.get("source") or "cdisc")
-            if by in ("submission_value", "any") and (
-                term.get("submissionValue") or ""
-            ).casefold() == needle:
-                return (term, term.get("source") or "cdisc")
-        return (None, None)
 
 
 def _ct_with(terms):
@@ -249,14 +224,20 @@ class TestRuleDDF00229Codelist:
 
 
 class TestRuleDDF00229CodelistMissing:
-    """When C66737 isn't loaded, skip rather than fail everything (cache-stale tolerance)."""
+    """When C66737 isn't loaded, raise rather than silently mark
+    every studyPhase as valid — it's a config flaw, not a per-document
+    finding. See ``feedback_missing_codelist_must_raise``."""
 
-    def test_codelist_not_loaded_skips_rule(self):
+    def test_codelist_not_loaded_raises(self):
         rule = RuleDDF00229()
         ct = FakeCT({})  # C66737 absent
         data = MagicMock()
-        assert rule.validate({"data": data, "ct": ct}) is True
-        data.instances_by_klass.assert_not_called()
+        data.instances_by_klass.return_value = [
+            {"id": "I1", "studyPhase": {"code": "C15600", "decode": "Phase 1 Trial"}}
+        ]
+        data.path_by_id.return_value = "$.x"
+        with pytest.raises(MissingCodelistError, match="not loaded"):
+            rule.validate({"data": data, "ct": ct})
 
 
 class TestRuleDDF00229M11Relaxation:

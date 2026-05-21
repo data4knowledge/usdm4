@@ -26,6 +26,12 @@
 # `usdm4.assembler.m11_phase_aliases`, shared with the M11Decoder so
 # the two no longer drift. See `project_m11_sdtm_phase_code_tension`
 # memory for the full design context.
+#
+# Missing-codelist contract: if C66737 is not loaded, the Library
+# predicate raises MissingCodelistError. We let it propagate; the rule
+# engine surfaces it as a per-rule EXCEPTION outcome so the operator
+# sees the config flaw rather than a misleading "rule passed". See
+# feedback_missing_codelist_must_raise.
 from simple_error_log.errors import Errors
 
 from usdm4.assembler.m11_phase_aliases import M11_TRIAL_PHASE_PTS
@@ -58,12 +64,12 @@ class RuleDDF00229(RuleTemplate):
     def validate(self, config: dict) -> bool:
         data = config["data"]
         ct = config["ct"]
-        if not ct.has_codelist(_C66737):
-            # C66737 is a baseline SDTM codelist and should always be
-            # loaded; if it isn't, the CT cache is stale or
-            # misconfigured. Treat this as cache-stale and skip rather
-            # than fail every studyPhase.
-            return True
+        # No cache-stale guard here: C66737 is a baseline SDTM codelist
+        # that must always be loaded. If it isn't, the first
+        # find_in_codelist call raises MissingCodelistError and the
+        # rule engine logs it as an exception outcome — the operator
+        # sees the config flaw immediately rather than every studyPhase
+        # silently marked valid.
         for klass in _DESIGN_KLASSES:
             for instance in data.instances_by_klass(klass):
                 self._check_one(instance, klass, ct, data)

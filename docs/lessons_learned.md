@@ -1125,34 +1125,21 @@ for instance in data.instances_by_klass(klass):
 Missing back-links (A has no nextId at all) aren't flagged — that's
 a different rule's concern. Only *mismatched* back-links fail.
 
-### CT codelist registered but not yet in cache
+### CT codelist registered but not yet in cache (superseded)
 
-DDF00237 needs the Age Unit codelist (C66781), which is SDTM CT —
-not in the default USDM cache. Three-layer situation:
+**Superseded 2026-05-21.** The earlier guidance here proposed a
+"defensive skip" when a registered codelist hadn't yet been pulled
+into the CT cache (rules returned True silently when the codelist
+was absent). That pattern is now wrong — see the new lesson "Missing
+codelist must raise" below for the current rule. The original DDF00237
+defensive-skip implementation has been removed; the rule now lets
+`MissingCodelistError` propagate so a missing codelist surfaces as a
+per-rule EXCEPTION outcome, not as silent pass.
 
-1. Add C66781 to `ct_config.yaml` `code_lists:` so a future cache
-   refresh will pull it.
-2. Don't count on the cache being fresh *right now* — the
-   `library_cache_usdm.yaml` snapshot was taken before we added the
-   codelist.
-3. Make the rule defensive: if
-   `config["ct"]._by_code_list.get("C66781") is None`, return True.
-   The rule will silently re-activate when the cache is refreshed.
-
-```python
-codelist = ct._by_code_list.get(AGE_UNIT_CODELIST)
-if codelist is None:
-    # C66781 is registered in ct_config.yaml but only populates
-    # after a CT cache refresh. Skip rather than crash.
-    return True
-```
-
-This is a "ship the config change now, the functionality activates
-after refresh" pattern. The alternative — raising CTException — is
-the pattern used by `_ct_check` (which assumes the codelist
-*should* be present). Use the raising behaviour when the codelist
-is expected to be there; use the defensive skip when a cache
-refresh is the enabling step.
+The remaining three-layer situation for adding a new SDTM codelist
+to the USDM cache (register in `ct_config.yaml`, refresh the cache,
+ensure CDISC publishes it) is unchanged. What changed is the rule's
+behaviour while the cache is stale: now raise, don't skip.
 
 ### When `klass_attribute_mapping` can't express the path
 
@@ -1161,19 +1148,18 @@ codelist }`. For DDF00237 the target is `plannedAge.unit` — two
 levels deep from StudyDesignPopulation. Can't be encoded in the
 flat mapping.
 
-Two options:
+The current pattern (post-2026-05-21 consolidation):
 
-- Use `cl_by_term()` or `_by_code_list[code_id]` to fetch the
-  codelist directly, then do the membership check inline.
-- Register the nested class.attribute (here, `Quantity.unit`) and
-  rely on context — but Quantity.unit serves many different
-  codelists depending on context (age, percent, mass, etc.), so a
-  blanket mapping would be wrong.
+- Hardcode the codelist ID as a module-level constant.
+- Call `ct.is_in_codelist(value, codelist_id, by=...)` or
+  `ct.find_in_codelist(...)` directly — the same predicate
+  `_ct_check` now routes through. Extensions are honoured
+  transparently.
+- Let `MissingCodelistError` propagate if the codelist isn't loaded
+  — do not gate with `has_codelist` (the method has been removed).
 
-DDF00237 chose option 1. Keep the codelist ID as a module-level
-constant so the rule is self-documenting; fetch via `_by_code_list`
-(accepting the private-attribute access — same caveat as `_parent`
-and `_ids` in §11).
+The previous workaround that reached into `ct._by_code_list[code_id]`
+is no longer needed; the public predicates are the seam to use.
 
 ### When stage-1 gets the class wrong
 
@@ -1437,3 +1423,74 @@ defaults to `level=ERROR`, which drops warnings. `_row()` calls it
 with `level=Errors.DEBUG` explicitly so rules constructed at
 `RuleTemplate.WARNING` (e.g. `rule_ddf00088.py`) still surface. Don't
 remove the level argument.
+
+## 24. Missing codelist must raise — one predicate, one contract
+
+Standing invariant (2026-05-21): when a CT-checking rule asks the
+Library to evaluate membership against a codelist that isn't loaded,
+the Library raises `MissingCodelistError`. The rule does NOT catch
+it. The rule engine (`rules/engine.py`) records it as a per-rule
+EXCEPTION outcome — distinct from SUCCESS / FAILURE / NOT_IMPLEMENTED
+— so the operator sees the config flaw immediately.
+
+The earlier "defensive skip" pattern (return True when codelist
+isn't loaded, on the theory that a cache refresh will activate the
+rule) is forbidden. A stale CT cache that silently passes every
+value is worse than a noisy exception: the validator is reporting
+success on data it didn't actually validate.
+
+**Implementation.** All CT-checking rules route through a single
+membership predicate — `Library.find_in_codelist` (with
+`Library.is_in_codelist` as a thin wrapper). The internal helpers
+that previously lived on `RuleTemplate` (`_check_codelist`,
+`_codes_and_decodes`, `_find_index`) and the public `has_codelist`
+method are gone. `RuleTemplate._ct_check` delegates to the predicate.
+DDF00229 and DDF00237 call the predicate directly because they
+need shapes `_ct_check` doesn't support (cross-standard PT warning;
+nested attribute path).
+
+`MissingCodelistError` is raised on two conditions:
+
+- The codelist isn't loaded in `_by_code_list` at all.
+- The codelist is loaded but `terms[]` is empty.
+
+Both are config flaws — the cache was built without a codelist a
+rule requires, or with a malformed entry. The previous distinction
+("loaded-but-empty rejects every value vs not-loaded skips silently")
+is gone; both now raise the same exception.
+
+**M11 validator side.** `RuleM11_002` follows the same invariant
+with two additional config-flaw checks: it raises `RuntimeError` if
+`ctx.ct is None` (validator was bypassed) and `MissingBindingError`
+if `codelist_bindings.yaml` has no entry for an element listed in
+the rule's hardcoded `_CT_ELEMENTS`. Three exception classes, each
+pointing at exactly the config flaw to fix: regenerate the CT cache
+(MissingCodelistError), wire the validator correctly (RuntimeError),
+or regenerate `codelist_bindings.yaml` (MissingBindingError).
+
+**Drift fixes shipped alongside.** Decode matching is now
+case-insensitive (`find_in_codelist` casefolds preferredTerm and
+submissionValue). `concept_id` matching stays case-sensitive
+because NCI conceptIds are normatively uppercase. Empty-terms
+behaviour is consistent across all CT-checking rules.
+
+**Test infrastructure.** A single `FakeCT` stub lives in each repo's
+test tree (`tests/usdm4/rules/ct_helpers.py` and
+`tests/validation/m11/rules/helpers.py`) so DDF00229 / DDF00237 /
+M11_002 tests use the same stub and can't drift from the Library
+contract. The two copies are deliberately not shared across repos.
+
+**How to apply.**
+
+- New d4k rule that checks CT membership: subclass `RuleTemplate`,
+  delegate to `self._ct_check(config, klass, attribute)`. Don't write
+  your own `is_in_codelist`/`has_codelist` call unless you need
+  something `_ct_check` can't express (nested attribute, custom
+  severity logic).
+- New M11 rule that checks CT membership: subclass the M11
+  `RuleTemplate`, call `ct.is_in_codelist(value, codelist_id,
+  by="any")` directly. Let `MissingCodelistError` propagate. Don't
+  add a `has_codelist` guard — the method doesn't exist anymore.
+- Codelist not loading at runtime: don't paper over with a skip;
+  regenerate the CT cache (or the missing-CT extension YAML) so the
+  rule has data to validate against.

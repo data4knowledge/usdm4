@@ -13,7 +13,11 @@ import pathlib
 
 import pytest
 
-from src.usdm4.ct.cdisc.library import ConfigurationError, Library
+from src.usdm4.ct.cdisc.library import (
+    ConfigurationError,
+    Library,
+    MissingCodelistError,
+)
 
 
 ROOT = os.path.join(
@@ -577,25 +581,12 @@ def test_add_whole_codelist_preserves_extensible_flag(loaded_library):
 
 
 # ---------------------------------------------------------------------------
-# has_codelist — companion to is_in_codelist for cache-stale detection
-# ---------------------------------------------------------------------------
-
-
-def test_has_codelist_true_when_loaded(loaded_library):
-    assert loaded_library.has_codelist("C1") is True
-
-
-def test_has_codelist_false_when_absent(loaded_library):
-    assert loaded_library.has_codelist("C_DOES_NOT_EXIST") is False
-
-
-def test_has_codelist_true_after_whole_codelist_added(loaded_library):
-    loaded_library._add_whole_codelist(_whole_codelist_entry("C217045"))
-    assert loaded_library.has_codelist("C217045") is True
-
-
-# ---------------------------------------------------------------------------
 # is_in_codelist / find_in_codelist — common membership predicate
+#
+# The predicates raise MissingCodelistError when the codelist is not
+# loaded or is loaded with no terms — both are config flaws, not
+# membership outcomes. See feedback_missing_codelist_must_raise for
+# the rationale and how rules surface this via the engine.
 # ---------------------------------------------------------------------------
 
 
@@ -623,8 +614,11 @@ def test_is_in_codelist_returns_false_on_miss(loaded_library):
     assert loaded_library.is_in_codelist("Nope", "C1", by="any") is False
 
 
-def test_is_in_codelist_returns_false_when_codelist_unknown(loaded_library):
-    assert loaded_library.is_in_codelist("T1", "C_DOES_NOT_EXIST", by="any") is False
+def test_is_in_codelist_raises_when_codelist_unknown(loaded_library):
+    """Unknown codelist is a config flaw — raise rather than silently
+    return False (which would mark every value as 'not in codelist')."""
+    with pytest.raises(MissingCodelistError, match="not loaded"):
+        loaded_library.is_in_codelist("T1", "C_DOES_NOT_EXIST", by="any")
 
 
 def test_is_in_codelist_concept_id_is_case_sensitive(loaded_library):
@@ -672,9 +666,31 @@ def test_find_in_codelist_miss_returns_none_pair(loaded_library):
     assert term is None and source is None
 
 
-def test_find_in_codelist_unknown_codelist_returns_none_pair(loaded_library):
-    term, source = loaded_library.find_in_codelist("T1", "C_NONE", by="any")
-    assert term is None and source is None
+def test_find_in_codelist_raises_when_codelist_unknown(loaded_library):
+    """Unknown codelist is a config flaw — raise rather than silently
+    return (None, None)."""
+    with pytest.raises(MissingCodelistError, match="not loaded"):
+        loaded_library.find_in_codelist("T1", "C_NONE", by="any")
+
+
+def test_is_in_codelist_raises_when_codelist_has_no_terms(loaded_library):
+    """A codelist loaded with zero terms is a config flaw — raise rather
+    than silently mark every value as 'not in codelist'."""
+    loaded_library._by_code_list["C_EMPTY"] = {
+        "conceptId": "C_EMPTY",
+        "terms": [],
+    }
+    with pytest.raises(MissingCodelistError, match="no terms"):
+        loaded_library.is_in_codelist("T1", "C_EMPTY", by="any")
+
+
+def test_find_in_codelist_raises_when_codelist_has_no_terms(loaded_library):
+    loaded_library._by_code_list["C_EMPTY"] = {
+        "conceptId": "C_EMPTY",
+        "terms": [],
+    }
+    with pytest.raises(MissingCodelistError, match="no terms"):
+        loaded_library.find_in_codelist("T1", "C_EMPTY", by="any")
 
 
 def test_find_in_codelist_handles_none_value(loaded_library):

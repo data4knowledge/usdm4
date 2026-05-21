@@ -2,7 +2,7 @@
 
 Covers:
 - metadata
-- C66781 not loaded → rule skipped (returns True; predicate via has_codelist)
+- C66781 not loaded → predicate raises MissingCodelistError (no skip)
 - Quantity-shaped plannedAge (with 'value')
 - Range-shaped plannedAge (minValue/maxValue)
 - Non-dict plannedAge early-return
@@ -16,52 +16,18 @@ Covers:
 - Extensions (via source-tagged terms) transparently accepted
 """
 
+import pytest
 from unittest.mock import MagicMock
 
-from src.usdm4.rules.library.rule_ddf00237 import (
+from usdm4.ct.cdisc.library import MissingCodelistError
+from usdm4.rules.library.rule_ddf00237 import (
     RuleDDF00237,
     _iter_quantities,
     AGE_UNIT_CODELIST,
 )
-from src.usdm4.rules.rule_template import RuleTemplate
+from usdm4.rules.rule_template import RuleTemplate
 
-
-# ---------------------------------------------------------------------------
-# FakeCT — minimal stand-in for Library exposing has_codelist + is_in_codelist
-#
-# The real Library is too heavy to construct in a unit test (loads YAML
-# caches, etc.). FakeCT replicates exactly the surface DDF00237 consumes,
-# so the rule's behaviour can be exercised in isolation.
-# ---------------------------------------------------------------------------
-
-
-class FakeCT:
-    """In-memory CT stub mirroring Library.has_codelist + is_in_codelist."""
-
-    def __init__(self, codelists: dict[str, list[dict]]):
-        # codelists is {codelist_id: [term_dict, ...]} where each term
-        # dict can carry conceptId, preferredTerm, submissionValue.
-        self._codelists = codelists
-
-    def has_codelist(self, codelist_id: str) -> bool:
-        return codelist_id in self._codelists
-
-    def is_in_codelist(self, value: str, codelist_id: str, by: str = "any") -> bool:
-        if codelist_id not in self._codelists:
-            return False
-        needle = (value or "").casefold()
-        for term in self._codelists[codelist_id]:
-            if by in ("concept_id", "any") and term.get("conceptId", "") == value:
-                return True
-            if by in ("preferred_term", "any") and (
-                term.get("preferredTerm") or ""
-            ).casefold() == needle:
-                return True
-            if by in ("submission_value", "any") and (
-                term.get("submissionValue") or ""
-            ).casefold() == needle:
-                return True
-        return False
+from tests.usdm4.rules.ct_helpers import FakeCT
 
 
 def _ct_with_age_unit() -> FakeCT:
@@ -142,14 +108,26 @@ def test_iter_quantities_range_ignores_non_dict_endpoints():
 # ---------------------------------------------------------------------------
 
 
-def test_validate_returns_true_when_codelist_not_loaded():
-    """When C66781 isn't loaded, rule skips (returns True) without
-    querying any instances. Preserves the original cache-stale tolerance."""
+def test_validate_raises_when_codelist_not_loaded():
+    """When C66781 isn't loaded, the predicate raises MissingCodelistError.
+    The rule engine surfaces this as an EXCEPTION outcome — the operator
+    sees the config flaw rather than every unit silently marked valid.
+    See ``feedback_missing_codelist_must_raise``."""
     rule = RuleDDF00237()
     ct = FakeCT({})  # C66781 absent
-    data = MagicMock()
-    assert rule.validate({"data": data, "ct": ct}) is True
-    data.instances_by_klass.assert_not_called()
+    data = _data_with_instances(
+        pop_instances=[
+            {
+                "id": "p1",
+                "plannedAge": {
+                    "value": 18,
+                    "unit": {"standardCode": {"code": "C29848", "decode": "Years"}},
+                },
+            }
+        ]
+    )
+    with pytest.raises(MissingCodelistError, match="not loaded"):
+        rule.validate({"data": data, "ct": ct})
 
 
 # ---------------------------------------------------------------------------
@@ -285,9 +263,11 @@ def test_planned_age_missing_is_skipped():
     assert rule.errors().count() == 0
 
 
-def test_codelist_loaded_but_empty_rejects_any_code():
-    """If C66781 is loaded with zero terms, every code/decode is rejected.
-    Distinguished from the not-loaded case (which would skip)."""
+def test_codelist_loaded_but_empty_raises():
+    """A codelist loaded with zero terms is a config flaw, same shape
+    as 'not loaded' — the predicate raises MissingCodelistError. The
+    rule no longer treats this as 'reject every code' (which would
+    flood findings) nor as 'skip silently' (which would hide the bug)."""
     rule = RuleDDF00237()
     ct = FakeCT({AGE_UNIT_CODELIST: []})
     data = _data_with_instances(
@@ -301,8 +281,8 @@ def test_codelist_loaded_but_empty_rejects_any_code():
             }
         ]
     )
-    assert rule.validate({"data": data, "ct": ct}) is False
-    assert rule.errors().count() == 1
+    with pytest.raises(MissingCodelistError, match="no terms"):
+        rule.validate({"data": data, "ct": ct})
 
 
 # ---------------------------------------------------------------------------

@@ -8,12 +8,11 @@
 # every CT-checking rule uses, so extensions to C66781 (if any are ever
 # loaded) are honoured transparently.
 #
-# History: this rule previously built local valid_codes / valid_decodes
-# sets inline (~30 lines) by reaching into ct._by_code_list directly.
-# Consolidated onto the Library predicate as part of the CT-extensions
-# design (see project_m11_sdtm_phase_code_tension). Behaviour is
-# preserved exactly — including the "codelist not loaded, skip the
-# rule" path, which uses the companion Library.has_codelist predicate.
+# Missing-codelist contract: if C66781 is not loaded, the Library
+# predicate raises MissingCodelistError. We let it propagate; the rule
+# engine surfaces it as a per-rule EXCEPTION outcome so the operator
+# sees the config flaw rather than a misleading "rule passed". See
+# feedback_missing_codelist_must_raise.
 from usdm4.rules.rule_template import RuleTemplate
 
 
@@ -54,12 +53,11 @@ class RuleDDF00237(RuleTemplate):
     def validate(self, config: dict) -> bool:
         data = config["data"]
         ct = config["ct"]
-        if not ct.has_codelist(AGE_UNIT_CODELIST):
-            # C66781 is registered in ct_config.yaml but only populates
-            # after a CT cache refresh. If the cache is stale we skip
-            # the check rather than emit a finding for every unit; the
-            # rule re-activates once the cache is refreshed.
-            return True
+        # No cache-stale guard here: if C66781 isn't loaded, the first
+        # is_in_codelist call raises MissingCodelistError and the rule
+        # engine logs it as an exception outcome. That's the right
+        # signal — a missing baseline codelist is a config flaw, not a
+        # per-document finding.
         for klass in SCOPE_CLASSES:
             for instance in data.instances_by_klass(klass):
                 planned_age = instance.get("plannedAge")

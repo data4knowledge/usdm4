@@ -17,6 +17,19 @@ class ConfigurationError(Exception):
     """
 
 
+class MissingCodelistError(Exception):
+    """Raised when a referenced codelist isn't loaded in the CT cache.
+
+    A rule has asked the Library to evaluate membership against a
+    codelist that the cache doesn't contain — either the codelist is
+    absent entirely, or it's present but has no terms. Both are config
+    flaws: the cache was built without a codelist the rule requires,
+    or the codelist was loaded but is empty. Must surface loudly
+    rather than silently passing rules that have no data to check
+    against (see ``feedback_missing_codelist_must_raise``).
+    """
+
+
 class Library:
     """
     A class to manage CDISC controlled terminology (CT) data.
@@ -120,18 +133,6 @@ class Library:
         except Exception:
             return None
 
-    def has_codelist(self, codelist_id: str) -> bool:
-        """True if ``codelist_id`` is loaded in the Library.
-
-        Companion to :meth:`is_in_codelist` for rules that need to
-        distinguish "codelist not loaded (skip the rule, the CT cache
-        is stale)" from "codelist loaded but value not a member
-        (emit a finding)". Without this distinction, an absent
-        codelist would cause :meth:`is_in_codelist` to return False for
-        every value, generating spurious findings.
-        """
-        return codelist_id in self._by_code_list
-
     def is_in_codelist(
         self, value: str, codelist_id: str, by: str = "any"
     ) -> bool:
@@ -143,6 +144,12 @@ class Library:
           - ``"preferred_term"`` — case-insensitive match on ``term.preferredTerm``
           - ``"submission_value"`` — case-insensitive match on ``term.submissionValue``
           - ``"any"`` (default) — try all three in that order
+
+        Raises :class:`MissingCodelistError` when ``codelist_id`` is
+        not loaded in the cache, or is loaded with no terms — both are
+        config flaws, not membership outcomes, and must surface loudly
+        rather than be silently reported as "not a member" for every
+        value.
 
         This is the single membership predicate that d4k rules and M11
         validator rules should call instead of reaching into
@@ -164,13 +171,40 @@ class Library:
         error decision) read this tag; callers that only care about
         membership use :meth:`is_in_codelist`.
 
-        See :meth:`is_in_codelist` for the ``by`` parameter semantics.
+        Raises :class:`MissingCodelistError` when ``codelist_id`` is
+        not loaded or is loaded with no terms. See :meth:`is_in_codelist`
+        for the ``by`` parameter semantics.
         """
         cl = self._by_code_list.get(codelist_id)
         if cl is None:
-            return (None, None)
+            raise MissingCodelistError(
+                f"Codelist {codelist_id!r} is not loaded in the CT cache"
+            )
+        terms = cl.get("terms") or []
+        if not terms:
+            raise MissingCodelistError(
+                f"Codelist {codelist_id!r} is loaded but has no terms"
+            )
+        return self.find_in_terms(terms, value, by)
+
+    @staticmethod
+    def find_in_terms(
+        terms: list[dict], value: str, by: str = "any"
+    ) -> tuple[dict, str]:
+        """Search a list of CDISC term dicts for ``value``.
+
+        Returns ``(term, source_tag)`` or ``(None, None)``. This is the
+        core matching primitive — :meth:`find_in_codelist` resolves a
+        codelist_id to a terms list and delegates here, and
+        :meth:`RuleTemplate._ct_check` calls it directly with terms it
+        has already obtained via :meth:`klass_and_attribute`. One
+        matching primitive, two entry points; the membership semantics
+        live in exactly one place.
+
+        See :meth:`is_in_codelist` for the ``by`` parameter semantics.
+        """
         needle = (value or "").casefold()
-        for term in cl.get("terms") or []:
+        for term in terms:
             if by in ("concept_id", "any") and term.get("conceptId", "") == value:
                 return (term, term.get("source") or "cdisc")
             if by in ("preferred_term", "any") and (

@@ -1,19 +1,29 @@
-"""Direct tests for RuleTemplate and ValidationLocation.
+"""Tests for RuleTemplate and ValidationLocation.
 
-Covers the shared helpers used by every rule_ddf* module:
-- ValidationLocation.__str__ (line 30)
-- RuleTemplate.validate raises NotImplementedError (line 51)
-- _ct_check code/decode mismatch branch (lines 119-126)
-- _check_codelist raises CTException when codelist is None (line 139)
-- _check_codelist raises CTException when terms are missing (line 144)
-- _codes_and_decodes returns None, None when no terms (line 151)
+After the predicate-consolidation refactor (see project memory
+``project_m11_sdtm_phase_code_tension`` and feedback memory
+``feedback_missing_codelist_must_raise``), RuleTemplate._ct_check
+delegates membership/match to Library.find_in_codelist. The internal
+helpers (_check_codelist, _codes_and_decodes, _find_index) are gone.
+
+These tests exercise _ct_check through a shared FakeCT stub that
+mirrors the Library predicate contract — including raising
+MissingCodelistError when the codelist is unknown or has no terms.
 """
 
 from unittest.mock import MagicMock
 
 import pytest
 
-from src.usdm4.rules.rule_template import RuleTemplate, ValidationLocation
+from usdm4.ct.cdisc.library import MissingCodelistError
+from usdm4.rules.rule_template import RuleTemplate, ValidationLocation
+
+from tests.usdm4.rules.ct_helpers import FakeCT
+
+
+# ---------------------------------------------------------------------------
+# ValidationLocation
+# ---------------------------------------------------------------------------
 
 
 def test_validation_location_str():
@@ -49,6 +59,11 @@ def test_validation_location_to_dict_and_headers():
     ]
 
 
+# ---------------------------------------------------------------------------
+# RuleTemplate base behaviour
+# ---------------------------------------------------------------------------
+
+
 def test_rule_template_validate_raises_not_implemented():
     rt = RuleTemplate("R001", RuleTemplate.ERROR, "rule text")
     with pytest.raises(NotImplementedError):
@@ -61,290 +76,280 @@ def test_rule_template_result_initial_true():
     assert rt.errors().count() == 0
 
 
-def test_ct_check_code_decode_mismatch_raises_failure():
-    """Exercise the mismatched code/decode branch (lines 118-124)."""
-    rt = RuleTemplate("R002", RuleTemplate.ERROR, "mismatched code/decode")
+# ---------------------------------------------------------------------------
+# _ct_check — codelist resolution
+#
+# When ct_config.yaml doesn't map (klass, attribute) to a conceptId,
+# the rule is registered against an unmapped attribute — a config flaw
+# distinct from "codelist not loaded". CTException stays the signal for
+# this case; MissingCodelistError covers the loaded-but-not-in-cache case.
+# ---------------------------------------------------------------------------
 
-    # codes=["A","B"], decodes=["DA","DB"]. Item has code="A" (index 0),
-    # decode="DB" (index 1) — indexes differ, triggering the mismatch path.
-    codelist = {
-        "terms": [
-            {"conceptId": "A", "preferredTerm": "DA"},
-            {"conceptId": "B", "preferredTerm": "DB"},
-        ]
-    }
 
+def test_ct_check_raises_ct_exception_when_klass_attribute_unmapped():
+    rt = RuleTemplate("R100", RuleTemplate.ERROR, "no mapping")
+    # FakeCT with no klass_attribute_map → klass_and_attribute returns None.
+    ct = FakeCT({})
+    data = MagicMock()
+    with pytest.raises(RuleTemplate.CTException, match="Failed to find code list"):
+        rt._ct_check({"data": data, "ct": ct}, "Study", "status")
+
+
+def test_ct_check_propagates_missing_codelist_error_when_codelist_absent():
+    """klass_and_attribute returns None for an unmapped pair (above).
+    But if the mapping exists yet the codelist isn't loaded into the
+    Library, find_in_codelist raises MissingCodelistError on first use.
+    This test simulates that with a mock that returns the codelist dict
+    from klass_and_attribute but then has it disappear before
+    find_in_codelist runs — an artificial scenario, but it pins the
+    propagation contract for any future loader change."""
+    rt = RuleTemplate("R101", RuleTemplate.ERROR, "predicate raises")
     ct = MagicMock()
-    ct.klass_and_attribute.return_value = codelist
-
+    ct.klass_and_attribute.return_value = {"conceptId": "C_GHOST", "terms": [{"conceptId": "X"}]}
+    ct.find_in_codelist.side_effect = MissingCodelistError(
+        "Codelist 'C_GHOST' is not loaded in the CT cache"
+    )
     data = MagicMock()
     data.instances_by_klass.return_value = [
-        {"id": "i1", "status": {"code": "A", "decode": "DB"}}
+        {"id": "i1", "status": {"code": "X", "decode": "Y"}}
     ]
     data.path_by_id.return_value = "$.study"
-
-    ok = rt._ct_check({"data": data, "ct": ct}, "Study", "status")
-
-    assert ok is False
-    assert rt.errors().count() == 1
-
-
-def test_ct_check_missing_attribute_raises_failure():
-    rt = RuleTemplate("R003", RuleTemplate.ERROR, "missing attribute")
-
-    codelist = {
-        "terms": [
-            {"conceptId": "A", "preferredTerm": "DA"},
-        ]
-    }
-    ct = MagicMock()
-    ct.klass_and_attribute.return_value = codelist
-
-    data = MagicMock()
-    # Instance has NO "status" attribute at all
-    data.instances_by_klass.return_value = [{"id": "i1"}]
-    data.path_by_id.return_value = "$.study"
-
-    ok = rt._ct_check({"data": data, "ct": ct}, "Study", "status")
-    assert ok is False
-    assert rt.errors().count() == 1
-
-
-def test_check_codelist_raises_when_codelist_missing():
-    """Line 139: no codelist found for klass/attribute -> CTException."""
-    rt = RuleTemplate("R004", RuleTemplate.ERROR, "missing codelist")
-    ct = MagicMock()
-    ct.klass_and_attribute.return_value = None
-    with pytest.raises(RuleTemplate.CTException) as ex:
-        rt._check_codelist(ct, "Study", "status")
-    assert "Failed to find code list" in str(ex.value)
-
-
-def test_check_codelist_raises_when_terms_missing():
-    """Line 144: codelist present but terms empty -> CTException."""
-    rt = RuleTemplate("R005", RuleTemplate.ERROR, "missing terms")
-    ct = MagicMock()
-    ct.klass_and_attribute.return_value = {"terms": []}
-    with pytest.raises(RuleTemplate.CTException) as ex:
-        rt._check_codelist(ct, "Study", "status")
-    assert "Failed to find terms" in str(ex.value)
-
-
-def test_codes_and_decodes_returns_none_pair_when_no_terms():
-    """Line 151: empty/absent terms returns (None, None)."""
-    rt = RuleTemplate("R006", RuleTemplate.ERROR, "no terms")
-    codes, decodes = rt._codes_and_decodes({"terms": []})
-    assert codes is None and decodes is None
-    codes, decodes = rt._codes_and_decodes({})
-    assert codes is None and decodes is None
-
-
-def test_find_index_returns_index_or_none():
-    rt = RuleTemplate("R007", RuleTemplate.ERROR, "find index")
-    assert rt._find_index(["a", "b", "c"], "b") == 1
-    assert rt._find_index(["a", "b", "c"], "missing") is None
+    with pytest.raises(MissingCodelistError, match="not loaded"):
+        rt._ct_check({"data": data, "ct": ct}, "Study", "status")
 
 
 # ---------------------------------------------------------------------------
-# _codes_and_decodes accepts BOTH preferredTerm and submissionValue
-# ---------------------------------------------------------------------------
-#
-# CDISC publishes two labels for each codelist term: preferredTerm (NCI
-# Thesaurus form) and submissionValue (SDTM/CDASH submission form).
-# Sponsors legitimately encode either. Earlier versions of d4k only
-# accepted preferredTerm and flagged perfectly valid submissionValue
-# encodings as "Invalid decode". The cases below pin the wider behaviour.
-
-
-def test_codes_and_decodes_returns_dict_for_decodes():
-    """Shape contract: decodes is a {label: term_index} dict, not a list."""
-    rt = RuleTemplate("R010", RuleTemplate.ERROR, "shape")
-    codelist = {
-        "terms": [
-            {"conceptId": "C1", "preferredTerm": "P1", "submissionValue": "S1"},
-            {"conceptId": "C2", "preferredTerm": "P2", "submissionValue": "S2"},
-        ]
-    }
-    codes, decodes = rt._codes_and_decodes(codelist)
-    assert codes == ["C1", "C2"]
-    assert isinstance(decodes, dict)
-    assert decodes == {"P1": 0, "S1": 0, "P2": 1, "S2": 1}
-
-
-def test_codes_and_decodes_handles_term_with_only_preferred_term():
-    """Backward compat — terms with no submissionValue (or null) still index by preferredTerm."""
-    rt = RuleTemplate("R011", RuleTemplate.ERROR, "preferred only")
-    codelist = {
-        "terms": [
-            {"conceptId": "C1", "preferredTerm": "P1"},
-            {"conceptId": "C2", "preferredTerm": "P2", "submissionValue": None},
-        ]
-    }
-    codes, decodes = rt._codes_and_decodes(codelist)
-    assert codes == ["C1", "C2"]
-    assert decodes == {"P1": 0, "P2": 1}
-
-
-def test_codes_and_decodes_handles_term_with_only_submission_value():
-    """Defensive — terms with no preferredTerm still index by submissionValue."""
-    rt = RuleTemplate("R012", RuleTemplate.ERROR, "submission only")
-    codelist = {
-        "terms": [
-            {"conceptId": "C1", "submissionValue": "S1"},
-            {"conceptId": "C2", "preferredTerm": None, "submissionValue": "S2"},
-        ]
-    }
-    codes, decodes = rt._codes_and_decodes(codelist)
-    assert codes == ["C1", "C2"]
-    assert decodes == {"S1": 0, "S2": 1}
-
-
-def test_codes_and_decodes_does_not_include_synonyms():
-    """Synonyms are deliberately excluded — we accept the two published labels only."""
-    rt = RuleTemplate("R013", RuleTemplate.ERROR, "no synonyms")
-    codelist = {
-        "terms": [
-            {
-                "conceptId": "C54149",
-                "preferredTerm": "Drug Company",
-                "submissionValue": "Pharmaceutical Company",
-                "synonyms": ["Pharma", "Drug Manufacturer"],
-            }
-        ]
-    }
-    codes, decodes = rt._codes_and_decodes(codelist)
-    assert codes == ["C54149"]
-    assert decodes == {"Drug Company": 0, "Pharmaceutical Company": 0}
-    assert "Pharma" not in decodes
-    assert "Drug Manufacturer" not in decodes
-
-
-# ---------------------------------------------------------------------------
-# _ct_check accepts decode whether it's preferredTerm or submissionValue
+# _ct_check — happy-path behaviour
 # ---------------------------------------------------------------------------
 
 
 def _ct_with_c54149():
-    """CT stub returning the real C188724/C54149 shape (preferredTerm and
-    submissionValue diverge, which is precisely the case that motivated
-    widening the check)."""
-    ct = MagicMock()
-    ct.klass_and_attribute.return_value = {
-        "terms": [
-            {
-                "conceptId": "C54149",
-                "preferredTerm": "Drug Company",
-                "submissionValue": "Pharmaceutical Company",
-            }
-        ]
-    }
-    return ct
+    """FakeCT carrying the C54149 ("Drug Company"/"Pharmaceutical Company")
+    pair — the canonical case for "preferredTerm and submissionValue
+    diverge, both must validate"."""
+    return FakeCT(
+        codelists={
+            "C_ORG_TYPE": [
+                {
+                    "conceptId": "C54149",
+                    "preferredTerm": "Drug Company",
+                    "submissionValue": "Pharmaceutical Company",
+                },
+                {
+                    "conceptId": "C93453",
+                    "preferredTerm": "Study Registry",
+                    "submissionValue": "Clinical Study Registry",
+                },
+            ]
+        },
+        klass_attribute_map={("Organization", "type"): "C_ORG_TYPE"},
+    )
+
+
+def _data_with(klass, instances):
+    data = MagicMock()
+    data.instances_by_klass.side_effect = lambda k: instances if k == klass else []
+    data.path_by_id.return_value = "$.x"
+    return data
 
 
 def test_ct_check_accepts_preferred_term_decode():
-    rt = RuleTemplate("R020", RuleTemplate.ERROR, "preferred ok")
-    data = MagicMock()
-    data.instances_by_klass.return_value = [
-        {"id": "i1", "type": {"code": "C54149", "decode": "Drug Company"}}
-    ]
-    data.path_by_id.return_value = "$.org"
-
+    rt = RuleTemplate("R200", RuleTemplate.ERROR, "preferred ok")
+    data = _data_with(
+        "Organization",
+        [{"id": "i1", "type": {"code": "C54149", "decode": "Drug Company"}}],
+    )
     ok = rt._ct_check({"data": data, "ct": _ct_with_c54149()}, "Organization", "type")
     assert ok is True
     assert rt.errors().count() == 0
 
 
 def test_ct_check_accepts_submission_value_decode():
-    """The regression case: C54149's submissionValue is 'Pharmaceutical Company',
-    which is also what the project's own builder emits via
-    cdisc_code('C54149', 'Pharmaceutical Company'). Previously rejected."""
-    rt = RuleTemplate("R021", RuleTemplate.ERROR, "submission ok")
-    data = MagicMock()
-    data.instances_by_klass.return_value = [
-        {"id": "i1", "type": {"code": "C54149", "decode": "Pharmaceutical Company"}}
-    ]
-    data.path_by_id.return_value = "$.org"
-
+    """C54149's submissionValue is 'Pharmaceutical Company' — must validate."""
+    rt = RuleTemplate("R201", RuleTemplate.ERROR, "submission ok")
+    data = _data_with(
+        "Organization",
+        [{"id": "i1", "type": {"code": "C54149", "decode": "Pharmaceutical Company"}}],
+    )
     ok = rt._ct_check({"data": data, "ct": _ct_with_c54149()}, "Organization", "type")
     assert ok is True
     assert rt.errors().count() == 0
 
 
-def test_ct_check_rejects_decode_that_is_neither():
-    """A decode string that matches neither published label is still a failure."""
-    rt = RuleTemplate("R022", RuleTemplate.ERROR, "neither")
-    data = MagicMock()
-    data.instances_by_klass.return_value = [
-        {"id": "i1", "type": {"code": "C54149", "decode": "Pharma"}}
-    ]
-    data.path_by_id.return_value = "$.org"
+def test_ct_check_decode_match_is_case_insensitive():
+    """After the predicate consolidation, decode matching uses casefold —
+    'drug company' validates against preferredTerm 'Drug Company'.
+    This is the drift fix versus the old _codes_and_decodes which used
+    case-sensitive dict lookup. See the analysis in
+    project_m11_sdtm_phase_code_tension."""
+    rt = RuleTemplate("R202", RuleTemplate.ERROR, "case insensitive decode")
+    data = _data_with(
+        "Organization",
+        [{"id": "i1", "type": {"code": "C54149", "decode": "drug company"}}],
+    )
+    ok = rt._ct_check({"data": data, "ct": _ct_with_c54149()}, "Organization", "type")
+    assert ok is True
+    assert rt.errors().count() == 0
 
+
+def test_ct_check_concept_id_match_remains_case_sensitive():
+    """NCI conceptIds are uppercase; lowercase 'c54149' must NOT match
+    'C54149'. The casefold applies to PT and submissionValue only —
+    by="concept_id" in find_in_codelist is case-sensitive."""
+    rt = RuleTemplate("R203", RuleTemplate.ERROR, "concept_id case-sensitive")
+    data = _data_with(
+        "Organization",
+        [{"id": "i1", "type": {"code": "c54149", "decode": "Drug Company"}}],
+    )
     ok = rt._ct_check({"data": data, "ct": _ct_with_c54149()}, "Organization", "type")
     assert ok is False
     assert rt.errors().count() == 1
 
 
-def test_ct_check_mismatch_detected_when_code_from_one_term_decode_from_another():
-    """The pair-mismatch check must still work after the dict change.
+# ---------------------------------------------------------------------------
+# _ct_check — failure paths
+# ---------------------------------------------------------------------------
 
-    code=C54149 (term 0) paired with decode='Study Registry' (term 1's
-    preferredTerm) is a real mismatch — both label and code are valid in
-    the codelist, but they're from different terms. The dict approach
-    preserves this because each label resolves to its own term's index.
-    """
-    rt = RuleTemplate("R023", RuleTemplate.ERROR, "mismatch")
-    ct = MagicMock()
-    ct.klass_and_attribute.return_value = {
-        "terms": [
-            {
-                "conceptId": "C54149",
-                "preferredTerm": "Drug Company",
-                "submissionValue": "Pharmaceutical Company",
-            },
-            {
-                "conceptId": "C93453",
-                "preferredTerm": "Study Registry",
-                "submissionValue": "Clinical Study Registry",
-            },
-        ]
-    }
-    data = MagicMock()
-    data.instances_by_klass.return_value = [
-        {"id": "i1", "type": {"code": "C54149", "decode": "Study Registry"}}
-    ]
-    data.path_by_id.return_value = "$.org"
 
-    ok = rt._ct_check({"data": data, "ct": ct}, "Organization", "type")
+def test_ct_check_rejects_decode_that_is_neither_pt_nor_sv():
+    rt = RuleTemplate("R300", RuleTemplate.ERROR, "neither label")
+    data = _data_with(
+        "Organization",
+        [{"id": "i1", "type": {"code": "C54149", "decode": "Pharma"}}],
+    )
+    ok = rt._ct_check({"data": data, "ct": _ct_with_c54149()}, "Organization", "type")
     assert ok is False
     assert rt.errors().count() == 1
 
 
-def test_ct_check_mismatch_also_detected_when_decode_is_submission_value_of_other_term():
-    """Same as above but the decode is the OTHER term's submissionValue
-    (not preferredTerm). Still a mismatch — both labels resolve to
-    different term indexes so code_index != decode_index."""
-    rt = RuleTemplate("R024", RuleTemplate.ERROR, "submission mismatch")
-    ct = MagicMock()
-    ct.klass_and_attribute.return_value = {
-        "terms": [
-            {
-                "conceptId": "C54149",
-                "preferredTerm": "Drug Company",
-                "submissionValue": "Pharmaceutical Company",
-            },
-            {
-                "conceptId": "C93453",
-                "preferredTerm": "Study Registry",
-                "submissionValue": "Clinical Study Registry",
-            },
-        ]
-    }
-    data = MagicMock()
-    data.instances_by_klass.return_value = [
-        {"id": "i1", "type": {"code": "C54149", "decode": "Clinical Study Registry"}}
-    ]
-    data.path_by_id.return_value = "$.org"
+def test_ct_check_pair_mismatch_when_code_from_one_term_decode_from_another():
+    """code=C54149 (term 0) paired with decode='Study Registry' (term 1)
+    is a pair mismatch — both label and code are valid in the codelist,
+    but they're from different terms. The conceptId-based check
+    (find_in_codelist returns the full term) preserves this semantics."""
+    rt = RuleTemplate("R301", RuleTemplate.ERROR, "pair mismatch")
+    data = _data_with(
+        "Organization",
+        [{"id": "i1", "type": {"code": "C54149", "decode": "Study Registry"}}],
+    )
+    ok = rt._ct_check({"data": data, "ct": _ct_with_c54149()}, "Organization", "type")
+    assert ok is False
+    assert rt.errors().count() == 1
+    entries = rt.errors().to_dict(level=0)
+    assert any("do not match" in e["message"] for e in entries)
 
-    ok = rt._ct_check({"data": data, "ct": ct}, "Organization", "type")
+
+def test_ct_check_pair_mismatch_also_detected_when_decode_is_other_terms_submission_value():
+    """Same as above but the decode is the other term's submissionValue
+    (not preferredTerm). Still a mismatch — both labels resolve to
+    different terms."""
+    rt = RuleTemplate("R302", RuleTemplate.ERROR, "pair mismatch SV")
+    data = _data_with(
+        "Organization",
+        [{"id": "i1", "type": {"code": "C54149", "decode": "Clinical Study Registry"}}],
+    )
+    ok = rt._ct_check({"data": data, "ct": _ct_with_c54149()}, "Organization", "type")
+    assert ok is False
+    assert rt.errors().count() == 1
+
+
+def test_ct_check_invalid_code_only_is_error():
+    rt = RuleTemplate("R303", RuleTemplate.ERROR, "code invalid")
+    data = _data_with(
+        "Organization",
+        [{"id": "i1", "type": {"code": "BAD", "decode": "Drug Company"}}],
+    )
+    ok = rt._ct_check({"data": data, "ct": _ct_with_c54149()}, "Organization", "type")
+    assert ok is False
+    entries = rt.errors().to_dict(level=0)
+    assert any("not in the codelist" in e["message"] for e in entries)
+
+
+def test_ct_check_invalid_decode_only_is_error():
+    rt = RuleTemplate("R304", RuleTemplate.ERROR, "decode invalid")
+    data = _data_with(
+        "Organization",
+        [{"id": "i1", "type": {"code": "C54149", "decode": "BAD"}}],
+    )
+    ok = rt._ct_check({"data": data, "ct": _ct_with_c54149()}, "Organization", "type")
+    assert ok is False
+    entries = rt.errors().to_dict(level=0)
+    assert any("not in the codelist" in e["message"] for e in entries)
+
+
+def test_ct_check_neither_code_nor_decode_in_codelist_is_single_error():
+    rt = RuleTemplate("R305", RuleTemplate.ERROR, "neither in codelist")
+    data = _data_with(
+        "Organization",
+        [{"id": "i1", "type": {"code": "BAD", "decode": "BAD"}}],
+    )
+    ok = rt._ct_check({"data": data, "ct": _ct_with_c54149()}, "Organization", "type")
+    assert ok is False
+    assert rt.errors().count() == 1
+    entries = rt.errors().to_dict(level=0)
+    assert any("neither" in e["message"].lower() for e in entries)
+
+
+def test_ct_check_missing_attribute_is_error():
+    rt = RuleTemplate("R306", RuleTemplate.ERROR, "missing attribute")
+    data = _data_with("Organization", [{"id": "i1"}])  # no 'type'
+    ok = rt._ct_check({"data": data, "ct": _ct_with_c54149()}, "Organization", "type")
+    assert ok is False
+    entries = rt.errors().to_dict(level=0)
+    assert any("Missing attribute" in e["message"] for e in entries)
+
+
+# ---------------------------------------------------------------------------
+# _ct_check — null / non-dict item handling
+# ---------------------------------------------------------------------------
+
+
+def test_ct_check_skips_null_item():
+    """An optional Code attribute set to None is a legitimate empty value,
+    not an invalid code."""
+    rt = RuleTemplate("R400", RuleTemplate.ERROR, "null item")
+    data = _data_with("Organization", [{"id": "i1", "type": None}])
+    ok = rt._ct_check({"data": data, "ct": _ct_with_c54149()}, "Organization", "type")
+    assert ok is True
+    assert rt.errors().count() == 0
+
+
+def test_ct_check_unwraps_alias_code_standard_code():
+    """AliasCode-shaped attributes carry code/decode on standardCode.
+    The unwrap is preserved across the refactor."""
+    rt = RuleTemplate("R401", RuleTemplate.ERROR, "AliasCode unwrap")
+    data = _data_with(
+        "Organization",
+        [
+            {
+                "id": "i1",
+                "type": {
+                    "id": "AliasCode_X",
+                    "standardCode": {"code": "C54149", "decode": "Drug Company"},
+                },
+            }
+        ],
+    )
+    ok = rt._ct_check({"data": data, "ct": _ct_with_c54149()}, "Organization", "type")
+    assert ok is True
+    assert rt.errors().count() == 0
+
+
+def test_ct_check_handles_list_valued_attribute():
+    """If the attribute is a list of Codes, each entry is checked."""
+    rt = RuleTemplate("R402", RuleTemplate.ERROR, "list of codes")
+    data = _data_with(
+        "Organization",
+        [
+            {
+                "id": "i1",
+                "type": [
+                    {"code": "C54149", "decode": "Drug Company"},  # valid
+                    {"code": "BAD", "decode": "BAD"},  # invalid
+                ],
+            }
+        ],
+    )
+    ok = rt._ct_check({"data": data, "ct": _ct_with_c54149()}, "Organization", "type")
     assert ok is False
     assert rt.errors().count() == 1
