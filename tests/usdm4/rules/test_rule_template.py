@@ -98,15 +98,16 @@ def test_ct_check_raises_ct_exception_when_klass_attribute_unmapped():
 def test_ct_check_propagates_missing_codelist_error_when_codelist_absent():
     """klass_and_attribute returns None for an unmapped pair (above).
     But if the mapping exists yet the codelist isn't loaded into the
-    Library, find_in_codelist raises MissingCodelistError on first use.
-    This test simulates that with a mock that returns the codelist dict
-    from klass_and_attribute but then has it disappear before
-    find_in_codelist runs — an artificial scenario, but it pins the
-    propagation contract for any future loader change."""
+    Library, klass_and_attribute itself raises MissingCodelistError —
+    see Library.klass_and_attribute, which deliberately splits "no
+    mapping" (None return) from "mapping resolves but codelist not in
+    cache" (MissingCodelistError). _ct_check must propagate the latter
+    so the operator sees a stale-cache config flaw, not the misleading
+    "Failed to find code list" message that the unmapped-attribute
+    case carries."""
     rt = RuleTemplate("R101", RuleTemplate.ERROR, "predicate raises")
     ct = MagicMock()
-    ct.klass_and_attribute.return_value = {"conceptId": "C_GHOST", "terms": [{"conceptId": "X"}]}
-    ct.find_in_codelist.side_effect = MissingCodelistError(
+    ct.klass_and_attribute.side_effect = MissingCodelistError(
         "Codelist 'C_GHOST' is not loaded in the CT cache"
     )
     data = MagicMock()

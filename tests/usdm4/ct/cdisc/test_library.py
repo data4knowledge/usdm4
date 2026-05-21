@@ -157,8 +157,23 @@ def test_klass_and_attribute_returns_codelist(loaded_library):
 
 
 def test_klass_and_attribute_returns_none_on_lookup_failure(loaded_library):
+    # Config has no mapping for (Klass, attr) — _config.klass_and_attribute
+    # raises. This is the "rule registered against an unmapped attribute"
+    # case, and the contract is to return None (callers like
+    # RuleTemplate._ct_check turn None into CTException).
     loaded_library._config.klass_and_attribute = MagicMock(side_effect=ValueError("x"))
     assert loaded_library.klass_and_attribute("Klass", "attr") is None
+
+
+def test_klass_and_attribute_raises_when_mapped_codelist_missing(loaded_library):
+    # Config maps (Klass, attr) → "C_GHOST", but C_GHOST isn't in
+    # _by_code_list. This is the stale-cache config flaw the
+    # feedback_missing_codelist_must_raise invariant covers — must surface
+    # loudly as MissingCodelistError, not be collapsed into the None
+    # return that signals "no mapping".
+    loaded_library._config.klass_and_attribute = MagicMock(return_value="C_GHOST")
+    with pytest.raises(MissingCodelistError, match="C_GHOST"):
+        loaded_library.klass_and_attribute("Klass", "attr")
 
 
 def test_klass_and_attribute_value_returns_item_and_date(loaded_library):

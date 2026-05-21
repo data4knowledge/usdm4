@@ -81,11 +81,41 @@ class Library:
         self._add_missing_ct()  # Add any additional required terminology
 
     def klass_and_attribute(self, klass, attribute) -> dict:
+        """Resolve ``(klass, attribute)`` to its codelist dict.
+
+        Two distinct failure modes are deliberately separated:
+
+        - **No mapping in config.** ``ct_config.yaml`` has no entry
+          binding ``klass.attribute`` to a conceptId — i.e. a rule is
+          registered against an attribute that isn't wired up. Return
+          ``None``. Callers (notably :meth:`RuleTemplate._ct_check`)
+          interpret this as "rule registered against an unmapped
+          attribute" and surface it as ``CTException``.
+        - **Mapping resolves but codelist isn't loaded.** The config
+          says ``klass.attribute → C123`` but ``C123`` isn't in the
+          cache. This is the stale-cache config flaw the
+          ``feedback_missing_codelist_must_raise`` invariant exists
+          for. Raise :class:`MissingCodelistError` so it surfaces as a
+          per-rule EXCEPTION outcome, not as a misleading "no codelist
+          found" message under the same exception type as the
+          unmapped-attribute case.
+
+        The two ``try`` blocks below intentionally avoid the wider
+        ``except Exception: return None`` they used to share — that
+        pattern collapsed both failure modes into a single return
+        value and made stale-cache bugs read as configuration typos.
+        """
         try:
             concept_id = self._config.klass_and_attribute(klass, attribute)
-            return self._by_code_list[concept_id]
         except Exception:
             return None
+        try:
+            return self._by_code_list[concept_id]
+        except KeyError:
+            raise MissingCodelistError(
+                f"Codelist {concept_id!r} mapped from "
+                f"{klass}.{attribute} is not loaded in the CT cache"
+            )
 
     def klass_and_attribute_value(
         self, klass: str, attribute: str, value: str
