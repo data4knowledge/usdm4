@@ -291,9 +291,27 @@ class CoreValidator:
         # in-memory cache and the USDMDataService. These retain data from
         # previous validation runs, so we must reset them to ensure each
         # file is validated independently.
+        #
+        # Two distinct stores must be cleared (see docs/cre_issues.md §1):
+        #
+        #  * dataset_cache — dataset CONTENTS / VARIABLES_METADATA cached
+        #    by the @cached_dataset decorator, keyed by dataset *name*.
+        #  * the main cache dict — per-file data the engine and its
+        #    operations cache here, also keyed by dataset name rather than
+        #    by file path. Clearing only dataset_cache is NOT enough: the
+        #    first file validated in a process leaves entries in the main
+        #    cache that are then reused for any later file with a
+        #    same-named dataset, silently changing that file's rule scope
+        #    and results (e.g. sample 7 yields 3 / 13 / 24 findings
+        #    depending on which file ran first). A full clear makes every
+        #    file behave as if it were validated first — i.e.
+        #    deterministically. The shared resources we genuinely want to
+        #    reuse (rules, CT packages) are re-loaded from the disk cache
+        #    later in this method, so wiping the in-memory cache is safe.
         cache = CacheServiceFactory(config).get_cache_service()
         with cache.dataset_cache_lock:
             cache.dataset_cache.clear()
+        cache.clear_all()
 
         # Reset the USDMDataService singleton so it loads the new file
         from cdisc_rules_engine.services.data_services import USDMDataService

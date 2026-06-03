@@ -2,8 +2,11 @@
 #
 # Cardinality rule: exactly one Primary Objective per StudyDesign. No CORE
 # JSONata was provided (the rule isn't in the CORE JSON for v4) — rule text
-# is unambiguous. "Primary Objective" is CDISC code C94496 (see
-# rule_ddf00096 which uses the same code for the primary objective filter).
+# is unambiguous. "Primary Objective" is the objective-level code C85826
+# ("Trial Primary Objective"), per the Objective Level Value Set (C188725)
+# and rule_ddf00096 (which requires a primary endpoint's parent objective to
+# be C85826). NOTE: C94496 is the primary *endpoint* code — using it here was
+# a bug (it contradicted rule_ddf00096 and could never be satisfied).
 from usdm4.rules.rule_template import RuleTemplate
 
 
@@ -12,7 +15,7 @@ STUDY_DESIGN_CLASSES = [
     "InterventionalStudyDesign",
     "ObservationalStudyDesign",
 ]
-PRIMARY_OBJECTIVE_CODE = "C94496"
+PRIMARY_OBJECTIVE_CODE = "C85826"
 
 
 class RuleDDF00084(RuleTemplate):

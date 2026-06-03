@@ -48,35 +48,25 @@ pytestmark = [pytest.mark.slow]
 
 
 # Frozen baseline of CORE rule ids currently failing on the minimum
-# assembled study, captured 2026-05-02. Update this set (in either
-# direction) when the assembler / fixture / CRE changes the set of rules
-# that fire — the test will tell you which to add or remove.
+# assembled study. Re-captured 2026-06-03 against CRE 0.16.0 with a
+# freshly refreshed CORE cache (207 rules, 206 CT packages). Update this
+# set (in either direction) when the assembler / fixture / CRE / cached
+# rules change the set of rules that fire — the test will tell you which
+# to add or remove.
+#
+# History: an earlier baseline (captured 2026-05-02) pinned 27 rules.
+# That set was inflated by two effects since corrected: (a) CRE
+# singleton-cache contamination when another CORE validation ran first in
+# the same process (fixed in core_validator.py — see docs/cre_issues.md
+# §1c), and (b) older cached rules/CT. After the determinism fix and a
+# forced cache refresh, 19 of those rules clear, leaving these 8.
 _KNOWN_FAILING_RULES = frozenset(
     {
         "CORE-000815",
-        "CORE-000854",
-        "CORE-000856",
-        "CORE-000857",
-        "CORE-000858",
-        "CORE-000879",
-        "CORE-000904",
-        "CORE-000905",
-        "CORE-000925",
-        "CORE-000930",
-        "CORE-000931",
-        "CORE-000933",
-        "CORE-000942",
-        "CORE-000943",
-        "CORE-000951",
-        "CORE-000959",
-        "CORE-000972",
         "CORE-000973",
-        "CORE-000988",
         "CORE-001016",
         "CORE-001036",
         "CORE-001054",
-        "CORE-001058",
-        "CORE-001059",
         "CORE-001065",
         "CORE-001076",
         "CORE-001077",

@@ -44,63 +44,43 @@ SAMPLE_PATH: pathlib.Path = (
 )
 
 
-# Baseline captured empirically against sample 7 with CRE 0.16.0. 24
-# rules fire, producing ~73 findings (most rules report 1–3 errors each).
+# Baseline captured empirically against sample 7 with CRE 0.16.0
+# (the version pinned by `setup.py`, `cdisc-rules-engine>=0.16.0`).
+# 3 rules fire, stable across repeated runs.
 #
 # This is a *drift-detector* set, not a conformance claim. Reading guide:
 #
-#  - 23 of the 24 are also in `test_assembler_to_core.py`'s
-#    `_KNOWN_FAILING_RULES` — the CRE noise floor that surfaces on
-#    essentially any non-trivial USDM input. Same population, same
-#    underlying CRE behaviour. See `docs/cre_issues.md` and
-#    `docs/d4k_cre_divergence_index.md` for what's behind each.
-#  - The 1 unique-to-sample-7 fire is `CORE-000830`. Not yet catalogued
-#    in the corpus engine_diff; if it persists, fold it into the
-#    divergence index next refresh.
 #  - The 2 *real* protocol-level findings (DDF rules d4k also flags)
 #    are `CORE-001016` (DDF00153, main timeline plannedDuration) and
 #    `CORE-001065` (DDF00101, no procedure→intervention link).
+#  - `CORE-000971` (DDF00194, address-all-attributes-blank) is the
+#    CRE issue 9 phantom — null `legalAddress` on Organization is
+#    materialised as a blank Address by CRE's traversal; d4k's
+#    `rule_ddf00194.py` correctly iterates real Address instances and
+#    skips this. It was previously kept out of the baseline as flaky; on
+#    CRE 0.16.0 it fires consistently, so it is now pinned here.
 #
-# Deliberately *omitted* from the baseline:
+# Note: an earlier baseline pinned 24 rules. That set was an artefact of
+# CRE singleton-cache contamination — when another CORE validation ran
+# *first* in the same process (e.g. test_assembler_to_core), it left
+# per-dataset state in the engine cache that changed sample 7's rule
+# scope (sample 7 yielded 3 / 13 / 24 findings depending on what ran
+# before it). The wrapper now fully clears the in-memory cache between
+# runs (core_validator.py; docs/cre_issues.md §1c), so sample 7 is
+# order-independent and yields these 3 findings on a clean engine.
 #
-#  - `CORE-000971` (DDF00194, address-all-attributes-blank). CRE issue
-#    9 phantom — null `legalAddress` on Organization is materialised as
-#    a blank Address by CRE's traversal; d4k's `rule_ddf00194.py`
-#    correctly iterates real Address instances and skips this. The
-#    finding appears intermittently across CRE runs (it fired on the
-#    first sample-7 run, did not fire on the run that produced this
-#    baseline). Keeping it out so the test isn't flaky on a known false
-#    positive; if it reappears we'll see it as "new" — fine, then drop
-#    this comment and add the line.
-#
-# If the set drifts, investigate against the assembler-to-core baseline
-# and the divergence index before adjusting.
+# If the set drifts:
+#   * Zero findings → confirm `cdisc-rules-engine` is 0.16.0. A version
+#     mismatch makes the wrapper's `validate_single_rule(rule)` call fail
+#     and *every* rule crash, so CORE reports nothing.
+#   * Set grows / changes → suspect cache-isolation regression first
+#     (does the result depend on test order?), then investigate against
+#     the assembler-to-core baseline and the divergence index.
 _EXPECTED_FAILING_RULES = frozenset(
     {
-        "CORE-000815",
-        "CORE-000830",
-        "CORE-000854",
-        "CORE-000856",
-        "CORE-000857",
-        "CORE-000858",
-        "CORE-000879",
-        "CORE-000904",
-        "CORE-000905",
-        "CORE-000925",
-        "CORE-000931",
-        "CORE-000933",
-        "CORE-000942",
-        "CORE-000972",
-        "CORE-000973",
-        "CORE-000988",
+        "CORE-000971",
         "CORE-001016",
-        "CORE-001036",
-        "CORE-001054",
-        "CORE-001058",
-        "CORE-001059",
         "CORE-001065",
-        "CORE-001076",
-        "CORE-001077",
     }
 )
 

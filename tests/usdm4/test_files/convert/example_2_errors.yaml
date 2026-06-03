@@ -3820,19 +3820,6 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00083
-- attribute: objectives
-  exception: null
-  klass: InterventionalStudyDesign
-  level: Error
-  message: Expected exactly one Primary Objective in study design, found 0
-  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0]
-  rule: DDF00084
-  rule_id: DDF00084
-  rule_text: Within a study design there must be exactly one objective with level
-    'Primary Objective'.
-  status: Failure
-  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
-  type: DDF00084
 - attribute: previousId, nextId
   exception: null
   klass: Encounter

@@ -24,7 +24,7 @@ maintainer knows which direction the drift went.
 Why a rule-id set instead of just counts: a set-match test surfaces
 *which* rule changed, not just that the totals moved. For sample 7
 that's the load-bearing question — if DDF00155 stops firing, that's
-an improvement worth recording; if DDF00084 stops firing, something
+an improvement worth recording; if DDF00101 stops firing, something
 in the CT pipeline has regressed.
 
 Note: this test does NOT execute in the Cowork sandbox. Run it
@@ -58,10 +58,9 @@ SAMPLE_PATH: pathlib.Path = (
 
 # Baseline captured against sample 7 with the rule library's `_ct_check`
 # accepting both `preferredTerm` and `submissionValue` (the CDISC-wide
-# policy fix) and HISTORICAL_VERSIONS including "2025-09-26". Four rules
+# policy fix) and HISTORICAL_VERSIONS including "2025-09-26". Three rules
 # still legitimately fail on this file:
 #
-#   DDF00084   — exactly one Primary Objective expected; file has zero
 #   DDF00101   — Interventional design with no Procedure→Intervention link
 #   DDF00153   — main ScheduleTimeline has no plannedDuration
 #   DDFSDW001  — wrapper usdmVersion is '4.0', rule expects '4.0.0'
@@ -71,7 +70,6 @@ SAMPLE_PATH: pathlib.Path = (
 # you can point at why.
 _EXPECTED_FAILING_RULES = frozenset(
     {
-        "DDF00084",
         "DDF00101",
         "DDF00153",
         "DDFSDW001",

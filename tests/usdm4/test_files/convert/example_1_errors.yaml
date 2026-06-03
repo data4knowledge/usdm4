@@ -4936,7 +4936,7 @@
   exception: null
   klass: InterventionalStudyDesign
   level: Error
-  message: Expected exactly one Primary Objective in study design, found 0
+  message: Expected exactly one Primary Objective in study design, found 2
   path: $.Study.StudyVersion[0].InterventionalStudyDesign[0]
   rule: DDF00084
   rule_id: DDF00084

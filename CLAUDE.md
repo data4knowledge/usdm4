@@ -51,10 +51,10 @@ For web-server deployments, pass an explicit `cache_dir` to `USDM4(cache_dir=...
 
 Three standalone scripts manage the CDISC caches the package consumes. All require a CDISC Library API key (set via `CDISC_LIBRARY_API_KEY`, typically via `.development_env` in the repo root which the scripts read with `python-dotenv`). Run from the repo root.
 
-- `tools/prepare_core_cache.py` — populate the CDISC CORE validation cache (rules, CT packages, JSONata files, XSD schemas). Wraps `USDM4.prepare_core(...)`. Run at server startup or before going offline.
+- `tools/prepare_core_cache.py` — populate the CDISC CORE validation cache (rules, CT packages, JSONata files, XSD schemas). Wraps `USDM4.prepare_core(...)`. Run at server startup or before going offline. By default only fills in what's missing; pass `--force` to wipe the cache and re-download everything (e.g. after a `cdisc-rules-engine` upgrade, or to adopt newly published rules/CT). Reads the API key from `--api-key`, `$CDISC_LIBRARY_API_KEY`, or `.development_env`.
 
   ```bash
-  python tools/prepare_core_cache.py [--version 4-0] [--cache-dir PATH]
+  python tools/prepare_core_cache.py [--version 4-0] [--cache-dir PATH] [--force]
   ```
 
 - `tools/ct_cache.py` — force-refresh the CDISC CT (Controlled Terminology) library cache bundled inside the `usdm4` package (`src/usdm4/ct/cdisc/library_cache/`). Deletes the on-disk cache, then reloads from the CDISC Library API. Use after the CDISC publishes a new CT package.

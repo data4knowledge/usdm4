@@ -86,6 +86,37 @@ instances per `RulesEngine` invocation), or provide an official `reset()` /
 and data service should be scoped to a single `RulesEngine` lifetime rather than
 to the process.
 
+### 1c. Main in-memory cache retains per-dataset state across runs
+
+Clearing `dataset_cache` (1a) and resetting `USDMDataService._instance` (1b) is
+*still* not sufficient. The `InMemoryCacheService.cache` dict — the main store
+written via `.add()` / read via `.get()`, separate from `dataset_cache` — also
+accumulates per-file data keyed by dataset *name* rather than by file path
+(variable/operation metadata cached during rule evaluation). The **first** file
+validated in a process populates these entries; any later file that has a
+dataset of the same name reuses the stale entry, which silently changes that
+file's rule **scope** (which rules are deemed "in scope" vs "Outside scope") and
+therefore its findings.
+
+Observed symptom: `sample_usdm_7.json` yields 3, 13, or 24 findings depending on
+which file was validated before it in the same process (3 when validated first /
+in isolation). This made any fixed CORE baseline order-dependent and flaky in
+the test suite.
+
+**Workaround:** Clear the whole in-memory cache between runs, not just the
+dataset cache:
+
+```python
+with cache.dataset_cache_lock:
+    cache.dataset_cache.clear()
+cache.clear_all()
+```
+
+This is safe in `core_validator.py` because the shared resources we want to
+reuse (USDM rules and CT packages) are re-loaded from the *disk* cache later in
+the same validation call. With the full clear, every file validates as if it
+were the first → results are deterministic and order-independent.
+
 
 ## 2. Thread safety — global state mutation
 
@@ -577,7 +608,8 @@ All workarounds are implemented in `src/usdm4/core/core_validator.py` and
 
 | Issue | Location | Workaround |
 |-------|----------|------------|
-| Singleton cache not clearing | `_run_validation_inner()` | Clear `dataset_cache` before each run |
+| Singleton dataset_cache not clearing | `_run_validation_inner()` | Clear `dataset_cache` before each run |
+| Singleton main cache not clearing | `_run_validation_inner()` | `cache.clear_all()` before each run (§1c) |
 | USDMDataService singleton | `_run_validation_inner()` | Set `USDMDataService._instance = None` |
 | Working directory mutation | `_execute_validation()` | Save/restore `os.getcwd()` in try/finally |
 | Stdout pollution | `_run_validation()` | Redirect sys.stdout/stderr to StringIO |

@@ -29,7 +29,7 @@ class TestRuleDDF00084:
                 {
                     "id": "SD1",
                     "objectives": [
-                        {"id": "O1", "level": {"code": "C94496"}},
+                        {"id": "O1", "level": {"code": "C85826"}},
                         {"id": "O2", "level": {"code": "OTHER"}},
                     ],
                 }
@@ -57,8 +57,8 @@ class TestRuleDDF00084:
                 {
                     "id": "SD1",
                     "objectives": [
-                        {"id": "O1", "level": {"code": "C94496"}},
-                        {"id": "O2", "level": {"code": "C94496"}},
+                        {"id": "O1", "level": {"code": "C85826"}},
+                        {"id": "O2", "level": {"code": "C85826"}},
                     ],
                 }
             ]
@@ -89,7 +89,7 @@ class TestRuleDDF00084:
             study_design=[
                 {
                     "id": "SD1",
-                    "objectives": [{"id": "O1", "level": {"code": "C94496"}}],
+                    "objectives": [{"id": "O1", "level": {"code": "C85826"}}],
                 }
             ]
         )
