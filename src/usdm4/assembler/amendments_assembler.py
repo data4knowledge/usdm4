@@ -267,12 +267,13 @@ class AmendmentsAssembler(BaseAssembler):
             A SubjectEnrollment object, or None if creation fails.
         """
         try:
-            global_code = self._builder.cdisc_code("C68846", "Global")
-            params = {
-                "type": global_code,
-                "code": None,
-            }
-            geo_scope = self._builder.create(GeographicScope, params)
+            # Derive the enrollment geographic scope from the amendment scope
+            # (the Amendment Scope title-page field, carried in data["scope"])
+            # rather than defaulting to global. Per ICH M11 the enrollment
+            # scope description is a deterministic function of the amendment
+            # scope, not authored independently: a global amendment enrolls
+            # "Globally"; a country/regional amendment enrolls "Locally".
+            geo_scope = self._enrollment_geographic_scope(data)
             # Truthy check, not key presence: ``enrollment`` is always a key
             # on ``data`` (Pydantic-injected default) but its value is ``None``
             # when no enrollment was supplied, which would TypeError on the
@@ -309,6 +310,67 @@ class AmendmentsAssembler(BaseAssembler):
             location = KlassMethodLocation(self.MODULE, "_create_enrollment")
             self._errors.exception("Failed during creation of enrollments", e, location)
             return None
+
+    def _enrollment_geographic_scope(self, data: dict) -> GeographicScope:
+        """Build the single GeographicScope for an amendment enrollment.
+
+        Per ICH M11 the enrollment scope description (Globally / Locally /
+        By Cohort, codelist C217275) is not authored independently — it is
+        determined by the amendment scope. So we derive ``forGeographicScope``
+        from ``data["scope"]`` (the Amendment Scope field: {global, countries,
+        regions, sites, unknown}) rather than always emitting a global scope.
+
+        The returned scope uses a CT-valid ``GeographicScope.type`` (codelist
+        C207412 — Global / Country / Region) so DDF00144 passes, and carries
+        the area code when non-global so DDF00261 passes. Country and region
+        both render as "Locally"; that wording is applied by the rendering
+        layer from this type, not stored here.
+
+        Known gap: a purely site- or cohort-scoped amendment has no C207412
+        area code to anchor a non-global scope, so it falls back to global
+        and is logged. Country/regional amendments (the M11 case this serves)
+        derive correctly.
+        """
+        scope = data.get("scope") or {}
+        results: list[GeographicScope] = []
+        if not scope or scope.get("global", True):
+            self._global_scope(results)
+            return results[0] if results else None
+        # Non-global: find the first resolvable area to anchor the scope.
+        # Mirror _create_scopes' precedence and, critically, also try the
+        # unparsed "unknown" tokens — the M11 extractor (step 1) drops a bare
+        # country/region name (e.g. "France") into scope["unknown"], whereas
+        # the FHIR import (step 3) populates scope["countries"]. Try countries
+        # (explicit + unknown) as ISO countries first, then regions (explicit +
+        # unknown). DDF00261 requires a code on a non-global scope.
+        unknown = scope.get("unknown", [])
+        for part in list(scope.get("countries", [])) + unknown:
+            code, decode = self._builder.iso3166_library.code_or_decode(part)
+            if code:
+                self._create_scope(
+                    results, self._encoder.geographic_scope("COUNTRY"), code, decode
+                )
+                break
+        if not results:
+            for part in list(scope.get("regions", [])) + unknown:
+                code, decode = self._builder.iso3166_library.region_code(part)
+                if code:
+                    self._create_scope(
+                        results, self._encoder.geographic_scope("REGION"), code, decode
+                    )
+                    break
+        if not results:
+            # Non-global but no resolvable country/region (e.g. site/cohort or
+            # unparsable text). No C207412 area code is available, so fall back
+            # to a global scope and log — the enrollment definition cannot be
+            # expressed as "Locally" without an area code.
+            self._errors.warning(
+                "Non-global amendment scope had no resolvable country/region "
+                f"for enrollment scope; defaulting to global. scope={scope}",
+                KlassMethodLocation(self.MODULE, "_enrollment_geographic_scope"),
+            )
+            self._global_scope(results)
+        return results[0] if results else None
 
     def _to_int(self, item: str | int) -> int:
         try:
