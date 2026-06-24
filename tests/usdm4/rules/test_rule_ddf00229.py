@@ -20,13 +20,33 @@ from tests.usdm4.rules.ct_helpers import FakeCT
 # C66737 SDTM Trial Phase Response — minimal subset that exercises the
 # M11 PT relaxation. SDTM PTs are "Phase N Trial"; M11 PTs are "Phase N".
 _SDTM_C66737 = [
-    {"conceptId": "C15600", "preferredTerm": "Phase 1 Trial", "submissionValue": "PHASE I TRIAL"},
-    {"conceptId": "C15601", "preferredTerm": "Phase 2 Trial", "submissionValue": "PHASE II TRIAL"},
-    {"conceptId": "C15602", "preferredTerm": "Phase 3 Trial", "submissionValue": "PHASE III TRIAL"},
-    {"conceptId": "C48660", "preferredTerm": "Not Applicable", "submissionValue": "NOT APPLICABLE"},
+    {
+        "conceptId": "C15600",
+        "preferredTerm": "Phase 1 Trial",
+        "submissionValue": "PHASE I TRIAL",
+    },
+    {
+        "conceptId": "C15601",
+        "preferredTerm": "Phase 2 Trial",
+        "submissionValue": "PHASE II TRIAL",
+    },
+    {
+        "conceptId": "C15602",
+        "preferredTerm": "Phase 3 Trial",
+        "submissionValue": "PHASE III TRIAL",
+    },
+    {
+        "conceptId": "C48660",
+        "preferredTerm": "Not Applicable",
+        "submissionValue": "NOT APPLICABLE",
+    },
     # C49686 ("Phase IIa Trial") is in SDTM but NOT in M11's C217045 —
     # used to prove "no M11 fallback for SDTM-only codes".
-    {"conceptId": "C49686", "preferredTerm": "Phase IIa Trial", "submissionValue": "PHASE IIA TRIAL"},
+    {
+        "conceptId": "C49686",
+        "preferredTerm": "Phase IIa Trial",
+        "submissionValue": "PHASE IIA TRIAL",
+    },
 ]
 
 

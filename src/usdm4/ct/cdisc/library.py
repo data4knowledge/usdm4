@@ -163,9 +163,7 @@ class Library:
         except Exception:
             return None
 
-    def is_in_codelist(
-        self, value: str, codelist_id: str, by: str = "any"
-    ) -> bool:
+    def is_in_codelist(self, value: str, codelist_id: str, by: str = "any") -> bool:
         """True if ``value`` is a member of the codelist identified by ``codelist_id``.
 
         ``by`` selects the match field:
@@ -237,13 +235,15 @@ class Library:
         for term in terms:
             if by in ("concept_id", "any") and term.get("conceptId", "") == value:
                 return (term, term.get("source") or "cdisc")
-            if by in ("preferred_term", "any") and (
-                term.get("preferredTerm") or ""
-            ).casefold() == needle:
+            if (
+                by in ("preferred_term", "any")
+                and (term.get("preferredTerm") or "").casefold() == needle
+            ):
                 return (term, term.get("source") or "cdisc")
-            if by in ("submission_value", "any") and (
-                term.get("submissionValue") or ""
-            ).casefold() == needle:
+            if (
+                by in ("submission_value", "any")
+                and (term.get("submissionValue") or "").casefold() == needle
+            ):
                 return (term, term.get("source") or "cdisc")
         return (None, None)
 
@@ -419,9 +419,7 @@ class Library:
         for term in entry.get("terms") or []:
             term_with_source = {**term, "source": source_tag}
             target["terms"].append(term_with_source)
-            self._check_in_and_add(
-                self._by_term, term["conceptId"], target_id
-            )
+            self._check_in_and_add(self._by_term, term["conceptId"], target_id)
             self._check_in_and_add(
                 self._by_submission, term.get("submissionValue", ""), target_id
             )
@@ -460,9 +458,7 @@ class Library:
             "terms": terms,
         }
         for term in terms:
-            self._check_in_and_add(
-                self._by_term, term["conceptId"], codelist_id
-            )
+            self._check_in_and_add(self._by_term, term["conceptId"], codelist_id)
             self._check_in_and_add(
                 self._by_submission, term.get("submissionValue", ""), codelist_id
             )

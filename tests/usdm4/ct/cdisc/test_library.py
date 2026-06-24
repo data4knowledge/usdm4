@@ -361,7 +361,8 @@ def _extension_entry(target="C66737", source="NCIt-M11", terms=None):
     return {
         "extends": target,
         "source": source,
-        "terms": terms or [
+        "terms": terms
+        or [
             {
                 "conceptId": "C999001",
                 "preferredTerm": "Extension Term",
@@ -383,7 +384,8 @@ def _whole_codelist_entry(codelist="C217045", source="NCIt-M11", terms=None):
         "extensible": False,
         "submissionValue": "",
         "synonyms": [],
-        "terms": terms or [
+        "terms": terms
+        or [
             {
                 "conceptId": "C999100",
                 "preferredTerm": "Whole Term",
@@ -478,7 +480,8 @@ def test_merge_extension_stamps_source_tag(loaded_library):
     }
     loaded_library._merge_extension(_extension_entry("C66737", source="NCIt-M11"))
     new_term = next(
-        t for t in loaded_library._by_code_list["C66737"]["terms"]
+        t
+        for t in loaded_library._by_code_list["C66737"]["terms"]
         if t["conceptId"] == "C999001"
     )
     assert new_term["source"] == "NCIt-M11"
@@ -494,7 +497,8 @@ def test_merge_extension_defaults_source_when_missing(loaded_library):
     del entry["source"]
     loaded_library._merge_extension(entry)
     new_term = next(
-        t for t in loaded_library._by_code_list["C66737"]["terms"]
+        t
+        for t in loaded_library._by_code_list["C66737"]["terms"]
         if t["conceptId"] == "C999001"
     )
     assert new_term["source"] == "extension"
@@ -509,11 +513,13 @@ def test_merge_extension_indexes_new_terms(loaded_library):
     loaded_library._merge_extension(
         _extension_entry(
             "C66737",
-            terms=[{
-                "conceptId": "C999001",
-                "preferredTerm": "Extension Term",
-                "submissionValue": "EXT_TERM",
-            }],
+            terms=[
+                {
+                    "conceptId": "C999001",
+                    "preferredTerm": "Extension Term",
+                    "submissionValue": "EXT_TERM",
+                }
+            ],
         )
     )
     assert "C999001" in loaded_library._by_term
@@ -569,11 +575,13 @@ def test_add_whole_codelist_indexes_terms(loaded_library):
     loaded_library._add_whole_codelist(
         _whole_codelist_entry(
             "C217045",
-            terms=[{
-                "conceptId": "C15600",
-                "preferredTerm": "Phase 1",
-                "submissionValue": "",
-            }],
+            terms=[
+                {
+                    "conceptId": "C15600",
+                    "preferredTerm": "Phase 1",
+                    "submissionValue": "",
+                }
+            ],
         )
     )
     assert "C15600" in loaded_library._by_term
@@ -658,9 +666,7 @@ def test_find_in_codelist_returns_extension_source_after_merge(loaded_library):
         **_sample_code_list("C66737"),
         "extensible": "true",
     }
-    loaded_library._merge_extension(
-        _extension_entry("C66737", source="NCIt-M11")
-    )
+    loaded_library._merge_extension(_extension_entry("C66737", source="NCIt-M11"))
     term, source = loaded_library.find_in_codelist("C999001", "C66737", by="concept_id")
     assert term["conceptId"] == "C999001"
     assert source == "NCIt-M11"
@@ -671,7 +677,9 @@ def test_find_in_codelist_returns_extension_source_for_whole_codelist(loaded_lib
     loaded_library._add_whole_codelist(
         _whole_codelist_entry("C217045", source="NCIt-M11")
     )
-    term, source = loaded_library.find_in_codelist("C999100", "C217045", by="concept_id")
+    term, source = loaded_library.find_in_codelist(
+        "C999100", "C217045", by="concept_id"
+    )
     assert term["conceptId"] == "C999100"
     assert source == "NCIt-M11"
 

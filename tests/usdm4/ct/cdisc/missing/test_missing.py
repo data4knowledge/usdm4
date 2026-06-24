@@ -7,7 +7,6 @@ verify file discovery, source tagging, and tolerance of absent files.
 
 import os
 
-import pytest
 
 from src.usdm4.ct.cdisc.missing.missing import Missing
 
@@ -49,7 +48,9 @@ def test_only_missing_ct_present(tmp_path):
     missing = Missing(str(tmp_path))
     entries = list(missing.code_lists())
 
-    assert entries == [({"extends": "C66737", "source": "NCIt-M11", "terms": []}, "missing_ct.yaml")]
+    assert entries == [
+        ({"extends": "C66737", "source": "NCIt-M11", "terms": []}, "missing_ct.yaml")
+    ]
 
 
 def test_only_m11_codelists_present(tmp_path):

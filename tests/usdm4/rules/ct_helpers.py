@@ -69,9 +69,7 @@ class FakeCT:
             "terms": list(self._codelists[codelist_id]),
         }
 
-    def is_in_codelist(
-        self, value: str, codelist_id: str, by: str = "any"
-    ) -> bool:
+    def is_in_codelist(self, value: str, codelist_id: str, by: str = "any") -> bool:
         return self.find_in_codelist(value, codelist_id, by)[0] is not None
 
     def find_in_codelist(
@@ -96,12 +94,14 @@ class FakeCT:
         for term in terms:
             if by in ("concept_id", "any") and term.get("conceptId", "") == value:
                 return (term, term.get("source") or "cdisc")
-            if by in ("preferred_term", "any") and (
-                term.get("preferredTerm") or ""
-            ).casefold() == needle:
+            if (
+                by in ("preferred_term", "any")
+                and (term.get("preferredTerm") or "").casefold() == needle
+            ):
                 return (term, term.get("source") or "cdisc")
-            if by in ("submission_value", "any") and (
-                term.get("submissionValue") or ""
-            ).casefold() == needle:
+            if (
+                by in ("submission_value", "any")
+                and (term.get("submissionValue") or "").casefold() == needle
+            ):
                 return (term, term.get("source") or "cdisc")
         return (None, None)

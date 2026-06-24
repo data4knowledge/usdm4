@@ -31,22 +31,38 @@ from tests.usdm4.rules.ct_helpers import FakeCT
 
 
 def _ct_with_age_unit() -> FakeCT:
-    return FakeCT({
-        AGE_UNIT_CODELIST: [
-            {"conceptId": "C29848", "preferredTerm": "Years", "submissionValue": "Years"},
-            {"conceptId": "C25301", "preferredTerm": "Months", "submissionValue": "Months"},
-        ]
-    })
+    return FakeCT(
+        {
+            AGE_UNIT_CODELIST: [
+                {
+                    "conceptId": "C29848",
+                    "preferredTerm": "Years",
+                    "submissionValue": "Years",
+                },
+                {
+                    "conceptId": "C25301",
+                    "preferredTerm": "Months",
+                    "submissionValue": "Months",
+                },
+            ]
+        }
+    )
 
 
 def _ct_with_both_labels() -> FakeCT:
     """C66781 stub where preferredTerm and submissionValue differ for a
     term, so we can confirm both forms are accepted independently."""
-    return FakeCT({
-        AGE_UNIT_CODELIST: [
-            {"conceptId": "C29848", "preferredTerm": "Year", "submissionValue": "Years"},
-        ]
-    })
+    return FakeCT(
+        {
+            AGE_UNIT_CODELIST: [
+                {
+                    "conceptId": "C29848",
+                    "preferredTerm": "Year",
+                    "submissionValue": "Years",
+                },
+            ]
+        }
+    )
 
 
 def _data_with_instances(pop_instances=None, cohort_instances=None):
@@ -356,24 +372,36 @@ def test_extension_term_is_accepted_transparently():
     """A term added to C66781 via the extension mechanism (carrying a
     non-cdisc source tag) is accepted by DDF00237 with no rule change."""
     rule = RuleDDF00237()
-    ct = FakeCT({
-        AGE_UNIT_CODELIST: [
-            # Standard CDISC term
-            {"conceptId": "C29848", "preferredTerm": "Years", "submissionValue": "Years"},
-            # Extension term (would be tagged with source: NCIt-M11 by
-            # Library._merge_extension; the rule doesn't care about the
-            # tag, only about membership).
-            {"conceptId": "C99999", "preferredTerm": "Femtoseconds",
-             "submissionValue": "Femtoseconds", "source": "NCIt-Something"},
-        ]
-    })
+    ct = FakeCT(
+        {
+            AGE_UNIT_CODELIST: [
+                # Standard CDISC term
+                {
+                    "conceptId": "C29848",
+                    "preferredTerm": "Years",
+                    "submissionValue": "Years",
+                },
+                # Extension term (would be tagged with source: NCIt-M11 by
+                # Library._merge_extension; the rule doesn't care about the
+                # tag, only about membership).
+                {
+                    "conceptId": "C99999",
+                    "preferredTerm": "Femtoseconds",
+                    "submissionValue": "Femtoseconds",
+                    "source": "NCIt-Something",
+                },
+            ]
+        }
+    )
     data = _data_with_instances(
         pop_instances=[
             {
                 "id": "p1",
                 "plannedAge": {
                     "value": 1,
-                    "unit": {"standardCode": {"code": "C99999", "decode": "Femtoseconds"}},
+                    "unit": {
+                        "standardCode": {"code": "C99999", "decode": "Femtoseconds"}
+                    },
                 },
             }
         ]
