@@ -168,37 +168,55 @@ class AmendmentsAssembler(BaseAssembler):
 
     def _extract_section_number_and_title(self, text) -> list[DocumentContentReference]:
         results = []
-        pattern = r"^(?:Section\s+)?(\d+(?:\.\d+)*),?\s*(.*)$"
         for line in text.strip().split("\n"):
-            stripped = line.strip()
-            match = re.match(pattern, stripped)
-            if match:
-                number, title = match.group(1), match.group(2)
-            elif stripped.lower() in self.NAMED_SECTIONS:
-                number, title = "", self.NAMED_SECTIONS[stripped.lower()]
-            else:
-                self._errors.error(
-                    f"Failed to extract section ref from '{line}'",
-                    KlassMethodLocation(
-                        self.MODULE, "_extract_section_number_and_title"
-                    ),
-                )
-                continue
-            params = {
-                "sectionNumber": number,
-                "sectionTitle": title,
-                "appliesToId": self._document_assembler.document.id,
-            }
-            ref = self._builder.create(DocumentContentReference, params)
-            if ref:
-                results.append(ref)
-                self._errors.info(
-                    f"Extracted section ref from '{line}' -> {params}",
-                    KlassMethodLocation(
-                        self.MODULE, "_extract_section_number_and_title"
-                    ),
-                )
+            for number, title in self._parse_section_line(line):
+                params = {
+                    "sectionNumber": number,
+                    "sectionTitle": title,
+                    "appliesToId": self._document_assembler.document.id,
+                }
+                ref = self._builder.create(DocumentContentReference, params)
+                if ref:
+                    results.append(ref)
+                    self._errors.info(
+                        f"Extracted section ref from '{line}' -> {params}",
+                        KlassMethodLocation(
+                            self.MODULE, "_extract_section_number_and_title"
+                        ),
+                    )
         return results
+
+    def _parse_section_line(self, line) -> list[tuple[str, str]]:
+        """Parse one section-reference line into (number, title) pairs.
+
+        A change row may cite several sections at once, written either on
+        separate lines or as a single plural list ("Sections 3.1, 4.1 and
+        6.1"). A plural list with no per-section titles expands to one
+        reference per number. A singular line keeps its trailing title.
+        The two non-numbered C217272 members (Title Page, Amendment
+        Details) are matched by name. Unparseable lines are logged and
+        dropped.
+        """
+        stripped = line.strip()
+        if not stripped:
+            return []
+        plural = re.match(r"(?i)^sections\b", stripped)
+        body = re.sub(r"(?i)^(?:new\s+)?sections?\b[\s:]*", "", stripped).strip()
+        parts = [p for p in re.split(r"\s*(?:,|\band\b)\s*", body) if p]
+        if (plural or len(parts) > 1) and parts and all(
+            re.fullmatch(r"\d+(?:\.\d+)*", p) for p in parts
+        ):
+            return [(p, "") for p in parts]
+        match = re.match(r"^(?:Section\s+)?(\d+(?:\.\d+)*),?\s*(.*)$", stripped)
+        if match:
+            return [(match.group(1), match.group(2))]
+        if stripped.lower() in self.NAMED_SECTIONS:
+            return [("", self.NAMED_SECTIONS[stripped.lower()])]
+        self._errors.error(
+            f"Failed to extract section ref from '{line}'",
+            KlassMethodLocation(self.MODULE, "_extract_section_number_and_title"),
+        )
+        return []
 
     def _create_amendment_impact(self, data: dict) -> list[StudyAmendmentImpact]:
         try:

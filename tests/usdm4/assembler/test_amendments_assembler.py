@@ -2085,3 +2085,134 @@ class TestAmendmentsAssemblerUnknownScopeResolution:
         # Should have site scope extensions
         assert amendment.extensionAttributes is not None
         assert len(amendment.extensionAttributes) >= 1
+
+
+class TestAmendmentsAssemblerNamedSections:
+    """Test that the two non-numbered C217272 members (Title Page and
+    Amendment Details) are recognised by name and stored with an empty
+    section number, instead of being discarded like unparseable text."""
+
+    def test_title_page_named_section(
+        self, amendments_assembler, document_assembler
+    ):
+        amendments_assembler._document_assembler = document_assembler
+
+        result = amendments_assembler._extract_section_number_and_title("Title Page")
+
+        assert len(result) == 1
+        assert result[0].sectionNumber == ""
+        assert result[0].sectionTitle == "Title Page"
+
+    def test_amendment_details_named_section(
+        self, amendments_assembler, document_assembler
+    ):
+        amendments_assembler._document_assembler = document_assembler
+
+        result = amendments_assembler._extract_section_number_and_title(
+            "Amendment Details"
+        )
+
+        assert len(result) == 1
+        assert result[0].sectionNumber == ""
+        assert result[0].sectionTitle == "Amendment Details"
+
+    def test_named_section_is_case_insensitive(
+        self, amendments_assembler, document_assembler
+    ):
+        amendments_assembler._document_assembler = document_assembler
+
+        result = amendments_assembler._extract_section_number_and_title("TITLE PAGE")
+
+        assert len(result) == 1
+        assert result[0].sectionNumber == ""
+        # Canonical casing is stored regardless of input casing
+        assert result[0].sectionTitle == "Title Page"
+
+    def test_numbered_and_named_sections_mix(
+        self, amendments_assembler, document_assembler
+    ):
+        amendments_assembler._document_assembler = document_assembler
+
+        result = amendments_assembler._extract_section_number_and_title(
+            "5.2 Inclusion Criteria\nTitle Page"
+        )
+
+        assert len(result) == 2
+        assert (result[0].sectionNumber, result[0].sectionTitle) == (
+            "5.2",
+            "Inclusion Criteria",
+        )
+        assert (result[1].sectionNumber, result[1].sectionTitle) == (
+            "",
+            "Title Page",
+        )
+
+    def test_unrecognised_unnumbered_line_still_drops(
+        self, amendments_assembler, document_assembler, errors
+    ):
+        amendments_assembler._document_assembler = document_assembler
+        initial_error_count = errors.error_count()
+
+        result = amendments_assembler._extract_section_number_and_title(
+            "Some free text that is not a section"
+        )
+
+        assert result == []
+        assert errors.error_count() > initial_error_count
+
+
+class TestAmendmentsAssemblerMultiSection:
+    """A single change row may cite several sections, either as a plural
+    list ("Sections 3.1, 4.1 and 6.1") or one per line. Each must become
+    its own DocumentContentReference."""
+
+    def test_plural_sections_comma_list(
+        self, amendments_assembler, document_assembler
+    ):
+        amendments_assembler._document_assembler = document_assembler
+        result = amendments_assembler._extract_section_number_and_title(
+            "Sections 3.1, 4.1, 6.1, 9.5"
+        )
+        assert [(r.sectionNumber, r.sectionTitle) for r in result] == [
+            ("3.1", ""),
+            ("4.1", ""),
+            ("6.1", ""),
+            ("9.5", ""),
+        ]
+
+    def test_plural_sections_with_and(
+        self, amendments_assembler, document_assembler
+    ):
+        amendments_assembler._document_assembler = document_assembler
+        result = amendments_assembler._extract_section_number_and_title(
+            "Sections 6.1 and 6.4.1"
+        )
+        assert [(r.sectionNumber, r.sectionTitle) for r in result] == [
+            ("6.1", ""),
+            ("6.4.1", ""),
+        ]
+
+    def test_multiple_sections_one_per_line(
+        self, amendments_assembler, document_assembler
+    ):
+        amendments_assembler._document_assembler = document_assembler
+        result = amendments_assembler._extract_section_number_and_title(
+            "Section 1.3\nSection 6.4"
+        )
+        assert [(r.sectionNumber, r.sectionTitle) for r in result] == [
+            ("1.3", ""),
+            ("6.4", ""),
+        ]
+
+    def test_singular_section_with_comma_title_is_not_split(
+        self, amendments_assembler, document_assembler
+    ):
+        # "Section 5.3, criteria 2 and 17" is ONE section whose title text
+        # happens to contain commas and 'and' — it must not be split.
+        amendments_assembler._document_assembler = document_assembler
+        result = amendments_assembler._extract_section_number_and_title(
+            "Section 5.3, criteria 2 and 17"
+        )
+        assert len(result) == 1
+        assert result[0].sectionNumber == "5.3"
+        assert result[0].sectionTitle == "criteria 2 and 17"

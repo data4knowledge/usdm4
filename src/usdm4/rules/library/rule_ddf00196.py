@@ -44,18 +44,23 @@ class RuleDDF00196(RuleTemplate):
                 applies = ref.get("appliesToId")
                 num = ref.get("sectionNumber")
                 title = ref.get("sectionTitle")
-                if num is not None:
+                # Empty/None numbers and titles represent the ABSENCE of
+                # that attribute (e.g. the Title Page and Amendment
+                # Details members of C217272 carry no section number).
+                # They are not real values, so exclude them from the
+                # one-to-one check - otherwise two distinct unnumbered
+                # sections would collide on "". Mirrors DDF00245, which
+                # likewise skips empty section numbers.
+                if num:
                     num_to_titles[(applies, num)].add(title)
-                if title is not None:
+                if title:
                     title_to_nums[(applies, title)].add(num)
             for ref in refs:
                 applies = ref.get("appliesToId")
                 num = ref.get("sectionNumber")
                 title = ref.get("sectionTitle")
-                bad_numbers = num is not None and len(num_to_titles[(applies, num)]) > 1
-                bad_titles = (
-                    title is not None and len(title_to_nums[(applies, title)]) > 1
-                )
+                bad_numbers = bool(num) and len(num_to_titles[(applies, num)]) > 1
+                bad_titles = bool(title) and len(title_to_nums[(applies, title)]) > 1
                 if bad_numbers or bad_titles:
                     self._add_failure(
                         "DocumentContentReference has an inconsistent sectionNumber↔sectionTitle mapping within the amendment",

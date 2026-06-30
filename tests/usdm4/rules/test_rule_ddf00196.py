@@ -116,3 +116,105 @@ class TestRuleDDF00196:
         )
         assert rule.validate({"data": data}) is False
         assert rule.errors().count() == 2
+
+    def test_distinct_unnumbered_sections_pass(self):
+        # Title Page and Amendment Details (C217272) both carry an empty
+        # sectionNumber. They are genuinely different sections, so they
+        # must not collide on "" and trip the one-to-one check.
+        rule = RuleDDF00196()
+        data = self._data(
+            [
+                {
+                    "id": "A1",
+                    "changes": [
+                        {
+                            "changedSections": [
+                                {
+                                    "id": "R1",
+                                    "appliesToId": "D1",
+                                    "sectionNumber": "",
+                                    "sectionTitle": "Title Page",
+                                },
+                                {
+                                    "id": "R2",
+                                    "appliesToId": "D1",
+                                    "sectionNumber": "",
+                                    "sectionTitle": "Amendment Details",
+                                },
+                            ]
+                        }
+                    ],
+                }
+            ]
+        )
+        assert rule.validate({"data": data}) is True
+        assert rule.errors().count() == 0
+
+    def test_repeated_same_unnumbered_section_passes(self):
+        # The same unnumbered section referenced by two changes is fine.
+        rule = RuleDDF00196()
+        data = self._data(
+            [
+                {
+                    "id": "A1",
+                    "changes": [
+                        {
+                            "changedSections": [
+                                {
+                                    "id": "R1",
+                                    "appliesToId": "D1",
+                                    "sectionNumber": "",
+                                    "sectionTitle": "Title Page",
+                                },
+                                {
+                                    "id": "R2",
+                                    "appliesToId": "D1",
+                                    "sectionNumber": "",
+                                    "sectionTitle": "Title Page",
+                                },
+                            ]
+                        }
+                    ],
+                }
+            ]
+        )
+        assert rule.validate({"data": data}) is True
+
+    def test_numbered_inconsistency_still_fails_alongside_unnumbered(self):
+        # The empty-number exemption must not mask a real number↔title
+        # clash on a genuinely numbered section in the same amendment.
+        rule = RuleDDF00196()
+        data = self._data(
+            [
+                {
+                    "id": "A1",
+                    "changes": [
+                        {
+                            "changedSections": [
+                                {
+                                    "id": "R1",
+                                    "appliesToId": "D1",
+                                    "sectionNumber": "",
+                                    "sectionTitle": "Title Page",
+                                },
+                                {
+                                    "id": "R2",
+                                    "appliesToId": "D1",
+                                    "sectionNumber": "5",
+                                    "sectionTitle": "Trial Population",
+                                },
+                                {
+                                    "id": "R3",
+                                    "appliesToId": "D1",
+                                    "sectionNumber": "5",
+                                    "sectionTitle": "Something Else",
+                                },
+                            ]
+                        }
+                    ],
+                }
+            ]
+        )
+        assert rule.validate({"data": data}) is False
+        # Only the two clashing numbered refs are reported, not the named one.
+        assert rule.errors().count() == 2
