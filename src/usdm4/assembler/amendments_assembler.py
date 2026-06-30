@@ -156,29 +156,44 @@ class AmendmentsAssembler(BaseAssembler):
                 results.append(change)
         return results
 
+    # The C217272 section value set has two members with no section
+    # number: the Title Page and the Amendment Details section. An
+    # amendment change may legitimately point at either, so recognise
+    # them by name and store them with an empty sectionNumber rather
+    # than discarding the reference.
+    NAMED_SECTIONS = {
+        "title page": "Title Page",
+        "amendment details": "Amendment Details",
+    }
+
     def _extract_section_number_and_title(self, text) -> list[DocumentContentReference]:
         results = []
         pattern = r"^(?:Section\s+)?(\d+(?:\.\d+)*),?\s*(.*)$"
         for line in text.strip().split("\n"):
-            match = re.match(pattern, line.strip())
+            stripped = line.strip()
+            match = re.match(pattern, stripped)
             if match:
-                params = {
-                    "sectionNumber": match.group(1),
-                    "sectionTitle": match.group(2),
-                    "appliesToId": self._document_assembler.document.id,
-                }
-                ref = self._builder.create(DocumentContentReference, params)
-                if ref:
-                    results.append(ref)
-                    self._errors.info(
-                        f"Extracted section ref from '{line}' -> {params}",
-                        KlassMethodLocation(
-                            self.MODULE, "_extract_section_number_and_title"
-                        ),
-                    )
+                number, title = match.group(1), match.group(2)
+            elif stripped.lower() in self.NAMED_SECTIONS:
+                number, title = "", self.NAMED_SECTIONS[stripped.lower()]
             else:
                 self._errors.error(
                     f"Failed to extract section ref from '{line}'",
+                    KlassMethodLocation(
+                        self.MODULE, "_extract_section_number_and_title"
+                    ),
+                )
+                continue
+            params = {
+                "sectionNumber": number,
+                "sectionTitle": title,
+                "appliesToId": self._document_assembler.document.id,
+            }
+            ref = self._builder.create(DocumentContentReference, params)
+            if ref:
+                results.append(ref)
+                self._errors.info(
+                    f"Extracted section ref from '{line}' -> {params}",
                     KlassMethodLocation(
                         self.MODULE, "_extract_section_number_and_title"
                     ),
