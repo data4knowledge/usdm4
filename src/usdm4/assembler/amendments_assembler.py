@@ -203,8 +203,10 @@ class AmendmentsAssembler(BaseAssembler):
         plural = re.match(r"(?i)^sections\b", stripped)
         body = re.sub(r"(?i)^(?:new\s+)?sections?\b[\s:]*", "", stripped).strip()
         parts = [p for p in re.split(r"\s*(?:,|\band\b)\s*", body) if p]
-        if (plural or len(parts) > 1) and parts and all(
-            re.fullmatch(r"\d+(?:\.\d+)*", p) for p in parts
+        if (
+            (plural or len(parts) > 1)
+            and parts
+            and all(re.fullmatch(r"\d+(?:\.\d+)*", p) for p in parts)
         ):
             return [(p, "") for p in parts]
         match = re.match(r"^(?:Section\s+)?(\d+(?:\.\d+)*),?\s*(.*)$", stripped)

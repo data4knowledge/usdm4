@@ -2092,9 +2092,7 @@ class TestAmendmentsAssemblerNamedSections:
     Amendment Details) are recognised by name and stored with an empty
     section number, instead of being discarded like unparseable text."""
 
-    def test_title_page_named_section(
-        self, amendments_assembler, document_assembler
-    ):
+    def test_title_page_named_section(self, amendments_assembler, document_assembler):
         amendments_assembler._document_assembler = document_assembler
 
         result = amendments_assembler._extract_section_number_and_title("Title Page")
@@ -2166,9 +2164,7 @@ class TestAmendmentsAssemblerMultiSection:
     list ("Sections 3.1, 4.1 and 6.1") or one per line. Each must become
     its own DocumentContentReference."""
 
-    def test_plural_sections_comma_list(
-        self, amendments_assembler, document_assembler
-    ):
+    def test_plural_sections_comma_list(self, amendments_assembler, document_assembler):
         amendments_assembler._document_assembler = document_assembler
         result = amendments_assembler._extract_section_number_and_title(
             "Sections 3.1, 4.1, 6.1, 9.5"
@@ -2180,9 +2176,7 @@ class TestAmendmentsAssemblerMultiSection:
             ("9.5", ""),
         ]
 
-    def test_plural_sections_with_and(
-        self, amendments_assembler, document_assembler
-    ):
+    def test_plural_sections_with_and(self, amendments_assembler, document_assembler):
         amendments_assembler._document_assembler = document_assembler
         result = amendments_assembler._extract_section_number_and_title(
             "Sections 6.1 and 6.4.1"
