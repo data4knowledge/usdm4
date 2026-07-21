@@ -182,3 +182,82 @@ class TestCellElementCrossReference:
                 }
             )
         assert "undeclared element" in str(exc_info.value)
+
+
+# ----------------------------------------------------------------------
+# Administrations + duration (issue 42)
+# ----------------------------------------------------------------------
+
+from src.usdm4.assembler.schema.study_design_schema import (  # noqa: E402
+    AdministrationDurationInput,
+    AdministrationInput,
+)
+
+
+class TestAdministrationDurationInput:
+    def test_defaults(self):
+        duration = AdministrationDurationInput()
+        assert duration.description == ""
+        assert duration.will_vary is False
+        assert duration.will_vary_reason == ""
+        assert duration.quantity is None
+
+    def test_populated(self):
+        duration = AdministrationDurationInput(
+            description="IV bolus over 1 minute",
+            will_vary=True,
+            will_vary_reason="Adaptive",
+            quantity="1 min",
+        )
+        assert duration.quantity == "1 min"
+        assert duration.will_vary is True
+
+
+class TestAdministrationInput:
+    def test_defaults(self):
+        admin = AdministrationInput()
+        assert admin.name == ""
+        assert admin.label == ""
+        assert admin.description == ""
+        assert admin.dose is None
+        assert admin.route is None
+        assert admin.frequency is None
+        assert admin.duration is None
+
+    def test_with_duration(self):
+        admin = AdministrationInput(
+            name="IV Dose",
+            route="Intravenous",
+            duration={"quantity": "1 min"},
+        )
+        assert isinstance(admin.duration, AdministrationDurationInput)
+        assert admin.duration.quantity == "1 min"
+
+
+class TestInterventionAdministrations:
+    def test_administrations_list_accepted(self):
+        intervention = InterventionInput(
+            name="Drug A",
+            administrations=[
+                {"name": "Oral Dose", "route": "Oral"},
+                {"route": "Intravenous", "duration": {"quantity": "1 min"}},
+            ],
+        )
+        assert len(intervention.administrations) == 2
+        assert isinstance(intervention.administrations[0], AdministrationInput)
+
+    def test_flat_fields_still_accepted(self):
+        intervention = InterventionInput(
+            name="Drug A", dose="10 mg", route="Oral", frequency="Once"
+        )
+        assert intervention.administrations == []
+        assert intervention.dose == "10 mg"
+
+    def test_flat_and_administrations_together_rejected(self):
+        for flat in ({"dose": "10 mg"}, {"route": "Oral"}, {"frequency": "Once"}):
+            with pytest.raises(ValidationError, match="use one or the other"):
+                InterventionInput(
+                    name="Drug A",
+                    administrations=[{"route": "Oral"}],
+                    **flat,
+                )

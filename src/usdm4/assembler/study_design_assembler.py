@@ -1,3 +1,4 @@
+import re
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.assembler.base_assembler import BaseAssembler
@@ -13,6 +14,7 @@ from usdm4.api.study_epoch import StudyEpoch
 from usdm4.api.study_intervention import StudyIntervention
 from usdm4.api.administration import Administration
 from usdm4.api.duration import Duration
+from usdm4.api.quantity_range import Quantity
 
 
 class StudyDesignAssembler(BaseAssembler):
@@ -183,9 +185,9 @@ class StudyDesignAssembler(BaseAssembler):
     def _build_interventions(self, items: list[dict]) -> dict[str, StudyIntervention]:
         """Build one ``StudyIntervention`` per input item; return ``{name: obj}``.
 
-        ``dose``/``route``/``frequency`` inputs are collapsed into a single
-        ``Administration`` per intervention. Splitting across multiple
-        administrations is a future enhancement.
+        Administrations come from the ``administrations`` list, or from the
+        flat ``dose``/``route``/``frequency`` back-compat fields collapsed
+        into a single ``Administration`` — see ``_build_administrations``.
         """
         result: dict[str, StudyIntervention] = {}
         for item in items:
@@ -213,46 +215,125 @@ class StudyDesignAssembler(BaseAssembler):
     def _build_administrations(self, item: dict) -> list[Administration]:
         """Assemble the ``Administration`` list for one intervention.
 
-        Returns an empty list when no dose/route/frequency fields are present
-        — the schema treats these as optional and existing interventions
-        without administration details should not synthesise a stub.
+        Two input styles are supported (mutually exclusive, enforced by
+        ``InterventionInput``):
+
+        - ``administrations``: a list of administration dicts, each with an
+          optional ``duration``;
+        - flat ``dose`` / ``route`` / ``frequency``: back-compat sugar,
+          collapsed into a single administration.
+
+        Returns an empty list when neither style supplies anything —
+        existing interventions without administration details should not
+        synthesise a stub.
         """
-        dose = item.get("dose")
-        route = item.get("route")
-        frequency = item.get("frequency")
-        if not (dose or route or frequency):
-            return []
-        try:
-            # Duration is required on Administration; supply a placeholder
-            # zero-duration entry. Real durations arrive later via the
-            # timeline/soa work.
-            duration = self._builder.create(
-                Duration,
-                {
-                    "text": None,
-                    "quantity": None,
-                    "durationWillVary": False,
-                    "reasonDurationWillVary": None,
-                },
+        admin_items = item.get("administrations") or []
+        if not admin_items:
+            dose = item.get("dose")
+            route = item.get("route")
+            frequency = item.get("frequency")
+            if not (dose or route or frequency):
+                return []
+            admin_items = [{"dose": dose, "route": route, "frequency": frequency}]
+
+        result: list[Administration] = []
+        multiple = len(admin_items) > 1
+        for index, admin in enumerate(admin_items, start=1):
+            administration = self._build_one_administration(
+                item, admin, index, multiple
             )
+            if administration is not None:
+                result.append(administration)
+        return result
+
+    def _build_one_administration(
+        self, item: dict, admin: dict, index: int, multiple: bool
+    ) -> Administration | None:
+        """Build a single ``Administration`` from one admin input dict."""
+        try:
+            route = admin.get("route")
+            frequency = admin.get("frequency")
+            input_name = (admin.get("name") or "").strip()
+            if input_name:
+                name = self._label_to_name(input_name)
+            else:
+                name = f"ADM-{self._label_to_name(item['name'])}"
+                if multiple:
+                    name = f"{name}-{index}"
             params = {
-                "name": f"ADM-{self._label_to_name(item['name'])}",
-                "label": item.get("label") or item["name"],
-                "description": "",
-                "duration": duration,
+                "name": name,
+                "label": admin.get("label")
+                or input_name
+                or item.get("label")
+                or item["name"],
+                "description": admin.get("description") or "",
+                "duration": self._build_duration(admin.get("duration")),
                 "dose": None,  # Future: parse ``dose`` text into Quantity
                 "route": self._encoder.route(route) if route else None,
                 "frequency": self._encoder.frequency(frequency) if frequency else None,
             }
-            administration = self._builder.create(Administration, params)
-            return [administration] if administration is not None else []
+            return self._builder.create(Administration, params)
         except Exception as e:
             self._errors.exception(
                 f"Failed during creation of administration for '{item.get('name', '?')}'",
                 e,
-                KlassMethodLocation(self.MODULE, "_build_administrations"),
+                KlassMethodLocation(self.MODULE, "_build_one_administration"),
             )
-            return []
+            return None
+
+    def _build_duration(self, duration: dict | None) -> Duration:
+        """Build the ``Duration`` for one administration.
+
+        With no input a zero-content placeholder is created (``Duration`` is
+        required on ``Administration``). With input, ``quantity`` is parsed
+        as a value+unit string; when the unit does not resolve against CDISC
+        CT the raw string is preserved on ``Duration.text`` alongside any
+        description rather than being dropped.
+        """
+        duration = duration or {}
+        text = duration.get("description") or None
+        quantity = self._duration_quantity(duration.get("quantity"))
+        if duration.get("quantity") and quantity is None:
+            raw = duration["quantity"]
+            text = f"{text} ({raw})" if text else raw
+        return self._builder.create(
+            Duration,
+            {
+                "text": text,
+                "quantity": quantity,
+                "durationWillVary": bool(duration.get("will_vary", False)),
+                "reasonDurationWillVary": duration.get("will_vary_reason") or None,
+            },
+        )
+
+    QUANTITY_RE = re.compile(r"^\s*(\d+(?:\.\d+)?)\s*([A-Za-z]+)\s*$")
+
+    def _duration_quantity(self, text: str | None) -> Quantity | None:
+        """Parse a "1 min" / "6 weeks" style string into a ``Quantity``.
+
+        The unit is resolved via CDISC CT (trying the raw form then the
+        singular). Returns ``None`` — caller falls back to ``Duration.text``
+        — when the string does not match or the unit is unknown.
+        """
+        if not text:
+            return None
+        match = self.QUANTITY_RE.match(text)
+        if not match:
+            return None
+        value, unit_text = float(match.group(1)), match.group(2)
+        unit_code = self._builder.cdisc_unit_code(unit_text)
+        if unit_code is None and unit_text.lower().endswith("s"):
+            unit_code = self._builder.cdisc_unit_code(unit_text[:-1])
+        if unit_code is None:
+            self._errors.warning(
+                f"Duration unit '{unit_text}' not recognised; keeping raw text.",
+                KlassMethodLocation(self.MODULE, "_duration_quantity"),
+            )
+            return None
+        return self._builder.create(
+            Quantity,
+            {"value": value, "unit": self._builder.alias_code(unit_code)},
+        )
 
     # ------------------------------------------------------------------
     # Pass 2a — StudyElement
