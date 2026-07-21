@@ -751,3 +751,60 @@ class TestStructuredCriteria:
         assert [c.identifier for c in pa.criteria] == ["1", "05"]
         assert pa.criteria[0].criterionItemId == pa.criteria_items[0].id
         assert pa.criteria[1].criterionItemId == pa.criteria_items[1].id
+
+
+# ----------------------------------------------------------------------
+# Criterion next/previous chaining (issue 46)
+# ----------------------------------------------------------------------
+
+
+class TestCriterionOrdering:
+    def _execute(self, population_assembler, inclusion, exclusion):
+        population_assembler.execute(
+            {
+                "label": "Pop",
+                "inclusion_exclusion": {
+                    "inclusion": inclusion,
+                    "exclusion": exclusion,
+                },
+            }
+        )
+        return population_assembler.criteria
+
+    def test_categories_form_separate_chains(self, population_assembler):
+        criteria = self._execute(population_assembler, ["A", "B", "C"], ["X", "Y"])
+        inc = criteria[:3]
+        exc = criteria[3:]
+
+        # Inclusion chain: A -> B -> C.
+        assert inc[0].previousId is None
+        assert inc[0].nextId == inc[1].id
+        assert inc[1].previousId == inc[0].id
+        assert inc[1].nextId == inc[2].id
+        assert inc[2].previousId == inc[1].id
+        assert inc[2].nextId is None
+
+        # Exclusion chain is independent: X -> Y, not linked to inclusion.
+        assert exc[0].previousId is None
+        assert exc[0].nextId == exc[1].id
+        assert exc[1].previousId == exc[0].id
+        assert exc[1].nextId is None
+
+    def test_single_criterion_has_null_ends(self, population_assembler):
+        criteria = self._execute(population_assembler, ["Only"], [])
+        assert criteria[0].previousId is None
+        assert criteria[0].nextId is None
+
+    def test_structured_criteria_chain_in_input_order(self, population_assembler):
+        # Chain order follows input order, not identifier order.
+        criteria = self._execute(
+            population_assembler,
+            [
+                {"identifier": "04", "text": "Fourth"},
+                {"identifier": "01", "text": "First"},
+            ],
+            [],
+        )
+        assert criteria[0].identifier == "04"
+        assert criteria[0].nextId == criteria[1].id
+        assert criteria[1].previousId == criteria[0].id

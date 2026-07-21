@@ -362,7 +362,12 @@ class PopulationAssembler(BaseAssembler):
         ``label`` / ``description`` override the generated defaults.
         Source identifiers are honoured verbatim — M11 numbering gaps
         (deleted criteria are not reused) must survive assembly.
+
+        Criteria within the category are chained via ``previousId`` /
+        ``nextId`` in input order (inclusion and exclusion form separate
+        chains — they are independent ordered lists).
         """
+        batch: list[EligibilityCriterion] = []
         for index, entry in enumerate(criteria):
             item = {"text": entry} if isinstance(entry, str) else entry
             text = item.get("text") or ""
@@ -390,11 +395,15 @@ class PopulationAssembler(BaseAssembler):
                     "category": category,
                     "identifier": item.get("identifier") or f"{index + 1}",
                 }
-                self._ec_items.append(
-                    self._builder.create(EligibilityCriterion, params)
-                )
+                criterion = self._builder.create(EligibilityCriterion, params)
+                self._ec_items.append(criterion)
+                if criterion is not None:
+                    batch.append(criterion)
             except Exception as e:
                 location = KlassMethodLocation(self.MODULE, "_collection")
                 self._errors.exception(
                     f"Failed during creation of criterion '{text}", e, location
                 )
+        # Chain the category's criteria in input order; a single criterion
+        # ends up with both ends null, matching double_link semantics.
+        self._builder.double_link(batch, "previousId", "nextId")
