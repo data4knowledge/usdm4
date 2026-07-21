@@ -165,3 +165,20 @@ class TestInclusionExclusionMixedForms:
         )
         assert ie.inclusion[0] == "Plain"
         assert isinstance(ie.inclusion[1], CriterionInput)
+
+
+class TestCohortInclusionExclusion:
+    def test_default_none(self):
+        cohort = CohortInput(name="Cohort A")
+        assert cohort.inclusion_exclusion is None
+
+    def test_accepts_criteria(self):
+        cohort = CohortInput(
+            name="Cohort A",
+            inclusion_exclusion={
+                "inclusion": ["Plain", {"identifier": "01", "text": "Structured"}],
+                "exclusion": [],
+            },
+        )
+        assert isinstance(cohort.inclusion_exclusion, InclusionExclusion)
+        assert len(cohort.inclusion_exclusion.inclusion) == 2

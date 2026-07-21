@@ -808,3 +808,94 @@ class TestCriterionOrdering:
         assert criteria[0].identifier == "04"
         assert criteria[0].nextId == criteria[1].id
         assert criteria[1].previousId == criteria[0].id
+
+
+# ----------------------------------------------------------------------
+# Cohort-level eligibility criteria (issue 47)
+# ----------------------------------------------------------------------
+
+
+class TestCohortCriteria:
+    def _execute(self, population_assembler, cohorts):
+        population_assembler.execute(
+            {
+                "label": "Main population",
+                "inclusion_exclusion": {
+                    "inclusion": ["Pop inc"],
+                    "exclusion": ["Pop exc"],
+                },
+                "cohorts": cohorts,
+            }
+        )
+        return population_assembler
+
+    def test_cohort_criteria_attached_and_namespaced(self, population_assembler):
+        pa = self._execute(
+            population_assembler,
+            [
+                {
+                    "name": "Cohort A",
+                    "inclusion_exclusion": {
+                        "inclusion": [{"identifier": "01", "text": "Part A healthy"}],
+                        "exclusion": ["Part A exclusion"],
+                    },
+                }
+            ],
+        )
+        cohort = pa.population.cohorts[0]
+        by_id = {c.id: c for c in pa.criteria}
+        names = [by_id[i].name for i in cohort.criterionIds]
+        assert names == ["COHORT-A-INC1", "COHORT-A-EXC1"]
+        assert by_id[cohort.criterionIds[0]].identifier == "01"
+        # Items are namespaced too and registered design-wide.
+        assert "COHORT-A-INC-I1" in [i.name for i in pa.criteria_items]
+
+    def test_population_ids_exclude_cohort_criteria(self, population_assembler):
+        pa = self._execute(
+            population_assembler,
+            [
+                {
+                    "name": "Cohort A",
+                    "inclusion_exclusion": {
+                        "inclusion": ["Part A only"],
+                        "exclusion": [],
+                    },
+                }
+            ],
+        )
+        population = pa.population
+        cohort = population.cohorts[0]
+        assert len(population.criterionIds) == 2  # pop inc + pop exc only
+        assert set(population.criterionIds).isdisjoint(cohort.criterionIds)
+        # All criteria (population + cohort) live in the design-wide list.
+        assert len(pa.criteria) == 3
+
+    def test_cohort_without_criteria_unchanged(self, population_assembler):
+        pa = self._execute(population_assembler, [{"name": "Cohort B"}])
+        assert pa.population.cohorts[0].criterionIds == []
+        assert len(pa.criteria) == 2
+
+    def test_cohort_chains_independent_of_population(self, population_assembler):
+        pa = self._execute(
+            population_assembler,
+            [
+                {
+                    "name": "Cohort A",
+                    "inclusion_exclusion": {
+                        "inclusion": ["A1", "A2"],
+                        "exclusion": [],
+                    },
+                }
+            ],
+        )
+        by_id = {c.id: c for c in pa.criteria}
+        cohort = pa.population.cohorts[0]
+        first, second = [by_id[i] for i in cohort.criterionIds]
+        # Cohort chain is self-contained.
+        assert first.previousId is None
+        assert first.nextId == second.id
+        assert second.previousId == first.id
+        assert second.nextId is None
+        # Population inclusion chain untouched by cohort criteria.
+        pop_inc = by_id[pa.population.criterionIds[0]]
+        assert pop_inc.nextId is None

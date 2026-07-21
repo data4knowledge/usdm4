@@ -74,7 +74,7 @@ class PopulationAssembler(BaseAssembler):
                 )
                 return
 
-            self._ie(data["inclusion_exclusion"])
+            population_criteria = self._ie(data["inclusion_exclusion"])
 
             demographics = data.get("demographics") or {}
             includes_healthy = bool(demographics.get("healthy_volunteers", True))
@@ -93,7 +93,7 @@ class PopulationAssembler(BaseAssembler):
                 "label": data["label"],
                 "description": "The study population, currently blank",
                 "includesHealthySubjects": includes_healthy,
-                "criterionIds": [x.id for x in self._ec_items],
+                "criterionIds": [x.id for x in population_criteria],
                 "plannedSex": planned_sex,
                 "plannedAge": planned_age,
                 "plannedEnrollmentNumber": planned_enrollment_qty,
@@ -273,6 +273,16 @@ class PopulationAssembler(BaseAssembler):
                 characteristics = self._build_characteristics(
                     name, c.get("characteristics", [])
                 )
+                # Cohort-level criteria (M11 maps criteria to population OR
+                # cohort level). Names are prefixed with the cohort name;
+                # the objects join the design-wide registry, the ids attach
+                # here only.
+                cohort_criteria: list[EligibilityCriterion] = []
+                if c.get("inclusion_exclusion"):
+                    cohort_criteria = self._ie(
+                        c["inclusion_exclusion"],
+                        prefix=f"{self._label_to_name(name)}-",
+                    )
                 cohort = self._builder.create(
                     StudyCohort,
                     {
@@ -282,6 +292,7 @@ class PopulationAssembler(BaseAssembler):
                         "includesHealthySubjects": parent_includes_healthy,
                         "plannedEnrollmentNumber": self._cohort_enrollment(c),
                         "characteristics": characteristics,
+                        "criterionIds": [x.id for x in cohort_criteria],
                     },
                 )
                 if cohort is not None:
@@ -338,13 +349,23 @@ class PopulationAssembler(BaseAssembler):
     # Inclusion / Exclusion (unchanged logic)
     # ------------------------------------------------------------------
 
-    def _ie(self, criteria: dict) -> None:
-        self._collection(
-            criteria["inclusion"], "C25532", "INCLUSION", "INC", "Inclusion"
+    def _ie(self, criteria: dict, prefix: str = "") -> list[EligibilityCriterion]:
+        """Build both criteria categories; return the created criteria.
+
+        ``prefix`` namespaces the generated names for cohort-level criteria
+        (e.g. "COHORT-A-INC1") so they cannot collide with the population's
+        "INC1"-style names. The return value lets callers wire
+        ``criterionIds`` from exactly the criteria built here — the shared
+        ``_ec_items`` registry holds population AND cohort criteria and
+        must not be used for that.
+        """
+        result = self._collection(
+            criteria["inclusion"], "C25532", "INCLUSION", f"{prefix}INC", "Inclusion"
         )
-        self._collection(
-            criteria["exclusion"], "C25370", "EXCLUSION", "EXC", "Exclusion"
+        result += self._collection(
+            criteria["exclusion"], "C25370", "EXCLUSION", f"{prefix}EXC", "Exclusion"
         )
+        return result
 
     def _collection(
         self,
@@ -353,7 +374,7 @@ class PopulationAssembler(BaseAssembler):
         decode: str,
         prefix: str,
         label: str,
-    ) -> None:
+    ) -> list[EligibilityCriterion]:
         """Build criterion + item pairs from plain-string or structured input.
 
         Each entry is either the criterion text (legacy form — names,
@@ -407,3 +428,4 @@ class PopulationAssembler(BaseAssembler):
         # Chain the category's criteria in input order; a single criterion
         # ends up with both ends null, matching double_link semantics.
         self._builder.double_link(batch, "previousId", "nextId")
+        return batch

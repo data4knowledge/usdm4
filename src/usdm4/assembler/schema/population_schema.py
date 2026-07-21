@@ -73,6 +73,10 @@ class CohortInput(BaseModel):
     planned_enrollment: Optional[int] = None
     characteristics: list[str] = []
     arm_names: list[str] = []
+    # Cohort-level eligibility criteria (M11 maps criteria to population OR
+    # cohort level). ``None`` means no cohort criteria — the cohort relies
+    # on the population-level criteria alone.
+    inclusion_exclusion: Optional[InclusionExclusion] = None
 
 
 class PopulationInput(BaseModel):
