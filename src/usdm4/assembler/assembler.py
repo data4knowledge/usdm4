@@ -10,6 +10,7 @@ from usdm4.assembler.study_design_assembler import StudyDesignAssembler
 from usdm4.assembler.amendments_assembler import AmendmentsAssembler
 from usdm4.assembler.study_assembler import StudyAssembler
 from usdm4.assembler.timeline_assembler import TimelineAssembler
+from usdm4.assembler.objectives_assembler import ObjectivesAssembler
 from usdm4.api.study import Study
 from usdm4.api.wrapper import Wrapper
 from usdm4.__info__ import __model_version__ as usdm_version
@@ -46,6 +47,7 @@ class Assembler:
         self._study_design_assembler = StudyDesignAssembler(self._builder, self._errors)
         self._study_assembler = StudyAssembler(self._builder, self._errors)
         self._timeline_assembler = TimelineAssembler(self._builder, self._errors)
+        self._objectives_assembler = ObjectivesAssembler(self._builder, self._errors)
 
     def clear(self):
         self._errors.clear()
@@ -57,6 +59,7 @@ class Assembler:
         self._study_design_assembler.clear()
         self._study_assembler.clear()
         self._timeline_assembler.clear()
+        self._objectives_assembler.clear()
 
     def execute(self, data: AssemblerInput | dict) -> None:
         """
@@ -140,6 +143,18 @@ class Assembler:
                 self._population_assembler,
                 self._timeline_assembler,
             )
+
+            # Objectives / endpoints / estimands — truthy check, mirroring
+            # ``amendments`` and ``soa``: the key is always present on the
+            # validated dict but ``None`` when not supplied. Runs after the
+            # study design assembler because estimands resolve intervention
+            # references and the results attach onto the created design.
+            if data.get("objectives"):
+                self._objectives_assembler.execute(
+                    data["objectives"],
+                    self._study_design_assembler,
+                    self._population_assembler,
+                )
 
             # Process core study data - requires all other assemblers for final assembly
             self._study_assembler.execute(

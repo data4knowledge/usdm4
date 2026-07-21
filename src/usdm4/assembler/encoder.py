@@ -431,6 +431,49 @@ class Encoder:
     ]
     FREQUENCY_DEFAULT = {"code": "C25473", "decode": "Daily"}
 
+    OBJECTIVE_LEVEL_MAP = [
+        (
+            ["PRIMARY", "PRIMARY OBJECTIVE", "TRIAL PRIMARY OBJECTIVE"],
+            {"code": "C85826", "decode": "Trial Primary Objective"},
+        ),
+        (
+            ["SECONDARY", "SECONDARY OBJECTIVE", "TRIAL SECONDARY OBJECTIVE"],
+            {"code": "C85827", "decode": "Trial Secondary Objective"},
+        ),
+        (
+            [
+                "EXPLORATORY",
+                "EXPLORATORY OBJECTIVE",
+                "TRIAL EXPLORATORY OBJECTIVE",
+                "TERTIARY",
+                "TERTIARY OBJECTIVE",
+            ],
+            {"code": "C163559", "decode": "Trial Exploratory Objective"},
+        ),
+    ]
+    OBJECTIVE_LEVEL_DEFAULT = {"code": "C85826", "decode": "Trial Primary Objective"}
+
+    ENDPOINT_LEVEL_MAP = [
+        (
+            ["PRIMARY", "PRIMARY ENDPOINT"],
+            {"code": "C94496", "decode": "Primary Endpoint"},
+        ),
+        (
+            ["SECONDARY", "SECONDARY ENDPOINT"],
+            {"code": "C139173", "decode": "Secondary Endpoint"},
+        ),
+        (
+            [
+                "EXPLORATORY",
+                "EXPLORATORY ENDPOINT",
+                "TERTIARY",
+                "TERTIARY ENDPOINT",
+            ],
+            {"code": "C170559", "decode": "Exploratory Endpoint"},
+        ),
+    ]
+    ENDPOINT_LEVEL_DEFAULT = {"code": "C94496", "decode": "Primary Endpoint"}
+
     def __init__(self, builder: Builder, errors: Errors):
         self._builder: Builder = builder
         self._errors: Errors = errors
@@ -649,6 +692,32 @@ class Encoder:
             self.INTERVENTION_ROLE_DEFAULT,
             "intervention_role",
             "Intervention role",
+        )
+
+    def objective_level(self, text: str) -> Code:
+        """Decode an objective level label to a CDISC Code (codelist C188725).
+
+        Accepts short labels (Primary / Secondary / Exploratory) and full
+        decodes (e.g. "Trial Primary Objective"). Empty or unknown input
+        defaults to the primary level with a warning, matching how the
+        other MAP-based lookups degrade.
+        """
+        return self._lookup_code(
+            text,
+            self.OBJECTIVE_LEVEL_MAP,
+            self.OBJECTIVE_LEVEL_DEFAULT,
+            "objective_level",
+            "Objective level",
+        )
+
+    def endpoint_level(self, text: str) -> Code:
+        """Decode an endpoint level label to a CDISC Code (codelist C188726)."""
+        return self._lookup_code(
+            text,
+            self.ENDPOINT_LEVEL_MAP,
+            self.ENDPOINT_LEVEL_DEFAULT,
+            "endpoint_level",
+            "Endpoint level",
         )
 
     def age_unit(self, text: str) -> Code:

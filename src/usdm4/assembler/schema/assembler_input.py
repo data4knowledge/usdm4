@@ -7,6 +7,7 @@ from usdm4.assembler.schema.amendments_schema import AmendmentsInput
 from usdm4.assembler.schema.study_design_schema import StudyDesignInput
 from usdm4.assembler.schema.study_schema import StudyInput
 from usdm4.assembler.schema.timeline_schema import TimelineInput
+from usdm4.assembler.schema.objectives_schema import ObjectivesInput
 
 
 class AssemblerInput(BaseModel):
@@ -26,6 +27,11 @@ class AssemblerInput(BaseModel):
     # ``Assembler.execute`` change in 0.24.0.
     amendments: AmendmentsInput | None = None
     soa: TimelineInput | None = None
+    # ``objectives`` follows the same presence-bearing optional pattern:
+    # ``None`` means "no objectives supplied" and the objectives assembler
+    # is skipped entirely, leaving the study design's objectives/estimands/
+    # analysisPopulations as empty lists.
+    objectives: ObjectivesInput | None = None
 
     @model_validator(mode="after")
     def _check_cohort_arm_references(self) -> "AssemblerInput":
@@ -43,6 +49,33 @@ class AssemblerInput(BaseModel):
                     raise ValueError(
                         f"cohort {cohort.name!r} references undeclared arm "
                         f"{ref!r}; declared arms: {declared}"
+                    )
+        return self
+
+    @model_validator(mode="after")
+    def _check_estimand_treatment_references(self) -> "AssemblerInput":
+        """Every ``estimand.treatment_names`` entry must resolve to a
+        declared intervention.
+
+        Cross-model invariant mirroring ``_check_cohort_arm_references``:
+        estimands live on ``ObjectivesInput`` while interventions live on
+        ``StudyDesignInput``, so the subset check belongs here at the
+        top level where both are visible. (Estimand→endpoint references
+        are intra-model and validated on ``ObjectivesInput`` itself.)
+        """
+        if self.objectives is None:
+            return self
+        intervention_names = {i.name for i in self.study_design.interventions}
+        for estimand in self.objectives.estimands:
+            for ref in estimand.treatment_names:
+                if ref not in intervention_names:
+                    declared = (
+                        sorted(intervention_names) if intervention_names else "(none)"
+                    )
+                    raise ValueError(
+                        f"estimand {estimand.name or estimand.endpoint_name!r} "
+                        f"references undeclared intervention {ref!r}; "
+                        f"declared interventions: {declared}"
                     )
         return self
 
