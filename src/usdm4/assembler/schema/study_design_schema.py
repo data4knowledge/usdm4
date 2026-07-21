@@ -22,10 +22,12 @@ class AdministrationDurationInput(BaseModel):
 class AdministrationInput(BaseModel):
     """Maps to usdm4.api.administration.Administration.
 
-    ``dose`` is accepted as text but not yet parsed to a ``Quantity``
-    (tracked separately); ``route`` and ``frequency`` are encoded via the
-    C66729 / C71113 codelists. ``name`` is optional — the assembler
-    generates one when absent.
+    ``dose`` is a human-readable value+unit string (e.g. "10 mg",
+    "2.5 mg/kg") parsed to a ``Quantity`` at assembly time, with the raw
+    text preserved on the administration description when it does not
+    parse; ``route`` and ``frequency`` are encoded via the C66729 / C71113
+    codelists. ``name`` is optional — the assembler generates one when
+    absent.
     """
 
     model_config = ConfigDict(strict=False)

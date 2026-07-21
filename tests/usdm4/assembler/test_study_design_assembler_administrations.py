@@ -297,3 +297,129 @@ class TestFlatBackCompat:
             [{"name": "Bare Drug"}],
         )
         assert interventions[0].administrations == []
+
+
+# ----------------------------------------------------------------------
+# Dose text -> Quantity (issue 43)
+# ----------------------------------------------------------------------
+
+
+class TestDoseQuantity:
+    def test_simple_dose_parsed(
+        self, assembler, population_assembler, timeline_assembler
+    ):
+        interventions = _execute(
+            assembler,
+            population_assembler,
+            timeline_assembler,
+            [{"name": "Drug A", "administrations": [{"dose": "10 mg"}]}],
+        )
+        dose = interventions[0].administrations[0].dose
+        assert dose.value == 10.0
+        assert dose.unit.standardCode.code == "C28253"
+        assert dose.unit.standardCode.decode == "Milligram"
+
+    def test_dose_without_space(
+        self, assembler, population_assembler, timeline_assembler
+    ):
+        interventions = _execute(
+            assembler,
+            population_assembler,
+            timeline_assembler,
+            [{"name": "Drug A", "administrations": [{"dose": "1mg"}]}],
+        )
+        dose = interventions[0].administrations[0].dose
+        assert dose.value == 1.0
+        assert dose.unit.standardCode.decode == "Milligram"
+
+    def test_microgram_aliases(
+        self, assembler, population_assembler, timeline_assembler
+    ):
+        interventions = _execute(
+            assembler,
+            population_assembler,
+            timeline_assembler,
+            [
+                {
+                    "name": "Drug A",
+                    "administrations": [
+                        {"dose": "1 ug"},
+                        {"dose": "5 mcg"},
+                        {"dose": "2 µg"},
+                    ],
+                }
+            ],
+        )
+        admins = interventions[0].administrations
+        for admin, value in zip(admins, [1.0, 5.0, 2.0]):
+            assert admin.dose.value == value
+            assert admin.dose.unit.standardCode.decode == "Microgram"
+
+    def test_composite_unit(self, assembler, population_assembler, timeline_assembler):
+        interventions = _execute(
+            assembler,
+            population_assembler,
+            timeline_assembler,
+            [{"name": "Drug A", "administrations": [{"dose": "2.5 mg/kg"}]}],
+        )
+        dose = interventions[0].administrations[0].dose
+        assert dose.value == 2.5
+        assert dose.unit.standardCode.decode == "Milligram per Kilogram"
+
+    def test_unparseable_dose_preserved_on_description(
+        self, assembler, population_assembler, timeline_assembler
+    ):
+        interventions = _execute(
+            assembler,
+            population_assembler,
+            timeline_assembler,
+            [
+                {
+                    "name": "Drug A",
+                    "administrations": [
+                        {"dose": "one tablet", "description": "Take with water"},
+                        {"dose": "10 zorbs"},
+                    ],
+                }
+            ],
+        )
+        admins = interventions[0].administrations
+        # Regex miss with existing description — appended.
+        assert admins[0].dose is None
+        assert admins[0].description == "Take with water [Dose: one tablet]"
+        # Unknown unit, no description — becomes the description.
+        assert admins[1].dose is None
+        assert admins[1].description == "Dose: 10 zorbs"
+
+    def test_flat_dose_parsed(
+        self, assembler, population_assembler, timeline_assembler
+    ):
+        interventions = _execute(
+            assembler,
+            population_assembler,
+            timeline_assembler,
+            [
+                {
+                    "name": "Flat Drug",
+                    "dose": "10 mg",
+                    "route": "Oral",
+                    "frequency": "Once",
+                }
+            ],
+        )
+        dose = interventions[0].administrations[0].dose
+        assert dose.value == 10.0
+        assert dose.unit.standardCode.decode == "Milligram"
+
+    def test_no_dose_stays_none(
+        self, assembler, population_assembler, timeline_assembler
+    ):
+        interventions = _execute(
+            assembler,
+            population_assembler,
+            timeline_assembler,
+            [{"name": "Drug A", "administrations": [{"route": "Oral"}]}],
+        )
+        admin = interventions[0].administrations[0]
+        assert admin.dose is None
+        assert admin.description == ""

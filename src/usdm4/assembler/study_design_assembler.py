@@ -260,15 +260,25 @@ class StudyDesignAssembler(BaseAssembler):
                 name = f"ADM-{self._label_to_name(item['name'])}"
                 if multiple:
                     name = f"{name}-{index}"
+            description = admin.get("description") or ""
+            dose = self._dose_quantity(admin.get("dose"))
+            if admin.get("dose") and dose is None:
+                # Text fallback — Administration has no dose-text field, so
+                # preserve the unparseable dose on the description rather
+                # than dropping it.
+                raw = admin["dose"]
+                description = (
+                    f"{description} [Dose: {raw}]" if description else f"Dose: {raw}"
+                )
             params = {
                 "name": name,
                 "label": admin.get("label")
                 or input_name
                 or item.get("label")
                 or item["name"],
-                "description": admin.get("description") or "",
+                "description": description,
                 "duration": self._build_duration(admin.get("duration")),
-                "dose": None,  # Future: parse ``dose`` text into Quantity
+                "dose": dose,
                 "route": self._encoder.route(route) if route else None,
                 "frequency": self._encoder.frequency(frequency) if frequency else None,
             }
@@ -306,28 +316,61 @@ class StudyDesignAssembler(BaseAssembler):
             },
         )
 
-    QUANTITY_RE = re.compile(r"^\s*(\d+(?:\.\d+)?)\s*([A-Za-z]+)\s*$")
+    # Value + unit, e.g. "10 mg", "1mg", "2.5 mg/kg", "1 min", "5 %".
+    QUANTITY_RE = re.compile(
+        r"^\s*(\d+(?:\.\d+)?)\s*([A-Za-z%\u00b5\u03bc][A-Za-z0-9/%\u00b5\u03bc]*)\s*$"
+    )
+
+    # Spellings the CT unit lookup does not know; normalised before lookup.
+    UNIT_ALIASES = {"mcg": "ug", "\u00b5g": "ug", "\u03bcg": "ug"}
 
     def _duration_quantity(self, text: str | None) -> Quantity | None:
         """Parse a "1 min" / "6 weeks" style string into a ``Quantity``.
 
-        The unit is resolved via CDISC CT (trying the raw form then the
-        singular). Returns ``None`` — caller falls back to ``Duration.text``
-        — when the string does not match or the unit is unknown.
+        Returns ``None`` — caller falls back to ``Duration.text`` — when the
+        string does not match or the unit is unknown. A regex miss is not
+        warned: free-text durations ("until progression") are expected.
+        """
+        return self._parse_quantity(text, "duration", warn_no_match=False)
+
+    def _dose_quantity(self, text: str | None) -> Quantity | None:
+        """Parse a dose string ("10 mg", "2.5 mg/kg") into a ``Quantity``.
+
+        Returns ``None`` on any parse failure — caller preserves the raw
+        text on the administration description. Both failure modes warn:
+        a dose that fails to parse is worth surfacing.
+        """
+        return self._parse_quantity(text, "dose", warn_no_match=True)
+
+    def _parse_quantity(
+        self, text: str | None, label: str, warn_no_match: bool
+    ) -> Quantity | None:
+        """Shared value+unit parser behind duration and dose quantities.
+
+        The unit resolves via CDISC CT, trying the raw form, a known alias
+        (mcg/\u00b5g \u2192 ug), then the singular ("weeks" \u2192 "week").
         """
         if not text:
             return None
         match = self.QUANTITY_RE.match(text)
         if not match:
+            if warn_no_match:
+                self._errors.warning(
+                    f"Could not parse {label} '{text}' as value+unit; "
+                    f"keeping raw text.",
+                    KlassMethodLocation(self.MODULE, "_parse_quantity"),
+                )
             return None
         value, unit_text = float(match.group(1)), match.group(2)
-        unit_code = self._builder.cdisc_unit_code(unit_text)
-        if unit_code is None and unit_text.lower().endswith("s"):
-            unit_code = self._builder.cdisc_unit_code(unit_text[:-1])
+        lookup = self.UNIT_ALIASES.get(unit_text.lower(), unit_text)
+        unit_code = self._builder.cdisc_unit_code(lookup)
+        if unit_code is None and lookup.lower().endswith("s"):
+            unit_code = self._builder.cdisc_unit_code(lookup[:-1])
         if unit_code is None:
             self._errors.warning(
-                f"Duration unit '{unit_text}' not recognised; keeping raw text.",
-                KlassMethodLocation(self.MODULE, "_duration_quantity"),
+                f"{label.capitalize()} unit '{unit_text}' not recognised; "
+                f"keeping raw text.",
+                KlassMethodLocation(self.MODULE, "_parse_quantity"),
             )
             return None
         return self._builder.create(
