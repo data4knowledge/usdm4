@@ -261,3 +261,39 @@ class TestInterventionAdministrations:
                     administrations=[{"route": "Oral"}],
                     **flat,
                 )
+
+
+# ----------------------------------------------------------------------
+# Arm -> intervention references (issue 44)
+# ----------------------------------------------------------------------
+
+
+class TestArmInterventionReferences:
+    def test_valid_references_accepted(self):
+        design = StudyDesignInput(
+            label="D",
+            interventions=[{"name": "Drug A"}, {"name": "Placebo"}],
+            arms=[{"name": "Active", "intervention_names": ["Drug A", "Placebo"]}],
+        )
+        assert design.arms[0].intervention_names == ["Drug A", "Placebo"]
+
+    def test_undeclared_reference_rejected(self):
+        with pytest.raises(ValidationError, match="undeclared intervention"):
+            StudyDesignInput(
+                label="D",
+                interventions=[{"name": "Drug A"}],
+                arms=[{"name": "Active", "intervention_names": ["Drug X"]}],
+            )
+
+    def test_no_interventions_declared_message(self):
+        with pytest.raises(ValidationError, match=r"\(none\)"):
+            StudyDesignInput(
+                label="D",
+                arms=[{"name": "Active", "intervention_names": ["Drug A"]}],
+            )
+
+    def test_arms_without_references_pass(self):
+        design = StudyDesignInput(
+            label="D", arms=[{"name": "Active"}, {"name": "Control"}]
+        )
+        assert len(design.arms) == 2

@@ -110,6 +110,19 @@ class StudyDesignAssembler(BaseAssembler):
                 timeline_assembler.epochs,
             )
 
+            # Arm → intervention wiring. ``ArmInput.intervention_names`` has
+            # no direct home on the API StudyArm (USDM expresses the
+            # linkage as cell → element → intervention), so it is encoded
+            # via elements — synthesised ones when the input declared none.
+            self._wire_arm_interventions(
+                data.get("arms", []),
+                arms_by_name,
+                interventions_by_name,
+                elements_by_name,
+                cells_list,
+                had_explicit_elements=bool(data.get("elements")),
+            )
+
             # Cohort → arm wiring. Cohorts were assembled in PopulationAssembler
             # with arm_names already captured; finalise StudyArm.populationIds
             # here, the one place with visibility into both the population and
@@ -574,6 +587,141 @@ class StudyDesignAssembler(BaseAssembler):
                         KlassMethodLocation(self.MODULE, "_synthesise_cell_grid"),
                     )
         return cells
+
+    # ------------------------------------------------------------------
+    # Arm → intervention wiring
+    # ------------------------------------------------------------------
+
+    def _wire_arm_interventions(
+        self,
+        items: list[dict],
+        arms_by_name: dict[str, StudyArm],
+        interventions_by_name: dict[str, StudyIntervention],
+        elements_by_name: dict[str, StudyElement],
+        cells: list[StudyCell],
+        had_explicit_elements: bool,
+    ) -> None:
+        """Encode ``ArmInput.intervention_names`` into the design.
+
+        The API ``StudyArm`` has no intervention reference; USDM expresses
+        arm → intervention through cell → element → ``studyInterventionIds``.
+        Two modes:
+
+        - The input declared explicit elements: those are authoritative.
+          Each arm's named interventions are checked for reachability via
+          the arm's cells and a warning is raised for any that are not —
+          no mutation.
+        - No explicit elements (the common extraction path): one element
+          per arm (``EL-<ARM>``) is synthesised to carry the resolved
+          intervention ids and attached to every one of the arm's cells.
+          With no cells (no epochs available) the element is still created
+          on the design so the linkage survives, just without cell
+          placement.
+        """
+        for item in items:
+            names = item.get("intervention_names", [])
+            if not names:
+                continue
+            arm = arms_by_name.get(item["name"])
+            if arm is None:
+                continue  # Arm creation already failed and was logged.
+            intervention_ids = self._resolve_arm_interventions(
+                item["name"], names, interventions_by_name
+            )
+            if not intervention_ids:
+                continue
+            arm_cells = [c for c in cells if c.armId == arm.id]
+            if had_explicit_elements:
+                self._check_arm_intervention_reachability(
+                    item["name"], intervention_ids, arm_cells, elements_by_name
+                )
+            else:
+                self._attach_arm_element(
+                    item["name"], arm_cells, intervention_ids, elements_by_name
+                )
+
+    def _resolve_arm_interventions(
+        self,
+        arm_name: str,
+        names: list[str],
+        interventions_by_name: dict[str, StudyIntervention],
+    ) -> list[str]:
+        """Resolve intervention name references for one arm; warn on misses."""
+        ids: list[str] = []
+        for ref in names:
+            intervention = interventions_by_name.get(ref)
+            if intervention is None:
+                self._errors.warning(
+                    f"Arm '{arm_name}' references undeclared intervention "
+                    f"'{ref}'; skipping reference.",
+                    KlassMethodLocation(self.MODULE, "_resolve_arm_interventions"),
+                )
+                continue
+            ids.append(intervention.id)
+        return ids
+
+    def _check_arm_intervention_reachability(
+        self,
+        arm_name: str,
+        intervention_ids: list[str],
+        arm_cells: list[StudyCell],
+        elements_by_name: dict[str, StudyElement],
+    ) -> None:
+        """Explicit-elements mode: verify, never mutate.
+
+        An arm's named interventions should already be reachable through
+        its cells' elements; anything unreachable indicates inconsistent
+        input worth surfacing.
+        """
+        elements_by_id = {e.id: e for e in elements_by_name.values()}
+        reachable: set[str] = set()
+        for cell in arm_cells:
+            for element_id in cell.elementIds:
+                element = elements_by_id.get(element_id)
+                if element is not None:
+                    reachable.update(element.studyInterventionIds)
+        missing = [i for i in intervention_ids if i not in reachable]
+        if missing:
+            self._errors.warning(
+                f"Arm '{arm_name}' names {len(missing)} intervention(s) not "
+                f"reachable through its cells' elements; explicit elements "
+                f"are authoritative — check the element definitions.",
+                KlassMethodLocation(
+                    self.MODULE, "_check_arm_intervention_reachability"
+                ),
+            )
+
+    def _attach_arm_element(
+        self,
+        arm_name: str,
+        arm_cells: list[StudyCell],
+        intervention_ids: list[str],
+        elements_by_name: dict[str, StudyElement],
+    ) -> None:
+        """Synthesise the per-arm element and place it on the arm's cells."""
+        try:
+            element_name = f"EL-{self._label_to_name(arm_name)}"
+            element = self._builder.create(
+                StudyElement,
+                {
+                    "name": element_name,
+                    "label": f"{arm_name} interventions",
+                    "description": f"Interventions administered in arm '{arm_name}'",
+                    "studyInterventionIds": intervention_ids,
+                },
+            )
+            if element is None:
+                return
+            elements_by_name[element_name] = element
+            for cell in arm_cells:
+                if element.id not in cell.elementIds:
+                    cell.elementIds.append(element.id)
+        except Exception as e:
+            self._errors.exception(
+                f"Failed during creation of arm element for '{arm_name}'",
+                e,
+                KlassMethodLocation(self.MODULE, "_attach_arm_element"),
+            )
 
     # ------------------------------------------------------------------
     # Cohort → arm wiring

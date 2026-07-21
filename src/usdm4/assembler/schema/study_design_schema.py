@@ -143,6 +143,27 @@ class StudyDesignInput(BaseModel):
     elements: list[ElementInput] = []
 
     @model_validator(mode="after")
+    def _check_arm_intervention_references(self) -> "StudyDesignInput":
+        """Every ``ArmInput.intervention_names`` entry must resolve to a
+        declared ``InterventionInput.name`` on this model.
+
+        Same-model sibling of the cell -> element check below; the assembler
+        additionally guards the reference at build time for direct dict use.
+        """
+        intervention_names = {i.name for i in self.interventions}
+        for arm in self.arms:
+            for ref in arm.intervention_names:
+                if ref not in intervention_names:
+                    declared = (
+                        sorted(intervention_names) if intervention_names else "(none)"
+                    )
+                    raise ValueError(
+                        f"arm {arm.name!r} references undeclared intervention "
+                        f"{ref!r}; declared interventions: {declared}"
+                    )
+        return self
+
+    @model_validator(mode="after")
     def _check_cell_element_references(self) -> "StudyDesignInput":
         """Every ``CellInput.elements`` entry must resolve to an
         ``ElementInput.name`` declared on this model.
