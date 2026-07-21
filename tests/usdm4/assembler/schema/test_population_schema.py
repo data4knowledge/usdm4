@@ -111,3 +111,57 @@ class TestCohortInput:
             {"name": "GBM", "arm_names": ["PHASE2_D1", "PHASE2_D2"]}
         )
         assert c.arm_names == ["PHASE2_D1", "PHASE2_D2"]
+
+
+# ----------------------------------------------------------------------
+# Structured criteria (issue 45)
+# ----------------------------------------------------------------------
+
+from src.usdm4.assembler.schema.population_schema import (  # noqa: E402
+    CriterionInput,
+    InclusionExclusion,
+)
+
+
+class TestCriterionInput:
+    def test_minimal(self):
+        criterion = CriterionInput(text="Age >= 18")
+        assert criterion.text == "Age >= 18"
+        assert criterion.identifier == ""
+        assert criterion.name == ""
+        assert criterion.label == ""
+        assert criterion.description == ""
+
+    def test_text_required(self):
+        with pytest.raises(ValidationError):
+            CriterionInput(identifier="01")
+
+    def test_populated(self):
+        criterion = CriterionInput(
+            text="Reliable participants",
+            identifier="03",
+            name="IN03",
+            label="Reliable",
+            description="Reliability criterion",
+        )
+        assert criterion.identifier == "03"
+        assert criterion.name == "IN03"
+
+
+class TestInclusionExclusionMixedForms:
+    def test_strings_stay_strings(self):
+        ie = InclusionExclusion(inclusion=["Age >= 18"], exclusion=["Pregnant"])
+        assert ie.inclusion == ["Age >= 18"]
+        assert ie.exclusion == ["Pregnant"]
+
+    def test_dicts_become_criterion_inputs(self):
+        ie = InclusionExclusion(inclusion=[{"identifier": "01", "text": "Age >= 18"}])
+        assert isinstance(ie.inclusion[0], CriterionInput)
+        assert ie.inclusion[0].identifier == "01"
+
+    def test_mixed_list(self):
+        ie = InclusionExclusion(
+            inclusion=["Plain", {"identifier": "02", "text": "Structured"}]
+        )
+        assert ie.inclusion[0] == "Plain"
+        assert isinstance(ie.inclusion[1], CriterionInput)

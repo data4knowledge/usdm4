@@ -2,11 +2,38 @@ from typing import Literal, Optional
 from pydantic import BaseModel, ConfigDict
 
 
-class InclusionExclusion(BaseModel):
+class CriterionInput(BaseModel):
+    """Structured eligibility criterion.
+
+    Maps to ``EligibilityCriterion`` / ``EligibilityCriterionItem``:
+    ``text`` is the criterion wording (required); ``identifier`` is the
+    source numbering (e.g. "01", "5" — honoured verbatim so gaps in M11
+    numbering, where deleted criteria are not reused, survive assembly);
+    ``name`` / ``label`` / ``description`` override the generated
+    defaults when supplied.
+    """
+
     model_config = ConfigDict(strict=False)
 
-    inclusion: list[str] = []
-    exclusion: list[str] = []
+    text: str
+    identifier: str = ""
+    name: str = ""
+    label: str = ""
+    description: str = ""
+
+
+class InclusionExclusion(BaseModel):
+    """Criteria lists accepting either form per entry:
+
+    - plain string — the criterion text, everything else generated
+      (back-compat with the original ``list[str]`` shape);
+    - ``CriterionInput`` dict — structured, with source identifiers.
+    """
+
+    model_config = ConfigDict(strict=False)
+
+    inclusion: list[CriterionInput | str] = []
+    exclusion: list[CriterionInput | str] = []
 
 
 class DemographicsInput(BaseModel):

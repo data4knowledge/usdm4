@@ -674,3 +674,80 @@ class TestPopulationAssemblerWiring:
         assert population.plannedEnrollmentNumber is None
         assert population.cohorts == []
         assert population_assembler.raw_cohorts == []
+
+
+# ----------------------------------------------------------------------
+# Structured criteria (issue 45)
+# ----------------------------------------------------------------------
+
+
+class TestStructuredCriteria:
+    def _execute(self, population_assembler, inclusion, exclusion=None):
+        population_assembler.execute(
+            {
+                "label": "Pop",
+                "inclusion_exclusion": {
+                    "inclusion": inclusion,
+                    "exclusion": exclusion or [],
+                },
+            }
+        )
+        return population_assembler
+
+    def test_plain_strings_unchanged(self, population_assembler):
+        pa = self._execute(population_assembler, ["Age >= 18", "Consent"], ["Pregnant"])
+        criteria = pa.criteria
+        assert [c.name for c in criteria] == ["INC1", "INC2", "EXC1"]
+        assert [c.identifier for c in criteria] == ["1", "2", "1"]
+        assert criteria[0].label == "Inclusion criterion 1 "
+        assert [i.name for i in pa.criteria_items] == [
+            "INC-I1",
+            "INC-I2",
+            "EXC-I1",
+        ]
+
+    def test_structured_criteria_honour_source_fields(self, population_assembler):
+        pa = self._execute(
+            population_assembler,
+            [
+                {
+                    "identifier": "03",
+                    "name": "IN03",
+                    "label": "Reliable",
+                    "description": "Reliability criterion",
+                    "text": "Reliable participants",
+                }
+            ],
+            [{"identifier": "07", "text": "Pregnant"}],
+        )
+        inc, exc = pa.criteria
+        assert inc.name == "IN03"
+        assert inc.identifier == "03"
+        assert inc.label == "Reliable"
+        assert inc.description == "Reliability criterion"
+        assert pa.criteria_items[0].name == "IN03-I"
+        assert pa.criteria_items[0].text == "Reliable participants"
+        # Identifier honoured verbatim; generated name/label defaults kept.
+        assert exc.name == "EXC1"
+        assert exc.identifier == "07"
+        assert exc.label == "Exclusion criterion 1 "
+
+    def test_identifier_gaps_preserved(self, population_assembler):
+        # M11: deleted criteria are not renumbered — gaps must survive.
+        pa = self._execute(
+            population_assembler,
+            [
+                {"identifier": "01", "text": "First"},
+                {"identifier": "04", "text": "Fourth (2 and 3 deleted)"},
+            ],
+        )
+        assert [c.identifier for c in pa.criteria] == ["01", "04"]
+
+    def test_mixed_forms(self, population_assembler):
+        pa = self._execute(
+            population_assembler,
+            ["Plain", {"identifier": "05", "text": "Structured"}],
+        )
+        assert [c.identifier for c in pa.criteria] == ["1", "05"]
+        assert pa.criteria[0].criterionItemId == pa.criteria_items[0].id
+        assert pa.criteria[1].criterionItemId == pa.criteria_items[1].id

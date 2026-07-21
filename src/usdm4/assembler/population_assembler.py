@@ -347,26 +347,48 @@ class PopulationAssembler(BaseAssembler):
         )
 
     def _collection(
-        self, criteria: list[str], code: str, decode: str, prefix: str, label: str
+        self,
+        criteria: list[str | dict],
+        code: str,
+        decode: str,
+        prefix: str,
+        label: str,
     ) -> None:
-        for index, text in enumerate(criteria):
+        """Build criterion + item pairs from plain-string or structured input.
+
+        Each entry is either the criterion text (legacy form — names,
+        labels and identifiers are generated exactly as before) or a
+        ``CriterionInput``-shaped dict whose ``identifier`` / ``name`` /
+        ``label`` / ``description`` override the generated defaults.
+        Source identifiers are honoured verbatim — M11 numbering gaps
+        (deleted criteria are not reused) must survive assembly.
+        """
+        for index, entry in enumerate(criteria):
+            item = {"text": entry} if isinstance(entry, str) else entry
+            text = item.get("text") or ""
             try:
                 category = self._builder.cdisc_code(code, decode)
+                custom_name = (item.get("name") or "").strip()
+                ec_name = (
+                    self._label_to_name(custom_name)
+                    if custom_name
+                    else f"{prefix}{index + 1}"
+                )
                 params = {
-                    "name": f"{prefix}-I{index + 1}",
-                    "label": f"{label} item {index + 1} ",
-                    "description": "",
+                    "name": f"{ec_name}-I" if custom_name else f"{prefix}-I{index + 1}",
+                    "label": item.get("label") or f"{label} item {index + 1} ",
+                    "description": item.get("description") or "",
                     "text": text,
                 }
                 eci_item = self._builder.create(EligibilityCriterionItem, params)
                 self._eci_items.append(eci_item)
                 params = {
-                    "name": f"{prefix}{index + 1}",
-                    "label": f"{label} criterion {index + 1} ",
-                    "description": "",
+                    "name": ec_name,
+                    "label": item.get("label") or f"{label} criterion {index + 1} ",
+                    "description": item.get("description") or "",
                     "criterionItemId": eci_item.id,
                     "category": category,
-                    "identifier": f"{index + 1}",
+                    "identifier": item.get("identifier") or f"{index + 1}",
                 }
                 self._ec_items.append(
                     self._builder.create(EligibilityCriterion, params)
