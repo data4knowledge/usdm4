@@ -15,6 +15,10 @@ from usdm4.api.study_intervention import StudyIntervention
 from usdm4.api.administration import Administration
 from usdm4.api.duration import Duration
 from usdm4.api.quantity_range import Quantity
+from usdm4.api.administrable_product import AdministrableProduct
+from usdm4.api.ingredient import Ingredient
+from usdm4.api.substance import Substance
+from usdm4.api.strength import Strength
 
 
 class StudyDesignAssembler(BaseAssembler):
@@ -50,6 +54,7 @@ class StudyDesignAssembler(BaseAssembler):
     def clear(self):
         self._study_design = None
         self._study_interventions: list[StudyIntervention] = []
+        self._administrable_products: list[AdministrableProduct] = []
 
     def execute(
         self,
@@ -86,9 +91,14 @@ class StudyDesignAssembler(BaseAssembler):
             so ``StudyAssembler`` can thread it onto ``StudyVersion.studyInterventions``.
         """
         try:
+            # Pass 0 — administrable products. Built first: administrations
+            # reference them by name.
+            products_by_name = self._build_products(data.get("products", []))
+            self._administrable_products = list(products_by_name.values())
+
             # Pass 1 — interventions. Build once, index by name for pass 2a.
             interventions_by_name = self._build_interventions(
-                data.get("interventions", [])
+                data.get("interventions", []), products_by_name
             )
 
             # Pass 2a — elements. Resolve intervention_names → studyInterventionIds.
@@ -191,11 +201,185 @@ class StudyDesignAssembler(BaseAssembler):
         """
         return self._study_interventions
 
+    @property
+    def administrable_products(self) -> list[AdministrableProduct]:
+        """Products assembled here — consumed by ``StudyAssembler`` for
+        placement on ``StudyVersion.administrableProducts`` (their canonical
+        home), mirroring how ``study_interventions`` flows.
+        """
+        return self._administrable_products
+
+    # ------------------------------------------------------------------
+    # Pass 0 — AdministrableProduct
+    # ------------------------------------------------------------------
+
+    def _build_products(self, items: list[dict]) -> dict[str, AdministrableProduct]:
+        """Build one ``AdministrableProduct`` per input item; return
+        ``{name: obj}``.
+
+        ``administrableDoseForm`` and ``productDesignation`` are required
+        on the API model; unresolvable or empty input degrades to warned
+        defaults (Unknown dose form; IMP designation — the sensible
+        assumption for a protocol's study interventions).
+        """
+        result: dict[str, AdministrableProduct] = {}
+        for item in items:
+            try:
+                ingredients = self._build_ingredients(item)
+                params = {
+                    "name": self._label_to_name(item["name"]),
+                    "label": item.get("label") or item["name"],
+                    "description": item.get("description") or "",
+                    "administrableDoseForm": self._dose_form(
+                        item.get("dose_form", ""), item["name"]
+                    ),
+                    "productDesignation": self._product_designation(
+                        item.get("product_designation", ""), item["name"]
+                    ),
+                    "ingredients": ingredients,
+                }
+                obj = self._builder.create(AdministrableProduct, params)
+                if obj is not None:
+                    result[item["name"]] = obj
+            except Exception as e:
+                self._errors.exception(
+                    f"Failed during creation of product '{item.get('name', '?')}'",
+                    e,
+                    KlassMethodLocation(self.MODULE, "_build_products"),
+                )
+        return result
+
+    def _build_ingredients(self, item: dict) -> list[Ingredient]:
+        """One Active-Ingredient ``Ingredient`` per input substance."""
+        result: list[Ingredient] = []
+        for substance_item in item.get("substances", []):
+            try:
+                strengths: list[Strength] = []
+                strength = self._build_strength(substance_item)
+                if strength is not None:
+                    strengths.append(strength)
+                substance = self._builder.create(
+                    Substance,
+                    {
+                        "name": self._label_to_name(substance_item["name"]),
+                        "label": substance_item.get("label") or substance_item["name"],
+                        "description": substance_item.get("description") or "",
+                        "strengths": strengths,
+                    },
+                )
+                if substance is None:
+                    continue
+                # C82533 is not in the bundled CDISC CT subset, so the
+                # role is emitted as an NCI Thesaurus code directly.
+                ingredient = self._builder.create(
+                    Ingredient,
+                    {
+                        "role": self._builder.other_code(
+                            "C82533",
+                            "http://ncithesaurus.nci.nih.gov",
+                            "",
+                            "Active Ingredient",
+                        ),
+                        "substance": substance,
+                    },
+                )
+                if ingredient is not None:
+                    result.append(ingredient)
+            except Exception as e:
+                self._errors.exception(
+                    f"Failed during creation of ingredient "
+                    f"'{substance_item.get('name', '?')}'",
+                    e,
+                    KlassMethodLocation(self.MODULE, "_build_ingredients"),
+                )
+        return result
+
+    def _build_strength(self, substance_item: dict) -> Strength | None:
+        """Parse ``strength`` text into a ``Strength``.
+
+        Handles "10 mg" (numerator only), "50 mg/5 mL" (numerator and
+        denominator) and "50 mg/mL" (unit-only denominator → value 1).
+        Note the parse order matters: single-string parsing runs first so
+        composite units like "2.5 mg/kg" stay a numerator-only strength.
+        Unparseable input is dropped with a warning.
+        """
+        text = substance_item.get("strength")
+        if not text:
+            return None
+        numerator = self._parse_quantity(text, "strength", warn_no_match=False)
+        denominator = None
+        if numerator is None and "/" in text:
+            left, right = text.split("/", 1)
+            numerator = self._parse_quantity(left, "strength", warn_no_match=False)
+            denominator = self._parse_quantity(right, "strength", warn_no_match=False)
+            if denominator is None:
+                unit_code = self._builder.cdisc_unit_code(right.strip())
+                if unit_code is not None:
+                    denominator = self._builder.create(
+                        Quantity,
+                        {"value": 1.0, "unit": self._builder.alias_code(unit_code)},
+                    )
+        if numerator is None:
+            self._errors.warning(
+                f"Could not parse strength '{text}' for substance "
+                f"'{substance_item.get('name', '?')}'; dropping.",
+                KlassMethodLocation(self.MODULE, "_build_strength"),
+            )
+            return None
+        return self._builder.create(
+            Strength,
+            {
+                "name": f"STR-{self._label_to_name(substance_item['name'])}",
+                "label": text,
+                "description": "",
+                "numerator": numerator,
+                "denominator": denominator,
+            },
+        )
+
+    def _dose_form(self, text: str, product_name: str):
+        """Dose form label → AliasCode (codelist C66726) with warned default."""
+        code = None
+        if text:
+            code = self._builder.klass_and_attribute_value(
+                AdministrableProduct, "administrableDoseForm", text
+            )
+        if code is None:
+            self._errors.warning(
+                f"Dose form '{text}' for product '{product_name}' not "
+                f"decoded; defaulting to 'Unknown'.",
+                KlassMethodLocation(self.MODULE, "_dose_form"),
+            )
+            code = self._builder.cdisc_code("C17998", "Unknown")
+        return self._builder.alias_code(code)
+
+    def _product_designation(self, text: str, product_name: str):
+        """Product designation label → Code with warned IMP default."""
+        code = None
+        if text:
+            code = self._builder.klass_and_attribute_value(
+                AdministrableProduct, "productDesignation", text
+            )
+        if code is None:
+            self._errors.warning(
+                f"Product designation '{text}' for product '{product_name}' "
+                f"not decoded; defaulting to 'IMP'.",
+                KlassMethodLocation(self.MODULE, "_product_designation"),
+            )
+            code = self._builder.cdisc_code(
+                "C202579", "Investigational Medicinal Product"
+            )
+        return code
+
     # ------------------------------------------------------------------
     # Pass 1 — StudyIntervention
     # ------------------------------------------------------------------
 
-    def _build_interventions(self, items: list[dict]) -> dict[str, StudyIntervention]:
+    def _build_interventions(
+        self,
+        items: list[dict],
+        products_by_name: dict[str, AdministrableProduct] | None = None,
+    ) -> dict[str, StudyIntervention]:
         """Build one ``StudyIntervention`` per input item; return ``{name: obj}``.
 
         Administrations come from the ``administrations`` list, or from the
@@ -205,7 +389,9 @@ class StudyDesignAssembler(BaseAssembler):
         result: dict[str, StudyIntervention] = {}
         for item in items:
             try:
-                administrations = self._build_administrations(item)
+                administrations = self._build_administrations(
+                    item, products_by_name or {}
+                )
                 params = {
                     "name": self._label_to_name(item["name"]),
                     "label": item.get("label") or item["name"],
@@ -225,7 +411,11 @@ class StudyDesignAssembler(BaseAssembler):
                 )
         return result
 
-    def _build_administrations(self, item: dict) -> list[Administration]:
+    def _build_administrations(
+        self,
+        item: dict,
+        products_by_name: dict[str, AdministrableProduct] | None = None,
+    ) -> list[Administration]:
         """Assemble the ``Administration`` list for one intervention.
 
         Two input styles are supported (mutually exclusive, enforced by
@@ -253,14 +443,19 @@ class StudyDesignAssembler(BaseAssembler):
         multiple = len(admin_items) > 1
         for index, admin in enumerate(admin_items, start=1):
             administration = self._build_one_administration(
-                item, admin, index, multiple
+                item, admin, index, multiple, products_by_name or {}
             )
             if administration is not None:
                 result.append(administration)
         return result
 
     def _build_one_administration(
-        self, item: dict, admin: dict, index: int, multiple: bool
+        self,
+        item: dict,
+        admin: dict,
+        index: int,
+        multiple: bool,
+        products_by_name: dict[str, AdministrableProduct],
     ) -> Administration | None:
         """Build a single ``Administration`` from one admin input dict."""
         try:
@@ -283,6 +478,18 @@ class StudyDesignAssembler(BaseAssembler):
                 description = (
                     f"{description} [Dose: {raw}]" if description else f"Dose: {raw}"
                 )
+            product_id = None
+            product_ref = (admin.get("product_name") or "").strip()
+            if product_ref:
+                product = products_by_name.get(product_ref)
+                if product is None:
+                    self._errors.warning(
+                        f"Administration for '{item['name']}' references "
+                        f"undeclared product '{product_ref}'; skipping reference.",
+                        KlassMethodLocation(self.MODULE, "_build_one_administration"),
+                    )
+                else:
+                    product_id = product.id
             params = {
                 "name": name,
                 "label": admin.get("label")
@@ -294,6 +501,7 @@ class StudyDesignAssembler(BaseAssembler):
                 "dose": dose,
                 "route": self._encoder.route(route) if route else None,
                 "frequency": self._encoder.frequency(frequency) if frequency else None,
+                "administrableProductId": product_id,
             }
             return self._builder.create(Administration, params)
         except Exception as e:

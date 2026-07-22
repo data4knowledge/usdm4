@@ -297,3 +297,72 @@ class TestArmInterventionReferences:
             label="D", arms=[{"name": "Active"}, {"name": "Control"}]
         )
         assert len(design.arms) == 2
+
+
+# ----------------------------------------------------------------------
+# Products (issue 48)
+# ----------------------------------------------------------------------
+
+from src.usdm4.assembler.schema.study_design_schema import (  # noqa: E402
+    ProductInput,
+    SubstanceInput,
+)
+
+
+class TestProductInput:
+    def test_defaults(self):
+        product = ProductInput(name="Drug A Tablet")
+        assert product.dose_form == ""
+        assert product.product_designation == ""
+        assert product.substances == []
+
+    def test_with_substances(self):
+        product = ProductInput(
+            name="Drug A Tablet",
+            dose_form="Tablet",
+            product_designation="IMP",
+            substances=[{"name": "Drug A", "strength": "10 mg"}],
+        )
+        assert isinstance(product.substances[0], SubstanceInput)
+        assert product.substances[0].strength == "10 mg"
+
+    def test_name_required(self):
+        with pytest.raises(ValidationError):
+            ProductInput(dose_form="Tablet")
+
+
+class TestAdministrationProductReferences:
+    def test_valid_reference_accepted(self):
+        design = StudyDesignInput(
+            label="D",
+            products=[{"name": "Drug A Tablet"}],
+            interventions=[
+                {
+                    "name": "Drug A",
+                    "administrations": [
+                        {"route": "Oral", "product_name": "Drug A Tablet"}
+                    ],
+                }
+            ],
+        )
+        admin = design.interventions[0].administrations[0]
+        assert admin.product_name == "Drug A Tablet"
+
+    def test_undeclared_reference_rejected(self):
+        with pytest.raises(ValidationError, match="undeclared product"):
+            StudyDesignInput(
+                label="D",
+                interventions=[
+                    {
+                        "name": "Drug A",
+                        "administrations": [{"product_name": "Ghost"}],
+                    }
+                ],
+            )
+
+    def test_empty_reference_ignored(self):
+        design = StudyDesignInput(
+            label="D",
+            interventions=[{"name": "Drug A", "administrations": [{"route": "Oral"}]}],
+        )
+        assert design.interventions[0].administrations[0].product_name == ""

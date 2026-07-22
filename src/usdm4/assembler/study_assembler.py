@@ -190,6 +190,9 @@ class StudyAssembler(BaseAssembler):
                 # StudyDesign only holds the id references in
                 # studyInterventionIds.
                 "studyInterventions": study_design_assembler.study_interventions,
+                # Products likewise live on StudyVersion; administrations
+                # reference them via administrableProductId.
+                "administrableProducts": study_design_assembler.administrable_products,
             }
             study_version = self._builder.create(StudyVersion, params)
 

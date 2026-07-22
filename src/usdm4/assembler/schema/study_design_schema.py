@@ -2,6 +2,45 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict, model_validator
 
 
+class SubstanceInput(BaseModel):
+    """Maps to usdm4.api.substance.Substance (+ Strength) inside an
+    Ingredient on an AdministrableProduct.
+
+    ``strength`` is a human-readable string: "10 mg" (numerator only),
+    "50 mg/5 mL" or "50 mg/mL" (numerator/denominator). Unparseable
+    strengths are dropped with a warning.
+    """
+
+    model_config = ConfigDict(strict=False)
+
+    name: str
+    label: str = ""
+    description: str = ""
+    strength: Optional[str] = None
+
+
+class ProductInput(BaseModel):
+    """Maps to usdm4.api.administrable_product.AdministrableProduct.
+
+    ``dose_form`` (e.g. "Tablet", "Injection") and
+    ``product_designation`` ("IMP" / "NIMP") resolve against CDISC CT;
+    both are required on the API model, so unresolvable or empty input
+    degrades to warned defaults (Unknown dose form, IMP). Each substance
+    becomes an Ingredient with the Active Ingredient role — richer
+    ingredient roles and pharmacologic class codes are out of scope for
+    assembler input.
+    """
+
+    model_config = ConfigDict(strict=False)
+
+    name: str
+    label: str = ""
+    description: str = ""
+    dose_form: str = ""
+    product_designation: str = ""
+    substances: list[SubstanceInput] = []
+
+
 class AdministrationDurationInput(BaseModel):
     """Maps to usdm4.api.duration.Duration on an Administration.
 
@@ -39,6 +78,9 @@ class AdministrationInput(BaseModel):
     route: Optional[str] = None
     frequency: Optional[str] = None
     duration: Optional[AdministrationDurationInput] = None
+    # Label-based reference into ``StudyDesignInput.products``; resolved to
+    # ``administrableProductId`` at assembly time.
+    product_name: str = ""
 
 
 class InterventionInput(BaseModel):
@@ -141,6 +183,23 @@ class StudyDesignInput(BaseModel):
     interventions: list[InterventionInput] = []
     cells: list[CellInput] = []
     elements: list[ElementInput] = []
+    products: list[ProductInput] = []
+
+    @model_validator(mode="after")
+    def _check_administration_product_references(self) -> "StudyDesignInput":
+        """Every ``AdministrationInput.product_name`` must resolve to a
+        declared ``ProductInput.name`` on this model."""
+        product_names = {p.name for p in self.products}
+        for intervention in self.interventions:
+            for admin in intervention.administrations:
+                if admin.product_name and admin.product_name not in product_names:
+                    declared = sorted(product_names) if product_names else "(none)"
+                    raise ValueError(
+                        f"intervention {intervention.name!r} administration "
+                        f"references undeclared product {admin.product_name!r}; "
+                        f"declared products: {declared}"
+                    )
+        return self
 
     @model_validator(mode="after")
     def _check_arm_intervention_references(self) -> "StudyDesignInput":

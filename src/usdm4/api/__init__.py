@@ -44,6 +44,7 @@ from .scheduled_instance import (
     ScheduledDecisionInstance,
 )
 from .strength import Strength
+from .substance import Substance
 from .study_amendment import StudyAmendment
 from .study_amendment_reason import StudyAmendmentReason
 from .study_amendment_impact import StudyAmendmentImpact
@@ -128,6 +129,7 @@ __all__ = [
     "ScheduledActivityInstance",
     "ScheduledDecisionInstance",
     "Strength",
+    "Substance",
     "StudyAmendment",
     "StudyAmendmentImpact",
     "StudyAmendmentReason",
