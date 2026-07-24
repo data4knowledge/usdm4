@@ -1256,3 +1256,286 @@ class TestTimelineAssemblerBiomedicalConcepts:
         assert len(activity.bcSurrogateIds) >= 1
         # Activity should have procedures
         assert len(activity.definedProcedures) >= 1
+
+
+def _table(epochs, visits, timepoints, activities, table_type="main_soa", title=None):
+    """Build a single SoA table dict (one TimelineInput) for tests."""
+    n = len(timepoints)
+    data = {
+        "table_type": table_type,
+        "epochs": {"items": [{"text": e} for e in epochs]},
+        "visits": {"items": [{"text": v, "references": []} for v in visits]},
+        "timepoints": {
+            "items": [
+                {"index": str(i), "text": tp[0], "value": tp[1], "unit": "days"}
+                for i, tp in enumerate(timepoints)
+            ]
+        },
+        "windows": {"items": [{"before": 0, "after": 0, "unit": "days"}] * n},
+        "activities": {
+            "items": [
+                {"name": name, "visits": [{"index": i, "references": []} for i in idxs]}
+                for name, idxs in activities
+            ]
+        },
+        "conditions": {"items": []},
+    }
+    if title is not None:
+        data["table_title"] = title
+    return data
+
+
+class TestTimelineAssemblerMultipleTimelines:
+    """Multiple timelines: one main + n subsidiary (per-timeline namespacing,
+    shared activities). Covers the list-input path added for SoA arrays."""
+
+    def _main(self):
+        return _table(
+            ["Screening", "Treatment"],
+            ["Visit 1", "Visit 2"],
+            [("Day 1", 1), ("Day 7", 7)],
+            [("Consent", [0]), ("Blood Draw", [1])],
+            table_type="main_soa",
+            title="Main SoA",
+        )
+
+    def _subsidiary(self):
+        # Shares "Blood Draw" with the main table, adds "PK Sample".
+        return _table(
+            ["PK Phase"],
+            ["PK Visit"],
+            [("Day 7", 7)],
+            [("Blood Draw", [0]), ("PK Sample", [0])],
+            table_type="subsidiary",
+            title="PK/PD SoA",
+        )
+
+    def test_list_of_tables_creates_multiple_timelines(self, timeline_assembler):
+        timeline_assembler.execute([self._main(), self._subsidiary()])
+        assert len(timeline_assembler.timelines) == 2
+
+    def test_exactly_one_main_timeline(self, timeline_assembler):
+        timeline_assembler.execute([self._main(), self._subsidiary()])
+        mains = [t for t in timeline_assembler.timelines if t.mainTimeline]
+        assert len(mains) == 1
+        assert mains[0].name == "TIMELINE-1"
+
+    def test_main_chosen_by_table_type_regardless_of_order(self, timeline_assembler):
+        # Subsidiary first: the main_soa table must still be flagged main.
+        timeline_assembler.execute([self._subsidiary(), self._main()])
+        mains = [t for t in timeline_assembler.timelines if t.mainTimeline]
+        assert len(mains) == 1
+        assert mains[0].label == "Main SoA"
+
+    def test_subsidiary_label_from_table_title(self, timeline_assembler):
+        timeline_assembler.execute([self._main(), self._subsidiary()])
+        subs = [t for t in timeline_assembler.timelines if not t.mainTimeline]
+        assert len(subs) == 1
+        assert subs[0].label == "PK/PD SoA"
+
+    def test_activities_shared_across_timelines(self, timeline_assembler):
+        timeline_assembler.execute([self._main(), self._subsidiary()])
+        # Consent, Blood Draw, PK Sample — Blood Draw shared, not duplicated.
+        labels = sorted(a.label for a in timeline_assembler.activities)
+        assert labels == ["Blood Draw", "Consent", "PK Sample"]
+
+    def test_shared_activity_referenced_by_both_timelines(self, timeline_assembler):
+        timeline_assembler.execute([self._main(), self._subsidiary()])
+        blood = next(
+            a for a in timeline_assembler.activities if a.label == "Blood Draw"
+        )
+        referencing = [
+            tl
+            for tl in timeline_assembler.timelines
+            if any(blood.id in sai.activityIds for sai in tl.instances)
+        ]
+        assert len(referencing) == 2
+
+    def test_entities_accumulate_across_tables(self, timeline_assembler):
+        timeline_assembler.execute([self._main(), self._subsidiary()])
+        # Epochs: 2 (main) + 1 (sub) = 3; encounters: 2 + 1 = 3.
+        assert len(timeline_assembler.epochs) == 3
+        assert len(timeline_assembler.encounters) == 3
+
+    def test_per_timeline_namespacing_avoids_collisions(self, timeline_assembler):
+        # If names collided across tables the builder would reject duplicates
+        # and produce fewer timelines / log errors. Two clean timelines proves
+        # the T{t}- namespacing worked.
+        timeline_assembler.execute([self._main(), self._subsidiary()])
+        assert len(timeline_assembler.timelines) == 2
+        epoch_names = [e.name for e in timeline_assembler.epochs]
+        assert len(epoch_names) == len(set(epoch_names))  # all unique
+        assert any(n.startswith("T2-") for n in epoch_names)
+
+    def test_single_dict_backward_compatible(self, timeline_assembler):
+        # The historical single-table dict form still yields one main timeline.
+        timeline_assembler.execute(self._main())
+        assert len(timeline_assembler.timelines) == 1
+        assert timeline_assembler.timelines[0].mainTimeline is True
+
+    def test_empty_list_creates_nothing(self, timeline_assembler):
+        timeline_assembler.execute([])
+        assert timeline_assembler.timelines == []
+
+
+class TestAssemblerInputSoaShape:
+    """AssemblerInput.soa accepts a single TimelineInput or a list of them."""
+
+    def _minimal(self, soa):
+        from src.usdm4.assembler.schema.assembler_input import AssemblerInput
+
+        base = {
+            "identification": {"titles": {"brief": "x", "official": "x"}},
+            "document": {},
+            "population": {},
+            "study_design": {},
+            "study": {},
+            "soa": soa,
+        }
+        return AssemblerInput.model_validate(base)
+
+    def test_soa_accepts_single_timeline(self):
+        one = {
+            "epochs": {"items": []},
+            "visits": {"items": []},
+            "timepoints": {"items": []},
+            "activities": {"items": []},
+            "conditions": {"items": []},
+        }
+        model = self._minimal(one)
+        assert not isinstance(model.soa, list)
+
+    def test_soa_accepts_list_of_timelines(self):
+        one = {
+            "epochs": {"items": []},
+            "visits": {"items": []},
+            "timepoints": {"items": []},
+            "activities": {"items": []},
+            "conditions": {"items": []},
+        }
+        model = self._minimal([one, one])
+        assert isinstance(model.soa, list)
+        assert len(model.soa) == 2
+
+    def test_soa_defaults_to_none(self):
+        one = None
+        model = self._minimal(one)
+        assert model.soa is None
+
+
+class TestTimelineAssemblerNormaliseAndDispatch:
+    """Cover the list/None/dispatch branches added for multi-timeline input."""
+
+    def test_execute_none_creates_nothing(self, timeline_assembler):
+        # ``_normalise(None)`` returns [] — no timelines, no error.
+        timeline_assembler.execute(None)
+        assert timeline_assembler.timelines == []
+
+    def test_execute_outer_exception_on_non_dict_table(
+        self, timeline_assembler, errors
+    ):
+        # A non-dict table element makes ``_main_index`` raise before the loop,
+        # exercising ``execute``'s own try/except.
+        initial = errors.error_count()
+        timeline_assembler.execute(["not a table"])
+        assert errors.error_count() > initial
+        assert timeline_assembler.timelines == []
+
+    def test_main_index_falls_back_to_first_when_no_main_soa(
+        self, timeline_assembler
+    ):
+        # Two subsidiary tables, none flagged main_soa → first becomes main.
+        sub1 = _table(
+            ["E"], ["V"], [("Day 1", 1)], [("A1", [0])],
+            table_type="subsidiary", title="Sub 1",
+        )
+        sub2 = _table(
+            ["E"], ["V"], [("Day 1", 1)], [("A2", [0])],
+            table_type="subsidiary", title="Sub 2",
+        )
+        timeline_assembler.execute([sub1, sub2])
+        mains = [t for t in timeline_assembler.timelines if t.mainTimeline]
+        assert len(mains) == 1
+        assert mains[0].label == "Sub 1"
+
+
+class TestTimelineAssemblerBiomedicalConceptBranches:
+    """Cover the exists / creation-failure branches of _get_biomedical_concepts.
+
+    These are exercised deterministically via monkeypatch so coverage does not
+    depend on which biomedical-concept names happen to be in the CT cache."""
+
+    def test_existing_bc_is_used(self, timeline_assembler, monkeypatch):
+        import types
+
+        monkeypatch.setattr(
+            timeline_assembler._builder.cdisc_bc_library, "exists", lambda name: True
+        )
+        fake_bc = types.SimpleNamespace(id="BC-X")
+        monkeypatch.setattr(timeline_assembler._builder, "bc", lambda name: fake_bc)
+
+        activity = {"name": "Vitals", "actions": {"bcs": ["Blood Pressure"]}}
+        bc_ids, sbc_ids, procedures = timeline_assembler._get_biomedical_concepts(
+            activity
+        )
+
+        assert "BC-X" in bc_ids
+        assert fake_bc in timeline_assembler._biomedical_concepts
+
+    def test_existing_bc_creation_failure_logs_warning(
+        self, timeline_assembler, monkeypatch, errors
+    ):
+        monkeypatch.setattr(
+            timeline_assembler._builder.cdisc_bc_library, "exists", lambda name: True
+        )
+        monkeypatch.setattr(timeline_assembler._builder, "bc", lambda name: None)
+        initial = errors.error_count()
+
+        activity = {"name": "Vitals", "actions": {"bcs": ["Blood Pressure"]}}
+        bc_ids, _, _ = timeline_assembler._get_biomedical_concepts(activity)
+
+        assert bc_ids == []  # nothing added when bc creation returns falsy
+
+    def test_surrogate_creation_failure_logs_warning(
+        self, timeline_assembler, monkeypatch
+    ):
+        from usdm4.api.biomedical_concept_surrogate import BiomedicalConceptSurrogate
+
+        monkeypatch.setattr(
+            timeline_assembler._builder.cdisc_bc_library, "exists", lambda name: False
+        )
+        real_create = timeline_assembler._builder.create
+
+        def create(klass, params):
+            if klass is BiomedicalConceptSurrogate:
+                return None
+            return real_create(klass, params)
+
+        monkeypatch.setattr(timeline_assembler._builder, "create", create)
+
+        activity = {"name": "Thing", "actions": {"bcs": ["MadeUpBC"]}}
+        _, sbc_ids, _ = timeline_assembler._get_biomedical_concepts(activity)
+
+        assert sbc_ids == []  # surrogate not added when creation returns falsy
+
+    def test_procedure_creation_failure_logs_warning(
+        self, timeline_assembler, monkeypatch
+    ):
+        from usdm4.api.procedure import Procedure
+
+        monkeypatch.setattr(
+            timeline_assembler._builder.cdisc_bc_library, "exists", lambda name: False
+        )
+        real_create = timeline_assembler._builder.create
+
+        def create(klass, params):
+            if klass is Procedure:
+                return None
+            return real_create(klass, params)
+
+        monkeypatch.setattr(timeline_assembler._builder, "create", create)
+
+        activity = {"name": "Thing", "actions": {"bcs": ["MadeUpBC"]}}
+        _, _, procedures = timeline_assembler._get_biomedical_concepts(activity)
+
+        assert procedures == []  # procedure not added when creation returns falsy

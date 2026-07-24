@@ -26,7 +26,12 @@ class AssemblerInput(BaseModel):
     # protocol to gain a synthetic global-scope amendment after the
     # ``Assembler.execute`` change in 0.24.0.
     amendments: AmendmentsInput | None = None
-    soa: TimelineInput | None = None
+    # ``soa`` is presence-bearing (``None`` means no SoA supplied) and accepts
+    # either a single ``TimelineInput`` (one timeline — the historical shape) or
+    # a list of them (a main plus n subsidiary timelines). The assembler
+    # normalises a single dict to a one-element list; exactly one is flagged as
+    # the main timeline (see ``TimelineAssembler.execute``).
+    soa: TimelineInput | list[TimelineInput] | None = None
     # ``objectives`` follows the same presence-bearing optional pattern:
     # ``None`` means "no objectives supplied" and the objectives assembler
     # is skipped entirely, leaving the study design's objectives/estimands/

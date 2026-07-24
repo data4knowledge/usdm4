@@ -30,29 +30,79 @@ class TimelineAssembler(BaseAssembler):
         self._epochs: list[StudyEpoch] = []
         self._encounters: list[Encounter] = []
         self._activities: list[Activity] = []
+        # Activities are SHARED across timelines: an activity named on both the
+        # main and a subsidiary SoA table is one Activity object referenced by
+        # both. Registry keyed by normalised label. Epochs, encounters, SAIs,
+        # timings, conditions and the timeline itself are per-timeline
+        # namespaced (T{t}-...) — see the individual add methods.
+        self._activity_by_name: dict[str, Activity] = {}
         self._condition_links: dict = {}
         self._conditions: list[Condition] = []
         self._biomedical_concepts: list[BiomedicalConcept] = []
         self._biomedical_concept_surrogates: list[BiomedicalConceptSurrogate] = []
         # self._procedures: list[Procedure] = []
 
-    def execute(self, data: dict) -> None:
+    def execute(self, data) -> None:
+        """Assemble one or more timelines.
+
+        ``data`` may be a single SoA table dict (one timeline, the historical
+        case) or a list of SoA table dicts (a main plus n subsidiary timelines).
+        Exactly one timeline is flagged ``mainTimeline``: the first table whose
+        ``table_type`` is ``main_soa`` (or the first table if none say so).
+        """
         try:
-            self._epochs = self._add_epochs(data)
-            self._encounters = self._add_encounters(data)
-            self._activities = self._add_activities(data)
-            timepoints = self._add_timepoints(data)
-            timings = self._add_timing(data)
-            self._link_timepoints_and_activities(data)
-            self._conditions = self._add_conditions(data)
-            tl = self._add_timeline(data, timepoints, timings)
-            if tl:
-                self._timelines.append(tl)
+            tables = self._normalise(data)
+            main_index = self._main_index(tables)
+            for offset, table in enumerate(tables):
+                self._execute_one(table, offset + 1, is_main=(offset == main_index))
+            # Single global ordering pass across every timeline's activities so
+            # previousId/nextId are consistent (and shared activities are linked
+            # once, not re-linked per table).
+            self._builder.double_link(self._activities, "previousId", "nextId")
         except Exception as e:
             self._errors.exception(
                 "Failed during creation of study design",
                 e,
                 KlassMethodLocation(self.MODULE, "execute"),
+            )
+
+    @staticmethod
+    def _normalise(data) -> list[dict]:
+        # A dict — even an empty one — is a single (possibly malformed) table;
+        # only ``None`` or an empty list means "no timelines". This keeps the
+        # historical behaviour where ``execute({})`` surfaces errors rather than
+        # silently doing nothing.
+        if data is None:
+            return []
+        return [data] if isinstance(data, dict) else list(data)
+
+    @staticmethod
+    def _main_index(tables: list[dict]) -> int:
+        for index, table in enumerate(tables):
+            if (table.get("table_type") or "main_soa") == "main_soa":
+                return index
+        return 0
+
+    def _execute_one(self, data: dict, t: int, is_main: bool) -> None:
+        try:
+            # Footnote references (e.g. "a", "b") are scoped to a single table,
+            # so reset the link map per timeline to avoid cross-table collisions.
+            self._condition_links = {}
+            self._epochs += self._add_epochs(data, t)
+            self._encounters += self._add_encounters(data, t)
+            self._add_activities(data, t)
+            timepoints = self._add_timepoints(data, t)
+            timings = self._add_timing(data, t)
+            self._link_timepoints_and_activities(data)
+            self._conditions += self._add_conditions(data, t)
+            tl = self._add_timeline(data, timepoints, timings, t, is_main)
+            if tl:
+                self._timelines.append(tl)
+        except Exception as e:
+            self._errors.exception(
+                f"Failed during creation of timeline {t}",
+                e,
+                KlassMethodLocation(self.MODULE, "_execute_one"),
             )
 
     @property
@@ -87,7 +137,7 @@ class TimelineAssembler(BaseAssembler):
     # def procedures(self) -> list[Procedure]:
     #     return self._procedures
 
-    def _add_epochs(self, data) -> list[ScheduledInstance]:
+    def _add_epochs(self, data, t: int = 1) -> list[ScheduledInstance]:
         try:
             results = []
             map = {}
@@ -104,7 +154,7 @@ class TimelineAssembler(BaseAssembler):
                     epoch: StudyEpoch = self._builder.create(
                         StudyEpoch,
                         {
-                            "name": f"EPOCH-{index + 1}",
+                            "name": f"T{t}-EPOCH-{index + 1}",
                             "description": f"EPOCH-{name}",
                             "label": label,
                             "type": self._builder.klass_and_attribute_value(
@@ -129,7 +179,7 @@ class TimelineAssembler(BaseAssembler):
             )
             return results
 
-    def _add_encounters(self, data) -> list[Encounter]:
+    def _add_encounters(self, data, t: int = 1) -> list[Encounter]:
         try:
             results = []
             items = data["visits"]["items"]
@@ -139,7 +189,7 @@ class TimelineAssembler(BaseAssembler):
                 encounter: Encounter = self._builder.create(
                     Encounter,
                     {
-                        "name": f"ENCOUNTER-{index + 1}",
+                        "name": f"T{t}-ENCOUNTER-{index + 1}",
                         "description": f"Encounter {name}",
                         "label": name,
                         "type": self._builder.klass_and_attribute_value(
@@ -205,71 +255,78 @@ class TimelineAssembler(BaseAssembler):
         self._condition_links[ref]["activity_id"].append(activity_id)
         self._condition_links[ref]["timepoint_index"].append(sai_index)
 
-    def _add_activities(self, data) -> list[Activity]:
+    def _add_activities(self, data, t: int = 1) -> list[Activity]:
+        """Create (or reuse) the activities named on this table.
+
+        Activities are shared across timelines: the registry
+        (``self._activity_by_name``) is keyed by normalised label, so an
+        activity that appears on more than one SoA table yields a single
+        ``Activity`` referenced by each timeline. Only newly-created activities
+        are appended to ``self._activities``; ordering (previousId/nextId) is
+        applied once, globally, in ``execute``. Returns the activities created
+        on this call (for logging only).
+        """
+        created: list[Activity] = []
         try:
-            results = []
             items = data["activities"]["items"]
-            for index, item in enumerate(items):
-                bc_ids, sbc_ids, procedures = self._get_biomedical_concepts(item)
-                # print(f"ADDING ACTIVITY: {index}, {item}")
-                params = {
-                    "name": f"ACTIVITY-{index + 1}",
-                    "description": f"Activity {item['name']}",
-                    "label": item["name"],
-                    "definedProcedures": procedures,
-                    "biomedicalConceptIds": bc_ids,
-                    "bcCategoryIds": [],
-                    "bcSurrogateIds": sbc_ids,
-                    "timelineId": None,
-                }
-                activity: Activity = self._builder.create(Activity, params)
-                results.append(activity)
+            for item in items:
+                activity = self._get_or_create_activity(item, created)
                 if "references" in item:
                     for ref in item["references"]:
-                        # print(f"ADDING ACTIVITY REF: {item["name"]} -> {ref}")
                         self._condition_activity_id(ref, activity.id)
                 item["activity_instance"] = activity
                 if "children" in item:
                     for child in item["children"]:
-                        # print(f"ADDING ACTIVITY: _, {child}")
-                        bc_ids, sbc_ids, procedures = self._get_biomedical_concepts(
-                            child
-                        )
-                        params = {
-                            "name": f"ACTIVITY-{child['name'].upper()}",
-                            "description": f"Activity {child['name']}",
-                            "label": child["name"],
-                            "definedProcedures": procedures,
-                            "biomedicalConceptIds": bc_ids,
-                            "bcCategoryIds": [],
-                            "bcSurrogateIds": sbc_ids,
-                            "timelineId": None,
-                        }
-                        child_activity: Activity = self._builder.create(
-                            Activity, params
-                        )
-                        results.append(child_activity)
+                        child_activity = self._get_or_create_activity(child, created)
                         if "references" in child:
                             for ref in child["references"]:
-                                # print(f"ADDING ACTIVITY REF: {item["name"]} -> {ref}")
                                 self._condition_activity_id(ref, child_activity.id)
                         child["activity_instance"] = child_activity
-                        activity.childIds.append(child_activity.id)
+                        if child_activity.id not in activity.childIds:
+                            activity.childIds.append(child_activity.id)
             self._errors.info(
-                f"Activities: {len(results)}",
+                f"Activities (timeline {t}): +{len(created)} new, "
+                f"{len(self._activity_by_name)} total",
                 KlassMethodLocation(self.MODULE, "_add_activities"),
             )
-            self._builder.double_link(results, "previousId", "nextId")
-            return results
+            return created
         except Exception as e:
             self._errors.exception(
                 "Error creating Activities",
                 e,
                 KlassMethodLocation(self.MODULE, "_add_activities"),
             )
-            return results
+            return created
 
-    def _add_timepoints(self, data) -> list[ScheduledInstance]:
+    def _get_or_create_activity(
+        self, item: dict, created: list[Activity]
+    ) -> Activity:
+        """Return the shared Activity for ``item['name']``, creating it on first
+        sighting. Names (``ACTIVITY-{n}``) use a study-global sequence so they
+        stay unique across timelines; the builder rejects duplicate keys."""
+        key = (item["name"] or "").strip().lower()
+        existing = self._activity_by_name.get(key)
+        if existing is not None:
+            return existing
+        bc_ids, sbc_ids, procedures = self._get_biomedical_concepts(item)
+        seq = len(self._activity_by_name) + 1
+        params = {
+            "name": f"ACTIVITY-{seq}",
+            "description": f"Activity {item['name']}",
+            "label": item["name"],
+            "definedProcedures": procedures,
+            "biomedicalConceptIds": bc_ids,
+            "bcCategoryIds": [],
+            "bcSurrogateIds": sbc_ids,
+            "timelineId": None,
+        }
+        activity: Activity = self._builder.create(Activity, params)
+        self._activity_by_name[key] = activity
+        self._activities.append(activity)
+        created.append(activity)
+        return activity
+
+    def _add_timepoints(self, data, t: int = 1) -> list[ScheduledInstance]:
         try:
             results = []
             timepoints: list = data["timepoints"]["items"]
@@ -277,7 +334,7 @@ class TimelineAssembler(BaseAssembler):
                 sai = self._builder.create(
                     ScheduledActivityInstance,
                     {
-                        "name": f"SAI-{index + 1}",
+                        "name": f"T{t}-SAI-{index + 1}",
                         "description": f"Scheduled activity instance {index + 1}",
                         "label": item["text"],
                         "timelineExitId": None,
@@ -308,7 +365,7 @@ class TimelineAssembler(BaseAssembler):
             )
             return results
 
-    def _add_conditions(self, data) -> list[Condition]:
+    def _add_conditions(self, data, t: int = 1) -> list[Condition]:
         results = []
         conditions: list = data["conditions"]["items"]
         timepoints: list = data["timepoints"]["items"]
@@ -328,7 +385,7 @@ class TimelineAssembler(BaseAssembler):
                         condition = self._builder.create(
                             Condition,
                             {
-                                "name": f"Condition_{index + 1}",
+                                "name": f"T{t}-Condition-{index + 1}",
                                 "label": f"Condition {index + 1}",
                                 "description": f"Extracted footnote / condition {index + 1}",
                                 "text": item["text"],
@@ -357,7 +414,7 @@ class TimelineAssembler(BaseAssembler):
             )
             return results
 
-    def _add_timing(self, data) -> list[ScheduledInstance]:
+    def _add_timing(self, data, t: int = 1) -> list[ScheduledInstance]:
         try:
             results = []
             timepoints: list = data["timepoints"]["items"]
@@ -368,17 +425,17 @@ class TimelineAssembler(BaseAssembler):
                 this_sai: ScheduledInstance = item["sai_instance"]
                 if index < anchor_index:
                     if timing := self._timing(
-                        data, index, "Before", this_sai.id, anchor.id
+                        data, index, "Before", this_sai.id, anchor.id, t
                     ):
                         results.append(timing)
                 elif index == anchor_index:
                     if timing := self._timing(
-                        data, index, "Fixed Reference", this_sai.id, this_sai.id
+                        data, index, "Fixed Reference", this_sai.id, this_sai.id, t
                     ):
                         results.append(timing)
                 else:
                     if timing := self._timing(
-                        data, index, "After", this_sai.id, anchor.id
+                        data, index, "After", this_sai.id, anchor.id, t
                     ):
                         results.append(timing)
             self._errors.info(
@@ -397,7 +454,7 @@ class TimelineAssembler(BaseAssembler):
     _EMPTY_WINDOW = {"before": 0, "after": 0, "unit": ""}
 
     def _timing(
-        self, data: dict, index: int, type: str, from_id: str, to_id: str
+        self, data: dict, index: int, type: str, from_id: str, to_id: str, t: int = 1
     ) -> Timing:
         try:
             windows: list = data["windows"]["items"]
@@ -414,7 +471,7 @@ class TimelineAssembler(BaseAssembler):
                         self._set_abs_duration(timepoint["value"]), timepoint["unit"]
                     ),
                     "valueLabel": self._timing_value_label(timepoints, index),
-                    "name": f"TIMING-{index}",
+                    "name": f"T{t}-TIMING-{index}",
                     "description": f"Timing {index + 1}",
                     "label": self._timing_value_label(timepoints, index),
                     "relativeToFrom": self._builder.klass_and_attribute_value(
@@ -511,7 +568,12 @@ class TimelineAssembler(BaseAssembler):
             return None
 
     def _add_timeline(
-        self, data, instances: list[ScheduledInstance], timings: list[Timing]
+        self,
+        data,
+        instances: list[ScheduledInstance],
+        timings: list[Timing],
+        t: int = 1,
+        is_main: bool = True,
     ):
         try:
             self._errors.debug(
@@ -523,13 +585,18 @@ class TimelineAssembler(BaseAssembler):
             sai.timelineExitId = exit.id
             sai.defaultConditionId = None
             duration = None
+            title = data.get("table_title") or (
+                "Main timeline" if is_main else f"Timeline {t}"
+            )
             return self._builder.create(
                 ScheduleTimeline,
                 {
-                    "mainTimeline": True,
-                    "name": "TIMELINE-1",
-                    "description": "The main timeline",
-                    "label": "Main timeline",
+                    "mainTimeline": is_main,
+                    "name": f"TIMELINE-{t}",
+                    "description": "The main timeline"
+                    if is_main
+                    else f"Subsidiary timeline {t}",
+                    "label": title,
                     "entryCondition": "Paricipant identified",
                     "entryId": instances[0].id,
                     "exits": [exit],
@@ -562,7 +629,9 @@ class TimelineAssembler(BaseAssembler):
                         self._biomedical_concepts.append(bc)
                         bc_ids.append(bc.id)
                     else:
-                        self._errors.warning(f"Failed to create BC with name '{bc}'")
+                        self._errors.warning(
+                            f"Failed to create BC with name '{bc_name}'"
+                        )
                 else:
                     params = {
                         "name": bc_name,
@@ -578,7 +647,7 @@ class TimelineAssembler(BaseAssembler):
                         sbc_ids.append(sbc.id)
                     else:
                         self._errors.warning(
-                            f"Failed to create surrogate BC with name '{bc}'"
+                            f"Failed to create surrogate BC with name '{bc_name}'"
                         )
                 params = {
                     "name": bc_name,
@@ -601,6 +670,8 @@ class TimelineAssembler(BaseAssembler):
                     # self._procedures.append(procedure)
                     procedures.append(procedure)
                 else:
-                    self._errors.warning(f"Failed to create procedure with name '{bc}'")
+                    self._errors.warning(
+                        f"Failed to create procedure with name '{bc_name}'"
+                    )
         # print(f"IDS: '{bc_ids}', '{sbc_ids}', '{procedures}'")
         return bc_ids, sbc_ids, procedures
