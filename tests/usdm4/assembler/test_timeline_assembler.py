@@ -459,12 +459,12 @@ class TestTimelineAssemblerTiming:
         assert anchor_index == 1
 
     def test_find_anchor_defaults_to_zero(self, timeline_assembler):
-        """Test finding anchor when none has value 1."""
+        """Test finding anchor when no timepoint carries a usable value."""
         data = {
             "timepoints": {
                 "items": [
-                    {"index": "0", "value": "0"},
-                    {"index": "1", "value": "7"},
+                    {"index": "0", "value": "x"},
+                    {"index": "1", "value": ""},
                 ]
             }
         }
@@ -472,6 +472,303 @@ class TestTimelineAssemblerTiming:
         anchor_index = timeline_assembler._find_anchor(data)
 
         assert anchor_index == 0
+
+    def test_find_anchor_ignores_input_index_field(self, timeline_assembler):
+        """The schema defaults ``index`` to 0 for every item when the producer
+        (e.g. ground truth) does not supply it — the anchor must be the
+        positional index, never the input's own index field."""
+        data = {
+            "timepoints": {
+                "items": [
+                    {"index": 0, "text": "Day -42", "value": -42, "unit": "day"},
+                    {"index": 0, "text": "Day -1", "value": -1, "unit": "day"},
+                    {"index": 0, "text": "Day 1", "value": 1, "unit": "day"},
+                    {"index": 0, "text": "Day 2", "value": 2, "unit": "day"},
+                ]
+            }
+        }
+
+        assert timeline_assembler._find_anchor(data) == 2
+
+    def test_find_anchor_skips_blank_placeholder_columns(self, timeline_assembler):
+        """A blank column (no text, zero value) must not be picked as anchor."""
+        data = {
+            "timepoints": {
+                "items": [
+                    {"text": "", "value": 0, "unit": "day"},
+                    {"text": "Day -1", "value": -1, "unit": "day"},
+                    {"text": "Day 1", "value": 1, "unit": "day"},
+                ]
+            }
+        }
+
+        assert timeline_assembler._find_anchor(data) == 2
+
+    def test_find_anchor_accepts_day_zero(self, timeline_assembler):
+        """An explicit Day 0 column is a valid anchor."""
+        data = {
+            "timepoints": {
+                "items": [
+                    {"text": "Day -7", "value": -7, "unit": "day"},
+                    {"text": "Day 0", "value": 0, "unit": "day"},
+                    {"text": "Day 7", "value": 7, "unit": "day"},
+                ]
+            }
+        }
+
+        assert timeline_assembler._find_anchor(data) == 1
+
+    @staticmethod
+    def _timing_data(timepoints: list[dict], windows: list[dict] | None = None):
+        """Build a full data dict (epochs/visits sized to match) so the
+        epoch/encounter/SAI chain can run ahead of ``_add_timing``."""
+        n = len(timepoints)
+        return {
+            "epochs": {"items": [{"text": f"Epoch {i + 1}"} for i in range(n)]},
+            "visits": {
+                "items": [
+                    {"text": f"Visit {i + 1}", "references": []} for i in range(n)
+                ]
+            },
+            "timepoints": {"items": timepoints},
+            "windows": {
+                "items": windows
+                if windows is not None
+                else [{"before": 0, "after": 0, "unit": "day"} for _ in range(n)]
+            },
+        }
+
+    def _run_timing(self, timeline_assembler, timepoints, windows=None):
+        data = self._timing_data(timepoints, windows)
+        timeline_assembler._add_epochs(data)
+        timeline_assembler._add_encounters(data)
+        timeline_assembler._add_timepoints(data)
+        return timeline_assembler._add_timing(data)
+
+    def test_timing_values_relative_to_anchor(self, timeline_assembler):
+        """Timing.value is the interval from the anchor, not the day number:
+        with a Day 1 anchor and 1-based day numbering (no Day 0), Day -42 is
+        42 days before, Day -1 is 1 day before, Day 2 is 1 day after and
+        Day 16 is 15 days after."""
+        timings = self._run_timing(
+            timeline_assembler,
+            [
+                {"text": "Day -42", "value": -42, "unit": "day"},
+                {"text": "Day -1", "value": -1, "unit": "day"},
+                {"text": "Day 1", "value": 1, "unit": "day"},
+                {"text": "Day 2", "value": 2, "unit": "day"},
+                {"text": "Day 16", "value": 16, "unit": "day"},
+            ],
+        )
+
+        assert [t.type.decode for t in timings] == [
+            "Before Timing Type",
+            "Before Timing Type",
+            "Fixed Reference Timing Type",
+            "After Timing Type",
+            "After Timing Type",
+        ]
+        assert [t.value for t in timings] == ["P42D", "P1D", "PT0M", "P1D", "P15D"]
+        anchor_id = timings[2].relativeFromScheduledInstanceId
+        for index, timing in enumerate(timings):
+            if index != 2:
+                assert timing.relativeToScheduledInstanceId == anchor_id
+
+    def test_timing_no_crossing_correction_with_day_zero(self, timeline_assembler):
+        """When the table has an explicit Day 0, day numbering is 0-based and
+        no crossing-zero correction applies: Day -1 to Day 0 is 1 day."""
+        timings = self._run_timing(
+            timeline_assembler,
+            [
+                {"text": "Day -1", "value": -1, "unit": "day"},
+                {"text": "Day 0", "value": 0, "unit": "day"},
+                {"text": "Day 1", "value": 1, "unit": "day"},
+            ],
+        )
+
+        assert [t.type.decode for t in timings] == [
+            "Before Timing Type",
+            "Fixed Reference Timing Type",
+            "After Timing Type",
+        ]
+        assert [t.value for t in timings] == ["P1D", "PT0M", "P1D"]
+
+    def test_timing_unit_mismatch_falls_back_to_abs(self, timeline_assembler):
+        """A timepoint in different units from the anchor falls back to the
+        absolute value (with a warning) rather than mixed-unit arithmetic."""
+        timings = self._run_timing(
+            timeline_assembler,
+            [
+                {"text": "Day 1", "value": 1, "unit": "day"},
+                {"text": "Week 12", "value": 12, "unit": "week"},
+            ],
+        )
+
+        assert [t.value for t in timings] == ["PT0M", "P12W"]
+
+    def test_timing_string_values_coerced(self, timeline_assembler):
+        """Numeric strings (the schema allows them) take part in the
+        anchor-relative arithmetic."""
+        timings = self._run_timing(
+            timeline_assembler,
+            [
+                {"text": "Day 1", "value": "1", "unit": "days"},
+                {"text": "Day 7", "value": "7", "unit": "days"},
+            ],
+        )
+
+        assert [t.value for t in timings] == ["PT0M", "P6D"]
+
+    def test_coerce_int_variants(self, timeline_assembler):
+        """All the value shapes the schema admits, plus the rejects."""
+        coerce = timeline_assembler._coerce_int
+        assert coerce(2) == 2
+        assert coerce(-42) == -42
+        assert coerce(2.0) == 2
+        assert coerce(2.5) is None
+        assert coerce("3") == 3
+        assert coerce(" 7 ") == 7
+        assert coerce("x") is None
+        assert coerce("") is None
+        assert coerce(True) is None
+        assert coerce(None) is None
+
+    def test_interval_falls_back_for_non_numeric_value(self, timeline_assembler):
+        """A non-numeric timepoint value falls back to the historical
+        abs-or-zero behaviour."""
+        timepoints = [
+            {"text": "Day 1", "value": 1, "unit": "day"},
+            {"text": "Unscheduled", "value": "n/a", "unit": "day"},
+        ]
+
+        assert timeline_assembler._interval_from_anchor(timepoints, 1, 0) == 0
+
+    def test_has_zero_timepoint(self, timeline_assembler):
+        """Zero detection skips blank placeholder columns (their value defaults
+        to 0) but honours a real Day 0."""
+        with_placeholder_only = [
+            {"text": "Day -1", "value": -1, "unit": "day"},
+            {"text": "", "value": 0, "unit": "day"},
+            {"text": "Day 1", "value": 1, "unit": "day"},
+        ]
+        with_real_day_zero = [
+            {"text": "Day -1", "value": -1, "unit": "day"},
+            {"text": "Day 0", "value": 0, "unit": "day"},
+            {"text": "Day 1", "value": 1, "unit": "day"},
+        ]
+
+        assert timeline_assembler._has_zero_timepoint(with_placeholder_only) is False
+        assert timeline_assembler._has_zero_timepoint(with_real_day_zero) is True
+
+    @staticmethod
+    def _name_data(timepoints: list[dict], visits: list[dict] | None = None):
+        return {
+            "timepoints": {"items": timepoints},
+            "visits": {
+                "items": visits or [{"text": "", "references": []} for _ in timepoints]
+            },
+        }
+
+    def test_sai_names_from_day_week_cycle_text(self, timeline_assembler):
+        """Timepoint text patterns compress to readable names."""
+        data = self._name_data(
+            [
+                {"text": "Day -42", "value": -42, "unit": "day"},
+                {"text": "Day 1", "value": 1, "unit": "day"},
+                {"text": "Week 12", "value": 12, "unit": "week"},
+                {"text": "Cycle 2 Day 1", "value": 22, "unit": "day"},
+            ]
+        )
+
+        names = [timeline_assembler._sai_name(data, i, 1) for i in range(4)]
+
+        assert names == ["D-42", "D1", "W12", "C2D1"]
+
+    def test_sai_names_bare_numbers_get_unit_prefix(self, timeline_assembler):
+        """A bare-number column takes the unit letter and the SIGNED value —
+        the text often drops the sign."""
+        data = self._name_data(
+            [
+                {"text": "-2", "value": -2, "unit": "weeks"},
+                {"text": "0", "value": 0, "unit": "weeks"},
+                {"text": "42", "value": -42, "unit": "day"},
+                {"text": "7", "value": None, "unit": "day"},
+                {"text": "3", "value": 3, "unit": "furlong"},
+            ]
+        )
+
+        names = [timeline_assembler._sai_name(data, i, 1) for i in range(5)]
+
+        assert names == ["W-2", "W0", "D-42", "D7", "3"]
+
+    def test_sai_names_slug_visit_fallback_and_dedupe(self, timeline_assembler):
+        """No timepoint text → slug of the visit text (slash → space,
+        truncated); duplicates get a numeric suffix; nothing at all → the
+        positional fallback."""
+        data = self._name_data(
+            [
+                {"text": "", "value": 0, "unit": "day"},
+                {"text": "", "value": 0, "unit": "day"},
+                {"text": "Day 1", "value": 1, "unit": "day"},
+                {"text": "Day 1", "value": 1, "unit": "day"},
+                {"text": "", "value": 0, "unit": "day"},
+                {"text": "", "value": 0, "unit": "day"},
+            ],
+            [
+                {"text": "Final Visit/ET", "references": []},
+                {"text": "A very long visit description indeed", "references": []},
+                {"text": "", "references": []},
+                {"text": "", "references": []},
+                {"text": "", "references": []},
+                {"text": "", "references": []},
+            ],
+        )
+
+        names = [timeline_assembler._sai_name(data, i, 1) for i in range(6)]
+
+        assert names == [
+            "FINAL VISIT ET",
+            "A VERY LONG VISIT DE",
+            "D1",
+            "D1-2",
+            "T1-SAI-5",
+            "T1-SAI-6",
+        ]
+
+    def test_sai_names_unusable_text_falls_through(self, timeline_assembler):
+        """Text that slugs to nothing (symbols only) is skipped in favour of
+        the visit text, or the positional fallback."""
+        data = self._name_data(
+            [
+                {"text": "###", "value": 0, "unit": "day"},
+                {"text": "###", "value": 0, "unit": "day"},
+            ],
+            [
+                {"text": "Day 5", "references": []},
+                {"text": "", "references": []},
+            ],
+        )
+
+        names = [timeline_assembler._sai_name(data, i, 1) for i in range(2)]
+
+        assert names == ["D5", "T1-SAI-2"]
+
+    def test_sai_names_flow_into_created_timepoints(self, timeline_assembler):
+        """The derived names land on the SAIs themselves (and so in the
+        timing sheet's from/to columns)."""
+        data = self._timing_data(
+            [
+                {"text": "Day -1", "value": -1, "unit": "day"},
+                {"text": "Day 1", "value": 1, "unit": "day"},
+                {"text": "Day 8", "value": 8, "unit": "day"},
+            ]
+        )
+        timeline_assembler._add_epochs(data)
+        timeline_assembler._add_encounters(data)
+
+        timepoints = timeline_assembler._add_timepoints(data)
+
+        assert [sai.name for sai in timepoints] == ["D-1", "D1", "D8"]
 
     def test_window_label_formats_correctly(self, timeline_assembler):
         """Test window label formatting."""
@@ -954,7 +1251,7 @@ class TestTimelineAssemblerExceptionCoverage:
             "timepoints": {"items": []},
         }
 
-        timing = timeline_assembler._timing(data, 0, "Fixed Reference", "id1", "id2")
+        timing = timeline_assembler._timing(data, 0, 0, "Fixed Reference", "id1", "id2")
 
         # Should return None and log exception
         assert timing is None

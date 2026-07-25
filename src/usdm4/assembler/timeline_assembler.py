@@ -1,3 +1,5 @@
+import re
+
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.assembler.base_assembler import BaseAssembler
@@ -36,6 +38,10 @@ class TimelineAssembler(BaseAssembler):
         # timings, conditions and the timeline itself are per-timeline
         # namespaced (T{t}-...) — see the individual add methods.
         self._activity_by_name: dict[str, Activity] = {}
+        # SAI names are derived from timepoint/visit text (D1, W12, SCREENING)
+        # so the timing sheet's from/to references are human-readable. The
+        # registry keeps them unique across every timeline in the study.
+        self._sai_name_registry: dict[str, int] = {}
         self._condition_links: dict = {}
         self._conditions: list[Condition] = []
         self._biomedical_concepts: list[BiomedicalConcept] = []
@@ -334,7 +340,7 @@ class TimelineAssembler(BaseAssembler):
                 sai = self._builder.create(
                     ScheduledActivityInstance,
                     {
-                        "name": f"T{t}-SAI-{index + 1}",
+                        "name": self._sai_name(data, index, t),
                         "description": f"Scheduled activity instance {index + 1}",
                         "label": item["text"],
                         "timelineExitId": None,
@@ -425,17 +431,23 @@ class TimelineAssembler(BaseAssembler):
                 this_sai: ScheduledInstance = item["sai_instance"]
                 if index < anchor_index:
                     if timing := self._timing(
-                        data, index, "Before", this_sai.id, anchor.id, t
+                        data, index, anchor_index, "Before", this_sai.id, anchor.id, t
                     ):
                         results.append(timing)
                 elif index == anchor_index:
                     if timing := self._timing(
-                        data, index, "Fixed Reference", this_sai.id, this_sai.id, t
+                        data,
+                        index,
+                        anchor_index,
+                        "Fixed Reference",
+                        this_sai.id,
+                        this_sai.id,
+                        t,
                     ):
                         results.append(timing)
                 else:
                     if timing := self._timing(
-                        data, index, "After", this_sai.id, anchor.id, t
+                        data, index, anchor_index, "After", this_sai.id, anchor.id, t
                     ):
                         results.append(timing)
             self._errors.info(
@@ -454,7 +466,14 @@ class TimelineAssembler(BaseAssembler):
     _EMPTY_WINDOW = {"before": 0, "after": 0, "unit": ""}
 
     def _timing(
-        self, data: dict, index: int, type: str, from_id: str, to_id: str, t: int = 1
+        self,
+        data: dict,
+        index: int,
+        anchor_index: int,
+        type: str,
+        from_id: str,
+        to_id: str,
+        t: int = 1,
     ) -> Timing:
         try:
             windows: list = data["windows"]["items"]
@@ -468,7 +487,8 @@ class TimelineAssembler(BaseAssembler):
                         Timing, "type", type
                     ),
                     "value": self._encoder.iso8601_duration(
-                        self._set_abs_duration(timepoint["value"]), timepoint["unit"]
+                        self._interval_from_anchor(timepoints, index, anchor_index),
+                        timepoint["unit"],
                     ),
                     "valueLabel": self._timing_value_label(timepoints, index),
                     "name": f"T{t}-TIMING-{index}",
@@ -506,6 +526,146 @@ class TimelineAssembler(BaseAssembler):
         # print(f"DURATION: {value}")
         return 0 if not isinstance(value, int) else abs(value)
 
+    @staticmethod
+    def _coerce_int(value) -> int | None:
+        """Coerce a timepoint value to int. Accepts int, whole float, and
+        numeric strings (schema allows all three). Returns None if not numeric."""
+        if isinstance(value, bool):
+            return None
+        if isinstance(value, int):
+            return value
+        if isinstance(value, float):
+            return int(value) if value.is_integer() else None
+        if isinstance(value, str):
+            try:
+                return int(value.strip())
+            except ValueError:
+                return None
+        return None
+
+    _SAI_TEXT_PATTERNS = (
+        (re.compile(r"^day\s*(-?\d+)$", re.IGNORECASE), "D{}"),
+        (re.compile(r"^week\s*(-?\d+)$", re.IGNORECASE), "W{}"),
+        (re.compile(r"^cycle\s*(\d+)[ ,]*day\s*(-?\d+)$", re.IGNORECASE), "C{}D{}"),
+    )
+
+    def _sai_name(self, data, index: int, t: int) -> str:
+        """Human-readable SAI name for the timing sheet's from/to references:
+        derived from the timepoint text (``Day 1`` → ``D1``, ``Week 12`` →
+        ``W12``, ``Cycle 2 Day 1`` → ``C2D1``), else an upper-cased slug of the
+        timepoint or visit text, else the positional fallback
+        ``T{t}-SAI-{n}``. Uniqued across the study with a numeric suffix."""
+        base = self._sai_base_name(data, index)
+        if not base:
+            base = f"T{t}-SAI-{index + 1}"
+        count = self._sai_name_registry.get(base, 0) + 1
+        self._sai_name_registry[base] = count
+        return base if count == 1 else f"{base}-{count}"
+
+    _UNIT_PREFIXES = {
+        "day": "D",
+        "d": "D",
+        "week": "W",
+        "wk": "W",
+        "w": "W",
+        "hour": "H",
+        "hr": "H",
+        "h": "H",
+        "minute": "MIN",
+        "min": "MIN",
+        "month": "MTH",
+        "mth": "MTH",
+        "year": "Y",
+        "yr": "Y",
+        "y": "Y",
+    }
+
+    def _sai_base_name(self, data, index: int) -> str:
+        timepoint = data["timepoints"]["items"][index]
+        visits = (data.get("visits") or {}).get("items") or []
+        visit_text = (visits[index].get("text") or "") if index < len(visits) else ""
+        for source, text in (
+            ("timepoint", timepoint.get("text") or ""),
+            ("visit", visit_text),
+        ):
+            text = text.strip()
+            if not text:
+                continue
+            if source == "timepoint" and re.fullmatch(r"[+-]?\d+", text):
+                # A bare number is a day/week count — prefix with the unit
+                # letter, preferring the signed value (the text often drops
+                # the sign).
+                unit = (timepoint.get("unit") or "").strip().lower().rstrip("s")
+                prefix = self._UNIT_PREFIXES.get(unit)
+                if prefix:
+                    value = self._coerce_int(timepoint.get("value"))
+                    return f"{prefix}{value if value is not None else text}"
+            for pattern, template in self._SAI_TEXT_PATTERNS:
+                match = pattern.match(text)
+                if match:
+                    return template.format(*match.groups())
+            slug = re.sub(r"[^A-Z0-9+,_ .-]", "", text.upper().replace("/", " "))
+            slug = re.sub(r"\s+", " ", slug).strip()
+            if slug:
+                return slug[:20].rstrip()
+        return ""
+
+    @staticmethod
+    def _is_placeholder(item: dict) -> bool:
+        """A blank SoA column: no text and no (or zero) value. These carry no
+        timing information — e.g. an unlabelled ET/unscheduled column."""
+        value = TimelineAssembler._coerce_int(item.get("value"))
+        return not (item.get("text") or "").strip() and not value
+
+    _DAY_UNITS = ("day", "days", "d")
+
+    def _interval_from_anchor(
+        self, timepoints: list[dict], index: int, anchor_index: int
+    ) -> int:
+        """Duration between this timepoint and the anchor.
+
+        USDM ``Timing.value`` is the interval relative to the referenced
+        instance, NOT the protocol's day number: Day 16 relative to a Day 1
+        anchor is 15 days. When day numbering is 1-based (no Day 0 in the
+        table, the common protocol convention), an interval crossing zero
+        loses a day: Day -1 to Day 1 is 1 day, Day -42 to Day 1 is 42 days.
+        Falls back to ``abs(value)`` (the historical behaviour) when either
+        value is non-numeric or the units differ."""
+        timepoint = timepoints[index]
+        anchor = timepoints[anchor_index]
+        value = self._coerce_int(timepoint.get("value"))
+        anchor_value = self._coerce_int(anchor.get("value"))
+        if value is None or anchor_value is None:
+            return self._set_abs_duration(timepoint.get("value"))
+        unit = (timepoint.get("unit") or "").strip().lower()
+        anchor_unit = (anchor.get("unit") or "").strip().lower()
+        if unit.rstrip("s") != anchor_unit.rstrip("s"):
+            self._errors.warning(
+                f"Timing unit '{timepoint.get('unit')}' differs from anchor "
+                f"unit '{anchor.get('unit')}'; using absolute value "
+                f"{abs(value)} for '{timepoint.get('text')}'",
+                KlassMethodLocation(self.MODULE, "_interval_from_anchor"),
+            )
+            return abs(value)
+        delta = abs(value - anchor_value)
+        if (
+            unit in self._DAY_UNITS
+            and (value < 0 < anchor_value or anchor_value < 0 < value)
+            and not self._has_zero_timepoint(timepoints)
+        ):
+            delta -= 1
+        return delta
+
+    def _has_zero_timepoint(self, timepoints: list[dict]) -> bool:
+        """True if the table numbers days from zero (an explicit Day 0 column
+        exists), in which case no crossing-zero correction applies."""
+        for item in timepoints:
+            if self._is_placeholder(item):
+                continue
+            if self._coerce_int(item.get("value")) == 0:
+                return True
+        return False
+
     def _window_label(self, windows: list[dict], index: int) -> str:
         if index >= len(windows):
             return "???"
@@ -520,14 +680,19 @@ class TimelineAssembler(BaseAssembler):
         return f"{timepoints[index]['text']}" if timepoints[index]["text"] else "???"
 
     def _find_anchor(self, data) -> int:
+        """Positional index of the anchor timepoint: the first real (non-blank)
+        column with a value >= 0 — Day 0 or Day 1 in a typical SoA. Returns the
+        position in the items list; the input's own ``index`` field is ignored
+        (the schema defaults it to 0, so it is 0 for every item when the
+        producer — e.g. ground truth — does not supply it)."""
         items = data["timepoints"]["items"]
         item: dict
-        for item in items:
-            # print(f"ANCHOR CHECK: '{item['value']}', {type(item['value'])}")
-            if isinstance(item["value"], int) and item["value"] >= 0:
-                # print(f"ANCHOR CHECK: POSITIVE")
-                item["sai_instance"]
-                return int(item["index"])
+        for index, item in enumerate(items):
+            if self._is_placeholder(item):
+                continue
+            value = self._coerce_int(item.get("value"))
+            if value is not None and value >= 0:
+                return index
         return 0
 
     def _link_timepoints_and_activities(self, data: dict) -> None:
