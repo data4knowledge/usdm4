@@ -308,8 +308,11 @@ class TimelineAssembler(BaseAssembler):
         self, item: dict, created: list[Activity]
     ) -> Activity:
         """Return the shared Activity for ``item['name']``, creating it on first
-        sighting. Names (``ACTIVITY-{n}``) use a study-global sequence so they
-        stay unique across timelines; the builder rejects duplicate keys."""
+        sighting. The activity's name IS its (trimmed) label text — the SoA
+        grid and BC/procedure references in the workbook show names, so they
+        must be human-readable. Uniqueness holds because the registry is keyed
+        by the normalised label (same label → same shared Activity); a
+        label-less activity falls back to the ``ACTIVITY-{n}`` sequence."""
         key = (item["name"] or "").strip().lower()
         existing = self._activity_by_name.get(key)
         if existing is not None:
@@ -317,7 +320,7 @@ class TimelineAssembler(BaseAssembler):
         bc_ids, sbc_ids, procedures = self._get_biomedical_concepts(item)
         seq = len(self._activity_by_name) + 1
         params = {
-            "name": f"ACTIVITY-{seq}",
+            "name": (item["name"] or "").strip() or f"ACTIVITY-{seq}",
             "description": f"Activity {item['name']}",
             "label": item["name"],
             "definedProcedures": procedures,
@@ -696,34 +699,18 @@ class TimelineAssembler(BaseAssembler):
         return 0
 
     def _link_timepoints_and_activities(self, data: dict) -> None:
+        """Attach each activity (and child activity) to the SAIs of the visits
+        it is marked at. NOTE: an activity's own visits are always processed —
+        the schema defaults ``children`` to ``[]`` for every activity, so a
+        presence test on the key (the historical behaviour) made flat
+        activities (the ground-truth shape) link nothing at all."""
         try:
             activities = data["activities"]["items"]
             timepoints = data["timepoints"]["items"]
-            for a_index, activity in enumerate(activities):
-                if "children" in activity:
-                    for child in activity["children"]:
-                        # sai_index = child["index"]
-                        activity_instance: Activity = child["activity_instance"]
-                        for visit in child["visits"]:
-                            index = visit["index"]
-                            sai_instance: ScheduledActivityInstance = timepoints[index][
-                                "sai_instance"
-                            ]
-                            sai_instance.activityIds.append(activity_instance.id)
-                            for ref in visit["references"]:
-                                self._condition_combined(
-                                    ref, index, activity_instance.id
-                                )
-                else:
-                    activity_instance: Activity = activity["activity_instance"]
-                    for visit in activity["visits"]:
-                        index = visit["index"]
-                        sai_instance: ScheduledActivityInstance = timepoints[index][
-                            "sai_instance"
-                        ]
-                        sai_instance.activityIds.append(activity_instance.id)
-                        for ref in visit["references"]:
-                            self._condition_combined(ref, index, activity_instance.id)
+            for activity in activities:
+                self._link_one_activity(activity, timepoints)
+                for child in activity.get("children") or []:
+                    self._link_one_activity(child, timepoints)
         except Exception as e:
             self._errors.exception(
                 "Error linking timepoints and activities",
@@ -731,6 +718,15 @@ class TimelineAssembler(BaseAssembler):
                 KlassMethodLocation(self.MODULE, "_link_timepoints_and_activities"),
             )
             return None
+
+    def _link_one_activity(self, activity: dict, timepoints: list[dict]) -> None:
+        activity_instance: Activity = activity["activity_instance"]
+        for visit in activity.get("visits") or []:
+            index = visit["index"]
+            sai_instance: ScheduledActivityInstance = timepoints[index]["sai_instance"]
+            sai_instance.activityIds.append(activity_instance.id)
+            for ref in visit["references"]:
+                self._condition_combined(ref, index, activity_instance.id)
 
     def _add_timeline(
         self,

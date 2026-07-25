@@ -915,6 +915,64 @@ class TestTimelineAssemblerLinkingTimepoints:
         timepoint = data["timepoints"]["items"][0]["sai_instance"]
         assert len(timepoint.activityIds) == 1
 
+    def test_link_timepoints_with_schema_default_empty_children(
+        self, timeline_assembler
+    ):
+        """The AssemblerInput schema defaults ``children`` to ``[]`` on every
+        activity, so a flat activity arrives with an empty children list —
+        its own visits must still be linked (this was the bug that left every
+        generated workbook's SoA grid empty)."""
+        data = {
+            "epochs": {"items": [{"text": "Screening"}, {"text": "Treatment"}]},
+            "visits": {
+                "items": [
+                    {"text": "Visit 1", "references": []},
+                    {"text": "Visit 2", "references": []},
+                ]
+            },
+            "timepoints": {
+                "items": [
+                    {"text": "Day 1", "value": 1, "unit": "day"},
+                    {"text": "Day 8", "value": 8, "unit": "day"},
+                ]
+            },
+            "activities": {
+                "items": [
+                    {
+                        "name": "Flat Activity",
+                        "visits": [
+                            {"index": 0, "references": []},
+                            {"index": 1, "references": ["a"]},
+                        ],
+                        "children": [],
+                    },
+                    {
+                        "name": "Parent",
+                        "visits": [],
+                        "children": [
+                            {
+                                "name": "Child",
+                                "visits": [{"index": 1, "references": []}],
+                                "children": [],
+                            }
+                        ],
+                    },
+                ]
+            },
+        }
+
+        timeline_assembler._add_epochs(data)
+        timeline_assembler._add_encounters(data)
+        timeline_assembler._add_activities(data)
+        timeline_assembler._add_timepoints(data)
+        timeline_assembler._link_timepoints_and_activities(data)
+
+        sai_1 = data["timepoints"]["items"][0]["sai_instance"]
+        sai_2 = data["timepoints"]["items"][1]["sai_instance"]
+        assert len(sai_1.activityIds) == 1  # Flat Activity
+        assert len(sai_2.activityIds) == 2  # Flat Activity + Child
+        assert "a" in timeline_assembler._condition_links
+
 
 class TestTimelineAssemblerTimeline:
     """Test TimelineAssembler timeline creation."""
