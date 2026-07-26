@@ -1796,17 +1796,23 @@ class TestTimelineAssemblerNormaliseAndDispatch:
         assert errors.error_count() > initial
         assert timeline_assembler.timelines == []
 
-    def test_main_index_falls_back_to_first_when_no_main_soa(
-        self, timeline_assembler
-    ):
+    def test_main_index_falls_back_to_first_when_no_main_soa(self, timeline_assembler):
         # Two subsidiary tables, none flagged main_soa → first becomes main.
         sub1 = _table(
-            ["E"], ["V"], [("Day 1", 1)], [("A1", [0])],
-            table_type="subsidiary", title="Sub 1",
+            ["E"],
+            ["V"],
+            [("Day 1", 1)],
+            [("A1", [0])],
+            table_type="subsidiary",
+            title="Sub 1",
         )
         sub2 = _table(
-            ["E"], ["V"], [("Day 1", 1)], [("A2", [0])],
-            table_type="subsidiary", title="Sub 2",
+            ["E"],
+            ["V"],
+            [("Day 1", 1)],
+            [("A2", [0])],
+            table_type="subsidiary",
+            title="Sub 2",
         )
         timeline_assembler.execute([sub1, sub2])
         mains = [t for t in timeline_assembler.timelines if t.mainTimeline]
@@ -1844,12 +1850,13 @@ class TestTimelineAssemblerBiomedicalConceptBranches:
             timeline_assembler._builder.cdisc_bc_library, "exists", lambda name: True
         )
         monkeypatch.setattr(timeline_assembler._builder, "bc", lambda name: None)
-        initial = errors.error_count()
+        initial = errors.count()
 
         activity = {"name": "Vitals", "actions": {"bcs": ["Blood Pressure"]}}
         bc_ids, _, _ = timeline_assembler._get_biomedical_concepts(activity)
 
         assert bc_ids == []  # nothing added when bc creation returns falsy
+        assert errors.count() > initial  # the failure was logged (warning)
 
     def test_surrogate_creation_failure_logs_warning(
         self, timeline_assembler, monkeypatch

@@ -574,15 +574,22 @@ class TestIdentificationAssemblerEdgeCases:
     """Test IdentificationAssembler edge cases."""
 
     def test_execute_with_empty_title_text(self, identification_assembler):
-        """Test execute with empty title text."""
-        data = {"titles": {"brief": "", "official": "Valid Title"}}
+        """Empty or whitespace title text mints no StudyTitle — placeholder
+        titles with no text are unusable content (and cannot survive an
+        Excel round trip)."""
+        data = {
+            "titles": {
+                "brief": "",
+                "public": "   ",
+                "scientific": None,
+                "official": "Valid Title",
+            }
+        }
 
         identification_assembler.execute(data)
 
-        # Should handle empty title text
-        assert len(identification_assembler.titles) >= 1  # At least the valid one
-        title_texts = [title.text for title in identification_assembler.titles]
-        assert "Valid Title" in title_texts
+        assert len(identification_assembler.titles) == 1
+        assert identification_assembler.titles[0].text == "Valid Title"
 
     def test_execute_with_unicode_titles(self, identification_assembler):
         """Test execute with unicode characters in titles."""

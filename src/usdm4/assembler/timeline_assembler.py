@@ -304,9 +304,7 @@ class TimelineAssembler(BaseAssembler):
             )
             return created
 
-    def _get_or_create_activity(
-        self, item: dict, created: list[Activity]
-    ) -> Activity:
+    def _get_or_create_activity(self, item: dict, created: list[Activity]) -> Activity:
         """Return the shared Activity for ``item['name']``, creating it on first
         sighting. The activity's name IS its (trimmed) label text — the SoA
         grid and BC/procedure references in the workbook show names, so they

@@ -378,10 +378,13 @@ class IdentificationAssembler(BaseAssembler):
         titles = data["titles"] if "titles" in data else {}
         identifiers = data["identifiers"] if "identifiers" in data else []
         roles = data["roles"] if "roles" in data else {}
-        # Titles
+        # Titles. A title with no text is not created — minting placeholder
+        # StudyTitle instances with empty strings put unusable content into
+        # every USDM file (and they cannot survive an Excel round trip: the
+        # importer rightly refuses to create a title from an empty cell).
         for type, text in titles.items():
             try:
-                if type in self.TITLE_TYPES:
+                if type in self.TITLE_TYPES and text and str(text).strip():
                     title = self._create_title(type, text)
                     if title:
                         self._titles.append(title)
