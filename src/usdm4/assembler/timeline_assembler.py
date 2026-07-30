@@ -373,45 +373,83 @@ class TimelineAssembler(BaseAssembler):
             return results
 
     def _add_conditions(self, data, t: int = 1) -> list[Condition]:
+        """Create the Conditions for one timeline from its extracted footnotes.
+
+        A condition is only created when its footnote reference (``"a"``,
+        ``"1"``, …) can be aligned to something in the timeline — a timepoint,
+        an activity, or both — via ``self._condition_links``, which the
+        timepoint and activity passes populate.
+
+        **Policy: an unanchored condition is skipped, not created.** Two cases
+        are skipped, and both are counted and reported:
+
+        - ``dropped_no_ref`` — the extractor supplied no reference at all, so
+          there is nothing to align on.
+        - ``dropped_no_match`` — a reference was supplied but nothing in this
+          timeline carries it.
+
+        Creating these anyway would mean a ``Condition`` with empty
+        ``contextIds`` and ``appliesToIds``. Downstream that is a hard error:
+        ``usdm4_legacy_excel`` rejects a condition with no ``appliesTo``, so
+        emitting unanchored conditions would break the Excel round trip for
+        every study. Anchoring is the extractor's job; this assembler's job is
+        to say loudly when it did not happen.
+
+        Every call emits one summary line (items in / referenced / aligned /
+        dropped-no-ref / dropped-no-match) so the three outcomes can be told
+        apart without re-running a whole corpus comparison.
+        """
         results = []
         conditions: list = data["conditions"]["items"]
         timepoints: list = data["timepoints"]["items"]
-        # print(f"COND LINKS: {self._condition_links:}")
+        counts = {
+            "in": 0,
+            "referenced": 0,
+            "aligned": 0,
+            "dropped_no_ref": 0,
+            "dropped_no_match": 0,
+        }
         try:
+            counts["in"] = len(conditions)
             for index, item in enumerate(conditions):
-                # print(f"COND: {item}")
-                if ref := item["reference"]:
-                    if ref in self._condition_links:
-                        # print(f"COND REF 1: {ref}")
-                        links = self._condition_links[ref]
-                        timepoint_ids = [
-                            timepoints[x]["sai_instance"].id
-                            for x in links["timepoint_index"]
-                        ]
-                        activity_ids = [x for x in links["activity_id"]]
-                        condition = self._builder.create(
-                            Condition,
-                            {
-                                "name": f"T{t}-Condition-{index + 1}",
-                                "label": f"Condition {index + 1}",
-                                "description": f"Extracted footnote / condition {index + 1}",
-                                "text": item["text"],
-                                "dictionaryId": None,
-                                "contextIds": timepoint_ids
-                                if timepoint_ids
-                                else activity_ids,
-                                "appliesToIds": activity_ids if timepoint_ids else [],
-                            },
-                        )
-                        if condition:
-                            # print(f"COND REF 2: {condition}")
-                            results.append(condition)
-                    else:
-                        # print(f"COND LINKS: {self._condition_links:}")
-                        self._errors.warning(
-                            f"Failed to align condition {item}, not created.",
-                            KlassMethodLocation(self.MODULE, "_add_conditions"),
-                        )
+                ref = item.get("reference") if isinstance(item, dict) else None
+                if not ref:
+                    counts["dropped_no_ref"] += 1
+                    self._errors.warning(
+                        f"Condition has no reference, not created: {item}",
+                        KlassMethodLocation(self.MODULE, "_add_conditions"),
+                    )
+                    continue
+
+                counts["referenced"] += 1
+                if ref not in self._condition_links:
+                    counts["dropped_no_match"] += 1
+                    self._errors.warning(
+                        f"Failed to align condition {item}, not created.",
+                        KlassMethodLocation(self.MODULE, "_add_conditions"),
+                    )
+                    continue
+
+                links = self._condition_links[ref]
+                timepoint_ids = [
+                    timepoints[x]["sai_instance"].id for x in links["timepoint_index"]
+                ]
+                activity_ids = [x for x in links["activity_id"]]
+                condition = self._builder.create(
+                    Condition,
+                    {
+                        "name": f"T{t}-Condition-{index + 1}",
+                        "label": f"Condition {index + 1}",
+                        "description": f"Extracted footnote / condition {index + 1}",
+                        "text": item["text"],
+                        "dictionaryId": None,
+                        "contextIds": timepoint_ids if timepoint_ids else activity_ids,
+                        "appliesToIds": activity_ids if timepoint_ids else [],
+                    },
+                )
+                if condition:
+                    counts["aligned"] += 1
+                    results.append(condition)
             return results
         except Exception as e:
             self._errors.exception(
@@ -420,6 +458,25 @@ class TimelineAssembler(BaseAssembler):
                 KlassMethodLocation(self.MODULE, "_add_conditions"),
             )
             return results
+        finally:
+            self._condition_summary(counts, t)
+
+    def _condition_summary(self, counts: dict, t: int) -> None:
+        """Emit the per-timeline condition alignment summary.
+
+        One line, always, even when there were no conditions to process — a
+        zero line is itself the signal that the extractor produced nothing for
+        this timeline, which is a different failure from producing footnotes
+        that could not be anchored.
+        """
+        self._errors.info(
+            f"Conditions T{t}: in={counts['in']}, "
+            f"referenced={counts['referenced']}, "
+            f"aligned={counts['aligned']}, "
+            f"dropped_no_ref={counts['dropped_no_ref']}, "
+            f"dropped_no_match={counts['dropped_no_match']}",
+            KlassMethodLocation(self.MODULE, "_add_conditions"),
+        )
 
     def _add_timing(self, data, t: int = 1) -> list[ScheduledInstance]:
         try:

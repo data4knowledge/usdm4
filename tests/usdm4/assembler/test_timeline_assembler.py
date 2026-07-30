@@ -403,6 +403,198 @@ class TestTimelineAssemblerConditions:
         assert errors.error_count() > initial_error_count
 
 
+class TestTimelineAssemblerConditionDiagnostics:
+    """Condition drop policy and per-timeline alignment diagnostics.
+
+    An unanchored condition is SKIPPED, never created with empty
+    ``contextIds``/``appliesToIds`` — ``usdm4_legacy_excel`` rejects a
+    condition with no ``appliesTo``, so creating them would break the Excel
+    round trip. Both drop reasons are counted and reported so the three
+    outcomes (aligned / no reference / no match) can be told apart from the
+    log alone.
+    """
+
+    @pytest.fixture
+    def own_errors(self):
+        """A per-test Errors so message assertions see only this test."""
+        return Errors()
+
+    @pytest.fixture
+    def assembler(self, builder, own_errors):
+        """A TimelineAssembler wired to the per-test Errors instance."""
+        builder.clear()
+        return TimelineAssembler(builder, own_errors)
+
+    @staticmethod
+    def _messages(errors):
+        """All logged messages, warnings and info included."""
+        return [item["message"] for item in errors.to_dict(level=Errors.INFO)]
+
+    @classmethod
+    def _summary(cls, errors):
+        """The single condition summary line. Fails if not exactly one."""
+        lines = [m for m in cls._messages(errors) if m.startswith("Conditions T")]
+        assert len(lines) == 1, f"expected one summary line, got {lines}"
+        return lines[0]
+
+    @staticmethod
+    def _aligned_data(condition_items):
+        """One timepoint, one activity, plus the given condition items."""
+        return {
+            "epochs": {"items": [{"text": "Screening"}]},
+            "visits": {"items": [{"text": "Visit 1", "references": []}]},
+            "timepoints": {
+                "items": [{"index": "0", "text": "Day 1", "value": "1", "unit": "days"}]
+            },
+            "conditions": {"items": condition_items},
+        }
+
+    def _prepare(self, assembler, condition_items):
+        """Build the timepoint spine so alignment can resolve, then run."""
+        data = self._aligned_data(condition_items)
+        assembler._add_epochs(data)
+        assembler._add_encounters(data)
+        assembler._add_timepoints(data)
+        return data
+
+    # -- U4-1: the drop policy ------------------------------------------
+
+    @pytest.mark.parametrize(
+        "item,label",
+        [
+            ({"reference": "", "text": "Empty string reference"}, "empty string"),
+            ({"reference": None, "text": "None reference"}, "None"),
+            ({"text": "No reference key at all"}, "missing key"),
+        ],
+    )
+    def test_unreferenced_condition_is_skipped_with_a_warning(
+        self, assembler, own_errors, item, label
+    ):
+        """An item the extractor could not reference is dropped, and said so."""
+        data = self._prepare(assembler, [item])
+
+        conditions = assembler._add_conditions(data)
+
+        assert conditions == [], f"{label} reference should not create a condition"
+        warnings = [m for m in self._messages(own_errors) if "no reference" in m]
+        assert len(warnings) == 1, f"{label} reference should warn exactly once"
+
+    def test_unreferenced_condition_is_never_created_unanchored(
+        self, assembler, own_errors
+    ):
+        """Pin the policy itself: skip, never create with empty anchors.
+
+        The alternative — creating the Condition with empty contextIds and
+        appliesToIds — is what this asserts against. It is rejected because
+        usdm4_legacy_excel errors on a condition with no appliesTo.
+        """
+        data = self._prepare(assembler, [{"reference": "", "text": "Unanchored"}])
+
+        assembler._add_conditions(data)
+
+        assert assembler.conditions == []
+
+    def test_a_referenced_condition_still_survives_alongside_dropped_ones(
+        self, assembler, own_errors
+    ):
+        """Dropping the unreferenced items must not lose the good one."""
+        assembler._condition_links["a"] = {
+            "reference": "a",
+            "timepoint_index": [0],
+            "activity_id": ["act1"],
+        }
+        data = self._prepare(
+            assembler,
+            [
+                {"reference": "", "text": "Dropped, no reference"},
+                {"reference": "a", "text": "Kept, aligns to a timepoint"},
+                {"reference": "zz", "text": "Dropped, nothing carries zz"},
+            ],
+        )
+
+        conditions = assembler._add_conditions(data)
+
+        assert len(conditions) == 1
+        assert conditions[0].text == "Kept, aligns to a timepoint"
+
+    # -- U4-2: the diagnostics ------------------------------------------
+
+    def test_summary_counts_every_outcome(self, assembler, own_errors):
+        """One line separating aligned from both kinds of drop."""
+        assembler._condition_links["a"] = {
+            "reference": "a",
+            "timepoint_index": [0],
+            "activity_id": ["act1"],
+        }
+        data = self._prepare(
+            assembler,
+            [
+                {"reference": "", "text": "No reference"},
+                {"reference": "a", "text": "Aligned"},
+                {"reference": "zz", "text": "No match"},
+            ],
+        )
+
+        assembler._add_conditions(data)
+
+        assert self._summary(own_errors) == (
+            "Conditions T1: in=3, referenced=2, aligned=1, "
+            "dropped_no_ref=1, dropped_no_match=1"
+        )
+
+    def test_summary_emitted_when_there_are_no_conditions(self, assembler, own_errors):
+        """A zero line is the signal that the extractor produced nothing.
+
+        That is a different failure from producing footnotes that could not
+        be anchored, so the line must appear rather than be suppressed.
+        """
+        data = self._prepare(assembler, [])
+
+        assembler._add_conditions(data)
+
+        assert self._summary(own_errors) == (
+            "Conditions T1: in=0, referenced=0, aligned=0, "
+            "dropped_no_ref=0, dropped_no_match=0"
+        )
+
+    def test_summary_emitted_on_the_exception_path(self, assembler, own_errors):
+        """A crash mid-assembly must not swallow the diagnostic."""
+        data = {
+            "conditions": {"items": None},  # len(None) raises
+            "timepoints": {"items": []},
+        }
+
+        conditions = assembler._add_conditions(data)
+
+        assert conditions == []
+        assert own_errors.error_count() > 0
+        assert self._summary(own_errors).startswith("Conditions T1: in=0")
+
+    def test_summary_names_the_timeline(self, assembler, own_errors):
+        """Multi-timeline studies need the counts attributed per table."""
+        data = self._prepare(assembler, [{"reference": "", "text": "No reference"}])
+
+        assembler._add_conditions(data, t=2)
+
+        assert self._summary(own_errors).startswith("Conditions T2:")
+
+    def test_all_aligned_reports_no_drops(self, assembler, own_errors):
+        """The healthy case reads as clean, so a real gap stands out."""
+        assembler._condition_links["a"] = {
+            "reference": "a",
+            "timepoint_index": [0],
+            "activity_id": ["act1"],
+        }
+        data = self._prepare(assembler, [{"reference": "a", "text": "Aligned"}])
+
+        assembler._add_conditions(data)
+
+        assert self._summary(own_errors) == (
+            "Conditions T1: in=1, referenced=1, aligned=1, "
+            "dropped_no_ref=0, dropped_no_match=0"
+        )
+
+
 class TestTimelineAssemblerTiming:
     """Test TimelineAssembler timing creation."""
 
