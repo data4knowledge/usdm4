@@ -223,3 +223,37 @@ clear code path), then revisit variant A's introduced rules
 (CORE-000971 needs a populated `legalAddress` on the sponsor org;
 CORE-001063 needs decoding) so the sponsor-identifier change can land
 cleanly.
+
+## 9. Assembler conditions — drop policy and diagnostics (branch `51-condition-assembler-diagnostic`)
+
+**Done 2026-07-30, full suite green.** `TimelineAssembler._add_conditions` opened
+`if ref := item["reference"]:` with no `else`, so a condition the extractor could not
+reference was discarded with no warning, no count and no log line. The mismatch case
+warned; the empty case was invisible — which made four upstream bugs in
+`usdm4_protocol`'s footnote handling look like "the extractor emits no conditions" when
+it was emitting 13–73 per protocol and every one was evaporating here.
+
+**Policy, recorded in the method docstring: skip, warn, count — never create unanchored.**
+A `Condition` with empty `contextIds`/`appliesToIds` is a hard error downstream —
+`usdm4_legacy_excel` rejects a condition with no `appliesTo` — so emitting them would
+break the Excel round trip for every study. Anchoring is the extractor's job.
+
+New `_condition_summary` emits one line per timeline, from a `finally` so a crash still
+reports it, and for an empty condition list too:
+
+```
+Conditions T1: in=… referenced=… aligned=… dropped_no_ref=… dropped_no_match=…
+```
+
+A zero `in` means the extractor produced nothing; `dropped_no_ref` means it produced
+footnotes with no marker; `dropped_no_match` means the marker exists but nothing in the
+timeline carries it. Three different bugs in three different places — the old single
+warning covered only the last.
+
+Tests: `TestTimelineAssemblerConditionDiagnostics` in
+`tests/usdm4/assembler/test_timeline_assembler.py` (8 tests — the three unreferenced
+shapes parametrised, the skip-not-create policy pin, and the summary cases including the
+exception path).
+
+Full context and the usdm4_protocol half: `usdm4_protocol/docs/next_steps.md` § Session
+Log, session 12 (2026-07-30).
