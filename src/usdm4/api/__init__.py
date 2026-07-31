@@ -27,12 +27,14 @@ from .indication import Indication
 from .ingredient import Ingredient
 from .intercurrent_event import IntercurrentEvent
 from .masking import Masking
+from .medical_device import MedicalDevice
 from .narrative_content import NarrativeContent, NarrativeContentItem
 from .objective import Objective
 from .organization import Organization
 from .person_name import PersonName
 from .population_definition import StudyDesignPopulation, StudyCohort
 from .procedure import Procedure
+from .product_organization_role import ProductOrganizationRole
 from .quantity_range import Quantity
 from .quantity_range import Range
 from .response_code import ResponseCode
@@ -112,6 +114,7 @@ __all__ = [
     "IntercurrentEvent",
     "InterventionalStudyDesign",
     "Masking",
+    "MedicalDevice",
     "NarrativeContent",
     "NarrativeContentItem",
     "Objective",
@@ -119,6 +122,7 @@ __all__ = [
     "Organization",
     "PersonName",
     "Procedure",
+    "ProductOrganizationRole",
     "Quantity",
     "Range",
     "ReferenceIdentifier",
@@ -143,7 +147,6 @@ __all__ = [
     "StudyEpoch",
     "StudyIdentifier",
     "AdministrableProductIdentifier",
-    "ReferenceIdentifier",
     "MedicalDeviceIdentifier",
     "StudyDefinitionDocumentVersion",
     "StudyDefinitionDocument",
