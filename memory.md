@@ -1,6 +1,6 @@
 # usdm4 — project memory
 
-## 2026-08-03 — api __all__ gaps: CommentAnnotation + 2 more (uncommitted)
+## 2026-08-03 — api __all__ gaps: CommentAnnotation + 2 more; suite GREEN (Dave's run)
 
 - usdm4_excel's annotations_and_abbreviations parity fixture exposed:
   CommentAnnotation missing from api/__init__.py __all__, which seeds the
