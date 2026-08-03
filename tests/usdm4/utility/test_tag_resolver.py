@@ -76,7 +76,9 @@ class TestTranslateMethod:
 
         assert result == text
 
-    def test_translate_html_text_without_special_tags(self, tag_resolver_with_data_store):
+    def test_translate_html_text_without_special_tags(
+        self, tag_resolver_with_data_store
+    ):
         """Test translate with HTML text containing no special tags."""
         instance = {"id": "test-instance-1"}
         text = "<p>This is <b>bold</b> text</p>"
@@ -99,10 +101,12 @@ class TestTranslateMethod:
         """Test translate with usdm:ref tag."""
         instance = {"id": "test-instance-1"}
         text = 'This is a <usdm:ref id="ref-1" attribute="name"/> reference'
-        
+
         # Mock the data store to return a referenced instance
         referenced_instance = {"id": "ref-1", "name": "Test Name"}
-        tag_resolver_with_data_store._data_store.instance_by_id.return_value = referenced_instance
+        tag_resolver_with_data_store._data_store.instance_by_id.return_value = (
+            referenced_instance
+        )
 
         result = tag_resolver_with_data_store.translate(instance, text)
 
@@ -113,15 +117,15 @@ class TestTranslateMethod:
         """Test translate with usdm:tag."""
         instance = {"id": "test-instance-1", "dictionaryId": "dict-1"}
         text = 'This uses <usdm:tag name="parameter1"/> tag'
-        
+
         # Mock the data store to return a dictionary with parameter maps
         dictionary = {
             "id": "dict-1",
-            "parameterMaps": [
-                {"tag": "parameter1", "reference": "resolved value"}
-            ]
+            "parameterMaps": [{"tag": "parameter1", "reference": "resolved value"}],
         }
-        tag_resolver_with_data_store._data_store.instance_by_id.return_value = dictionary
+        tag_resolver_with_data_store._data_store.instance_by_id.return_value = (
+            dictionary
+        )
 
         result = tag_resolver_with_data_store.translate(instance, text)
 
@@ -132,7 +136,7 @@ class TestTranslateMethod:
         """Test translate with multiple special tags."""
         instance = {"id": "test-instance-1", "dictionaryId": "dict-1"}
         text = 'Text with <usdm:ref id="ref-1" attribute="value"/> and <usdm:ref id="ref-2" attribute="name"/>'
-        
+
         # Mock the data store to return different instances based on id
         def mock_instance_by_id(id_value):
             if id_value == "ref-1":
@@ -140,8 +144,10 @@ class TestTranslateMethod:
             elif id_value == "ref-2":
                 return {"id": "ref-2", "name": "Name2"}
             return None
-        
-        tag_resolver_with_data_store._data_store.instance_by_id.side_effect = mock_instance_by_id
+
+        tag_resolver_with_data_store._data_store.instance_by_id.side_effect = (
+            mock_instance_by_id
+        )
 
         result = tag_resolver_with_data_store.translate(instance, text)
 
@@ -156,23 +162,29 @@ class TestTranslateReferencesMethod:
         """Test _translate_references with nested special tags."""
         instance = {"id": "test-instance-1"}
         text = '<div><usdm:ref id="ref-1" attribute="content"/></div>'
-        
+
         # Mock to return text that itself contains a tag
         referenced_instance = {"id": "ref-1", "content": "Nested content"}
-        tag_resolver_with_data_store._data_store.instance_by_id.return_value = referenced_instance
+        tag_resolver_with_data_store._data_store.instance_by_id.return_value = (
+            referenced_instance
+        )
 
         result = tag_resolver_with_data_store._translate_references(instance, text)
 
         assert "Nested content" in result
         assert "usdm:ref" not in result
 
-    def test_translate_references_exception_handling(self, tag_resolver_with_data_store):
+    def test_translate_references_exception_handling(
+        self, tag_resolver_with_data_store
+    ):
         """Test _translate_references handles exceptions gracefully."""
         instance = {"id": "test-instance-1"}
         text = '<usdm:ref id="ref-1" attribute="value"/>'
-        
+
         # Mock to raise an exception
-        tag_resolver_with_data_store._data_store.instance_by_id.side_effect = Exception("Test exception")
+        tag_resolver_with_data_store._data_store.instance_by_id.side_effect = Exception(
+            "Test exception"
+        )
 
         # Should handle exception and continue
         result = tag_resolver_with_data_store._translate_references(instance, text)
@@ -189,39 +201,51 @@ class TestResolveUsdmRefMethod:
         instance = {"id": "test-instance-1"}
         soup = BeautifulSoup('<usdm:ref id="ref-1" attribute="name"/>', "html.parser")
         ref_tag = soup.find("usdm:ref")
-        
+
         # Mock the data store
         referenced_instance = {"id": "ref-1", "name": "Referenced Name"}
-        tag_resolver_with_data_store._data_store.instance_by_id.return_value = referenced_instance
+        tag_resolver_with_data_store._data_store.instance_by_id.return_value = (
+            referenced_instance
+        )
 
         result = tag_resolver_with_data_store._resolve_usdm_ref(instance, ref_tag)
 
         assert result == "Referenced Name"
-        tag_resolver_with_data_store._data_store.instance_by_id.assert_called_once_with("ref-1")
+        tag_resolver_with_data_store._data_store.instance_by_id.assert_called_once_with(
+            "ref-1"
+        )
 
-    def test_resolve_usdm_ref_with_numeric_attribute(self, tag_resolver_with_data_store):
+    def test_resolve_usdm_ref_with_numeric_attribute(
+        self, tag_resolver_with_data_store
+    ):
         """Test _resolve_usdm_ref with numeric attribute value."""
         instance = {"id": "test-instance-1"}
         soup = BeautifulSoup('<usdm:ref id="ref-1" attribute="count"/>', "html.parser")
         ref_tag = soup.find("usdm:ref")
-        
+
         # Mock the data store with numeric value
         referenced_instance = {"id": "ref-1", "count": 42}
-        tag_resolver_with_data_store._data_store.instance_by_id.return_value = referenced_instance
+        tag_resolver_with_data_store._data_store.instance_by_id.return_value = (
+            referenced_instance
+        )
 
         result = tag_resolver_with_data_store._resolve_usdm_ref(instance, ref_tag)
 
         assert result == "42"
 
-    def test_resolve_usdm_ref_with_boolean_attribute(self, tag_resolver_with_data_store):
+    def test_resolve_usdm_ref_with_boolean_attribute(
+        self, tag_resolver_with_data_store
+    ):
         """Test _resolve_usdm_ref with boolean attribute value."""
         instance = {"id": "test-instance-1"}
         soup = BeautifulSoup('<usdm:ref id="ref-1" attribute="active"/>', "html.parser")
         ref_tag = soup.find("usdm:ref")
-        
+
         # Mock the data store with boolean value
         referenced_instance = {"id": "ref-1", "active": True}
-        tag_resolver_with_data_store._data_store.instance_by_id.return_value = referenced_instance
+        tag_resolver_with_data_store._data_store.instance_by_id.return_value = (
+            referenced_instance
+        )
 
         result = tag_resolver_with_data_store._resolve_usdm_ref(instance, ref_tag)
 
@@ -230,26 +254,36 @@ class TestResolveUsdmRefMethod:
     def test_resolve_usdm_ref_with_none_attribute(self, tag_resolver_with_data_store):
         """Test _resolve_usdm_ref with None attribute value."""
         instance = {"id": "test-instance-1"}
-        soup = BeautifulSoup('<usdm:ref id="ref-1" attribute="optional"/>', "html.parser")
+        soup = BeautifulSoup(
+            '<usdm:ref id="ref-1" attribute="optional"/>', "html.parser"
+        )
         ref_tag = soup.find("usdm:ref")
-        
+
         # Mock the data store with None value
         referenced_instance = {"id": "ref-1", "optional": None}
-        tag_resolver_with_data_store._data_store.instance_by_id.return_value = referenced_instance
+        tag_resolver_with_data_store._data_store.instance_by_id.return_value = (
+            referenced_instance
+        )
 
         result = tag_resolver_with_data_store._resolve_usdm_ref(instance, ref_tag)
 
         assert result == "None"
 
-    def test_resolve_usdm_ref_missing_attribute_raises_error(self, tag_resolver_with_data_store):
+    def test_resolve_usdm_ref_missing_attribute_raises_error(
+        self, tag_resolver_with_data_store
+    ):
         """Test _resolve_usdm_ref raises error when attribute is missing."""
         instance = {"id": "test-instance-1"}
-        soup = BeautifulSoup('<usdm:ref id="ref-1" attribute="missing"/>', "html.parser")
+        soup = BeautifulSoup(
+            '<usdm:ref id="ref-1" attribute="missing"/>', "html.parser"
+        )
         ref_tag = soup.find("usdm:ref")
-        
+
         # Mock the data store without the requested attribute
         referenced_instance = {"id": "ref-1", "name": "Referenced Name"}
-        tag_resolver_with_data_store._data_store.instance_by_id.return_value = referenced_instance
+        tag_resolver_with_data_store._data_store.instance_by_id.return_value = (
+            referenced_instance
+        )
 
         with pytest.raises(KeyError):
             tag_resolver_with_data_store._resolve_usdm_ref(instance, ref_tag)
@@ -263,35 +297,39 @@ class TestResolveUsdmTagMethod:
         instance = {"id": "test-instance-1", "dictionaryId": "dict-1"}
         soup = BeautifulSoup('<usdm:tag name="param1"/>', "html.parser")
         tag_element = soup.find("usdm:tag")
-        
+
         # Mock the data store with a dictionary containing the parameter
         dictionary = {
             "id": "dict-1",
             "parameterMaps": [
                 {"tag": "param1", "reference": "param1 value"},
-                {"tag": "param2", "reference": "param2 value"}
-            ]
+                {"tag": "param2", "reference": "param2 value"},
+            ],
         }
-        tag_resolver_with_data_store._data_store.instance_by_id.return_value = dictionary
+        tag_resolver_with_data_store._data_store.instance_by_id.return_value = (
+            dictionary
+        )
 
         result = tag_resolver_with_data_store._resolve_usdm_tag(instance, tag_element)
 
         assert result == "param1 value"
 
-    def test_resolve_usdm_tag_not_found_in_parameter_maps(self, tag_resolver_with_data_store):
+    def test_resolve_usdm_tag_not_found_in_parameter_maps(
+        self, tag_resolver_with_data_store
+    ):
         """Test _resolve_usdm_tag when tag is not found in parameter maps."""
         instance = {"id": "test-instance-1", "dictionaryId": "dict-1"}
         soup = BeautifulSoup('<usdm:tag name="missing-param"/>', "html.parser")
         tag_element = soup.find("usdm:tag")
-        
+
         # Mock the data store with a dictionary without the requested parameter
         dictionary = {
             "id": "dict-1",
-            "parameterMaps": [
-                {"tag": "param1", "reference": "param1 value"}
-            ]
+            "parameterMaps": [{"tag": "param1", "reference": "param1 value"}],
         }
-        tag_resolver_with_data_store._data_store.instance_by_id.return_value = dictionary
+        tag_resolver_with_data_store._data_store.instance_by_id.return_value = (
+            dictionary
+        )
 
         result = tag_resolver_with_data_store._resolve_usdm_tag(instance, tag_element)
 
@@ -304,7 +342,7 @@ class TestResolveUsdmTagMethod:
         instance = {"id": "test-instance-1", "dictionaryId": "dict-1"}
         soup = BeautifulSoup('<usdm:tag name="param1"/>', "html.parser")
         tag_element = soup.find("usdm:tag")
-        
+
         # Mock the data store to return None (no dictionary found)
         tag_resolver_with_data_store._data_store.instance_by_id.return_value = None
 
@@ -319,13 +357,12 @@ class TestResolveUsdmTagMethod:
         instance = {"id": "test-instance-1", "dictionaryId": "dict-1"}
         soup = BeautifulSoup('<usdm:tag name="param1"/>', "html.parser")
         tag_element = soup.find("usdm:tag")
-        
+
         # Mock the data store with empty parameter maps
-        dictionary = {
-            "id": "dict-1",
-            "parameterMaps": []
-        }
-        tag_resolver_with_data_store._data_store.instance_by_id.return_value = dictionary
+        dictionary = {"id": "dict-1", "parameterMaps": []}
+        tag_resolver_with_data_store._data_store.instance_by_id.return_value = (
+            dictionary
+        )
 
         result = tag_resolver_with_data_store._resolve_usdm_tag(instance, tag_element)
 
@@ -337,7 +374,7 @@ class TestResolveUsdmTagMethod:
         instance = {"id": "test-instance-1", "dictionaryId": "dict-1"}
         soup = BeautifulSoup('<usdm:tag name="param3"/>', "html.parser")
         tag_element = soup.find("usdm:tag")
-        
+
         # Mock the data store with multiple parameters
         dictionary = {
             "id": "dict-1",
@@ -345,10 +382,12 @@ class TestResolveUsdmTagMethod:
                 {"tag": "param1", "reference": "value1"},
                 {"tag": "param2", "reference": "value2"},
                 {"tag": "param3", "reference": "value3"},
-                {"tag": "param4", "reference": "value4"}
-            ]
+                {"tag": "param4", "reference": "value4"},
+            ],
         }
-        tag_resolver_with_data_store._data_store.instance_by_id.return_value = dictionary
+        tag_resolver_with_data_store._data_store.instance_by_id.return_value = (
+            dictionary
+        )
 
         result = tag_resolver_with_data_store._resolve_usdm_tag(instance, tag_element)
 
@@ -368,7 +407,7 @@ class TestIntegrationScenarios:
             <p>Regular text with <b>bold</b> content</p>
         </div>
         """
-        
+
         # Mock the data store
         def mock_instance_by_id(id_value):
             if id_value == "title-1":
@@ -378,11 +417,13 @@ class TestIntegrationScenarios:
                     "id": "dict-1",
                     "parameterMaps": [
                         {"tag": "param1", "reference": "Parameter Value"}
-                    ]
+                    ],
                 }
             return None
-        
-        tag_resolver_with_data_store._data_store.instance_by_id.side_effect = mock_instance_by_id
+
+        tag_resolver_with_data_store._data_store.instance_by_id.side_effect = (
+            mock_instance_by_id
+        )
 
         result = tag_resolver_with_data_store.translate(instance, text)
 
@@ -413,10 +454,12 @@ class TestIntegrationScenarios:
         """Test translation with only usdm:ref tags."""
         instance = {"id": "test-1"}
         text = 'Study: <usdm:ref id="study-1" attribute="name"/> Version: <usdm:ref id="study-1" attribute="version"/>'
-        
+
         # Mock the data store
         referenced_instance = {"id": "study-1", "name": "Study Name", "version": "1.0"}
-        tag_resolver_with_data_store._data_store.instance_by_id.return_value = referenced_instance
+        tag_resolver_with_data_store._data_store.instance_by_id.return_value = (
+            referenced_instance
+        )
 
         result = tag_resolver_with_data_store.translate(instance, text)
 
@@ -428,16 +471,18 @@ class TestIntegrationScenarios:
         """Test translation with only usdm:tag tags."""
         instance = {"id": "test-1", "dictionaryId": "dict-1"}
         text = 'Value 1: <usdm:tag name="p1"/> Value 2: <usdm:tag name="p2"/>'
-        
+
         # Mock the data store
         dictionary = {
             "id": "dict-1",
             "parameterMaps": [
                 {"tag": "p1", "reference": "First Value"},
-                {"tag": "p2", "reference": "Second Value"}
-            ]
+                {"tag": "p2", "reference": "Second Value"},
+            ],
         }
-        tag_resolver_with_data_store._data_store.instance_by_id.return_value = dictionary
+        tag_resolver_with_data_store._data_store.instance_by_id.return_value = (
+            dictionary
+        )
 
         result = tag_resolver_with_data_store.translate(instance, text)
 

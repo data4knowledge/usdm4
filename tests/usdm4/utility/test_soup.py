@@ -99,11 +99,14 @@ class TestGetSoupFunction:
         assert isinstance(result, BeautifulSoup)
         assert result.find("p") is not None
 
-    @patch('usdm4.utility.soup.BeautifulSoup')
+    @patch("usdm4.utility.soup.BeautifulSoup")
     def test_get_soup_handles_exception(self, mock_beautiful_soup, errors):
         """Test get_soup handles exceptions from BeautifulSoup."""
         # Mock BeautifulSoup to raise an exception on first call, return empty soup on second
-        mock_beautiful_soup.side_effect = [Exception("Parsing error"), BeautifulSoup("", "html.parser")]
+        mock_beautiful_soup.side_effect = [
+            Exception("Parsing error"),
+            BeautifulSoup("", "html.parser"),
+        ]
 
         text = "<p>Test</p>"
         result = get_soup(text, errors)
