@@ -39,7 +39,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("Phase 0")
 
-        encoder._builder.cdisc_code.assert_called_with("C54721", "Phase 0 Trial")
+        encoder._builder.cdisc_code.assert_called_with("C54721", "Early Phase 1")
         assert result == mock_alias
 
     def test_phase_preclinical(self, encoder):
@@ -51,7 +51,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("PRE-CLINICAL")
 
-        encoder._builder.cdisc_code.assert_called_with("C54721", "Phase 0 Trial")
+        encoder._builder.cdisc_code.assert_called_with("C54721", "Early Phase 1")
         assert result == mock_alias
 
     def test_phase_1(self, encoder):
@@ -63,7 +63,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("Phase I")
 
-        encoder._builder.cdisc_code.assert_called_with("C15600", "Phase I Trial")
+        encoder._builder.cdisc_code.assert_called_with("C15600", "Phase 1")
         assert result == mock_alias
 
     def test_phase_1_numeric(self, encoder):
@@ -75,7 +75,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("1")
 
-        encoder._builder.cdisc_code.assert_called_with("C15600", "Phase I Trial")
+        encoder._builder.cdisc_code.assert_called_with("C15600", "Phase 1")
         assert result == mock_alias
 
     def test_phase_1_2(self, encoder):
@@ -87,7 +87,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("Phase 1-2")
 
-        encoder._builder.cdisc_code.assert_called_with("C15693", "Phase I/II Trial")
+        encoder._builder.cdisc_code.assert_called_with("C15693", "Phase 1/Phase 2")
         assert result == mock_alias
 
     def test_phase_1_slash_2(self, encoder):
@@ -99,7 +99,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("1/2")
 
-        encoder._builder.cdisc_code.assert_called_with("C15693", "Phase I/II Trial")
+        encoder._builder.cdisc_code.assert_called_with("C15693", "Phase 1/Phase 2")
         assert result == mock_alias
 
     def test_phase_1_2_3(self, encoder):
@@ -112,7 +112,7 @@ class TestEncoderPhase:
         result = encoder.phase("1/2/3")
 
         encoder._builder.cdisc_code.assert_called_with(
-            "C198366", "Phase I/II/III Trial"
+            "C198366", "Phase 1/Phase 2/Phase 3"
         )
         assert result == mock_alias
 
@@ -125,7 +125,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("1/3")
 
-        encoder._builder.cdisc_code.assert_called_with("C198367", "Phase I/III Trial")
+        encoder._builder.cdisc_code.assert_called_with("C198367", "Phase 1/Phase 3")
         assert result == mock_alias
 
     def test_phase_1a(self, encoder):
@@ -161,7 +161,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("Phase II")
 
-        encoder._builder.cdisc_code.assert_called_with("C15601", "Phase II Trial")
+        encoder._builder.cdisc_code.assert_called_with("C15601", "Phase 2")
         assert result == mock_alias
 
     def test_phase_2_3(self, encoder):
@@ -173,7 +173,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("2-3")
 
-        encoder._builder.cdisc_code.assert_called_with("C15694", "Phase II/III Trial")
+        encoder._builder.cdisc_code.assert_called_with("C15694", "Phase 2/Phase 3")
         assert result == mock_alias
 
     def test_phase_2a(self, encoder):
@@ -209,7 +209,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("Phase III")
 
-        encoder._builder.cdisc_code.assert_called_with("C15602", "Phase III Trial")
+        encoder._builder.cdisc_code.assert_called_with("C15602", "Phase 3")
         assert result == mock_alias
 
     def test_phase_3a(self, encoder):
@@ -245,7 +245,7 @@ class TestEncoderPhase:
 
         result = encoder.phase("4")
 
-        encoder._builder.cdisc_code.assert_called_with("C15603", "Phase IV Trial")
+        encoder._builder.cdisc_code.assert_called_with("C15603", "Phase 4")
         assert result == mock_alias
 
     def test_phase_5(self, encoder):
@@ -289,6 +289,90 @@ class TestEncoderPhase:
         )
         encoder._errors.warning.assert_called()
         assert result == mock_alias
+
+    @pytest.mark.parametrize(
+        "alias",
+        [
+            "1-2",
+            "1/2",
+            "I-II",
+            "I/II",
+            "1/2/3",
+            "1-2-3",
+            "I/II/III",
+            "I-II-III",
+            "1/3",
+            "1-3",
+            "I/III",
+            "I-III",
+            "2-3",
+            "2/3",
+            "II-III",
+            "II/III",
+            "2/3/4",
+            "2-3-4",
+            "II/III/IV",
+            "II-III-IV",
+            "3/4",
+            "3-4",
+            "III/IV",
+            "III-IV",
+        ],
+    )
+    def test_phase_compound_aliases_resolve(self, encoder, alias):
+        """Every compound-phase alias maps to a CDISC code (not the
+        Not-Applicable fallback). Guards against the slash/Roman
+        synonyms regressing — the FHIR round-trip lands a Roman-numeral
+        form like ``"I/II"`` back in the encoder, and the assembler
+        must keep round-tripping it to the correct CDISC concept.
+        """
+        mock_code = Mock(spec=Code)
+        mock_alias = Mock(spec=AliasCode)
+        encoder._builder.cdisc_code.return_value = mock_code
+        encoder._builder.alias_code.return_value = mock_alias
+
+        encoder.phase(alias)
+
+        # Must NOT have fallen through to the Not-Applicable default.
+        call = encoder._builder.cdisc_code.call_args
+        assert call is not None, f"phase({alias!r}) made no cdisc_code call"
+        assert call[0][0] != "C48660", (
+            f"phase({alias!r}) fell through to Not-Applicable — "
+            "expected a compound-phase concept ID."
+        )
+
+
+class TestEncoderPhaseTextForCode:
+    """Encoder.phase_text_for_code — classmethod for code-first round-trip."""
+
+    @pytest.mark.parametrize(
+        "code,expected_first_alias",
+        [
+            ("C54721", "0"),
+            ("C15600", "1"),
+            ("C15601", "2"),
+            ("C15602", "3"),
+            ("C15603", "4"),
+            ("C15693", "1-2"),
+            ("C15694", "2-3"),
+            ("C198366", "1/2/3"),
+            ("C198367", "1/3"),
+            ("C217024", "2/3/4"),
+            ("C217025", "3/4"),
+            ("C199990", "1A"),
+            ("C49689", "3B"),
+        ],
+    )
+    def test_known_codes_resolve(self, code, expected_first_alias):
+        """Returns the first alias from the matching PHASE_MAP tuple."""
+        assert Encoder.phase_text_for_code(code) == expected_first_alias
+
+    def test_unknown_code_returns_none(self):
+        """Unknown concept ID → None so the caller can fall back."""
+        assert Encoder.phase_text_for_code("C99999999") is None
+
+    def test_empty_code_returns_none(self):
+        assert Encoder.phase_text_for_code("") is None
 
 
 class TestEncoderDocumentStatus:
@@ -580,16 +664,14 @@ class TestEncoderAmendmentReason:
         assert result["other_reason"] == ""
 
     def test_amendment_reason_other(self, encoder):
-        """Test Other - note that 'Other' matches 'New Data Available (Other Than Safety Data)' first"""
+        """Test Other reason code with exact matching"""
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
         result = encoder.amendment_reason("Reason:Other")
 
-        # "Other" is contained in "New Data Available (Other Than Safety Data)" so it matches that
-        encoder._builder.cdisc_code.assert_called_with(
-            "C207607", "New Data Available (Other Than Safety Data)"
-        )
+        # With exact matching, "Other" matches the "Other" entry in REASON_MAP
+        encoder._builder.cdisc_code.assert_called_with("C17649", "Other")
         assert result["code"] == mock_code
         assert result["other_reason"] == ""
 
@@ -713,11 +795,12 @@ class TestEncoderToDate:
         assert result is None
 
     def test_to_date_invalid_format(self, encoder):
-        """Test invalid date format"""
+        """Test invalid date format — logs a warning (not a traceback-bearing exception)."""
         result = encoder.to_date("invalid date")
 
         assert result is None
-        encoder._errors.exception.assert_called()
+        encoder._errors.warning.assert_called()
+        encoder._errors.exception.assert_not_called()
 
     def test_to_date_partial_date(self, encoder):
         """Test partial date like year-month"""
@@ -726,6 +809,24 @@ class TestEncoderToDate:
         assert isinstance(result, datetime.datetime)
         assert result.year == 2024
         assert result.month == 1
+
+    def test_to_date_unexpected_exception_is_logged(self, encoder):
+        """Covers the fallback except Exception branch (lines 531-538) of to_date.
+
+        Dateutil's parser normally raises ValueError/TypeError/OverflowError —
+        those go down the warning branch. Any other exception (e.g. an
+        environment issue) should take the exception/traceback branch.
+        """
+        from unittest.mock import patch
+
+        with patch(
+            "src.usdm4.assembler.encoder.parser.parse",
+            side_effect=RuntimeError("boom"),
+        ):
+            result = encoder.to_date("2024-01-15")
+
+        assert result is None
+        encoder._errors.exception.assert_called()
 
 
 class TestEncoderISO8601Duration:
@@ -874,7 +975,7 @@ class TestEncoderEdgeCases:
 
         result = encoder.phase("Phase I Trial")
 
-        encoder._builder.cdisc_code.assert_called_with("C15600", "Phase I Trial")
+        encoder._builder.cdisc_code.assert_called_with("C15600", "Phase 1")
         assert result == mock_alias
 
     def test_phase_mixed_case(self, encoder):
@@ -886,7 +987,7 @@ class TestEncoderEdgeCases:
 
         result = encoder.phase("pHaSe Ii")
 
-        encoder._builder.cdisc_code.assert_called_with("C15601", "Phase II Trial")
+        encoder._builder.cdisc_code.assert_called_with("C15601", "Phase 2")
         assert result == mock_alias
 
     def test_document_status_with_spaces(self, encoder):
@@ -917,26 +1018,708 @@ class TestEncoderEdgeCases:
 
         result = encoder.amendment_reason(":")
 
-        # Empty string '' is in any string, so it matches the first reason in REASON_MAP
-        encoder._builder.cdisc_code.assert_called_with(
-            "C207612", "Regulatory Agency Request To Amend"
-        )
+        # With exact matching, empty string doesn't match any reason, so defaults to Other
+        encoder._builder.cdisc_code.assert_called_with("C17649", "Other")
+        encoder._errors.warning.assert_called()
         assert result["code"] == mock_code
         assert result["other_reason"] == ""
 
-    def test_iso8601_duration_zero_value(self, encoder):
-        """Test duration with zero value"""
-        assert encoder.iso8601_duration(0, "DAYS") == "P0D"
-        assert encoder.iso8601_duration(0, "HOURS") == "PT0H"
+    def test_iso8601_duration_zero_value_returns_zero_duration(self, encoder):
+        """Zero value should return ZERO_DURATION regardless of unit."""
+        assert encoder.iso8601_duration(0, "DAYS") == "PT0M"
+        assert encoder.iso8601_duration(0, "HOURS") == "PT0M"
+        assert encoder.iso8601_duration(0, "WEEKS") == "PT0M"
+        assert encoder.iso8601_duration(0, "M") == "PT0M"
+        assert encoder.iso8601_duration(0, "S") == "PT0M"
+
+    def test_iso8601_duration_zero_value_with_empty_unit(self, encoder):
+        """Zero value with empty unit should return ZERO_DURATION without warning.
+
+        Regression test: before the fix, value=0 with unit="" fell through
+        to the warning path because the empty unit didn't match any pattern.
+        """
+        result = encoder.iso8601_duration(0, "")
+
+        assert result == "PT0M"
+        encoder._errors.warning.assert_not_called()
+
+    def test_iso8601_duration_zero_value_with_whitespace_unit(self, encoder):
+        """Zero value with whitespace-only unit should return ZERO_DURATION without warning."""
+        result = encoder.iso8601_duration(0, "   ")
+
+        assert result == "PT0M"
+        encoder._errors.warning.assert_not_called()
 
     def test_iso8601_duration_large_value(self, encoder):
         """Test duration with large value"""
         assert encoder.iso8601_duration(1000, "DAYS") == "P1000D"
         assert encoder.iso8601_duration(999, "HOURS") == "PT999H"
 
-    def test_iso8601_duration_empty_unit(self, encoder):
-        """Test duration with empty unit string"""
+    def test_iso8601_duration_nonzero_value_empty_unit_warns(self, encoder):
+        """Non-zero value with empty unit should still warn and return ZERO_DURATION."""
         result = encoder.iso8601_duration(5, "")
 
         assert result == "PT0M"
         encoder._errors.warning.assert_called()
+
+
+class TestEncoderGeographicScope:
+    """Test geographic_scope encoding method."""
+
+    @pytest.fixture
+    def encoder(self):
+        builder = Mock(spec=Builder)
+        errors = Mock(spec=Errors)
+        return Encoder(builder, errors)
+
+    def test_geographic_scope_country(self, encoder):
+        """Test COUNTRY scope returns correct code."""
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.geographic_scope("COUNTRY")
+
+        encoder._builder.cdisc_code.assert_called_with("C25464", "Country")
+        assert result == mock_code
+
+    def test_geographic_scope_global(self, encoder):
+        """Test GLOBAL scope returns correct code."""
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.geographic_scope("GLOBAL")
+
+        encoder._builder.cdisc_code.assert_called_with("C68846", "Global")
+        assert result == mock_code
+
+    def test_geographic_scope_region(self, encoder):
+        """Test REGION scope returns correct code."""
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.geographic_scope("REGION")
+
+        encoder._builder.cdisc_code.assert_called_with("C41129", "Region")
+        assert result == mock_code
+
+    def test_geographic_scope_lowercase(self, encoder):
+        """Test lowercase scope input."""
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.geographic_scope("country")
+
+        encoder._builder.cdisc_code.assert_called_with("C25464", "Country")
+        assert result == mock_code
+
+    def test_geographic_scope_unknown_falls_back_to_global(self, encoder):
+        """Test unknown scope type falls back to global (covers lines 270-275)."""
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.geographic_scope("UNKNOWN_TYPE")
+
+        encoder._errors.warning.assert_called()
+        encoder._builder.cdisc_code.assert_called_with("C68846", "Global")
+        assert result == mock_code
+
+    def test_geographic_scope_empty_string_falls_back_to_global(self, encoder):
+        """Test empty string scope falls back to global (covers lines 270-275)."""
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.geographic_scope("")
+
+        encoder._errors.warning.assert_called()
+        encoder._builder.cdisc_code.assert_called_with("C68846", "Global")
+        assert result == mock_code
+
+
+class TestEncoderToBoolean:
+    """Test to_boolean encoding method."""
+
+    @pytest.fixture
+    def encoder(self):
+        builder = Mock(spec=Builder)
+        errors = Mock(spec=Errors)
+        return Encoder(builder, errors)
+
+    def test_to_boolean_true_string(self, encoder):
+        """Test 'true' returns True (covers line 322)."""
+        assert encoder.to_boolean("true") is True
+
+    def test_to_boolean_false_string(self, encoder):
+        """Test 'false' returns False."""
+        assert encoder.to_boolean("false") is False
+
+    def test_to_boolean_yes(self, encoder):
+        """Test 'yes' returns True."""
+        assert encoder.to_boolean("yes") is True
+
+    def test_to_boolean_no(self, encoder):
+        """Test 'no' returns False."""
+        assert encoder.to_boolean("no") is False
+
+    def test_to_boolean_one(self, encoder):
+        """Test '1' returns True."""
+        assert encoder.to_boolean("1") is True
+
+    def test_to_boolean_zero(self, encoder):
+        """Test '0' returns False."""
+        assert encoder.to_boolean("0") is False
+
+    def test_to_boolean_y(self, encoder):
+        """Test 'y' returns True."""
+        assert encoder.to_boolean("y") is True
+
+    def test_to_boolean_n(self, encoder):
+        """Test 'n' returns False."""
+        assert encoder.to_boolean("n") is False
+
+    def test_to_boolean_none_returns_false(self, encoder):
+        """Test None returns False."""
+        assert encoder.to_boolean(None) is False
+
+    def test_to_boolean_unknown_returns_false(self, encoder):
+        """Test unknown string returns False."""
+        assert encoder.to_boolean("maybe") is False
+
+    def test_to_boolean_uppercase(self, encoder):
+        """Test uppercase input is lowered."""
+        assert encoder.to_boolean("TRUE") is True
+        assert encoder.to_boolean("YES") is True
+
+
+class TestEncoderInterventionModel:
+    """Test intervention_model encoding method (CDISC CT C99076)."""
+
+    @pytest.fixture
+    def encoder(self):
+        builder = Mock(spec=Builder)
+        errors = Mock(spec=Errors)
+        return Encoder(builder, errors)
+
+    def test_intervention_model_parallel(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.intervention_model("Parallel")
+
+        encoder._builder.cdisc_code.assert_called_with("C82639", "Parallel Study")
+        encoder._errors.info.assert_called()
+        assert result == mock_code
+
+    def test_intervention_model_crossover(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.intervention_model("Crossover")
+
+        encoder._builder.cdisc_code.assert_called_with("C82637", "Crossover Study")
+        assert result == mock_code
+
+    def test_intervention_model_sequential(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.intervention_model("Sequential")
+
+        encoder._builder.cdisc_code.assert_called_with(
+            "C142568", "Group Sequential Design"
+        )
+        assert result == mock_code
+
+    def test_intervention_model_factorial(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.intervention_model("Factorial")
+
+        encoder._builder.cdisc_code.assert_called_with("C82638", "Factorial Study")
+        assert result == mock_code
+
+    def test_intervention_model_single_group(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.intervention_model("Single Group")
+
+        encoder._builder.cdisc_code.assert_called_with("C82640", "Single Group Study")
+        assert result == mock_code
+
+    def test_intervention_model_empty_defaults_to_parallel(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.intervention_model("")
+
+        encoder._builder.cdisc_code.assert_called_with("C82639", "Parallel Study")
+        encoder._errors.warning.assert_called()
+        assert result == mock_code
+
+    def test_intervention_model_unknown_defaults_to_parallel(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.intervention_model("NoSuchModel")
+
+        encoder._builder.cdisc_code.assert_called_with("C82639", "Parallel Study")
+        encoder._errors.warning.assert_called()
+        assert result == mock_code
+
+
+class TestEncoderArmType:
+    """Test arm_type encoding method (CDISC CT C174222)."""
+
+    @pytest.fixture
+    def encoder(self):
+        builder = Mock(spec=Builder)
+        errors = Mock(spec=Errors)
+        return Encoder(builder, errors)
+
+    def test_arm_type_experimental(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.arm_type("Experimental")
+
+        encoder._builder.cdisc_code.assert_called_with("C174266", "Investigational Arm")
+        assert result == mock_code
+
+    def test_arm_type_placebo_comparator(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.arm_type("Placebo Comparator")
+
+        encoder._builder.cdisc_code.assert_called_with("C174268", "Placebo Control Arm")
+        assert result == mock_code
+
+    def test_arm_type_active_comparator(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.arm_type("Active Comparator")
+
+        encoder._builder.cdisc_code.assert_called_with(
+            "C174267", "Active Comparator Arm"
+        )
+        assert result == mock_code
+
+    def test_arm_type_sham_comparator(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.arm_type("Sham Comparator")
+
+        encoder._builder.cdisc_code.assert_called_with("C174269", "Sham Comparator Arm")
+        assert result == mock_code
+
+    def test_arm_type_no_intervention(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.arm_type("No Intervention")
+
+        encoder._builder.cdisc_code.assert_called_with("C174270", "No Intervention Arm")
+        assert result == mock_code
+
+    def test_arm_type_empty_defaults_to_experimental(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.arm_type("")
+
+        encoder._builder.cdisc_code.assert_called_with("C174266", "Investigational Arm")
+        encoder._errors.warning.assert_called()
+        assert result == mock_code
+
+    def test_arm_type_unknown_defaults_to_experimental(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.arm_type("WeirdArm")
+
+        encoder._builder.cdisc_code.assert_called_with("C174266", "Investigational Arm")
+        encoder._errors.warning.assert_called()
+        assert result == mock_code
+
+
+class TestEncoderInterventionType:
+    """Test intervention_type encoding method (CDISC CT C99078)."""
+
+    @pytest.fixture
+    def encoder(self):
+        builder = Mock(spec=Builder)
+        errors = Mock(spec=Errors)
+        return Encoder(builder, errors)
+
+    def test_intervention_type_drug(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.intervention_type("Drug")
+
+        encoder._builder.cdisc_code.assert_called_with(
+            "C1909", "Pharmacologic Substance"
+        )
+        assert result == mock_code
+
+    def test_intervention_type_device(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.intervention_type("Device")
+
+        encoder._builder.cdisc_code.assert_called_with("C16830", "Medical Device")
+        assert result == mock_code
+
+    def test_intervention_type_behavioral(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.intervention_type("Behavioral")
+
+        encoder._builder.cdisc_code.assert_called_with(
+            "C15184", "Behavioral Intervention"
+        )
+        assert result == mock_code
+
+    def test_intervention_type_procedure(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.intervention_type("Procedure")
+
+        encoder._builder.cdisc_code.assert_called_with(
+            "C98769", "Physical Medical Procedure"
+        )
+        assert result == mock_code
+
+    def test_intervention_type_biological(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.intervention_type("Biological")
+
+        encoder._builder.cdisc_code.assert_called_with("C307", "Biological Agent")
+        assert result == mock_code
+
+    def test_intervention_type_empty_defaults_to_drug(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.intervention_type("")
+
+        encoder._builder.cdisc_code.assert_called_with(
+            "C1909", "Pharmacologic Substance"
+        )
+        encoder._errors.warning.assert_called()
+        assert result == mock_code
+
+    def test_intervention_type_unknown_defaults_to_drug(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.intervention_type("NoSuchThing")
+
+        encoder._builder.cdisc_code.assert_called_with(
+            "C1909", "Pharmacologic Substance"
+        )
+        encoder._errors.warning.assert_called()
+        assert result == mock_code
+
+
+class TestEncoderInterventionRole:
+    """Test intervention_role encoding method (CDISC CT C207417)."""
+
+    @pytest.fixture
+    def encoder(self):
+        builder = Mock(spec=Builder)
+        errors = Mock(spec=Errors)
+        return Encoder(builder, errors)
+
+    def test_intervention_role_investigational(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.intervention_role("Investigational Treatment")
+
+        encoder._builder.cdisc_code.assert_called_with("C41161", "Protocol Agent")
+        assert result == mock_code
+
+    def test_intervention_role_placebo_comparator(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.intervention_role("Placebo Comparator")
+
+        encoder._builder.cdisc_code.assert_called_with("C753", "Placebo")
+        assert result == mock_code
+
+    def test_intervention_role_background(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.intervention_role("Background Treatment")
+
+        encoder._builder.cdisc_code.assert_called_with(
+            "C165822", "Background Treatment"
+        )
+        assert result == mock_code
+
+    def test_intervention_role_empty_defaults_to_investigational(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.intervention_role("")
+
+        encoder._builder.cdisc_code.assert_called_with("C41161", "Protocol Agent")
+        encoder._errors.warning.assert_called()
+        assert result == mock_code
+
+    def test_intervention_role_unknown_defaults_to_investigational(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.intervention_role("Mystery Role")
+
+        encoder._builder.cdisc_code.assert_called_with("C41161", "Protocol Agent")
+        encoder._errors.warning.assert_called()
+        assert result == mock_code
+
+
+class TestEncoderAgeUnit:
+    """Test age_unit encoding method (CDISC CT C66781)."""
+
+    @pytest.fixture
+    def encoder(self):
+        builder = Mock(spec=Builder)
+        errors = Mock(spec=Errors)
+        return Encoder(builder, errors)
+
+    def test_age_unit_years(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.age_unit("Years")
+
+        encoder._builder.cdisc_code.assert_called_with("C29848", "Year")
+        assert result == mock_code
+
+    def test_age_unit_months(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.age_unit("Months")
+
+        encoder._builder.cdisc_code.assert_called_with("C29846", "Month")
+        assert result == mock_code
+
+    def test_age_unit_weeks(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.age_unit("Weeks")
+
+        encoder._builder.cdisc_code.assert_called_with("C29844", "Week")
+        assert result == mock_code
+
+    def test_age_unit_days(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.age_unit("Days")
+
+        encoder._builder.cdisc_code.assert_called_with("C25301", "Day")
+        assert result == mock_code
+
+    def test_age_unit_empty_defaults_to_years(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.age_unit("")
+
+        encoder._builder.cdisc_code.assert_called_with("C29848", "Year")
+        encoder._errors.warning.assert_called()
+        assert result == mock_code
+
+    def test_age_unit_unknown_defaults_to_years(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.age_unit("Millennia")
+
+        encoder._builder.cdisc_code.assert_called_with("C29848", "Year")
+        encoder._errors.warning.assert_called()
+        assert result == mock_code
+
+
+class TestEncoderSex:
+    """Test sex encoding method (CDISC CT C66732)."""
+
+    @pytest.fixture
+    def encoder(self):
+        builder = Mock(spec=Builder)
+        errors = Mock(spec=Errors)
+        return Encoder(builder, errors)
+
+    def test_sex_male(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.sex("Male")
+
+        encoder._builder.cdisc_code.assert_called_with("C20197", "Male")
+        assert result == mock_code
+
+    def test_sex_female(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.sex("Female")
+
+        encoder._builder.cdisc_code.assert_called_with("C16576", "Female")
+        assert result == mock_code
+
+    def test_sex_empty_defaults_to_female(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.sex("")
+
+        encoder._builder.cdisc_code.assert_called_with("C16576", "Female")
+        encoder._errors.warning.assert_called()
+        assert result == mock_code
+
+    def test_sex_unknown_defaults_to_female(self, encoder):
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.sex("Unknown")
+
+        encoder._builder.cdisc_code.assert_called_with("C16576", "Female")
+        encoder._errors.warning.assert_called()
+        assert result == mock_code
+
+
+class TestEncoderRoute:
+    """Test route encoding method (CDISC CT C66729, returns AliasCode)."""
+
+    @pytest.fixture
+    def encoder(self):
+        builder = Mock(spec=Builder)
+        errors = Mock(spec=Errors)
+        return Encoder(builder, errors)
+
+    def test_route_oral(self, encoder):
+        mock_code = Mock(spec=Code)
+        mock_alias = Mock(spec=AliasCode)
+        encoder._builder.cdisc_code.return_value = mock_code
+        encoder._builder.alias_code.return_value = mock_alias
+
+        result = encoder.route("Oral")
+
+        encoder._builder.cdisc_code.assert_called_with(
+            "C38288", "Oral Route of Administration"
+        )
+        encoder._builder.alias_code.assert_called_with(mock_code)
+        assert result == mock_alias
+
+    def test_route_intravenous(self, encoder):
+        mock_code = Mock(spec=Code)
+        mock_alias = Mock(spec=AliasCode)
+        encoder._builder.cdisc_code.return_value = mock_code
+        encoder._builder.alias_code.return_value = mock_alias
+
+        result = encoder.route("Intravenous")
+
+        encoder._builder.cdisc_code.assert_called_with(
+            "C38276", "Intravenous Route of Administration"
+        )
+        assert result == mock_alias
+
+    def test_route_empty_defaults_to_oral(self, encoder):
+        mock_code = Mock(spec=Code)
+        mock_alias = Mock(spec=AliasCode)
+        encoder._builder.cdisc_code.return_value = mock_code
+        encoder._builder.alias_code.return_value = mock_alias
+
+        result = encoder.route("")
+
+        encoder._builder.cdisc_code.assert_called_with(
+            "C38288", "Oral Route of Administration"
+        )
+        encoder._errors.warning.assert_called()
+        assert result == mock_alias
+
+    def test_route_unknown_defaults_to_oral(self, encoder):
+        mock_code = Mock(spec=Code)
+        mock_alias = Mock(spec=AliasCode)
+        encoder._builder.cdisc_code.return_value = mock_code
+        encoder._builder.alias_code.return_value = mock_alias
+
+        result = encoder.route("Telepathic")
+
+        encoder._builder.cdisc_code.assert_called_with(
+            "C38288", "Oral Route of Administration"
+        )
+        encoder._errors.warning.assert_called()
+        assert result == mock_alias
+
+
+class TestEncoderFrequency:
+    """Test frequency encoding method (CDISC CT C71113, returns AliasCode)."""
+
+    @pytest.fixture
+    def encoder(self):
+        builder = Mock(spec=Builder)
+        errors = Mock(spec=Errors)
+        return Encoder(builder, errors)
+
+    def test_frequency_once_daily(self, encoder):
+        mock_code = Mock(spec=Code)
+        mock_alias = Mock(spec=AliasCode)
+        encoder._builder.cdisc_code.return_value = mock_code
+        encoder._builder.alias_code.return_value = mock_alias
+
+        result = encoder.frequency("Once Daily")
+
+        encoder._builder.cdisc_code.assert_called_with("C25473", "Daily")
+        encoder._builder.alias_code.assert_called_with(mock_code)
+        assert result == mock_alias
+
+    def test_frequency_twice_daily(self, encoder):
+        mock_code = Mock(spec=Code)
+        mock_alias = Mock(spec=AliasCode)
+        encoder._builder.cdisc_code.return_value = mock_code
+        encoder._builder.alias_code.return_value = mock_alias
+
+        result = encoder.frequency("BID")
+
+        encoder._builder.cdisc_code.assert_called_with("C64496", "Twice Daily")
+        assert result == mock_alias
+
+    def test_frequency_empty_defaults_to_daily(self, encoder):
+        mock_code = Mock(spec=Code)
+        mock_alias = Mock(spec=AliasCode)
+        encoder._builder.cdisc_code.return_value = mock_code
+        encoder._builder.alias_code.return_value = mock_alias
+
+        result = encoder.frequency("")
+
+        encoder._builder.cdisc_code.assert_called_with("C25473", "Daily")
+        encoder._errors.warning.assert_called()
+        assert result == mock_alias
+
+    def test_frequency_unknown_defaults_to_daily(self, encoder):
+        mock_code = Mock(spec=Code)
+        mock_alias = Mock(spec=AliasCode)
+        encoder._builder.cdisc_code.return_value = mock_code
+        encoder._builder.alias_code.return_value = mock_alias
+
+        result = encoder.frequency("Sporadically")
+
+        encoder._builder.cdisc_code.assert_called_with("C25473", "Daily")
+        encoder._errors.warning.assert_called()
+        assert result == mock_alias

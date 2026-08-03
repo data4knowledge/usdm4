@@ -23,10 +23,10 @@
             "type": {
               "id": "Code_7",
               "extensionAttributes": [],
-              "code": "C132352",
+              "code": "C71476",
               "codeSystem": "http://www.cdisc.org",
-              "codeSystemVersion": "2024-09-27",
-              "decode": "Protocol Approval by Sponsor Date",
+              "codeSystemVersion": "2026-03-27",
+              "decode": "Approval Date",
               "instanceType": "Code"
             },
             "dateValue": "2006-06-01",
@@ -39,7 +39,7 @@
                   "extensionAttributes": [],
                   "code": "C68846",
                   "codeSystem": "http://www.cdisc.org",
-                  "codeSystemVersion": "2024-09-27",
+                  "codeSystemVersion": "2026-03-27",
                   "decode": "Global",
                   "instanceType": "Code"
                 },
@@ -73,7 +73,7 @@
               "extensionAttributes": [],
               "code": "C207616",
               "codeSystem": "http://www.cdisc.org",
-              "codeSystemVersion": "2024-09-27",
+              "codeSystemVersion": "2026-03-27",
               "decode": "Official Study Title",
               "instanceType": "Code"
             },
@@ -95,8 +95,8 @@
               "extensionAttributes": [],
               "code": "C54149",
               "codeSystem": "http://www.cdisc.org",
-              "codeSystemVersion": "2025-03-28",
-              "decode": "Pharmaceutical Company",
+              "codeSystemVersion": "2026-03-27",
+              "decode": "Drug Company",
               "instanceType": "Code"
             },
             "identifierScheme": "To be provided",
@@ -140,8 +140,8 @@
           "extensionAttributes": [],
           "code": "C70817",
           "codeSystem": "http://www.cdisc.org",
-          "codeSystemVersion": "2025-03-28",
-          "decode": "Protocol",
+          "codeSystemVersion": "2026-03-27",
+          "decode": "Study Protocol",
           "instanceType": "Code"
         },
         "templateName": "Sponsor",
@@ -155,8 +155,8 @@
               "extensionAttributes": [],
               "code": "C25425",
               "codeSystem": "http://www.cdisc.org",
-              "codeSystemVersion": "2024-09-27",
-              "decode": "Approved",
+              "codeSystemVersion": "2026-03-27",
+              "decode": "Approval",
               "instanceType": "Code"
             },
             "dateValues": [
@@ -169,10 +169,10 @@
                 "type": {
                   "id": "Code_7",
                   "extensionAttributes": [],
-                  "code": "C132352",
+                  "code": "C71476",
                   "codeSystem": "http://www.cdisc.org",
-                  "codeSystemVersion": "2024-09-27",
-                  "decode": "Protocol Approval by Sponsor Date",
+                  "codeSystemVersion": "2026-03-27",
+                  "decode": "Approval Date",
                   "instanceType": "Code"
                 },
                 "dateValue": "2006-06-01",
@@ -185,7 +185,7 @@
                       "extensionAttributes": [],
                       "code": "C68846",
                       "codeSystem": "http://www.cdisc.org",
-                      "codeSystemVersion": "2024-09-27",
+                      "codeSystemVersion": "2026-03-27",
                       "decode": "Global",
                       "instanceType": "Code"
                     },
@@ -210,5 +210,5 @@
   },
   "usdmVersion": "4.0.0",
   "systemName": "Python USDM4 Package",
-  "systemVersion": "0.14.0"
+  "systemVersion": "0.29.0"
 }

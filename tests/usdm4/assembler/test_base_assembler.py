@@ -63,3 +63,17 @@ class TestBaseAssemblerInitialization:
         """Test that the MODULE constant is set correctly."""
         assert hasattr(BaseAssembler, "MODULE")
         assert BaseAssembler.MODULE == "usdm4.assembler.base_assembler.BaseAssembler"
+
+
+class TestBaseAssemblerExecute:
+    """Test BaseAssembler execute method."""
+
+    def test_execute_returns_none(self, base_assembler):
+        """Test that execute on base class does nothing (covers line 13)."""
+        result = base_assembler.execute({})
+        assert result is None
+
+    def test_execute_with_any_data(self, base_assembler):
+        """Test that execute accepts any data without error."""
+        base_assembler.execute({"key": "value"})
+        base_assembler.execute(None)

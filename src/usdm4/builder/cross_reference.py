@@ -18,8 +18,8 @@ class CrossReference:
         self._by_name = {}
         self._by_id = {}
 
-    def add(self, object: ApiBaseModelWithId, name: str) -> None:
-        name = object.name if hasattr(object, "name") else name
+    def add(self, object: ApiBaseModelWithId, name: str = None) -> None:
+        name = name if name else getattr(object, "name", None)
         if name:
             self._add_to_collection(name, self._by_name, object)
         self._add_to_collection(object.id, self._by_id, object)
@@ -70,7 +70,7 @@ class CrossReference:
                         )
                 if instance and attribute:
                     if not self.get_by_id(instance.__class__, instance.id):
-                        self.add(instance.id, instance)
+                        self.add(instance)
                     return instance, attribute
                 else:
                     raise PathError(

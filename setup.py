@@ -16,9 +16,15 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=[
-        "usdm3==0.12.1",
-        "simple_error_log>=0.6.0",
+        "simple_error_log>=0.8.0",
         "python-dateutil==2.9.0.post0",
+        "cdisc-rules-engine>=0.16.0",
+        "platformdirs>=3.0",
+        "jsonschema>=4.0",
+        "lxml>=4.9",
+        "pyyaml>=6.0",
+        "requests>=2.31",
+        "pydantic>=2.0",
     ],
     packages=setuptools.find_packages(where="src"),
     package_dir={"": "src"},
@@ -28,9 +34,14 @@ setuptools.setup(
             "ct/cdisc/library_cache/library_cache_usdm.yaml",
             "ct/cdisc/config/ct_config.yaml",
             "ct/cdisc/missing/missing_ct.yaml",
+            "ct/cdisc/missing/m11_codelists.yaml",
             "ct/iso/iso3166/iso3166.json",
             "bc/cdisc/library_cache/library_cache.yaml",
             "rules/library/schema/usdm_v4-0-0.json",
+            # USDM-XHTML 1.0 schema (bundled from the CORE cache) —
+            # required by rules/xhtml_validation.py for DDF00187 / DDF00247.
+            "rules/library/schema/xml/cdisc-usdm-xhtml-1.0/*.xsd",
+            "rules/library/schema/xml/xhtml-1.1/*.xsd",
         ]
     },
     tests_require=["pytest", "pytest-cov", "pytest-mock", "python-dotenv"],
@@ -38,7 +49,7 @@ setuptools.setup(
         "Intended Audience :: Developers",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.12",
         "Operating System :: OS Independent",
     ],
 )

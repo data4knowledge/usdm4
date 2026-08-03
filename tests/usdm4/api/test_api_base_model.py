@@ -13,15 +13,15 @@ from src.usdm4.api.api_base_model import (
     ApiBaseModelWithIdNameLabelAndDesc,
     ApiBaseModelWithIdNameAndDesc,
 )
-from src.usdm4.api.extension import ExtensionAttribute
+from src.usdm4.api.extension import Extension, BaseDataType, ExtensionAttribute
 
 
-class TestEnum(enum.Enum):
+class SampleEnum(enum.Enum):
     VALUE1 = "value1"
     VALUE2 = "value2"
 
 
-class TestObject:
+class SampleObject:
     def __init__(self, name, value):
         self.name = name
         self.value = value
@@ -30,7 +30,7 @@ class TestObject:
 class TestApiBaseModel:
     def testserialize_as_json_enum(self):
         """Test serialize_as_json with enum."""
-        test_enum = TestEnum.VALUE1
+        test_enum = SampleEnum.VALUE1
         result = serialize_as_json(test_enum)
         assert result == "value1"
 
@@ -48,7 +48,7 @@ class TestApiBaseModel:
 
     def testserialize_as_json_object(self):
         """Test serialize_as_json with regular object."""
-        test_obj = TestObject("test", 42)
+        test_obj = SampleObject("test", 42)
         result = serialize_as_json(test_obj)
         expected = {"name": "test", "value": 42}
         assert result == expected
@@ -279,3 +279,22 @@ class TestApiBaseModelWithIdNameAndLabel:
     def test_label_name_label(self):
         item = ApiBaseModelWithIdNameAndLabel(id="2", name="xxx", label="123")
         assert item.label_name() == "123"
+
+
+class TestExtensionToJson:
+    def test_extension_to_json(self):
+        """Test Extension.to_json() serializes correctly."""
+        ext = Extension(id="ext1", url="http://example.com")
+        result = ext.to_json()
+        assert isinstance(result, str)
+        parsed = json.loads(result)
+        assert parsed["id"] == "ext1"
+        assert parsed["url"] == "http://example.com"
+
+    def test_base_data_type_to_json(self):
+        """Test BaseDataType.to_json() serializes correctly."""
+        bdt = BaseDataType(id="bdt1")
+        result = bdt.to_json()
+        assert isinstance(result, str)
+        parsed = json.loads(result)
+        assert parsed["id"] == "bdt1"

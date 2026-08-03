@@ -1,5 +1,5 @@
-from usdm3.rules.rules_validation import RulesValidationEngine
-from usdm3.base.singleton import Singleton
+from usdm4.rules.engine import RulesValidationEngine
+from usdm4.base.singleton import Singleton
 
 
 class RulesValidation4(metaclass=Singleton):

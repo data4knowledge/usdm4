@@ -1,0 +1,4928 @@
+corpus_root: /Users/daveih/Documents/github/protocol_corpus
+output_dir: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2
+pattern: protocols/*/results/usdm.json
+python: /Users/daveih/Documents/github/usdm4/.venv/bin/python3
+cache_dir: null
+total_inputs: 234
+files_processed: 234
+duration_s: 2788.06
+tallies:
+  core_ok: 234
+  d4k_ok: 234
+  compare_ok: 234
+  with_errors: 0
+rows:
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0001/results/usdm.json
+  stem: CORP0001
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0001_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0001_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0001_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0001_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.8
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.66
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.1
+      yaml_exists: true
+  errors: []
+  duration_s: 7.56
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0002/results/usdm.json
+  stem: CORP0002
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0002_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0002_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0002_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0002_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 8.88
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 10.44
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0003/results/usdm.json
+  stem: CORP0003
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0003_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0003_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0003_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0003_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 7.75
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 9.27
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0004/results/usdm.json
+  stem: CORP0004
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0004_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0004_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0004_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0004_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 10.87
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 12.41
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0005/results/usdm.json
+  stem: CORP0005
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0005_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0005_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0005_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0005_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.76
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 8.27
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0006/results/usdm.json
+  stem: CORP0006
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0006_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0006_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0006_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0006_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 4.57
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.09
+      yaml_exists: true
+  errors: []
+  duration_s: 6.05
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0007/results/usdm.json
+  stem: CORP0007
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0007_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0007_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0007_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0007_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 9.61
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 11.13
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0008/results/usdm.json
+  stem: CORP0008
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0008_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0008_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0008_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0008_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 3.54
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.09
+      yaml_exists: true
+  errors: []
+  duration_s: 5.02
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0009/results/usdm.json
+  stem: CORP0009
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0009_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0009_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0009_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0009_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 3.38
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.35
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.09
+      yaml_exists: true
+  errors: []
+  duration_s: 4.82
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0010/results/usdm.json
+  stem: CORP0010
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0010_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0010_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0010_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0010_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 3.43
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.37
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.1
+      yaml_exists: true
+  errors: []
+  duration_s: 4.9
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0011/results/usdm.json
+  stem: CORP0011
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0011_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0011_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0011_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0011_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.94
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.61
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 8.68
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0012/results/usdm.json
+  stem: CORP0012
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0012_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0012_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0012_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0012_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 4.88
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.42
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.1
+      yaml_exists: true
+  errors: []
+  duration_s: 6.4
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0013/results/usdm.json
+  stem: CORP0013
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0013_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0013_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0013_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0013_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.96
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.46
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0014/results/usdm.json
+  stem: CORP0014
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0014_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0014_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0014_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0014_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.79
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.47
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 7.38
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0015/results/usdm.json
+  stem: CORP0015
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0015_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0015_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0015_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0015_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.9
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.46
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.49
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0016/results/usdm.json
+  stem: CORP0016
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0016_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0016_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0016_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0016_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.84
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 7.34
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0017/results/usdm.json
+  stem: CORP0017
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0017_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0017_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0017_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0017_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 7.26
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 8.78
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0018/results/usdm.json
+  stem: CORP0018
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0018_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0018_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0018_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0018_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 9.99
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.49
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.17
+      yaml_exists: true
+  errors: []
+  duration_s: 11.64
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0019/results/usdm.json
+  stem: CORP0019
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0019_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0019_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0019_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/CORP0019_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 7.7
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 9.23
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT01847274/results/usdm.json
+  stem: NCT01847274
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT01847274_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT01847274_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT01847274_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT01847274_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 7.98
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 9.5
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT02107703/results/usdm.json
+  stem: NCT02107703
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT02107703_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT02107703_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT02107703_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT02107703_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.17
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.37
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 6.66
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT02291289/results/usdm.json
+  stem: NCT02291289
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT02291289_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT02291289_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT02291289_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT02291289_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 22.02
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.56
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.21
+      yaml_exists: true
+  errors: []
+  duration_s: 23.79
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT03283098/results/usdm.json
+  stem: NCT03283098
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03283098_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03283098_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03283098_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03283098_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.62
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.42
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 8.19
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT03402841/results/usdm.json
+  stem: NCT03402841
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03402841_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03402841_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03402841_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03402841_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 4.85
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 6.38
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT03421379/results/usdm.json
+  stem: NCT03421379
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03421379_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03421379_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03421379_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03421379_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.12
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.44
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.11
+      yaml_exists: true
+  errors: []
+  duration_s: 6.67
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT03523273/results/usdm.json
+  stem: NCT03523273
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03523273_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03523273_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03523273_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03523273_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 2.86
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.37
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.08
+      yaml_exists: true
+  errors: []
+  duration_s: 4.31
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT03548935/results/usdm.json
+  stem: NCT03548935
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03548935_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03548935_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03548935_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03548935_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 15.19
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.43
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 16.78
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT03548987/results/usdm.json
+  stem: NCT03548987
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03548987_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03548987_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03548987_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03548987_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.7
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.23
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT03637764/results/usdm.json
+  stem: NCT03637764
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03637764_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03637764_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03637764_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03637764_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 7.97
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 9.53
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT03693430/results/usdm.json
+  stem: NCT03693430
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03693430_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03693430_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03693430_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03693430_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.29
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.42
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 6.87
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT03817853/results/usdm.json
+  stem: NCT03817853
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03817853_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03817853_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03817853_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT03817853_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.94
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.45
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04003896/results/usdm.json
+  stem: NCT04003896
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04003896_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04003896_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04003896_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04003896_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.31
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 6.81
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04004611/results/usdm.json
+  stem: NCT04004611
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04004611_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04004611_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04004611_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04004611_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.58
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.11
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04004988/results/usdm.json
+  stem: NCT04004988
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04004988_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04004988_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04004988_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04004988_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.59
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.11
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04050553/results/usdm.json
+  stem: NCT04050553
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04050553_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04050553_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04050553_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04050553_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.22
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.74
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04081337/results/usdm.json
+  stem: NCT04081337
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04081337_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04081337_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04081337_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04081337_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.25
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 7.79
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04145349/results/usdm.json
+  stem: NCT04145349
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04145349_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04145349_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04145349_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04145349_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.66
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.37
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 7.16
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04145700/results/usdm.json
+  stem: NCT04145700
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04145700_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04145700_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04145700_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04145700_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 38.74
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.49
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.17
+      yaml_exists: true
+  errors: []
+  duration_s: 40.4
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04148937/results/usdm.json
+  stem: NCT04148937
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04148937_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04148937_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04148937_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04148937_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.88
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.42
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04157751/results/usdm.json
+  stem: NCT04157751
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04157751_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04157751_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04157751_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04157751_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.75
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.29
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04158752/results/usdm.json
+  stem: NCT04158752
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04158752_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04158752_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04158752_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04158752_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 3.42
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.34
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.09
+      yaml_exists: true
+  errors: []
+  duration_s: 4.85
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04172987/results/usdm.json
+  stem: NCT04172987
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04172987_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04172987_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04172987_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04172987_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 20.02
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.17
+      yaml_exists: true
+  errors: []
+  duration_s: 21.58
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04178733/results/usdm.json
+  stem: NCT04178733
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04178733_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04178733_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04178733_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04178733_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.43
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 7.97
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04184622/results/usdm.json
+  stem: NCT04184622
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04184622_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04184622_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04184622_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04184622_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 43.27
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.51
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.18
+      yaml_exists: true
+  errors: []
+  duration_s: 44.96
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04194944/results/usdm.json
+  stem: NCT04194944
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04194944_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04194944_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04194944_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04194944_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 11.48
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.47
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 13.09
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04211337/results/usdm.json
+  stem: NCT04211337
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04211337_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04211337_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04211337_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04211337_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 9.66
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.5
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 11.3
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04230122/results/usdm.json
+  stem: NCT04230122
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04230122_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04230122_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04230122_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04230122_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.58
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 8.15
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04232553/results/usdm.json
+  stem: NCT04232553
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04232553_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04232553_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04232553_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04232553_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 10.52
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.46
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 12.13
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04235959/results/usdm.json
+  stem: NCT04235959
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04235959_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04235959_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04235959_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04235959_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.24
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.77
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04238819/results/usdm.json
+  stem: NCT04238819
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04238819_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04238819_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04238819_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04238819_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.27
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 6.83
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04243096/results/usdm.json
+  stem: NCT04243096
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04243096_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04243096_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04243096_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04243096_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.97
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 8.52
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04250337/results/usdm.json
+  stem: NCT04250337
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04250337_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04250337_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04250337_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04250337_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.95
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.46
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04250350/results/usdm.json
+  stem: NCT04250350
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04250350_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04250350_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04250350_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04250350_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.87
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 8.41
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04259346/results/usdm.json
+  stem: NCT04259346
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04259346_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04259346_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04259346_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04259346_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.31
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 7.87
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04270370/results/usdm.json
+  stem: NCT04270370
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04270370_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04270370_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04270370_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04270370_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 9.5
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 11.05
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04276207/results/usdm.json
+  stem: NCT04276207
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04276207_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04276207_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04276207_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04276207_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.08
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.6
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04280081/results/usdm.json
+  stem: NCT04280081
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04280081_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04280081_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04280081_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04280081_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.7
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.24
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04285229/results/usdm.json
+  stem: NCT04285229
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04285229_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04285229_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04285229_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04285229_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 37.5
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.47
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.2
+      yaml_exists: true
+  errors: []
+  duration_s: 39.17
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04294147/results/usdm.json
+  stem: NCT04294147
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04294147_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04294147_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04294147_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04294147_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.9
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.43
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04298983/results/usdm.json
+  stem: NCT04298983
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04298983_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04298983_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04298983_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04298983_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.9
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.36
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 7.38
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04305236/results/usdm.json
+  stem: NCT04305236
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04305236_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04305236_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04305236_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04305236_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 4.89
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.37
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.11
+      yaml_exists: true
+  errors: []
+  duration_s: 6.37
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04311411/results/usdm.json
+  stem: NCT04311411
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04311411_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04311411_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04311411_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04311411_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 10.03
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.44
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 11.61
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04311424/results/usdm.json
+  stem: NCT04311424
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04311424_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04311424_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04311424_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04311424_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.68
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.21
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04320615/results/usdm.json
+  stem: NCT04320615
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04320615_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04320615_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04320615_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04320615_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 7.52
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.11
+      yaml_exists: true
+  errors: []
+  duration_s: 9.03
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04342897/results/usdm.json
+  stem: NCT04342897
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04342897_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04342897_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04342897_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04342897_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.3
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 6.82
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04386057/results/usdm.json
+  stem: NCT04386057
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04386057_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04386057_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04386057_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04386057_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.74
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 8.29
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04392154/results/usdm.json
+  stem: NCT04392154
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04392154_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04392154_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04392154_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04392154_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.96
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 8.48
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04407234/results/usdm.json
+  stem: NCT04407234
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04407234_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04407234_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04407234_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04407234_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.75
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 8.31
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04408924/results/usdm.json
+  stem: NCT04408924
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04408924_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04408924_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04408924_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04408924_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.74
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 7.27
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04411628/results/usdm.json
+  stem: NCT04411628
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04411628_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04411628_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04411628_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04411628_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 8.04
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 9.58
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04417361/results/usdm.json
+  stem: NCT04417361
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04417361_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04417361_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04417361_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04417361_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 4.12
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.36
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.1
+      yaml_exists: true
+  errors: []
+  duration_s: 5.59
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04421027/results/usdm.json
+  stem: NCT04421027
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04421027_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04421027_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04421027_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04421027_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 14.74
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.46
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 16.34
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04427501/results/usdm.json
+  stem: NCT04427501
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04427501_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04427501_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04427501_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04427501_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.76
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 8.31
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04433585/results/usdm.json
+  stem: NCT04433585
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04433585_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04433585_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04433585_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04433585_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.35
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.5
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.98
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04437511/results/usdm.json
+  stem: NCT04437511
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04437511_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04437511_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04437511_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04437511_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 17.28
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.48
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 18.91
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04441931/results/usdm.json
+  stem: NCT04441931
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04441931_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04441931_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04441931_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04441931_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.22
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 6.74
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04450394/results/usdm.json
+  stem: NCT04450394
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04450394_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04450394_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04450394_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04450394_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 10.94
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 12.5
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04450407/results/usdm.json
+  stem: NCT04450407
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04450407_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04450407_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04450407_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04450407_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 16.73
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.45
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.17
+      yaml_exists: true
+  errors: []
+  duration_s: 18.35
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04456686/results/usdm.json
+  stem: NCT04456686
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04456686_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04456686_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04456686_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04456686_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 4.98
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.11
+      yaml_exists: true
+  errors: []
+  duration_s: 6.47
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04476108/results/usdm.json
+  stem: NCT04476108
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04476108_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04476108_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04476108_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04476108_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.79
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.43
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 7.33
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04493502/results/usdm.json
+  stem: NCT04493502
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04493502_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04493502_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04493502_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04493502_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 36.44
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.5
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 38.1
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04495478/results/usdm.json
+  stem: NCT04495478
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04495478_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04495478_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04495478_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04495478_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.77
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.29
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04497987/results/usdm.json
+  stem: NCT04497987
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04497987_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04497987_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04497987_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04497987_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 4.81
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.37
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 6.31
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04498390/results/usdm.json
+  stem: NCT04498390
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04498390_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04498390_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04498390_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04498390_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.39
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 6.94
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04498910/results/usdm.json
+  stem: NCT04498910
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04498910_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04498910_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04498910_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04498910_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.67
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 8.21
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04509674/results/usdm.json
+  stem: NCT04509674
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04509674_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04509674_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04509674_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04509674_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.02
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 6.52
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04515576/results/usdm.json
+  stem: NCT04515576
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04515576_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04515576_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04515576_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04515576_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 7.63
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.45
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.17
+      yaml_exists: true
+  errors: []
+  duration_s: 9.25
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04517253/results/usdm.json
+  stem: NCT04517253
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04517253_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04517253_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04517253_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04517253_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 2.6
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.33
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.08
+      yaml_exists: true
+  errors: []
+  duration_s: 4.02
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04518410/results/usdm.json
+  stem: NCT04518410
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04518410_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04518410_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04518410_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04518410_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 18.09
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.51
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.36
+      yaml_exists: true
+  errors: []
+  duration_s: 19.96
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04527380/results/usdm.json
+  stem: NCT04527380
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04527380_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04527380_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04527380_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04527380_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 30.36
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.52
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.18
+      yaml_exists: true
+  errors: []
+  duration_s: 32.06
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04529096/results/usdm.json
+  stem: NCT04529096
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04529096_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04529096_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04529096_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04529096_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.55
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.11
+      yaml_exists: true
+  errors: []
+  duration_s: 8.04
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04534283/results/usdm.json
+  stem: NCT04534283
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04534283_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04534283_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04534283_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04534283_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 4.5
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.11
+      yaml_exists: true
+  errors: []
+  duration_s: 6.0
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04537910/results/usdm.json
+  stem: NCT04537910
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04537910_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04537910_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04537910_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04537910_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.99
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.51
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04537923/results/usdm.json
+  stem: NCT04537923
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04537923_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04537923_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04537923_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04537923_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 17.47
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 19.05
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04541628/results/usdm.json
+  stem: NCT04541628
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04541628_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04541628_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04541628_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04541628_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.76
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 8.28
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04548219/results/usdm.json
+  stem: NCT04548219
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04548219_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04548219_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04548219_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04548219_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.97
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 7.52
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04557384/results/usdm.json
+  stem: NCT04557384
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04557384_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04557384_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04557384_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04557384_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.7
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.44
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.26
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04559568/results/usdm.json
+  stem: NCT04559568
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04559568_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04559568_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04559568_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04559568_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.85
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.36
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04573309/results/usdm.json
+  stem: NCT04573309
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04573309_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04573309_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04573309_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04573309_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 9.44
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.17
+      yaml_exists: true
+  errors: []
+  duration_s: 11.01
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04585776/results/usdm.json
+  stem: NCT04585776
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04585776_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04585776_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04585776_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04585776_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 24.18
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 25.75
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04586920/results/usdm.json
+  stem: NCT04586920
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04586920_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04586920_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04586920_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04586920_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.33
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.53
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.18
+      yaml_exists: true
+  errors: []
+  duration_s: 8.04
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04591626/results/usdm.json
+  stem: NCT04591626
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04591626_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04591626_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04591626_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04591626_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 30.67
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.42
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.19
+      yaml_exists: true
+  errors: []
+  duration_s: 32.29
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04605991/results/usdm.json
+  stem: NCT04605991
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04605991_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04605991_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04605991_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04605991_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.4
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.91
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04607733/results/usdm.json
+  stem: NCT04607733
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04607733_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04607733_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04607733_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04607733_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.2
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.74
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04611789/results/usdm.json
+  stem: NCT04611789
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04611789_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04611789_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04611789_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04611789_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.21
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 6.73
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04613518/results/usdm.json
+  stem: NCT04613518
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04613518_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04613518_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04613518_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04613518_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.24
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.1
+      yaml_exists: true
+  errors: []
+  duration_s: 6.73
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04626297/results/usdm.json
+  stem: NCT04626297
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04626297_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04626297_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04626297_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04626297_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 11.36
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.5
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 13.01
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04627038/results/usdm.json
+  stem: NCT04627038
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04627038_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04627038_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04627038_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04627038_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 4.45
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.36
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.1
+      yaml_exists: true
+  errors: []
+  duration_s: 5.91
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04627064/results/usdm.json
+  stem: NCT04627064
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04627064_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04627064_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04627064_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04627064_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 2.8
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.35
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.08
+      yaml_exists: true
+  errors: []
+  duration_s: 4.23
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04634253/results/usdm.json
+  stem: NCT04634253
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04634253_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04634253_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04634253_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04634253_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 15.7
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 17.25
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04634409/results/usdm.json
+  stem: NCT04634409
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04634409_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04634409_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04634409_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04634409_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 26.52
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.49
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 28.16
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04640077/results/usdm.json
+  stem: NCT04640077
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04640077_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04640077_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04640077_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04640077_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.99
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.17
+      yaml_exists: true
+  errors: []
+  duration_s: 8.55
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04647487/results/usdm.json
+  stem: NCT04647487
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04647487_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04647487_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04647487_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04647487_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.86
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.37
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 7.35
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04647526/results/usdm.json
+  stem: NCT04647526
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04647526_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04647526_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04647526_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04647526_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 9.57
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.43
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.18
+      yaml_exists: true
+  errors: []
+  duration_s: 11.18
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04656691/results/usdm.json
+  stem: NCT04656691
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04656691_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04656691_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04656691_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04656691_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 3.63
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.35
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.1
+      yaml_exists: true
+  errors: []
+  duration_s: 5.08
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04657003/results/usdm.json
+  stem: NCT04657003
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04657003_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04657003_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04657003_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04657003_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 20.37
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.17
+      yaml_exists: true
+  errors: []
+  duration_s: 21.94
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04657016/results/usdm.json
+  stem: NCT04657016
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04657016_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04657016_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04657016_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04657016_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 9.78
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.42
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 11.35
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04660643/results/usdm.json
+  stem: NCT04660643
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04660643_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04660643_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04660643_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04660643_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 14.4
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.42
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 15.99
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04666038/results/usdm.json
+  stem: NCT04666038
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04666038_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04666038_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04666038_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04666038_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 71.87
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.42
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.19
+      yaml_exists: true
+  errors: []
+  duration_s: 73.48
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04677179/results/usdm.json
+  stem: NCT04677179
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04677179_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04677179_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04677179_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04677179_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 184.45
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.47
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.22
+      yaml_exists: true
+  errors: []
+  duration_s: 186.14
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04682106/results/usdm.json
+  stem: NCT04682106
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04682106_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04682106_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04682106_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04682106_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.13
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.43
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.7
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04682119/results/usdm.json
+  stem: NCT04682119
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04682119_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04682119_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04682119_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04682119_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.6
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.51
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.24
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04701658/results/usdm.json
+  stem: NCT04701658
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04701658_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04701658_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04701658_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04701658_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.01
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.11
+      yaml_exists: true
+  errors: []
+  duration_s: 6.5
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04707157/results/usdm.json
+  stem: NCT04707157
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04707157_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04707157_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04707157_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04707157_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.13
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.36
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 6.61
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04707196/results/usdm.json
+  stem: NCT04707196
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04707196_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04707196_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04707196_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04707196_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.92
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.43
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04730349/results/usdm.json
+  stem: NCT04730349
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04730349_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04730349_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04730349_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04730349_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 10.1
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 11.66
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04749914/results/usdm.json
+  stem: NCT04749914
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04749914_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04749914_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04749914_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04749914_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.8
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.47
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.17
+      yaml_exists: true
+  errors: []
+  duration_s: 7.45
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04751929/results/usdm.json
+  stem: NCT04751929
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04751929_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04751929_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04751929_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04751929_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.88
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.48
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.5
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04752332/results/usdm.json
+  stem: NCT04752332
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04752332_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04752332_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04752332_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04752332_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.5
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 8.02
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04760314/results/usdm.json
+  stem: NCT04760314
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04760314_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04760314_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04760314_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04760314_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.87
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.46
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 8.47
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04782076/results/usdm.json
+  stem: NCT04782076
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04782076_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04782076_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04782076_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04782076_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.85
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 7.39
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04809220/results/usdm.json
+  stem: NCT04809220
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04809220_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04809220_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04809220_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04809220_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.18
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.72
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04840888/results/usdm.json
+  stem: NCT04840888
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04840888_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04840888_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04840888_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04840888_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 4.27
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.1
+      yaml_exists: true
+  errors: []
+  duration_s: 5.77
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04840901/results/usdm.json
+  stem: NCT04840901
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04840901_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04840901_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04840901_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04840901_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.27
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 7.82
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04844918/results/usdm.json
+  stem: NCT04844918
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04844918_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04844918_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04844918_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04844918_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 15.9
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.46
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 17.52
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04847557/results/usdm.json
+  stem: NCT04847557
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04847557_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04847557_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04847557_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04847557_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 8.76
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 10.31
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04849416/results/usdm.json
+  stem: NCT04849416
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04849416_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04849416_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04849416_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04849416_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 16.9
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.42
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.18
+      yaml_exists: true
+  errors: []
+  duration_s: 18.5
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04867785/results/usdm.json
+  stem: NCT04867785
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04867785_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04867785_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04867785_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04867785_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 19.76
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.44
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 21.35
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04874636/results/usdm.json
+  stem: NCT04874636
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04874636_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04874636_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04874636_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04874636_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.05
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.37
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 6.54
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04881747/results/usdm.json
+  stem: NCT04881747
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04881747_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04881747_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04881747_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04881747_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.47
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.48
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.08
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04881760/results/usdm.json
+  stem: NCT04881760
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04881760_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04881760_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04881760_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04881760_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.79
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 8.31
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04975308/results/usdm.json
+  stem: NCT04975308
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04975308_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04975308_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04975308_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04975308_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.34
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.86
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04991766/results/usdm.json
+  stem: NCT04991766
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04991766_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04991766_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04991766_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04991766_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 4.24
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.37
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.1
+      yaml_exists: true
+  errors: []
+  duration_s: 5.71
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04992312/results/usdm.json
+  stem: NCT04992312
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04992312_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04992312_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04992312_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT04992312_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.34
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 6.85
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05024032/results/usdm.json
+  stem: NCT05024032
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05024032_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05024032_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05024032_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05024032_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 25.06
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.44
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 26.66
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05048719/results/usdm.json
+  stem: NCT05048719
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05048719_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05048719_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05048719_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05048719_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 30.88
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.17
+      yaml_exists: true
+  errors: []
+  duration_s: 32.46
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05051579/results/usdm.json
+  stem: NCT05051579
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05051579_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05051579_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05051579_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05051579_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 33.56
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.43
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.18
+      yaml_exists: true
+  errors: []
+  duration_s: 35.17
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05063539/results/usdm.json
+  stem: NCT05063539
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05063539_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05063539_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05063539_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05063539_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 8.24
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.43
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 9.8
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05067270/results/usdm.json
+  stem: NCT05067270
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05067270_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05067270_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05067270_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05067270_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.2
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 6.72
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05069896/results/usdm.json
+  stem: NCT05069896
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05069896_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05069896_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05069896_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05069896_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.19
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 6.74
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05080660/results/usdm.json
+  stem: NCT05080660
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05080660_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05080660_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05080660_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05080660_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 4.56
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.46
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 6.13
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05086289/results/usdm.json
+  stem: NCT05086289
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05086289_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05086289_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05086289_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05086289_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 4.54
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.37
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 6.03
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05089019/results/usdm.json
+  stem: NCT05089019
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05089019_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05089019_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05089019_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05089019_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.74
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.44
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 8.35
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05108922/results/usdm.json
+  stem: NCT05108922
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05108922_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05108922_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05108922_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05108922_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.82
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 8.34
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05123586/results/usdm.json
+  stem: NCT05123586
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05123586_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05123586_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05123586_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05123586_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.61
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.37
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 8.11
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05127486/results/usdm.json
+  stem: NCT05127486
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05127486_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05127486_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05127486_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05127486_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 8.8
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 10.32
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05134337/results/usdm.json
+  stem: NCT05134337
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05134337_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05134337_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05134337_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05134337_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 8.57
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.42
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 10.15
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05134350/results/usdm.json
+  stem: NCT05134350
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05134350_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05134350_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05134350_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05134350_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 7.73
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 9.29
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05136404/results/usdm.json
+  stem: NCT05136404
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05136404_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05136404_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05136404_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05136404_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.84
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.37
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05169567/results/usdm.json
+  stem: NCT05169567
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05169567_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05169567_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05169567_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05169567_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.62
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 7.14
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05176314/results/usdm.json
+  stem: NCT05176314
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05176314_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05176314_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05176314_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05176314_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.41
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 7.95
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05177094/results/usdm.json
+  stem: NCT05177094
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05177094_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05177094_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05177094_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05177094_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 4.34
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.36
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 5.82
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05256654/results/usdm.json
+  stem: NCT05256654
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05256654_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05256654_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05256654_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05256654_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 26.41
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.46
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.18
+      yaml_exists: true
+  errors: []
+  duration_s: 28.05
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05259917/results/usdm.json
+  stem: NCT05259917
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05259917_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05259917_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05259917_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05259917_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.53
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.37
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 7.02
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05260021/results/usdm.json
+  stem: NCT05260021
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05260021_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05260021_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05260021_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05260021_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 12.21
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 13.76
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05262387/results/usdm.json
+  stem: NCT05262387
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05262387_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05262387_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05262387_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05262387_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.06
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.58
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05263505/results/usdm.json
+  stem: NCT05263505
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05263505_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05263505_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05263505_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05263505_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 2.58
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.44
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.08
+      yaml_exists: true
+  errors: []
+  duration_s: 4.1
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05275400/results/usdm.json
+  stem: NCT05275400
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05275400_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05275400_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05275400_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05275400_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 22.55
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.42
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 24.12
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05288166/results/usdm.json
+  stem: NCT05288166
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05288166_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05288166_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05288166_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05288166_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 8.49
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.45
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.18
+      yaml_exists: true
+  errors: []
+  duration_s: 10.12
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05291689/results/usdm.json
+  stem: NCT05291689
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05291689_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05291689_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05291689_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05291689_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 7.43
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 8.96
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05324124/results/usdm.json
+  stem: NCT05324124
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05324124_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05324124_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05324124_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05324124_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.9
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.44
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05325294/results/usdm.json
+  stem: NCT05325294
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05325294_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05325294_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05325294_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05325294_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.99
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.5
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.62
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05362058/results/usdm.json
+  stem: NCT05362058
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05362058_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05362058_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05362058_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05362058_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 23.72
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 25.29
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05369403/results/usdm.json
+  stem: NCT05369403
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05369403_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05369403_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05369403_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05369403_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 15.93
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 17.48
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05372419/results/usdm.json
+  stem: NCT05372419
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05372419_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05372419_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05372419_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05372419_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 16.4
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.52
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 18.07
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05403502/results/usdm.json
+  stem: NCT05403502
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05403502_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05403502_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05403502_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05403502_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.42
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 6.94
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05412004/results/usdm.json
+  stem: NCT05412004
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05412004_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05412004_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05412004_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05412004_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 31.46
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.42
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.17
+      yaml_exists: true
+  errors: []
+  duration_s: 33.05
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05440344/results/usdm.json
+  stem: NCT05440344
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05440344_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05440344_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05440344_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05440344_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.66
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.19
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05444556/results/usdm.json
+  stem: NCT05444556
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05444556_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05444556_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05444556_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05444556_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 21.91
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 23.46
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05462756/results/usdm.json
+  stem: NCT05462756
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05462756_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05462756_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05462756_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05462756_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 13.7
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.53
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 15.38
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05463744/results/usdm.json
+  stem: NCT05463744
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05463744_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05463744_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05463744_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05463744_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 44.36
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.42
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 45.95
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05509816/results/usdm.json
+  stem: NCT05509816
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05509816_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05509816_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05509816_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05509816_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 4.18
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.11
+      yaml_exists: true
+  errors: []
+  duration_s: 5.67
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05515601/results/usdm.json
+  stem: NCT05515601
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05515601_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05515601_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05515601_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05515601_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.4
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 7.95
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05516758/results/usdm.json
+  stem: NCT05516758
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05516758_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05516758_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05516758_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05516758_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 4.11
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.35
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.09
+      yaml_exists: true
+  errors: []
+  duration_s: 5.55
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05533411/results/usdm.json
+  stem: NCT05533411
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05533411_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05533411_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05533411_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05533411_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.03
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.58
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05563246/results/usdm.json
+  stem: NCT05563246
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05563246_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05563246_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05563246_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05563246_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 16.19
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 17.75
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05564039/results/usdm.json
+  stem: NCT05564039
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05564039_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05564039_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05564039_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05564039_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 18.47
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.52
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 20.14
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05565742/results/usdm.json
+  stem: NCT05565742
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05565742_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05565742_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05565742_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05565742_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 8.45
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 9.97
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05567159/results/usdm.json
+  stem: NCT05567159
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05567159_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05567159_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05567159_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05567159_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.62
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.13
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05592275/results/usdm.json
+  stem: NCT05592275
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05592275_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05592275_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05592275_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05592275_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.14
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.11
+      yaml_exists: true
+  errors: []
+  duration_s: 6.64
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05611671/results/usdm.json
+  stem: NCT05611671
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05611671_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05611671_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05611671_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05611671_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 15.83
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.42
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 17.41
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05616013/results/usdm.json
+  stem: NCT05616013
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05616013_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05616013_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05616013_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05616013_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 10.82
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.17
+      yaml_exists: true
+  errors: []
+  duration_s: 12.4
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05620563/results/usdm.json
+  stem: NCT05620563
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05620563_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05620563_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05620563_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05620563_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 4.85
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 6.37
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05620576/results/usdm.json
+  stem: NCT05620576
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05620576_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05620576_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05620576_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05620576_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.47
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.63
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 8.22
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05630196/results/usdm.json
+  stem: NCT05630196
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05630196_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05630196_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05630196_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05630196_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.42
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 7.93
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05644353/results/usdm.json
+  stem: NCT05644353
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05644353_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05644353_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05644353_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05644353_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.32
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 7.87
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05659537/results/usdm.json
+  stem: NCT05659537
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05659537_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05659537_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05659537_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05659537_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 7.47
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 8.97
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05662332/results/usdm.json
+  stem: NCT05662332
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05662332_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05662332_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05662332_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05662332_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 22.0
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 23.57
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05691712/results/usdm.json
+  stem: NCT05691712
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05691712_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05691712_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05691712_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05691712_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 13.76
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.42
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.17
+      yaml_exists: true
+  errors: []
+  duration_s: 15.35
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05696847/results/usdm.json
+  stem: NCT05696847
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05696847_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05696847_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05696847_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05696847_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.45
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.99
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05706506/results/usdm.json
+  stem: NCT05706506
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05706506_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05706506_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05706506_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05706506_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.02
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.55
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05738486/results/usdm.json
+  stem: NCT05738486
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05738486_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05738486_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05738486_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05738486_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 9.69
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 11.22
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05767021/results/usdm.json
+  stem: NCT05767021
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05767021_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05767021_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05767021_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05767021_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 8.73
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.43
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 10.32
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05780268/results/usdm.json
+  stem: NCT05780268
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05780268_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05780268_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05780268_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05780268_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 2.58
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.35
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.08
+      yaml_exists: true
+  errors: []
+  duration_s: 4.0
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05794243/results/usdm.json
+  stem: NCT05794243
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05794243_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05794243_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05794243_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05794243_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.9
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.43
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05810597/results/usdm.json
+  stem: NCT05810597
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05810597_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05810597_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05810597_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05810597_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.68
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.2
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05822830/results/usdm.json
+  stem: NCT05822830
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05822830_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05822830_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05822830_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05822830_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 28.69
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.42
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.17
+      yaml_exists: true
+  errors: []
+  duration_s: 30.28
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05853887/results/usdm.json
+  stem: NCT05853887
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05853887_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05853887_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05853887_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05853887_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 4.53
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 6.02
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05855967/results/usdm.json
+  stem: NCT05855967
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05855967_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05855967_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05855967_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05855967_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 15.82
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.45
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.19
+      yaml_exists: true
+  errors: []
+  duration_s: 17.45
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05893797/results/usdm.json
+  stem: NCT05893797
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05893797_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05893797_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05893797_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05893797_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 8.08
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 9.59
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05896527/results/usdm.json
+  stem: NCT05896527
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05896527_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05896527_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05896527_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05896527_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 4.95
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.42
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.11
+      yaml_exists: true
+  errors: []
+  duration_s: 6.48
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05906836/results/usdm.json
+  stem: NCT05906836
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05906836_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05906836_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05906836_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05906836_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.11
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.55
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.8
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05911841/results/usdm.json
+  stem: NCT05911841
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05911841_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05911841_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05911841_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05911841_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 8.62
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.44
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 10.19
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05963022/results/usdm.json
+  stem: NCT05963022
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05963022_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05963022_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05963022_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05963022_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 12.76
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 14.3
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05978713/results/usdm.json
+  stem: NCT05978713
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05978713_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05978713_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05978713_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05978713_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.81
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.32
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05980416/results/usdm.json
+  stem: NCT05980416
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05980416_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05980416_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05980416_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05980416_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.06
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 7.59
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05986292/results/usdm.json
+  stem: NCT05986292
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05986292_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05986292_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05986292_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05986292_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 9.85
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 11.4
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05999994/results/usdm.json
+  stem: NCT05999994
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05999994_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05999994_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05999994_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT05999994_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 3.82
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.09
+      yaml_exists: true
+  errors: []
+  duration_s: 5.33
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT06119529/results/usdm.json
+  stem: NCT06119529
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06119529_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06119529_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06119529_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06119529_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 11.3
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.42
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.18
+      yaml_exists: true
+  errors: []
+  duration_s: 12.91
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT06165146/results/usdm.json
+  stem: NCT06165146
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06165146_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06165146_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06165146_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06165146_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.16
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 7.71
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT06176768/results/usdm.json
+  stem: NCT06176768
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06176768_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06176768_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06176768_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06176768_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.02
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.12
+      yaml_exists: true
+  errors: []
+  duration_s: 7.54
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT06180954/results/usdm.json
+  stem: NCT06180954
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06180954_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06180954_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06180954_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06180954_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.95
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.5
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 8.6
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT06180967/results/usdm.json
+  stem: NCT06180967
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06180967_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06180967_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06180967_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06180967_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 7.05
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.46
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.17
+      yaml_exists: true
+  errors: []
+  duration_s: 8.68
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT06180980/results/usdm.json
+  stem: NCT06180980
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06180980_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06180980_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06180980_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06180980_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.57
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.41
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 8.13
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT06181006/results/usdm.json
+  stem: NCT06181006
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06181006_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06181006_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06181006_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06181006_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.12
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.15
+      yaml_exists: true
+  errors: []
+  duration_s: 7.67
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT06190678/results/usdm.json
+  stem: NCT06190678
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06190678_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06190678_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06190678_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06190678_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.84
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.43
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 8.4
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT06190691/results/usdm.json
+  stem: NCT06190691
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06190691_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06190691_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06190691_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06190691_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.68
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 8.23
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT06194214/results/usdm.json
+  stem: NCT06194214
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06194214_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06194214_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06194214_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06194214_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.3
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.42
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.16
+      yaml_exists: true
+  errors: []
+  duration_s: 7.88
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT06215430/results/usdm.json
+  stem: NCT06215430
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06215430_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06215430_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06215430_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06215430_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.28
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.38
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.17
+      yaml_exists: true
+  errors: []
+  duration_s: 7.83
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT06215521/results/usdm.json
+  stem: NCT06215521
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06215521_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06215521_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06215521_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06215521_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 5.26
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.39
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.13
+      yaml_exists: true
+  errors: []
+  duration_s: 6.79
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT06243198/results/usdm.json
+  stem: NCT06243198
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06243198_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06243198_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06243198_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06243198_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.26
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.4
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.8
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT06258174/results/usdm.json
+  stem: NCT06258174
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06258174_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06258174_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06258174_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06258174_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 2.63
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.34
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.08
+      yaml_exists: true
+  errors: []
+  duration_s: 4.04
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT06444165/results/usdm.json
+  stem: NCT06444165
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06444165_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06444165_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06444165_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06444165_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 4.77
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.36
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.11
+      yaml_exists: true
+  errors: []
+  duration_s: 6.24
+- input: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT06475729/results/usdm.json
+  stem: NCT06475729
+  core_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06475729_core.yaml
+  d4k_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06475729_d4k.yaml
+  alignment_yaml: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06475729_vs_d4k.yaml
+  alignment_txt: /Users/daveih/Documents/github/usdm4/validate/corpus_out_cre_0_16_v2/NCT06475729_vs_d4k.txt
+  stages:
+    core:
+      ok: true
+      duration_s: 6.23
+      yaml_exists: true
+    d4k:
+      ok: true
+      duration_s: 1.51
+      yaml_exists: true
+    compare:
+      ok: true
+      duration_s: 0.14
+      yaml_exists: true
+  errors: []
+  duration_s: 7.88

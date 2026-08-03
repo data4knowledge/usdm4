@@ -1,0 +1,2804 @@
+file: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04230122/results/usdm.json
+engine: d4k
+is_valid: false
+rules_executed: 213
+finding_count: 276
+counts:
+  success: 187
+  failure: 26
+  exception: 0
+  not_implemented: 0
+outcomes:
+- rule_id: DDF00006
+  status: Failure
+  error_count: 15
+  errors:
+  - message: "Timing has partial window definition \u2014 set: ['windowLabel'], missing:\
+      \ ['windowLower', 'windowUpper']"
+    level: Error
+    klass: Timing
+    attribute: windowLabel, windowLower, windowUpper
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[0]
+    rule_text: Timing windows must be fully defined, if one of the window attributes
+      (i.e., window label, window lower, and window upper) is defined then all must
+      be specified.
+  - message: "Timing has partial window definition \u2014 set: ['windowLabel'], missing:\
+      \ ['windowLower', 'windowUpper']"
+    level: Error
+    klass: Timing
+    attribute: windowLabel, windowLower, windowUpper
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[1]
+    rule_text: Timing windows must be fully defined, if one of the window attributes
+      (i.e., window label, window lower, and window upper) is defined then all must
+      be specified.
+  - message: "Timing has partial window definition \u2014 set: ['windowLabel'], missing:\
+      \ ['windowLower', 'windowUpper']"
+    level: Error
+    klass: Timing
+    attribute: windowLabel, windowLower, windowUpper
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[2]
+    rule_text: Timing windows must be fully defined, if one of the window attributes
+      (i.e., window label, window lower, and window upper) is defined then all must
+      be specified.
+  - message: "Timing has partial window definition \u2014 set: ['windowLabel'], missing:\
+      \ ['windowLower', 'windowUpper']"
+    level: Error
+    klass: Timing
+    attribute: windowLabel, windowLower, windowUpper
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[3]
+    rule_text: Timing windows must be fully defined, if one of the window attributes
+      (i.e., window label, window lower, and window upper) is defined then all must
+      be specified.
+  - message: "Timing has partial window definition \u2014 set: ['windowLabel'], missing:\
+      \ ['windowLower', 'windowUpper']"
+    level: Error
+    klass: Timing
+    attribute: windowLabel, windowLower, windowUpper
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[4]
+    rule_text: Timing windows must be fully defined, if one of the window attributes
+      (i.e., window label, window lower, and window upper) is defined then all must
+      be specified.
+  - message: "Timing has partial window definition \u2014 set: ['windowLabel'], missing:\
+      \ ['windowLower', 'windowUpper']"
+    level: Error
+    klass: Timing
+    attribute: windowLabel, windowLower, windowUpper
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[5]
+    rule_text: Timing windows must be fully defined, if one of the window attributes
+      (i.e., window label, window lower, and window upper) is defined then all must
+      be specified.
+  - message: "Timing has partial window definition \u2014 set: ['windowLabel'], missing:\
+      \ ['windowLower', 'windowUpper']"
+    level: Error
+    klass: Timing
+    attribute: windowLabel, windowLower, windowUpper
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[6]
+    rule_text: Timing windows must be fully defined, if one of the window attributes
+      (i.e., window label, window lower, and window upper) is defined then all must
+      be specified.
+  - message: "Timing has partial window definition \u2014 set: ['windowLabel'], missing:\
+      \ ['windowLower', 'windowUpper']"
+    level: Error
+    klass: Timing
+    attribute: windowLabel, windowLower, windowUpper
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[7]
+    rule_text: Timing windows must be fully defined, if one of the window attributes
+      (i.e., window label, window lower, and window upper) is defined then all must
+      be specified.
+  - message: "Timing has partial window definition \u2014 set: ['windowLabel'], missing:\
+      \ ['windowLower', 'windowUpper']"
+    level: Error
+    klass: Timing
+    attribute: windowLabel, windowLower, windowUpper
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[8]
+    rule_text: Timing windows must be fully defined, if one of the window attributes
+      (i.e., window label, window lower, and window upper) is defined then all must
+      be specified.
+  - message: "Timing has partial window definition \u2014 set: ['windowLabel'], missing:\
+      \ ['windowLower', 'windowUpper']"
+    level: Error
+    klass: Timing
+    attribute: windowLabel, windowLower, windowUpper
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[9]
+    rule_text: Timing windows must be fully defined, if one of the window attributes
+      (i.e., window label, window lower, and window upper) is defined then all must
+      be specified.
+  - message: "Timing has partial window definition \u2014 set: ['windowLabel'], missing:\
+      \ ['windowLower', 'windowUpper']"
+    level: Error
+    klass: Timing
+    attribute: windowLabel, windowLower, windowUpper
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[10]
+    rule_text: Timing windows must be fully defined, if one of the window attributes
+      (i.e., window label, window lower, and window upper) is defined then all must
+      be specified.
+  - message: "Timing has partial window definition \u2014 set: ['windowLabel'], missing:\
+      \ ['windowLower', 'windowUpper']"
+    level: Error
+    klass: Timing
+    attribute: windowLabel, windowLower, windowUpper
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[11]
+    rule_text: Timing windows must be fully defined, if one of the window attributes
+      (i.e., window label, window lower, and window upper) is defined then all must
+      be specified.
+  - message: "Timing has partial window definition \u2014 set: ['windowLabel'], missing:\
+      \ ['windowLower', 'windowUpper']"
+    level: Error
+    klass: Timing
+    attribute: windowLabel, windowLower, windowUpper
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[12]
+    rule_text: Timing windows must be fully defined, if one of the window attributes
+      (i.e., window label, window lower, and window upper) is defined then all must
+      be specified.
+  - message: "Timing has partial window definition \u2014 set: ['windowLabel'], missing:\
+      \ ['windowLower', 'windowUpper']"
+    level: Error
+    klass: Timing
+    attribute: windowLabel, windowLower, windowUpper
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[13]
+    rule_text: Timing windows must be fully defined, if one of the window attributes
+      (i.e., window label, window lower, and window upper) is defined then all must
+      be specified.
+  - message: "Timing has partial window definition \u2014 set: ['windowLabel'], missing:\
+      \ ['windowLower', 'windowUpper']"
+    level: Error
+    klass: Timing
+    attribute: windowLabel, windowLower, windowUpper
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[14]
+    rule_text: Timing windows must be fully defined, if one of the window attributes
+      (i.e., window label, window lower, and window upper) is defined then all must
+      be specified.
+- rule_id: DDF00007
+  status: Success
+  error_count: 0
+- rule_id: DDF00008
+  status: Success
+  error_count: 0
+- rule_id: DDF00009
+  status: Success
+  error_count: 0
+- rule_id: DDF00010
+  status: Success
+  error_count: 0
+- rule_id: DDF00011
+  status: Success
+  error_count: 0
+- rule_id: DDF00012
+  status: Success
+  error_count: 0
+- rule_id: DDF00013
+  status: Success
+  error_count: 0
+- rule_id: DDF00014
+  status: Success
+  error_count: 0
+- rule_id: DDF00017
+  status: Success
+  error_count: 0
+- rule_id: DDF00018
+  status: Success
+  error_count: 0
+- rule_id: DDF00019
+  status: Success
+  error_count: 0
+- rule_id: DDF00020
+  status: Success
+  error_count: 0
+- rule_id: DDF00021
+  status: Success
+  error_count: 0
+- rule_id: DDF00022
+  status: Success
+  error_count: 0
+- rule_id: DDF00023
+  status: Success
+  error_count: 0
+- rule_id: DDF00024
+  status: Success
+  error_count: 0
+- rule_id: DDF00025
+  status: Failure
+  error_count: 1
+  errors:
+  - message: Window label defined for anchor timing
+    level: Error
+    klass: Timing
+    attribute: windowLabel
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[0]
+    rule_text: A window must not be defined for an anchor timing (i.e., type is "Fixed
+      Reference").
+- rule_id: DDF00026
+  status: Success
+  error_count: 0
+- rule_id: DDF00027
+  status: Success
+  error_count: 0
+- rule_id: DDF00028
+  status: Success
+  error_count: 0
+- rule_id: DDF00029
+  status: Success
+  error_count: 0
+- rule_id: DDF00030
+  status: Success
+  error_count: 0
+- rule_id: DDF00031
+  status: Failure
+  error_count: 1
+  errors:
+  - message: relativeToScheduledInstanceId and relativeFromScheduledInstanceId are
+      equal
+    level: Error
+    klass: Timing
+    attribute: relativeToScheduledInstanceId and relativeFromScheduledInstanceId
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[0]
+    rule_text: If timing type is not "Fixed Reference" then it must point to two scheduled
+      instances (e.g. the relativeFromScheduledInstance and relativeToScheduledInstance
+      attributes must not be missing and must not be equal to each other).
+- rule_id: DDF00032
+  status: Success
+  error_count: 0
+- rule_id: DDF00033
+  status: Success
+  error_count: 0
+- rule_id: DDF00034
+  status: Success
+  error_count: 0
+- rule_id: DDF00035
+  status: Success
+  error_count: 0
+- rule_id: DDF00036
+  status: Success
+  error_count: 0
+- rule_id: DDF00037
+  status: Success
+  error_count: 0
+- rule_id: DDF00038
+  status: Success
+  error_count: 0
+- rule_id: DDF00039
+  status: Success
+  error_count: 0
+- rule_id: DDF00040
+  status: Success
+  error_count: 0
+- rule_id: DDF00041
+  status: Failure
+  error_count: 1
+  errors:
+  - message: Expected at least one Primary Endpoint in study design, found 0
+    level: Error
+    klass: InterventionalStudyDesign
+    attribute: objectives.endpoints.level
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0]
+    rule_text: Within a study design, there must be at least one endpoint with level
+      primary.
+- rule_id: DDF00042
+  status: Success
+  error_count: 0
+- rule_id: DDF00044
+  status: Success
+  error_count: 0
+- rule_id: DDF00045
+  status: Success
+  error_count: 0
+- rule_id: DDF00046
+  status: Success
+  error_count: 0
+- rule_id: DDF00047
+  status: Success
+  error_count: 0
+- rule_id: DDF00050
+  status: Success
+  error_count: 0
+- rule_id: DDF00051
+  status: Success
+  error_count: 0
+- rule_id: DDF00052
+  status: Success
+  error_count: 0
+- rule_id: DDF00054
+  status: Success
+  error_count: 0
+- rule_id: DDF00058
+  status: Success
+  error_count: 0
+- rule_id: DDF00059
+  status: Success
+  error_count: 0
+- rule_id: DDF00060
+  status: Success
+  error_count: 0
+- rule_id: DDF00061
+  status: Success
+  error_count: 0
+- rule_id: DDF00062
+  status: Success
+  error_count: 0
+- rule_id: DDF00063
+  status: Success
+  error_count: 0
+- rule_id: DDF00069
+  status: Success
+  error_count: 0
+- rule_id: DDF00071
+  status: Success
+  error_count: 0
+- rule_id: DDF00072
+  status: Success
+  error_count: 0
+- rule_id: DDF00073
+  status: Success
+  error_count: 0
+- rule_id: DDF00075
+  status: Failure
+  error_count: 41
+  errors:
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[0]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[1]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[2]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[3]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[4]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[5]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[6]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[7]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[8]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[9]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[10]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[11]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[12]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[13]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[14]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[15]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[16]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[17]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[18]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[19]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[20]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[21]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[22]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[23]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[24]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[25]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[26]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[27]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[28]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[29]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[30]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[31]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[32]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[33]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[34]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[35]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[36]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[37]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[38]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[39]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+  - message: Activity does not reference any procedure, BC, BC category, or BC surrogate
+    level: Warning
+    klass: Activity
+    attribute: definedProcedures, biomedicalConceptIds, bcCategoryIds, bcSurrogateIds
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Activity[40]
+    rule_text: An activity is expected to refer to at least one procedure, biomedical
+      concept, biomedical concept category or biomedical concept surrogate.
+- rule_id: DDF00076
+  status: Success
+  error_count: 0
+- rule_id: DDF00080
+  status: Success
+  error_count: 0
+- rule_id: DDF00081
+  status: Success
+  error_count: 0
+- rule_id: DDF00082
+  status: Success
+  error_count: 0
+- rule_id: DDF00083
+  status: Failure
+  error_count: 8
+  errors:
+  - message: id 'GovernanceDate_1' is not unique (2 occurrences)
+    level: Error
+    klass: GovernanceDate
+    attribute: id
+    path: $.study.versions[0].dateValues[1]
+    rule_text: Within a study version, all id values must be unique.
+  - message: id 'GovernanceDate_1' is not unique (2 occurrences)
+    level: Error
+    klass: GovernanceDate
+    attribute: id
+    path: $.study.documentedBy[0].versions[0].dateValues[0]
+    rule_text: Within a study version, all id values must be unique.
+  - message: id 'Code_8' is not unique (2 occurrences)
+    level: Error
+    klass: Code
+    attribute: id
+    path: $.study.versions[0].dateValues[1].type
+    rule_text: Within a study version, all id values must be unique.
+  - message: id 'Code_8' is not unique (2 occurrences)
+    level: Error
+    klass: Code
+    attribute: id
+    path: $.study.documentedBy[0].versions[0].dateValues[0].type
+    rule_text: Within a study version, all id values must be unique.
+  - message: id 'GeographicScope_1' is not unique (2 occurrences)
+    level: Error
+    klass: GeographicScope
+    attribute: id
+    path: $.study.versions[0].dateValues[1].geographicScopes[0]
+    rule_text: Within a study version, all id values must be unique.
+  - message: id 'GeographicScope_1' is not unique (2 occurrences)
+    level: Error
+    klass: GeographicScope
+    attribute: id
+    path: $.study.documentedBy[0].versions[0].dateValues[0].geographicScopes[0]
+    rule_text: Within a study version, all id values must be unique.
+  - message: id 'Code_9' is not unique (2 occurrences)
+    level: Error
+    klass: Code
+    attribute: id
+    path: $.study.versions[0].dateValues[1].geographicScopes[0].type
+    rule_text: Within a study version, all id values must be unique.
+  - message: id 'Code_9' is not unique (2 occurrences)
+    level: Error
+    klass: Code
+    attribute: id
+    path: $.study.documentedBy[0].versions[0].dateValues[0].geographicScopes[0].type
+    rule_text: Within a study version, all id values must be unique.
+- rule_id: DDF00084
+  status: Failure
+  error_count: 1
+  errors:
+  - message: Expected exactly one Primary Objective in study design, found 0
+    level: Error
+    klass: InterventionalStudyDesign
+    attribute: objectives
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0]
+    rule_text: Within a study design there must be exactly one objective with level
+      'Primary Objective'.
+- rule_id: DDF00087
+  status: Failure
+  error_count: 2
+  errors:
+  - message: "StudyDesign has 15 encounter chain heads (previousId=null) \u2014 expected\
+      \ 1"
+    level: Warning
+    klass: Encounter
+    attribute: previousId
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0]
+    rule_text: Encounter ordering using previous and next attributes is expected to
+      be consistent with the order of corresponding scheduled activity instances according
+      to their specified default conditions.
+  - message: Encounter prev/next order ['Encounter_1'] does not match order derived
+      from SAI flow ['Encounter_1', 'Encounter_2', 'Encounter_3', 'Encounter_4', 'Encounter_5',
+      'Encounter_6', 'Encounter_7', 'Encounter_8', 'Encounter_9', 'Encounter_10',
+      'Encounter_11', 'Encounter_12', 'Encounter_13', 'Encounter_14', 'Encounter_15']
+    level: Warning
+    klass: Encounter
+    attribute: previousId, nextId
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0]
+    rule_text: Encounter ordering using previous and next attributes is expected to
+      be consistent with the order of corresponding scheduled activity instances according
+      to their specified default conditions.
+- rule_id: DDF00088
+  status: Failure
+  error_count: 2
+  errors:
+  - message: "StudyDesign has 15 epoch chain heads (previousId=null) \u2014 expected\
+      \ 1"
+    level: Warning
+    klass: StudyEpoch
+    attribute: previousId
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0]
+    rule_text: Epoch ordering using previous and next attributes is expected to be
+      consistent with the order of corresponding scheduled activity instances according
+      to their specified default conditions.
+  - message: StudyEpoch prev/next order ['StudyEpoch_1'] does not match order derived
+      from SAI flow ['StudyEpoch_1', 'StudyEpoch_2', 'StudyEpoch_3', 'StudyEpoch_4',
+      'StudyEpoch_5', 'StudyEpoch_6', 'StudyEpoch_7', 'StudyEpoch_8', 'StudyEpoch_9',
+      'StudyEpoch_10', 'StudyEpoch_11', 'StudyEpoch_12', 'StudyEpoch_13', 'StudyEpoch_14',
+      'StudyEpoch_15']
+    level: Warning
+    klass: StudyEpoch
+    attribute: previousId, nextId
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0]
+    rule_text: Epoch ordering using previous and next attributes is expected to be
+      consistent with the order of corresponding scheduled activity instances according
+      to their specified default conditions.
+- rule_id: DDF00090
+  status: Success
+  error_count: 0
+- rule_id: DDF00091
+  status: Success
+  error_count: 0
+- rule_id: DDF00093
+  status: Failure
+  error_count: 2
+  errors:
+  - message: StudyVersion.dateValues has 2 entries with type.code 'C71476' and geographic
+      scopes ['C68846']
+    level: Error
+    klass: GovernanceDate
+    attribute: type, geographicScopes
+    path: $.Study.StudyVersion[0].GovernanceDate[0]
+    rule_text: Date values associated to a study version must be unique regarding
+      the combination of type and geographic scopes of the date.
+  - message: StudyVersion.dateValues has 2 entries with type.code 'C71476' and geographic
+      scopes ['C68846']
+    level: Error
+    klass: GovernanceDate
+    attribute: type, geographicScopes
+    path: $.Study.StudyDefinitionDocument[0].StudyDefinitionDocumentVersion[0].GovernanceDate[0]
+    rule_text: Date values associated to a study version must be unique regarding
+      the combination of type and geographic scopes of the date.
+- rule_id: DDF00094
+  status: Failure
+  error_count: 2
+  errors:
+  - message: Date of type.code 'C71476' has a global geographic scope but 2 dates
+      of that type exist in this study version
+    level: Warning
+    klass: GovernanceDate
+    attribute: type, geographicScopes
+    path: $.Study.StudyVersion[0].GovernanceDate[0]
+    rule_text: Within a study version, if a date of a specific type exists with a
+      global geographic scope then no other dates are expected with the same type.
+  - message: Date of type.code 'C71476' has a global geographic scope but 2 dates
+      of that type exist in this study version
+    level: Warning
+    klass: GovernanceDate
+    attribute: type, geographicScopes
+    path: $.Study.StudyDefinitionDocument[0].StudyDefinitionDocumentVersion[0].GovernanceDate[0]
+    rule_text: Within a study version, if a date of a specific type exists with a
+      global geographic scope then no other dates are expected with the same type.
+- rule_id: DDF00096
+  status: Success
+  error_count: 0
+- rule_id: DDF00097
+  status: Failure
+  error_count: 1
+  errors:
+  - message: plannedAge is not specified on the study population and not specified
+      on any of the 0 cohort(s); specify it on the study population or on all cohorts
+    level: Error
+    klass: StudyDesignPopulation
+    attribute: plannedAge
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyDesignPopulation
+    rule_text: Within a study design, the planned age range must be specified either
+      in the study population or in all cohorts.
+- rule_id: DDF00098
+  status: Failure
+  error_count: 1
+  errors:
+  - message: plannedSex is not specified on the study population and not specified
+      on any of the 0 cohort(s); specify it on the study population or on all cohorts
+    level: Error
+    klass: StudyDesignPopulation
+    attribute: plannedSex
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyDesignPopulation
+    rule_text: Within a study design, the planned sex must be specified either in
+      the study population or in all cohorts.
+- rule_id: DDF00099
+  status: Success
+  error_count: 0
+- rule_id: DDF00100
+  status: Success
+  error_count: 0
+- rule_id: DDF00101
+  status: Success
+  error_count: 0
+- rule_id: DDF00102
+  status: Success
+  error_count: 0
+- rule_id: DDF00104
+  status: Success
+  error_count: 0
+- rule_id: DDF00105
+  status: Success
+  error_count: 0
+- rule_id: DDF00106
+  status: Success
+  error_count: 0
+- rule_id: DDF00107
+  status: Success
+  error_count: 0
+- rule_id: DDF00108
+  status: Success
+  error_count: 0
+- rule_id: DDF00110
+  status: Failure
+  error_count: 38
+  errors:
+  - message: Invalid decode 'INCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[0]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'INCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[1]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'INCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[2]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'INCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[3]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'INCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[4]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'INCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[5]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'INCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[6]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'INCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[7]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'INCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[8]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'INCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[9]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[10]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[11]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[12]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[13]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[14]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[15]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[16]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[17]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[18]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[19]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[20]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[21]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[22]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[23]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[24]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[25]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[26]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[27]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[28]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[29]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[30]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[31]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[32]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[33]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[34]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[35]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[36]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+  - message: Invalid decode 'EXCLUSION', the decode is not in the codelist
+    level: Error
+    klass: EligibilityCriterion
+    attribute: category
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[37]
+    rule_text: An eligibility criterion's category must be specified using the Category
+      of Inclusion/Exclusion (C66797) SDTM codelist.
+- rule_id: DDF00112
+  status: Success
+  error_count: 0
+- rule_id: DDF00114
+  status: Success
+  error_count: 0
+- rule_id: DDF00115
+  status: Success
+  error_count: 0
+- rule_id: DDF00124
+  status: Success
+  error_count: 0
+- rule_id: DDF00125
+  status: Success
+  error_count: 0
+- rule_id: DDF00126
+  status: Success
+  error_count: 0
+- rule_id: DDF00127
+  status: Success
+  error_count: 0
+- rule_id: DDF00128
+  status: Success
+  error_count: 0
+- rule_id: DDF00132
+  status: Success
+  error_count: 0
+- rule_id: DDF00133
+  status: Success
+  error_count: 0
+- rule_id: DDF00136
+  status: Success
+  error_count: 0
+- rule_id: DDF00137
+  status: Success
+  error_count: 0
+- rule_id: DDF00140
+  status: Failure
+  error_count: 1
+  errors:
+  - message: Invalid decode 'Pharmaceutical Company', the decode is not in the codelist
+    level: Error
+    klass: Organization
+    attribute: type
+    path: $.Study.StudyVersion[0].Organization[0]
+    rule_text: An organization type must be specified according to the extensible
+      organization type (C188724) DDF codelist (e.g. an entry with a code or decode
+      used from the codelist should be consistent with the full entry in the codelist).
+- rule_id: DDF00141
+  status: Success
+  error_count: 0
+- rule_id: DDF00142
+  status: Success
+  error_count: 0
+- rule_id: DDF00143
+  status: Success
+  error_count: 0
+- rule_id: DDF00144
+  status: Success
+  error_count: 0
+- rule_id: DDF00146
+  status: Success
+  error_count: 0
+- rule_id: DDF00147
+  status: Success
+  error_count: 0
+- rule_id: DDF00148
+  status: Success
+  error_count: 0
+- rule_id: DDF00149
+  status: Success
+  error_count: 0
+- rule_id: DDF00150
+  status: Success
+  error_count: 0
+- rule_id: DDF00151
+  status: Success
+  error_count: 0
+- rule_id: DDF00152
+  status: Success
+  error_count: 0
+- rule_id: DDF00153
+  status: Failure
+  error_count: 1
+  errors:
+  - message: Main ScheduleTimeline has no plannedDuration
+    level: Warning
+    klass: ScheduleTimeline
+    attribute: plannedDuration
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0]
+    rule_text: A planned duration is expected for the main timeline.
+- rule_id: DDF00154
+  status: Success
+  error_count: 0
+- rule_id: DDF00155
+  status: Failure
+  error_count: 141
+  errors:
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].GovernanceDate[0].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].GovernanceDate[0].GeographicScope[0].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyDefinitionDocument[0].StudyDefinitionDocumentVersion[0].GovernanceDate[0].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyDefinitionDocument[0].StudyDefinitionDocumentVersion[0].GovernanceDate[0].GeographicScope[0].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].AliasCode.Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[0].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[0].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[0].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[1].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[1].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[1].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[2].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[2].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[2].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[3].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[3].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[3].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[4].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[4].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[4].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[5].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[5].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[5].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[6].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[6].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[6].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[7].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[7].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[7].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[8].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[8].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[8].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[9].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[9].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[9].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[10].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[10].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[10].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[11].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[11].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[11].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[12].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[12].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[12].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[13].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[13].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[13].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[14].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[14].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Encounter[14].Code[0]
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyEpoch[0].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyEpoch[1].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyEpoch[2].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyEpoch[3].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyEpoch[4].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyEpoch[5].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyEpoch[6].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyEpoch[7].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyEpoch[8].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyEpoch[9].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyEpoch[10].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyEpoch[11].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyEpoch[12].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyEpoch[13].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].StudyEpoch[14].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[0].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[0].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[1].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[1].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[2].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[2].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[3].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[3].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[4].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[4].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[5].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[5].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[6].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[6].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[7].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[7].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[8].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[8].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[9].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[9].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[10].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[10].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[11].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[11].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[12].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[12].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[13].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[13].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[14].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0].Timing[14].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[0].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[1].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[2].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[3].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[4].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[5].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[6].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[7].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[8].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[9].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[10].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[11].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[12].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[13].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[14].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[15].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[16].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[17].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[18].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[19].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[20].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[21].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[22].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[23].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[24].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[25].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[26].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[27].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[28].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[29].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[30].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[31].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[32].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[33].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[34].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[35].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[36].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].EligibilityCriterion[37].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].StudyTitle[0].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].StudyTitle[1].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].StudyTitle[2].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].StudyRole[0].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyVersion[0].Organization[0].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyDefinitionDocument[0].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+  - message: Invalid codeSystemVersion
+    level: Error
+    klass: Code
+    attribute: codeSystemVersion
+    path: $.Study.StudyDefinitionDocument[0].StudyDefinitionDocumentVersion[0].Code
+    rule_text: For CDISC codelist references (where the code system is 'http://www.cdisc.org'),
+      the code system version must be a valid CDISC terminology release date in ISO
+      8601 date format.
+- rule_id: DDF00156
+  status: Success
+  error_count: 0
+- rule_id: DDF00157
+  status: Success
+  error_count: 0
+- rule_id: DDF00158
+  status: Success
+  error_count: 0
+- rule_id: DDF00159
+  status: Success
+  error_count: 0
+- rule_id: DDF00160
+  status: Success
+  error_count: 0
+- rule_id: DDF00161
+  status: Success
+  error_count: 0
+- rule_id: DDF00162
+  status: Success
+  error_count: 0
+- rule_id: DDF00163
+  status: Success
+  error_count: 0
+- rule_id: DDF00164
+  status: Success
+  error_count: 0
+- rule_id: DDF00165
+  status: Success
+  error_count: 0
+- rule_id: DDF00166
+  status: Failure
+  error_count: 1
+  errors:
+  - message: Invalid decode 'Protocol', the decode is not in the codelist
+    level: Error
+    klass: StudyDefinitionDocument
+    attribute: type
+    path: $.Study.StudyDefinitionDocument[0]
+    rule_text: A study definition document type must be specified according to the
+      extensible study definition document type (C215477) DDF codelist (e.g. an entry
+      with a code or decode used from the codelist should be consistent with the full
+      entry in the codelist).
+- rule_id: DDF00167
+  status: Success
+  error_count: 0
+- rule_id: DDF00168
+  status: Success
+  error_count: 0
+- rule_id: DDF00169
+  status: Success
+  error_count: 0
+- rule_id: DDF00170
+  status: Success
+  error_count: 0
+- rule_id: DDF00171
+  status: Success
+  error_count: 0
+- rule_id: DDF00172
+  status: Success
+  error_count: 0
+- rule_id: DDF00173
+  status: Success
+  error_count: 0
+- rule_id: DDF00174
+  status: Success
+  error_count: 0
+- rule_id: DDF00175
+  status: Success
+  error_count: 0
+- rule_id: DDF00176
+  status: Success
+  error_count: 0
+- rule_id: DDF00177
+  status: Success
+  error_count: 0
+- rule_id: DDF00178
+  status: Success
+  error_count: 0
+- rule_id: DDF00179
+  status: Success
+  error_count: 0
+- rule_id: DDF00180
+  status: Success
+  error_count: 0
+- rule_id: DDF00181
+  status: Success
+  error_count: 0
+- rule_id: DDF00182
+  status: Success
+  error_count: 0
+- rule_id: DDF00183
+  status: Success
+  error_count: 0
+- rule_id: DDF00184
+  status: Success
+  error_count: 0
+- rule_id: DDF00185
+  status: Success
+  error_count: 0
+- rule_id: DDF00186
+  status: Success
+  error_count: 0
+- rule_id: DDF00187
+  status: Failure
+  error_count: 4
+  errors:
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 1: Element\
+      \ '{http://www.w3.org/1999/xhtml}div': This element is not expected."
+    level: Warning
+    klass: NarrativeContentItem
+    attribute: text
+    path: $.Study.StudyVersion[0].NarrativeContentItem[7]
+    rule_text: Narrative content item text is expected to be HTML formatted.
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 1: Element\
+      \ '{http://www.w3.org/1999/xhtml}figure': This element is not expected."
+    level: Warning
+    klass: NarrativeContentItem
+    attribute: text
+    path: $.Study.StudyVersion[0].NarrativeContentItem[9]
+    rule_text: Narrative content item text is expected to be HTML formatted.
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 6: Element\
+      \ '{http://www.w3.org/1999/xhtml}div': This element is not expected."
+    level: Warning
+    klass: NarrativeContentItem
+    attribute: text
+    path: $.Study.StudyVersion[0].NarrativeContentItem[13]
+    rule_text: Narrative content item text is expected to be HTML formatted.
+  - message: "NarrativeContentItem.text is not valid USDM-XHTML \u2014 line 56: Element\
+      \ '{http://www.w3.org/1999/xhtml}div': This element is not expected."
+    level: Warning
+    klass: NarrativeContentItem
+    attribute: text
+    path: $.Study.StudyVersion[0].NarrativeContentItem[84]
+    rule_text: Narrative content item text is expected to be HTML formatted.
+- rule_id: DDF00188
+  status: Success
+  error_count: 0
+- rule_id: DDF00189
+  status: Failure
+  error_count: 1
+  errors:
+  - message: StudyRole does not apply only to the StudyVersion or only to one-or-more
+      of its StudyDesigns
+    level: Error
+    klass: StudyRole
+    attribute: appliesToIds
+    path: $.Study.StudyVersion[0].StudyRole[0]
+    rule_text: Every study role must apply to either a study version or at least one
+      study design, but not both.
+- rule_id: DDF00190
+  status: Success
+  error_count: 0
+- rule_id: DDF00191
+  status: Success
+  error_count: 0
+- rule_id: DDF00192
+  status: Success
+  error_count: 0
+- rule_id: DDF00193
+  status: Success
+  error_count: 0
+- rule_id: DDF00194
+  status: Success
+  error_count: 0
+- rule_id: DDF00195
+  status: Success
+  error_count: 0
+- rule_id: DDF00196
+  status: Success
+  error_count: 0
+- rule_id: DDF00197
+  status: Success
+  error_count: 0
+- rule_id: DDF00198
+  status: Success
+  error_count: 0
+- rule_id: DDF00199
+  status: Success
+  error_count: 0
+- rule_id: DDF00200
+  status: Failure
+  error_count: 1
+  errors:
+  - message: Invalid decode 'Pharmaceutical Company', the decode is not in the codelist
+    level: Error
+    klass: Organization
+    attribute: type
+    path: $.Study.StudyVersion[0].Organization[0]
+    rule_text: An organization type must be specified according to the extensible
+      organization type (C188724) DDF codelist (e.g. an entry with a code or decode
+      used from the codelist should be consistent with the full entry in the codelist).
+- rule_id: DDF00201
+  status: Success
+  error_count: 0
+- rule_id: DDF00202
+  status: Success
+  error_count: 0
+- rule_id: DDF00203
+  status: Failure
+  error_count: 1
+  errors:
+  - message: Sponsor StudyRole is not applicable to the StudyVersion
+    level: Error
+    klass: StudyRole
+    attribute: appliesToIds
+    path: $.Study.StudyVersion[0].StudyRole[0]
+    rule_text: The sponsor study role must be applicable to a study version.
+- rule_id: DDF00204
+  status: Success
+  error_count: 0
+- rule_id: DDF00205
+  status: Success
+  error_count: 0
+- rule_id: DDF00206
+  status: Success
+  error_count: 0
+- rule_id: DDF00207
+  status: Success
+  error_count: 0
+- rule_id: DDF00208
+  status: Success
+  error_count: 0
+- rule_id: DDF00209
+  status: Success
+  error_count: 0
+- rule_id: DDF00210
+  status: Success
+  error_count: 0
+- rule_id: DDF00211
+  status: Success
+  error_count: 0
+- rule_id: DDF00212
+  status: Success
+  error_count: 0
+- rule_id: DDF00213
+  status: Success
+  error_count: 0
+- rule_id: DDF00214
+  status: Success
+  error_count: 0
+- rule_id: DDF00215
+  status: Success
+  error_count: 0
+- rule_id: DDF00216
+  status: Success
+  error_count: 0
+- rule_id: DDF00217
+  status: Success
+  error_count: 0
+- rule_id: DDF00218
+  status: Success
+  error_count: 0
+- rule_id: DDF00219
+  status: Success
+  error_count: 0
+- rule_id: DDF00220
+  status: Success
+  error_count: 0
+- rule_id: DDF00221
+  status: Success
+  error_count: 0
+- rule_id: DDF00222
+  status: Success
+  error_count: 0
+- rule_id: DDF00223
+  status: Success
+  error_count: 0
+- rule_id: DDF00224
+  status: Success
+  error_count: 0
+- rule_id: DDF00225
+  status: Success
+  error_count: 0
+- rule_id: DDF00226
+  status: Success
+  error_count: 0
+- rule_id: DDF00227
+  status: Failure
+  error_count: 1
+  errors:
+  - message: Required attribute 'studyType' is missing or empty
+    level: Error
+    klass: InterventionalStudyDesign
+    attribute: studyType
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0]
+    rule_text: An interventional study must be specified using the InterventionalStudyDesign
+      class.
+- rule_id: DDF00228
+  status: Success
+  error_count: 0
+- rule_id: DDF00229
+  status: Failure
+  error_count: 1
+  errors:
+  - message: Decode 'Phase 1' for code 'C15600' uses the M11/CPT preferred term; SDTM
+      C66737 PT is 'Phase I Trial'
+    level: Warning
+    klass: InterventionalStudyDesign
+    attribute: studyPhase
+    path: $.Study.StudyVersion[0].InterventionalStudyDesign[0]
+    rule_text: A study design's study phase must be specified according to the extensible
+      Trial Phase Response (C66737) SDTM codelist (e.g. an entry with a code or decode
+      used from the codelist should be consistent with the full entry in the codelist).
+- rule_id: DDF00230
+  status: Success
+  error_count: 0
+- rule_id: DDF00231
+  status: Success
+  error_count: 0
+- rule_id: DDF00232
+  status: Success
+  error_count: 0
+- rule_id: DDF00233
+  status: Success
+  error_count: 0
+- rule_id: DDF00234
+  status: Success
+  error_count: 0
+- rule_id: DDF00235
+  status: Success
+  error_count: 0
+- rule_id: DDF00236
+  status: Success
+  error_count: 0
+- rule_id: DDF00237
+  status: Success
+  error_count: 0
+- rule_id: DDF00238
+  status: Success
+  error_count: 0
+- rule_id: DDF00239
+  status: Success
+  error_count: 0
+- rule_id: DDF00240
+  status: Success
+  error_count: 0
+- rule_id: DDF00241
+  status: Success
+  error_count: 0
+- rule_id: DDF00242
+  status: Success
+  error_count: 0
+- rule_id: DDF00243
+  status: Success
+  error_count: 0
+- rule_id: DDF00244
+  status: Success
+  error_count: 0
+- rule_id: DDF00245
+  status: Failure
+  error_count: 6
+  errors:
+  - message: NarrativeContent.sectionNumber '6.2' is not unique within the document
+      version (2 occurrences)
+    level: Error
+    klass: NarrativeContent
+    attribute: sectionNumber
+    path: $.Study.StudyDefinitionDocument[0].StudyDefinitionDocumentVersion[0].NarrativeContent[16]
+    rule_text: Within a document version, the specified section numbers for narrative
+      content must be unique.
+  - message: NarrativeContent.sectionNumber '6.2' is not unique within the document
+      version (2 occurrences)
+    level: Error
+    klass: NarrativeContent
+    attribute: sectionNumber
+    path: $.Study.StudyDefinitionDocument[0].StudyDefinitionDocumentVersion[0].NarrativeContent[85]
+    rule_text: Within a document version, the specified section numbers for narrative
+      content must be unique.
+  - message: NarrativeContent.sectionNumber '6.3.2' is not unique within the document
+      version (2 occurrences)
+    level: Error
+    klass: NarrativeContent
+    attribute: sectionNumber
+    path: $.Study.StudyDefinitionDocument[0].StudyDefinitionDocumentVersion[0].NarrativeContent[19]
+    rule_text: Within a document version, the specified section numbers for narrative
+      content must be unique.
+  - message: NarrativeContent.sectionNumber '6.3.2' is not unique within the document
+      version (2 occurrences)
+    level: Error
+    klass: NarrativeContent
+    attribute: sectionNumber
+    path: $.Study.StudyDefinitionDocument[0].StudyDefinitionDocumentVersion[0].NarrativeContent[86]
+    rule_text: Within a document version, the specified section numbers for narrative
+      content must be unique.
+  - message: NarrativeContent.sectionNumber '9.4.5.2' is not unique within the document
+      version (2 occurrences)
+    level: Error
+    klass: NarrativeContent
+    attribute: sectionNumber
+    path: $.Study.StudyDefinitionDocument[0].StudyDefinitionDocumentVersion[0].NarrativeContent[59]
+    rule_text: Within a document version, the specified section numbers for narrative
+      content must be unique.
+  - message: NarrativeContent.sectionNumber '9.4.5.2' is not unique within the document
+      version (2 occurrences)
+    level: Error
+    klass: NarrativeContent
+    attribute: sectionNumber
+    path: $.Study.StudyDefinitionDocument[0].StudyDefinitionDocumentVersion[0].NarrativeContent[87]
+    rule_text: Within a document version, the specified section numbers for narrative
+      content must be unique.
+- rule_id: DDF00246
+  status: Success
+  error_count: 0
+- rule_id: DDF00247
+  status: Success
+  error_count: 0
+- rule_id: DDF00248
+  status: Success
+  error_count: 0
+- rule_id: DDF00249
+  status: Success
+  error_count: 0
+- rule_id: DDF00250
+  status: Success
+  error_count: 0
+- rule_id: DDF00251
+  status: Success
+  error_count: 0
+- rule_id: DDF00252
+  status: Success
+  error_count: 0
+- rule_id: DDF00253
+  status: Success
+  error_count: 0
+- rule_id: DDF00254
+  status: Success
+  error_count: 0
+- rule_id: DDF00255
+  status: Success
+  error_count: 0
+- rule_id: DDF00256
+  status: Success
+  error_count: 0
+- rule_id: DDF00257
+  status: Success
+  error_count: 0
+- rule_id: DDF00258
+  status: Success
+  error_count: 0
+- rule_id: DDF00259
+  status: Failure
+  error_count: 1
+  errors:
+  - message: Invalid decode 'Sponsor', the decode is not in the codelist
+    level: Error
+    klass: StudyRole
+    attribute: code
+    path: $.Study.StudyVersion[0].StudyRole[0]
+    rule_text: A study role code must be specified according to the (C215480) DDF
+      codelist (e.g. an entry with a code or decode used from the codelist should
+      be consistent with the full entry in the codelist).
+- rule_id: DDF00260
+  status: Success
+  error_count: 0
+- rule_id: DDF00261
+  status: Success
+  error_count: 0
+- rule_id: DDFSDW001
+  status: Success
+  error_count: 0

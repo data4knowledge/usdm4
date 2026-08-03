@@ -6,7 +6,7 @@ from src.usdm4.builder.builder import Builder
 from src.usdm4.api.code import Code
 from tests.usdm4.helpers.files import write_json_file, read_json_file
 
-SAVE = False
+SAVE = True
 
 
 def root_path():
@@ -39,14 +39,16 @@ def test_seed(builder):
 
 
 def test_cdisc_code_basic(builder):
-    # builder = Builder(root_path())
+    # The decode is now the canonical preferredTerm from the CT library
+    # (C12345 → "Ciliary Body" in the loaded cache), not the passed-in
+    # string. The decode parameter is preserved for backward compatibility
+    # but ignored when the term is found in CT.
     result = builder.cdisc_code("C12345", "Test Code")
 
-    # assert isinstance(result, Code)
     assert result.code == "C12345"
-    assert result.decode == "Test Code"
+    assert result.decode == "Ciliary Body"
     assert result.codeSystem == builder._cdisc_code_system
-    assert result.codeSystemVersion == "2025-03-28"
+    assert result.codeSystemVersion == "2026-03-27"
 
 
 def test_cdisc_code_missing(builder):
@@ -56,25 +58,24 @@ def test_cdisc_code_missing(builder):
 
 
 def test_alias_code_basic(builder):
-    # builder = Builder(root_path())
     sc = builder.cdisc_code("C12345", "Test Code")
     result = builder.alias_code(sc)
 
-    # assert isinstance(result, AliasCode)
     assert result.standardCode.code == "C12345"
-    assert result.standardCode.decode == "Test Code"
+    assert result.standardCode.decode == "Ciliary Body"
     assert result.standardCode.codeSystem == builder._cdisc_code_system
-    assert result.standardCode.codeSystemVersion == "2025-03-28"
+    assert result.standardCode.codeSystemVersion == "2026-03-27"
     assert result.standardCodeAliases == []
 
 
 def test_sponsor_basic(builder):
-    # builder = Builder(root_path())
+    # C54149's CDISC preferredTerm is "Drug Company" (it used to be
+    # "Pharmaceutical Company"); the builder reflects whatever the CT
+    # library has loaded.
     result = builder.sponsor("ACME Pharma")
 
-    # assert isinstance(result, Organization)
     assert result.type.code == "C54149"
-    assert result.type.decode == "Pharmaceutical Company"
+    assert result.type.decode == "Drug Company"
     assert result.name == "ACME Pharma"
 
 
@@ -267,10 +268,8 @@ def test_iso3166_code_valid(builder):
     """Test that the iso3166_code method returns the correct Code object for a valid country code."""
     # Mock the decode method to return a known value for testing
     original_decode = builder.iso3166_library.decode
-    builder.iso3166_library.decode = (
-        lambda code: ("USA", "United States of America")
-        if code == "US"
-        else (None, None)
+    builder.iso3166_library.decode = lambda code: (
+        ("USA", "United States of America") if code == "US" else (None, None)
     )
 
     # Also need to mock the actual iso3166_code method to handle the tuple correctly
@@ -309,10 +308,8 @@ def test_iso3166_code_invalid(builder):
     """Test that the iso3166_code method handles invalid country codes correctly."""
     # Mock the decode method to return None for invalid codes
     original_decode = builder.iso3166_library.decode
-    builder.iso3166_library.decode = (
-        lambda code: (None, None)
-        if code == "XX"
-        else ("USA", "United States of America")
+    builder.iso3166_library.decode = lambda code: (
+        (None, None) if code == "XX" else ("USA", "United States of America")
     )
 
     # Also need to mock the actual iso3166_code method to handle the tuple correctly

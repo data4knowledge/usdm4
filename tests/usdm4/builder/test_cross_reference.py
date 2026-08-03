@@ -106,6 +106,17 @@ def test_get_by_path():
     assert attribute == "value"
 
 
+def test_get_by_path_single_part():
+    """Covers the single-attribute path branch (line 57): when the path has
+    exactly one part, the start instance is returned with the stripped attribute."""
+    cross_references = CrossReference()
+    item = CRTest(id="1234", name="only")
+    cross_references.add(item, "only")
+    instance, attribute = cross_references.get_by_path("CRTest", "only", "@value")
+    assert instance is item
+    assert attribute == "value"
+
+
 def test_get_by_path_errors():
     cross_references = CrossReference()
     item1 = CRTest(id="1234", name="name1")
@@ -163,6 +174,39 @@ def test_get_by_path_errors():
     )
 
 
+def test_add_alias_name_overrides_object_name():
+    """An explicitly passed name wins over the object's own name attribute."""
+    cross_references = CrossReference()
+    item = CRTest(id="1234", name="real_name")
+    cross_references.add(item, "alias")
+    assert cross_references.get_by_name(CRTest, "alias") is item
+    assert cross_references.get_by_name(CRTest, "real_name") is None
+    assert cross_references.get_by_id(CRTest, "1234") is item
+
+
+def test_add_without_name_uses_object_name():
+    """With no name argument, the object's own name attribute is used."""
+    cross_references = CrossReference()
+    item = CRTest(id="1234", name="real_name")
+    cross_references.add(item)
+    assert cross_references.get_by_name(CRTest, "real_name") is item
+    assert cross_references.get_by_id(CRTest, "1234") is item
+
+
+def test_add_without_name_and_nameless_object():
+    """No name argument and no name attribute: registered by id only."""
+
+    class NoName:
+        def __init__(self, id):
+            self.id = id
+
+    cross_references = CrossReference()
+    item = NoName(id="1234")
+    cross_references.add(item)
+    assert len(cross_references._by_name) == 0
+    assert cross_references.get_by_id(NoName, "1234") is item
+
+
 def test_duplicate_error():
     """Test that DuplicateError is raised when adding duplicate keys (line 34)"""
     cross_references = CrossReference()
@@ -210,13 +254,7 @@ def test_get_by_path_with_new_instance():
     # Only add item2, not item1
     cross_references.add(item2, "name2")
 
-    # This should trigger the condition on line 73 where item1 is not in cross reference by ID
-    # But there's a bug in the original code - it calls self.add(instance.id, instance)
-    # which has wrong parameter order. Let's test what actually happens.
-    # The code will fail because it tries to call add with a string as first parameter
-
-    # Actually, let's create a scenario that works around this bug
-    # We need to manually add item1 to bypass the bug in line 73
+    # Add item1 as well so the traversal finds it already registered
     cross_references.add(item1, "name1")
 
     # Now test the path resolution
@@ -230,21 +268,25 @@ def test_get_by_path_with_new_instance():
     assert cross_references.get_by_id(CRTest, "1234") is not None
 
 
-def test_get_by_path_bug_in_line_73():
-    """Test the bug in line 73 where add is called with wrong parameter order"""
+def test_get_by_path_registers_unseen_instance():
+    """When path traversal reaches an instance not yet in the cross reference,
+    it is registered (previously raised AttributeError due to swapped add args)."""
     cross_references = CrossReference()
     item1 = CRTest(id="1234", name="name1")
     item2 = CRTest2(id="1235", name="name2", instance=item1)
 
     # Only add item2, not item1
     cross_references.add(item2, "name2")
+    assert cross_references.get_by_id(CRTest, "1234") is None
 
-    # This should trigger the bug on line 73 where it calls self.add(instance.id, instance)
-    # with wrong parameter order, causing an AttributeError
-    with pytest.raises(AttributeError) as ex_info:
-        cross_references.get_by_path("CRTest2", "name2", "child/CRTest/@value")
-
-    assert "'str' object has no attribute 'id'" in str(ex_info.value)
+    instance, attribute = cross_references.get_by_path(
+        "CRTest2", "name2", "child/CRTest/@value"
+    )
+    assert instance is item1
+    assert attribute == "value"
+    # item1 now registered by id and by its own name
+    assert cross_references.get_by_id(CRTest, "1234") is item1
+    assert cross_references.get_by_name(CRTest, "name1") is item1
 
 
 def test_get_by_path_none_instance_error():

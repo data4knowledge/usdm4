@@ -45,7 +45,7 @@ def test_decode_none(library):
     assert result == (None, None)
 
 
-def test_load_method(library):
+def test_load_method():
     """Test that the load method exists and can be called."""
     # The load method is currently empty, so we just test that it can be called
     # without raising an exception
@@ -53,3 +53,39 @@ def test_load_method(library):
         Library(root_path()).load()
     except Exception as e:
         pytest.fail(f"load() method raised {e} unexpectedly!")
+
+
+def test_code_english(library):
+    """Test that the code method returns 'en' for 'English'."""
+    result = library.code("English")
+    assert result == ("en", "English")
+
+
+def test_code_english_lowercase(library):
+    """Test that the code method is case-insensitive."""
+    result = library.code("english")
+    assert result == ("en", "English")
+
+
+def test_code_unknown(library):
+    """Test that the code method returns None for unknown languages."""
+    result = library.code("French")
+    assert result == (None, None)
+
+
+def test_code_or_decode_with_code(library):
+    """Test code_or_decode with a valid code ('en')."""
+    result = library.code_or_decode("en")
+    assert result == ("en", "English")
+
+
+def test_code_or_decode_with_decode(library):
+    """Test code_or_decode with a valid decode ('English')."""
+    result = library.code_or_decode("English")
+    assert result == ("en", "English")
+
+
+def test_code_or_decode_unknown(library):
+    """Test code_or_decode with unknown text."""
+    result = library.code_or_decode("unknown")
+    assert result == (None, None)

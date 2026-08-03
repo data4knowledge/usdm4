@@ -16,11 +16,11 @@ from usdm4.api.study_version import StudyVersion
 from usdm4.api.biomedical_concept import BiomedicalConcept
 from usdm4.api import __all__ as v4_classes
 from usdm4.__info__ import __model_version__, __package_version__
-from usdm3.base.id_manager import IdManager
-from usdm3.base.api_instance import APIInstance
-from usdm3.ct.cdisc.library import Library as CdiscCTLibrary
-from usdm3.bc.cdisc.library import Library as CdiscBCLibrary
-from usdm3.data_store.data_store import DataStore
+from usdm4.base.id_manager import IdManager
+from usdm4.base.api_instance import APIInstance
+from usdm4.ct.cdisc.library import Library as CdiscCTLibrary
+from usdm4.bc.cdisc.library import Library as CdiscBCLibrary
+from usdm4.data_store.data_store import DataStore
 from usdm4.ct.iso.iso3166.library import Library as Iso3166Library
 from usdm4.ct.iso.iso639.library import Library as Iso639Library
 from usdm4.builder.cross_reference import CrossReference
@@ -41,13 +41,23 @@ class Builder:
         self.iso639_library = Iso639Library(root_path)
         self.cross_reference = CrossReference()
         self.other_ct_version_manager = OtherCTVersionManager()
-        self.cdisc_ct_library.load()
-        self.cdisc_bc_library.load()
-        self.iso3166_library.load()
-        self.iso639_library.load()
         self._data_store = None
-        self._cdisc_code_system = self.cdisc_ct_library.system
-        self._cdisc_code_system_version = self.cdisc_ct_library.version
+
+        # Lazy loading: Track if CT libraries have been loaded
+        self._ct_loaded = False
+        self._cdisc_code_system = None
+        self._cdisc_code_system_version = None
+
+    def _ensure_ct_loaded(self):
+        """Lazy load CT libraries only when first needed."""
+        if not self._ct_loaded:
+            self.cdisc_ct_library.load()
+            self.cdisc_bc_library.load()
+            self.iso3166_library.load()
+            self.iso639_library.load()
+            self._cdisc_code_system = self.cdisc_ct_library.system
+            self._cdisc_code_system_version = self.cdisc_ct_library.version
+            self._ct_loaded = True
 
     def clear(self):
         self._id_manager.clear()
@@ -82,6 +92,32 @@ class Builder:
             )
             return None
 
+    def duplicate(self, instance: ApiBaseModelWithId) -> ApiBaseModelWithId | None:
+        """Return a deep copy of ``instance`` with fresh ids throughout.
+
+        Use when the same logical content (e.g. an approval ``GovernanceDate``,
+        a default ``dataOriginType`` ``Code``) needs to live at more than one
+        path in the assembled study. Sharing the same Python instance produces
+        the same ``id`` at multiple paths after ``model_dump`` serialisation,
+        which DDF00083 (and CORE-001015) flag as a uniqueness violation.
+
+        The returned model is fully validated and has been registered with
+        the cross-reference index, so it can be used anywhere the original
+        could be.
+        """
+        if instance is None:
+            return None
+        klass = instance.__class__
+        params = instance.model_dump(by_alias=True)
+        # Walk the dict assigning a fresh id to every dict that carries an
+        # ``instanceType``. ``_set_ids`` already does this — same mechanism
+        # used by ``bc()`` for biomedical-concept loading.
+        self._set_ids(params)
+        # Skip the cross-reference index — the duplicate shares its
+        # ``name`` with the original, which the index rejects as a
+        # collision. ``bc()`` does the same for the same reason.
+        return self.create(klass, params, cross_reference=False)
+
     def _check_object(self, object) -> bool:
         return True if object and hasattr(object, "id") else False
 
@@ -96,6 +132,7 @@ class Builder:
         """
         Create a minimum study with the given title, identifier, and version.
         """
+        self._ensure_ct_loaded()
         # Define the codes to be used in the study
         english_code = self.iso639_code("en")
         title_type = self.cdisc_code("C207616", "Official Study Title")
@@ -104,9 +141,7 @@ class Builder:
         protocol_code = self.cdisc_code("C70817", "Protocol")
         global_code = self.cdisc_code("C68846", "Global")
         global_scope = self.create(GeographicScope, {"type": global_code})
-        approval_date_code = self.cdisc_code(
-            "C132352", "Protocol Approval by Sponsor Date"
-        )
+        approval_date_code = self.cdisc_code("C71476", "Approval Date")
 
         # Study Title
         study_title = self.create(StudyTitle, {"text": title, "type": title_type})
@@ -197,9 +232,11 @@ class Builder:
         return result
 
     def klass_and_attribute(self, klass: str, attribute: str) -> dict:
+        self._ensure_ct_loaded()
         return self.cdisc_ct_library.klass_and_attribute(klass, attribute)
 
     def klass_and_attribute_value(self, klass: str, attribute: str, value: str) -> Code:
+        self._ensure_ct_loaded()
         code_item, version = self.cdisc_ct_library.klass_and_attribute_value(
             klass, attribute, value
         )
@@ -217,23 +254,50 @@ class Builder:
             else None
         )
 
-    def cdisc_code(self, code: str, decode: str) -> Code:
+    def cdisc_code(self, code: str, decode: str = "") -> Code:
+        """Build a CDISC ``Code`` from a concept id.
+
+        The canonical ``preferredTerm`` for the concept is always read from
+        the loaded CT library and used as the ``decode``. The ``decode``
+        parameter is kept on the signature for backward compatibility with
+        existing call sites but is no longer consulted — passing a stale
+        decode (e.g. ``"Pharmaceutical Company"`` for ``C54149`` whose
+        current preferredTerm is ``"Drug Company"``) used to produce
+        DDF-rule decode-mismatch failures (DDF00140 / DDF00200 / DDF00259).
+
+        If the concept is not in the CT library the method returns ``None``
+        — same behaviour as before.
+        """
+        self._ensure_ct_loaded()
         cl = self.cdisc_ct_library.cl_by_term(code)
-        return (
-            self.create(
-                Code,
-                {
-                    "code": code,
-                    "codeSystem": self._cdisc_code_system,
-                    "codeSystemVersion": cl["source"]["effective_date"],
-                    "decode": decode,
-                },
-            )
-            if cl
-            else None
+        if not cl:
+            return None
+        # Look up the canonical preferredTerm by conceptId within the
+        # codelist's terms array. Fall back to the passed-in decode only
+        # if the term isn't present in the codelist's terms list (which
+        # would be unexpected — cl_by_term resolved the codelist via this
+        # code — but keep the fallback so a misshapen CT entry doesn't
+        # silently emit Code(decode="").
+        preferred = next(
+            (
+                term["preferredTerm"]
+                for term in cl.get("terms", [])
+                if term.get("conceptId") == code
+            ),
+            decode,
+        )
+        return self.create(
+            Code,
+            {
+                "code": code,
+                "codeSystem": self._cdisc_code_system,
+                "codeSystemVersion": cl["source"]["effective_date"],
+                "decode": preferred,
+            },
         )
 
     def cdisc_unit_code(self, unit: str) -> Code:
+        self._ensure_ct_loaded()
         unit = self.cdisc_ct_library.unit(unit)
         unit_cl = self.cdisc_ct_library.unit_code_list()
         return (
@@ -254,6 +318,7 @@ class Builder:
         return self.create(AliasCode, {"standardCode": standard_code})
 
     def bc(self, name) -> BiomedicalConcept | None:
+        self._ensure_ct_loaded()
         if self.cdisc_bc_library.exists(name):
             bc_params = self.cdisc_bc_library.usdm(name)
             self._set_ids(bc_params)
@@ -264,6 +329,7 @@ class Builder:
             return None
 
     def iso3166_code_or_decode(self, text: str) -> Code:
+        self._ensure_ct_loaded()
         code, decode = self.iso3166_library.code_or_decode(text)
         if code:
             return self.create(
@@ -279,6 +345,7 @@ class Builder:
             return None
 
     def iso3166_code(self, code: str) -> Code:
+        self._ensure_ct_loaded()
         code, decode = self.iso3166_library.decode(code)
         if code:
             return self.create(
@@ -294,6 +361,7 @@ class Builder:
             return None
 
     def iso639_code_or_decode(self, text: str) -> Code:
+        self._ensure_ct_loaded()
         code, decode = self.iso639_library.code_or_decode(text)
         # print(f"ISO639: {text} = [{code} {decode}]")
         if code:
@@ -310,6 +378,7 @@ class Builder:
             return None
 
     def iso639_code(self, code: str) -> Code:
+        self._ensure_ct_loaded()
         new_code, decode = self.iso639_library.decode(code)
         if new_code:
             return self.create(
@@ -325,6 +394,7 @@ class Builder:
             return None
 
     def iso3166_region_code(self, code: str) -> Code:
+        self._ensure_ct_loaded()
         code, decode = self.iso3166_library.region_code(code)
         return self.create(
             Code,
@@ -348,6 +418,7 @@ class Builder:
         )
 
     def sponsor(self, sponsor_name: str) -> Organization:
+        self._ensure_ct_loaded()
         sponsor_code = self.cdisc_code("C54149", "Pharmaceutical Company")
         return self.create(
             Organization,
@@ -391,12 +462,18 @@ class Builder:
         self._id_manager.add_id(data["instanceType"], data["id"])
 
     def _set_ids(self, parent):
-        if isinstance(parent, str) or isinstance(parent, bool) or (parent is None):
+        # Walk an instance-shaped dict, assigning a fresh ``id`` to every
+        # nested dict that has an ``instanceType``. Anything that isn't an
+        # instance dict (scalars, datetime values, plain configuration
+        # dicts) is treated as a leaf — we don't mint ids for non-USDM
+        # entities and we don't fail on field types like ``datetime.date``
+        # that turn up inside Pydantic dumps.
+        if not isinstance(parent, dict) or "instanceType" not in parent:
             return
         parent["id"] = self._id_manager.build_id(parent["instanceType"])
         for _, value in parent.items():
             if isinstance(value, list):
                 for child in value:
                     self._set_ids(child)
-            else:
+            elif isinstance(value, dict):
                 self._set_ids(value)

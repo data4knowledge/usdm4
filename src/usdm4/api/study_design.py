@@ -11,7 +11,7 @@ from .study_arm import StudyArm
 from .study_epoch import StudyEpoch
 from .study_element import StudyElement
 from .population_definition import StudyDesignPopulation
-from .eligibility_criterion import EligibilityCriterion
+from .eligibility_criterion import EligibilityCriterion, EligibilityCriterionItem
 from .analysis_population import AnalysisPopulation
 from .objective import Objective
 from .schedule_timeline import ScheduleTimeline
@@ -59,16 +59,6 @@ class StudyDesign(ApiBaseModelWithIdNameLabelAndDesc):
         code = self.phase()
         return code.decode if code else ""
 
-    # def soa(self, timeline_name: str) -> list:
-    #     timeline = next(
-    #         (x for x in self.scheduleTimelines if x.name == timeline_name), None
-    #     )
-    #     return timeline.soa() if timeline else None
-
-    # def main_soa(self) -> list:
-    #     timeline = next((x for x in self.scheduleTimelines if x.mainTimeline), None)
-    #     return timeline.soa() if timeline else None
-
     def first_activity(self) -> Activity:
         return next((x for x in self.activities if not x.previousId and x.nextId), None)
 
@@ -80,6 +70,16 @@ class StudyDesign(ApiBaseModelWithIdNameLabelAndDesc):
         item = self.first_activity()
         while item:
             items.append(item)
+            item = self.find_activity(item.nextId)
+        return items
+
+    def activity_parent(self) -> dict:
+        items = {}
+        item: Activity = self.first_activity()
+        while item:
+            if item.childIds:
+                for child_id in item.childIds:
+                    items[child_id] = item.id
             item = self.find_activity(item.nextId)
         return items
 
@@ -97,6 +97,33 @@ class StudyDesign(ApiBaseModelWithIdNameLabelAndDesc):
 
     def criterion_map(self) -> dict[EligibilityCriterion]:
         return {x.id: x for x in self.eligibilityCriteria}
+
+    def inclusion_criteria(
+        self, criteria: dict[str, EligibilityCriterionItem]
+    ) -> list[dict]:
+        return self._criteria(criteria, "C25532")
+
+    def exclusion_criteria(
+        self, criteria: dict[str, EligibilityCriterionItem]
+    ) -> list[dict]:
+        return self._criteria(criteria, "C25370")
+
+    def _criteria(
+        self, criteria: dict[str, EligibilityCriterionItem], category_code: str
+    ) -> list[dict]:
+        results = []
+        ecis = {
+            x.criterionItemId: criteria[x.criterionItemId]
+            for x in self.eligibilityCriteria
+        }
+        for ec in self.eligibilityCriteria:
+            if ec.category.code != category_code:
+                continue
+            combined = ec.model_dump()
+            combined["criterionItem"] = ecis[ec.criterionItemId].model_dump()
+            combined.pop("criterionItemId")
+            results.append(combined)
+        return results
 
 
 class InterventionalStudyDesign(StudyDesign):

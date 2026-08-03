@@ -53,6 +53,16 @@ class Convert:
             doc = cls._get_document(study, doc_id)
             if doc:
                 doc["instanceType"] = "StudyDefinitionDocumentVersion"
+                # Tweak type for dates
+                for date in doc["dateValues"]:
+                    if date["type"]["code"] == "C132352":
+                        date["type"]["code"] = "C71476"
+                        date["type"]["decode"] = "Approval Date"
+                    elif date["type"]["code"] == "C207598":
+                        date["type"]["code"] = "C215663"
+                        date["type"]["decode"] = "Effective Date"
+                    else:
+                        pass
                 items = []
                 for content in doc["contents"]:
                     content["displaySectionTitle"] = True
@@ -88,12 +98,23 @@ class Convert:
                 # print(f"ORG: {org}")
                 if org["type"]["code"] == "C70793":
                     org["type"]["code"] = "C54149"
-                    org["type"]["decode"] = "Pharmaceutical Company"
+                    org["type"]["decode"] = "Drug Company"
                 if org["type"]["code"] == "C93453":
-                    org["type"]["decode"] = "Clinical Study Registry"
+                    org["type"]["decode"] = "Study Registry"
                 identifier["scopeId"] = org["id"]
                 identifier.pop("studyIdentifierScope")
             version["organizations"] = organizations
+
+            # Tweak type for dates
+            for date in version["dateValues"]:
+                if date["type"]["code"] == "C132352":
+                    date["type"]["code"] = "C71476"
+                    date["type"]["decode"] = "Approval Date"
+                elif date["type"]["code"] == "C207598":
+                    date["type"]["code"] = "C215663"
+                    date["type"]["decode"] = "Effective Date"
+                else:
+                    pass
 
             # Move the criteria to a StudyVersion collection
             version_ec_items = []

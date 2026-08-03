@@ -12,7 +12,16 @@ from usdm4.assembler.amendments_assembler import AmendmentsAssembler
 from usdm4.assembler.timeline_assembler import TimelineAssembler
 from usdm4.builder.builder import Builder
 from usdm4.api.study import Study
-from usdm4.api.study_version import StudyVersion, CS_EXT_URL, OV_EXT_URL
+from usdm4.api.study_version import (
+    StudyVersion,
+    CS_EXT_URL,
+    OV_EXT_URL,
+    CC_EXT_URL,
+    CN_EXT_URL,
+    MECDL_EXT_URL,
+    SS_EXT_URL,
+    SAL_EXT_URL,
+)
 from usdm4.api.geographic_scope import GeographicScope
 from usdm4.api.governance_date import GovernanceDate
 from usdm4.api.extension import ExtensionAttribute
@@ -99,21 +108,18 @@ class StudyAssembler(BaseAssembler):
         """
         try:
             # Create the dates
-            self._create_date(data)
+            valid_date = self._create_date(data)
 
             # Extensions
             extensions = []
+            if not valid_date and "sponsor_approval_date" in data:
+                # Create where approval infomration is extension
+                self._create_extension(
+                    extensions, SAL_EXT_URL, data["sponsor_approval_date"]
+                )
             if "confidentiality" in data:
                 # Create confidentiality extension
-                extensions.append(
-                    self._builder.create(
-                        ExtensionAttribute,
-                        {
-                            "url": CS_EXT_URL,
-                            "valueString": data["confidentiality"],
-                        },
-                    )
-                )
+                self._create_extension(extensions, CS_EXT_URL, data["confidentiality"])
             if "original_protocol" in data:
                 # Create original protocol
                 extensions.append(
@@ -127,14 +133,41 @@ class StudyAssembler(BaseAssembler):
                         },
                     )
                 )
+            if identification_assembler.compound_codes:
+                # Compound codes
+                self._create_extension(
+                    extensions, CC_EXT_URL, identification_assembler.compound_codes
+                )
+            if identification_assembler.compound_names:
+                # compound names
+                self._create_extension(
+                    extensions, CN_EXT_URL, identification_assembler.compound_names
+                )
+            if identification_assembler.sponsor_signatory:
+                # Sponsor signatory
+                self._create_extension(
+                    extensions, SS_EXT_URL, identification_assembler.sponsor_signatory
+                )
+            if identification_assembler.medical_expert_contact_details_location:
+                # Medical expert contact details location
+                self._create_extension(
+                    extensions,
+                    MECDL_EXT_URL,
+                    identification_assembler.medical_expert_contact_details_location,
+                )
 
-            # Create StudyVersion parameters by combining data from all assemblers
+            # Create StudyVersion parameters by combining data from all assemblers.
+            #
+            # ``StudyVersion.dateValues`` holds dates *about the study version*
+            # (e.g. sponsor approval); ``StudyDefinitionDocumentVersion.dateValues``
+            # holds dates *about the document version* (when the document was
+            # signed off). They are different scopes — document_assembler's
+            # dates stay on the document version and are not re-attached here.
             params = {
                 "versionIdentifier": data["version"],  # Version ID from input data
                 "rationale": data["rationale"],  # Version rationale from input data
                 "titles": identification_assembler.titles,  # Study titles from identification
-                "dateValues": self._dates
-                + document_assembler.dates,  # Combined governance dates
+                "dateValues": self._dates,  # Study-version-scoped governance dates
                 "studyDesigns": [
                     study_design_assembler.study_design
                 ],  # Study design structure
@@ -149,11 +182,37 @@ class StudyAssembler(BaseAssembler):
                 if amendments_assembler.amendment
                 else [],
                 "conditions": timeline_assembler.conditions,
+                "biomedicalConcepts": timeline_assembler.biomedical_concepts,
+                "bcSurrogates": timeline_assembler.biomedical_concept_surrogates,
+                "roles": identification_assembler.roles,
                 "extensionAttributes": extensions,
+                # Interventions live on StudyVersion, not StudyDesign —
+                # StudyDesign only holds the id references in
+                # studyInterventionIds.
+                "studyInterventions": study_design_assembler.study_interventions,
+                # Products likewise live on StudyVersion; administrations
+                # reference them via administrableProductId.
+                "administrableProducts": study_design_assembler.administrable_products,
             }
             study_version = self._builder.create(StudyVersion, params)
 
-            # print(f"STUDY VERSION: {study_version is not None}")
+            # Wire each StudyRole back to the StudyVersion it lives under.
+            # ``StudyRole.appliesToIds`` is required by DDF00189 ("every role
+            # must apply to a version or to one-or-more designs") and, for
+            # the sponsor role specifically, by DDF00203 ("the sponsor role
+            # must be applicable to a study version"). It can only be set
+            # here — the StudyVersion id isn't known at the point the role
+            # is created in IdentificationAssembler.
+            #
+            # The version:design relationship is 1:1 today, so applying every
+            # role to the version is the correct choice. When multiple
+            # designs land per version, IdentificationAssembler should tag
+            # each role at creation time with whether it applies to the
+            # version or to specific designs, and this loop should resolve
+            # the right ids accordingly.
+            if study_version is not None:
+                for role in study_version.roles or []:
+                    role.appliesToIds = [study_version.id]
 
             # Create the top-level Study container object
             study_name, study_label = self._get_study_name_label(data["name"])
@@ -170,9 +229,6 @@ class StudyAssembler(BaseAssembler):
                     else [],  # Reference to protocol document
                 },
             )
-
-            # print(f"STUDY: {self._study is not None}")
-
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
             self._errors.exception("Failed during creation of study", e, location)
@@ -181,11 +237,28 @@ class StudyAssembler(BaseAssembler):
     def study(self) -> Study:
         return self._study
 
-    def _create_date(self, data: dict) -> None:
+    def _create_extension(
+        self, extensions: list[ExtensionAttribute], url: str, value: str
+    ) -> None:
+        try:
+            extensions.append(
+                self._builder.create(
+                    ExtensionAttribute, {"url": url, "valueString": value}
+                )
+            )
+        except Exception as e:
+            self._errors.exception(
+                "Failed during creation of extesnion",
+                e,
+                KlassMethodLocation(self.MODULE, "_create_extension"),
+            )
+
+    def _create_date(self, data: dict) -> bool:
+        result = False
         try:
             if actual_date := self._encoder.to_date(data["sponsor_approval_date"]):
                 sponsor_approval_date_code = self._builder.cdisc_code(
-                    "C132352", "Protocol Approval by Sponsor Date"
+                    "C71476", "Approval Date"
                 )
                 global_code = self._builder.cdisc_code("C68846", "Global")
                 global_scope = self._builder.create(
@@ -202,20 +275,23 @@ class StudyAssembler(BaseAssembler):
                 )
                 if approval_date:
                     self._dates.append(approval_date)
+                    result = True
             else:
                 self._errors.warning(
                     "No sponsor approval date detected",
                     KlassMethodLocation(self.MODULE, "_create_date"),
                 )
+            return result
         except Exception as e:
             self._errors.exception(
                 "Failed during creation of governance date",
                 e,
                 KlassMethodLocation(self.MODULE, "_create_date"),
             )
+            return False
 
     def _get_study_name_label(self, options: dict) -> tuple[str, str]:
-        items = ["acronym", "identifier", "compound"]
+        items = ["identifier", "acronym", "compound"]
         for item in items:
             if item in options and options[item]:
                 name = re.sub(r"[\W_]+", "", options[item].upper())

@@ -1,4 +1,13 @@
-from usdm3.rules.library.rule_template import RuleTemplate
+# MANUAL: do not regenerate
+#
+# Each StudyElement must be referenced by at least one StudyCell via
+# StudyCell.elementIds. The previous implementation iterated
+# StudyElement instances and looked for a non-existent `elements`
+# attribute on them (StudyElement has `studyInterventionIds`,
+# `transitionEndRule`, etc. — there is no `elements`), which meant
+# every element was flagged as "missing elements" regardless of
+# whether any cell referenced it.
+from usdm4.rules.rule_template import RuleTemplate
 
 
 class RuleDDF00040(RuleTemplate):
@@ -17,4 +26,20 @@ class RuleDDF00040(RuleTemplate):
         )
 
     def validate(self, config: dict) -> bool:
-        raise NotImplementedError("rule is not implemented")
+        data = config["data"]
+        referenced: set[str] = set()
+        for cell in data.instances_by_klass("StudyCell"):
+            for eid in cell.get("elementIds") or []:
+                if isinstance(eid, str) and eid:
+                    referenced.add(eid)
+
+        for element in data.instances_by_klass("StudyElement"):
+            eid = element.get("id")
+            if eid and eid not in referenced:
+                self._add_failure(
+                    f"StudyElement {eid!r} is not referenced by any StudyCell.elementIds",
+                    "StudyElement",
+                    "id",
+                    data.path_by_id(eid),
+                )
+        return self._result()

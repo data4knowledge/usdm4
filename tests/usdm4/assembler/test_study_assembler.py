@@ -87,7 +87,7 @@ def prepared_assemblers(
     # Prepare identification assembler with basic data
     identification_data = {
         "titles": {"brief": "Test Study", "official": "Official Test Study"},
-        "identifiers": [{"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}}],
+        "identifiers": [{"identifier": "NCT12345678", "scope": {"standard": "nct"}}],
     }
     identification_assembler.execute(identification_data)
 
@@ -156,7 +156,7 @@ def prepared_assemblers(
         "impact": {"safety": True, "reliability": False},
         "enrollment": {"value": 100, "unit": "subjects"},
     }
-    amendments_assembler.execute(amendments_data)
+    amendments_assembler.execute(amendments_data, document_assembler)
 
     return {
         "identification": identification_assembler,
@@ -678,9 +678,9 @@ class TestStudyAssemblerEdgeCases:
         )
 
         assert study_assembler.study is not None
-        # Should use acronym (first in priority order)
-        assert study_assembler.study.name == "ACR"
-        assert study_assembler.study.label == "ACR"
+        # Priority order is: identifier > acronym > compound
+        assert study_assembler.study.name == "ID001"
+        assert study_assembler.study.label == "ID-001"
 
     def test_execute_with_empty_string_values(
         self, study_assembler, prepared_assemblers
@@ -798,7 +798,7 @@ class TestStudyAssemblerPrivateMethods:
         assert label == "VALID-ID"
 
     def test_get_study_name_label_priority_order(self, study_assembler):
-        """Test _get_study_name_label priority order (acronym > identifier > compound)."""
+        """Test _get_study_name_label priority order (identifier > acronym > compound)."""
         options = {
             "compound": "COMPOUND",
             "identifier": "IDENTIFIER",
@@ -807,9 +807,9 @@ class TestStudyAssemblerPrivateMethods:
 
         name, label = study_assembler._get_study_name_label(options)
 
-        # Should use acronym (highest priority)
-        assert name == "ACRONYM"
-        assert label == "ACRONYM"
+        # Should use identifier (highest priority)
+        assert name == "IDENTIFIER"
+        assert label == "IDENTIFIER"
 
 
 class TestStudyAssemblerStateManagement:
@@ -1149,8 +1149,227 @@ class TestStudyAssemblerAdditionalCoverage:
 
         name, label = study_assembler._get_study_name_label(options)
 
-        # Should use acronym and clean special characters
+        # Should use identifier (highest priority) and clean special characters
         # The regex r"[\W_]+" removes all non-word characters (including underscores)
-        # "A@C#R$" becomes "ACR" (not "ACRS" as the @ # $ are removed, not replaced with S)
-        assert name == "ACR"
-        assert label == "A@C#R$"
+        # "I%D^E&N*T" becomes "IDENT"
+        assert name == "IDENT"
+        assert label == "I%D^E&N*T"
+
+
+class TestStudyAssemblerExtensions:
+    """Test extension creation paths (covers lines 127, 134, 139, 144, 149)."""
+
+    def test_execute_with_original_protocol(self, study_assembler, prepared_assemblers):
+        """Test execute with original_protocol creates boolean extension (covers line 127)."""
+        data = {
+            "name": {"acronym": "TST"},
+            "label": "Test Study",
+            "version": "1.0",
+            "rationale": "Test rationale",
+            "sponsor_approval_date": "2024-01-15",
+            "original_protocol": "true",
+        }
+
+        study_assembler.execute(
+            data,
+            prepared_assemblers["identification"],
+            prepared_assemblers["study_design"],
+            prepared_assemblers["document"],
+            prepared_assemblers["population"],
+            prepared_assemblers["amendments"],
+            prepared_assemblers["timeline"],
+        )
+
+        assert study_assembler.study is not None
+        study_version = study_assembler.study.versions[0]
+        # Should have at least one extension for original_protocol
+        ext_urls = [e.url for e in study_version.extensionAttributes]
+        assert "www.d4k.dk/usdm/extensions/002" in ext_urls
+
+    def test_execute_with_compound_codes_and_names(self, builder, errors):
+        """Test execute with compound_codes and compound_names (covers lines 134, 139)."""
+        builder.clear()
+        sa = StudyAssembler(builder, errors)
+        ia = IdentificationAssembler(builder, errors)
+        sda = StudyDesignAssembler(builder, errors)
+        da = DocumentAssembler(builder, errors)
+        pa = PopulationAssembler(builder, errors)
+        aa = AmendmentsAssembler(builder, errors)
+        ta = TimelineAssembler(builder, errors)
+
+        # Set up identification with compound data
+        ia.execute(
+            {
+                "titles": {"brief": "Test"},
+                "identifiers": [
+                    {"identifier": "NCT12345678", "scope": {"standard": "nct"}}
+                ],
+                "other": {
+                    "sponsor_signatory": "Dr. Smith",
+                    "medical_expert": {"name": "Dr. Jones"},
+                    "compound_names": "CompoundA",
+                    "compound_codes": "CODE-123",
+                },
+            }
+        )
+
+        pa.execute(
+            {
+                "label": "Pop",
+                "inclusion_exclusion": {
+                    "inclusion": ["Age >= 18"],
+                    "exclusion": ["Pregnant"],
+                },
+            }
+        )
+        ta._timelines = []
+        ta._epochs = []
+        ta._encounters = []
+        ta._activities = []
+        ta._conditions = []
+        sda.execute(
+            {"label": "Design", "rationale": "Rat", "trial_phase": "phase-1"}, pa, ta
+        )
+        da.execute(
+            {
+                "document": {
+                    "label": "Doc",
+                    "version": "1.0",
+                    "status": "final",
+                    "template": "T",
+                    "version_date": "2024-01-01",
+                },
+                "sections": [
+                    {"section_number": "1", "section_title": "Intro", "text": "Text"}
+                ],
+            }
+        )
+        aa.execute(None, da)
+
+        data = {
+            "name": {"acronym": "TST"},
+            "label": "Test",
+            "version": "1.0",
+            "rationale": "Test",
+            "sponsor_approval_date": "2024-01-15",
+        }
+
+        sa.execute(data, ia, sda, da, pa, aa, ta)
+
+        assert sa.study is not None
+        study_version = sa.study.versions[0]
+        ext_urls = [e.url for e in study_version.extensionAttributes]
+        # Should have compound_codes, compound_names, sponsor_signatory extensions
+        assert "www.d4k.dk/usdm/extensions/004" in ext_urls  # compound_codes
+        assert "www.d4k.dk/usdm/extensions/005" in ext_urls  # compound_names
+        assert "www.d4k.dk/usdm/extensions/007" in ext_urls  # sponsor_signatory
+        # medical_expert with a name creates a role, not an extension
+        assert "www.d4k.dk/usdm/extensions/006" not in ext_urls
+
+
+class TestStudyAssemblerMedicalExpertContactDetailsLocation:
+    """Cover study_assembler line 153 — MECDL_EXT_URL extension creation path."""
+
+    def test_execute_with_medical_expert_reference_creates_extension(
+        self, builder, errors
+    ):
+        """When identification has medical_expert.reference (no name), the
+        MECDL extension should be created on StudyVersion — covers line 153."""
+        builder.clear()
+        sa = StudyAssembler(builder, errors)
+        ia = IdentificationAssembler(builder, errors)
+        sda = StudyDesignAssembler(builder, errors)
+        da = DocumentAssembler(builder, errors)
+        pa = PopulationAssembler(builder, errors)
+        aa = AmendmentsAssembler(builder, errors)
+        ta = TimelineAssembler(builder, errors)
+
+        ia.execute(
+            {
+                "titles": {"brief": "Test"},
+                "identifiers": [
+                    {"identifier": "NCT12345678", "scope": {"standard": "nct"}}
+                ],
+                "other": {
+                    "sponsor_signatory": "Dr. Smith",
+                    # reference (not name) — triggers the contact details
+                    # location path
+                    "medical_expert": {
+                        "reference": ["Protocol Section 1.2", "Contact info page"]
+                    },
+                    "compound_names": "CompoundA",
+                    "compound_codes": "CODE-123",
+                },
+            }
+        )
+        pa.execute(
+            {
+                "label": "Pop",
+                "inclusion_exclusion": {
+                    "inclusion": ["Age >= 18"],
+                    "exclusion": ["Pregnant"],
+                },
+            }
+        )
+        ta._timelines = []
+        ta._epochs = []
+        ta._encounters = []
+        ta._activities = []
+        ta._conditions = []
+        sda.execute(
+            {"label": "Design", "rationale": "Rat", "trial_phase": "phase-1"}, pa, ta
+        )
+        da.execute(
+            {
+                "document": {
+                    "label": "Doc",
+                    "version": "1.0",
+                    "status": "final",
+                    "template": "T",
+                    "version_date": "2024-01-01",
+                },
+                "sections": [
+                    {"section_number": "1", "section_title": "Intro", "text": "Text"}
+                ],
+            }
+        )
+        aa.execute(None, da)
+
+        data = {
+            "name": {"acronym": "TST"},
+            "label": "Test",
+            "version": "1.0",
+            "rationale": "Test",
+        }
+        sa.execute(data, ia, sda, da, pa, aa, ta)
+
+        assert sa.study is not None
+        study_version = sa.study.versions[0]
+        ext_urls = [e.url for e in study_version.extensionAttributes]
+        # MECDL_EXT_URL — medical expert contact details location extension
+        assert "www.d4k.dk/usdm/extensions/006" in ext_urls
+
+
+class TestStudyAssemblerCreateExtensionException:
+    """Test _create_extension exception handler (covers lines 213-214)."""
+
+    def test_create_extension_exception_is_caught(self, study_assembler, errors):
+        """Test that exceptions in _create_extension are caught and logged."""
+        initial_error_count = errors.error_count()
+
+        # Monkey-patch builder.create to raise an exception
+        original_create = study_assembler._builder.create
+
+        def raise_error(cls, params):
+            raise RuntimeError("Simulated extension creation failure")
+
+        study_assembler._builder.create = raise_error
+
+        try:
+            extensions = []
+            study_assembler._create_extension(extensions, "test-url", "test-value")
+        finally:
+            study_assembler._builder.create = original_create
+
+        assert len(extensions) == 0
+        assert errors.error_count() > initial_error_count

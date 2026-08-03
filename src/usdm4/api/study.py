@@ -1,7 +1,10 @@
 from typing import List, Literal, Union
 from pydantic import Field
 from .api_base_model import ApiBaseModel
-from .study_definition_document import StudyDefinitionDocument
+from .study_definition_document import (
+    StudyDefinitionDocument,
+    StudyDefinitionDocumentVersion,
+)
 from .study_version import StudyVersion
 from uuid import UUID
 
@@ -21,8 +24,17 @@ class Study(ApiBaseModel):
             None,
         )
 
+    def document_templates(self) -> list[str]:
+        return [x.templateName for x in self.documentedBy]
+
+    def document_map(
+        self,
+    ) -> dict[str, dict[StudyDefinitionDocument, StudyDefinitionDocumentVersion]]:
+        result = {}
+        for doc in self.documentedBy:
+            for version in doc.versions:
+                result[version.id] = {"document": doc, "version": version}
+        return result
+
     def first_version(self) -> StudyVersion | None:
-        try:
-            return self.versions[0]
-        except Exception:
-            return None
+        return self.versions[0] if len(self.versions) > 0 else None

@@ -1,28 +1,69 @@
+"""
+Assembler for creating StudyAmendment objects from input data.
+
+This module processes amendment data and constructs USDM4-compliant StudyAmendment
+objects including reasons, enrollment information, and geographic scopes.
+"""
+
+import re
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.assembler.base_assembler import BaseAssembler
 from usdm4.assembler.encoder import Encoder
+from usdm4.assembler.document_assembler import DocumentAssembler
 from usdm4.builder.builder import Builder
 from usdm4.api.quantity_range import Quantity
 from usdm4.api.geographic_scope import GeographicScope
 from usdm4.api.subject_enrollment import SubjectEnrollment
 from usdm4.api.study_amendment_reason import StudyAmendmentReason
-from usdm4.api.study_amendment import StudyAmendment
+from usdm4.api.study_amendment import StudyAmendment, SI_EXT_URL
+from usdm4.api.study_amendment_impact import StudyAmendmentImpact
+from usdm4.api.study_change import StudyChange
+from usdm4.api.document_content_reference import DocumentContentReference
+from usdm4.api.code import Code
+from usdm4.api.extension import ExtensionAttribute
 
 
 class AmendmentsAssembler(BaseAssembler):
-    MODULE = "usdm4.assembler.amendments_assembler.AmenementsAssembler"
+    """
+    Assembler that creates StudyAmendment objects from structured input data.
+
+    Handles the creation of amendments including their reasons, enrollment data,
+    and geographic scope information. Supports global, country-specific, and
+    region-specific scopes.
+    """
+
+    MODULE = "usdm4.assembler.amendments_assembler.AmendmentsAssembler"
 
     def __init__(self, builder: Builder, errors: Errors):
+        """
+        Initialize the AmendmentsAssembler.
+
+        Args:
+            builder: The Builder instance for creating USDM4 objects.
+            errors: The Errors instance for logging errors and information.
+        """
         super().__init__(builder, errors)
         self._encoder = Encoder(builder, errors)
         self.clear()
 
     def clear(self):
+        """Reset the assembler state by clearing the current amendment."""
         self._amendment = None
 
-    def execute(self, data: dict) -> None:
+    def execute(self, data: dict, document_assembler: DocumentAssembler) -> None:
+        """
+        Execute the amendment assembly process.
+
+        Processes the input data dictionary and creates a StudyAmendment object.
+        Any exceptions during processing are caught and logged.
+
+        Args:
+            data: Dictionary containing amendment data with keys like 'identifier',
+                  'summary', 'reasons', 'impact', 'enrollment', and 'scope'.
+        """
         try:
+            self._document_assembler = document_assembler
             if data:
                 self._amendment = self._create_amendment(data)
         except Exception as e:
@@ -31,30 +72,49 @@ class AmendmentsAssembler(BaseAssembler):
 
     @property
     def amendment(self) -> StudyAmendment:
+        """
+        Get the created StudyAmendment object.
+
+        Returns:
+            The StudyAmendment object created by the last execute() call,
+            or None if no amendment was created.
+        """
         return self._amendment
 
     def _create_amendment(self, data: dict) -> StudyAmendment:
+        """
+        Create a StudyAmendment from the provided data.
+
+        Constructs the amendment with primary and secondary reasons, impact flags,
+        enrollment information, and geographic scopes.
+
+        Args:
+            data: Dictionary containing amendment details.
+
+        Returns:
+            A StudyAmendment object, or None if creation fails.
+        """
         try:
-            # print(f"DATA: {data}")
-            reason = {}
-            global_code = self._builder.cdisc_code("C68846", "Global")
-            global_scope = self._builder.create(GeographicScope, {"type": global_code})
-            for k, item in data["reasons"].items():
-                # print(f"REASON_CODE: {k} = {item}")
-                reason[k] = self._builder.create(
-                    StudyAmendmentReason, self._encoder.amendment_reason(item)
-                )
-            impact = data["impact"]["safety"] or data["impact"]["reliability"]
-            # print(f"IMPACT: {impact}")
+            self._errors.info(f"Amendment assembler source data {data}")
+            reasons = self._create_primary_secondary_reasons(data)
+            geo_scopes, site_scopes = self._create_scopes(data)
             params = {
                 "name": "AMENDMENT 1",
-                "number": "1",
+                "number": data["identifier"],
                 "summary": data["summary"],
-                "substantialImpact": impact,
-                "primaryReason": reason["primary"],
-                "secondaryReasons": [reason["secondary"]],
+                "impacts": self._create_amendment_impact(data),
+                "primaryReason": reasons["primary"],
+                # secondaryReasons stays empty when the corpus didn't
+                # supply a secondary reason — synthesising an "Other" code
+                # whenever the input is empty produces a primary == secondary
+                # pair that DDF00256 (correctly) flags.
+                "secondaryReasons": (
+                    [reasons["secondary"]] if reasons.get("secondary") else []
+                ),
                 "enrollments": [self._create_enrollment(data)],
-                "geographicScopes": [global_scope],
+                "geographicScopes": geo_scopes,
+                "changes": self._create_changes(data),
+                "extensionAttributes": [site_scopes] if site_scopes else [],
             }
             return self._builder.create(StudyAmendment, params)
         except Exception as e:
@@ -62,23 +122,211 @@ class AmendmentsAssembler(BaseAssembler):
             self._errors.exception("Failed during creation of amendments", e, location)
             return None
 
-    def _create_enrollment(self, data: dict):
-        try:
-            global_code = self._builder.cdisc_code("C68846", "Global")
+    def _create_primary_secondary_reasons(
+        self, data: dict
+    ) -> dict[str, StudyAmendmentReason]:
+        # Build the primary reason unconditionally — primaryReason is
+        # required on StudyAmendment and the encoder falls back to "Other"
+        # when no real reason was supplied. The secondary, however, is
+        # optional: only synthesise one when the corpus actually supplied
+        # a value, otherwise return an empty mapping for ``secondary`` and
+        # let the caller leave secondaryReasons as ``[]``.
+        reasons: dict[str, StudyAmendmentReason] = {}
+        raw = data.get("reasons") or {}
+        for k, item in raw.items():
+            if k == "secondary" and not item:
+                continue
+            a_reason = self._encoder.amendment_reason(item)
+            a_reason["otherReason"] = a_reason.pop("other_reason")
+            reasons[k] = self._builder.create(StudyAmendmentReason, a_reason)
+        return reasons
+
+    def _create_changes(self, data: dict) -> list[StudyChange]:
+        results = []
+        for index, item in enumerate(data["changes"]):
+            refs = self._extract_section_number_and_title(item["section"])
             params = {
-                "type": global_code,
-                "code": None,
+                "name": f"CHANGE_{index + 1}",
+                "summary": item["description"].strip(),
+                "rationale": item["rationale"].strip(),
+                "changedSections": refs,
             }
-            geo_scope = self._builder.create(GeographicScope, params)
-            if "enrollment" in data:
+            change = self._builder.create(StudyChange, params)
+            if change:
+                results.append(change)
+        return results
+
+    # The C217272 section value set has two members with no section
+    # number: the Title Page and the Amendment Details section. An
+    # amendment change may legitimately point at either, so recognise
+    # them by name and store them with an empty sectionNumber rather
+    # than discarding the reference.
+    NAMED_SECTIONS = {
+        "title page": "Title Page",
+        "amendment details": "Amendment Details",
+    }
+
+    def _extract_section_number_and_title(self, text) -> list[DocumentContentReference]:
+        results = []
+        for line in text.strip().split("\n"):
+            for number, title in self._parse_section_line(line):
+                params = {
+                    "sectionNumber": number,
+                    "sectionTitle": title,
+                    "appliesToId": self._document_assembler.document.id,
+                }
+                ref = self._builder.create(DocumentContentReference, params)
+                if ref:
+                    results.append(ref)
+                    self._errors.info(
+                        f"Extracted section ref from '{line}' -> {params}",
+                        KlassMethodLocation(
+                            self.MODULE, "_extract_section_number_and_title"
+                        ),
+                    )
+        return results
+
+    def _parse_section_line(self, line) -> list[tuple[str, str]]:
+        """Parse one section-reference line into (number, title) pairs.
+
+        A change row may cite several sections at once, written either on
+        separate lines or as a single plural list ("Sections 3.1, 4.1 and
+        6.1"). A plural list with no per-section titles expands to one
+        reference per number. A singular line keeps its trailing title.
+        The two non-numbered C217272 members (Title Page, Amendment
+        Details) are matched by name. Unparseable lines are logged and
+        dropped.
+        """
+        stripped = line.strip()
+        if not stripped:
+            return []
+        plural = re.match(r"(?i)^sections\b", stripped)
+        body = re.sub(r"(?i)^(?:new\s+)?sections?\b[\s:]*", "", stripped).strip()
+        parts = [p for p in re.split(r"\s*(?:,|\band\b)\s*", body) if p]
+        if (
+            (plural or len(parts) > 1)
+            and parts
+            and all(re.fullmatch(r"\d+(?:\.\d+)*", p) for p in parts)
+        ):
+            return [(p, "") for p in parts]
+        match = re.match(r"^(?:Section\s+)?(\d+(?:\.\d+)*),?\s*(.*)$", stripped)
+        if match:
+            return [(match.group(1), match.group(2))]
+        if stripped.lower() in self.NAMED_SECTIONS:
+            return [("", self.NAMED_SECTIONS[stripped.lower()])]
+        self._errors.error(
+            f"Failed to extract section ref from '{line}'",
+            KlassMethodLocation(self.MODULE, "_extract_section_number_and_title"),
+        )
+        return []
+
+    def _create_amendment_impact(self, data: dict) -> list[StudyAmendmentImpact]:
+        try:
+            results = []
+            self._errors.info(
+                f"Creating amendment impacts using {data['impact']}",
+                KlassMethodLocation(self.MODULE, "_create_amendment_impact"),
+            )
+            impact = data["impact"]
+            s_and_r = impact["safety_and_rights"]
+            r_and_r = impact["reliability_and_robustness"]
+            # print(f"\nR-R1: {r_and_r}")
+            # print(f"R-R2: {r_and_r["reliability"]}")
+            self._create_impact(
+                results,
+                "C215665",
+                "Study Subject Safety",
+                s_and_r["safety"]["substantial"],
+                s_and_r["safety"]["reason"],
+            )
+            self._create_impact(
+                results,
+                "C215666",
+                "Study Subject Rights",
+                s_and_r["rights"]["substantial"],
+                s_and_r["rights"]["reason"],
+            )
+            self._create_impact(
+                results,
+                "C215667",
+                "Study Data Reliability",
+                r_and_r["reliability"]["substantial"],
+                r_and_r["reliability"]["reason"],
+            )
+            self._create_impact(
+                results,
+                "C215668",
+                "Study Data Robustness",
+                r_and_r["robustness"]["substantial"],
+                r_and_r["robustness"]["reason"],
+            )
+            return results
+        except Exception as e:
+            self._errors.exception(
+                "Failed during creation of amendment impacts",
+                e,
+                KlassMethodLocation(self.MODULE, "_create_amendment_impact"),
+            )
+            return []
+
+    def _create_impact(
+        self,
+        results: list[StudyAmendmentImpact],
+        code: str,
+        decode: str,
+        is_substantial: bool,
+        text: str,
+    ) -> None:
+        type_code = self._builder.cdisc_code(code, decode)
+        params = {
+            "text": text,
+            "isSubstantial": is_substantial,
+            "type": type_code,
+        }
+        item = self._builder.create(StudyAmendmentImpact, params)
+        if item:
+            results.append(item)
+
+    def _create_enrollment(self, data: dict) -> SubjectEnrollment:
+        """
+        Create a SubjectEnrollment object from the provided data.
+
+        If enrollment data is present, creates a quantity with the specified value
+        and unit (percentage if '%'). Otherwise, creates a default enrollment with
+        value 0.
+
+        Args:
+            data: Dictionary that may contain an 'enrollment' key with 'value' and 'unit'.
+
+        Returns:
+            A SubjectEnrollment object, or None if creation fails.
+        """
+        try:
+            # Derive the enrollment geographic scope from the amendment scope
+            # (the Amendment Scope title-page field, carried in data["scope"])
+            # rather than defaulting to global. Per ICH M11 the enrollment
+            # scope description is a deterministic function of the amendment
+            # scope, not authored independently: a global amendment enrolls
+            # "Globally"; a country/regional amendment enrolls "Locally".
+            geo_scope = self._enrollment_geographic_scope(data)
+            # Truthy check, not key presence: ``enrollment`` is always a key
+            # on ``data`` (Pydantic-injected default) but its value is ``None``
+            # when no enrollment was supplied, which would TypeError on the
+            # subscript below. Falsy ``enrollment`` (None, missing, empty)
+            # falls through to the default-quantity branch.
+            if data.get("enrollment"):
                 unit_alias = None
-                if data["enrollment"]["unit"] == "%":
+                if data["enrollment"]["unit"] in ("%", "percent", "percentage"):
                     unit_code = self._builder.cdisc_code("C25613", "Percentage")
                     unit_alias = (
                         self._builder.alias_code(unit_code) if unit_code else None
                     )
                 quantity = self._builder.create(
-                    Quantity, {"value": data["enrollment"]["value"], "unit": unit_alias}
+                    Quantity,
+                    {
+                        "value": self._to_int(data["enrollment"]["value"]),
+                        "unit": unit_alias,
+                    },
                 )
                 params = {
                     "name": "ENROLLMENT",
@@ -94,6 +342,208 @@ class AmendmentsAssembler(BaseAssembler):
                 }
             return self._builder.create(SubjectEnrollment, params)
         except Exception as e:
-            location = KlassMethodLocation(self.MODULE, "execute")
+            location = KlassMethodLocation(self.MODULE, "_create_enrollment")
             self._errors.exception("Failed during creation of enrollments", e, location)
             return None
+
+    def _enrollment_geographic_scope(self, data: dict) -> GeographicScope:
+        """Build the single GeographicScope for an amendment enrollment.
+
+        Per ICH M11 the enrollment scope description (Globally / Locally /
+        By Cohort, codelist C217275) is not authored independently — it is
+        determined by the amendment scope. So we derive ``forGeographicScope``
+        from ``data["scope"]`` (the Amendment Scope field: {global, countries,
+        regions, sites, unknown}) rather than always emitting a global scope.
+
+        The returned scope uses a CT-valid ``GeographicScope.type`` (codelist
+        C207412 — Global / Country / Region) so DDF00144 passes, and carries
+        the area code when non-global so DDF00261 passes. Country and region
+        both render as "Locally"; that wording is applied by the rendering
+        layer from this type, not stored here.
+
+        Known gap: a purely site- or cohort-scoped amendment has no C207412
+        area code to anchor a non-global scope, so it falls back to global
+        and is logged. Country/regional amendments (the M11 case this serves)
+        derive correctly.
+        """
+        scope = data.get("scope") or {}
+        results: list[GeographicScope] = []
+        if not scope or scope.get("global", True):
+            self._global_scope(results)
+            return results[0] if results else None
+        # Non-global: find the first resolvable area to anchor the scope.
+        # Mirror _create_scopes' precedence and, critically, also try the
+        # unparsed "unknown" tokens — the M11 extractor (step 1) drops a bare
+        # country/region name (e.g. "France") into scope["unknown"], whereas
+        # the FHIR import (step 3) populates scope["countries"]. Try countries
+        # (explicit + unknown) as ISO countries first, then regions (explicit +
+        # unknown). DDF00261 requires a code on a non-global scope.
+        unknown = scope.get("unknown", [])
+        for part in list(scope.get("countries", [])) + unknown:
+            code, decode = self._builder.iso3166_library.code_or_decode(part)
+            if code:
+                self._create_scope(
+                    results, self._encoder.geographic_scope("COUNTRY"), code, decode
+                )
+                break
+        if not results:
+            for part in list(scope.get("regions", [])) + unknown:
+                code, decode = self._builder.iso3166_library.region_code(part)
+                if code:
+                    self._create_scope(
+                        results, self._encoder.geographic_scope("REGION"), code, decode
+                    )
+                    break
+        if not results:
+            # Non-global but no resolvable country/region (e.g. site/cohort or
+            # unparsable text). No C207412 area code is available, so fall back
+            # to a global scope and log — the enrollment definition cannot be
+            # expressed as "Locally" without an area code.
+            self._errors.warning(
+                "Non-global amendment scope had no resolvable country/region "
+                f"for enrollment scope; defaulting to global. scope={scope}",
+                KlassMethodLocation(self.MODULE, "_enrollment_geographic_scope"),
+            )
+            self._global_scope(results)
+        return results[0] if results else None
+
+    def _to_int(self, item: str | int) -> int:
+        try:
+            return item if isinstance(item, int) else int(str(item))
+        except Exception as e:
+            self._errors.exception(
+                f"Failed to convert '{item}' to integer value",
+                e,
+                KlassMethodLocation(self.MODULE, "_to_int"),
+            )
+            return 0
+
+    def _create_scopes(
+        self, data: dict
+    ) -> tuple[list[GeographicScope], ExtensionAttribute]:
+        extension = None
+        results = []
+        extensions = []
+        if "scope" in data and data["scope"]:
+            scope = data["scope"]
+            # {"global": True/False, "countries": [], "regions": [], "sites": [], "unknown": []}
+            if scope["global"]:
+                self._global_scope(results)
+            else:
+                for part in scope["unknown"]:
+                    text = part.strip()
+                    if not text:
+                        continue
+                    # Try to find as a country code first
+                    code, decode = self._builder.iso3166_library.code_or_decode(text)
+                    if code:
+                        country_code = self._encoder.geographic_scope("COUNTRY")
+                        self._create_scope(results, country_code, code, decode)
+                    else:
+                        # If not a country, try as a region code
+                        code, decode = self._builder.iso3166_library.region_code(text)
+                        if code:
+                            region_code = self._encoder.geographic_scope("REGION")
+                            self._create_scope(results, region_code, code, decode)
+                        else:
+                            self._create_site_scope(extensions, text)
+                for part in scope["countries"]:
+                    code, decode = self._builder.iso3166_library.code_or_decode(part)
+                    if code:
+                        country_code = self._encoder.geographic_scope("COUNTRY")
+                        self._create_scope(results, country_code, code, decode)
+                for part in scope["regions"]:
+                    code, decode = self._builder.iso3166_library.region_code(part)
+                    if code:
+                        region_code = self._encoder.geographic_scope("REGION")
+                        self._create_scope(results, region_code, code, decode)
+                for part in scope["sites"]:
+                    self._create_site_scope(extensions, part)
+        else:
+            # Empty scope string - default to global and log error
+            self._global_scope(results)
+            self._errors.error(
+                "Empty scope found",
+                KlassMethodLocation(self.MODULE, "_create_scopes"),
+            )
+        if extensions:
+            extension = self._builder.create(
+                ExtensionAttribute,
+                {
+                    "url": SI_EXT_URL,
+                    "extensionAttributes": extensions,
+                },
+            )
+        self._errors.info(
+            f"Scopes created in assembler, geo: {results}, sites: {extension}"
+        )
+        return results, extension
+
+    def _global_scope(self, results: list[GeographicScope]) -> None:
+        """
+        Add a global geographic scope to the results list.
+
+        Args:
+            results: List to append the global scope to.
+        """
+        global_code = self._encoder.geographic_scope("GLOBAL")
+        self._create_scope(results, global_code)
+
+    def _create_site_scope(self, extensions: list, text: str):
+        extension = self._builder.create(
+            ExtensionAttribute,
+            {
+                "url": "site-identifier",
+                "valueString": text,
+            },
+        )
+        if extension:
+            extensions.append(extension)
+
+    def _create_scope(
+        self,
+        results: list[GeographicScope],
+        type: Code,
+        code: str = None,
+        decode: str = None,
+    ) -> None:
+        """
+        Create a GeographicScope and add it to the results list.
+
+        For country scopes (C25464), looks up the ISO3166 country code.
+        For region scopes, looks up the ISO3166 region code.
+        Creates an alias code from the standard code if found.
+
+        Args:
+            results: List to append the created scope to.
+            type: The Code object indicating the scope type (Country, Global, Region).
+            code: Optional ISO code string (e.g., 'US', '150').
+            decode: Optional human-readable decode for the code.
+        """
+        alias_code = None
+        if code and decode:
+            # Look up the standard code based on scope type
+            std_code = (
+                self._builder.iso3166_code(code)
+                if type.code == "C25464"
+                else self._builder.iso3166_region_code(code)
+            )
+            if std_code:
+                alias_code = self._builder.alias_code(std_code)
+            else:
+                self._errors.error(
+                    f"Failed to create standard code for '{code}', '{decode}'",
+                    KlassMethodLocation(self.MODULE, "_create_scope"),
+                )
+        gs = self._builder.create(GeographicScope, {"type": type, "code": alias_code})
+        if gs:
+            self._errors.info(
+                f"Created scope of type {type.decode}{f' -> [{code}, {decode}]' if code else ''}",
+                KlassMethodLocation(self.MODULE, "_create_scope"),
+            )
+            results.append(gs)
+        else:
+            self._errors.error(
+                f"Failed to create geographic scope for {type}, {code}, {decode}",
+                KlassMethodLocation(self.MODULE, "_create_scope"),
+            )

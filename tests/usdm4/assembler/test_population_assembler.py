@@ -540,3 +540,362 @@ class TestPopulationAssembler:
         assert hasattr(exclusion_criterion, "category")
         assert isinstance(inclusion_criterion.category, Code)
         assert isinstance(exclusion_criterion.category, Code)
+
+
+# ---------------------------------------------------------------------------
+# Scope C — demographics + cohorts wiring
+# ---------------------------------------------------------------------------
+
+
+class TestPopulationAssemblerWiring:
+    """Integration tests covering the demographics + cohorts wiring."""
+
+    def test_full_demographics_and_two_cohorts(self, population_assembler):
+        """Demographics + cohorts produce populated plannedSex / plannedAge /
+        plannedEnrollmentNumber / cohorts."""
+        data = {
+            "label": "Adult Population",
+            "inclusion_exclusion": {"inclusion": [], "exclusion": []},
+            "demographics": {
+                "age_min": 18,
+                "age_max": 65,
+                "age_unit": "Years",
+                "sex": "ALL",
+                "healthy_volunteers": False,
+            },
+            "cohorts": [
+                {
+                    "name": "Naive",
+                    "planned_enrollment": 40,
+                    "characteristics": ["treatment-naive"],
+                    "arm_names": ["Active"],
+                },
+                {
+                    "name": "Experienced",
+                    "planned_enrollment": 60,
+                    "characteristics": ["prior-treatment"],
+                    "arm_names": ["Active"],
+                },
+            ],
+        }
+
+        population_assembler.execute(data)
+
+        population = population_assembler.population
+        assert population is not None
+        assert population.includesHealthySubjects is False
+
+        # plannedAge is a Range with min/max Quantities.
+        assert population.plannedAge is not None
+        assert population.plannedAge.minValue.value == 18.0
+        assert population.plannedAge.maxValue.value == 65.0
+
+        # Sex = "ALL" → two entries.
+        assert len(population.plannedSex) == 2
+
+        # Two cohorts with per-cohort planned enrollment.
+        assert len(population.cohorts) == 2
+        assert population.cohorts[0].label == "Naive"
+        assert population.cohorts[0].plannedEnrollmentNumber.value == 40.0
+        assert population.cohorts[0].characteristics[0].text == "treatment-naive"
+
+        # Overall plannedEnrollmentNumber defaults to the sum of cohort values.
+        assert population.plannedEnrollmentNumber is not None
+        assert population.plannedEnrollmentNumber.value == 100.0
+
+    def test_partial_demographics_sex_only(self, population_assembler):
+        """sex-only demographics → plannedSex set, plannedAge = None."""
+        data = {
+            "label": "Female Only",
+            "inclusion_exclusion": {"inclusion": [], "exclusion": []},
+            "demographics": {"sex": "FEMALE"},
+        }
+
+        population_assembler.execute(data)
+
+        population = population_assembler.population
+        assert population is not None
+        assert len(population.plannedSex) == 1
+        assert population.plannedSex[0].code == "C16576"  # Female
+        assert population.plannedAge is None
+        # Default healthy_volunteers defaults to True in our assembler when
+        # the input dict doesn't carry it.
+        assert population.includesHealthySubjects is True
+
+    def test_explicit_planned_enrollment_wins_over_cohort_sum(
+        self, population_assembler
+    ):
+        """planned_enrollment at the population level overrides cohort sum."""
+        data = {
+            "label": "Pop",
+            "inclusion_exclusion": {"inclusion": [], "exclusion": []},
+            "planned_enrollment": 999,
+            "cohorts": [
+                {"name": "C1", "planned_enrollment": 10},
+                {"name": "C2", "planned_enrollment": 20},
+            ],
+        }
+
+        population_assembler.execute(data)
+
+        population = population_assembler.population
+        assert population.plannedEnrollmentNumber.value == 999.0
+
+    def test_raw_cohorts_exposed_for_cross_wiring(self, population_assembler):
+        """raw_cohorts preserves arm_names for StudyDesignAssembler."""
+        data = {
+            "label": "Pop",
+            "inclusion_exclusion": {"inclusion": [], "exclusion": []},
+            "cohorts": [
+                {"name": "C1", "arm_names": ["A1", "A2"]},
+            ],
+        }
+
+        population_assembler.execute(data)
+
+        raw = population_assembler.raw_cohorts
+        assert len(raw) == 1
+        assert raw[0]["arm_names"] == ["A1", "A2"]
+
+    def test_legacy_payload_without_demographics(self, population_assembler):
+        """Pre-scope-C payloads (no demographics, no cohorts) keep the old
+        defaults: includesHealthySubjects=True, empty plannedSex/Age/cohorts."""
+        data = {
+            "label": "Legacy Pop",
+            "inclusion_exclusion": {"inclusion": [], "exclusion": []},
+        }
+
+        population_assembler.execute(data)
+
+        population = population_assembler.population
+        assert population is not None
+        assert population.includesHealthySubjects is True
+        assert population.plannedAge is None
+        assert population.plannedEnrollmentNumber is None
+        assert population.cohorts == []
+        assert population_assembler.raw_cohorts == []
+
+
+# ----------------------------------------------------------------------
+# Structured criteria (issue 45)
+# ----------------------------------------------------------------------
+
+
+class TestStructuredCriteria:
+    def _execute(self, population_assembler, inclusion, exclusion=None):
+        population_assembler.execute(
+            {
+                "label": "Pop",
+                "inclusion_exclusion": {
+                    "inclusion": inclusion,
+                    "exclusion": exclusion or [],
+                },
+            }
+        )
+        return population_assembler
+
+    def test_plain_strings_unchanged(self, population_assembler):
+        pa = self._execute(population_assembler, ["Age >= 18", "Consent"], ["Pregnant"])
+        criteria = pa.criteria
+        assert [c.name for c in criteria] == ["INC1", "INC2", "EXC1"]
+        assert [c.identifier for c in criteria] == ["1", "2", "1"]
+        assert criteria[0].label == "Inclusion criterion 1 "
+        assert [i.name for i in pa.criteria_items] == [
+            "INC-I1",
+            "INC-I2",
+            "EXC-I1",
+        ]
+
+    def test_structured_criteria_honour_source_fields(self, population_assembler):
+        pa = self._execute(
+            population_assembler,
+            [
+                {
+                    "identifier": "03",
+                    "name": "IN03",
+                    "label": "Reliable",
+                    "description": "Reliability criterion",
+                    "text": "Reliable participants",
+                }
+            ],
+            [{"identifier": "07", "text": "Pregnant"}],
+        )
+        inc, exc = pa.criteria
+        assert inc.name == "IN03"
+        assert inc.identifier == "03"
+        assert inc.label == "Reliable"
+        assert inc.description == "Reliability criterion"
+        assert pa.criteria_items[0].name == "IN03-I"
+        assert pa.criteria_items[0].text == "Reliable participants"
+        # Identifier honoured verbatim; generated name/label defaults kept.
+        assert exc.name == "EXC1"
+        assert exc.identifier == "07"
+        assert exc.label == "Exclusion criterion 1 "
+
+    def test_identifier_gaps_preserved(self, population_assembler):
+        # M11: deleted criteria are not renumbered — gaps must survive.
+        pa = self._execute(
+            population_assembler,
+            [
+                {"identifier": "01", "text": "First"},
+                {"identifier": "04", "text": "Fourth (2 and 3 deleted)"},
+            ],
+        )
+        assert [c.identifier for c in pa.criteria] == ["01", "04"]
+
+    def test_mixed_forms(self, population_assembler):
+        pa = self._execute(
+            population_assembler,
+            ["Plain", {"identifier": "05", "text": "Structured"}],
+        )
+        assert [c.identifier for c in pa.criteria] == ["1", "05"]
+        assert pa.criteria[0].criterionItemId == pa.criteria_items[0].id
+        assert pa.criteria[1].criterionItemId == pa.criteria_items[1].id
+
+
+# ----------------------------------------------------------------------
+# Criterion next/previous chaining (issue 46)
+# ----------------------------------------------------------------------
+
+
+class TestCriterionOrdering:
+    def _execute(self, population_assembler, inclusion, exclusion):
+        population_assembler.execute(
+            {
+                "label": "Pop",
+                "inclusion_exclusion": {
+                    "inclusion": inclusion,
+                    "exclusion": exclusion,
+                },
+            }
+        )
+        return population_assembler.criteria
+
+    def test_categories_form_separate_chains(self, population_assembler):
+        criteria = self._execute(population_assembler, ["A", "B", "C"], ["X", "Y"])
+        inc = criteria[:3]
+        exc = criteria[3:]
+
+        # Inclusion chain: A -> B -> C.
+        assert inc[0].previousId is None
+        assert inc[0].nextId == inc[1].id
+        assert inc[1].previousId == inc[0].id
+        assert inc[1].nextId == inc[2].id
+        assert inc[2].previousId == inc[1].id
+        assert inc[2].nextId is None
+
+        # Exclusion chain is independent: X -> Y, not linked to inclusion.
+        assert exc[0].previousId is None
+        assert exc[0].nextId == exc[1].id
+        assert exc[1].previousId == exc[0].id
+        assert exc[1].nextId is None
+
+    def test_single_criterion_has_null_ends(self, population_assembler):
+        criteria = self._execute(population_assembler, ["Only"], [])
+        assert criteria[0].previousId is None
+        assert criteria[0].nextId is None
+
+    def test_structured_criteria_chain_in_input_order(self, population_assembler):
+        # Chain order follows input order, not identifier order.
+        criteria = self._execute(
+            population_assembler,
+            [
+                {"identifier": "04", "text": "Fourth"},
+                {"identifier": "01", "text": "First"},
+            ],
+            [],
+        )
+        assert criteria[0].identifier == "04"
+        assert criteria[0].nextId == criteria[1].id
+        assert criteria[1].previousId == criteria[0].id
+
+
+# ----------------------------------------------------------------------
+# Cohort-level eligibility criteria (issue 47)
+# ----------------------------------------------------------------------
+
+
+class TestCohortCriteria:
+    def _execute(self, population_assembler, cohorts):
+        population_assembler.execute(
+            {
+                "label": "Main population",
+                "inclusion_exclusion": {
+                    "inclusion": ["Pop inc"],
+                    "exclusion": ["Pop exc"],
+                },
+                "cohorts": cohorts,
+            }
+        )
+        return population_assembler
+
+    def test_cohort_criteria_attached_and_namespaced(self, population_assembler):
+        pa = self._execute(
+            population_assembler,
+            [
+                {
+                    "name": "Cohort A",
+                    "inclusion_exclusion": {
+                        "inclusion": [{"identifier": "01", "text": "Part A healthy"}],
+                        "exclusion": ["Part A exclusion"],
+                    },
+                }
+            ],
+        )
+        cohort = pa.population.cohorts[0]
+        by_id = {c.id: c for c in pa.criteria}
+        names = [by_id[i].name for i in cohort.criterionIds]
+        assert names == ["COHORT-A-INC1", "COHORT-A-EXC1"]
+        assert by_id[cohort.criterionIds[0]].identifier == "01"
+        # Items are namespaced too and registered design-wide.
+        assert "COHORT-A-INC-I1" in [i.name for i in pa.criteria_items]
+
+    def test_population_ids_exclude_cohort_criteria(self, population_assembler):
+        pa = self._execute(
+            population_assembler,
+            [
+                {
+                    "name": "Cohort A",
+                    "inclusion_exclusion": {
+                        "inclusion": ["Part A only"],
+                        "exclusion": [],
+                    },
+                }
+            ],
+        )
+        population = pa.population
+        cohort = population.cohorts[0]
+        assert len(population.criterionIds) == 2  # pop inc + pop exc only
+        assert set(population.criterionIds).isdisjoint(cohort.criterionIds)
+        # All criteria (population + cohort) live in the design-wide list.
+        assert len(pa.criteria) == 3
+
+    def test_cohort_without_criteria_unchanged(self, population_assembler):
+        pa = self._execute(population_assembler, [{"name": "Cohort B"}])
+        assert pa.population.cohorts[0].criterionIds == []
+        assert len(pa.criteria) == 2
+
+    def test_cohort_chains_independent_of_population(self, population_assembler):
+        pa = self._execute(
+            population_assembler,
+            [
+                {
+                    "name": "Cohort A",
+                    "inclusion_exclusion": {
+                        "inclusion": ["A1", "A2"],
+                        "exclusion": [],
+                    },
+                }
+            ],
+        )
+        by_id = {c.id: c for c in pa.criteria}
+        cohort = pa.population.cohorts[0]
+        first, second = [by_id[i] for i in cohort.criterionIds]
+        # Cohort chain is self-contained.
+        assert first.previousId is None
+        assert first.nextId == second.id
+        assert second.previousId == first.id
+        assert second.nextId is None
+        # Population inclusion chain untouched by cohort criteria.
+        pop_inc = by_id[pa.population.criterionIds[0]]
+        assert pop_inc.nextId is None

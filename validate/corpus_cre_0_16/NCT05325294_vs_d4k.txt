@@ -1,0 +1,265 @@
+==============================================================================
+USDM4 Engine Alignment Report (CORE vs d4k)
+==============================================================================
+CORE file: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05325294/results/usdm.json
+d4k  file: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT05325294/results/usdm.json
+
+CORE: rules_executed=205 findings=49 skipped=2 exec_errors=3216
+d4k : rules_executed=213 findings=231 counts={'success': 190, 'failure': 23, 'exception': 0, 'not_implemented': 0}
+
+Rule ids total      : 214
+Rule ids shared     : 14
+Rule ids d4k-only   : 199
+Rule ids CORE-only  : 1
+
+Classifications:
+  aligned_pass       187
+  d4k_only           12
+  aligned_fail       9
+  core_only          3
+  count_mismatch     2
+  core_only_rule     1
+
+------------------------------------------------------------------------------
+Divergent rules (most useful rows first):
+------------------------------------------------------------------------------
+rule_id      classification     d4k            core           core_id       
+----------------------------------------------------------------------------
+DDF00010     core_only          Success(0)     Fail(2)        CORE-001013   
+DDF00031     d4k_only           Failure(1)     Pass-or-NA(0)                
+DDF00075     d4k_only           Failure(17)    Pass-or-NA(0)                
+DDF00084     d4k_only           Failure(1)     Pass-or-NA(0)                
+DDF00087     d4k_only           Failure(2)     Pass-or-NA(0)                
+DDF00088     d4k_only           Failure(2)     Pass-or-NA(0)                
+DDF00093     count_mismatch     Failure(2)     Fail(3)        CORE-000873   
+DDF00094     count_mismatch     Failure(2)     Fail(3)        CORE-000814   
+DDF00110     d4k_only           Failure(50)    Pass-or-NA(0)                
+DDF00140     d4k_only           Failure(2)     Pass-or-NA(0)                
+DDF00151     core_only          Success(0)     Fail(2)        CORE-000834   
+DDF00155     d4k_only           Failure(127)   Pass-or-NA(0)                
+DDF00166     d4k_only           Failure(1)     Pass-or-NA(0)                
+DDF00181     core_only          Success(0)     Fail(2)        CORE-001068   
+DDF00200     d4k_only           Failure(2)     Pass-or-NA(0)                
+DDF00227     d4k_only           Failure(1)     Pass-or-NA(0)                
+DDF00259     d4k_only           Failure(1)     Pass-or-NA(0)                
+DDF00263     core_only_rule     Absent(0)      Fail(17)       CORE-001076   
+
+------------------------------------------------------------------------------
+All rules:
+------------------------------------------------------------------------------
+rule_id      classification     d4k            core           core_id       
+----------------------------------------------------------------------------
+DDF00006     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00007     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00008     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00009     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00010     core_only          Success(0)     Fail(2)        CORE-001013   
+DDF00011     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00012     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00013     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00014     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00017     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00018     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00019     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00020     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00021     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00022     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00023     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00024     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00025     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00026     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00027     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00028     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00029     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00030     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00031     d4k_only           Failure(1)     Pass-or-NA(0)                
+DDF00032     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00033     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00034     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00035     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00036     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00037     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00038     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00039     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00040     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00041     aligned_fail       Failure(1)     Fail(1)        CORE-001036   
+DDF00042     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00044     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00045     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00046     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00047     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00050     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00051     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00052     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00054     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00058     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00059     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00060     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00061     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00062     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00063     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00069     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00071     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00072     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00073     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00075     d4k_only           Failure(17)    Pass-or-NA(0)                
+DDF00076     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00080     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00081     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00082     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00083     aligned_fail       Failure(8)     Fail(8)        CORE-001015   
+DDF00084     d4k_only           Failure(1)     Pass-or-NA(0)                
+DDF00087     d4k_only           Failure(2)     Pass-or-NA(0)                
+DDF00088     d4k_only           Failure(2)     Pass-or-NA(0)                
+DDF00090     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00091     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00093     count_mismatch     Failure(2)     Fail(3)        CORE-000873   
+DDF00094     count_mismatch     Failure(2)     Fail(3)        CORE-000814   
+DDF00096     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00097     aligned_fail       Failure(1)     Fail(1)        CORE-000815   
+DDF00098     aligned_fail       Failure(1)     Fail(1)        CORE-000875   
+DDF00099     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00100     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00101     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00102     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00104     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00105     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00106     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00107     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00108     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00110     d4k_only           Failure(50)    Pass-or-NA(0)                
+DDF00112     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00114     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00115     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00124     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00125     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00126     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00127     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00128     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00132     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00133     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00136     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00137     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00140     d4k_only           Failure(2)     Pass-or-NA(0)                
+DDF00141     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00142     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00143     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00144     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00146     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00147     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00148     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00149     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00150     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00151     core_only          Success(0)     Fail(2)        CORE-000834   
+DDF00152     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00153     aligned_fail       Failure(1)     Fail(1)        CORE-001016   
+DDF00154     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00155     d4k_only           Failure(127)   Pass-or-NA(0)                
+DDF00156     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00157     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00158     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00159     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00160     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00161     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00162     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00163     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00164     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00165     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00166     d4k_only           Failure(1)     Pass-or-NA(0)                
+DDF00167     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00168     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00169     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00170     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00171     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00172     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00173     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00174     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00175     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00176     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00177     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00178     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00179     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00180     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00181     core_only          Success(0)     Fail(2)        CORE-001068   
+DDF00182     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00183     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00184     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00185     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00186     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00187     aligned_fail       Failure(5)     Fail(5)        CORE-001069   
+DDF00188     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00189     aligned_fail       Failure(1)     Fail(1)        CORE-000970   
+DDF00190     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00191     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00192     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00193     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00194     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00195     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00196     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00197     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00198     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00199     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00200     d4k_only           Failure(2)     Pass-or-NA(0)                
+DDF00201     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00202     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00203     aligned_fail       Failure(1)     Fail(1)        CORE-000974   
+DDF00204     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00205     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00206     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00207     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00208     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00209     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00210     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00211     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00212     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00213     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00214     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00215     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00216     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00217     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00218     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00219     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00220     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00221     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00222     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00223     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00224     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00225     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00226     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00227     d4k_only           Failure(1)     Pass-or-NA(0)                
+DDF00228     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00229     aligned_fail       Failure(1)     Fail(1)        CORE-001058   
+DDF00230     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00231     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00232     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00233     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00234     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00235     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00236     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00237     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00238     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00239     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00240     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00241     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00242     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00243     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00244     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00245     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00246     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00247     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00248     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00249     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00250     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00251     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00252     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00253     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00254     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00255     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00256     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00257     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00258     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00259     d4k_only           Failure(1)     Pass-or-NA(0)                
+DDF00260     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00261     aligned_pass       Success(0)     Pass-or-NA(0)                
+DDF00263     core_only_rule     Absent(0)      Fail(17)       CORE-001076   
+DDFSDW001    aligned_pass       Success(0)     Pass-or-NA(0)                

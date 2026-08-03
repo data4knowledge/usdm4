@@ -1,0 +1,1584 @@
+file: /Users/daveih/Documents/github/protocol_corpus/protocols/NCT04647526/results/usdm.json
+version: 4-0
+is_valid: false
+rules_executed: 205
+rules_skipped: 2
+finding_count: 129
+execution_error_count: 3082
+ct_packages_available: 200
+ct_packages_loaded:
+- sdtmct-2025-09-26
+- ddfct-2025-09-26
+findings:
+- rule_id: CORE-000417
+  description: A window must not be defined for an anchor timing (i.e., type is "Fixed
+    Reference").
+  message: One or more of the window attributes (windowLabel, windowLower, windowUpper)
+    contains a value for a Fixed Reference timing (type.code=C201358).
+  error_count: 1
+  errors:
+  - instance_id: Timing_1
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/0
+    name: TIMING-0
+    details:
+      parent_id: ScheduleTimeline_1
+      type.code: C201358
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      type.decode: Fixed Reference Timing Type
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+- rule_id: CORE-001068
+  description: Date values associated to a study definition document version must
+    be unique regarding the combination of type and geographic scopes of the date.
+  message: The study definition document version has more than one governance date
+    with the same type and geographic scope.
+  error_count: 1
+  errors:
+  - instance_id: StudyDefinitionDocumentVersion_1
+    path: /study/documentedBy/0/versions/0
+    name: Not in dataset
+    details:
+      parent_id: StudyDefinitionDocument_1
+      version: null
+      parent_rel: versions
+      parent_entity: StudyDefinitionDocument
+      code.standardCode.decode: Not in dataset
+      id.GovernanceDate: Not in dataset
+      type.code: Not in dataset
+      dateValue: Not in dataset
+      code.standardCode.code: Not in dataset
+      type.decode: Not in dataset
+      type.decode.GeographicScope: Not in dataset
+      type.code.GeographicScope: Not in dataset
+- rule_id: CORE-000873
+  description: Date values associated to a study version must be unique regarding
+    the combination of type and geographic scopes of the date.
+  message: The study version has more than one governance date with the same type
+    and geographic scope.
+  error_count: 1
+  errors:
+  - instance_id: StudyVersion_1
+    path: /study/versions/0
+    name: Not in dataset
+    details:
+      parent_id: b5c9ad0a-202d-492e-a044-142a581b72ec
+      parent_rel: versions
+      parent_entity: Study
+      versionIdentifier: '1'
+      code.standardCode.decode: Not in dataset
+      id.GovernanceDate: Not in dataset
+      type.code: Not in dataset
+      dateValue: Not in dataset
+      code.standardCode.code: Not in dataset
+      type.decode: Not in dataset
+      type.decode.GeographicScope: Not in dataset
+      type.code.GeographicScope: Not in dataset
+- rule_id: CORE-001069
+  description: Narrative content item text is expected to be HTML formatted.
+  message: The narrative content item text contains non-conformant XHTML.
+  error_count: 12
+  errors:
+  - instance_id: NarrativeContentItem_4
+    path: /study/versions/0/narrativeContentItems/3
+    name: NCI-3
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 60 [ERROR]: Element ''figure'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+  - instance_id: NarrativeContentItem_6
+    path: /study/versions/0/narrativeContentItems/5
+    name: NCI-5
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 27 [ERROR]: Element ''div'': This element is not expected.'
+      - 'Invalid XHTML line 44 [ERROR]: Element ''div'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+  - instance_id: NarrativeContentItem_15
+    path: /study/versions/0/narrativeContentItems/14
+    name: NCI-14
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''figure'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+  - instance_id: NarrativeContentItem_29
+    path: /study/versions/0/narrativeContentItems/28
+    name: NCI-28
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''figure'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+  - instance_id: NarrativeContentItem_45
+    path: /study/versions/0/narrativeContentItems/44
+    name: NCI-44
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''figure'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+  - instance_id: NarrativeContentItem_72
+    path: /study/versions/0/narrativeContentItems/71
+    name: NCI-71
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''div'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+  - instance_id: NarrativeContentItem_76
+    path: /study/versions/0/narrativeContentItems/75
+    name: NCI-75
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''div'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+  - instance_id: NarrativeContentItem_77
+    path: /study/versions/0/narrativeContentItems/76
+    name: NCI-76
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''div'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+  - instance_id: NarrativeContentItem_79
+    path: /study/versions/0/narrativeContentItems/78
+    name: NCI-78
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''div'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+  - instance_id: NarrativeContentItem_123
+    path: /study/versions/0/narrativeContentItems/122
+    name: NCI-122
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''div'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+  - instance_id: NarrativeContentItem_124
+    path: /study/versions/0/narrativeContentItems/123
+    name: NCI-123
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''div'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+  - instance_id: NarrativeContentItem_180
+    path: /study/versions/0/narrativeContentItems/179
+    name: NCI-179
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''div'': This element is not expected.'
+      - 'Invalid XHTML line 1 [ERROR]: Element ''div'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: narrativeContentItems
+      parent_entity: StudyVersion
+- rule_id: CORE-000974
+  description: The sponsor study role must be applicable to a study version.
+  message: The study role is a sponsor role (code.code is C70793) but it is not applicable
+    to the study version (appliesToIds does not contain the id of the study version).
+  error_count: 1
+  errors:
+  - instance_id: StudyRole_1
+    entity: StudyRole
+    path: /study/versions/0/roles/0
+    name: ROLE_1
+    details:
+      code.code: C70793
+      code.decode: Sponsor
+      appliesToIds: []
+- rule_id: CORE-000815
+  description: Within a study design, the planned age range must be specified either
+    in the study population or in all cohorts.
+  message: Planned age has not been specified for either the study population or the
+    cohort, or it has been specified for both.
+  error_count: 1
+  errors:
+  - instance_id: StudyDesignPopulation_1
+    path: /study/versions/0/studyDesigns/0/population
+    name: DEFAULT-POPULATION
+    details:
+      parent_id: InterventionalStudyDesign_1
+      parent_rel: population
+      parent_entity: InterventionalStudyDesign
+      plannedAge: null
+      plannedAge.maxValue.StudyCohort: Not in dataset
+      plannedAge.minValue: Not in dataset
+      plannedAge.unit.decode: Not in dataset
+      plannedAge.maxValue: Not in dataset
+      id.StudyCohort: Not in dataset
+      plannedAge.minValue.StudyCohort: Not in dataset
+      name.StudyCohort: Not in dataset
+      plannedAge.StudyCohort: Not in dataset
+      plannedAge.unit.decode.StudyCohort: Not in dataset
+- rule_id: CORE-000875
+  description: Within a study design, the planned sex must be specified either in
+    the study population or in all cohorts.
+  message: Planned sex has not been specified for either the study population or the
+    cohort, or it has been specified for both.
+  error_count: 1
+  errors:
+  - instance_id: StudyDesignPopulation_1
+    path: /study/versions/0/studyDesigns/0/population
+    name: DEFAULT-POPULATION
+    details:
+      parent_id: InterventionalStudyDesign_1
+      plannedSex: false
+      parent_rel: population
+      parent_entity: InterventionalStudyDesign
+      plannedSex.decode.StudyCohort: Not in dataset
+      plannedSex.StudyCohort: Not in dataset
+      name.StudyCohort: Not in dataset
+      id.StudyCohort: Not in dataset
+      plannedSex.decode: Not in dataset
+- rule_id: CORE-001058
+  description: A study design's study phase must be specified according to the extensible
+    Trial Phase Response (C66737) SDTM codelist (e.g. an entry with a code or decode
+    used from the codelist should be consistent with the full entry in the codelist).
+  message: The study design's study phase is not specified according to the extensible
+    Trial Phase Response (C66737) SDTM codelist - codeSystem is not "http://www.cdisc.org",
+    codeSystemVersion is not a valid terminology package date, and/or the code or
+    decode (either as preferred term or as submission value) is found in the codelist
+    (case insensitive) but the corresponding decode or code does not match the codelist
+    value (case sensitive).
+  error_count: 1
+  errors:
+  - instance_id: InterventionalStudyDesign_1
+    path: /study/versions/0/studyDesigns/0
+    name: STUDY-DESIGN-1
+    details:
+      parent_id: StudyVersion_1
+      studyPhase.standardCode.codeSystem: http://www.cdisc.org
+      studyPhase.standardCode.code: C48660
+      $code_for_decode_pref_term: null
+      $code_for_decode_value: null
+      parent_rel: studyDesigns
+      parent_entity: StudyVersion
+      studyPhase.standardCode.codeSystemVersion: '2025-09-26'
+      $value_for_code: NOT APPLICABLE
+      $codelist_code: C66737
+      studyPhase.standardCode.decode: '[Trial Phase] Not Applicable'
+      $pref_term_for_code: Not Applicable
+      $codelist_extensible: true
+- rule_id: CORE-000970
+  description: Every study role must apply to either a study version or at least one
+    study design, but not both.
+  message: The study role does not only apply to the study version or at least one
+    study design - it does not apply to anything, it applies to both the study version
+    and at least one study design, or it applies to something that is not a study
+    version or a study design.
+  error_count: 1
+  errors:
+  - instance_id: StudyRole_1
+    entity: StudyRole
+    path: /study/versions/0/roles/0
+    name: ROLE_1
+    details:
+      code: Sponsor
+      appliesToIds: []
+- rule_id: CORE-001016
+  description: A planned duration is expected for the main timeline.
+  message: The planned duration is not specified for the main timeline.
+  error_count: 1
+  errors:
+  - instance_id: ScheduleTimeline_1
+    entity: ScheduleTimeline
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0
+    name: TIMELINE-1
+    details:
+      mainTimeline: true
+      check: true
+- rule_id: CORE-001036
+  description: Within a study design, there must be at least one endpoint with level
+    primary.
+  message: There is not at least one endpoint with a level of primary within the study
+    design.
+  error_count: 1
+  errors:
+  - instance_id: InterventionalStudyDesign_1
+    entity: InterventionalStudyDesign
+    path: /study/versions/0/studyDesigns/0
+    name: STUDY-DESIGN-1
+    details:
+      '# Primary endpoints': 0
+- rule_id: CORE-001076
+  description: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category, biomedical concept surrogate, child activity,
+    or timeline.
+  message: The activity does not refer to any procedure, biomedical concept, biomedical
+    concept category, biomedical concept surrogate, child activity, or timeline.
+  error_count: 60
+  errors:
+  - instance_id: Activity_1
+    path: /study/versions/0/studyDesigns/0/activities/0
+    name: ACTIVITY-1
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_2
+    path: /study/versions/0/studyDesigns/0/activities/1
+    name: ACTIVITY-2
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_3
+    path: /study/versions/0/studyDesigns/0/activities/2
+    name: ACTIVITY-3
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_4
+    path: /study/versions/0/studyDesigns/0/activities/3
+    name: ACTIVITY-4
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_5
+    path: /study/versions/0/studyDesigns/0/activities/4
+    name: ACTIVITY-5
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_6
+    path: /study/versions/0/studyDesigns/0/activities/5
+    name: ACTIVITY-6
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_7
+    path: /study/versions/0/studyDesigns/0/activities/6
+    name: ACTIVITY-7
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_8
+    path: /study/versions/0/studyDesigns/0/activities/7
+    name: ACTIVITY-8
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_9
+    path: /study/versions/0/studyDesigns/0/activities/8
+    name: ACTIVITY-9
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_10
+    path: /study/versions/0/studyDesigns/0/activities/9
+    name: ACTIVITY-10
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_11
+    path: /study/versions/0/studyDesigns/0/activities/10
+    name: ACTIVITY-11
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_12
+    path: /study/versions/0/studyDesigns/0/activities/11
+    name: ACTIVITY-12
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_13
+    path: /study/versions/0/studyDesigns/0/activities/12
+    name: ACTIVITY-13
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_14
+    path: /study/versions/0/studyDesigns/0/activities/13
+    name: ACTIVITY-14
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_15
+    path: /study/versions/0/studyDesigns/0/activities/14
+    name: ACTIVITY-15
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_16
+    path: /study/versions/0/studyDesigns/0/activities/15
+    name: ACTIVITY-16
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_17
+    path: /study/versions/0/studyDesigns/0/activities/16
+    name: ACTIVITY-17
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_18
+    path: /study/versions/0/studyDesigns/0/activities/17
+    name: ACTIVITY-18
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_19
+    path: /study/versions/0/studyDesigns/0/activities/18
+    name: ACTIVITY-19
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_20
+    path: /study/versions/0/studyDesigns/0/activities/19
+    name: ACTIVITY-20
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_21
+    path: /study/versions/0/studyDesigns/0/activities/20
+    name: ACTIVITY-21
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_22
+    path: /study/versions/0/studyDesigns/0/activities/21
+    name: ACTIVITY-22
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_23
+    path: /study/versions/0/studyDesigns/0/activities/22
+    name: ACTIVITY-23
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_24
+    path: /study/versions/0/studyDesigns/0/activities/23
+    name: ACTIVITY-24
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_25
+    path: /study/versions/0/studyDesigns/0/activities/24
+    name: ACTIVITY-25
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_26
+    path: /study/versions/0/studyDesigns/0/activities/25
+    name: ACTIVITY-26
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_27
+    path: /study/versions/0/studyDesigns/0/activities/26
+    name: ACTIVITY-27
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_28
+    path: /study/versions/0/studyDesigns/0/activities/27
+    name: ACTIVITY-28
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_29
+    path: /study/versions/0/studyDesigns/0/activities/28
+    name: ACTIVITY-29
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_30
+    path: /study/versions/0/studyDesigns/0/activities/29
+    name: ACTIVITY-30
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_31
+    path: /study/versions/0/studyDesigns/0/activities/30
+    name: ACTIVITY-31
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_32
+    path: /study/versions/0/studyDesigns/0/activities/31
+    name: ACTIVITY-32
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_33
+    path: /study/versions/0/studyDesigns/0/activities/32
+    name: ACTIVITY-33
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_34
+    path: /study/versions/0/studyDesigns/0/activities/33
+    name: ACTIVITY-34
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_35
+    path: /study/versions/0/studyDesigns/0/activities/34
+    name: ACTIVITY-35
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_36
+    path: /study/versions/0/studyDesigns/0/activities/35
+    name: ACTIVITY-36
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_37
+    path: /study/versions/0/studyDesigns/0/activities/36
+    name: ACTIVITY-37
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_38
+    path: /study/versions/0/studyDesigns/0/activities/37
+    name: ACTIVITY-38
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_39
+    path: /study/versions/0/studyDesigns/0/activities/38
+    name: ACTIVITY-39
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_40
+    path: /study/versions/0/studyDesigns/0/activities/39
+    name: ACTIVITY-40
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_41
+    path: /study/versions/0/studyDesigns/0/activities/40
+    name: ACTIVITY-41
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_42
+    path: /study/versions/0/studyDesigns/0/activities/41
+    name: ACTIVITY-42
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_43
+    path: /study/versions/0/studyDesigns/0/activities/42
+    name: ACTIVITY-43
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_44
+    path: /study/versions/0/studyDesigns/0/activities/43
+    name: ACTIVITY-44
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_45
+    path: /study/versions/0/studyDesigns/0/activities/44
+    name: ACTIVITY-45
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_46
+    path: /study/versions/0/studyDesigns/0/activities/45
+    name: ACTIVITY-46
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_47
+    path: /study/versions/0/studyDesigns/0/activities/46
+    name: ACTIVITY-47
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_48
+    path: /study/versions/0/studyDesigns/0/activities/47
+    name: ACTIVITY-48
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_49
+    path: /study/versions/0/studyDesigns/0/activities/48
+    name: ACTIVITY-49
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_50
+    path: /study/versions/0/studyDesigns/0/activities/49
+    name: ACTIVITY-50
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_51
+    path: /study/versions/0/studyDesigns/0/activities/50
+    name: ACTIVITY-51
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_52
+    path: /study/versions/0/studyDesigns/0/activities/51
+    name: ACTIVITY-52
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_53
+    path: /study/versions/0/studyDesigns/0/activities/52
+    name: ACTIVITY-53
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_54
+    path: /study/versions/0/studyDesigns/0/activities/53
+    name: ACTIVITY-54
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_55
+    path: /study/versions/0/studyDesigns/0/activities/54
+    name: ACTIVITY-55
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_56
+    path: /study/versions/0/studyDesigns/0/activities/55
+    name: ACTIVITY-56
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_57
+    path: /study/versions/0/studyDesigns/0/activities/56
+    name: ACTIVITY-57
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_58
+    path: /study/versions/0/studyDesigns/0/activities/57
+    name: ACTIVITY-58
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_59
+    path: /study/versions/0/studyDesigns/0/activities/58
+    name: ACTIVITY-59
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+  - instance_id: Activity_60
+    path: /study/versions/0/studyDesigns/0/activities/59
+    name: ACTIVITY-60
+    details:
+      parent_id: InterventionalStudyDesign_1
+      definedProcedures: false
+      bcCategoryIds: false
+      parent_rel: activities
+      bcSurrogateIds: false
+      parent_entity: InterventionalStudyDesign
+      biomedicalConceptIds: false
+      timelineId: null
+      childIds: false
+- rule_id: CORE-000402
+  description: Timing windows must be fully defined, if one of the window attributes
+    (i.e., window label, window lower, and window upper) is defined then all must
+    be specified.
+  message: One or more of the window attributes (windowLabel, windowLower, windowUpper)
+    is missing.
+  error_count: 20
+  errors:
+  - instance_id: Timing_1
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/0
+    name: TIMING-0
+    details:
+      parent_id: ScheduleTimeline_1
+      valueLabel: 0 (BL)
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+  - instance_id: Timing_2
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/1
+    name: TIMING-1
+    details:
+      parent_id: ScheduleTimeline_1
+      valueLabel: '2'
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+  - instance_id: Timing_3
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/2
+    name: TIMING-2
+    details:
+      parent_id: ScheduleTimeline_1
+      valueLabel: '4'
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+  - instance_id: Timing_4
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/3
+    name: TIMING-3
+    details:
+      parent_id: ScheduleTimeline_1
+      valueLabel: '6'
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+  - instance_id: Timing_5
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/4
+    name: TIMING-4
+    details:
+      parent_id: ScheduleTimeline_1
+      valueLabel: '8'
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+  - instance_id: Timing_6
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/5
+    name: TIMING-5
+    details:
+      parent_id: ScheduleTimeline_1
+      valueLabel: '10'
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+  - instance_id: Timing_7
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/6
+    name: TIMING-6
+    details:
+      parent_id: ScheduleTimeline_1
+      valueLabel: '12'
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+  - instance_id: Timing_8
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/7
+    name: TIMING-7
+    details:
+      parent_id: ScheduleTimeline_1
+      valueLabel: '14'
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+  - instance_id: Timing_9
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/8
+    name: TIMING-8
+    details:
+      parent_id: ScheduleTimeline_1
+      valueLabel: '16'
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+  - instance_id: Timing_10
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/9
+    name: TIMING-9
+    details:
+      parent_id: ScheduleTimeline_1
+      valueLabel: '18'
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+  - instance_id: Timing_11
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/10
+    name: TIMING-10
+    details:
+      parent_id: ScheduleTimeline_1
+      valueLabel: '20'
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+  - instance_id: Timing_12
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/11
+    name: TIMING-11
+    details:
+      parent_id: ScheduleTimeline_1
+      valueLabel: '22'
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+  - instance_id: Timing_13
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/12
+    name: TIMING-12
+    details:
+      parent_id: ScheduleTimeline_1
+      valueLabel: '24'
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+  - instance_id: Timing_14
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/13
+    name: TIMING-13
+    details:
+      parent_id: ScheduleTimeline_1
+      valueLabel: '26'
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+  - instance_id: Timing_15
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/14
+    name: TIMING-14
+    details:
+      parent_id: ScheduleTimeline_1
+      valueLabel: '28'
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+  - instance_id: Timing_16
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/15
+    name: TIMING-15
+    details:
+      parent_id: ScheduleTimeline_1
+      valueLabel: '30'
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+  - instance_id: Timing_17
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/16
+    name: TIMING-16
+    details:
+      parent_id: ScheduleTimeline_1
+      valueLabel: Until rPFS
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+  - instance_id: Timing_18
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/17
+    name: TIMING-17
+    details:
+      parent_id: ScheduleTimeline_1
+      valueLabel: 8 wks post last dose
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+  - instance_id: Timing_19
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/18
+    name: TIMING-18
+    details:
+      parent_id: ScheduleTimeline_1
+      valueLabel: q8w until rPFS
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+  - instance_id: Timing_20
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0/timings/19
+    name: TIMING-19
+    details:
+      parent_id: ScheduleTimeline_1
+      valueLabel: "q90 days (\xB11 week) until deathc"
+      parent_rel: timings
+      parent_entity: ScheduleTimeline
+      windowUpper: null
+      windowLabel: ???
+      windowLower: null
+- rule_id: CORE-000945
+  description: Syntax template text is expected to be HTML formatted.
+  message: The text attribute contains non-conformant XHTML.
+  error_count: 27
+  errors:
+  - instance_id: EligibilityCriterionItem_1
+    path: /study/versions/0/eligibilityCriterionItems/0
+    name: INC-I1
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_2
+    path: /study/versions/0/eligibilityCriterionItems/1
+    name: INC-I2
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_3
+    path: /study/versions/0/eligibilityCriterionItems/2
+    name: INC-I3
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_4
+    path: /study/versions/0/eligibilityCriterionItems/3
+    name: INC-I4
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_5
+    path: /study/versions/0/eligibilityCriterionItems/4
+    name: INC-I5
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_6
+    path: /study/versions/0/eligibilityCriterionItems/5
+    name: INC-I6
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_7
+    path: /study/versions/0/eligibilityCriterionItems/6
+    name: INC-I7
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_8
+    path: /study/versions/0/eligibilityCriterionItems/7
+    name: INC-I8
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_9
+    path: /study/versions/0/eligibilityCriterionItems/8
+    name: INC-I9
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_10
+    path: /study/versions/0/eligibilityCriterionItems/9
+    name: INC-I10
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_11
+    path: /study/versions/0/eligibilityCriterionItems/10
+    name: INC-I11
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_12
+    path: /study/versions/0/eligibilityCriterionItems/11
+    name: INC-I12
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_13
+    path: /study/versions/0/eligibilityCriterionItems/12
+    name: INC-I13
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_14
+    path: /study/versions/0/eligibilityCriterionItems/13
+    name: INC-I14
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_15
+    path: /study/versions/0/eligibilityCriterionItems/14
+    name: INC-I15
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_16
+    path: /study/versions/0/eligibilityCriterionItems/15
+    name: INC-I16
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_17
+    path: /study/versions/0/eligibilityCriterionItems/16
+    name: INC-I17
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_18
+    path: /study/versions/0/eligibilityCriterionItems/17
+    name: INC-I18
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_19
+    path: /study/versions/0/eligibilityCriterionItems/18
+    name: INC-I19
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_20
+    path: /study/versions/0/eligibilityCriterionItems/19
+    name: INC-I20
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_21
+    path: /study/versions/0/eligibilityCriterionItems/20
+    name: INC-I21
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_22
+    path: /study/versions/0/eligibilityCriterionItems/21
+    name: INC-I22
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_23
+    path: /study/versions/0/eligibilityCriterionItems/22
+    name: INC-I23
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_24
+    path: /study/versions/0/eligibilityCriterionItems/23
+    name: INC-I24
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_25
+    path: /study/versions/0/eligibilityCriterionItems/24
+    name: INC-I25
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_26
+    path: /study/versions/0/eligibilityCriterionItems/25
+    name: INC-I26
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion
+  - instance_id: EligibilityCriterionItem_27
+    path: /study/versions/0/eligibilityCriterionItems/26
+    name: INC-I27
+    details:
+      $xhtml_errors:
+      - 'Invalid XHTML line 1 [ERROR]: Element ''li'': This element is not expected.'
+      parent_id: StudyVersion_1
+      parent_rel: eligibilityCriterionItems
+      parent_entity: StudyVersion

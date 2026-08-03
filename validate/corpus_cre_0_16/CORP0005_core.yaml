@@ -1,0 +1,685 @@
+file: /Users/daveih/Documents/github/protocol_corpus/protocols/CORP0005/results/usdm.json
+version: 4-0
+is_valid: false
+rules_executed: 205
+rules_skipped: 2
+finding_count: 51
+execution_error_count: 3216
+ct_packages_available: 200
+ct_packages_loaded:
+- sdtmct-2025-09-26
+- ddfct-2025-09-26
+findings:
+- rule_id: CORE-001068
+  description: Date values associated to a study definition document version must
+    be unique regarding the combination of type and geographic scopes of the date.
+  message: The study definition document version has more than one governance date
+    with the same type and geographic scope.
+  error_count: 2
+  errors:
+  - instance_id: StudyDefinitionDocumentVersion_1
+    path: /study/documentedBy/0/versions/0
+    name: PROTOCOL-DATE
+    details:
+      type.code.GeographicScope: C68846
+      dateValue: '2020-12-07'
+      parent_rel: versions
+      type.decode.GeographicScope: Global
+      type.decode: Approval Date
+      version: null
+      parent_id: StudyDefinitionDocument_1
+      type.code: C71476
+      id.GovernanceDate: GovernanceDate_1
+      parent_entity: StudyDefinitionDocument
+      code.standardCode.code: Not in dataset
+      code.standardCode.decode: Not in dataset
+  - instance_id: StudyDefinitionDocumentVersion_1
+    path: /study/documentedBy/0/versions/0
+    name: PROTOCOL-DATE
+    details:
+      type.code.GeographicScope: C68846
+      dateValue: '2020-12-07'
+      parent_rel: versions
+      type.decode.GeographicScope: Global
+      type.decode: Approval Date
+      version: null
+      parent_id: StudyDefinitionDocument_1
+      type.code: C71476
+      id.GovernanceDate: GovernanceDate_1
+      parent_entity: StudyDefinitionDocument
+      code.standardCode.code: Not in dataset
+      code.standardCode.decode: Not in dataset
+- rule_id: CORE-000814
+  description: Within a study version, if a date of a specific type exists with a
+    global geographic scope then no other dates are expected with the same type.
+  message: The study version has a type of governance date with a global geographic
+    scope and either another date of the same type or additional geographic scope(s)
+    defined for the date.
+  error_count: 3
+  errors:
+  - instance_id: GeographicScope_2
+    path: /study/versions/0/dateValues/0/geographicScopes/0
+    details:
+      type.code.GovernanceDate: C71476
+      id.StudyVersion: StudyVersion_1
+      $num_geographic_scopes_for_this_date: 1
+      versionIdentifier: '1.0'
+      dateValue: '2020-12-07'
+      $num_dates_of_this_type: 2
+      parent_rel.StudyVersion: versions
+      parent_id.StudyVersion: 0dd8e92f-859d-48d1-8ee2-44045d4e3696
+      type.decode: Global
+      parent_entity.StudyVersion: Study
+      type.decode.GovernanceDate: Approval Date
+      type.code: C68846
+  - instance_id: GeographicScope_1
+    path: /study/versions/0/dateValues/1/geographicScopes/0
+    details:
+      type.code.GovernanceDate: C71476
+      id.StudyVersion: StudyVersion_1
+      $num_geographic_scopes_for_this_date: 2
+      versionIdentifier: '1.0'
+      dateValue: '2020-12-07'
+      $num_dates_of_this_type: 2
+      parent_rel.StudyVersion: versions
+      parent_id.StudyVersion: 0dd8e92f-859d-48d1-8ee2-44045d4e3696
+      type.decode: Global
+      parent_entity.StudyVersion: Study
+      type.decode.GovernanceDate: Approval Date
+      type.code: C68846
+  - instance_id: GeographicScope_1
+    path: /study/documentedBy/0/versions/0/dateValues/0/geographicScopes/0
+    details:
+      type.code.GovernanceDate: C71476
+      id.StudyVersion: StudyVersion_1
+      $num_geographic_scopes_for_this_date: 2
+      versionIdentifier: '1.0'
+      dateValue: '2020-12-07'
+      $num_dates_of_this_type: 2
+      parent_rel.StudyVersion: versions
+      parent_id.StudyVersion: 0dd8e92f-859d-48d1-8ee2-44045d4e3696
+      type.decode: Global
+      parent_entity.StudyVersion: Study
+      type.decode.GovernanceDate: Approval Date
+      type.code: C68846
+- rule_id: CORE-000873
+  description: Date values associated to a study version must be unique regarding
+    the combination of type and geographic scopes of the date.
+  message: The study version has more than one governance date with the same type
+    and geographic scope.
+  error_count: 3
+  errors:
+  - instance_id: StudyVersion_1
+    path: /study/versions/0
+    name: SPONSOR-APPORVAL-DATE
+    details:
+      type.code.GeographicScope: C68846
+      versionIdentifier: '1.0'
+      dateValue: '2020-12-07'
+      parent_rel: versions
+      type.decode.GeographicScope: Global
+      type.decode: Approval Date
+      parent_id: 0dd8e92f-859d-48d1-8ee2-44045d4e3696
+      type.code: C71476
+      id.GovernanceDate: GovernanceDate_2
+      parent_entity: Study
+      code.standardCode.code: Not in dataset
+      code.standardCode.decode: Not in dataset
+  - instance_id: StudyVersion_1
+    path: /study/versions/0
+    name: PROTOCOL-DATE
+    details:
+      type.code.GeographicScope: C68846
+      versionIdentifier: '1.0'
+      dateValue: '2020-12-07'
+      parent_rel: versions
+      type.decode.GeographicScope: Global
+      type.decode: Approval Date
+      parent_id: 0dd8e92f-859d-48d1-8ee2-44045d4e3696
+      type.code: C71476
+      id.GovernanceDate: GovernanceDate_1
+      parent_entity: Study
+      code.standardCode.code: Not in dataset
+      code.standardCode.decode: Not in dataset
+  - instance_id: StudyVersion_1
+    path: /study/versions/0
+    name: PROTOCOL-DATE
+    details:
+      type.code.GeographicScope: C68846
+      versionIdentifier: '1.0'
+      dateValue: '2020-12-07'
+      parent_rel: versions
+      type.decode.GeographicScope: Global
+      type.decode: Approval Date
+      parent_id: 0dd8e92f-859d-48d1-8ee2-44045d4e3696
+      type.code: C71476
+      id.GovernanceDate: GovernanceDate_1
+      parent_entity: Study
+      code.standardCode.code: Not in dataset
+      code.standardCode.decode: Not in dataset
+- rule_id: CORE-001013
+  description: The names of all instances of the same class must be unique.
+  message: The same name has been used for more than one instance of the class.
+  error_count: 2
+  errors:
+  - instance_id: GovernanceDate_1
+    entity: GovernanceDate
+    path: /study/versions/0/dateValues/1
+    name: PROTOCOL-DATE
+  - instance_id: GovernanceDate_1
+    entity: GovernanceDate
+    path: /study/documentedBy/0/versions/0/dateValues/0
+    name: PROTOCOL-DATE
+- rule_id: CORE-000974
+  description: The sponsor study role must be applicable to a study version.
+  message: The study role is a sponsor role (code.code is C70793) but it is not applicable
+    to the study version (appliesToIds does not contain the id of the study version).
+  error_count: 1
+  errors:
+  - instance_id: StudyRole_1
+    entity: StudyRole
+    path: /study/versions/0/roles/0
+    name: ROLE_1
+    details:
+      code.code: C70793
+      code.decode: Sponsor
+      appliesToIds: []
+- rule_id: CORE-000815
+  description: Within a study design, the planned age range must be specified either
+    in the study population or in all cohorts.
+  message: Planned age has not been specified for either the study population or the
+    cohort, or it has been specified for both.
+  error_count: 1
+  errors:
+  - instance_id: StudyDesignPopulation_1
+    path: /study/versions/0/studyDesigns/0/population
+    name: DEFAULT-POPULATION
+    details:
+      parent_rel: population
+      plannedAge: null
+      parent_id: InterventionalStudyDesign_1
+      parent_entity: InterventionalStudyDesign
+      name.StudyCohort: Not in dataset
+      id.StudyCohort: Not in dataset
+      plannedAge.unit.decode.StudyCohort: Not in dataset
+      plannedAge.minValue.StudyCohort: Not in dataset
+      plannedAge.unit.decode: Not in dataset
+      plannedAge.StudyCohort: Not in dataset
+      plannedAge.maxValue: Not in dataset
+      plannedAge.minValue: Not in dataset
+      plannedAge.maxValue.StudyCohort: Not in dataset
+- rule_id: CORE-000875
+  description: Within a study design, the planned sex must be specified either in
+    the study population or in all cohorts.
+  message: Planned sex has not been specified for either the study population or the
+    cohort, or it has been specified for both.
+  error_count: 1
+  errors:
+  - instance_id: StudyDesignPopulation_1
+    path: /study/versions/0/studyDesigns/0/population
+    name: DEFAULT-POPULATION
+    details:
+      parent_rel: population
+      plannedSex: false
+      parent_id: InterventionalStudyDesign_1
+      parent_entity: InterventionalStudyDesign
+      name.StudyCohort: Not in dataset
+      id.StudyCohort: Not in dataset
+      plannedSex.StudyCohort: Not in dataset
+      plannedSex.decode.StudyCohort: Not in dataset
+      plannedSex.decode: Not in dataset
+- rule_id: CORE-000834
+  description: If geographic scope type is global then there must be only one geographic
+    scope specified.
+  message: The governance date has more than one geographic scope defined, at least
+    one of which has type of "Global" (type.code = C68846 or type.decode = "Global",
+    both case insensitive).
+  error_count: 2
+  errors:
+  - instance_id: GovernanceDate_1
+    path: /study/versions/0/dateValues/1
+    name: PROTOCOL-DATE
+    details:
+      $geographic_scope_type_decodes:
+      - Global
+      dateValue: '2020-12-07'
+      parent_rel: dateValues
+      $geographic_scope_type_codes:
+      - C68846
+      $num_of_geographic_scopes: 2
+      parent_id: StudyVersion_1
+      parent_entity: StudyVersion
+  - instance_id: GovernanceDate_1
+    path: /study/documentedBy/0/versions/0/dateValues/0
+    name: PROTOCOL-DATE
+    details:
+      $geographic_scope_type_decodes:
+      - Global
+      dateValue: '2020-12-07'
+      parent_rel: dateValues
+      $geographic_scope_type_codes:
+      - C68846
+      $num_of_geographic_scopes: 2
+      parent_id: StudyDefinitionDocumentVersion_1
+      parent_entity: StudyDefinitionDocumentVersion
+- rule_id: CORE-001058
+  description: A study design's study phase must be specified according to the extensible
+    Trial Phase Response (C66737) SDTM codelist (e.g. an entry with a code or decode
+    used from the codelist should be consistent with the full entry in the codelist).
+  message: The study design's study phase is not specified according to the extensible
+    Trial Phase Response (C66737) SDTM codelist - codeSystem is not "http://www.cdisc.org",
+    codeSystemVersion is not a valid terminology package date, and/or the code or
+    decode (either as preferred term or as submission value) is found in the codelist
+    (case insensitive) but the corresponding decode or code does not match the codelist
+    value (case sensitive).
+  error_count: 1
+  errors:
+  - instance_id: InterventionalStudyDesign_1
+    path: /study/versions/0/studyDesigns/0
+    name: STUDY-DESIGN-1
+    details:
+      $codelist_code: C66737
+      $code_for_decode_value: null
+      $code_for_decode_pref_term: null
+      $codelist_extensible: true
+      parent_rel: studyDesigns
+      $value_for_code: PHASE I TRIAL
+      studyPhase.standardCode.code: C15600
+      studyPhase.standardCode.codeSystemVersion: '2025-09-26'
+      studyPhase.standardCode.decode: Phase 1
+      studyPhase.standardCode.codeSystem: http://www.cdisc.org
+      parent_id: StudyVersion_1
+      $pref_term_for_code: Phase I Trial
+      parent_entity: StudyVersion
+- rule_id: CORE-001015
+  description: Within a study version, all id values must be unique.
+  message: The id value is not unique.
+  error_count: 8
+  errors:
+  - instance_id: GovernanceDate_1
+    entity: GovernanceDate
+    path: /study/versions/0/dateValues/1
+    name: PROTOCOL-DATE
+  - instance_id: GovernanceDate_1
+    entity: GovernanceDate
+    path: /study/documentedBy/0/versions/0/dateValues/0
+    name: PROTOCOL-DATE
+  - instance_id: Code_12
+    entity: Code
+    path: /study/versions/0/dateValues/1/type
+  - instance_id: Code_12
+    entity: Code
+    path: /study/documentedBy/0/versions/0/dateValues/0/type
+  - instance_id: Code_13
+    entity: Code
+    path: /study/versions/0/dateValues/1/geographicScopes/0/type
+  - instance_id: Code_13
+    entity: Code
+    path: /study/documentedBy/0/versions/0/dateValues/0/geographicScopes/0/type
+  - instance_id: GeographicScope_1
+    entity: GeographicScope
+    path: /study/versions/0/dateValues/1/geographicScopes/0
+  - instance_id: GeographicScope_1
+    entity: GeographicScope
+    path: /study/documentedBy/0/versions/0/dateValues/0/geographicScopes/0
+- rule_id: CORE-000970
+  description: Every study role must apply to either a study version or at least one
+    study design, but not both.
+  message: The study role does not only apply to the study version or at least one
+    study design - it does not apply to anything, it applies to both the study version
+    and at least one study design, or it applies to something that is not a study
+    version or a study design.
+  error_count: 2
+  errors:
+  - instance_id: StudyRole_1
+    entity: StudyRole
+    path: /study/versions/0/roles/0
+    name: ROLE_1
+    details:
+      code: Sponsor
+      appliesToIds: []
+  - instance_id: StudyRole_2
+    entity: StudyRole
+    path: /study/versions/0/roles/1
+    name: ROLE_2
+    details:
+      code: Regulatory Agency
+      appliesToIds: []
+- rule_id: CORE-001016
+  description: A planned duration is expected for the main timeline.
+  message: The planned duration is not specified for the main timeline.
+  error_count: 1
+  errors:
+  - instance_id: ScheduleTimeline_1
+    entity: ScheduleTimeline
+    path: /study/versions/0/studyDesigns/0/scheduleTimelines/0
+    name: TIMELINE-1
+    details:
+      mainTimeline: true
+      check: true
+- rule_id: CORE-001036
+  description: Within a study design, there must be at least one endpoint with level
+    primary.
+  message: There is not at least one endpoint with a level of primary within the study
+    design.
+  error_count: 1
+  errors:
+  - instance_id: InterventionalStudyDesign_1
+    entity: InterventionalStudyDesign
+    path: /study/versions/0/studyDesigns/0
+    name: STUDY-DESIGN-1
+    details:
+      '# Primary endpoints': 0
+- rule_id: CORE-001076
+  description: An activity is expected to refer to at least one procedure, biomedical
+    concept, biomedical concept category, biomedical concept surrogate, child activity,
+    or timeline.
+  message: The activity does not refer to any procedure, biomedical concept, biomedical
+    concept category, biomedical concept surrogate, child activity, or timeline.
+  error_count: 23
+  errors:
+  - instance_id: Activity_2
+    path: /study/versions/0/studyDesigns/0/activities/1
+    name: ACTIVITY-MEASURES/ACTIONS
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_3
+    path: /study/versions/0/studyDesigns/0/activities/2
+    name: ACTIVITY-WRITTEN INFORMED CONSENT
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_4
+    path: /study/versions/0/studyDesigns/0/activities/3
+    name: ACTIVITY-ALLOCATION OF SCREENING NUMBER
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_5
+    path: /study/versions/0/studyDesigns/0/activities/4
+    name: ACTIVITY-DEMOGRAPHIC DATA
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_6
+    path: /study/versions/0/studyDesigns/0/activities/5
+    name: ACTIVITY-MEDICAL AND SURGICAL HISTORY (SEE SECTION 5.3)
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_7
+    path: /study/versions/0/studyDesigns/0/activities/6
+    name: ACTIVITY-BODY WEIGHT, HEIGHT, BODY MASS INDEX (SEE SECTION 8.4.1)
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_8
+    path: /study/versions/0/studyDesigns/0/activities/7
+    name: ACTIVITY-FULL PHYSICAL EXAMINATION (INCLUDING SKIN EXAMINATION) (SEE SECTION
+      8.4.1)
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_9
+    path: /study/versions/0/studyDesigns/0/activities/8
+    name: ACTIVITY-NEUROLOGICAL EXAMINATION (SEE SECTION 8.4.1)
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_10
+    path: /study/versions/0/studyDesigns/0/activities/9
+    name: ACTIVITY-QUESTIONING FOR SPECIAL BEHAVIOR (SMOKING HISTORY, DIETARY HABITS,
+      ALCOHOL CONSUMPTION) (SEE SECTION 5.5.2)
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_11
+    path: /study/versions/0/studyDesigns/0/activities/10
+    name: ACTIVITY-PREVIOUS/CONCOMITANT MEDICATIONS
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_12
+    path: /study/versions/0/studyDesigns/0/activities/11
+    name: ACTIVITY-BLOOD SAMPLE FOR SAFETY IN FASTED STATE (SEE SECTION 12.1
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_13
+    path: /study/versions/0/studyDesigns/0/activities/12
+    name: ACTIVITY-URINE SAMPLE FOR SAFETY IN FASTED STATE (SEE SECTION 12.1)
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_14
+    path: /study/versions/0/studyDesigns/0/activities/13
+    name: ACTIVITY-VIROLOGY (SEE SECTION 12.1)
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_15
+    path: /study/versions/0/studyDesigns/0/activities/14
+    name: ACTIVITY-PREGNANCY TEST (FEMALE PARTICIPANTS ONLY, AS APPLICABLE)
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_16
+    path: /study/versions/0/studyDesigns/0/activities/15
+    name: ACTIVITY-FOLLICLE STIMULATING HORMONE TEST (FEMALE PARTICIPANTS ONLY)
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_17
+    path: /study/versions/0/studyDesigns/0/activities/16
+    name: ACTIVITY-SARS-COV-2 VIRAL RNA TEST
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_18
+    path: /study/versions/0/studyDesigns/0/activities/17
+    name: ACTIVITY-URINE DRUG AND COTININE SCREENING, SERUM ALCOHOL TEST (SEE SECTION
+      12.1)
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_19
+    path: /study/versions/0/studyDesigns/0/activities/18
+    name: ACTIVITY-ADVERSE EVENT QUESTIONING
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_20
+    path: /study/versions/0/studyDesigns/0/activities/19
+    name: ACTIVITY-VITAL SIGNS (BLOOD PRESSURE, HEART RATE, TEMPERATURE, RESPIRATORY
+      RATE - SEE SECTIONS 8.4.2)
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_21
+    path: /study/versions/0/studyDesigns/0/activities/20
+    name: ACTIVITY-ELECTROCARDIOGRAM IN TRIPLICATE (SEE SECTION 8.4.3)
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_22
+    path: /study/versions/0/studyDesigns/0/activities/21
+    name: ACTIVITY-ESTIMATED CREATININE CLEARANCE (ACCORDING TO COCKCROFT-GAULT FORMULA)
+      (SEE SECTION 12.1)
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_23
+    path: /study/versions/0/studyDesigns/0/activities/22
+    name: ACTIVITY-ELIGIBILITY CHECK (IN-/EXCLUSION CRITERIA) (SEE SECTIONS 5.2 AND
+      5.3)
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign
+  - instance_id: Activity_24
+    path: /study/versions/0/studyDesigns/0/activities/23
+    name: ACTIVITY-2
+    details:
+      childIds: false
+      bcSurrogateIds: false
+      timelineId: null
+      parent_rel: activities
+      bcCategoryIds: false
+      definedProcedures: false
+      parent_id: InterventionalStudyDesign_1
+      biomedicalConceptIds: false
+      parent_entity: InterventionalStudyDesign

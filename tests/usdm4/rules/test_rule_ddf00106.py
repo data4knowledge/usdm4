@@ -1,134 +1,109 @@
-import pytest
-from unittest.mock import Mock
+"""Tests for RuleDDF00106 — ScheduledActivityInstance.encounter same-design."""
+
+from unittest.mock import MagicMock
+
 from usdm4.rules.library.rule_ddf00106 import RuleDDF00106
-from usdm3.rules.library.rule_template import RuleTemplate
-from tests.usdm4.helpers.rule_error import error_timestamp
+from usdm4.rules.rule_template import RuleTemplate
 
 
-@pytest.fixture
-def rule():
-    return RuleDDF00106()
+class TestRuleDDF00106:
+    def test_metadata(self):
+        rule = RuleDDF00106()
+        assert rule._rule == "DDF00106"
+        assert rule._level == RuleTemplate.ERROR
 
+    def _data(self, by_klass, id_map=None, parent_map=None):
+        data = MagicMock()
+        data.instances_by_klass.side_effect = lambda k: by_klass.get(k, [])
+        data.path_by_id.return_value = "$.path"
+        data.instance_by_id.side_effect = lambda tid: (id_map or {}).get(tid)
+        data.parent_by_klass.side_effect = lambda tid, _kl: (parent_map or {}).get(tid)
+        return data
 
-def test_initialization(rule):
-    """Test rule initialization"""
-    assert rule._rule == "DDF00106"
-    assert rule._level == RuleTemplate.ERROR
-    assert (
-        rule._rule_text
-        == "A scheduled activity instance must only reference an encounter that is defined within the same study design as the scheduled activity instance."
-    )
-    assert rule._errors.count() == 0
+    def test_no_encounter_id_skipped(self):
+        rule = RuleDDF00106()
+        data = self._data(
+            {"ScheduledActivityInstance": [{"id": "SAI1", "instanceType": "SAI"}]}
+        )
+        assert rule.validate({"data": data}) is True
 
-
-def test_validate_encounter_in_different_study_design(rule):
-    data_store = Mock()
-    data_store.instances_by_klass.return_value = [
-        {
-            "id": "sai1",
-            "encounterId": "enc1",
-            "instanceType": "ScheduledActivityInstance",
-        },
-    ]
-    data_store.instance_by_id.return_value = {
-        "id": "enc1",
-    }
-    data_store.parent_by_klass.side_effect = [
-        {"id": "sai1"},
-        {"id": "sai2"},
-    ]
-    data_store.path_by_id.side_effect = ["path/path1"]
-
-    config = {"data": data_store}
-    assert rule.validate(config) is False
-    assert rule._errors.count() == 1
-    assert error_timestamp(rule._errors) == {
-        "level": "Error",
-        "location": {
-            "attribute": "encounterId",
-            "klass": "ScheduledActivityInstance",
-            "path": "path/path1",
-            "rule": "DDF00106",
-            "rule_text": "A scheduled activity instance must only reference an encounter that is defined within the same study design as the scheduled activity instance.",
-        },
-        "message": "Encounter defined in a different study design",
-        "type": "DDF00106",
-        "timestamp": "YYYY-MM-DD HH:MM:SS.nnnnnn",
-    }
-
-
-def test_validate_encounter_in_same_study_design(rule):
-    data_store = Mock()
-    data_store.instances_by_klass.return_value = [
-        {
-            "id": "sai1",
-            "encounterId": "enc1",
-            "instanceType": "ScheduledActivityInstance",
-        },
-    ]
-    data_store.instance_by_id.return_value = {
-        "id": "enc1",
-    }
-    data_store.parent_by_klass.side_effect = [
-        {"id": "sai1"},
-        {"id": "sai1"},
-    ]
-    data_store.path_by_id.side_effect = ["path/path1"]
-
-    config = {"data": data_store}
-    assert rule.validate(config) is True
-    assert rule._errors.count() == 0
-
-
-def test_validate_encounter_both_missing(rule):
-    data_store = Mock()
-    data_store.instances_by_klass.side_effect = [
-        [
+    def test_encounter_unresolved_skipped(self):
+        rule = RuleDDF00106()
+        data = self._data(
             {
-                "id": "sai1",
-                "encounterId": "ep1",
-                "instanceType": "ScheduledActivityInstance",
+                "ScheduledActivityInstance": [
+                    {"id": "SAI1", "instanceType": "SAI", "encounterId": "missing"}
+                ]
             },
-            {
-                "id": "sai2",
-                "encounterId": "ep2",
-                "instanceType": "ScheduledActivityInstance",
-            },
-        ],
-    ]
-    data_store.instance_by_id.side_effect = [
-        {"id": " ep1", "instanceType": "XXX"},
-        {"id": "ep2", "instanceType": "YYY"},
-    ]
-    data_store.parent_by_klass.side_effect = [None, None, None, None]
-    data_store.path_by_id.side_effect = ["path/path1", "path/path2"]
+            id_map={},
+        )
+        assert rule.validate({"data": data}) is True
 
-    config = {"data": data_store}
-    assert rule.validate(config) is False
-    assert rule._errors.count() == 2
-    assert error_timestamp(rule._errors) == {
-        "level": "Error",
-        "location": {
-            "attribute": "encounterId",
-            "klass": "ScheduledActivityInstance",
-            "path": "path/path1",
-            "rule": "DDF00106",
-            "rule_text": "A scheduled activity instance must only reference an encounter that is defined within the same study design as the scheduled activity instance.",
-        },
-        "message": "ScheduledActivityInstance and XXX missing parents",
-        "type": "DDF00106",
-        "timestamp": "YYYY-MM-DD HH:MM:SS.nnnnnn",
-    }
-    assert error_timestamp(rule._errors, 1) == {
-        "level": "Error",
-        "location": {
-            "attribute": "encounterId",
-            "klass": "ScheduledActivityInstance",
-            "path": "path/path2",
-            "rule": "DDF00106",
-            "rule_text": "A scheduled activity instance must only reference an encounter that is defined within the same study design as the scheduled activity instance.",
-        },
-        "message": "ScheduledActivityInstance and YYY missing parents",
-        "type": "DDF00106",
-        "timestamp": "YYYY-MM-DD HH:MM:SS.nnnnnn",
-    }
+    def test_both_parents_missing_fails(self):
+        rule = RuleDDF00106()
+        data = self._data(
+            {
+                "ScheduledActivityInstance": [
+                    {"id": "SAI1", "instanceType": "SAI", "encounterId": "ENC1"}
+                ]
+            },
+            id_map={"ENC1": {"id": "ENC1", "instanceType": "Encounter"}},
+            parent_map={},
+        )
+        assert rule.validate({"data": data}) is False
+        assert "SAI and Encounter missing parents" in rule.errors().dump()
+
+    def test_item_parent_missing_fails(self):
+        rule = RuleDDF00106()
+        data = self._data(
+            {
+                "ScheduledActivityInstance": [
+                    {"id": "SAI1", "instanceType": "SAI", "encounterId": "ENC1"}
+                ]
+            },
+            id_map={"ENC1": {"id": "ENC1", "instanceType": "Encounter"}},
+            parent_map={"ENC1": {"id": "SD1"}},
+        )
+        assert rule.validate({"data": data}) is False
+        assert "SAI missing parent" in rule.errors().dump()
+
+    def test_encounter_parent_missing_fails(self):
+        rule = RuleDDF00106()
+        data = self._data(
+            {
+                "ScheduledActivityInstance": [
+                    {"id": "SAI1", "instanceType": "SAI", "encounterId": "ENC1"}
+                ]
+            },
+            id_map={"ENC1": {"id": "ENC1", "instanceType": "Encounter"}},
+            parent_map={"SAI1": {"id": "SD1"}},
+        )
+        assert rule.validate({"data": data}) is False
+        assert "Encounter missing parent" in rule.errors().dump()
+
+    def test_different_parents_fail(self):
+        rule = RuleDDF00106()
+        data = self._data(
+            {
+                "ScheduledActivityInstance": [
+                    {"id": "SAI1", "instanceType": "SAI", "encounterId": "ENC1"}
+                ]
+            },
+            id_map={"ENC1": {"id": "ENC1", "instanceType": "Encounter"}},
+            parent_map={"SAI1": {"id": "SD1"}, "ENC1": {"id": "SD2"}},
+        )
+        assert rule.validate({"data": data}) is False
+        assert "different study design" in rule.errors().dump()
+
+    def test_same_parent_passes(self):
+        rule = RuleDDF00106()
+        data = self._data(
+            {
+                "ScheduledActivityInstance": [
+                    {"id": "SAI1", "instanceType": "SAI", "encounterId": "ENC1"}
+                ]
+            },
+            id_map={"ENC1": {"id": "ENC1", "instanceType": "Encounter"}},
+            parent_map={"SAI1": {"id": "SD1"}, "ENC1": {"id": "SD1"}},
+        )
+        assert rule.validate({"data": data}) is True

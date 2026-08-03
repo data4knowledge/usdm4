@@ -1,11 +1,15 @@
+import copy
 from usdm4.assembler.base_assembler import BaseAssembler
 from usdm4.builder.builder import Builder
 from usdm4.api.address import Address
 from usdm4.api.organization import Organization
-from usdm4.api.identifier import StudyIdentifier
+from usdm4.api.identifier import StudyIdentifier, SIT_EXT_URL, ExtensionAttribute
 from usdm4.api.study_title import StudyTitle
-
-
+from usdm4.api.study_role import StudyRole
+from usdm4.api.code import Code
+from usdm4.api.extension import BaseCode
+from usdm4.api.assigned_person import AssignedPerson
+from usdm4.api.person_name import PersonName
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 
@@ -36,6 +40,70 @@ class IdentificationAssembler(BaseAssembler):
         "acronym",
     ]
 
+    ROLE_CODES = {
+        "co-sponsor": {"code": "C215669", "decode": "Co-Sponsor"},
+        "manufacturer": {"code": "C25392", "decode": "Manufacturer"},
+        "investigator": {"code": "C25936", "decode": "Investigator"},
+        "pharmacovigilance": {"code": "C215673", "decode": "Pharmacovigilance"},
+        "project maanger": {"code": "C51851", "decode": "Project Manager"},
+        "local sponsor": {"code": "C215670", "decode": "Local Sponsor"},
+        "laboratory": {"code": "C37984", "decode": "Laboratory"},
+        "study subject": {"code": "C41189", "decode": "Study Subject"},
+        "medical expert": {"code": "C51876", "decode": "Medical Expert"},
+        "statistician": {"code": "C51877", "decode": "Statistician"},
+        "idmc": {"code": "C142578", "decode": "Independent Data Monitoring Committee"},
+        "care provider": {"code": "C17445", "decode": "Care Provider"},
+        "principal investigator": {
+            "code": "C19924",
+            "decode": "Principal investigator ",
+        },
+        "outcomes assessor": {"code": "C207599", "decode": "Outcomes Assessor      "},
+        "dec": {"code": "C215671", "decode": "Dose Escalation Committee"},
+        "clinical trial physician": {
+            "code": "C215672",
+            "decode": "Clinical Trial Physician",
+        },
+        "sponsor": {"code": "C70793", "decode": "Sponsor"},
+        "adjudication Committee": {
+            "code": "C78726",
+            "decode": "Adjudication Committee",
+        },
+        "study site": {"code": "C80403", "decode": "Study Site"},
+        "dsmb": {"code": "C142489", "decode": "Data Safety Monitoring Board"},
+        "regulatory agency": {"code": "C188863", "decode": "Regulatory Agency"},
+        "contract research": {"code": "C215662", "decode": "Contract Research"},
+    }
+
+    ROLE_ORGS = {
+        "co_sponsor": {
+            "type": "pharma",
+            "role": "co-sponsor",
+            "description": "The co-sponsor organization",
+            "label": "",
+            "identifier": "Not known",
+            "identifierScheme": "Not known",
+            "legalAddress": {},
+        },
+        "local_sponsor": {
+            "type": "pharma",
+            "role": "local sponsor",
+            "description": "The local sponsor organization",
+            "label": "",
+            "identifier": "Not known",
+            "identifierScheme": "Not known",
+            "legalAddress": {},
+        },
+        "device_manufacturer": {
+            "type": "medical_device",
+            "role": "manufacturer",
+            "description": "The medical device manufacturer",
+            "label": "",
+            "identifier": "Not known",
+            "identifierScheme": "Not known",
+            "legalAddress": {},
+        },
+    }
+
     TITLE_CODES = {
         "brief": {"code": "C207615", "decode": "Brief Study Title"},
         "official": {"code": "C207616", "decode": "Official Study Title"},
@@ -54,10 +122,36 @@ class IdentificationAssembler(BaseAssembler):
         "gov": {"code": "C199144", "decode": "Government Institute"},
         "academic": {"code": "C18240", "decode": "Academic Institution"},
         "medical_device": {"code": "C215661", "decode": "Medical Device Company"},
+        "unknown": {"code": "C17998", "decode": "Unknown"},
     }
+
+    IDENTIFIER_CODES = {
+        "nct": {"code": "C172240", "decode": "Clinicaltrials.gov Identifier"},
+        "jrct": {
+            "code": "C218687",
+            "decode": "Japan Registry for Clinical Trials Number",
+        },
+        "nmpa": {"code": "C218688", "decode": "NMPA IND Number"},
+        "other": {
+            "code": "C218690",
+            "decode": "Other Regulatory or Clinical Trial Identifier",
+        },
+        "who": {"code": "C218689", "decode": "WHO/UTN Number"},
+        "ema": {"code": "C218684", "decode": "EU Clinical Trial Register Number"},
+        "fda-ind": {
+            "code": "C218685",
+            "decode": "US FDA Investigational New Drug Application Number",
+        },
+        "fda-ide": {
+            "code": "C218686",
+            "decode": "US FDA Investigational Device Exemption Application Number",
+        },
+    }
+
     STANDARD_ORGS = {
-        "ct.gov": {
+        "nct": {
             "type": "registry",
+            "role": None,
             "name": "CT.GOV",
             "label": "ClinicalTrials.gov",
             "description": "The US clinical trials registry",
@@ -74,6 +168,7 @@ class IdentificationAssembler(BaseAssembler):
         },
         "ema": {
             "type": "regulator",
+            "role": "regulatory agency",
             "name": "EMA",
             "label": "European Medicines Agency",
             "description": "The European medicines regulator",
@@ -88,10 +183,11 @@ class IdentificationAssembler(BaseAssembler):
                 "country": "NL",
             },
         },
-        "fda": {
+        "fda-ind": {
             "type": "regulator",
+            "role": "regulatory agency",
             "name": "FDA",
-            "label": "Food and Drug Admionistration",
+            "label": "Food and Drug Administration",
             "identifier": "FDA",
             "description": "The US medicines regulator",
             "identifierScheme": "Health and Human Services, US Government",
@@ -103,6 +199,89 @@ class IdentificationAssembler(BaseAssembler):
                 "postalCode": "20903",
                 "country": "USA",
             },
+        },
+        "fda-ide": {
+            "type": "regulator",
+            "role": "regulatory agency",
+            "name": "FDA",
+            "label": "Food and Drug Administration",
+            "identifier": "FDA",
+            "description": "The US medicines regulator",
+            "identifierScheme": "Health and Human Services, US Government",
+            "legalAddress": {
+                "lines": ["10903 New Hampshire Ave"],
+                "city": "Silver Spring",
+                "district": "",
+                "state": "MD",
+                "postalCode": "20903",
+                "country": "USA",
+            },
+        },
+        "jrct": {
+            "type": "registry",
+            "role": None,
+            "name": "jRCT",
+            "label": "Japan Registry of Clinical Trials",
+            "identifier": "JRCT",
+            "description": "The Japanese clinical trial registry",
+            "identifierScheme": "Ministry of Health, Labour and Welfare of Japan",
+            "legalAddress": {
+                "lines": ["1-2-2 Kasumigaseki"],
+                "city": "Tokyo",
+                "district": "Chiyoda",
+                "state": "",
+                "postalCode": "",
+                "country": "JPN",
+            },
+        },
+        "nmpa": {
+            "type": "regulator",
+            "role": "regulatory agency",
+            "name": "NMPA",
+            "label": "National Medical Products Administration",
+            "identifier": "NMPA",
+            "description": "The Chinese medicines regulator",
+            "identifierScheme": "People's Republic of China Government",
+            "legalAddress": {
+                "lines": ["No. 1 Beiluyuan", "Zhanlan Road"],
+                "city": "Beijing",
+                "district": "Xicheng District",
+                "state": "",
+                "postalCode": "100037",
+                "country": "CHN",
+            },
+        },
+        "who": {
+            "type": "registry",
+            "role": None,
+            "name": "WHO UTN",
+            "label": "WHO Registry of Clinical Trials",
+            "identifier": "WHO UTN",
+            "description": "The WHP clinical trial registry",
+            "identifierScheme": "United Nations",
+            "legalAddress": {
+                "lines": ["20 Avenue Appia"],
+                "city": "Geneva",
+                "district": "27",
+                "state": "",
+                "postalCode": "CH-1211",
+                "country": "CHE",
+            },
+        },
+        # Fallback organisation for identifiers the upstream extractor
+        # couldn't classify into a known registry/regulator. Lets the
+        # assembler preserve the identifier value without fabricating an
+        # address. Keyed on "other" so it matches the sentinel used by
+        # the extractor and by _create_identifier's scope_key fallback.
+        "other": {
+            "type": "unknown",
+            "role": None,
+            "name": "Unknown",
+            "label": "Unknown Organization",
+            "identifier": "Unknown",
+            "description": "Unclassified identifier; source organisation unknown",
+            "identifierScheme": "Unknown",
+            "legalAddress": None,
         },
     }
 
@@ -121,7 +300,12 @@ class IdentificationAssembler(BaseAssembler):
         self._titles = []
         self._organizations = []
         self._identifiers = []
+        self._roles = []
         self._study_name = ""
+        self._sponsor_signatory = None
+        self._compound_names = None
+        self._compound_codes = None
+        self._medical_expert_contact_details_location = None
 
     def execute(self, data: dict) -> None:
         """
@@ -146,11 +330,12 @@ class IdentificationAssembler(BaseAssembler):
                             "identifier": str,  # The actual identifier value
                             "scope": {          # Organization scope for the identifier
                                 # Either use a standard predefined organization:
-                                "standard": str,    # Key from STANDARD_ORGS (e.g., "ct.gov", "ema", "fda")
+                                "standard": str,    # Key from STANDARD_ORGS (e.g., "nct", "ema", "fda")
 
                                 # OR define a custom non-standard organization:
                                 "non_standard": {
                                     "type": str,            # Organization type (must match ORG_CODES keys)
+                                    "role": str,            # Organization role (must match ROLE_CODES keys), can be None
                                     "name": str,            # Organization name
                                     "description": str,     # Organization description
                                     "label": str,           # Organization label/display name
@@ -167,7 +352,16 @@ class IdentificationAssembler(BaseAssembler):
                                 }
                             }
                         }
-                    ]
+                    ],
+                    "roles": {
+                        # Address key is "address" (NOT "legal_address" or
+                        # "legalAddress"). The execute() loop reads
+                        # info.get("address") and converts it into the
+                        # Organization's legalAddress on the model side.
+                        "co_sponsor": {"name": str, "address": "<address structure>"},
+                        "local_sponsor": {"name": str, "address": "<address structure>"},
+                        "device_manufacturer": {"name": str, "address": "<address structure>"},
+                    }
                 }
 
         Note:
@@ -180,16 +374,17 @@ class IdentificationAssembler(BaseAssembler):
         Raises:
             Various exceptions may be raised during object creation if data is invalid
         """
-        # print(f"\n\nDATA; {data}\n\n")
-
         # Make sure data ok.
         titles = data["titles"] if "titles" in data else {}
         identifiers = data["identifiers"] if "identifiers" in data else []
-
-        # Titles
+        roles = data["roles"] if "roles" in data else {}
+        # Titles. A title with no text is not created — minting placeholder
+        # StudyTitle instances with empty strings put unusable content into
+        # every USDM file (and they cannot survive an Excel round trip: the
+        # importer rightly refuses to create a title from an empty cell).
         for type, text in titles.items():
             try:
-                if type in self.TITLE_TYPES:
+                if type in self.TITLE_TYPES and text and str(text).strip():
                     title = self._create_title(type, text)
                     if title:
                         self._titles.append(title)
@@ -205,37 +400,71 @@ class IdentificationAssembler(BaseAssembler):
                 )
 
         # Identifiers
+        # Cache organisations by scope key so that multiple identifiers
+        # sharing the same standard scope (e.g. two "other" identifiers)
+        # reuse the same Organisation instead of trying to create a
+        # duplicate (which the builder rejects).
         id_details: dict
+        scope_org_cache: dict[str, Organization] = {}
         for id_details in identifiers:
             try:
                 scope = id_details["scope"]
-                organization: dict = (
-                    self.STANDARD_ORGS[scope["standard"]]
-                    if "standard" in scope
-                    else scope["non_standard"]
-                )
+                # Test for a truthy ``standard`` value, not just key presence.
+                # After Pydantic normalisation, ``scope`` always carries both
+                # keys with one set to ``None``; the ``in`` test would lie.
+                standard_key = scope.get("standard")
+                if standard_key:
+                    scope_key = standard_key
+                    # Cache by org name so scopes that share an org
+                    # (e.g. fda-ind and fda-ide both use "FDA") reuse
+                    # it instead of hitting a duplicate-name rejection.
+                    cache_key = self.STANDARD_ORGS[scope_key]["name"]
+                else:
+                    # For identifier type code lookup, non-standard orgs
+                    # always map to "other".
+                    scope_key = "other"
+                    # For the org cache, use the org name so different
+                    # organisations stay separate while same-named ones
+                    # (e.g. two "other" identifiers on the same sponsor)
+                    # still share correctly.
+                    cache_key = (scope.get("non_standard") or {}).get("name", "other")
 
-                # Address
-                if organization["legalAddress"]:
-                    organization["legalAddress"] = self._create_address(
-                        organization["legalAddress"]
+                # Reuse a previously created org for this scope, or create one
+                org = scope_org_cache.get(cache_key)
+                if org is None:
+                    organization: dict = (
+                        copy.deepcopy(self.STANDARD_ORGS[standard_key])
+                        if standard_key
+                        else scope["non_standard"]
                     )
 
-                # Identifier and scoping Organization
-                org = self._create_organization(organization)
-                if org:
-                    identifier = self._create_identifier(id_details["identifier"], org)
-                    if identifier:
+                    # Address — non_standard orgs from raw input may not
+                    # carry a ``legalAddress`` key at all. Treat missing as
+                    # absent rather than KeyError-ing.
+                    legal_address = organization.get("legalAddress")
+                    organization["legalAddress"] = (
+                        self._create_address(legal_address) if legal_address else None
+                    )
+
+                    org = self._create_organization(organization)
+                    if org:
                         self._organizations.append(org)
+                        scope_org_cache[cache_key] = org
+
+                if org:
+                    identifier = self._create_identifier(
+                        scope_key, id_details["identifier"], org
+                    )
+                    if identifier:
                         self._identifiers.append(identifier)
                     else:
                         self._errors.exception(
-                            f"Failed to create identifier {id_details['identifier']}",
+                            f"Failed to create identifier {id_details['identifier']} with scope '{scope_key}'",
                             KlassMethodLocation(self.MODULE, "execute"),
                         )
                 else:
                     self._errors.exception(
-                        f"Failed to create organization {organization}",
+                        f"Failed to create organization for scope '{scope_key}'",
                         KlassMethodLocation(self.MODULE, "execute"),
                     )
             except Exception as e:
@@ -244,6 +473,73 @@ class IdentificationAssembler(BaseAssembler):
                     e,
                     KlassMethodLocation(self.MODULE, "execute"),
                 )
+        for role, info in roles.items():
+            try:
+                self._errors.debug(
+                    f"Processing {role}, {info}",
+                    KlassMethodLocation(self.MODULE, "execute"),
+                )
+                if info is None:
+                    continue
+                # Sponsor is created via the identifiers loop above (the
+                # protocol identifier's organisation IS the sponsor). Other
+                # role keys not in ROLE_ORGS aren't templated here either —
+                # warn and skip rather than crash so unknown / future role
+                # names don't take the whole assembler down.
+                role_key = role.replace("-", "_")
+                if role_key not in self.ROLE_ORGS:
+                    self._errors.warning(
+                        f"Skipping role '{role}' — no template in ROLE_ORGS "
+                        f"(sponsor is wired through the identifier scope)",
+                        KlassMethodLocation(self.MODULE, "execute"),
+                    )
+                    continue
+                organization = copy.deepcopy(self.ROLE_ORGS[role_key])
+                organization["label"] = info["name"]
+                organization["legalAddress"] = self._create_address(info.get("address"))
+                org = self._create_organization(organization)
+                if org:
+                    self._errors.debug(
+                        f"Organization {org} in {role} created",
+                        KlassMethodLocation(self.MODULE, "execute"),
+                    )
+                    self._organizations.append(org)
+                else:
+                    self._errors.exception(
+                        f"Failed to create organization in {role}, {organization}",
+                        KlassMethodLocation(self.MODULE, "execute"),
+                    )
+            except Exception as e:
+                self._errors.exception(
+                    f"Failed during creation of organization in {role}, {info}",
+                    e,
+                    KlassMethodLocation(self.MODULE, "execute"),
+                )
+        # ``other`` is optional on the schema and every field inside it
+        # defaults to ``None``. Use ``.get`` so the assembler tolerates either
+        # the schema-default shape (key present, values None) or a raw dict
+        # the user supplied with the block omitted entirely.
+        other = data.get("other") or {}
+        me = other.get("medical_expert")
+        if me:
+            if me.get("name"):
+                ap: AssignedPerson = self._create_assigned_person(me)
+                if ap:
+                    role: StudyRole = self._create_role("medical expert")
+                    if role:
+                        role.assignedPersons = [ap]
+            elif me.get("reference"):
+                self._medical_expert_contact_details_location = ("/n").join(
+                    me["reference"]
+                )
+            else:
+                self._errors.warning(
+                    "No medical expert contact information detected",
+                    KlassMethodLocation(self.MODULE, "execute"),
+                )
+        self._sponsor_signatory = other.get("sponsor_signatory")
+        self._compound_names = other.get("compound_names")
+        self._compound_codes = other.get("compound_codes")
 
     @property
     def titles(self):
@@ -257,7 +553,31 @@ class IdentificationAssembler(BaseAssembler):
     def identifiers(self):
         return self._identifiers
 
-    def _create_address(self, address: dict) -> Address | None:
+    @property
+    def roles(self):
+        return self._roles
+
+    @property
+    def sponsor_signatory(self) -> str:
+        return self._sponsor_signatory
+
+    @property
+    def compound_names(self) -> str:
+        return self._compound_names
+
+    @property
+    def medical_expert_contact_details_location(self) -> str | None:
+        return self._medical_expert_contact_details_location
+
+    @property
+    def compound_codes(self) -> str:
+        return self._compound_codes
+
+    def _create_address(self, address: dict | None) -> Address | None:
+        # Tolerate falsy input — schema-injected ``None`` for missing addresses
+        # is the common case, and there's nothing to build from.
+        if not address:
+            return None
         try:
             self._errors.debug(
                 f"Creating address, source data: {address}",
@@ -286,12 +606,28 @@ class IdentificationAssembler(BaseAssembler):
 
     def _create_organization(self, organization: dict) -> Organization | None:
         try:
+            role = None
+            if organization["role"]:
+                role: StudyRole = self._create_role(organization["role"])
+                organization.pop("role")
             org_type = organization["type"]
             organization["type"] = self._builder.cdisc_code(
                 self.ORG_CODES[org_type]["code"], self.ORG_CODES[org_type]["decode"]
             )
-            organization["name"] = self._label_to_name(organization["label"])
-            return self._builder.create(Organization, organization)
+            # Fall back to a label-derived name when ``name`` is missing OR
+            # an empty string. The Pydantic ``NonStandardOrganization`` schema
+            # defaults ``name`` to ``""``, so by the time the dict reaches us
+            # the key is always present even when the source data omitted it
+            # — a bare ``"name" in organization`` check would silently keep
+            # the empty string and trigger the ``min_length=1`` validator on
+            # ``Organization``.
+            organization["name"] = organization.get("name") or self._label_to_name(
+                organization.get("label", "")
+            )
+            org = self._builder.create(Organization, organization)
+            if role:
+                role.organizationIds = [org.id]
+            return org
         except Exception as e:
             self._errors.exception(
                 "Failed during creation of organization",
@@ -301,20 +637,62 @@ class IdentificationAssembler(BaseAssembler):
             return None
 
     def _create_identifier(
-        self, identifier: str, org: Organization
+        self, scope: str, identifier: str, org: Organization
     ) -> StudyIdentifier | None:
         try:
+            type_code = self._identifier_type(scope)
             identifier = self._builder.create(
-                StudyIdentifier, {"text": identifier, "scopeId": org.id}
+                StudyIdentifier,
+                {
+                    "text": identifier,
+                    "scopeId": org.id,
+                    "extensionAttributes": [type_code],
+                },
             )
             return identifier
         except Exception as e:
             self._errors.exception(
-                f"Failed during creation of identifier '{identifier}'",
+                f"Failed during creation of identifier '{identifier}' with scope type '{scope}' and organisation {org}",
                 e,
                 KlassMethodLocation(self.MODULE, "_create_identifier"),
             )
             return None
+
+    def _identifier_type(self, scope: str) -> ExtensionAttribute:
+        if scope in self.IDENTIFIER_CODES:
+            code = self.IDENTIFIER_CODES[scope]["code"]
+            decode = self.IDENTIFIER_CODES[scope]["decode"]
+        else:
+            code = self.IDENTIFIER_CODES["other"]["code"]
+            decode = self.IDENTIFIER_CODES["other"]["decode"]
+        code: Code = self._builder.create(
+            Code,
+            {
+                "code": code,
+                "decode": decode,
+                "codeSystem": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl",
+                "codeSystemVersion": "25.12e",
+            },
+        )
+        base_code = BaseCode(
+            **code.model_dump(
+                include={
+                    "id",
+                    "code",
+                    "codeSystem",
+                    "codeSystemVersion",
+                    "decode",
+                    "instanceType",
+                }
+            )
+        )
+        return self._builder.create(
+            ExtensionAttribute,
+            {
+                "url": SIT_EXT_URL,
+                "valueCode": base_code,
+            },
+        )
 
     def _create_title(self, type: str, text: str) -> StudyTitle | None:
         try:
@@ -327,5 +705,47 @@ class IdentificationAssembler(BaseAssembler):
                 f"Failed during creation of title '{text}'of type '{type}'",
                 e,
                 KlassMethodLocation(self.MODULE, "_create_title"),
+            )
+            return None
+
+    def _create_role(self, type: str) -> StudyRole | None:
+        try:
+            role_type = self._builder.cdisc_code(
+                self.ROLE_CODES[type]["code"], self.ROLE_CODES[type]["decode"]
+            )
+            index = len(self._roles)
+            study_role: StudyRole = self._builder.create(
+                StudyRole, {"name": f"ROLE_{index + 1}", "code": role_type}
+            )
+            if study_role:
+                self._roles.append(study_role)
+            return study_role
+        except Exception as e:
+            self._errors.exception(
+                f"Failed during creation of role of type '{type}'",
+                e,
+                KlassMethodLocation(self.MODULE, "_create_role"),
+            )
+            return None
+
+    def _create_assigned_person(self, data: dict) -> AssignedPerson | None:
+        try:
+            person_name: PersonName = self._builder.create(
+                PersonName, {"text": data["name"]}
+            )
+            ap: AssignedPerson = self._builder.create(
+                AssignedPerson,
+                {
+                    "name": data["name"],
+                    "personName": person_name,
+                    "jobTitle": "Medical Expert",
+                },
+            )
+            return ap
+        except Exception as e:
+            self._errors.exception(
+                f"Failed during creation of assigned person from {data}",
+                e,
+                KlassMethodLocation(self.MODULE, "_create_assigned_person"),
             )
             return None

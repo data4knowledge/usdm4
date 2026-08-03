@@ -1,6 +1,8 @@
+from pydantic import ValidationError
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
 from usdm4.builder.builder import Builder
+from usdm4.assembler.schema import AssemblerInput
 from usdm4.assembler.identification_assembler import IdentificationAssembler
 from usdm4.assembler.population_assembler import PopulationAssembler
 from usdm4.assembler.document_assembler import DocumentAssembler
@@ -8,6 +10,7 @@ from usdm4.assembler.study_design_assembler import StudyDesignAssembler
 from usdm4.assembler.amendments_assembler import AmendmentsAssembler
 from usdm4.assembler.study_assembler import StudyAssembler
 from usdm4.assembler.timeline_assembler import TimelineAssembler
+from usdm4.assembler.objectives_assembler import ObjectivesAssembler
 from usdm4.api.study import Study
 from usdm4.api.wrapper import Wrapper
 from usdm4.__info__ import __model_version__ as usdm_version
@@ -44,6 +47,7 @@ class Assembler:
         self._study_design_assembler = StudyDesignAssembler(self._builder, self._errors)
         self._study_assembler = StudyAssembler(self._builder, self._errors)
         self._timeline_assembler = TimelineAssembler(self._builder, self._errors)
+        self._objectives_assembler = ObjectivesAssembler(self._builder, self._errors)
 
     def clear(self):
         self._errors.clear()
@@ -55,67 +59,84 @@ class Assembler:
         self._study_design_assembler.clear()
         self._study_assembler.clear()
         self._timeline_assembler.clear()
+        self._objectives_assembler.clear()
 
-    def execute(self, data: dict) -> None:
+    def execute(self, data: AssemblerInput | dict) -> None:
         """
         Executes the assembly process to build a complete Study object from structured data.
 
+        Accepts either an ``AssemblerInput`` Pydantic model or a raw ``dict``.
+        In both cases the input is validated against ``AssemblerInput`` and
+        the **fully-defaulted** dict (schema-injected defaults included) is
+        forwarded to the sub-assemblers. This means a sub-assembler can rely
+        on every optional key being present (with its declared default value)
+        rather than having to ``"key" in data`` everywhere.
+
+        ``by_alias=True`` is kept on the dump so any aliased fields (e.g.
+        ``amendments.impact.global`` aliased from ``global_``) are emitted
+        under their alias names — sub-assemblers index by alias.
+
         Args:
-            data (dict): A dictionary containing all the structured data needed to assemble a study.
-                        The data parameter must have the following top-level structure:
-
-                        {
-                            "identification": dict,    # Study identification data (IDs, versions, etc.)
-                            "document": dict,          # Document-related data (protocols, amendments, etc.)
-                            "population": dict,        # Population definitions and analysis populations
-                            "study_design": dict,      # Study design elements (arms, epochs, activities, etc.)
-                            "study": dict             # Core study information (title, objectives, etc.)
-                        }
-
-                        Each top-level key corresponds to a specific domain of study data:
-
-                        - "identification": Contains study identifiers, version information, and
-                          regulatory identifiers needed to uniquely identify the study
-
-                        - "document": Contains study definition documents, protocol versions,
-                          amendments, and other document-related metadata
-
-                        - "population": Contains population definitions, analysis populations,
-                          eligibility criteria, and subject enrollment information
-
-                        - "study_design": Contains the structural elements of the study design
-                          including study arms, epochs, elements, activities, encounters,
-                          procedures, and timeline information
-
-                        - "study": Contains the core study metadata including titles, objectives,
-                          indications, interventions, and high-level study characteristics
+            data: A dict (or ``AssemblerInput``) with the top-level keys
+                  ``identification``, ``document``, ``population``, ``study_design``,
+                  ``study``, and optionally ``amendments`` and ``soa``.
 
         Returns:
             None
-
-        Note:
-            The assembly process is sequential and interdependent:
-            1. Identification data is processed first to establish study identity
-            2. Document data is processed to set up protocol and amendment structure
-            3. Population data is processed to define subject populations
-            4. Study design data is processed (requires population data for references)
-            5. Study data is processed last (requires all other components for assembly)
         """
+        # --- input validation + normalisation --------------------------------
+        if isinstance(data, dict):
+            try:
+                validated = AssemblerInput.model_validate(data)
+            except ValidationError as e:
+                location = KlassMethodLocation(self.MODULE, "execute")
+                for error in e.errors():
+                    field_path = ".".join(str(loc) for loc in error["loc"])
+                    msg = f"Schema validation: {field_path} — {error['msg']}"
+                    self._errors.error(msg, location)
+                return
+            data = validated.model_dump(by_alias=True)
+        elif isinstance(data, AssemblerInput):
+            data = data.model_dump(by_alias=True)
+        else:
+            location = KlassMethodLocation(self.MODULE, "execute")
+            self._errors.error(
+                f"Invalid input type: expected dict or AssemblerInput, "
+                f"got {type(data).__name__}",
+                location,
+            )
+            return
+
+        # --- assembly ---------------------------------------------------------
         try:
             # Process identification data - establishes study identity and versioning
             self._identification_assembler.execute(data["identification"])
 
-            # Process document data - sets up protocol documents and amendments
+            # Process document data - sets up protocol documents
             self._document_assembler.execute(data["document"])
 
             # Process population data - defines subject populations and analysis sets
             self._population_assembler.execute(data["population"])
 
-            # Process amendments data
-            self._amendments_assembler.execute(data["amendments"])
+            # Process amendments data — truthy check, not key presence:
+            # ``amendments`` is always present on the validated dict (Pydantic
+            # default) but its value is ``None`` when no amendment was
+            # supplied. Mirrors the ``soa`` branch below — and prevents the
+            # sub-assembler from synthesising a default Global-scope amendment
+            # for every protocol that has none (regression hunted in 0.24.0).
+            if data.get("amendments"):
+                self._amendments_assembler.execute(
+                    data["amendments"], self._document_assembler
+                )
 
-            # Timelines data
-            if "soa" in data:
+            # Timelines data — truthy check, not key presence: ``soa`` is
+            # always a key on the validated dict (Pydantic-injected default)
+            # but its value is ``None`` when no SoA was supplied. The timeline
+            # assembler indexes ``data["epochs"]["items"]`` etc. unconditionally
+            # and can't take ``None``. ``soa`` may be a single table dict or a
+            # list of tables (main + subsidiary timelines); the timeline
+            # assembler normalises either form.
+            if data.get("soa"):
                 self._timeline_assembler.execute(data["soa"])
 
             # Process study design data - requires population assembler for cross-references
@@ -124,6 +145,18 @@ class Assembler:
                 self._population_assembler,
                 self._timeline_assembler,
             )
+
+            # Objectives / endpoints / estimands — truthy check, mirroring
+            # ``amendments`` and ``soa``: the key is always present on the
+            # validated dict but ``None`` when not supplied. Runs after the
+            # study design assembler because estimands resolve intervention
+            # references and the results attach onto the created design.
+            if data.get("objectives"):
+                self._objectives_assembler.execute(
+                    data["objectives"],
+                    self._study_design_assembler,
+                    self._population_assembler,
+                )
 
             # Process core study data - requires all other assemblers for final assembly
             self._study_assembler.execute(

@@ -1,6 +1,9 @@
 from typing import Union
 from .api_base_model import ApiBaseModel
 from .study import Study
+from .study_version import StudyVersion
+from .study_design import StudyDesign
+from .study_definition_document_version import StudyDefinitionDocumentVersion
 
 
 class Wrapper(ApiBaseModel):
@@ -8,3 +11,34 @@ class Wrapper(ApiBaseModel):
     usdmVersion: str
     systemName: Union[str, None] = None
     systemVersion: Union[str, None] = None
+
+    def first_version(self) -> StudyVersion | None:
+        return self.study.first_version() if self.study else None
+
+    def study_version_and_design(
+        self, id: str
+    ) -> tuple[Study | None, StudyVersion | None, StudyDesign | None]:
+        study: Study = self.study
+        if study:
+            version: StudyVersion = study.first_version()
+            if version:
+                return study, version, version.find_study_design(id)
+        return None, None, None
+
+    def to_html(self, template: str) -> str:
+        study: Study = self.study
+        version: StudyVersion = self.first_version()
+        return (
+            version.to_html(template, study.document_map()) if version and study else ""
+        )
+
+    def study_document_version(
+        self, template: str
+    ) -> StudyDefinitionDocumentVersion | None:
+        study: Study = self.study
+        version: StudyVersion = self.first_version()
+        return (
+            version.study_document_version(template, study.document_map())
+            if version and study
+            else None
+        )

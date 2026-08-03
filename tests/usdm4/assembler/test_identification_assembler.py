@@ -1,3 +1,4 @@
+import copy
 import os
 import pathlib
 import pytest
@@ -50,6 +51,7 @@ class TestIdentificationAssemblerInitialization:
         assert assembler._titles == []
         assert assembler._organizations == []
         assert assembler._identifiers == []
+        assert assembler._roles == []
         assert assembler._study_name == ""
 
     def test_class_constants(self, identification_assembler):
@@ -85,11 +87,20 @@ class TestIdentificationAssemblerInitialization:
 
         # Test STANDARD_ORGS structure
         assert isinstance(identification_assembler.STANDARD_ORGS, dict)
-        expected_standard_orgs = ["ct.gov", "ema", "fda"]
+        expected_standard_orgs = [
+            "nct",
+            "ema",
+            "fda-ind",
+            "fda-ide",
+            "jrct",
+            "nmpa",
+            "who",
+        ]
         for org_key in expected_standard_orgs:
             assert org_key in identification_assembler.STANDARD_ORGS
             org = identification_assembler.STANDARD_ORGS[org_key]
             assert "type" in org
+            assert "role" in org  # Role field added for standard orgs
             assert "name" in org
             assert "label" in org
             assert "description" in org
@@ -97,11 +108,43 @@ class TestIdentificationAssemblerInitialization:
             assert "identifierScheme" in org
             assert "legalAddress" in org
 
+        # Test ROLE_CODES structure
+        assert isinstance(identification_assembler.ROLE_CODES, dict)
+        expected_role_types = [
+            "co-sponsor",
+            "manufacturer",
+            "investigator",
+            "pharmacovigilance",
+            "project maanger",
+            "local sponsor",
+            "laboratory",
+            "study subject",
+            "medical expert",
+            "statistician",
+            "idmc",
+            "care provider",
+            "principal investigator",
+            "outcomes assessor",
+            "dec",
+            "clinical trial physician",
+            "sponsor",
+            "adjudication Committee",
+            "study site",
+            "dsmb",
+            "regulatory agency",
+            "contract research",
+        ]
+        for role_type in expected_role_types:
+            assert role_type in identification_assembler.ROLE_CODES
+            assert "code" in identification_assembler.ROLE_CODES[role_type]
+            assert "decode" in identification_assembler.ROLE_CODES[role_type]
+
     def test_properties_initial_state(self, identification_assembler):
         """Test that properties return correct initial state."""
         assert identification_assembler.titles == []
         assert identification_assembler.organizations == []
         assert identification_assembler.identifiers == []
+        assert identification_assembler.roles == []
 
 
 class TestIdentificationAssemblerValidData:
@@ -137,9 +180,7 @@ class TestIdentificationAssemblerValidData:
     ):
         """Test execute with standard organization identifier."""
         data = {
-            "identifiers": [
-                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}}
-            ]
+            "identifiers": [{"identifier": "NCT12345678", "scope": {"standard": "nct"}}]
         }
 
         identification_assembler.execute(data)
@@ -154,8 +195,41 @@ class TestIdentificationAssemblerValidData:
 
         # Verify organization
         organization = identification_assembler.organizations[0]
-        assert organization.name == "CLINICALTRIALS.GOV"  # _label_to_name conversion
+        assert organization.name == "CT.GOV"  # Uses name field from STANDARD_ORGS
         assert organization.label == "ClinicalTrials.gov"
+
+    def test_execute_with_other_standard_organization_identifier(
+        self, identification_assembler
+    ):
+        """An identifier whose scope.standard is "other" (the extractor's
+        sentinel for an unclassified identifier) should resolve to the
+        built-in Unknown organisation and round-trip without error."""
+        data = {
+            "identifiers": [
+                {
+                    "identifier": "NCTA12313212",
+                    "scope": {"standard": "other"},
+                }
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        # One identifier and one organisation created — no exception logged.
+        assert len(identification_assembler.identifiers) == 1
+        assert len(identification_assembler.organizations) == 1
+
+        # Identifier value is preserved verbatim.
+        identifier = identification_assembler.identifiers[0]
+        assert identifier.text == "NCTA12313212"
+
+        # Organisation is the built-in Unknown placeholder.
+        organization = identification_assembler.organizations[0]
+        assert organization.name == "Unknown"
+        assert organization.label == "Unknown Organization"
+        # legalAddress is None in STANDARD_ORGS["other"], so the assembler
+        # should not attach one.
+        assert organization.legalAddress is None
 
     def test_execute_with_non_standard_organization_identifier(
         self, identification_assembler
@@ -168,6 +242,7 @@ class TestIdentificationAssemblerValidData:
                     "scope": {
                         "non_standard": {
                             "type": "pharma",
+                            "role": None,
                             "name": "Custom Pharma",
                             "description": "A custom pharmaceutical company",
                             "label": "Custom Pharmaceutical Company",
@@ -200,8 +275,8 @@ class TestIdentificationAssemblerValidData:
         # Verify organization
         organization = identification_assembler.organizations[0]
         assert (
-            organization.name == "CUSTOM-PHARMACEUTICAL-COMPANY"
-        )  # _label_to_name conversion
+            organization.name == "Custom Pharma"
+        )  # Uses name field from non_standard data
         assert organization.label == "Custom Pharmaceutical Company"
         # Note: Organization API model doesn't have description field
 
@@ -214,13 +289,14 @@ class TestIdentificationAssemblerValidData:
                 "acronym": "TSX",
             },
             "identifiers": [
-                {"identifier": "NCT98765432", "scope": {"standard": "ct.gov"}},
+                {"identifier": "NCT98765432", "scope": {"standard": "nct"}},
                 {"identifier": "EMA-2024-001", "scope": {"standard": "ema"}},
                 {
                     "identifier": "SPONSOR-001",
                     "scope": {
                         "non_standard": {
                             "type": "pharma",
+                            "role": "sponsor",
                             "name": "Test Pharma",
                             "description": "Test pharmaceutical company",
                             "label": "Test Pharmaceutical Inc",
@@ -269,9 +345,9 @@ class TestIdentificationAssemblerValidData:
         # Verify organizations - check that we have the expected ones that were created
         org_names = [org.name for org in identification_assembler.organizations]
         expected_orgs = [
-            "CLINICALTRIALS.GOV",
-            "EUROPEAN-MEDICINES-AGENCY",
-            "TEST-PHARMACEUTICAL-INC",
+            "CT.GOV",
+            "EMA",
+            "Test Pharma",
         ]
         found_orgs = [org_name for org_name in expected_orgs if org_name in org_names]
         assert len(found_orgs) >= 2, (
@@ -282,9 +358,9 @@ class TestIdentificationAssemblerValidData:
         """Test execute with all standard organizations."""
         data = {
             "identifiers": [
-                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}},
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}},
                 {"identifier": "EMA-2024-001", "scope": {"standard": "ema"}},
-                {"identifier": "FDA-IND-123456", "scope": {"standard": "fda"}},
+                {"identifier": "FDA-IND-123456", "scope": {"standard": "fda-ind"}},
             ]
         }
 
@@ -297,9 +373,9 @@ class TestIdentificationAssemblerValidData:
         # Verify standard organizations were created - check that we have the expected ones
         org_names = [org.name for org in identification_assembler.organizations]
         expected_orgs = [
-            "CLINICALTRIALS.GOV",
-            "EUROPEAN-MEDICINES-AGENCY",
-            "FOOD-AND-DRUG-ADMIONISTRATION",
+            "CT.GOV",
+            "EMA",
+            "FDA",
         ]
         found_orgs = [org_name for org_name in expected_orgs if org_name in org_names]
         assert len(found_orgs) >= 1, (
@@ -391,6 +467,7 @@ class TestIdentificationAssemblerInvalidData:
                     "scope": {
                         "non_standard": {
                             "type": "invalid_type",
+                            "role": None,
                             "name": "Test Org",
                             "description": "Test organization",
                             "label": "Test Organization",
@@ -467,6 +544,7 @@ class TestIdentificationAssemblerInvalidData:
                     "scope": {
                         "non_standard": {
                             "type": "pharma",
+                            "role": None,
                             "name": "Test Org",
                             "description": "Test organization",
                             "label": "Test Organization",
@@ -496,15 +574,22 @@ class TestIdentificationAssemblerEdgeCases:
     """Test IdentificationAssembler edge cases."""
 
     def test_execute_with_empty_title_text(self, identification_assembler):
-        """Test execute with empty title text."""
-        data = {"titles": {"brief": "", "official": "Valid Title"}}
+        """Empty or whitespace title text mints no StudyTitle — placeholder
+        titles with no text are unusable content (and cannot survive an
+        Excel round trip)."""
+        data = {
+            "titles": {
+                "brief": "",
+                "public": "   ",
+                "scientific": None,
+                "official": "Valid Title",
+            }
+        }
 
         identification_assembler.execute(data)
 
-        # Should handle empty title text
-        assert len(identification_assembler.titles) >= 1  # At least the valid one
-        title_texts = [title.text for title in identification_assembler.titles]
-        assert "Valid Title" in title_texts
+        assert len(identification_assembler.titles) == 1
+        assert identification_assembler.titles[0].text == "Valid Title"
 
     def test_execute_with_unicode_titles(self, identification_assembler):
         """Test execute with unicode characters in titles."""
@@ -541,7 +626,7 @@ class TestIdentificationAssemblerEdgeCases:
         """Test execute with special characters in identifiers."""
         data = {
             "identifiers": [
-                {"identifier": "NCT-2024/001_TEST", "scope": {"standard": "ct.gov"}}
+                {"identifier": "NCT-2024/001_TEST", "scope": {"standard": "nct"}}
             ]
         }
 
@@ -560,6 +645,7 @@ class TestIdentificationAssemblerEdgeCases:
                     "scope": {
                         "non_standard": {
                             "type": "pharma",
+                            "role": None,
                             "name": "Test Org",
                             "description": "Test organization",
                             "label": "Test Organization",
@@ -592,13 +678,14 @@ class TestIdentificationAssemblerEdgeCases:
                 "official": "Valid Official Title",
             },
             "identifiers": [
-                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}},
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}},
                 {"identifier": "INVALID-001", "scope": {"standard": "invalid_org"}},
                 {
                     "identifier": "VALID-001",
                     "scope": {
                         "non_standard": {
                             "type": "pharma",
+                            "role": None,
                             "name": "Valid Org",
                             "description": "Valid organization",
                             "label": "Valid Organization",
@@ -662,6 +749,7 @@ class TestIdentificationAssemblerPrivateMethods:
         """Test _create_organization with valid organization data."""
         org_data = {
             "type": "pharma",
+            "role": None,
             "name": "Test Pharma",
             "description": "Test pharmaceutical company",
             "label": "Test Pharmaceutical Company",
@@ -676,9 +764,7 @@ class TestIdentificationAssemblerPrivateMethods:
         # Check that it's an Organization-like object with expected attributes
         assert hasattr(organization, "name")
         assert hasattr(organization, "label")
-        assert (
-            organization.name == "TEST-PHARMACEUTICAL-COMPANY"
-        )  # _label_to_name conversion
+        assert organization.name == "Test Pharma"  # Uses name field from org_data
         assert organization.label == "Test Pharmaceutical Company"
         # Note: Organization API model doesn't have description field
 
@@ -687,6 +773,7 @@ class TestIdentificationAssemblerPrivateMethods:
         # First create an organization
         org_data = {
             "type": "pharma",
+            "role": None,
             "name": "Test Org",
             "description": "Test organization",
             "label": "Test Organization",
@@ -700,7 +787,7 @@ class TestIdentificationAssemblerPrivateMethods:
         if organization is not None:
             # Now create identifier
             identifier = identification_assembler._create_identifier(
-                "TEST-001", organization
+                "other", "TEST-001", organization
             )
 
             assert identifier is not None
@@ -722,6 +809,191 @@ class TestIdentificationAssemblerPrivateMethods:
         # Check that it's a StudyTitle-like object with expected attributes
         assert hasattr(title, "text")
         assert title.text == "Test Brief Title"
+
+    def test_create_role_with_valid_type(self, identification_assembler):
+        """Test _create_role with valid role type."""
+        role = identification_assembler._create_role("sponsor")
+
+        assert role is not None
+        # Check that it's a StudyRole-like object with expected attributes
+        assert hasattr(role, "name")
+        assert hasattr(role, "code")
+        assert role.name == "ROLE_1"
+        # Role should be added to the roles list
+        assert len(identification_assembler.roles) == 1
+        assert identification_assembler.roles[0] is role
+
+    def test_create_role_with_invalid_type(self, identification_assembler):
+        """Test _create_role with invalid role type."""
+        role = identification_assembler._create_role("invalid_role_type")
+
+        # Should return None due to invalid type
+        assert role is None
+        # No role should be added to the list
+        assert len(identification_assembler.roles) == 0
+
+    def test_create_role_multiple_roles(self, identification_assembler):
+        """Test _create_role creates roles with incrementing names."""
+        role1 = identification_assembler._create_role("sponsor")
+        role2 = identification_assembler._create_role("regulatory agency")
+        role3 = identification_assembler._create_role("investigator")
+
+        assert role1 is not None
+        assert role2 is not None
+        assert role3 is not None
+
+        # Names should increment
+        assert role1.name == "ROLE_1"
+        assert role2.name == "ROLE_2"
+        assert role3.name == "ROLE_3"
+
+        # All roles should be in the list
+        assert len(identification_assembler.roles) == 3
+
+    def test_create_role_sponsor_type(self, identification_assembler):
+        """Test _create_role with sponsor role type."""
+        # Test the sponsor role type which is known to exist in the CDISC reference
+        # Some codes may not exist in all versions of the reference data
+        identification_assembler._roles = []
+
+        role = identification_assembler._create_role("sponsor")
+
+        assert role is not None, "Failed to create role of type 'sponsor'"
+        assert hasattr(role, "code")
+        assert role.code.code == identification_assembler.ROLE_CODES["sponsor"]["code"]
+
+    def test_create_organization_with_role(self, identification_assembler):
+        """Test _create_organization creates role when role is specified."""
+        org_data = {
+            "type": "regulator",
+            "role": "regulatory agency",
+            "name": "Test Regulator",
+            "description": "Test regulatory agency",
+            "label": "Test Regulatory Agency",
+            "identifier": "TEST-REG-ID",
+            "identifierScheme": "Test Scheme",
+            "legalAddress": None,
+        }
+
+        organization = identification_assembler._create_organization(org_data)
+
+        assert organization is not None
+        assert organization.name == "Test Regulator"
+        # Role should have been created and added to roles list
+        assert len(identification_assembler.roles) == 1
+        # Role should have the organization ID
+        role = identification_assembler.roles[0]
+        assert organization.id in role.organizationIds
+
+    def test_create_organization_without_role(self, identification_assembler):
+        """Test _create_organization does not create role when role is None."""
+        org_data = {
+            "type": "pharma",
+            "role": None,
+            "name": "Test Pharma",
+            "description": "Test pharmaceutical company",
+            "label": "Test Pharmaceutical Company",
+            "identifier": "TEST-PHARMA-ID",
+            "identifierScheme": "Test Scheme",
+            "legalAddress": None,
+        }
+
+        organization = identification_assembler._create_organization(org_data)
+
+        assert organization is not None
+        assert organization.name == "Test Pharma"
+        # No role should have been created
+        assert len(identification_assembler.roles) == 0
+
+    def test_create_organization_with_empty_name_falls_back_to_label(
+        self, identification_assembler
+    ):
+        """Empty ``name`` (string) must fall back to a label-derived name.
+
+        Regression test: the ``NonStandardOrganization`` Pydantic schema
+        defaults ``name`` to ``""``, so after ``model_validate``/``model_dump``
+        the assembler always sees the key — a bare ``"name" in organization``
+        check would silently keep the empty string and trip the
+        ``min_length=1`` validator on ``Organization.name``.
+        """
+        org_data = {
+            "type": "pharma",
+            "role": None,
+            "name": "",  # empty — must NOT be propagated as-is
+            "description": "Sponsor",
+            "label": "Astellas Pharma",
+            "identifier": "Not known",
+            "identifierScheme": "Not known",
+            "legalAddress": None,
+        }
+
+        organization = identification_assembler._create_organization(org_data)
+
+        assert organization is not None, (
+            "Organization creation must not fail when name is empty but label is set"
+        )
+        assert organization.name == "ASTELLAS-PHARMA"
+        assert organization.label == "Astellas Pharma"
+
+    def test_create_organization_with_missing_name_falls_back_to_label(
+        self, identification_assembler
+    ):
+        """Missing ``name`` key must also fall back to a label-derived name."""
+        org_data = {
+            "type": "pharma",
+            "role": None,
+            # no "name" key at all
+            "description": "Sponsor",
+            "label": "Some Pharma Co",
+            "identifier": "-",
+            "identifierScheme": "-",
+            "legalAddress": None,
+        }
+
+        organization = identification_assembler._create_organization(org_data)
+
+        assert organization is not None
+        assert organization.name == "SOME-PHARMA-CO"
+        assert organization.label == "Some Pharma Co"
+
+    def test_create_organization_after_pydantic_normalisation(
+        self, identification_assembler
+    ):
+        """End-to-end: extractor-style dict → schema → dump → assembler.
+
+        Mirrors the real M11 import path where ``title_page.py`` builds a
+        ``non_standard`` dict that omits ``name``, then ``assembler.execute``
+        runs it through ``AssemblerInput.model_validate(...).model_dump(...)``
+        before handing it to ``_create_organization``. After normalisation the
+        dict carries ``name=""``; the assembler must recover.
+        """
+        from src.usdm4.assembler.schema.identification_schema import (
+            NonStandardOrganization,
+        )
+
+        extractor_dict = {
+            "type": "pharma",
+            "role": None,
+            "description": "The sponsor organization",
+            "label": "Astellas Pharma",
+            "identifier": "Not known",
+            "identifierScheme": "Not known",
+            "legalAddress": None,
+        }
+        normalised = NonStandardOrganization.model_validate(extractor_dict).model_dump(
+            by_alias=True
+        )
+        # Sanity-check the precondition the regression relies on.
+        assert normalised["name"] == "", (
+            "Schema must inject empty-string default — if this changes the "
+            "regression scenario is no longer reproduced; re-evaluate the test."
+        )
+
+        organization = identification_assembler._create_organization(normalised)
+
+        assert organization is not None
+        assert organization.name == "ASTELLAS-PHARMA"
+        assert organization.label == "Astellas Pharma"
 
 
 class TestIdentificationAssemblerStateManagement:
@@ -748,9 +1020,7 @@ class TestIdentificationAssemblerStateManagement:
         """Test that properties reflect current state after operations."""
         data = {
             "titles": {"brief": "Test Title"},
-            "identifiers": [
-                {"identifier": "TEST-001", "scope": {"standard": "ct.gov"}}
-            ],
+            "identifiers": [{"identifier": "TEST-001", "scope": {"standard": "nct"}}],
         }
 
         identification_assembler.execute(data)
@@ -796,6 +1066,7 @@ class TestIdentificationAssemblerBuilderIntegration:
                     "scope": {
                         "non_standard": {
                             "type": "pharma",
+                            "role": None,
                             "name": "Test Org",
                             "description": "Test organization",
                             "label": "Test Organization",
@@ -862,7 +1133,7 @@ class TestIdentificationAssemblerErrorHandling:
         """Test error handling with None values in data."""
         data = {
             "titles": {"brief": None, "official": "Valid Title"},
-            "identifiers": [{"identifier": None, "scope": {"standard": "ct.gov"}}],
+            "identifiers": [{"identifier": None, "scope": {"standard": "nct"}}],
         }
 
         # Should handle None values gracefully
@@ -901,9 +1172,10 @@ class TestIdentificationAssemblerErrorHandling:
                 {
                     "identifier": "TEST-001",
                     "scope": {
-                        "standard": "ct.gov",
+                        "standard": "nct",
                         "non_standard": {
                             "type": "pharma",
+                            "role": None,
                             "name": "Test Org",
                             "description": "Test organization",
                             "label": "Test Organization",
@@ -1045,6 +1317,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
         """Test _create_organization with missing type field."""
         org_data = {
             # Missing type
+            "role": None,
             "name": "Test Org",
             "description": "Test organization",
             "label": "Test Organization",
@@ -1061,6 +1334,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
         """Test _create_organization with invalid organization type."""
         org_data = {
             "type": "invalid_org_type",
+            "role": None,
             "name": "Test Org",
             "description": "Test organization",
             "label": "Test Organization",
@@ -1090,6 +1364,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
         for org_type in org_types:
             org_data = {
                 "type": org_type,
+                "role": None,
                 "name": f"Test {org_type.title()} Org",
                 "description": f"Test {org_type} organization",
                 "label": f"Test {org_type.title()} Organization",
@@ -1100,14 +1375,16 @@ class TestIdentificationAssemblerAdditionalCoverage:
 
             organization = identification_assembler._create_organization(org_data)
             if organization is not None:
-                assert organization.name == identification_assembler._label_to_name(
-                    org_data["label"]
-                )
+                assert (
+                    organization.name == org_data["name"]
+                )  # Uses name field from org_data
                 assert organization.label == org_data["label"]
 
     def test_create_identifier_with_none_organization(self, identification_assembler):
         """Test _create_identifier with None organization."""
-        identifier = identification_assembler._create_identifier("TEST-001", None)
+        identifier = identification_assembler._create_identifier(
+            "other", "TEST-001", None
+        )
         # Should return None due to None organization
         assert identifier is None
 
@@ -1185,6 +1462,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
                         "scope": {
                             "non_standard": {
                                 "type": org_type,
+                                "role": None,
                                 "name": f"Test {org_type.title()}",
                                 "description": f"Test {org_type} organization",
                                 "label": f"Test {org_type.title()} Organization",
@@ -1224,6 +1502,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
                     "scope": {
                         "non_standard": {
                             "type": "pharma",
+                            "role": None,
                             "name": "Test Org",
                             "description": "Test organization",
                             "label": "Test Organization",
@@ -1238,10 +1517,14 @@ class TestIdentificationAssemblerAdditionalCoverage:
 
         identification_assembler.execute(data)
 
-        # Should handle None legal address gracefully
-        if len(identification_assembler.organizations) > 0:
-            org = identification_assembler.organizations[0]
-            assert org.label == "Test Organization"
+        # Should create org and identifier successfully without an address
+        assert len(identification_assembler.organizations) == 1
+        assert len(identification_assembler.identifiers) == 1
+        org = identification_assembler.organizations[0]
+        assert org.name == "Test Org"
+        assert org.label == "Test Organization"
+        assert org.legalAddress is None
+        assert identification_assembler.identifiers[0].text == "TEST-001"
 
     def test_execute_with_organization_empty_legal_address(
         self, identification_assembler
@@ -1254,6 +1537,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
                     "scope": {
                         "non_standard": {
                             "type": "pharma",
+                            "role": None,
                             "name": "Test Org",
                             "description": "Test organization",
                             "label": "Test Organization",
@@ -1268,7 +1552,74 @@ class TestIdentificationAssemblerAdditionalCoverage:
 
         identification_assembler.execute(data)
 
-        # Should handle empty address dict
+        # Empty dict is falsy, so address should be set to None
+        assert len(identification_assembler.organizations) == 1
+        assert len(identification_assembler.identifiers) == 1
+        org = identification_assembler.organizations[0]
+        assert org.name == "Test Org"
+        assert org.legalAddress is None
+
+    def test_execute_non_standard_org_address_not_required(
+        self, identification_assembler
+    ):
+        """Test that a non-standard organization works without any address field."""
+        data = {
+            "identifiers": [
+                {
+                    "identifier": "NOADDR-001",
+                    "scope": {
+                        "non_standard": {
+                            "type": "academic",
+                            "role": None,
+                            "name": "University of Nowhere",
+                            "description": "An academic institution",
+                            "label": "University of Nowhere",
+                            "identifier": "UNI-001",
+                            "identifierScheme": "Internal",
+                            "legalAddress": None,
+                        }
+                    },
+                },
+                {
+                    "identifier": "WITHADDR-001",
+                    "scope": {
+                        "non_standard": {
+                            "type": "pharma",
+                            "role": None,
+                            "name": "Pharma With Addr",
+                            "description": "A pharma company",
+                            "label": "Pharma With Address",
+                            "identifier": "PWA-001",
+                            "identifierScheme": "DUNS",
+                            "legalAddress": {
+                                "lines": ["100 Lab Drive"],
+                                "city": "Cambridge",
+                                "district": "",
+                                "state": "MA",
+                                "postalCode": "02139",
+                                "country": "USA",
+                            },
+                        }
+                    },
+                },
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        # Both orgs should be created
+        assert len(identification_assembler.organizations) == 2
+        assert len(identification_assembler.identifiers) == 2
+
+        # First org has no address
+        org_no_addr = identification_assembler.organizations[0]
+        assert org_no_addr.name == "University of Nowhere"
+        assert org_no_addr.legalAddress is None
+
+        # Second org has an address
+        org_with_addr = identification_assembler.organizations[1]
+        assert org_with_addr.name == "Pharma With Addr"
+        assert org_with_addr.legalAddress is not None
 
     def test_execute_with_multiple_identifiers_same_organization(
         self, identification_assembler
@@ -1276,8 +1627,8 @@ class TestIdentificationAssemblerAdditionalCoverage:
         """Test execute with multiple identifiers for the same organization."""
         data = {
             "identifiers": [
-                {"identifier": "NCT12345678", "scope": {"standard": "ct.gov"}},
-                {"identifier": "NCT87654321", "scope": {"standard": "ct.gov"}},
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}},
+                {"identifier": "NCT87654321", "scope": {"standard": "nct"}},
             ]
         }
 
@@ -1367,7 +1718,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
                 "acronym": "VB",
             },
             "identifiers": [
-                {"identifier": "VALID-001", "scope": {"standard": "ct.gov"}},
+                {"identifier": "VALID-001", "scope": {"standard": "nct"}},
                 {
                     "identifier": "",  # Empty identifier
                     "scope": {"standard": "ema"},
@@ -1378,6 +1729,7 @@ class TestIdentificationAssemblerAdditionalCoverage:
                     "scope": {
                         "non_standard": {
                             "type": "pharma",
+                            "role": "sponsor",
                             "name": "Custom Org",
                             "description": "Custom organization",
                             "label": "Custom Organization",
@@ -1408,3 +1760,1002 @@ class TestIdentificationAssemblerAdditionalCoverage:
         assert (
             len(identification_assembler.organizations) >= 0
         )  # May have some valid organizations
+
+
+class TestIdentificationAssemblerRoles:
+    """Test IdentificationAssembler role processing."""
+
+    def test_execute_with_standard_org_with_role(self, identification_assembler):
+        """Test execute with standard organization that has a role (e.g., EMA)."""
+        data = {
+            "identifiers": [
+                {"identifier": "EMA-2024-001", "scope": {"standard": "ema"}}
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        # EMA has role "regulatory agency" defined in STANDARD_ORGS
+        if len(identification_assembler.organizations) > 0:
+            # A role should have been created for EMA
+            assert len(identification_assembler.roles) >= 1
+            # The role should link to the organization
+            role = identification_assembler.roles[0]
+            org = identification_assembler.organizations[0]
+            assert org.id in role.organizationIds
+
+    def test_execute_with_standard_org_without_role(self, identification_assembler):
+        """Test execute with standard organization that has no role (e.g., ct.gov)."""
+        data = {
+            "identifiers": [{"identifier": "NCT12345678", "scope": {"standard": "nct"}}]
+        }
+
+        identification_assembler.execute(data)
+
+        # ct.gov has role=None defined in STANDARD_ORGS
+        if len(identification_assembler.organizations) > 0:
+            # No role should have been created for ct.gov
+            assert len(identification_assembler.roles) == 0
+
+    def test_execute_with_non_standard_org_with_role(self, identification_assembler):
+        """Test execute with non-standard organization that has a role."""
+        data = {
+            "identifiers": [
+                {
+                    "identifier": "SPONSOR-001",
+                    "scope": {
+                        "non_standard": {
+                            "type": "pharma",
+                            "role": "sponsor",
+                            "name": "Test Sponsor",
+                            "description": "Test sponsor company",
+                            "label": "Test Sponsor Company",
+                            "identifier": "TEST-SPONSOR-ID",
+                            "identifierScheme": "Test Scheme",
+                            "legalAddress": {
+                                "lines": ["123 Test St"],
+                                "city": "Test City",
+                                "district": "",
+                                "state": "TS",
+                                "postalCode": "12345",
+                                "country": "USA",
+                            },
+                        }
+                    },
+                }
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        if len(identification_assembler.organizations) > 0:
+            # A role should have been created
+            assert len(identification_assembler.roles) == 1
+            role = identification_assembler.roles[0]
+            # Role should have the sponsor code
+            assert role.code.code == "C70793"
+            # Role should link to the organization
+            org = identification_assembler.organizations[0]
+            assert org.id in role.organizationIds
+
+    def test_execute_with_multiple_orgs_with_roles(self, identification_assembler):
+        """Test execute with multiple organizations that have roles."""
+        data = {
+            "identifiers": [
+                {"identifier": "EMA-2024-001", "scope": {"standard": "ema"}},
+                {"identifier": "FDA-IND-123456", "scope": {"standard": "fda-ind"}},
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        # Both EMA and FDA have roles defined in STANDARD_ORGS
+        if len(identification_assembler.organizations) >= 2:
+            # Roles should have been created for both
+            assert len(identification_assembler.roles) >= 2
+            # Each role should have incrementing names
+            role_names = [role.name for role in identification_assembler.roles]
+            assert "ROLE_1" in role_names
+            assert "ROLE_2" in role_names
+
+    def test_roles_property_is_reference(self, identification_assembler):
+        """Test that roles property returns reference to internal list."""
+        assert identification_assembler.roles is identification_assembler._roles
+
+        # Add a role
+        identification_assembler._create_role("sponsor")
+
+        # Property should still be the same reference
+        assert identification_assembler.roles is identification_assembler._roles
+        assert len(identification_assembler.roles) == 1
+
+    def test_clear_resets_roles(self, identification_assembler):
+        """Test that clear() resets the roles list."""
+        # Add some roles
+        identification_assembler._create_role("sponsor")
+        identification_assembler._create_role("investigator")
+        assert len(identification_assembler.roles) == 2
+
+        # Clear should reset the roles list
+        identification_assembler.clear()
+        assert len(identification_assembler.roles) == 0
+
+    def test_role_has_correct_code(self, identification_assembler):
+        """Test that created roles have the correct code from ROLE_CODES."""
+        role = identification_assembler._create_role("sponsor")
+
+        assert role is not None
+        assert role.code.code == "C70793"
+        assert "Sponsor" in role.code.decode
+
+    def test_execute_preserves_role_order(self, identification_assembler):
+        """Test that roles are created in the order organizations are processed."""
+        data = {
+            "identifiers": [
+                {"identifier": "EMA-2024-001", "scope": {"standard": "ema"}},
+                {
+                    "identifier": "SPONSOR-001",
+                    "scope": {
+                        "non_standard": {
+                            "type": "pharma",
+                            "role": "sponsor",
+                            "name": "Test Sponsor",
+                            "description": "Test sponsor",
+                            "label": "Test Sponsor",
+                            "identifier": "TEST-ID",
+                            "identifierScheme": "Test",
+                            "legalAddress": None,
+                        }
+                    },
+                },
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        if len(identification_assembler.roles) >= 2:
+            # First role should be from EMA (regulatory agency)
+            # Second role should be from non-standard (sponsor)
+            assert identification_assembler.roles[0].name == "ROLE_1"
+            assert identification_assembler.roles[1].name == "ROLE_2"
+
+
+class TestIdentificationAssemblerTitleExceptionHandler:
+    """Test title creation exception handler (covers lines 278-279)."""
+
+    def test_title_creation_exception_is_caught(self, builder, errors):
+        """Test that exceptions during title creation are caught and logged."""
+        assembler = IdentificationAssembler(builder, errors)
+        initial_error_count = errors.error_count()
+
+        # Monkey-patch _create_title to raise an exception
+        original = assembler._create_title
+
+        def raise_error(type, text):
+            raise RuntimeError("Simulated title creation failure")
+
+        assembler._create_title = raise_error
+
+        try:
+            data = {"titles": {"brief": "Will fail"}}
+            assembler.execute(data)
+        finally:
+            assembler._create_title = original
+
+        assert len(assembler.titles) == 0
+        assert errors.error_count() > initial_error_count
+
+
+class TestIdentificationAssemblerRolesProcessing:
+    """Test roles processing loop (covers lines 326-347)."""
+
+    _original_role_orgs = None
+
+    def setup_method(self):
+        """Restore ROLE_ORGS before each test since _create_organization mutates it."""
+        if TestIdentificationAssemblerRolesProcessing._original_role_orgs is None:
+            TestIdentificationAssemblerRolesProcessing._original_role_orgs = (
+                copy.deepcopy(IdentificationAssembler.ROLE_ORGS)
+            )
+        IdentificationAssembler.ROLE_ORGS = copy.deepcopy(
+            TestIdentificationAssemblerRolesProcessing._original_role_orgs
+        )
+
+    def test_execute_with_co_sponsor_role(self, identification_assembler):
+        """Test execute with co_sponsor role data (covers lines 326-336)."""
+        data = {
+            "roles": {
+                "co_sponsor": {
+                    "name": "Co-Sponsor Corp",
+                },
+            }
+        }
+
+        identification_assembler.execute(data)
+
+        # Should have created an organization for co_sponsor
+        assert len(identification_assembler.organizations) >= 1
+        org_labels = [org.label for org in identification_assembler.organizations]
+        assert "Co-Sponsor Corp" in org_labels
+
+    def test_execute_with_local_sponsor_role(self, identification_assembler):
+        """Test execute with local_sponsor role data."""
+        data = {
+            "roles": {
+                "local_sponsor": {
+                    "name": "Local Sponsor Ltd",
+                },
+            }
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) >= 1
+        org_labels = [org.label for org in identification_assembler.organizations]
+        assert "Local Sponsor Ltd" in org_labels
+
+    def test_execute_with_device_manufacturer_role(self, identification_assembler):
+        """Test execute with device_manufacturer role data."""
+        data = {
+            "roles": {
+                "device_manufacturer": {
+                    "name": "Device Maker Inc",
+                },
+            }
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) >= 1
+        org_labels = [org.label for org in identification_assembler.organizations]
+        assert "Device Maker Inc" in org_labels
+
+    def test_execute_with_role_and_address(self, identification_assembler):
+        """Test execute with role that includes an address (covers line 332)."""
+        data = {
+            "roles": {
+                "co_sponsor": {
+                    "name": "Addressed Corp",
+                    "address": {
+                        "lines": ["123 Main St"],
+                        "city": "Springfield",
+                        "district": "",
+                        "state": "IL",
+                        "postalCode": "62701",
+                        "country": "USA",
+                    },
+                },
+            }
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) >= 1
+
+    def test_execute_with_none_role_info_skips(self, identification_assembler):
+        """Test execute with None role info skips processing (covers lines 327-328)."""
+        data = {
+            "roles": {
+                "co_sponsor": None,
+                "local_sponsor": None,
+            }
+        }
+
+        identification_assembler.execute(data)
+
+        # Should not create any organizations since info is None
+        assert len(identification_assembler.organizations) == 0
+
+    def test_execute_with_unknown_role_key_logs_warning(self, builder, errors):
+        """Unknown role keys are skipped with a warning, not an error.
+
+        Sponsor (and any role not in ROLE_ORGS) is wired through the
+        identifier scope, not the role loop. The role loop should keep going
+        rather than terminate the assembler when it sees a role name it
+        doesn't have a template for.
+        """
+        from simple_error_log.errors import Errors as _Errors
+
+        assembler = IdentificationAssembler(builder, errors)
+        builder.clear()
+        initial_error_count = errors.error_count()
+        initial_dump = errors.dump(level=_Errors.WARNING)
+
+        data = {
+            "roles": {
+                "nonexistent_role": {"name": "Bad Role"},
+            }
+        }
+
+        assembler.execute(data)
+
+        # No new errors — the role is skipped gracefully.
+        assert errors.error_count() == initial_error_count
+        # But a warning is recorded so the unknown role is visible.
+        new_dump = errors.dump(level=_Errors.WARNING)
+        assert "nonexistent_role" in new_dump and new_dump != initial_dump
+
+    def test_execute_with_multiple_roles(self, identification_assembler):
+        """Test execute with multiple roles."""
+        data = {
+            "roles": {
+                "co_sponsor": {"name": "Co-Sponsor Corp"},
+                "local_sponsor": {"name": "Local Sponsor Ltd"},
+                "device_manufacturer": {"name": "Device Maker Inc"},
+            }
+        }
+
+        identification_assembler.execute(data)
+
+        # Should create organizations for all three roles
+        assert len(identification_assembler.organizations) >= 3
+
+
+class TestIdentificationAssemblerDeepcopyProtection:
+    """Test that STANDARD_ORGS and ROLE_ORGS class constants are not mutated by execute().
+
+    The execute method uses copy.deepcopy on STANDARD_ORGS (line 291) and ROLE_ORGS (line 329)
+    because _create_organization pops 'role', replaces 'type' with a CDISC code object,
+    and replaces 'legalAddress' with an Address object. Without deepcopy these mutations
+    would corrupt the class-level dictionaries.
+    """
+
+    def test_standard_orgs_unchanged_after_execute(self, identification_assembler):
+        """Test that STANDARD_ORGS is not mutated after processing a standard org identifier."""
+        snapshot = copy.deepcopy(IdentificationAssembler.STANDARD_ORGS)
+
+        data = {
+            "identifiers": [
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}},
+            ]
+        }
+        identification_assembler.execute(data)
+
+        assert IdentificationAssembler.STANDARD_ORGS == snapshot
+
+    def test_standard_orgs_unchanged_after_all_standard_orgs(
+        self, identification_assembler
+    ):
+        """Test that STANDARD_ORGS is not mutated after processing all standard orgs."""
+        snapshot = copy.deepcopy(IdentificationAssembler.STANDARD_ORGS)
+
+        data = {
+            "identifiers": [
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}},
+                {"identifier": "EMA-2024-001", "scope": {"standard": "ema"}},
+                {"identifier": "FDA-IND-123456", "scope": {"standard": "fda-ind"}},
+            ]
+        }
+        identification_assembler.execute(data)
+
+        assert IdentificationAssembler.STANDARD_ORGS == snapshot
+
+    def test_standard_orgs_unchanged_after_repeated_execute(self, builder, errors):
+        """Test that STANDARD_ORGS survives multiple execute calls with the same org."""
+        snapshot = copy.deepcopy(IdentificationAssembler.STANDARD_ORGS)
+
+        for _ in range(3):
+            builder.clear()
+            assembler = IdentificationAssembler(builder, errors)
+            data = {
+                "identifiers": [
+                    {"identifier": "EMA-2024-001", "scope": {"standard": "ema"}},
+                ]
+            }
+            assembler.execute(data)
+
+        assert IdentificationAssembler.STANDARD_ORGS == snapshot
+
+    def test_standard_orgs_legaladdress_unchanged(self, identification_assembler):
+        """Test that nested legalAddress dicts in STANDARD_ORGS are not mutated."""
+        snapshot_addresses = {
+            key: copy.deepcopy(org["legalAddress"])
+            for key, org in IdentificationAssembler.STANDARD_ORGS.items()
+        }
+
+        data = {
+            "identifiers": [
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}},
+            ]
+        }
+        identification_assembler.execute(data)
+
+        for key, org in IdentificationAssembler.STANDARD_ORGS.items():
+            assert org["legalAddress"] == snapshot_addresses[key], (
+                f"STANDARD_ORGS['{key}']['legalAddress'] was mutated"
+            )
+
+    def test_standard_orgs_role_key_preserved(self, identification_assembler):
+        """Test that 'role' key is not popped from STANDARD_ORGS entries."""
+        data = {
+            "identifiers": [
+                {"identifier": "EMA-2024-001", "scope": {"standard": "ema"}},
+            ]
+        }
+        identification_assembler.execute(data)
+
+        # _create_organization pops 'role' from the dict; deepcopy prevents this
+        # from affecting STANDARD_ORGS
+        for key, org in IdentificationAssembler.STANDARD_ORGS.items():
+            assert "role" in org, f"STANDARD_ORGS['{key}'] lost its 'role' key"
+
+    def test_standard_orgs_type_remains_string(self, identification_assembler):
+        """Test that 'type' in STANDARD_ORGS remains a string, not a CDISC code object."""
+        data = {
+            "identifiers": [
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}},
+            ]
+        }
+        identification_assembler.execute(data)
+
+        # _create_organization replaces 'type' string with a CDISC code object;
+        # deepcopy prevents this from affecting STANDARD_ORGS
+        for key, org in IdentificationAssembler.STANDARD_ORGS.items():
+            assert isinstance(org["type"], str), (
+                f"STANDARD_ORGS['{key}']['type'] was mutated from str to {type(org['type'])}"
+            )
+
+    def test_role_orgs_unchanged_after_execute(self, identification_assembler):
+        """Test that ROLE_ORGS is not mutated after processing a role."""
+        snapshot = copy.deepcopy(IdentificationAssembler.ROLE_ORGS)
+
+        data = {
+            "roles": {
+                "co_sponsor": {"name": "Co-Sponsor Corp"},
+            }
+        }
+        identification_assembler.execute(data)
+
+        assert IdentificationAssembler.ROLE_ORGS == snapshot
+
+    def test_role_orgs_unchanged_after_all_roles(self, identification_assembler):
+        """Test that ROLE_ORGS is not mutated after processing all role types."""
+        snapshot = copy.deepcopy(IdentificationAssembler.ROLE_ORGS)
+
+        data = {
+            "roles": {
+                "co_sponsor": {"name": "Co-Sponsor Corp"},
+                "local_sponsor": {"name": "Local Sponsor Ltd"},
+                "device_manufacturer": {"name": "Device Maker Inc"},
+            }
+        }
+        identification_assembler.execute(data)
+
+        assert IdentificationAssembler.ROLE_ORGS == snapshot
+
+    def test_role_orgs_unchanged_after_repeated_execute(self, builder, errors):
+        """Test that ROLE_ORGS survives multiple execute calls."""
+        snapshot = copy.deepcopy(IdentificationAssembler.ROLE_ORGS)
+
+        for _ in range(3):
+            builder.clear()
+            assembler = IdentificationAssembler(builder, errors)
+            data = {
+                "roles": {
+                    "co_sponsor": {"name": "Co-Sponsor Corp"},
+                }
+            }
+            assembler.execute(data)
+
+        assert IdentificationAssembler.ROLE_ORGS == snapshot
+
+    def test_role_orgs_label_not_overwritten(self, identification_assembler):
+        """Test that ROLE_ORGS entries retain their original empty label."""
+        data = {
+            "roles": {
+                "co_sponsor": {"name": "Overwrite Attempt"},
+            }
+        }
+        identification_assembler.execute(data)
+
+        # execute sets organization["label"] = info["name"]; deepcopy prevents
+        # this from affecting ROLE_ORGS
+        assert IdentificationAssembler.ROLE_ORGS["co_sponsor"]["label"] == ""
+
+    def test_role_orgs_legaladdress_unchanged(self, identification_assembler):
+        """Test that ROLE_ORGS legalAddress stays as empty dict after execute."""
+        data = {
+            "roles": {
+                "co_sponsor": {
+                    "name": "Corp",
+                    "address": {
+                        "lines": ["1 St"],
+                        "city": "C",
+                        "district": "",
+                        "state": "S",
+                        "postalCode": "00000",
+                        "country": "USA",
+                    },
+                },
+            }
+        }
+        identification_assembler.execute(data)
+
+        # execute replaces organization["legalAddress"] with an Address object;
+        # deepcopy prevents this from affecting ROLE_ORGS
+        assert IdentificationAssembler.ROLE_ORGS["co_sponsor"]["legalAddress"] == {}
+
+
+class TestIdentificationAssemblerOtherData:
+    """Test 'other' data processing (covers lines 348-352)."""
+
+    def test_execute_with_other_data(self, identification_assembler):
+        """Test execute with 'other' data sets sponsor_signatory etc."""
+        data = {
+            "other": {
+                "sponsor_signatory": "Dr. Jane Smith",
+                "medical_expert": {"name": "Dr. John Doe"},
+                "compound_names": "Compound A, Compound B",
+                "compound_codes": "ABC-123, DEF-456",
+            }
+        }
+
+        identification_assembler.execute(data)
+
+        assert identification_assembler.sponsor_signatory == "Dr. Jane Smith"
+        assert identification_assembler.compound_names == "Compound A, Compound B"
+        assert identification_assembler.compound_codes == "ABC-123, DEF-456"
+        # medical_expert with a name creates a role and assigned person
+        assert len(identification_assembler.roles) == 1
+        assert identification_assembler.roles[0].code.code == "C51876"
+        assert (
+            identification_assembler.roles[0].assignedPersons[0].personName.text
+            == "Dr. John Doe"
+        )
+
+    def test_execute_without_other_data_leaves_defaults(self, identification_assembler):
+        """Test execute without 'other' data leaves properties as None."""
+        data = {"titles": {"brief": "Test"}}
+
+        identification_assembler.execute(data)
+
+        assert identification_assembler.sponsor_signatory is None
+        assert identification_assembler.medical_expert_contact_details_location is None
+        assert identification_assembler.compound_names is None
+        assert identification_assembler.compound_codes is None
+
+    def test_execute_with_medical_expert_empty_name(self, identification_assembler):
+        """Test execute with medical_expert that has an empty name does not create a role."""
+        data = {
+            "other": {
+                "sponsor_signatory": None,
+                "medical_expert": {"name": ""},
+                "compound_names": None,
+                "compound_codes": None,
+            }
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.roles) == 0
+
+    def test_execute_with_medical_expert_none(self, identification_assembler):
+        """Test execute with medical_expert set to None does not create a role."""
+        data = {
+            "other": {
+                "sponsor_signatory": None,
+                "medical_expert": None,
+                "compound_names": None,
+                "compound_codes": None,
+            }
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.roles) == 0
+
+
+class TestIdentificationAssemblerStandardOrgCreation:
+    """Test that each standard organization in STANDARD_ORGS can be created successfully."""
+
+    @pytest.mark.parametrize(
+        "org_key,expected_name,expected_label,has_role",
+        [
+            ("nct", "CT.GOV", "ClinicalTrials.gov", False),
+            ("ema", "EMA", "European Medicines Agency", True),
+            ("fda-ind", "FDA", "Food and Drug Administration", True),
+            ("fda-ide", "FDA", "Food and Drug Administration", True),
+            ("jrct", "jRCT", "Japan Registry of Clinical Trials", False),
+            ("nmpa", "NMPA", "National Medical Products Administration", True),
+            ("who", "WHO UTN", "WHO Registry of Clinical Trials", False),
+        ],
+    )
+    def test_standard_org_creates_organization(
+        self,
+        identification_assembler,
+        org_key,
+        expected_name,
+        expected_label,
+        has_role,
+    ):
+        """Test that a standard org identifier creates the correct organization."""
+        data = {
+            "identifiers": [
+                {
+                    "identifier": f"TEST-{org_key.upper()}-001",
+                    "scope": {"standard": org_key},
+                }
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.identifiers) == 1, (
+            f"Failed to create identifier for standard org '{org_key}'"
+        )
+        assert len(identification_assembler.organizations) == 1, (
+            f"Failed to create organization for standard org '{org_key}'"
+        )
+
+        org = identification_assembler.organizations[0]
+        assert org.name == expected_name
+        assert org.label == expected_label
+
+        identifier = identification_assembler.identifiers[0]
+        assert identifier.text == f"TEST-{org_key.upper()}-001"
+        assert identifier.scopeId == org.id
+
+    @pytest.mark.parametrize(
+        "org_key,expected_name,has_role",
+        [
+            ("nct", "CT.GOV", False),
+            ("ema", "EMA", True),
+            ("fda-ind", "FDA", True),
+            ("fda-ide", "FDA", True),
+            ("jrct", "jRCT", False),
+            ("nmpa", "NMPA", True),
+            ("who", "WHO UTN", False),
+        ],
+    )
+    def test_standard_org_creates_role_when_expected(
+        self, identification_assembler, org_key, expected_name, has_role
+    ):
+        """Test that standard orgs with a role create a StudyRole, and those without do not."""
+        data = {
+            "identifiers": [
+                {
+                    "identifier": f"TEST-{org_key.upper()}-001",
+                    "scope": {"standard": org_key},
+                }
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        if has_role:
+            assert len(identification_assembler.roles) == 1, (
+                f"Expected a role to be created for standard org '{org_key}'"
+            )
+            role = identification_assembler.roles[0]
+            org = identification_assembler.organizations[0]
+            assert org.id in role.organizationIds
+        else:
+            assert len(identification_assembler.roles) == 0, (
+                f"Expected no role for standard org '{org_key}', but found {len(identification_assembler.roles)}"
+            )
+
+    @pytest.mark.parametrize(
+        "org_key",
+        ["nct", "ema", "fda-ind", "fda-ide", "jrct", "nmpa", "who"],
+    )
+    def test_standard_org_creates_address(self, identification_assembler, org_key):
+        """Test that each standard org creates an organization with a legal address."""
+        data = {
+            "identifiers": [
+                {
+                    "identifier": f"TEST-{org_key.upper()}-001",
+                    "scope": {"standard": org_key},
+                }
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) == 1, (
+            f"Failed to create organization for standard org '{org_key}'"
+        )
+        org = identification_assembler.organizations[0]
+        assert org.legalAddress is not None, (
+            f"Organization for '{org_key}' should have a legal address"
+        )
+        assert hasattr(org.legalAddress, "text"), (
+            f"Address for '{org_key}' should have text set"
+        )
+
+
+class TestIdentificationAssemblerCoverageGaps:
+    """Tests targeting specific uncovered lines."""
+
+    _original_role_orgs = None
+
+    def setup_method(self):
+        """Restore ROLE_ORGS before each test since _create_organization mutates it."""
+        if TestIdentificationAssemblerCoverageGaps._original_role_orgs is None:
+            TestIdentificationAssemblerCoverageGaps._original_role_orgs = copy.deepcopy(
+                IdentificationAssembler.ROLE_ORGS
+            )
+        IdentificationAssembler.ROLE_ORGS = copy.deepcopy(
+            TestIdentificationAssemblerCoverageGaps._original_role_orgs
+        )
+
+    def test_role_org_creation_failure_logs_error(self, builder, errors):
+        """Test that failed organization creation during role processing logs an error (line 443)."""
+        assembler = IdentificationAssembler(builder, errors)
+        builder.clear()
+        initial_error_count = errors.error_count()
+
+        # Monkey-patch _create_organization to return None
+        original = assembler._create_organization
+
+        def return_none(organization):
+            return None
+
+        assembler._create_organization = return_none
+
+        try:
+            data = {
+                "roles": {
+                    "co_sponsor": {"name": "Will Fail Corp"},
+                }
+            }
+            assembler.execute(data)
+        finally:
+            assembler._create_organization = original
+
+        assert len(assembler.organizations) == 0
+        assert errors.error_count() > initial_error_count
+
+    def test_medical_expert_with_reference(self, identification_assembler):
+        """Test medical expert with reference key sets contact details location (line 465)."""
+        data = {
+            "other": {
+                "sponsor_signatory": None,
+                "medical_expert": {
+                    "reference": ["Section 1", "Section 2"],
+                },
+                "compound_names": None,
+                "compound_codes": None,
+            }
+        }
+
+        identification_assembler.execute(data)
+
+        assert (
+            identification_assembler.medical_expert_contact_details_location
+            == "Section 1/nSection 2"
+        )
+        assert len(identification_assembler.roles) == 0
+
+    def test_identifier_type_unknown_scope_uses_other(self, identification_assembler):
+        """Test _identifier_type with unknown scope falls back to 'other' codes (lines 588-589)."""
+        result = identification_assembler._identifier_type("unknown_scope")
+
+        assert result is not None
+        assert result.valueCode.code == "C218690"
+        assert (
+            result.valueCode.decode == "Other Regulatory or Clinical Trial Identifier"
+        )
+
+    def test_create_assigned_person_exception(self, builder, errors):
+        """Test _create_assigned_person exception handling (lines 667-673)."""
+        assembler = IdentificationAssembler(builder, errors)
+        builder.clear()
+        initial_error_count = errors.error_count()
+
+        # Pass data that will cause an exception (missing required 'name' key)
+        result = assembler._create_assigned_person({})
+
+        assert result is None
+        assert errors.error_count() > initial_error_count
+
+
+class TestIdentificationAssemblerScopeOrgCache:
+    """Tests for the scope-based organisation cache.
+
+    Multiple identifiers sharing the same standard scope (e.g. two "other"
+    identifiers) must reuse a single Organisation rather than trying to
+    create a duplicate, which the builder rejects.
+    """
+
+    def test_two_other_identifiers_both_created(self, identification_assembler):
+        """Two 'other' identifiers should both appear in the identifiers list."""
+        data = {
+            "identifiers": [
+                {"identifier": "IDE 98765", "scope": {"standard": "other"}},
+                {"identifier": "OTHER-1234", "scope": {"standard": "other"}},
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        texts = [i.text for i in identification_assembler.identifiers]
+        assert "IDE 98765" in texts
+        assert "OTHER-1234" in texts
+
+    def test_two_other_identifiers_share_one_org(self, identification_assembler):
+        """Two 'other' identifiers should share a single Organisation."""
+        data = {
+            "identifiers": [
+                {"identifier": "IDE 98765", "scope": {"standard": "other"}},
+                {"identifier": "OTHER-1234", "scope": {"standard": "other"}},
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) == 1
+        assert len(identification_assembler.identifiers) == 2
+        # Both identifiers should reference the same org
+        org_id = identification_assembler.organizations[0].id
+        assert identification_assembler.identifiers[0].scopeId == org_id
+        assert identification_assembler.identifiers[1].scopeId == org_id
+
+    def test_two_nct_identifiers_share_one_org(self, identification_assembler):
+        """Two NCT identifiers should share a single CT.GOV Organisation."""
+        data = {
+            "identifiers": [
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}},
+                {"identifier": "NCT87654321", "scope": {"standard": "nct"}},
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) == 1
+        assert len(identification_assembler.identifiers) == 2
+
+    def test_mixed_scopes_get_separate_orgs(self, identification_assembler):
+        """Identifiers with different scopes should each get their own org."""
+        data = {
+            "identifiers": [
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}},
+                {"identifier": "IND 12345", "scope": {"standard": "fda-ind"}},
+                {"identifier": "IDE 98765", "scope": {"standard": "other"}},
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) == 3
+        assert len(identification_assembler.identifiers) == 3
+
+    def test_single_identifier_per_scope_unaffected(self, identification_assembler):
+        """Single identifier per scope should work exactly as before."""
+        data = {
+            "identifiers": [
+                {"identifier": "NCT12345678", "scope": {"standard": "nct"}},
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) == 1
+        assert len(identification_assembler.identifiers) == 1
+        assert identification_assembler.identifiers[0].text == "NCT12345678"
+
+    def test_three_other_identifiers(self, identification_assembler):
+        """Three 'other' identifiers should all be created under one org."""
+        data = {
+            "identifiers": [
+                {"identifier": "IDE 98765", "scope": {"standard": "other"}},
+                {"identifier": "OTHER-1234", "scope": {"standard": "other"}},
+                {"identifier": "MISC-5678", "scope": {"standard": "other"}},
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) == 1
+        assert len(identification_assembler.identifiers) == 3
+        texts = [i.text for i in identification_assembler.identifiers]
+        assert "IDE 98765" in texts
+        assert "OTHER-1234" in texts
+        assert "MISC-5678" in texts
+
+    def test_non_standard_different_orgs_stay_separate(self, identification_assembler):
+        """Two non-standard identifiers with different org names get separate Organisations."""
+        data = {
+            "identifiers": [
+                {
+                    "identifier": "UNI-001",
+                    "scope": {
+                        "non_standard": {
+                            "type": "academic",
+                            "role": None,
+                            "name": "University of Nowhere",
+                            "description": "Academic",
+                            "label": "University of Nowhere",
+                            "identifier": "UNI-001",
+                            "identifierScheme": "Internal",
+                            "legalAddress": None,
+                        }
+                    },
+                },
+                {
+                    "identifier": "PHARMA-001",
+                    "scope": {
+                        "non_standard": {
+                            "type": "pharma",
+                            "role": None,
+                            "name": "Pharma Corp",
+                            "description": "Pharma",
+                            "label": "Pharma Corp",
+                            "identifier": "PC-001",
+                            "identifierScheme": "DUNS",
+                            "legalAddress": None,
+                        }
+                    },
+                },
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) == 2
+        assert len(identification_assembler.identifiers) == 2
+        org_names = [o.name for o in identification_assembler.organizations]
+        assert "University of Nowhere" in org_names
+        assert "Pharma Corp" in org_names
+
+    def test_non_standard_same_org_shared(self, identification_assembler):
+        """Two non-standard identifiers with the same org name share one Organisation."""
+        data = {
+            "identifiers": [
+                {
+                    "identifier": "ID-001",
+                    "scope": {
+                        "non_standard": {
+                            "type": "pharma",
+                            "role": None,
+                            "name": "Same Corp",
+                            "description": "Pharma",
+                            "label": "Same Corp",
+                            "identifier": "SC-001",
+                            "identifierScheme": "DUNS",
+                            "legalAddress": None,
+                        }
+                    },
+                },
+                {
+                    "identifier": "ID-002",
+                    "scope": {
+                        "non_standard": {
+                            "type": "pharma",
+                            "role": None,
+                            "name": "Same Corp",
+                            "description": "Pharma",
+                            "label": "Same Corp",
+                            "identifier": "SC-001",
+                            "identifierScheme": "DUNS",
+                            "legalAddress": None,
+                        }
+                    },
+                },
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) == 1
+        assert len(identification_assembler.identifiers) == 2
+        texts = [i.text for i in identification_assembler.identifiers]
+        assert "ID-001" in texts
+        assert "ID-002" in texts
+
+    def test_fda_ind_and_fda_ide_share_one_org(self, identification_assembler):
+        """fda-ind and fda-ide both map to org 'FDA' and must share it."""
+        data = {
+            "identifiers": [
+                {"identifier": "IND 12345", "scope": {"standard": "fda-ind"}},
+                {"identifier": "IDE 98765", "scope": {"standard": "fda-ide"}},
+            ]
+        }
+
+        identification_assembler.execute(data)
+
+        assert len(identification_assembler.organizations) == 1
+        assert identification_assembler.organizations[0].name == "FDA"
+        assert len(identification_assembler.identifiers) == 2
+        texts = [i.text for i in identification_assembler.identifiers]
+        assert "IND 12345" in texts
+        assert "IDE 98765" in texts
