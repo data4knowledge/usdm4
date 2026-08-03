@@ -13,6 +13,8 @@ from usdm4.assembler.assembler import Assembler
 from usdm4.core.core_validator import CoreValidator
 from usdm4.core.core_validation_result import CoreValidationResult
 from usdm4.core.core_cache_manager import CoreCacheManager, CacheStatus
+from usdm4.data_store.data_store import DataStore
+from usdm4.utility.tag_resolver import TagResolver
 
 
 class USDM4:
@@ -120,6 +122,20 @@ class USDM4:
         with open(file_path, "r") as file:
             data = json.load(file)
         return Convert.convert(data)
+
+    def tag_resolver(self, file_path: str, errors: Errors) -> TagResolver:
+        """
+        Return a TagResolver over a USDM JSON file: translates usdm:ref and
+        usdm:tag elements in content text (e.g. NarrativeContentItem or
+        EligibilityCriterionItem text) into their final values, recursively.
+
+        Note: usdm:macro is deliberately NOT handled here — macros are an
+        authoring convenience expanded at workbook import by usdm4_excel;
+        they never appear in USDM JSON.
+        """
+        store = DataStore(file_path)
+        store.decompose()
+        return TagResolver(store, errors)
 
     def builder(self, errors: Errors) -> Builder:
         return Builder(self.root, errors)

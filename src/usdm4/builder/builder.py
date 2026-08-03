@@ -65,6 +65,13 @@ class Builder:
         self.cross_reference.clear()
         self._data_store = None
 
+    @property
+    def data_store(self) -> DataStore | None:
+        """The DataStore created by seed(), or None if not seeded. Public
+        accessor so callers (e.g. TagResolver users) need not touch
+        _data_store."""
+        return self._data_store
+
     def seed(self, file_path: str):
         self._data_store = DataStore(file_path)
         self._data_store.decompose()

@@ -5,7 +5,7 @@ from simple_error_log.error_location import KlassMethodLocation
 
 
 def get_soup(text: str, errors: Errors) -> BeautifulSoup:
-    MODULE = "usdm4_fhir.m11.soup.soup"
+    MODULE = "usdm4.utility.soup"
     try:
         with warnings.catch_warnings(record=True) as warning_list:
             result = BeautifulSoup(text, "html.parser")

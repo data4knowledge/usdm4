@@ -1,9 +1,10 @@
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
-from usdm3.data_store.data_store import DataStore
+from usdm4.data_store.data_store import DataStore
 from usdm4.utility.soup import get_soup, BeautifulSoup
 
-class TagResolver():
+
+class TagResolver:
     MODULE = "usdm4.utility.tag_resolver.TagResolver"
 
     def __init__(self, data_store: DataStore, errors: Errors):
@@ -15,23 +16,44 @@ class TagResolver():
 
     def _translate_references(self, instance: dict, text: str) -> str:
         soup = get_soup(text, self._errors)
+        # usdm:macro is an authoring construct (expanded at workbook import
+        # by usdm4_excel) and should never appear in USDM content. Warn and
+        # leave any stray macro in place rather than silently ignoring it.
+        for macro in soup(["usdm:macro"]):
+            self._errors.warning(
+                f"Unexpanded usdm:macro encountered in instance "
+                f"'{instance.get('id', '')}': '{macro}'. Macros should be "
+                f"expanded before USDM content is produced; left unresolved.",
+                KlassMethodLocation(self.MODULE, "_translate_references"),
+            )
         ref: BeautifulSoup
         for ref in soup(["usdm:ref", "usdm:tag"]):
             try:
+                # The resolved text is parsed and inserted as markup (not as
+                # an escaped string): resolved values may themselves contain
+                # XHTML destined for a rendered document.
                 if ref.name == "usdm:ref":
                     text = self._resolve_usdm_ref(instance, ref)
-                    ref.replace_with(self._translate_references(instance, text))
+                    ref.replace_with(
+                        get_soup(
+                            self._translate_references(instance, text), self._errors
+                        )
+                    )
                 if ref.name == "usdm:tag":
                     text = self._resolve_usdm_tag(instance, ref)
-                    ref.replace_with(self._translate_references(instance, text))
+                    ref.replace_with(
+                        get_soup(
+                            self._translate_references(instance, text), self._errors
+                        )
+                    )
             except Exception as e:
                 self._errors.exception(
                     f"Exception raised while attempting to translate '{ref}'",
                     e,
-                    KlassMethodLocation(self.MODULE, "_translate_references")
+                    KlassMethodLocation(self.MODULE, "_translate_references"),
                 )
         return str(soup)
-    
+
     def _resolve_usdm_ref(self, instance: dict, ref: BeautifulSoup) -> str:
         attributes = ref.attrs
         instance = self._data_store.instance_by_id(attributes["id"])
@@ -46,6 +68,10 @@ class TagResolver():
                 if p_map["tag"] == attributes["name"]:
                     value = p_map["reference"]
                     return value
-        self._errors.warning(f"Failed to resolve tag '{ref.name}' in instance '{instance["id"]}'",
-                    KlassMethodLocation(self.MODULE, "_resolve_usdm_tag"))
-        return f"<i>failed to resolve tag '{ref.name}' in instance '{instance["id"]}'</i>"
+        self._errors.warning(
+            f"Failed to resolve tag '{ref.name}' in instance '{instance['id']}'",
+            KlassMethodLocation(self.MODULE, "_resolve_usdm_tag"),
+        )
+        return (
+            f"<i>failed to resolve tag '{ref.name}' in instance '{instance['id']}'</i>"
+        )
