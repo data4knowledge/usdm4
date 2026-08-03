@@ -1,5 +1,21 @@
 # usdm4 — project memory
 
+## 2026-08-03 — api __all__ gaps: CommentAnnotation + 2 more (uncommitted)
+
+- usdm4_excel's annotations_and_abbreviations parity fixture exposed:
+  CommentAnnotation missing from api/__init__.py __all__, which seeds the
+  Builder IdManager → builder.create KeyError, every note creation
+  failed. Audit found two more latent ones also builder-created by
+  usdm4_excel readers: BiospecimenRetention, ConditionAssignment. All
+  three added to imports + __all__.
+- Third recurrence of this bug class (12076cf fixed MedicalDevice/
+  Substance/ProductOrganizationRole). New guard test
+  tests/usdm4/api/test_api_all_complete.py: scans api/*.py class defs,
+  subtracts a NON_CONCRETE list (ApiBase*/Base*/Extension/Identifier/
+  PopulationDefinition/QuantityRange), asserts the rest are in __all__.
+- Why usdm4_excel unit tests never caught it: their SheetFramework mocks
+  IdManager.build_id — only real end-to-end imports hit the id index.
+
 ## 2026-08-03 — TagResolver fixed and exposed (uncommitted)
 
 - utility/tag_resolver.py already held the recursive usdm:ref/usdm:tag

@@ -44,7 +44,10 @@ from .scheduled_instance import (
     ScheduledInstance,
     ScheduledActivityInstance,
     ScheduledDecisionInstance,
+    ConditionAssignment,
 )
+from .comment_annotation import CommentAnnotation
+from .biospecimen_retention import BiospecimenRetention
 from .strength import Strength
 from .substance import Substance
 from .study_amendment import StudyAmendment
@@ -96,8 +99,11 @@ __all__ = [
     "BiomedicalConceptProperty",
     "BiomedicalConceptSurrogate",
     "BiomedicalConcept",
+    "BiospecimenRetention",
     "Characteristic",
     "Code",
+    "CommentAnnotation",
+    "ConditionAssignment",
     "Condition",
     "DocumentContentReference",
     "EligibilityCriterion",
