@@ -249,18 +249,24 @@ def test_generic_bc_as_usdm_handles_missing_synonyms(api):
     assert bc["synonyms"] == []
 
 
-def test_generic_bc_property_as_usdm_with_example_set(api):
+def test_generic_bc_property_as_usdm_with_example_set(api, ct_library):
+    terms = {
+        "Year": {"conceptId": "C29848", "preferredTerm": "Year"},
+        "Month": {"conceptId": "C29846", "preferredTerm": "Month"},
+    }
+    ct_library.preferred_term.side_effect = lambda v: terms.get(v)
     prop = api._generic_bc_property_as_usdm(
         {
             "conceptId": "C9",
             "shortName": "AgeProp",
             "dataType": "integer",
-            "exampleSet": ["Year", "Month"],
+            "exampleSet": ["Year", "Month", "Unknown"],
         }
     )
-    # exampleSet is iterated but term is always None (preferred_term call
-    # is commented-out in the source), so no response codes are produced.
-    assert prop["responseCodes"] == []
+    # exampleSet terms resolved via the CT library become response codes;
+    # unresolvable terms are skipped.
+    decodes = [rc["code"]["decode"] for rc in prop["responseCodes"]]
+    assert decodes == ["Year", "Month"]
     assert prop["datatype"] == "integer"
     assert prop["name"] == "AgeProp"
 
