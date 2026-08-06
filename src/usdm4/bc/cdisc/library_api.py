@@ -152,8 +152,7 @@ class LibraryAPI:
         responses = []
         if "exampleSet" in property:
             for example in property["exampleSet"]:
-                # term = self._ct_library.preferred_term(example)
-                term = None
+                term = self._ct_library.preferred_term(example)
                 if term is not None:
                     code = self._code_object(term["conceptId"], term["preferredTerm"])
                     responses.append(self._response_code_object(code))

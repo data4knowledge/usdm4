@@ -79,6 +79,17 @@ class Library:
             self._get_usdm_ct() if self._usdm() else self._get_all_ct()  # Fetch from API
             self._cache.save(self._by_code_list)  # Cache the results
         self._add_missing_ct()  # Add any additional required terminology
+        # Version reflects the loaded CT data, not a hardcoded default: the
+        # newest effective_date across loaded codelists (missing/sponsor
+        # codelists without a source are skipped).
+        dates = [
+            cl.get("source", {}).get("effective_date")
+            for cl in self._by_code_list.values()
+            if isinstance(cl, dict) and isinstance(cl.get("source"), dict)
+        ]
+        dates = [d for d in dates if d]
+        if dates:
+            self.version = max(dates)
 
     def klass_and_attribute(self, klass, attribute) -> dict:
         """Resolve ``(klass, attribute)`` to its codelist dict.
