@@ -39,6 +39,12 @@ setuptools.setup(
             "ct/iso/iso3166/iso3166.json",
             "bc/cdisc/library_cache/library_cache.yaml",
             "rules/library/schema/usdm_v4-0-0.json",
+            # CORE USDM JSON Schemas (bundled from cdisc-rules-engine
+            # v0.16.0 resources/cache/usdm-*-schema.pkl, stored as JSON) —
+            # required by CoreValidator for schema-conformance rules
+            # (CORE-000938 / DDF00126). See issue #54.
+            "core/data/usdm-3-0-schema.json",
+            "core/data/usdm-4-0-schema.json",
             # USDM-XHTML 1.0 schema (bundled from the CORE cache) —
             # required by rules/xhtml_validation.py for DDF00187 / DDF00247.
             "rules/library/schema/xml/cdisc-usdm-xhtml-1.0/*.xsd",

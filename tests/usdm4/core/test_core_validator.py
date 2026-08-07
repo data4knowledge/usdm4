@@ -890,3 +890,110 @@ class TestClassifyErrorsEdgeCases:
         real, exec_ = CoreValidator._classify_errors(results)
         assert len(real) == 1
         assert real[0] == "string error"
+
+
+# ------------------------------------------------------------------
+# _classify_errors — executionStatus-based classification (issue #54)
+# ------------------------------------------------------------------
+
+
+class TestClassifyErrorsByExecutionStatus:
+    """Classification must follow the engine's executionStatus, matching the
+    CORE CLI report: skipped results are dropped, issue-reported errors are
+    findings, execution-error errors are execution errors. Without this,
+    every rule/entity mismatch ('Column not found in data' on a skipped
+    result) floods execution_errors — 6,749 of them on one file."""
+
+    def test_skipped_results_are_ignored(self):
+        from usdm4.core.core_validator import CoreValidator
+
+        results = {
+            "ds": {
+                "executionStatus": "skipped",
+                "errors": [{"error": "Column not found in data"}] * 100,
+            }
+        }
+        real, exec_ = CoreValidator._classify_errors(results)
+        assert real == []
+        assert exec_ == []
+
+    def test_issue_reported_errors_are_findings(self):
+        from usdm4.core.core_validator import CoreValidator
+
+        results = {
+            "ds": {
+                "executionStatus": "issue reported",
+                "errors": [{"value": "a"}, {"value": "b"}],
+            }
+        }
+        real, exec_ = CoreValidator._classify_errors(results)
+        assert len(real) == 2
+        assert exec_ == []
+
+    def test_issue_reported_wins_over_legacy_error_text(self):
+        """An issue-reported result is a finding even if its error text
+        happens to match the legacy execution-error string set."""
+        from usdm4.core.core_validator import CoreValidator
+
+        results = {
+            "ds": {
+                "executionStatus": "issue reported",
+                "errors": [{"error": "Domain not found"}],
+            }
+        }
+        real, exec_ = CoreValidator._classify_errors(results)
+        assert len(real) == 1
+        assert exec_ == []
+
+    def test_execution_error_status(self):
+        from usdm4.core.core_validator import CoreValidator
+
+        results = {
+            "ds": {
+                "executionStatus": "execution error",
+                "errors": [{"error": "rule evaluation error - operation failed"}],
+            }
+        }
+        real, exec_ = CoreValidator._classify_errors(results)
+        assert real == []
+        assert len(exec_) == 1
+
+    def test_missing_status_falls_back_to_error_text(self):
+        from usdm4.core.core_validator import CoreValidator
+
+        results = {
+            "ds": {
+                "errors": [
+                    {"error": "Outside scope"},
+                    {"value": "real finding"},
+                ]
+            }
+        }
+        real, exec_ = CoreValidator._classify_errors(results)
+        assert len(real) == 1
+        assert len(exec_) == 1
+
+
+# ------------------------------------------------------------------
+# _load_standard_schema — bundled CORE USDM schemas (issue #54)
+# ------------------------------------------------------------------
+
+
+class TestLoadStandardSchema:
+    def test_loads_bundled_4_0_schema(self):
+        from usdm4.core.core_validator import CoreValidator
+
+        schema = CoreValidator._load_standard_schema("4-0")
+        assert schema.get("title") == "Wrapper"
+        assert "$defs" in schema and len(schema["$defs"]) > 50
+
+    def test_loads_bundled_3_0_schema(self):
+        from usdm4.core.core_validator import CoreValidator
+
+        schema = CoreValidator._load_standard_schema("3-0")
+        assert schema.get("title") == "Wrapper"
+
+    def test_unknown_version_returns_empty_dict(self):
+        from usdm4.core.core_validator import CoreValidator
+
+        assert CoreValidator._load_standard_schema("9-9") == {}

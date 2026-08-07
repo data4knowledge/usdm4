@@ -1378,7 +1378,7 @@
 				{
 					"id": "ExtTransAttr_2",
 					"url": "http://cdisc.org/usdm/extensions/extensionR-1/languages",
-					"extensionAtrtibutes": [
+					"extensionAttributes": [
 						{
 							"id": "extensionAttributes_3",
 							"url": "http://cdisc.org/usdm/extensions/extensionR-2/language",
@@ -1408,7 +1408,7 @@
 									"instanceType": "ExtensionAttribute"
 								}			
 								],
-								"instanceType": "extensionClass"
+								"instanceType": "ExtensionClass"
 							},
 							"instanceType": "ExtensionAttribute"
 						},
@@ -1441,7 +1441,7 @@
 										"instanceType": "ExtensionAttribute"
 									}		
 									],
-									"instanceType": "extensionCLass"
+									"instanceType": "ExtensionClass"
 								},
 							"instanceType": "ExtensionAttribute"
 							}
@@ -1539,7 +1539,7 @@
                     "extensionAttributes": [{
 						"id": "ExtTransAttr_3",
 						"url": "http://cdisc.org/usdm/extensions/extensionR-1/languages",
-						"extensionAtrtibutes": [
+						"extensionAttributes": [
 							{
 								"id": "extensionAttributes_5",
 								"url": "http://cdisc.org/usdm/extensions/extensionR-2/language",
@@ -1576,9 +1576,9 @@
 										"instanceType": "ExtensionAttribute"
 									}									
 									],
-									"instanceType": "extensionCLass"
+									"instanceType": "ExtensionClass"
 								},
-								"instanceType": "extensionAttribute"
+								"instanceType": "ExtensionAttribute"
 							},
 							{
 								"id": "extensionAttributes_6",
@@ -1616,7 +1616,7 @@
 											"instanceType": "ExtensionAttribute"
 										}										
 										],
-										"instanceType": "extensionCLass"
+										"instanceType": "ExtensionClass"
 									},
 								"instanceType": "ExtensionAttribute"
 								}
@@ -3155,7 +3155,7 @@
             "extensionAttributes": [{
 				"id": "ExtTransAttr_1",
 				"url": "http://cdisc.org/usdm/extensions/extensionR-1/languages",
-				"extensionAtrtibutes": [
+				"extensionAttributes": [
 				{
 					"id": "extensionAttributes_1",
 					"url": "http://cdisc.org/usdm/extensions/extensionR-2/language",
@@ -3192,7 +3192,7 @@
 							"instanceType": "ExtensionAttribute"
 						}			
 						],
-						"instanceType": "ExtensionCLass"
+						"instanceType": "ExtensionClass"
 					},
 					"instanceType": "ExtensionAttribute"
 				},
@@ -3232,7 +3232,7 @@
 								"instanceType": "ExtensionAttribute"
 							}			
 							],
-							"instanceType": "ExtensionCLass"
+							"instanceType": "ExtensionClass"
 						},
 					"instanceType": "ExtensionAttribute"
 					}

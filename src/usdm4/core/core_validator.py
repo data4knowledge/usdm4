@@ -63,6 +63,17 @@ _EXECUTION_ERROR_TYPES = {
     "Empty dataset",
 }
 
+# Engine executionStatus values (cdisc_rules_engine.enums.execution_status).
+# Classification follows these, matching the CORE CLI report: "skipped"
+# results are the engine saying a rule does not apply to an entity — the CLI
+# drops them, and so do we. The legacy _EXECUTION_ERROR_TYPES string set
+# above is retained only as a fallback for items without an executionStatus;
+# note SkippedReason in the engine lists those same strings, which is why
+# string-matching them ever worked at all.
+_STATUS_SKIPPED = "skipped"
+_STATUS_ISSUE_REPORTED = "issue reported"
+_STATUS_EXECUTION_ERROR = "execution error"
+
 
 class CoreValidator:
     """
@@ -334,6 +345,7 @@ class CoreValidator:
         library_metadata = LibraryMetadataContainer(
             published_ct_packages=ct_packages,
             ct_package_metadata=ct_package_metadata,
+            standard_schema_definition=self._load_standard_schema(version),
         )
 
         # --- Rules Engine Setup ---
@@ -552,9 +564,41 @@ class CoreValidator:
         return versions
 
     @staticmethod
+    def _load_standard_schema(version: str) -> dict:
+        """
+        Load the bundled USDM JSON Schema for schema-conformance rules.
+
+        The CORE engine's cardinality rules (e.g. CORE-000938 / DDF00126)
+        validate the file against a JSON Schema of the USDM API ``Wrapper``
+        via ``JsonSchemaCheckDatasetBuilder``. The CLI distribution ships
+        this as ``usdm-<version>-schema.pkl``; we vendor the same schemas as
+        JSON (``core/data/usdm-<version>-schema.json``, taken from
+        cdisc-rules-engine v0.16.0). Without it those rules silently report
+        nothing (issue #54).
+
+        Returns an empty dict if no schema is bundled for the version.
+        """
+        path = Path(__file__).parent / "data" / f"usdm-{version}-schema.json"
+        if path.exists():
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        return {}
+
+    @staticmethod
     def _classify_errors(rule_results) -> tuple[list, list]:
         """
         Separate real validation findings from execution errors.
+
+        Classification follows the engine's own ``executionStatus`` on each
+        result item — the same scheme the CORE CLI report uses:
+
+        * ``"skipped"`` — the rule does not apply to this entity; ignored
+          entirely (previously these flooded execution_errors — issue #54).
+        * ``"issue reported"`` — real validation findings.
+        * ``"execution error"`` — genuine rule execution failures.
+
+        Items carrying no ``executionStatus`` fall back to the legacy
+        error-text classification against ``_EXECUTION_ERROR_TYPES``.
 
         Returns (real_errors, execution_errors).
         """
@@ -566,12 +610,22 @@ class CoreValidator:
             for item in items:
                 if not isinstance(item, dict):
                     continue
-                for error in item.get("errors", []):
-                    if isinstance(error, dict):
-                        error_type = error.get("error", "")
-                        if error_type in _EXECUTION_ERROR_TYPES:
+                status = item.get("executionStatus")
+                if status == _STATUS_SKIPPED:
+                    continue
+                errors = item.get("errors", [])
+                if status == _STATUS_ISSUE_REPORTED:
+                    real_errors.extend(errors)
+                elif status == _STATUS_EXECUTION_ERROR:
+                    exec_errors.extend(errors)
+                else:
+                    for error in errors:
+                        if (
+                            isinstance(error, dict)
+                            and error.get("error", "") in _EXECUTION_ERROR_TYPES
+                        ):
                             exec_errors.append(error)
-                            continue
-                    real_errors.append(error)
+                        else:
+                            real_errors.append(error)
 
         return real_errors, exec_errors

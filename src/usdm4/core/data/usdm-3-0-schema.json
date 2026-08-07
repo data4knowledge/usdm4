@@ -1,0 +1,3995 @@
+{
+  "$defs": {
+    "Activity": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "previousId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Previousid"
+        },
+        "nextId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Nextid"
+        },
+        "definedProcedures": {
+          "items": {
+            "$ref": "#/$defs/Procedure"
+          },
+          "type": "array",
+          "title": "Definedprocedures",
+          "default": []
+        },
+        "biomedicalConceptIds": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Biomedicalconceptids",
+          "default": []
+        },
+        "bcCategoryIds": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Bccategoryids",
+          "default": []
+        },
+        "bcSurrogateIds": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Bcsurrogateids",
+          "default": []
+        },
+        "timelineId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Timelineid"
+        },
+        "instanceType": {
+          "const": "Activity",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "instanceType"
+      ],
+      "title": "Activity",
+      "additionalProperties": false
+    },
+    "Address": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Text"
+        },
+        "line": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Line"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "City"
+        },
+        "district": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "District"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "State"
+        },
+        "postalCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Postalcode"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Code"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "instanceType": {
+          "const": "Address",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "instanceType"
+      ],
+      "title": "Address",
+      "additionalProperties": false
+    },
+    "AdministrationDuration": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quantity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "description": {
+          "type": "string",
+          "title": "Description"
+        },
+        "durationWillVary": {
+          "type": "boolean",
+          "title": "Durationwillvary"
+        },
+        "reasonDurationWillVary": {
+          "type": "string",
+          "title": "Reasondurationwillvary"
+        },
+        "instanceType": {
+          "const": "AdministrationDuration",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "description",
+        "durationWillVary",
+        "reasonDurationWillVary",
+        "instanceType"
+      ],
+      "title": "AdministrationDuration",
+      "additionalProperties": false
+    },
+    "AgentAdministration": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "duration": {
+          "$ref": "#/$defs/AdministrationDuration"
+        },
+        "dose": {
+          "$ref": "#/$defs/Quantity"
+        },
+        "route": {
+          "$ref": "#/$defs/AliasCode"
+        },
+        "frequency": {
+          "$ref": "#/$defs/AliasCode"
+        },
+        "instanceType": {
+          "const": "AgentAdministration",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "duration",
+        "dose",
+        "route",
+        "frequency",
+        "instanceType"
+      ],
+      "title": "AgentAdministration",
+      "additionalProperties": false
+    },
+    "AliasCode": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "standardCode": {
+          "$ref": "#/$defs/Code"
+        },
+        "standardCodeAliases": {
+          "items": {
+            "$ref": "#/$defs/Code"
+          },
+          "type": "array",
+          "title": "Standardcodealiases",
+          "default": []
+        },
+        "instanceType": {
+          "const": "AliasCode",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "standardCode",
+        "instanceType"
+      ],
+      "title": "AliasCode",
+      "additionalProperties": false
+    },
+    "AnalysisPopulation": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "text": {
+          "type": "string",
+          "title": "Text"
+        },
+        "instanceType": {
+          "const": "AnalysisPopulation",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "text",
+        "instanceType"
+      ],
+      "title": "AnalysisPopulation",
+      "additionalProperties": false
+    },
+    "BiomedicalConcept": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "synonyms": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Synonyms",
+          "default": []
+        },
+        "reference": {
+          "type": "string",
+          "title": "Reference"
+        },
+        "properties": {
+          "items": {
+            "$ref": "#/$defs/BiomedicalConceptProperty"
+          },
+          "type": "array",
+          "title": "Properties",
+          "default": []
+        },
+        "code": {
+          "$ref": "#/$defs/AliasCode"
+        },
+        "instanceType": {
+          "const": "BiomedicalConcept",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "reference",
+        "code",
+        "instanceType"
+      ],
+      "title": "BiomedicalConcept",
+      "additionalProperties": false
+    },
+    "BiomedicalConceptCategory": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "childIds": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Childids",
+          "default": []
+        },
+        "memberIds": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Memberids",
+          "default": []
+        },
+        "code": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AliasCode"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "instanceType": {
+          "const": "BiomedicalConceptCategory",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "instanceType"
+      ],
+      "title": "BiomedicalConceptCategory",
+      "additionalProperties": false
+    },
+    "BiomedicalConceptProperty": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "isRequired": {
+          "type": "boolean",
+          "title": "Isrequired"
+        },
+        "isEnabled": {
+          "type": "boolean",
+          "title": "Isenabled"
+        },
+        "datatype": {
+          "type": "string",
+          "title": "Datatype"
+        },
+        "responseCodes": {
+          "items": {
+            "$ref": "#/$defs/ResponseCode"
+          },
+          "type": "array",
+          "title": "Responsecodes",
+          "default": []
+        },
+        "code": {
+          "$ref": "#/$defs/AliasCode"
+        },
+        "instanceType": {
+          "const": "BiomedicalConceptProperty",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "isRequired",
+        "isEnabled",
+        "datatype",
+        "code",
+        "instanceType"
+      ],
+      "title": "BiomedicalConceptProperty",
+      "additionalProperties": false
+    },
+    "BiomedicalConceptSurrogate": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reference"
+        },
+        "instanceType": {
+          "const": "BiomedicalConceptSurrogate",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "instanceType"
+      ],
+      "title": "BiomedicalConceptSurrogate",
+      "additionalProperties": false
+    },
+    "Characteristic": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "text": {
+          "type": "string",
+          "title": "Text"
+        },
+        "dictionaryId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Dictionaryid"
+        },
+        "instanceType": {
+          "const": "Characteristic",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "text",
+        "instanceType"
+      ],
+      "title": "Characteristic",
+      "additionalProperties": false
+    },
+    "Code": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "code": {
+          "type": "string",
+          "title": "Code"
+        },
+        "codeSystem": {
+          "type": "string",
+          "title": "Codesystem"
+        },
+        "codeSystemVersion": {
+          "type": "string",
+          "title": "Codesystemversion"
+        },
+        "decode": {
+          "type": "string",
+          "title": "Decode"
+        },
+        "instanceType": {
+          "const": "Code",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "code",
+        "codeSystem",
+        "codeSystemVersion",
+        "decode",
+        "instanceType"
+      ],
+      "title": "Code",
+      "additionalProperties": false
+    },
+    "Condition": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "text": {
+          "type": "string",
+          "title": "Text"
+        },
+        "dictionaryId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Dictionaryid"
+        },
+        "contextIds": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Contextids",
+          "default": []
+        },
+        "appliesToIds": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Appliestoids",
+          "default": []
+        },
+        "instanceType": {
+          "const": "Condition",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "text",
+        "instanceType"
+      ],
+      "title": "Condition",
+      "additionalProperties": false
+    },
+    "ConditionAssignment": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "condition": {
+          "type": "string",
+          "title": "Condition"
+        },
+        "conditionTargetId": {
+          "type": "string",
+          "title": "Conditiontargetid"
+        },
+        "instanceType": {
+          "const": "ConditionAssignment",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "condition",
+        "conditionTargetId",
+        "instanceType"
+      ],
+      "title": "ConditionAssignment",
+      "additionalProperties": false
+    },
+    "EligibilityCriterion": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "text": {
+          "type": "string",
+          "title": "Text"
+        },
+        "dictionaryId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Dictionaryid"
+        },
+        "instanceType": {
+          "const": "EligibilityCriterion",
+          "title": "Instancetype"
+        },
+        "category": {
+          "$ref": "#/$defs/Code"
+        },
+        "identifier": {
+          "type": "string",
+          "title": "Identifier"
+        },
+        "nextId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Nextid"
+        },
+        "previousId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Previousid"
+        },
+        "contextId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Contextid"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "text",
+        "instanceType",
+        "category",
+        "identifier"
+      ],
+      "title": "EligibilityCriterion",
+      "additionalProperties": false
+    },
+    "Encounter": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "type": {
+          "$ref": "#/$defs/Code"
+        },
+        "previousId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Previousid"
+        },
+        "nextId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Nextid"
+        },
+        "scheduledAtId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Scheduledatid"
+        },
+        "environmentalSetting": {
+          "items": {
+            "$ref": "#/$defs/Code"
+          },
+          "type": "array",
+          "title": "Environmentalsetting",
+          "default": []
+        },
+        "contactModes": {
+          "items": {
+            "$ref": "#/$defs/Code"
+          },
+          "type": "array",
+          "title": "Contactmodes",
+          "default": []
+        },
+        "transitionStartRule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TransitionRule"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "transitionEndRule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TransitionRule"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "instanceType": {
+          "const": "Encounter",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "type",
+        "instanceType"
+      ],
+      "title": "Encounter",
+      "additionalProperties": false
+    },
+    "Endpoint": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "text": {
+          "type": "string",
+          "title": "Text"
+        },
+        "dictionaryId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Dictionaryid"
+        },
+        "instanceType": {
+          "const": "Endpoint",
+          "title": "Instancetype"
+        },
+        "purpose": {
+          "type": "string",
+          "title": "Purpose"
+        },
+        "level": {
+          "$ref": "#/$defs/Code"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "text",
+        "instanceType",
+        "purpose",
+        "level"
+      ],
+      "title": "Endpoint",
+      "additionalProperties": false
+    },
+    "Estimand": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "summaryMeasure": {
+          "type": "string",
+          "title": "Summarymeasure"
+        },
+        "analysisPopulation": {
+          "$ref": "#/$defs/AnalysisPopulation"
+        },
+        "interventionId": {
+          "type": "string",
+          "title": "Interventionid"
+        },
+        "variableOfInterestId": {
+          "type": "string",
+          "title": "Variableofinterestid"
+        },
+        "intercurrentEvents": {
+          "items": {
+            "$ref": "#/$defs/IntercurrentEvent"
+          },
+          "type": "array",
+          "title": "Intercurrentevents",
+          "minItems": 1
+        },
+        "instanceType": {
+          "const": "Estimand",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "summaryMeasure",
+        "analysisPopulation",
+        "interventionId",
+        "variableOfInterestId",
+        "intercurrentEvents",
+        "instanceType"
+      ],
+      "title": "Estimand",
+      "additionalProperties": false
+    },
+    "GeographicScope": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "type": {
+          "$ref": "#/$defs/Code"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AliasCode"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "instanceType": {
+          "const": "GeographicScope",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "instanceType"
+      ],
+      "title": "GeographicScope",
+      "additionalProperties": false
+    },
+    "GovernanceDate": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "type": {
+          "$ref": "#/$defs/Code"
+        },
+        "dateValue": {
+          "type": "string",
+          "format": "date",
+          "title": "Datevalue"
+        },
+        "geographicScopes": {
+          "items": {
+            "$ref": "#/$defs/GeographicScope"
+          },
+          "type": "array",
+          "title": "Geographicscopes",
+          "minItems": 1
+        },
+        "instanceType": {
+          "const": "GovernanceDate",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "type",
+        "dateValue",
+        "geographicScopes",
+        "instanceType"
+      ],
+      "title": "GovernanceDate",
+      "additionalProperties": false
+    },
+    "HTTPValidationError": {
+      "properties": {
+        "detail": {
+          "items": {
+            "$ref": "#/$defs/ValidationError"
+          },
+          "type": "array",
+          "title": "Detail"
+        }
+      },
+      "type": "object",
+      "title": "HTTPValidationError",
+      "additionalProperties": false
+    },
+    "Indication": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "codes": {
+          "items": {
+            "$ref": "#/$defs/Code"
+          },
+          "type": "array",
+          "title": "Codes",
+          "default": []
+        },
+        "isRareDisease": {
+          "type": "boolean",
+          "title": "Israredisease"
+        },
+        "instanceType": {
+          "const": "Indication",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "isRareDisease",
+        "instanceType"
+      ],
+      "title": "Indication",
+      "additionalProperties": false
+    },
+    "IntercurrentEvent": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "strategy": {
+          "type": "string",
+          "title": "Strategy"
+        },
+        "instanceType": {
+          "const": "IntercurrentEvent",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "strategy",
+        "instanceType"
+      ],
+      "title": "IntercurrentEvent",
+      "additionalProperties": false
+    },
+    "Masking": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "role": {
+          "$ref": "#/$defs/Code"
+        },
+        "instanceType": {
+          "const": "Masking",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "role",
+        "instanceType"
+      ],
+      "title": "Masking",
+      "additionalProperties": false
+    },
+    "NarrativeContent": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "sectionNumber": {
+          "type": "string",
+          "title": "Sectionnumber"
+        },
+        "sectionTitle": {
+          "type": "string",
+          "title": "Sectiontitle"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Text"
+        },
+        "childIds": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Childids",
+          "default": []
+        },
+        "previousId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Previousid"
+        },
+        "nextId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Nextid"
+        },
+        "instanceType": {
+          "const": "NarrativeContent",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "sectionNumber",
+        "sectionTitle",
+        "instanceType"
+      ],
+      "title": "NarrativeContent",
+      "additionalProperties": false
+    },
+    "Objective": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "text": {
+          "type": "string",
+          "title": "Text"
+        },
+        "dictionaryId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Dictionaryid"
+        },
+        "instanceType": {
+          "const": "Objective",
+          "title": "Instancetype"
+        },
+        "level": {
+          "$ref": "#/$defs/Code"
+        },
+        "endpoints": {
+          "items": {
+            "$ref": "#/$defs/Endpoint"
+          },
+          "type": "array",
+          "title": "Endpoints",
+          "default": []
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "text",
+        "instanceType",
+        "level"
+      ],
+      "title": "Objective",
+      "additionalProperties": false
+    },
+    "Organization": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "organizationType": {
+          "$ref": "#/$defs/Code"
+        },
+        "identifierScheme": {
+          "type": "string",
+          "title": "Identifierscheme"
+        },
+        "identifier": {
+          "type": "string",
+          "title": "Identifier"
+        },
+        "legalAddress": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Address"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "instanceType": {
+          "const": "Organization",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "organizationType",
+        "identifierScheme",
+        "identifier",
+        "instanceType"
+      ],
+      "title": "Organization",
+      "additionalProperties": false
+    },
+    "ParameterMap": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "tag": {
+          "type": "string",
+          "title": "Tag"
+        },
+        "reference": {
+          "type": "string",
+          "title": "Reference"
+        },
+        "instanceType": {
+          "const": "ParameterMap",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "tag",
+        "reference",
+        "instanceType"
+      ],
+      "title": "ParameterMap",
+      "additionalProperties": false
+    },
+    "Procedure": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "procedureType": {
+          "type": "string",
+          "title": "Proceduretype"
+        },
+        "code": {
+          "$ref": "#/$defs/Code"
+        },
+        "studyInterventionId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Studyinterventionid"
+        },
+        "instanceType": {
+          "const": "Procedure",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "procedureType",
+        "code",
+        "instanceType"
+      ],
+      "title": "Procedure",
+      "additionalProperties": false
+    },
+    "Quantity": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "value": {
+          "type": "number",
+          "title": "Value"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AliasCode"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "instanceType": {
+          "const": "Quantity",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "value",
+        "instanceType"
+      ],
+      "title": "Quantity",
+      "additionalProperties": false
+    },
+    "Range": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "minValue": {
+          "type": "number",
+          "title": "Minvalue"
+        },
+        "maxValue": {
+          "type": "number",
+          "title": "Maxvalue"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Code"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "isApproximate": {
+          "type": "boolean",
+          "title": "Isapproximate"
+        },
+        "instanceType": {
+          "const": "Range",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "minValue",
+        "maxValue",
+        "isApproximate",
+        "instanceType"
+      ],
+      "title": "Range",
+      "additionalProperties": false
+    },
+    "ResearchOrganization": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "organizationType": {
+          "$ref": "#/$defs/Code"
+        },
+        "identifierScheme": {
+          "type": "string",
+          "title": "Identifierscheme"
+        },
+        "identifier": {
+          "type": "string",
+          "title": "Identifier"
+        },
+        "legalAddress": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Address"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "instanceType": {
+          "const": "ResearchOrganization",
+          "title": "Instancetype"
+        },
+        "manages": {
+          "items": {
+            "$ref": "#/$defs/StudySite"
+          },
+          "type": "array",
+          "title": "Manages",
+          "minItems": 1
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "organizationType",
+        "identifierScheme",
+        "identifier",
+        "instanceType",
+        "manages"
+      ],
+      "title": "ResearchOrganization",
+      "additionalProperties": false
+    },
+    "ResponseCode": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "isEnabled": {
+          "type": "boolean",
+          "title": "Isenabled"
+        },
+        "code": {
+          "$ref": "#/$defs/Code"
+        },
+        "instanceType": {
+          "const": "ResponseCode",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "isEnabled",
+        "code",
+        "instanceType"
+      ],
+      "title": "ResponseCode",
+      "additionalProperties": false
+    },
+    "ScheduleTimeline": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "mainTimeline": {
+          "type": "boolean",
+          "title": "Maintimeline"
+        },
+        "entryCondition": {
+          "type": "string",
+          "title": "Entrycondition"
+        },
+        "entryId": {
+          "type": "string",
+          "title": "Entryid"
+        },
+        "exits": {
+          "items": {
+            "$ref": "#/$defs/ScheduleTimelineExit"
+          },
+          "type": "array",
+          "title": "Exits",
+          "default": []
+        },
+        "timings": {
+          "items": {
+            "$ref": "#/$defs/Timing"
+          },
+          "type": "array",
+          "title": "Timings",
+          "default": []
+        },
+        "instances": {
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ScheduledActivityInstance"
+              },
+              {
+                "$ref": "#/$defs/ScheduledDecisionInstance"
+              }
+            ]
+          },
+          "type": "array",
+          "title": "Instances",
+          "default": []
+        },
+        "instanceType": {
+          "const": "ScheduleTimeline",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "mainTimeline",
+        "entryCondition",
+        "entryId",
+        "instanceType"
+      ],
+      "title": "ScheduleTimeline",
+      "additionalProperties": false
+    },
+    "ScheduleTimelineExit": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "instanceType": {
+          "const": "ScheduleTimelineExit",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "instanceType"
+      ],
+      "title": "ScheduleTimelineExit",
+      "additionalProperties": false
+    },
+    "ScheduledActivityInstance": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "timelineId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Timelineid"
+        },
+        "timelineExitId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Timelineexitid"
+        },
+        "defaultConditionId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Defaultconditionid"
+        },
+        "epochId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Epochid"
+        },
+        "instanceType": {
+          "const": "ScheduledActivityInstance",
+          "title": "Instancetype"
+        },
+        "activityIds": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Activityids",
+          "default": []
+        },
+        "encounterId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Encounterid"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "instanceType"
+      ],
+      "title": "ScheduledActivityInstance",
+      "additionalProperties": false
+    },
+    "ScheduledDecisionInstance": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "timelineId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Timelineid"
+        },
+        "timelineExitId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Timelineexitid"
+        },
+        "defaultConditionId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Defaultconditionid"
+        },
+        "epochId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Epochid"
+        },
+        "instanceType": {
+          "const": "ScheduledDecisionInstance",
+          "title": "Instancetype"
+        },
+        "conditionAssignments": {
+          "items": {
+            "$ref": "#/$defs/ConditionAssignment"
+          },
+          "type": "array",
+          "title": "Conditionassignments",
+          "minItems": 1
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "instanceType",
+        "conditionAssignments"
+      ],
+      "title": "ScheduledDecisionInstance",
+      "additionalProperties": false
+    },
+    "Study": {
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "versions": {
+          "items": {
+            "$ref": "#/$defs/StudyVersion"
+          },
+          "type": "array",
+          "title": "Versions",
+          "default": []
+        },
+        "documentedBy": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StudyProtocolDocument"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "instanceType": {
+          "const": "Study",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "name",
+        "instanceType"
+      ],
+      "title": "Study",
+      "additionalProperties": false
+    },
+    "StudyAmendment": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "number": {
+          "type": "string",
+          "title": "Number"
+        },
+        "summary": {
+          "type": "string",
+          "title": "Summary"
+        },
+        "substantialImpact": {
+          "type": "boolean",
+          "title": "Substantialimpact"
+        },
+        "primaryReason": {
+          "$ref": "#/$defs/StudyAmendmentReason"
+        },
+        "secondaryReasons": {
+          "items": {
+            "$ref": "#/$defs/StudyAmendmentReason"
+          },
+          "type": "array",
+          "title": "Secondaryreasons",
+          "default": []
+        },
+        "enrollments": {
+          "items": {
+            "$ref": "#/$defs/SubjectEnrollment"
+          },
+          "type": "array",
+          "title": "Enrollments",
+          "minItems": 1
+        },
+        "previousId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Previousid"
+        },
+        "instanceType": {
+          "const": "StudyAmendment",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "number",
+        "summary",
+        "substantialImpact",
+        "primaryReason",
+        "enrollments",
+        "instanceType"
+      ],
+      "title": "StudyAmendment",
+      "additionalProperties": false
+    },
+    "StudyAmendmentReason": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "code": {
+          "$ref": "#/$defs/Code"
+        },
+        "otherReason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Otherreason"
+        },
+        "instanceType": {
+          "const": "StudyAmendmentReason",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "code",
+        "instanceType"
+      ],
+      "title": "StudyAmendmentReason",
+      "additionalProperties": false
+    },
+    "StudyArm": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "type": {
+          "$ref": "#/$defs/Code"
+        },
+        "dataOriginDescription": {
+          "type": "string",
+          "title": "Dataorigindescription"
+        },
+        "dataOriginType": {
+          "$ref": "#/$defs/Code"
+        },
+        "populationIds": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Populationids",
+          "default": []
+        },
+        "instanceType": {
+          "const": "StudyArm",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "type",
+        "dataOriginDescription",
+        "dataOriginType",
+        "instanceType"
+      ],
+      "title": "StudyArm",
+      "additionalProperties": false
+    },
+    "StudyCell": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "armId": {
+          "type": "string",
+          "title": "Armid"
+        },
+        "epochId": {
+          "type": "string",
+          "title": "Epochid"
+        },
+        "elementIds": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Elementids",
+          "default": []
+        },
+        "instanceType": {
+          "const": "StudyCell",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "armId",
+        "epochId",
+        "instanceType"
+      ],
+      "title": "StudyCell",
+      "additionalProperties": false
+    },
+    "StudyCohort": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "includesHealthySubjects": {
+          "type": "boolean",
+          "title": "Includeshealthysubjects"
+        },
+        "plannedEnrollmentNumber": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Range"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "plannedCompletionNumber": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Range"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "plannedSex": {
+          "items": {
+            "$ref": "#/$defs/Code"
+          },
+          "type": "array",
+          "title": "Plannedsex",
+          "default": []
+        },
+        "criteria": {
+          "items": {
+            "$ref": "#/$defs/EligibilityCriterion"
+          },
+          "type": "array",
+          "title": "Criteria",
+          "minItems": 1
+        },
+        "plannedAge": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Range"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "instanceType": {
+          "const": "StudyCohort",
+          "title": "Instancetype"
+        },
+        "characteristics": {
+          "items": {
+            "$ref": "#/$defs/Characteristic"
+          },
+          "type": "array",
+          "title": "Characteristics",
+          "default": []
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "includesHealthySubjects",
+        "criteria",
+        "instanceType"
+      ],
+      "title": "StudyCohort",
+      "additionalProperties": false
+    },
+    "StudyDesign": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "trialIntentTypes": {
+          "items": {
+            "$ref": "#/$defs/Code"
+          },
+          "type": "array",
+          "title": "Trialintenttypes",
+          "default": []
+        },
+        "trialTypes": {
+          "items": {
+            "$ref": "#/$defs/Code"
+          },
+          "type": "array",
+          "title": "Trialtypes",
+          "default": []
+        },
+        "therapeuticAreas": {
+          "items": {
+            "$ref": "#/$defs/Code"
+          },
+          "type": "array",
+          "title": "Therapeuticareas",
+          "default": []
+        },
+        "characteristics": {
+          "items": {
+            "$ref": "#/$defs/Code"
+          },
+          "type": "array",
+          "title": "Characteristics",
+          "default": []
+        },
+        "interventionModel": {
+          "$ref": "#/$defs/Code"
+        },
+        "encounters": {
+          "items": {
+            "$ref": "#/$defs/Encounter"
+          },
+          "type": "array",
+          "title": "Encounters",
+          "default": []
+        },
+        "activities": {
+          "items": {
+            "$ref": "#/$defs/Activity"
+          },
+          "type": "array",
+          "title": "Activities",
+          "default": []
+        },
+        "biomedicalConcepts": {
+          "items": {
+            "$ref": "#/$defs/BiomedicalConcept"
+          },
+          "type": "array",
+          "title": "Biomedicalconcepts",
+          "default": []
+        },
+        "bcCategories": {
+          "items": {
+            "$ref": "#/$defs/BiomedicalConceptCategory"
+          },
+          "type": "array",
+          "title": "Bccategories",
+          "default": []
+        },
+        "bcSurrogates": {
+          "items": {
+            "$ref": "#/$defs/BiomedicalConceptSurrogate"
+          },
+          "type": "array",
+          "title": "Bcsurrogates",
+          "default": []
+        },
+        "arms": {
+          "items": {
+            "$ref": "#/$defs/StudyArm"
+          },
+          "type": "array",
+          "title": "Arms",
+          "minItems": 1
+        },
+        "studyCells": {
+          "items": {
+            "$ref": "#/$defs/StudyCell"
+          },
+          "type": "array",
+          "title": "Studycells",
+          "minItems": 1
+        },
+        "blindingSchema": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AliasCode"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rationale": {
+          "type": "string",
+          "title": "Rationale"
+        },
+        "epochs": {
+          "items": {
+            "$ref": "#/$defs/StudyEpoch"
+          },
+          "type": "array",
+          "title": "Epochs",
+          "minItems": 1
+        },
+        "elements": {
+          "items": {
+            "$ref": "#/$defs/StudyElement"
+          },
+          "type": "array",
+          "title": "Elements",
+          "default": []
+        },
+        "estimands": {
+          "items": {
+            "$ref": "#/$defs/Estimand"
+          },
+          "type": "array",
+          "title": "Estimands",
+          "default": []
+        },
+        "indications": {
+          "items": {
+            "$ref": "#/$defs/Indication"
+          },
+          "type": "array",
+          "title": "Indications",
+          "default": []
+        },
+        "maskingRoles": {
+          "items": {
+            "$ref": "#/$defs/Masking"
+          },
+          "type": "array",
+          "title": "Maskingroles",
+          "default": []
+        },
+        "studyInterventions": {
+          "items": {
+            "$ref": "#/$defs/StudyIntervention"
+          },
+          "type": "array",
+          "title": "Studyinterventions",
+          "default": []
+        },
+        "objectives": {
+          "items": {
+            "$ref": "#/$defs/Objective"
+          },
+          "type": "array",
+          "title": "Objectives",
+          "default": []
+        },
+        "population": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StudyDesignPopulation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scheduleTimelines": {
+          "items": {
+            "$ref": "#/$defs/ScheduleTimeline"
+          },
+          "type": "array",
+          "title": "Scheduletimelines",
+          "default": []
+        },
+        "documentVersionId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Documentversionid"
+        },
+        "dictionaries": {
+          "items": {
+            "$ref": "#/$defs/SyntaxTemplateDictionary"
+          },
+          "type": "array",
+          "title": "Dictionaries",
+          "default": []
+        },
+        "conditions": {
+          "items": {
+            "$ref": "#/$defs/Condition"
+          },
+          "type": "array",
+          "title": "Conditions",
+          "default": []
+        },
+        "organizations": {
+          "items": {
+            "$ref": "#/$defs/ResearchOrganization"
+          },
+          "type": "array",
+          "title": "Organizations",
+          "default": []
+        },
+        "instanceType": {
+          "const": "StudyDesign",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "interventionModel",
+        "arms",
+        "studyCells",
+        "rationale",
+        "epochs",
+        "instanceType"
+      ],
+      "title": "StudyDesign",
+      "additionalProperties": false
+    },
+    "StudyDesignPopulation": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "includesHealthySubjects": {
+          "type": "boolean",
+          "title": "Includeshealthysubjects"
+        },
+        "plannedEnrollmentNumber": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Range"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "plannedCompletionNumber": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Range"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "plannedSex": {
+          "items": {
+            "$ref": "#/$defs/Code"
+          },
+          "type": "array",
+          "title": "Plannedsex",
+          "default": []
+        },
+        "criteria": {
+          "items": {
+            "$ref": "#/$defs/EligibilityCriterion"
+          },
+          "type": "array",
+          "title": "Criteria",
+          "minItems": 1
+        },
+        "plannedAge": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Range"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "instanceType": {
+          "const": "StudyDesignPopulation",
+          "title": "Instancetype"
+        },
+        "cohorts": {
+          "items": {
+            "$ref": "#/$defs/StudyCohort"
+          },
+          "type": "array",
+          "title": "Cohorts",
+          "default": []
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "includesHealthySubjects",
+        "criteria",
+        "instanceType"
+      ],
+      "title": "StudyDesignPopulation",
+      "additionalProperties": false
+    },
+    "StudyElement": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "transitionStartRule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TransitionRule"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "transitionEndRule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TransitionRule"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "studyInterventionIds": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Studyinterventionids",
+          "default": []
+        },
+        "instanceType": {
+          "const": "StudyElement",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "instanceType"
+      ],
+      "title": "StudyElement",
+      "additionalProperties": false
+    },
+    "StudyEpoch": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "type": {
+          "$ref": "#/$defs/Code"
+        },
+        "previousId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Previousid"
+        },
+        "nextId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Nextid"
+        },
+        "instanceType": {
+          "const": "StudyEpoch",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "type",
+        "instanceType"
+      ],
+      "title": "StudyEpoch",
+      "additionalProperties": false
+    },
+    "StudyIdentifier": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "studyIdentifier": {
+          "type": "string",
+          "title": "Studyidentifier"
+        },
+        "studyIdentifierScope": {
+          "$ref": "#/$defs/Organization"
+        },
+        "instanceType": {
+          "const": "StudyIdentifier",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "studyIdentifier",
+        "studyIdentifierScope",
+        "instanceType"
+      ],
+      "title": "StudyIdentifier",
+      "additionalProperties": false
+    },
+    "StudyIntervention": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "role": {
+          "$ref": "#/$defs/Code"
+        },
+        "type": {
+          "$ref": "#/$defs/Code"
+        },
+        "minimumResponseDuration": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Quantity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "codes": {
+          "items": {
+            "$ref": "#/$defs/Code"
+          },
+          "type": "array",
+          "title": "Codes",
+          "default": []
+        },
+        "administrations": {
+          "items": {
+            "$ref": "#/$defs/AgentAdministration"
+          },
+          "type": "array",
+          "title": "Administrations",
+          "default": []
+        },
+        "productDesignation": {
+          "$ref": "#/$defs/Code"
+        },
+        "pharmacologicClass": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Code"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "instanceType": {
+          "const": "StudyIntervention",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "role",
+        "type",
+        "productDesignation",
+        "instanceType"
+      ],
+      "title": "StudyIntervention",
+      "additionalProperties": false
+    },
+    "StudyProtocolDocument": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "versions": {
+          "items": {
+            "$ref": "#/$defs/StudyProtocolDocumentVersion"
+          },
+          "type": "array",
+          "title": "Versions",
+          "default": []
+        },
+        "instanceType": {
+          "const": "StudyProtocolDocument",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "instanceType"
+      ],
+      "title": "StudyProtocolDocument",
+      "additionalProperties": false
+    },
+    "StudyProtocolDocumentVersion": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "protocolVersion": {
+          "type": "string",
+          "title": "Protocolversion"
+        },
+        "protocolStatus": {
+          "$ref": "#/$defs/Code"
+        },
+        "dateValues": {
+          "items": {
+            "$ref": "#/$defs/GovernanceDate"
+          },
+          "type": "array",
+          "title": "Datevalues",
+          "default": []
+        },
+        "contents": {
+          "items": {
+            "$ref": "#/$defs/NarrativeContent"
+          },
+          "type": "array",
+          "title": "Contents",
+          "default": []
+        },
+        "childIds": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Childids",
+          "default": []
+        },
+        "instanceType": {
+          "const": "StudyProtocolDocumentVersion",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "protocolVersion",
+        "protocolStatus",
+        "instanceType"
+      ],
+      "title": "StudyProtocolDocumentVersion",
+      "additionalProperties": false
+    },
+    "StudySite": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "currentEnrollment": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SubjectEnrollment"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "instanceType": {
+          "const": "StudySite",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "instanceType"
+      ],
+      "title": "StudySite",
+      "additionalProperties": false
+    },
+    "StudyTitle": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "text": {
+          "type": "string",
+          "title": "Text"
+        },
+        "type": {
+          "$ref": "#/$defs/Code"
+        },
+        "instanceType": {
+          "const": "StudyTitle",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "text",
+        "type",
+        "instanceType"
+      ],
+      "title": "StudyTitle",
+      "additionalProperties": false
+    },
+    "StudyVersion": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "versionIdentifier": {
+          "type": "string",
+          "title": "Versionidentifier"
+        },
+        "rationale": {
+          "type": "string",
+          "title": "Rationale"
+        },
+        "studyType": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Code"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "studyPhase": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AliasCode"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "documentVersionId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Documentversionid"
+        },
+        "dateValues": {
+          "items": {
+            "$ref": "#/$defs/GovernanceDate"
+          },
+          "type": "array",
+          "title": "Datevalues",
+          "default": []
+        },
+        "amendments": {
+          "items": {
+            "$ref": "#/$defs/StudyAmendment"
+          },
+          "type": "array",
+          "title": "Amendments",
+          "default": []
+        },
+        "businessTherapeuticAreas": {
+          "items": {
+            "$ref": "#/$defs/Code"
+          },
+          "type": "array",
+          "title": "Businesstherapeuticareas",
+          "default": []
+        },
+        "studyIdentifiers": {
+          "items": {
+            "$ref": "#/$defs/StudyIdentifier"
+          },
+          "type": "array",
+          "title": "Studyidentifiers",
+          "default": []
+        },
+        "studyDesigns": {
+          "items": {
+            "$ref": "#/$defs/StudyDesign"
+          },
+          "type": "array",
+          "title": "Studydesigns",
+          "default": []
+        },
+        "titles": {
+          "items": {
+            "$ref": "#/$defs/StudyTitle"
+          },
+          "type": "array",
+          "title": "Titles",
+          "minItems": 1
+        },
+        "instanceType": {
+          "const": "StudyVersion",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "versionIdentifier",
+        "rationale",
+        "titles",
+        "instanceType"
+      ],
+      "title": "StudyVersion",
+      "additionalProperties": false
+    },
+    "SubjectEnrollment": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "type": {
+          "$ref": "#/$defs/Code"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AliasCode"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "instanceType": {
+          "const": "SubjectEnrollment",
+          "title": "Instancetype"
+        },
+        "quantity": {
+          "$ref": "#/$defs/Quantity"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "instanceType",
+        "quantity"
+      ],
+      "title": "SubjectEnrollment",
+      "additionalProperties": false
+    },
+    "SyntaxTemplateDictionary": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "parameterMaps": {
+          "items": {
+            "$ref": "#/$defs/ParameterMap"
+          },
+          "type": "array",
+          "title": "Parametermaps",
+          "minItems": 1
+        },
+        "instanceType": {
+          "const": "SyntaxTemplateDictionary",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "parameterMaps",
+        "instanceType"
+      ],
+      "title": "SyntaxTemplateDictionary",
+      "additionalProperties": false
+    },
+    "Timing": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "type": {
+          "$ref": "#/$defs/Code"
+        },
+        "value": {
+          "type": "string",
+          "title": "Value"
+        },
+        "valueLabel": {
+          "type": "string",
+          "title": "Valuelabel"
+        },
+        "relativeToFrom": {
+          "$ref": "#/$defs/Code"
+        },
+        "relativeFromScheduledInstanceId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Relativefromscheduledinstanceid"
+        },
+        "relativeToScheduledInstanceId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Relativetoscheduledinstanceid"
+        },
+        "windowLower": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Windowlower"
+        },
+        "windowUpper": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Windowupper"
+        },
+        "windowLabel": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Windowlabel"
+        },
+        "instanceType": {
+          "const": "Timing",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "type",
+        "value",
+        "valueLabel",
+        "relativeToFrom",
+        "instanceType"
+      ],
+      "title": "Timing",
+      "additionalProperties": false
+    },
+    "TransitionRule": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "title": "Name"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Label"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "text": {
+          "type": "string",
+          "title": "Text"
+        },
+        "instanceType": {
+          "const": "TransitionRule",
+          "title": "Instancetype"
+        }
+      },
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "text",
+        "instanceType"
+      ],
+      "title": "TransitionRule",
+      "additionalProperties": false
+    },
+    "ValidationError": {
+      "properties": {
+        "loc": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          },
+          "type": "array",
+          "title": "Location",
+          "minItems": 1
+        },
+        "msg": {
+          "type": "string",
+          "title": "Message"
+        },
+        "type": {
+          "type": "string",
+          "title": "Error Type"
+        }
+      },
+      "type": "object",
+      "required": [
+        "loc",
+        "msg",
+        "type"
+      ],
+      "title": "ValidationError",
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "study": {
+      "$ref": "#/$defs/Study"
+    },
+    "usdmVersion": {
+      "type": "string",
+      "title": "Usdmversion"
+    },
+    "systemName": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Systemname"
+    },
+    "systemVersion": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Systemversion"
+    }
+  },
+  "type": "object",
+  "required": [
+    "study",
+    "usdmVersion"
+  ],
+  "title": "Wrapper"
+}

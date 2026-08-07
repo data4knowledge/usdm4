@@ -1,5 +1,46 @@
 # usdm4 — project memory
 
+## 2026-08-07 — CoreValidator fixed on 54-core-engine: executionStatus + bundled schema (issue #54)
+
+- Root causes of the exec-error flood (6,749/file) and dropped findings,
+  found by diffing our wrapper against the CORE CLI (same engine 0.16.0,
+  same rules — byte-identical; same json):
+  1. _classify_errors ignored the engine's per-result executionStatus and
+     string-matched error text. "skipped" results (rule doesn't apply to
+     entity — SkippedReason lists the very strings we matched) flooded
+     execution_errors. Now: skipped→dropped, "issue reported"→findings,
+     "execution error"→exec errors; string set kept only as no-status
+     fallback. Matches the CLI report logic (usdm_report_data.py).
+  2. LibraryMetadataContainer got no standard_schema_definition, so
+     JsonSchemaCheckDatasetBuilder rules (CORE-000938/DDF00126 cardinality)
+     silently found nothing. The CLI ships usdm-<v>-schema.pkl — a pydantic
+     model_json_schema() dump of the API Wrapper (NOT our
+     rules/library/schema/usdm_v4-0-0.json, which is the full OpenAPI doc).
+     DECIDED (Dave): vendor CORE's shipped schemas, converted pkl→JSON, as
+     core/data/usdm-{3-0,4-0}-schema.json (source: cdisc-rules-engine
+     v0.16.0, c78b05c); manual refresh when CORE updates. NOTE: our Wrapper
+     model has drifted (84 $defs vs shipped 82, Base* classes) — vendoring
+     keeps parity with official CORE; disagreements surface as findings.
+- Parity verified: NCT04573309 49 findings + 1 exec error; NCT03637764
+  84 + 1 — both match the CLI number-for-number per rule.
+- Changed: core_validator.py, setup.py (package_data), new core/data/*.json,
+  tests (+8, status classification + schema loading). core/ subset: 177
+  pass, core_validator.py 100% cov. Ruff default-rules + format clean.
+  Stale .git/index.lock present — rm it before committing.
+- Dave's full-suite run then surfaced 2 baseline failures = the fix seeing
+  what was invisible: (a) sample_usdm_7.json had 'extensionAtrtibutes' key
+  typo x3 + mangled instanceType values x7 (extensionClass/extensionCLass/
+  ExtensionCLass/extensionAttribute) in its extension subtree — ALL FIXED
+  in the file (Dave's call: clean exemplar, not as-received artifact);
+  cleared CORE-000937, CORE-000949 and d4k DDF00082 with no baseline edit.
+  (b) assembled-minimum: CORE-000938 ADDED to _KNOWN_FAILING_RULES with
+  comment — three real assembler gaps on the minimum fixture
+  (StudyAmendment.changes, InterventionalStudyDesign.arms, .studyCells all
+  emitted []); assembler fix is separate work, candidate for its own issue.
+  Integration subset 12/12 green in sandbox; Dave to re-run full suite
+  (earlier 99.47% coverage shortfall was the 2 failures aborting paths).
+
+
 ## 2026-08-03 — api __all__ gaps: CommentAnnotation + 2 more; suite GREEN (Dave's run)
 
 - usdm4_excel's annotations_and_abbreviations parity fixture exposed:
