@@ -37,8 +37,9 @@
   comment — three real assembler gaps on the minimum fixture
   (StudyAmendment.changes, InterventionalStudyDesign.arms, .studyCells all
   emitted []); assembler fix is separate work, candidate for its own issue.
-  Integration subset 12/12 green in sandbox; Dave to re-run full suite
-  (earlier 99.47% coverage shortfall was the 2 failures aborting paths).
+  Full suite GREEN (Dave's run, 2026-08-07) — issue #54 resolved; branch
+  ready to merge. Uncommitted: core fix + schema data + sample_usdm_7 fix
+  + baseline edit + memory (Dave commits by hand).
 
 
 ## 2026-08-03 — api __all__ gaps: CommentAnnotation + 2 more; suite GREEN (Dave's run)
