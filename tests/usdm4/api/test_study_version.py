@@ -468,8 +468,48 @@ class TestStudyVersion:
     def test_phases(self):
         """Test getting phases as text."""
         phases = self.study_version.phases()
-        # Since we don't have studyPhase set, it should return empty strings
-        assert phases == ", "
+        # Neither design has studyPhase set: two empty phase strings
+        # deduplicate to a single empty result.
+        assert phases == ""
+
+    def test_phases_deduplicated(self):
+        """Designs sharing a phase report it once."""
+        from src.usdm4.api.alias_code import AliasCode
+
+        phase = AliasCode(
+            id="alias_phase_1",
+            standardCode=self.phase_code,
+            instanceType="AliasCode",
+        )
+        self.interventional_design.studyPhase = phase
+        self.observational_design.studyPhase = phase
+        phases = self.study_version.phases()
+        assert phases == "Phase I"
+
+    def test_phases_distinct_order_preserved(self):
+        """Distinct phases all appear, in design order."""
+        from src.usdm4.api.alias_code import AliasCode
+
+        phase_2_code = Code(
+            id="phase_code_2",
+            code="C15601",
+            codeSystem="CDISC",
+            codeSystemVersion="1.0",
+            decode="Phase II",
+            instanceType="Code",
+        )
+        self.interventional_design.studyPhase = AliasCode(
+            id="alias_phase_1",
+            standardCode=self.phase_code,
+            instanceType="AliasCode",
+        )
+        self.observational_design.studyPhase = AliasCode(
+            id="alias_phase_2",
+            standardCode=phase_2_code,
+            instanceType="AliasCode",
+        )
+        phases = self.study_version.phases()
+        assert phases == "Phase I, Phase II"
 
     def test_phases_empty(self):
         """Test getting phases when no study designs exist."""

@@ -317,7 +317,13 @@ class StudyVersion(ApiBaseModelWithId):
         return next((x for x in self.conditions if x.id == id), None)
 
     def phases(self) -> str:
-        return ", ".join([sd.phase_as_text() for sd in self.studyDesigns])
+        """Distinct study design phases as text, first-occurrence order
+        preserved. Deduplicated: a six-design study where every design
+        is Phase III reads "Phase III", not the phase repeated six
+        times."""
+        return ", ".join(
+            dict.fromkeys([sd.phase_as_text() for sd in self.studyDesigns])
+        )
 
     def official_title_text(self) -> str:
         for x in self.titles:
