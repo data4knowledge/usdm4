@@ -3534,6 +3534,66 @@ class TestStudyVersion:
         assert len(result) == 1
         assert result[0].text == "OTHER-004"
 
+    def test_other_identifiers_ignores_untyped_identifier(self):
+        """Test other_identifiers skips an identifier carrying no SIT extension.
+
+        The identifier-type extension is optional, so ``of_type()`` returns
+        None for identifiers written without one (most USDM produced before
+        the extension existed). Such an identifier must be skipped, not
+        dereferenced -- it used to raise AttributeError and take down every
+        caller of this method.
+        """
+        sponsor_id = self._create_identifier_with_type(
+            "id_sponsor_oi4", "SPONSOR-123", "org_1", "C999999"
+        )
+        untyped_id = StudyIdentifier(
+            id="id_untyped_1",
+            text="UNTYPED-001",
+            scopeId="org_2",
+            instanceType="StudyIdentifier",
+        )
+        other_id = self._create_identifier_with_type(
+            "id_other_5", "OTHER-005", "org_2", "C218690"
+        )
+        sv = StudyVersion(
+            id="sv_other_untyped",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[sponsor_id, untyped_id, other_id],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org, self.non_sponsor_org],
+            instanceType="StudyVersion",
+        )
+        result = sv.other_identifiers()
+        assert len(result) == 1
+        assert result[0].text == "OTHER-005"
+
+    def test_other_identifiers_all_untyped(self):
+        """Test other_identifiers returns an empty list when no identifier
+        carries a SIT extension, rather than raising."""
+        untyped_sponsor = StudyIdentifier(
+            id="id_untyped_sponsor",
+            text="SPONSOR-UNTYPED",
+            scopeId="org_1",
+            instanceType="StudyIdentifier",
+        )
+        untyped_other = StudyIdentifier(
+            id="id_untyped_2",
+            text="UNTYPED-002",
+            scopeId="org_2",
+            instanceType="StudyIdentifier",
+        )
+        sv = StudyVersion(
+            id="sv_other_all_untyped",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[untyped_sponsor, untyped_other],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org, self.non_sponsor_org],
+            instanceType="StudyVersion",
+        )
+        assert sv.other_identifiers() == []
+
     # =====================================================
     # Tests for _identifier_of_type private method (line 241-242)
     # =====================================================
