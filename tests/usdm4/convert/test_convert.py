@@ -9,7 +9,7 @@ from tests.usdm4.helpers.files import (
 from tests.usdm4.helpers.rule_error import fix_timestamp
 
 
-SAVE = True
+SAVE = False
 
 
 def fix_timestamps(data: list[dict]) -> list[dict]:
