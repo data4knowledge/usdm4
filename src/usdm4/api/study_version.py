@@ -247,7 +247,12 @@ class StudyVersion(ApiBaseModelWithId):
         for identifier in self.studyIdentifiers:
             if identifier is si:
                 continue
-            if identifier.of_type().code == "C218690":
+            # The identifier-type extension is optional, so of_type() can
+            # return None -- as _identifier_of_type() below already allows
+            # for. Without the guard a single untyped identifier took down
+            # every caller of this method (e.g. the M11 title-page view).
+            type_code = identifier.of_type()
+            if type_code and type_code.code == "C218690":
                 result.append(identifier)
         return result
 
