@@ -38,8 +38,9 @@ class TestRuleDDF00009:
         )
         assert rule.validate({"data": data}) is True
 
-    def test_anchor_by_decode_passes(self):
-        """Fall-back recognition via decode = 'Fixed Reference'."""
+    def test_anchor_by_decode_alone_is_not_recognised(self):
+        """No decode fallback. A Timing carrying only the decode is not an
+        anchor, so this timeline has none and the rule fails."""
         rule = RuleDDF00009()
         data = _data(
             [
@@ -48,14 +49,14 @@ class TestRuleDDF00009:
                     "instances": [{"id": "SAI1"}],
                     "timings": [
                         {
-                            "type": {"decode": "Fixed Reference"},
+                            "type": {"decode": "Fixed Reference"},  # no code
                             "relativeToScheduledInstanceId": "SAI1",
                         }
                     ],
                 }
             ]
         )
-        assert rule.validate({"data": data}) is True
+        assert rule.validate({"data": data}) is False
 
     def test_no_fixed_reference_timing_fails(self):
         rule = RuleDDF00009()
@@ -66,7 +67,7 @@ class TestRuleDDF00009:
                     "instances": [{"id": "SAI1"}],
                     "timings": [
                         {
-                            "type": {"decode": "Before"},
+                            "type": {"code": "C201357", "decode": "Before Timing Type"},
                             "relativeToScheduledInstanceId": "SAI1",
                         }
                     ],
@@ -87,7 +88,7 @@ class TestRuleDDF00009:
                     "instances": [{"id": "SAI1"}, {"id": "SAI2"}],
                     "timings": [
                         {
-                            "type": {"decode": "Fixed Reference"},
+                            "type": {"code": "C201358", "decode": "Fixed Reference Timing Type"},
                             # Target is NOT one of this timeline's instances
                             "relativeToScheduledInstanceId": "SAI_elsewhere",
                         }
@@ -111,7 +112,7 @@ class TestRuleDDF00009:
                     "instances": [],
                     "timings": [
                         {
-                            "type": {"decode": "Fixed Reference"},
+                            "type": {"code": "C201358", "decode": "Fixed Reference Timing Type"},
                             "relativeToScheduledInstanceId": "SAI1",
                         }
                     ],
@@ -146,7 +147,7 @@ class TestRuleDDF00009:
                     "instances": [{"id": "SAI1"}],
                     "timings": [
                         {
-                            "type": {"decode": "Fixed Reference"},
+                            "type": {"code": "C201358", "decode": "Fixed Reference Timing Type"},
                             "relativeToScheduledInstanceId": "SAI1",
                         }
                     ],

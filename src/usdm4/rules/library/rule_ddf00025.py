@@ -22,9 +22,8 @@
 # and CORE does not flag them. We mirror that by using `bool(value)`
 # rather than `value is not None`.
 from usdm4.rules.rule_template import RuleTemplate
+from usdm4.rules.timing import is_fixed_reference
 
-
-_FIXED_REFERENCE_CODE = "C201358"
 
 # (attribute name on Timing, message text) pairs that the rule checks.
 _WINDOW_ATTRIBUTES = (
@@ -52,10 +51,7 @@ class RuleDDF00025(RuleTemplate):
     def validate(self, config: dict) -> bool:
         data = config["data"]
         for item in data.instances_by_klass("Timing"):
-            type_block = item.get("type")
-            if not isinstance(type_block, dict):
-                continue
-            if type_block.get("code") != _FIXED_REFERENCE_CODE:
+            if not is_fixed_reference(item):
                 continue
             path = data.path_by_id(item["id"])
             for attr, message in _WINDOW_ATTRIBUTES:
