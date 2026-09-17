@@ -17,6 +17,13 @@ from usdm4.api.biomedical_concept import BiomedicalConcept
 from usdm4.api.biomedical_concept_surrogate import BiomedicalConceptSurrogate
 from usdm4.api.procedure import Procedure
 from usdm4.api.code import Code
+from usdm4.api.extension import ExtensionAttribute
+from usdm4.api.extensions_d4k import (
+    TLF_EXT_URL,
+    TLO_EXT_URL,
+    TLP_EXT_URL,
+    TLU_EXT_URL,
+)
 
 
 class TimelineAssembler(BaseAssembler):
@@ -804,14 +811,18 @@ class TimelineAssembler(BaseAssembler):
             title = data.get("table_title") or (
                 "Main timeline" if is_main else f"Timeline {t}"
             )
+            # The description is prose. It was generated from ``is_main`` alone
+            # and has no other reader, so a caller with something better to say
+            # about the timeline may supply it.
+            description = data.get("table_description") or (
+                "The main timeline" if is_main else f"Subsidiary timeline {t}"
+            )
             return self._builder.create(
                 ScheduleTimeline,
                 {
                     "mainTimeline": is_main,
                     "name": f"TIMELINE-{t}",
-                    "description": "The main timeline"
-                    if is_main
-                    else f"Subsidiary timeline {t}",
+                    "description": description,
                     "label": title,
                     "entryCondition": "Paricipant identified",
                     "entryId": instances[0].id,
@@ -819,6 +830,7 @@ class TimelineAssembler(BaseAssembler):
                     "plannedDuration": duration,
                     "instances": instances,
                     "timings": timings,
+                    "extensionAttributes": self._timeline_extensions(data),
                 },
             )
         except Exception as e:
@@ -828,6 +840,47 @@ class TimelineAssembler(BaseAssembler):
                 KlassMethodLocation(self.MODULE, "_add_timeline"),
             )
             return None
+
+    # The SoA input's classification keys, and the d4k extension each is
+    # emitted as. One concept per URL, matching every other d4k extension.
+    _CLASSIFICATION_EXTENSIONS = (
+        ("table_family", TLF_EXT_URL),
+        ("table_orientation", TLO_EXT_URL),
+        ("table_unit", TLU_EXT_URL),
+        ("table_placement", TLP_EXT_URL),
+    )
+
+    def _timeline_extensions(self, data: dict) -> list[ExtensionAttribute]:
+        """Classification of the source table, as d4k extension attributes.
+
+        A caller that has classified the table it read — a sampling or dosing
+        profile, which way round its timing axis ran, in what unit, and whether
+        it was printed with the main schedule or away from it — has nowhere in
+        USDM to say so. The description is prose and would have to be parsed
+        back; these are queryable by URL.
+
+        Emitted together or not at all, so the presence of the family attribute
+        is what marks a timeline as a profile. A caller that classifies nothing
+        gets an empty list, which is what every timeline had before.
+        """
+        extensions: list[ExtensionAttribute] = []
+        try:
+            for key, url in self._CLASSIFICATION_EXTENSIONS:
+                value = data.get(key)
+                if value in (None, ""):
+                    continue
+                extensions.append(
+                    self._builder.create(
+                        ExtensionAttribute, {"url": url, "valueString": str(value)}
+                    )
+                )
+        except Exception as e:
+            self._errors.exception(
+                "Error creating timeline classification extensions",
+                e,
+                KlassMethodLocation(self.MODULE, "_timeline_extensions"),
+            )
+        return extensions
 
     def _get_biomedical_concepts(
         self, activity: dict

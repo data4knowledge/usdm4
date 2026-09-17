@@ -103,6 +103,25 @@ class ConditionsBlock(BaseModel):
 
 
 class TimelineInput(BaseModel):
+    """One SoA table: the six feature blocks, plus what the caller knows about
+    the table it read them from.
+
+    **The ``table_*`` fields have to be declared here to survive.**
+    ``Assembler.execute`` validates its input with
+    ``AssemblerInput.model_validate`` and then passes ``model_dump()`` on to the
+    sub-assemblers, so pydantic's default ``extra="ignore"`` silently strips any
+    key this model does not name. ``table_type`` was read by
+    ``TimelineAssembler._main_index`` and ``table_title`` by ``_add_timeline``
+    for some time while never reaching either of them through this path: the
+    main-timeline choice looked right only because the caller happens to put
+    the main table first, which is also ``_main_index``'s fallback.
+
+    ``table_type`` steers which timeline is the main one. The rest say what kind
+    of table it was — a sampling or dosing profile, which way round its timing
+    axis ran, in what unit, and whether it was printed with the main schedule —
+    and are emitted as d4k extension attributes on the timeline.
+    """
+
     model_config = ConfigDict(strict=False)
 
     epochs: EpochsBlock = EpochsBlock()
@@ -111,3 +130,11 @@ class TimelineInput(BaseModel):
     windows: WindowsBlock = WindowsBlock()
     activities: ActivitiesBlock = ActivitiesBlock()
     conditions: ConditionsBlock = ConditionsBlock()
+
+    table_type: str | None = None
+    table_title: str | None = None
+    table_description: str | None = None
+    table_family: str | None = None
+    table_orientation: str | None = None
+    table_unit: str | None = None
+    table_placement: str | None = None
