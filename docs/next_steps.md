@@ -19,6 +19,52 @@ record of the rule generation process).
 
 Newest first. Cross-repo "save session" entries; pairs with `usdm4_protocol` and `udp_prism` logs.
 
+### 2026-09-17 — timeline classification: `table_*` input fields declared, four d4k extensions, description freed for prose
+- `usdm4 @ 57-let-the-soa-input-set-a-timelines-description` (0.30.0). Paired with
+  `usdm4_protocol @ 45-classify-profile-tables-and-keep-them-instead-of-dropping-them` (0.11.0.a6),
+  whose SoA extractor now classifies sampling and dosing profiles instead of discarding them and
+  needs somewhere to record what kind of table a timeline came from.
+
+**What changed**
+
+1. **`TimelineInput` declares seven `table_*` fields** (`timeline_schema.py`) — and this is a
+   defect fix, not just a feature. `Assembler.execute` validates with
+   `AssemblerInput.model_validate` and passes `model_dump()` on, so pydantic's default
+   `extra="ignore"` was stripping every key the model did not name. **`table_type` had never
+   reached `TimelineAssembler._main_index`, and `table_title` never reached `_add_timeline`,
+   through the live pipeline.** Nothing looked wrong because the main-timeline choice agrees with
+   `_main_index`'s first-table fallback on every input tried, and the unit tests call
+   `timeline_assembler.execute()` with raw dicts, bypassing the validation that was doing the
+   damage.
+2. **`ScheduleTimeline.description` is caller-settable** from `table_description`, generated
+   string as the fallback. It is prose — the structure goes in the extensions.
+3. **Four flat d4k extensions**, `extensions_d4k.py` 011-014: `TLF` family, `TLO` orientation,
+   `TLU` unit, `TLP` placement. `_add_timeline` builds them through a new `_timeline_extensions`
+   using the same `_builder.create(ExtensionAttribute, ...)` call `study_assembler` makes. Absent
+   values are omitted rather than filled, so a missing attribute means "not measured". A caller
+   that classifies nothing gets `[]`, as every timeline had before.
+
+**Why extensions rather than a string in the description** (Dave's call): the description is prose
+and would have to be parsed back; extensions are queryable by URL via `get_extension`, and the
+backbone materialises them generically (`loader/schedule_timeline.py` calls
+`merge_extension_attributes`, `serializer/walker.py` round-trips them), so the structure survives
+into RDF and back. Flat rather than nested because every existing d4k extension is a flat
+`valueString`.
+
+**Verified** by constructing the real models: `ScheduleTimeline` accepts the four,
+`get_extension(TLF_EXT_URL)` returns its value, a missing URL returns `None`, `to_json()` emits
+urls 011-014. Live through the corpus on seven protocols: five profiles tagged with correct
+family/orientation/unit/placement, no profile taking `mainTimeline`, both controls clean.
+
+**Tests** — `tests/usdm4/assembler/schema/test_timeline_schema.py::TestTableClassificationFields`
+(the seven fields survive a dump; `table_type` reaches the assembler; unclassified dumps as None;
+feature blocks untouched) and seven in `test_timeline_assembler.py` for the description and the
+extensions.
+
+**NEXT** — nothing outstanding in this repo for this work. If a fifth extension is wanted for an
+explicit timeline *kind*, it is 015; today profile-ness is implied by `TLF` being present, since
+its values name profile families.
+
 ### 2026-06-18 — Amendment enrollment geographic scope derivation — NOT WORKING YET, tests needed
 
 **Status: incomplete and unverified. No unit tests written for this change yet. Nothing run in Cowork (tests are VSCode-only).**
