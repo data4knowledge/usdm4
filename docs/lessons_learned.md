@@ -1494,3 +1494,22 @@ contract. The two copies are deliberately not shared across repos.
 - Codelist not loading at runtime: don't paper over with a skip;
   regenerate the CT cache (or the missing-CT extension YAML) so the
   rule has data to validate against.
+
+## 25. A schema that ignores extra keys eats the fields its consumer reads
+
+`Assembler.execute` validates its input with `AssemblerInput.model_validate` and then passes
+`model_dump()` to the sub-assemblers. Any key a schema model does not declare is dropped there by
+pydantic's default `extra="ignore"` — silently, before the assembler that reads it ever runs.
+
+`TimelineInput` declared only its six feature blocks, so `table_type` never reached
+`TimelineAssembler._main_index` and `table_title` never reached `_add_timeline`. Neither failed
+visibly: `_main_index` falls back to the first table, the caller puts the main table first, and a
+dead mechanism and a working one agree on every input anyone had tried. The unit tests missed it
+because they call `timeline_assembler.execute()` with raw dicts — bypassing the validation step
+that was doing the damage.
+
+**Rules.** Every field a sub-assembler reads out of its input must be declared on the
+corresponding schema model; reading it with `.get()` and a default is not enough, because the
+default hides the loss. Prefer declaring the field to opening `extra="allow"` — the declaration is
+the contract. And when a test builds assembler input by hand, it is not exercising the path
+production uses: assert the field end to end, through `Assembler.execute`, at least once.

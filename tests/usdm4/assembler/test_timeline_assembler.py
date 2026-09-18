@@ -3,6 +3,12 @@ import pathlib
 import pytest
 from simple_error_log.errors import Errors
 from src.usdm4.assembler.timeline_assembler import TimelineAssembler
+from src.usdm4.api.extensions_d4k import (
+    TLF_EXT_URL,
+    TLO_EXT_URL,
+    TLP_EXT_URL,
+    TLU_EXT_URL,
+)
 from src.usdm4.builder.builder import Builder
 
 
@@ -1805,7 +1811,16 @@ class TestTimelineAssemblerBiomedicalConcepts:
         assert len(activity.definedProcedures) >= 1
 
 
-def _table(epochs, visits, timepoints, activities, table_type="main_soa", title=None):
+def _table(
+    epochs,
+    visits,
+    timepoints,
+    activities,
+    table_type="main_soa",
+    title=None,
+    table_description=None,
+    classification=None,
+):
     """Build a single SoA table dict (one TimelineInput) for tests."""
     n = len(timepoints)
     data = {
@@ -1829,6 +1844,10 @@ def _table(epochs, visits, timepoints, activities, table_type="main_soa", title=
     }
     if title is not None:
         data["table_title"] = title
+    if table_description is not None:
+        data["table_description"] = table_description
+    if classification:
+        data.update(classification)
     return data
 
 
@@ -1879,6 +1898,113 @@ class TestTimelineAssemblerMultipleTimelines:
         subs = [t for t in timeline_assembler.timelines if not t.mainTimeline]
         assert len(subs) == 1
         assert subs[0].label == "PK/PD SoA"
+
+    def test_description_defaults_to_the_generated_string(self, timeline_assembler):
+        """Unchanged behaviour when the caller supplies nothing."""
+        timeline_assembler.execute([self._main(), self._subsidiary()])
+        by_main = {t.mainTimeline: t for t in timeline_assembler.timelines}
+        assert by_main[True].description == "The main timeline"
+        assert by_main[False].description == "Subsidiary timeline 2"
+
+    def test_description_taken_from_the_input_when_supplied(self, timeline_assembler):
+        """The caller has classified the source table and needs somewhere to
+        say what kind of schedule it is."""
+        profile = _table(
+            ["PK Phase"],
+            ["PK Visit"],
+            [("Day 7", 7)],
+            [("PK Sample", [0])],
+            table_type="profile",
+            title="Profile \u2014 nominal timing (minutes)",
+            table_description="profile; family=unit_axis; orientation=vertical; unit=minute",
+        )
+        timeline_assembler.execute([self._main(), profile])
+        subs = [t for t in timeline_assembler.timelines if not t.mainTimeline]
+        assert subs[0].label == "Profile \u2014 nominal timing (minutes)"
+        assert subs[0].description == (
+            "profile; family=unit_axis; orientation=vertical; unit=minute"
+        )
+
+    def test_a_description_on_the_main_table_is_honoured_too(self, timeline_assembler):
+        main = _table(
+            ["Screening"],
+            ["Visit 1"],
+            [("Day 1", 1)],
+            [("Consent", [0])],
+            table_type="main_soa",
+            title="Main SoA",
+            table_description="schedule; source=printed in three column-blocks",
+        )
+        timeline_assembler.execute([main])
+        assert timeline_assembler.timelines[0].description == (
+            "schedule; source=printed in three column-blocks"
+        )
+
+    def test_no_extensions_when_the_caller_classifies_nothing(self, timeline_assembler):
+        """Every timeline had an empty list before, and still does."""
+        timeline_assembler.execute([self._main(), self._subsidiary()])
+        assert all(t.extensionAttributes == [] for t in timeline_assembler.timelines)
+
+    def test_a_classified_table_emits_four_flat_extensions(self, timeline_assembler):
+        profile = _table(
+            ["PK Phase"],
+            ["PK Visit"],
+            [("Day 7", 7)],
+            [("PK Sample", [0])],
+            table_type="profile",
+            title="Profile \u2014 nominal timing (minutes)",
+            classification={
+                "table_family": "unit_axis",
+                "table_orientation": "vertical",
+                "table_unit": "minute",
+                "table_placement": "remote",
+            },
+        )
+        timeline_assembler.execute([self._main(), profile])
+        subs = [t for t in timeline_assembler.timelines if not t.mainTimeline]
+        by_url = {e.url: e.valueString for e in subs[0].extensionAttributes}
+        assert by_url == {
+            TLF_EXT_URL: "unit_axis",
+            TLO_EXT_URL: "vertical",
+            TLU_EXT_URL: "minute",
+            TLP_EXT_URL: "remote",
+        }
+
+    def test_an_absent_classification_value_is_left_out(self, timeline_assembler):
+        """Placement cannot always be measured, and a guess would be worse than
+        silence."""
+        profile = _table(
+            ["PK Phase"],
+            ["PK Visit"],
+            [("Day 7", 7)],
+            [("PK Sample", [0])],
+            table_type="profile",
+            classification={
+                "table_family": "records",
+                "table_orientation": "vertical",
+                "table_unit": "minute",
+            },
+        )
+        timeline_assembler.execute([self._main(), profile])
+        subs = [t for t in timeline_assembler.timelines if not t.mainTimeline]
+        assert TLP_EXT_URL not in {e.url for e in subs[0].extensionAttributes}
+        assert len(subs[0].extensionAttributes) == 3
+
+    def test_the_extensions_are_findable_by_url(self, timeline_assembler):
+        """`get_extension` is how a consumer reads them — the reason for using
+        extensions rather than a string in the description."""
+        profile = _table(
+            ["PK Phase"],
+            ["PK Visit"],
+            [("Day 7", 7)],
+            [("PK Sample", [0])],
+            table_type="profile",
+            classification={"table_family": "unit_axis"},
+        )
+        timeline_assembler.execute([self._main(), profile])
+        subs = [t for t in timeline_assembler.timelines if not t.mainTimeline]
+        assert subs[0].get_extension(TLF_EXT_URL).valueString == "unit_axis"
+        assert subs[0].get_extension(TLU_EXT_URL) is None
 
     def test_activities_shared_across_timelines(self, timeline_assembler):
         timeline_assembler.execute([self._main(), self._subsidiary()])
