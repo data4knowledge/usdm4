@@ -62,12 +62,28 @@ class TimelineAssembler(BaseAssembler):
         case) or a list of SoA table dicts (a main plus n subsidiary timelines).
         Exactly one timeline is flagged ``mainTimeline``: the first table whose
         ``table_type`` is ``main_soa`` (or the first table if none say so).
+
+        A table with no timepoints is skipped before anything is built from it.
+        The timepoints list is the spine — epochs and encounters are attached to
+        it by positional index — so such a table can yield no
+        ScheduledActivityInstance and therefore no ScheduleTimeline. Building it
+        anyway registered its activities first and then failed, leaving them in
+        the study design referenced by nothing, and if the table was the one
+        ``_main_index`` had chosen, no timeline carried ``mainTimeline`` at all.
+        The main timeline is therefore chosen from the tables that remain.
+
+        Ordinals are the table's own position, so a skipped table leaves a gap
+        (``TIMELINE-1``, ``TIMELINE-3``) rather than renaming the timelines that
+        did assemble.
         """
         try:
             tables = self._normalise(data)
-            main_index = self._main_index(tables)
-            for offset, table in enumerate(tables):
-                self._execute_one(table, offset + 1, is_main=(offset == main_index))
+            keep = self._assemblable(tables)
+            main_ordinal = self._main_ordinal(tables, keep)
+            for index in keep:
+                self._execute_one(
+                    tables[index], index + 1, is_main=(index == main_ordinal)
+                )
             # Single global ordering pass across every timeline's activities so
             # previousId/nextId are consistent (and shared activities are linked
             # once, not re-linked per table).
@@ -88,6 +104,45 @@ class TimelineAssembler(BaseAssembler):
         if data is None:
             return []
         return [data] if isinstance(data, dict) else list(data)
+
+    @staticmethod
+    def _has_spine(table) -> bool:
+        """Does this table carry the timepoints every other list is indexed against?"""
+        if not isinstance(table, dict):
+            return False
+        return bool((table.get("timepoints") or {}).get("items"))
+
+    def _assemblable(self, tables: list[dict]) -> list[int]:
+        """Indices of the tables a timeline can be built from, in order.
+
+        Every rejection is reported once, with the table's ordinal and the
+        number of activities discarded with it — the loss is otherwise invisible
+        in the output, which is what made it hard to see.
+        """
+        keep: list[int] = []
+        for index, table in enumerate(tables):
+            if self._has_spine(table):
+                keep.append(index)
+                continue
+            activities = []
+            if isinstance(table, dict):
+                activities = (table.get("activities") or {}).get("items") or []
+            self._errors.error(
+                f"Timeline {index + 1} has no timepoints, not created "
+                f"({len(activities)} activities discarded with it)",
+                KlassMethodLocation(self.MODULE, "_assemblable"),
+            )
+        return keep
+
+    def _main_ordinal(self, tables: list[dict], keep: list[int]) -> int | None:
+        """The index, within *tables*, of the table that carries ``mainTimeline``.
+
+        Chosen over the assemblable tables only, so a skipped table cannot take
+        the flag with it. ``None`` when nothing is assemblable.
+        """
+        if not keep:
+            return None
+        return keep[self._main_index([tables[index] for index in keep])]
 
     @staticmethod
     def _main_index(tables: list[dict]) -> int:

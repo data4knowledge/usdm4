@@ -2104,15 +2104,32 @@ class TestTimelineAssemblerNormaliseAndDispatch:
         timeline_assembler.execute(None)
         assert timeline_assembler.timelines == []
 
-    def test_execute_outer_exception_on_non_dict_table(
-        self, timeline_assembler, errors
+    def test_execute_outer_exception_is_caught(
+        self, timeline_assembler, errors, monkeypatch
     ):
-        # A non-dict table element makes ``_main_index`` raise before the loop,
-        # exercising ``execute``'s own try/except.
+        # ``execute``'s own try/except. A non-dict table no longer reaches
+        # ``_main_index`` (it has no spine, so it is skipped), so the outer
+        # handler is exercised by making the final ordering pass raise.
+        def boom(*_args, **_kwargs):
+            raise RuntimeError("ordering failed")
+
+        monkeypatch.setattr(timeline_assembler._builder, "double_link", boom)
         initial = errors.error_count()
-        timeline_assembler.execute(["not a table"])
+        timeline_assembler.execute(
+            [_table(["E"], ["V"], [("Day 1", 1)], [("A1", [0])])]
+        )
         assert errors.error_count() > initial
-        assert timeline_assembler.timelines == []
+
+    def test_non_dict_table_is_skipped_not_raised(self, timeline_assembler, errors):
+        # A non-dict element has no spine. It is reported and skipped, and it
+        # does not stop the real table beside it from assembling.
+        initial = errors.error_count()
+        timeline_assembler.execute(
+            ["not a table", _table(["E"], ["V"], [("Day 1", 1)], [("A1", [0])])]
+        )
+        assert errors.error_count() > initial
+        assert [t.name for t in timeline_assembler.timelines] == ["TIMELINE-2"]
+        assert timeline_assembler.timelines[0].mainTimeline is True
 
     def test_main_index_falls_back_to_first_when_no_main_soa(self, timeline_assembler):
         # Two subsidiary tables, none flagged main_soa → first becomes main.
@@ -2136,6 +2153,145 @@ class TestTimelineAssemblerNormaliseAndDispatch:
         mains = [t for t in timeline_assembler.timelines if t.mainTimeline]
         assert len(mains) == 1
         assert mains[0].label == "Sub 1"
+
+
+def _spineless(activities, title=None):
+    """A table the extractor could not read a time axis from.
+
+    Neither a timing row nor a visit row was found, so both synthesis
+    fallbacks no-op and ``timepoints.items`` is empty. Its activities carry
+    no visits either: the column bound derived from the timepoints is -1, so
+    the grid is never read. Epochs and windows are empty for the same reason.
+    This is the shape the SoA extractor really hands over, not a contrivance.
+    """
+    data = {
+        "epochs": {"items": []},
+        "visits": {"items": []},
+        "timepoints": {"items": []},
+        "windows": {"items": []},
+        "activities": {"items": [{"name": n, "visits": []} for n in activities]},
+        "conditions": {"items": []},
+    }
+    if title is not None:
+        data["table_title"] = title
+    return data
+
+
+class TestTimelineAssemblerNoTimepointSpine:
+    """A table with no timepoints must be skipped, not half-built.
+
+    Weighted to must-not-fire: the skip is only ever allowed to take a table
+    that could not have produced a timeline anyway.
+    """
+
+    def _real(self, name="A1", title=None):
+        return _table(
+            ["Treatment"],
+            ["Visit 1", "Visit 2"],
+            [("Day 1", 1), ("Day 7", 7)],
+            [(name, [0])],
+            title=title,
+        )
+
+    # --- must not fire -----------------------------------------------------
+
+    def test_a_single_normal_table_is_unaffected(self, timeline_assembler):
+        timeline_assembler.execute(self._real())
+        assert [t.name for t in timeline_assembler.timelines] == ["TIMELINE-1"]
+        assert len(timeline_assembler.activities) == 1
+
+    def test_several_normal_tables_are_unaffected(self, timeline_assembler):
+        timeline_assembler.execute(
+            [self._real("A1"), self._real("A2"), self._real("A3")]
+        )
+        assert [t.name for t in timeline_assembler.timelines] == [
+            "TIMELINE-1",
+            "TIMELINE-2",
+            "TIMELINE-3",
+        ]
+
+    def test_a_one_timepoint_table_is_kept(self, timeline_assembler):
+        # The shortest real spine there is. One timepoint is a schedule; none
+        # is not, and the boundary between them is exactly this.
+        timeline_assembler.execute(
+            [_table(["E"], ["V"], [("Day 1", 1)], [("A1", [0])])]
+        )
+        assert len(timeline_assembler.timelines) == 1
+
+    def test_a_timepoint_with_no_value_is_kept(self, timeline_assembler):
+        # Synthesised placeholder timepoints carry value 0. They are a spine.
+        timeline_assembler.execute(
+            [_table(["E"], ["V"], [("Screening", 0)], [("A1", [0])])]
+        )
+        assert len(timeline_assembler.timelines) == 1
+
+    def test_table_type_still_steers_the_main_flag(self, timeline_assembler):
+        profile = self._real("A1", title="Profile")
+        profile["table_type"] = "profile"
+        timeline_assembler.execute([profile, self._real("A2", title="Schedule")])
+        mains = [t for t in timeline_assembler.timelines if t.mainTimeline]
+        assert len(mains) == 1
+        assert mains[0].label == "Schedule"
+
+    # --- must fire ---------------------------------------------------------
+
+    def test_spineless_table_creates_no_timeline(self, timeline_assembler):
+        timeline_assembler.execute([self._real(), _spineless(["junk1", "junk2"])])
+        assert [t.name for t in timeline_assembler.timelines] == ["TIMELINE-1"]
+
+    def test_spineless_table_leaves_no_orphan_activities(self, timeline_assembler):
+        timeline_assembler.execute([self._real(), _spineless(["junk1", "junk2"])])
+        linked = {
+            activity_id
+            for timeline in timeline_assembler.timelines
+            for instance in timeline.instances
+            for activity_id in (instance.activityIds or [])
+        }
+        assert [a.name for a in timeline_assembler.activities] == ["A1"]
+        assert all(a.id in linked for a in timeline_assembler.activities)
+
+    def test_spineless_table_is_reported_with_its_activity_count(
+        self, timeline_assembler, errors
+    ):
+        initial = errors.error_count()
+        timeline_assembler.execute([self._real(), _spineless(["junk1", "junk2"])])
+        assert errors.error_count() > initial
+
+    def test_main_flag_moves_to_the_first_assemblable_table(self, timeline_assembler):
+        # The spineless table sorts first and would have taken the main flag
+        # with it, leaving the study with no main timeline at all.
+        timeline_assembler.execute(
+            [_spineless(["junk1"]), self._real("A1", title="Schedule")]
+        )
+        mains = [t for t in timeline_assembler.timelines if t.mainTimeline]
+        assert len(mains) == 1
+        assert mains[0].name == "TIMELINE-2"
+
+    def test_ordinals_are_the_table_position_so_a_skip_leaves_a_gap(
+        self, timeline_assembler
+    ):
+        timeline_assembler.execute(
+            [self._real("A1"), _spineless(["junk1"]), self._real("A2")]
+        )
+        assert [t.name for t in timeline_assembler.timelines] == [
+            "TIMELINE-1",
+            "TIMELINE-3",
+        ]
+
+    def test_every_table_spineless_creates_nothing(self, timeline_assembler):
+        timeline_assembler.execute([_spineless(["junk1"]), _spineless(["junk2"])])
+        assert timeline_assembler.timelines == []
+        assert timeline_assembler.activities == []
+
+    def test_a_missing_timepoints_key_is_spineless(self, timeline_assembler):
+        timeline_assembler.execute([{"activities": {"items": []}}, self._real()])
+        assert [t.name for t in timeline_assembler.timelines] == ["TIMELINE-2"]
+
+    def test_a_null_timepoints_block_is_spineless(self, timeline_assembler):
+        table = _spineless(["junk1"])
+        table["timepoints"] = None
+        timeline_assembler.execute([table, self._real()])
+        assert [t.name for t in timeline_assembler.timelines] == ["TIMELINE-2"]
 
 
 class TestTimelineAssemblerBiomedicalConceptBranches:
