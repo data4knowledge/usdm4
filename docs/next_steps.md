@@ -19,6 +19,109 @@ record of the rule generation process).
 
 Newest first. Cross-repo "save session" entries; pairs with `usdm4_protocol` and `udp_prism` logs.
 
+### 2026-09-18 — ISSUE 58 CLOSED (GitHub 58, branch `58-assembler-orphans-and-timelines`): a table with no timepoint spine is skipped, not half-built
+- `usdm4 @ 58-assembler-orphans-and-timelines`. No `usdm4_protocol` change. Gated live from
+  `protocol_corpus`, whose register row N20 scoped this; that repo's `memory.md` 2026-09-18 holds
+  the corpus-side figures and the reviewer decisions.
+
+**What it was.** `TimelineAssembler._execute_one` registered a table's activities before building
+that table's timepoints, timings and timeline. When the caller supplied a table whose
+`timepoints.items` was empty, `_add_timing` raised `IndexError` on `timepoints[anchor_index]` and
+`_add_timeline` raised `IndexError` on `instances[-1]`. Both were caught and logged and the run
+continued — but the activities were already in `self._activities` and no `ScheduledActivityInstance`
+had been created to reference them, so they reached the study design linked to nothing. Separately,
+`_main_index` chose the main timeline before any of that ran, so when its pick was the table that
+failed, no timeline in the study carried `mainTimeline` at all.
+
+The timepoints list is the spine: epochs and encounters are attached to it by positional index.
+A table without it can produce no SAI and therefore no `ScheduleTimeline`, so there was nothing to
+salvage from building it.
+
+**The fix.** `src/usdm4/assembler/timeline_assembler.py`, one method plus three helpers:
+
+- `_has_spine(table)` — does the table carry the timepoints every other list is indexed against.
+  Non-dict input answers False, which is how a malformed element now leaves the loop alone.
+- `_assemblable(tables)` — the indices a timeline can be built from, reporting each rejection once
+  with its ordinal and the count of activities discarded with it. The loss was otherwise invisible
+  in the output, which is what made it hard to see.
+- `_main_ordinal(tables, keep)` — the main flag is chosen over the assemblable tables only, so a
+  skipped table cannot take it. `_main_index` is unchanged and still decides by `table_type`; it
+  is simply handed a shorter list.
+- `execute` iterates `keep` and passes `index + 1` as the ordinal, so a skipped table leaves a gap
+  (`TIMELINE-1`, `TIMELINE-3`) rather than renaming the timelines that did assemble.
+
+**The detector, and why it is that and not something else.** The condition is the empty spine, not
+a classification of the table. Measured across `protocol_corpus`'s 104-protocol measurement set at
+usdm4_protocol 0.11.0.a6: every crash has `SAI: 0` and no crash has `SAI > 0`. The correlation is
+1:1, so the skip set and the crash set are provably the same set and the change cannot take a
+table that was producing a timeline. Sweeping by package version mattered — the raw corpus-wide
+sweep showed 30 crashes in 22 protocols, but 14 were stale results at 0.10.0 / 0.11.0a2 and four
+of those were a different mechanism (`KeyError: 'encounter_instance'`) fixed upstream long ago.
+
+**Gate PASSED live 2026-09-18**, 8 protocols re-extracted and compared:
+
+| protocol | timelines | mainTimeline | activities | orphans | crashes | skips |
+|---|---|---|---|---|---|---|
+| NCT02107703 | 2 → 2 | 1 | 20 → 7 | 13 → 0 | 2 → 0 | 2 |
+| NCT03486912 | 2 → 2 | 1 | 69 → 44 | 25 → 0 | 2 → 0 | 2 |
+| NCT04586920 | 0 → 0 | 0 | 3 → 0 | 3 → 0 | 1 → 0 | 1 |
+| NCT04682119 | 3 → 3 | 1 | 33 → 29 | 4 → 0 | 1 → 0 | 1 |
+| NCT04776148 | 3 → 3 | 1 | 60 → 57 | 10 → 7 | 1 → 0 | 1 |
+| NCT05262387 | 1 → 1 | 1 | 43 → 41 | 2 → 0 | 1 → 0 | 1 |
+| NCT06085482 | 1 → 1 | 0 → 1 | 50 → 26 | 24 → 0 | 1 → 0 | 1 |
+| NCT06868654 | 2 → 2 | 1 | 82 → 77 | 9 → 4 | 1 → 0 | 1 |
+
+Timeline counts unchanged on every one, which was the prediction: the fix creates no timelines.
+10 crashes → 0, replaced by 10 accounted-for skip lines. 90 orphan activities → 11. NCT06085482
+regained its `mainTimeline`. NCT04586920's 0 is correct — it has no timelines, so nothing to flag.
+
+**Regression evidence.** Before the change was written, a monkey-patched version was run against
+the three real assembler-input shapes and five controls; afterwards the same harness was run
+against the edited source and matched it. Every control is byte-identical to the pre-change run:
+a single table passed as a dict, three tables, a one-timepoint table, a value-0 placeholder
+timepoint, `table_type` steering the main flag to table 2, `execute(None)` and `execute([])`.
+Timeline names and labels on surviving tables are unchanged (`TIMELINE-1` / `TIMELINE-3`,
+`Main timeline` / `Timeline 3`). One control did change deliberately: `execute({})` surfaced 7
+cascading errors and now surfaces 1. It still surfaces an error, which is what `_normalise`'s
+docstring promises.
+
+**Files changed**
+
+- `src/usdm4/assembler/timeline_assembler.py` — `execute` filters before it builds; new
+  `_has_spine`, `_assemblable`, `_main_ordinal`.
+- `tests/usdm4/assembler/test_timeline_assembler.py` — new `TestTimelineAssemblerNoTimepointSpine`
+  (14 tests) plus a `_spineless` fixture helper whose docstring records why the shape is what it
+  is. `test_execute_outer_exception_on_non_dict_table` was rewritten and renamed: a non-dict
+  element no longer reaches `_main_index`, so `execute`'s outer handler is now exercised by making
+  the final ordering pass raise. Its old assertion was replaced by
+  `test_non_dict_table_is_skipped_not_raised`. That rewrite is not optional housekeeping —
+  `pytest.ini` enforces `--cov-fail-under=100`, so leaving the outer `except` unreached would fail
+  the suite on coverage.
+
+The new tests are weighted to must-not-fire: single table, several tables, a one-timepoint table
+(the shortest real spine), a value-0 placeholder timepoint, and `table_type` steering the main
+flag all have to be unaffected. The must-fire half covers no timeline, no orphans, the error
+report, the main flag moving, the ordinal gap, all-tables-spineless, a missing `timepoints` key
+and a null `timepoints` block.
+
+**Re-verify:**
+
+```
+python3 -m pytest tests/usdm4/assembler/test_timeline_assembler.py -v --no-cov
+python3 -m pytest
+```
+
+**Found, and not this issue.** Eleven orphan activities survive the fix — 7 on NCT04776148, 4 on
+NCT06868654 — and the arithmetic shows they never came from a skipped table. They are activities
+in *surviving* timelines that no SAI references, caused by `_activity_by_name` keying on the exact
+normalised label: one activity printed three ways across three arm tables registers as three
+activities, and only the one whose cells resolved gets linked. Logged as `protocol_corpus` register
+row N22; the repo is undecided between normalising labels upstream and changing the registry key
+here, and the population needs sweeping before either is worth building.
+
+**Next.** Nothing open in this repo from this issue. The corpus register's next item is transposed
+decode of sampling profiles, which is `usdm4_protocol` work.
+
 ### 2026-09-17 — timeline classification: `table_*` input fields declared, four d4k extensions, description freed for prose
 - `usdm4 @ 57-let-the-soa-input-set-a-timelines-description` (0.30.0). Paired with
   `usdm4_protocol @ 45-classify-profile-tables-and-keep-them-instead-of-dropping-them` (0.11.0.a6),

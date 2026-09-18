@@ -1513,3 +1513,51 @@ corresponding schema model; reading it with `.get()` and a default is not enough
 default hides the loss. Prefer declaring the field to opening `extra="allow"` — the declaration is
 the contract. And when a test builds assembler input by hand, it is not exercising the path
 production uses: assert the field end to end, through `Assembler.execute`, at least once.
+
+## A caught exception that leaves half its work behind is worse than one that propagates (2026-09-18)
+
+`TimelineAssembler._execute_one` registered a table's activities, then failed building that table's
+timepoints and timeline, twice, on an empty timepoints list. Both failures were caught and logged
+exactly as the error-handling convention asks. The result still corrupted the output: the
+activities stayed in `self._activities` with no `ScheduledActivityInstance` referencing them, so
+the study design carried 90 activities across eight protocols that were linked to nothing, and
+`usdm.json` looked clean. The loss was visible only in the error log.
+
+Worse, `_main_index` had already chosen the main timeline before the failure. On two protocols its
+pick was the table that died, so the study ended up with no `mainTimeline` at all — a conformance
+defect caused entirely by the recovery path.
+
+**Rules.** Catch-and-log is only safe where the caught operation has no side effects before the
+throw. Where it does, validate the precondition before the side effects start, not after. And when
+a choice is made across a set — which table is main, which item is primary — make it over the
+members that actually survived, because a choice made over the input silently points at nothing.
+
+## Test what a fix does to the output, not what it does to the error log (2026-09-18)
+
+The register row this closed predicted the corpus quality gate would fall, because five of the
+eight affected protocols agreed with their reference while losing timelines to the crash. It did
+not move at all. Those tables crashed because the decode found no timing row and no visit row, so
+`timepoints.items` was empty — and the timepoints list is the spine that epochs, encounters and
+SAIs are attached to by positional index. A table without it could never have produced a
+`ScheduleTimeline` however the crash was handled. A destroyed timeline and an impossible one are
+indistinguishable in a count.
+
+Running the candidate as a monkey-patch against the three real input shapes, before writing it,
+gave the true answer — counts unchanged, orphans gone, main flag restored — and gave it cheaply
+enough to correct the issue text before it was raised.
+
+**Rule.** Before fixing a crash that is suspected of hiding content, work out what the code would
+have produced had it not crashed. If the answer is *nothing*, the fix is correctness and hygiene,
+not a scoring change, and saying so up front is worth more than the fix.
+
+## `100%` coverage makes a test's premise part of the contract (2026-09-18)
+
+`pytest.ini` enforces `--cov-fail-under=100`, and one existing test reached `execute`'s outer
+`except` by passing a non-dict table element, relying on `_main_index` raising on it. The new
+precondition check answers False for a non-dict and skips it, so nothing reached that handler any
+more. Every assertion in the test still passed; the suite would have failed on coverage.
+
+**Rule.** Under a 100% gate, a test that exercises a branch *by side effect* is holding that branch
+open. When a change alters how input reaches it, the test has to be rewritten to reach it
+deliberately — here by making the final ordering pass raise — and the case it used to cover keeps
+its own test.
