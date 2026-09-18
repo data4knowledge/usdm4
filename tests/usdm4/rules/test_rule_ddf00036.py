@@ -1,9 +1,12 @@
-"""Tests for RuleDDF00036 — Fixed Reference => relativeToFrom 'Start to Start'."""
+"""Tests for RuleDDF00036 — Fixed Reference => relativeToFrom \'Start to Start\'."""
 
 from unittest.mock import MagicMock
 
 from usdm4.rules.library.rule_ddf00036 import RuleDDF00036
 from usdm4.rules.rule_template import RuleTemplate
+
+FIXED = {"code": "C201358", "decode": "Fixed Reference Timing Type"}
+S2S = {"code": "C201355", "decode": "Start to Start"}
 
 
 class TestRuleDDF00036:
@@ -24,7 +27,7 @@ class TestRuleDDF00036:
             [
                 {
                     "id": "T1",
-                    "type": {"decode": "After"},
+                    "type": {"code": "C201356", "decode": "After Timing Type"},
                     "relativeToFrom": {"decode": "End to Start"},
                 }
             ]
@@ -33,28 +36,22 @@ class TestRuleDDF00036:
 
     def test_fixed_reference_start_to_start_passes(self):
         rule = RuleDDF00036()
-        data = self._data(
-            [
-                {
-                    "id": "T1",
-                    "type": {"decode": "Fixed Reference"},
-                    "relativeToFrom": {"decode": "Start to Start"},
-                }
-            ]
-        )
+        data = self._data([{"id": "T1", "type": FIXED, "relativeToFrom": S2S}])
         assert rule.validate({"data": data}) is True
 
     def test_fixed_reference_wrong_relative_fails(self):
+        """Regression: before the fix this rule never fired at all, because the
+        corpus decode is the preferred term rather than the submission value."""
         rule = RuleDDF00036()
         data = self._data(
-            [
-                {
-                    "id": "T1",
-                    "type": {"decode": "Fixed Reference"},
-                    "relativeToFrom": {"decode": "End to End"},
-                }
-            ]
+            [{"id": "T1", "type": FIXED, "relativeToFrom": {"decode": "End to End"}}]
         )
         assert rule.validate({"data": data}) is False
         assert rule.errors().count() == 1
         assert "Invalid relativeToFrom" in rule.errors().dump()
+
+    def test_missing_relative_to_from_fails(self):
+        rule = RuleDDF00036()
+        data = self._data([{"id": "T1", "type": FIXED}])
+        assert rule.validate({"data": data}) is False
+        assert rule.errors().count() == 1
