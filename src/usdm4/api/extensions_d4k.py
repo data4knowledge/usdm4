@@ -29,3 +29,12 @@ TLF_EXT_URL = "www.d4k.dk/usdm/extensions/011"  # Timeline source family
 TLO_EXT_URL = "www.d4k.dk/usdm/extensions/012"  # Timeline source orientation
 TLU_EXT_URL = "www.d4k.dk/usdm/extensions/013"  # Timeline timing-axis unit
 TLP_EXT_URL = "www.d4k.dk/usdm/extensions/014"  # Timeline source placement
+
+# Intervention model provenance, set when the assembler had to DEFAULT the study
+# design's ``model`` rather than encode a value the caller supplied. ``model`` is
+# required on InterventionalStudyDesign and validated against C99076, so a design
+# whose model was never stated still carries a real term from that codelist.
+# Without this attribute nothing on the output distinguishes that term from one
+# the caller asserted. Absent on every design whose model was decoded, which is
+# what every design carried before.
+IMP_EXT_URL = "www.d4k.dk/usdm/extensions/015"  # Intervention model provenance

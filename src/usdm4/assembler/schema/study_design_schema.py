@@ -178,7 +178,11 @@ class StudyDesignInput(BaseModel):
     label: str = ""
     rationale: str = ""
     trial_phase: str = ""
-    intervention_model: str = ""
+    # ``None`` is the caller stating no model, and is now distinct from a
+    # label the encoder cannot decode. Both still reach a C99076 term, because
+    # ``model`` is required on InterventionalStudyDesign; the assembler records
+    # which of the two it was on the design itself.
+    intervention_model: Optional[str] = None
     arms: list[ArmInput] = []
     interventions: list[InterventionInput] = []
     cells: list[CellInput] = []

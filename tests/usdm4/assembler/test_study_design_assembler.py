@@ -1187,6 +1187,129 @@ class TestStudyDesignAssemblerWiring:
         # Encoder maps Crossover → C82637 (per CDISC CT C99076).
         assert study_design.model.code == "C82637"
 
+
+class TestStudyDesignAssemblerModelProvenance:
+    """``model`` is required and validated against C99076, so a design whose
+    model was never stated still carries a real term. These cover the
+    attribute that says which designs those are.
+
+    Weighted to must-not-fire: a design whose model the caller DID state must
+    carry no attribute at all, or every consumer reading it is misinformed in
+    the damaging direction.
+    """
+
+    def _design(self, assembler, population, timeline, **extra):
+        data = {
+            "label": "A Design",
+            "rationale": "rationale",
+            "trial_phase": "Phase II",
+        }
+        data.update(extra)
+        assembler.execute(data, population, timeline)
+        return assembler.study_design
+
+    def _provenance(self, study_design):
+        # The literal URL, not the constant: this asserts the value that goes
+        # on the wire, so a renumbered extension fails here rather than
+        # silently agreeing with itself.
+        return [
+            e
+            for e in study_design.extensionAttributes
+            if e.url == "www.d4k.dk/usdm/extensions/015"
+        ]
+
+    # ---- must not fire -------------------------------------------------
+
+    @pytest.mark.parametrize(
+        "stated, expected_code",
+        [
+            ("Crossover", "C82637"),
+            ("Parallel", "C82639"),
+            ("Single Group", "C82640"),
+            ("Factorial", "C82638"),
+            ("Sequential", "C142568"),
+            ("parallel", "C82639"),
+            ("  Crossover  ", "C82637"),
+        ],
+    )
+    def test_a_decoded_model_carries_no_provenance(
+        self,
+        study_design_assembler,
+        population_assembler,
+        timeline_with_epochs,
+        stated,
+        expected_code,
+    ):
+        study_design = self._design(
+            study_design_assembler,
+            population_assembler,
+            timeline_with_epochs,
+            intervention_model=stated,
+        )
+
+        assert study_design.model.code == expected_code
+        assert self._provenance(study_design) == []
+
+    # ---- fires ---------------------------------------------------------
+
+    def test_key_absent_is_recorded_as_not_supplied(
+        self, study_design_assembler, population_assembler, timeline_with_epochs
+    ):
+        study_design = self._design(
+            study_design_assembler, population_assembler, timeline_with_epochs
+        )
+
+        # The default itself is unchanged — the design stays valid against
+        # DDF00216, which checks membership of C99076.
+        assert study_design.model.code == "C82639"
+        provenance = self._provenance(study_design)
+        assert len(provenance) == 1
+        assert provenance[0].valueString == StudyDesignAssembler.MODEL_NOT_SUPPLIED
+
+    @pytest.mark.parametrize("stated", [None, "", "   "])
+    def test_nothing_stated_is_recorded_as_not_supplied(
+        self,
+        study_design_assembler,
+        population_assembler,
+        timeline_with_epochs,
+        stated,
+    ):
+        study_design = self._design(
+            study_design_assembler,
+            population_assembler,
+            timeline_with_epochs,
+            intervention_model=stated,
+        )
+
+        assert study_design.model.code == "C82639"
+        provenance = self._provenance(study_design)
+        assert len(provenance) == 1
+        assert provenance[0].valueString == StudyDesignAssembler.MODEL_NOT_SUPPLIED
+
+    @pytest.mark.parametrize("stated", ["Parallel Group", "SINGLE_GROUP", "Adaptive"])
+    def test_a_stated_label_that_does_not_decode_carries_the_label(
+        self,
+        study_design_assembler,
+        population_assembler,
+        timeline_with_epochs,
+        stated,
+    ):
+        """"Said something we could not read" is not "said nothing"."""
+        study_design = self._design(
+            study_design_assembler,
+            population_assembler,
+            timeline_with_epochs,
+            intervention_model=stated,
+        )
+
+        assert study_design.model.code == "C82639"
+        provenance = self._provenance(study_design)
+        assert len(provenance) == 1
+        assert provenance[0].valueString == (
+            StudyDesignAssembler.MODEL_NOT_DECODED + stated.strip()
+        )
+        assert stated.strip() in provenance[0].valueString
+
     def test_empty_cells_synthesises_arm_epoch_grid(
         self, study_design_assembler, population_assembler, timeline_with_epochs
     ):

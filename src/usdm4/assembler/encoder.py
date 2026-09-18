@@ -664,6 +664,17 @@ class Encoder:
             "Intervention model",
         )
 
+    def decodes_intervention_model(self, text: str) -> bool:
+        """True when ``text`` resolves to a C99076 term.
+
+        ``intervention_model()`` returns the default code for input it cannot
+        decode, so a caller holding its return value cannot tell a decoded
+        model from a defaulted one. This reads the same table and normalises
+        the same way as ``_lookup_code``, so the two answers cannot drift.
+        """
+        value = text.upper().strip() if text else ""
+        return any(value in keys for keys, _ in self.INTERVENTION_MODEL_MAP)
+
     def arm_type(self, text: str) -> Code:
         """Decode an arm type label to a CDISC Code (codelist C174222)."""
         return self._lookup_code(

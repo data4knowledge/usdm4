@@ -24,11 +24,18 @@ class TestStudyDesignInput:
 
     def test_new_field_defaults(self):
         sd = StudyDesignInput()
-        assert sd.intervention_model == ""
+        # None, not "": a caller that states nothing is now distinguishable
+        # from one that states a label the encoder cannot decode.
+        assert sd.intervention_model is None
         assert sd.arms == []
         assert sd.interventions == []
         assert sd.cells == []
         assert sd.elements == []
+
+    def test_intervention_model_accepts_a_stated_empty_string(self):
+        """An explicit "" is still accepted; it is just no longer the default."""
+        sd = StudyDesignInput.model_validate({"intervention_model": ""})
+        assert sd.intervention_model == ""
 
     def test_full_input_with_arms(self):
         data = {
@@ -366,3 +373,4 @@ class TestAdministrationProductReferences:
             interventions=[{"name": "Drug A", "administrations": [{"route": "Oral"}]}],
         )
         assert design.interventions[0].administrations[0].product_name == ""
+

@@ -19,6 +19,8 @@ from usdm4.api.administrable_product import AdministrableProduct
 from usdm4.api.ingredient import Ingredient
 from usdm4.api.substance import Substance
 from usdm4.api.strength import Strength
+from usdm4.api.extension import ExtensionAttribute
+from usdm4.api.extensions_d4k import IMP_EXT_URL
 
 
 class StudyDesignAssembler(BaseAssembler):
@@ -144,8 +146,15 @@ class StudyDesignAssembler(BaseAssembler):
             self._study_interventions = list(interventions_by_name.values())
 
             # Intervention model — human label → CDISC Code via encoder.
+            #
+            # ``model`` is required on InterventionalStudyDesign and validated
+            # against C99076, so a design whose model the caller never stated
+            # still has to carry a term from that codelist. Record on the
+            # design that the term was defaulted, so a consumer can tell it
+            # from one the caller asserted.
+            raw_intervention_model = data.get("intervention_model")
             intervention_model_code = self._encoder.intervention_model(
-                data.get("intervention_model", "")
+                raw_intervention_model or ""
             )
 
             # Create the InterventionalStudyDesign object.
@@ -181,6 +190,9 @@ class StudyDesignAssembler(BaseAssembler):
                     "studyPhase": self._encoder.phase(data["trial_phase"]),
                     "scheduleTimelines": timeline_assembler.timelines,
                     "eligibilityCriteria": population_assembler.criteria,
+                    "extensionAttributes": self._model_extensions(
+                        raw_intervention_model
+                    ),
                 },
             )
         except Exception as e:
@@ -188,6 +200,40 @@ class StudyDesignAssembler(BaseAssembler):
             self._errors.exception(
                 "Failed during creation of study design", e, location
             )
+
+    # Provenance for a defaulted ``model``. Emitted only when the assembler
+    # had to default it; a design whose model was decoded from the caller's
+    # input carries no attribute, which is what every design carried before.
+    MODEL_NOT_SUPPLIED = "defaulted: no intervention model supplied"
+    MODEL_NOT_DECODED = "defaulted: intervention model not decoded: "
+
+    def _model_extensions(self, text: str | None) -> list[ExtensionAttribute]:
+        """Why ``model`` holds the value it does, as a d4k extension attribute.
+
+        Returns an empty list for input the encoder decodes — the common case,
+        and the one that must not fire. A stated label that does not decode is
+        reported with the label, because "the caller said something we could
+        not read" is a different fact from "the caller said nothing".
+        """
+        try:
+            if text is None or not str(text).strip():
+                value = self.MODEL_NOT_SUPPLIED
+            elif self._encoder.decodes_intervention_model(text):
+                return []
+            else:
+                value = self.MODEL_NOT_DECODED + str(text).strip()
+            return [
+                self._builder.create(
+                    ExtensionAttribute, {"url": IMP_EXT_URL, "valueString": value}
+                )
+            ]
+        except Exception as e:
+            self._errors.exception(
+                "Failed during creation of intervention model provenance",
+                e,
+                KlassMethodLocation(self.MODULE, "_model_extensions"),
+            )
+            return []
 
     @property
     def study_design(self) -> InterventionalStudyDesign:

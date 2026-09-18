@@ -1247,7 +1247,8 @@ class TestEncoderInterventionModel:
         encoder._builder.cdisc_code.assert_called_with("C82640", "Single Group Study")
         assert result == mock_code
 
-    def test_intervention_model_empty_defaults_to_parallel(self, encoder):
+    def test_intervention_model_empty_still_defaults_to_parallel(self, encoder):
+        """The default is unchanged; what changes is that it is reportable."""
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
@@ -1256,8 +1257,10 @@ class TestEncoderInterventionModel:
         encoder._builder.cdisc_code.assert_called_with("C82639", "Parallel Study")
         encoder._errors.warning.assert_called()
         assert result == mock_code
+        # The returned Code cannot say it was defaulted; this can.
+        assert encoder.decodes_intervention_model("") is False
 
-    def test_intervention_model_unknown_defaults_to_parallel(self, encoder):
+    def test_intervention_model_unknown_still_defaults_to_parallel(self, encoder):
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
@@ -1266,6 +1269,66 @@ class TestEncoderInterventionModel:
         encoder._builder.cdisc_code.assert_called_with("C82639", "Parallel Study")
         encoder._errors.warning.assert_called()
         assert result == mock_code
+        assert encoder.decodes_intervention_model("NoSuchModel") is False
+
+
+class TestEncoderDecodesInterventionModel:
+    """``decodes_intervention_model`` — does this label reach C99076?
+
+    Weighted to the cases that must answer True, because a False answer makes
+    the assembler record a design as defaulted when the caller did state a
+    model, which is the damaging direction.
+    """
+
+    @pytest.fixture
+    def encoder(self):
+        builder = Mock(spec=Builder)
+        errors = Mock(spec=Errors)
+        return Encoder(builder, errors)
+
+    @pytest.mark.parametrize(
+        "text",
+        [
+            "Parallel",
+            "Crossover",
+            "Cross-over",
+            "Cross over",
+            "Sequential",
+            "Group Sequential",
+            "Factorial",
+            "Single Group",
+            "Single-Group",
+            "SingleGroup",
+        ],
+    )
+    def test_every_mapped_label_decodes(self, encoder, text):
+        assert encoder.decodes_intervention_model(text) is True
+
+    @pytest.mark.parametrize("text", ["PARALLEL", "parallel", "  Parallel  "])
+    def test_normalisation_matches_the_lookup(self, encoder, text):
+        """Same casing and stripping as ``_lookup_code``, or the two drift."""
+        assert encoder.decodes_intervention_model(text) is True
+
+    @pytest.mark.parametrize("text", ["", "   ", None, "NoSuchModel"])
+    def test_nothing_and_nonsense_do_not_decode(self, encoder, text):
+        assert encoder.decodes_intervention_model(text) is False
+
+    def test_a_near_miss_does_not_decode(self, encoder):
+        """The map is exact-match: a label that reads right still misses.
+
+        Recorded deliberately. ``intervention_model()`` returns Parallel for
+        this input, and the point of the predicate is that the caller can see
+        that it was not decoded.
+        """
+        assert encoder.decodes_intervention_model("Parallel Group") is False
+        assert encoder.decodes_intervention_model("SINGLE_GROUP") is False
+
+    def test_agrees_with_the_encoder_on_every_mapped_key(self, encoder):
+        """One table, two readers — assert they cannot disagree."""
+        encoder._builder.cdisc_code.return_value = Mock(spec=Code)
+        for keys, _ in Encoder.INTERVENTION_MODEL_MAP:
+            for key in keys:
+                assert encoder.decodes_intervention_model(key) is True
 
 
 class TestEncoderArmType:
