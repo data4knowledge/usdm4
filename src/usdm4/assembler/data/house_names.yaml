@@ -1,0 +1,105 @@
+# House-style short names.
+#
+# `name` in USDM is a shorthand identifier — short, unique, and meaningful
+# enough to follow a cross-reference by eye. The protocol's own wording is the
+# `label`. This file holds the curated head of the vocabulary; anything not
+# listed is generated deterministically by the assembler (initials of the
+# significant words, collisions extended from the word that diverges).
+#
+# ADD TO THIS FILE FREELY. An entry here beats the generated form, so curating
+# a name is how you fix an ugly one. Keys are matched case-insensitively with
+# punctuation, whitespace and trailing footnote markers stripped.
+
+activities:
+  informed consent: IC
+  informed consent/assent: IC
+  assent: ASSENT
+  inclusion/exclusion criteria: IE
+  inclusion and exclusion criteria: IE
+  eligibility criteria: IE
+  demographics: DEMOG
+  medical history: MH
+  medical history and demographics: MHD
+  prior and concomitant medications: PCM
+  concomitant medications: CM
+  concomitant medication review: CM
+  adverse events: AE
+  adverse event: AE
+  serious adverse events: SAE
+  adverse event review: AE
+  physical examination: PE
+  physical exam: PE
+  targeted physical examination: TPE
+  complete physical examination: CPE
+  vital signs: VS
+  orthostatic vital signs: OVS
+  height: HT
+  weight: WT
+  body weight: WT
+  body mass index: BMI
+  waist circumference: WC
+  temperature: TEMP
+  blood pressure: BP
+  pulse rate: PR
+  electrocardiogram: ECG
+  12-lead ecg: ECG12
+  ecg: ECG
+  triplicate ecg: ECG3
+  echocardiogram: ECHO
+  haematology: HEM
+  hematology: HEM
+  clinical chemistry: CHEM
+  serum chemistry: CHEM
+  urinalysis: UA
+  coagulation: COAG
+  lipid panel: LIPID
+  hba1c: HBA1C
+  fsh: FSH
+  thyroid function tests: TFT
+  pregnancy test: PREG
+  serum pregnancy test: SPREG
+  urine pregnancy test: UPREG
+  serum pregnancy: SPREG
+  urine drug screen: UDS
+  alcohol test: ALC
+  randomisation: RAND
+  randomization: RAND
+  study drug administration: DOSE
+  study drug dispensing: DISP
+  drug accountability: DACC
+  pharmacokinetic sampling: PK
+  pk sampling: PK
+  pharmacodynamic sampling: PD
+  immunogenicity sampling: IG
+  biomarker sampling: BIOM
+  ecog performance status: ECOG
+  karnofsky performance status: KPS
+  tumour assessment: TA
+  tumor assessment: TA
+  ct/mri: CTMRI
+  survival follow-up: SFU
+  telephone contact: TEL
+  outpatient visit: OPV
+  admit to unit: ADMIT
+  discharge from unit: DISCH
+  discharge from cru: DISCH
+
+# Keyed by CDISC C99079 (SDTM Epoch) submission value. `match` lists the
+# wordings a protocol prints for that epoch; the assembler normalises an
+# epoch label and looks for a match before falling back to generation.
+epochs:
+  PRE-SCREENING:          {name: PRESCR,   match: [pre-screening, prescreening, pre screen]}
+  SCREENING:              {name: SCR,      match: [screening, screen, screening period, screening visit]}
+  RUN-IN:                 {name: RUNIN,    match: [run-in, runin, run in, lead-in, lead in]}
+  BASELINE:               {name: BASE,     match: [baseline, base, day 0, randomisation, randomization]}
+  TREATMENT:              {name: TREAT,    match: [treatment, treatment period, on-treatment, on treatment, therapy]}
+  BLINDED TREATMENT:      {name: BLTREAT,  match: [blinded treatment, double-blind treatment, double blind]}
+  OPEN LABEL TREATMENT:   {name: OLTREAT,  match: [open label treatment, open-label treatment, open label, ole]}
+  INDUCTION TREATMENT:    {name: INDTREAT, match: [induction, induction treatment, induction therapy]}
+  CONTINUATION TREATMENT: {name: CONTREAT, match: [continuation, continuation treatment, maintenance, consolidation]}
+  INTERVENTION:           {name: INTV,     match: [intervention, investigational intervention]}
+  PRODUCT EXPOSURE:       {name: PEXP,     match: [product exposure, exposure]}
+  OBSERVATION:            {name: OBS,      match: [observation, observational]}
+  WASHOUT:                {name: WASH,     match: [washout, wash-out, wash out]}
+  FOLLOW-UP:              {name: FU,       match: [follow-up, follow up, followup, post-treatment, safety follow-up, end of treatment, end of study]}
+  LONG-TERM FOLLOW-UP:    {name: LTFU,     match: [long-term follow-up, long term follow-up, ltfu, extension, continued access]}

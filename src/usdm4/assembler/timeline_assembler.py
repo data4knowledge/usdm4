@@ -1,4 +1,5 @@
 import re
+from pathlib import Path
 
 from simple_error_log.errors import Errors
 from simple_error_log.error_location import KlassMethodLocation
@@ -49,6 +50,8 @@ class TimelineAssembler(BaseAssembler):
         # so the timing sheet's from/to references are human-readable. The
         # registry keeps them unique across every timeline in the study.
         self._sai_name_registry: dict[str, int] = {}
+        self._activity_name_registry: dict[str, str] = {}
+        self._multi_timeline: bool = False
         self._condition_links: dict = {}
         self._conditions: list[Condition] = []
         self._biomedical_concepts: list[BiomedicalConcept] = []
@@ -80,6 +83,11 @@ class TimelineAssembler(BaseAssembler):
             tables = self._normalise(data)
             keep = self._assemblable(tables)
             main_ordinal = self._main_ordinal(tables, keep)
+            # House style: names are bare within a single-timeline study and
+            # carry a `T{t}-` prefix only where more than one timeline is
+            # built, so the common case stays short and a multi-timeline study
+            # still has unique, traceable identifiers.
+            self._multi_timeline = len(keep) > 1
             for index in keep:
                 self._execute_one(
                     tables[index], index + 1, is_main=(index == main_ordinal)
@@ -222,8 +230,9 @@ class TimelineAssembler(BaseAssembler):
                     epoch: StudyEpoch = self._builder.create(
                         StudyEpoch,
                         {
-                            "name": f"T{t}-EPOCH-{index + 1}",
-                            "description": f"EPOCH-{name}",
+                            "name": self._qualify(
+                                self._epoch_name(label, index + 1), t),
+                            "description": None,
                             "label": label,
                             "type": self._builder.klass_and_attribute_value(
                                 StudyEpoch, "type", "Treatment Epoch"
@@ -257,8 +266,8 @@ class TimelineAssembler(BaseAssembler):
                 encounter: Encounter = self._builder.create(
                     Encounter,
                     {
-                        "name": f"T{t}-ENCOUNTER-{index + 1}",
-                        "description": f"Encounter {name}",
+                        "name": self._qualify(f"E{index + 1}", t),
+                        "description": None,
                         "label": name,
                         "type": self._builder.klass_and_attribute_value(
                             Encounter, "type", "visit"
@@ -366,6 +375,132 @@ class TimelineAssembler(BaseAssembler):
             )
             return created
 
+    def _qualify(self, name: str, t: int) -> str:
+        """House style: `E1` in a single-timeline study, `T2-E1` where several
+        timelines are built. Prefixing unconditionally makes every identifier
+        in the common case four characters longer for no gain."""
+        return f"T{t}-{name}" if getattr(self, "_multi_timeline", False) else name
+
+    _HOUSE_NAMES_PATH = Path(__file__).parent / "data" / "house_names.yaml"
+    _house_names: dict | None = None
+
+    @classmethod
+    def _house(cls) -> dict:
+        """The curated short-name vocabulary, loaded once.
+
+        `data/house_names.yaml` is meant to be added to: an entry there beats
+        the generated form, so curating a name is how an ugly one gets fixed.
+        A missing or unreadable file degrades to generation for everything
+        rather than failing the assembly."""
+        if cls._house_names is None:
+            try:
+                import yaml
+                cls._house_names = yaml.safe_load(
+                    cls._HOUSE_NAMES_PATH.read_text()) or {}
+            except Exception:
+                cls._house_names = {}
+        return cls._house_names
+
+    @staticmethod
+    def _name_key(text: str) -> str:
+        """Lookup key: case, punctuation, whitespace and a trailing footnote
+        marker all removed. `Pregnancy Test`, `pregnancy test` and
+        `Pregnancy testb` resolve to the same entry."""
+        t = (text or "").strip().lower()
+        t = re.sub(r"[\s,;]*\(?[a-z]?\d{1,2}\)?$", "", t)
+        t = re.sub(r"[^a-z0-9/ -]+", " ", t)
+        return re.sub(r"\s+", " ", t).strip()
+
+    def _epoch_name(self, label: str, index: int) -> str:
+        """House-style epoch name.
+
+        Matched against the CDISC C99079 (SDTM Epoch) terms in
+        `data/house_names.yaml` — SCREENING -> `SCR`, FOLLOW-UP -> `FU` — so
+        the same phase carries the same name across protocols however the
+        document words it. Unmatched epochs generate from the label."""
+        key = self._name_key(label)
+        if key:
+            pairs = [(c, term["name"])
+                     for term in (self._house().get("epochs") or {}).values()
+                     for c in (term.get("match") or [])]
+            # Longest candidate first: `long-term follow-up` must not be taken
+            # by `follow-up`, which it ends with.
+            for candidate, name in sorted(pairs, key=lambda x: -len(x[0])):
+                if key == candidate or key.startswith(candidate + " ") \
+                        or key.endswith(" " + candidate):
+                    return name
+            # No CT term fits — generate the same way an activity does, rather
+            # than truncating a slug mid-word (`BONEMARROWSU`).
+            return self._initials(label) or f"EP{index}"
+        return f"EP{index}"
+
+    _ACT_STOPWORDS = {
+        "of", "the", "and", "or", "a", "an", "for", "to", "in", "at", "by",
+        "with", "per", "on", "from", "if",
+    }
+
+    def _significant_words(self, text: str) -> list[str]:
+        return [w for w in re.split(r"[^A-Za-z0-9]+", text or "")
+                if w and w.lower() not in self._ACT_STOPWORDS]
+
+    def _initials(self, text: str) -> str:
+        """Initials of the significant words, uppercased and capped. A single
+        word gives its first four characters."""
+        words = self._significant_words(text)
+        if not words:
+            return ""
+        return (words[0][:4] if len(words) == 1
+                else "".join(w[0] for w in words)[:6]).upper()
+
+    def _activity_name(self, text: str, seq: int) -> str:
+        """House style short name for an activity: `VS`, `IC`, `ECG`.
+
+        `name` is a shorthand identifier — short, unique, and meaningful enough
+        to follow a cross-reference by eye. The protocol's own wording is the
+        `label`; it does not belong in the name, where it produced 46-character
+        identifiers full of spaces.
+
+        Derivation is initials of the significant words (one word gives its
+        first four characters). A collision extends the abbreviation from the
+        word that diverges rather than appending a number, so the name keeps
+        meaning: `physical examination` -> `PE`, `participant education` ->
+        `PEDU`, `participant eligibility` -> `PELI`.
+        """
+        raw = (text or "").strip()
+        if not raw:
+            return f"ACT{seq}"
+        table = self._house().get("activities") or {}
+        key = self._name_key(raw)
+        curated = table.get(key)
+        if curated is None and len(key) > 4 and key[-1].isalpha():
+            # `Pregnancy testb` — a footnote LETTER, the form register N13 does
+            # not cover. Only consulted to find a curated entry; the text
+            # itself is never rewritten, so `CD4` cannot be truncated to `CD`.
+            curated = table.get(key[:-1].strip())
+        if curated:
+            self._activity_name_registry.setdefault(curated, raw)
+            return curated
+        words = self._significant_words(raw)
+        if not words:
+            return f"ACT{seq}"
+        base = self._initials(raw)
+        taken = self._activity_name_registry
+        if base not in taken:
+            taken[base] = raw
+            return base
+        if taken[base] == raw:
+            return base
+        for extra in range(1, 4):                      # PE -> PEDU -> PEDUC
+            longer = "".join(w[: 1 + extra] for w in words)[:8].upper()
+            if longer not in taken:
+                taken[longer] = raw
+                return longer
+        n = 2
+        while f"{base}{n}" in taken:
+            n += 1
+        taken[f"{base}{n}"] = raw
+        return f"{base}{n}"
+
     def _get_or_create_activity(self, item: dict, created: list[Activity]) -> Activity:
         """Return the shared Activity for ``item['name']``, creating it on first
         sighting. The activity's name IS its (trimmed) label text — the SoA
@@ -380,9 +515,9 @@ class TimelineAssembler(BaseAssembler):
         bc_ids, sbc_ids, procedures = self._get_biomedical_concepts(item)
         seq = len(self._activity_by_name) + 1
         params = {
-            "name": (item["name"] or "").strip() or f"ACTIVITY-{seq}",
-            "description": f"Activity {item['name']}",
-            "label": item["name"],
+            "name": self._activity_name(item["name"], seq),
+            "description": None,
+            "label": (item["name"] or "").strip() or None,
             "definedProcedures": procedures,
             "biomedicalConceptIds": bc_ids,
             "bcCategoryIds": [],
@@ -404,7 +539,7 @@ class TimelineAssembler(BaseAssembler):
                     ScheduledActivityInstance,
                     {
                         "name": self._sai_name(data, index, t),
-                        "description": f"Scheduled activity instance {index + 1}",
+                        "description": None,
                         "label": item["text"],
                         "timelineExitId": None,
                         "encounterId": item["encounter_instance"].id
@@ -500,9 +635,12 @@ class TimelineAssembler(BaseAssembler):
                 condition = self._builder.create(
                     Condition,
                     {
-                        "name": f"T{t}-Condition-{index + 1}",
-                        "label": f"Condition {index + 1}",
-                        "description": f"Extracted footnote / condition {index + 1}",
+                        "name": self._qualify(f"COND{index + 1}", t),
+                        # The printed marker (`a`, `b`, `11`) is what a
+                        # reviewer matches against the footnote legend by eye,
+                        # and what makes a glued activity suffix provable.
+                        "label": str(ref).strip() or None,
+                        "description": None,
                         "text": item["text"],
                         "dictionaryId": None,
                         "contextIds": timepoint_ids if timepoint_ids else activity_ids,
@@ -611,8 +749,8 @@ class TimelineAssembler(BaseAssembler):
                         timepoint["unit"],
                     ),
                     "valueLabel": self._timing_value_label(timepoints, index),
-                    "name": f"T{t}-TIMING-{index}",
-                    "description": f"Timing {index + 1}",
+                    "name": self._qualify(f"TIM{index + 1}", t),
+                    "description": None,
                     "label": self._timing_value_label(timepoints, index),
                     "relativeToFrom": self._builder.klass_and_attribute_value(
                         Timing, "relativeToFrom", "start to start"
@@ -786,18 +924,27 @@ class TimelineAssembler(BaseAssembler):
                 return True
         return False
 
-    def _window_label(self, windows: list[dict], index: int) -> str:
+    def _window_label(self, windows: list[dict], index: int):
+        """The window as `-1..+2 days`, or None where there is no window.
+
+        House style: a label carries the protocol's words or it is absent.
+        `???` read as data while saying nothing."""
         if index >= len(windows):
-            return "???"
+            return None
         window = windows[index]
         if window["before"] == 0 and window["after"] == 0:
             return ""
         return f"-{window['before']}..+{window['after']} {window['unit']}"
 
-    def _timing_value_label(self, timepoints: list[dict], index: int) -> str:
+    def _timing_value_label(self, timepoints: list[dict], index: int):
+        """The timepoint's own text, or None where the protocol states none.
+
+        House style: a label carries the protocol's words or it is absent.
+        `???` was a manufactured placeholder — it reads as data, sorts, and
+        compares, while saying nothing."""
         if index >= len(timepoints):
-            return "???"
-        return f"{timepoints[index]['text']}" if timepoints[index]["text"] else "???"
+            return None
+        return timepoints[index]["text"] or None
 
     def _find_anchor(self, data) -> int:
         """Positional index of the anchor timepoint: the first real (non-blank)

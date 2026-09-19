@@ -987,7 +987,7 @@ class TestTimelineAssemblerTiming:
 
         label = timeline_assembler._window_label(windows, 0)
 
-        assert label == "???"
+        assert label is None
 
     def test_timing_value_label(self, timeline_assembler):
         """Test timing value label."""
@@ -1000,7 +1000,7 @@ class TestTimelineAssemblerTiming:
         label2 = timeline_assembler._timing_value_label(timepoints, 1)
 
         assert label1 == "Day 1"
-        assert label2 == "???"
+        assert label2 is None
 
     def test_timing_value_label_out_of_range(self, timeline_assembler):
         """Test timing value label with out of range index."""
@@ -1008,7 +1008,7 @@ class TestTimelineAssemblerTiming:
 
         label = timeline_assembler._timing_value_label(timepoints, 0)
 
-        assert label == "???"
+        assert label is None
 
 
 class TestTimelineAssemblerConditionLinks:
@@ -1426,8 +1426,8 @@ class TestTimelineAssemblerWindowsBoundsCheck:
         windows = [{"before": 1, "after": 2, "unit": "days"}]
 
         assert timeline_assembler._window_label(windows, 0) == "-1..+2 days"
-        assert timeline_assembler._window_label(windows, 1) == "???"
-        assert timeline_assembler._window_label(windows, 99) == "???"
+        assert timeline_assembler._window_label(windows, 1) is None
+        assert timeline_assembler._window_label(windows, 99) is None
 
     def test_empty_window_constant(self, timeline_assembler):
         """_EMPTY_WINDOW should have zero before/after and empty unit."""

@@ -31,6 +31,9 @@ setuptools.setup(
     package_dir={"": "src"},
     package_data={
         "usdm4": [
+            # House-style short names for activities and epochs — curated
+            # head of the vocabulary, read by TimelineAssembler.
+            "assembler/data/house_names.yaml",
             "ct/cdisc/library_cache/library_cache_all.yaml",
             "ct/cdisc/library_cache/library_cache_usdm.yaml",
             "ct/cdisc/config/ct_config.yaml",

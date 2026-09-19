@@ -109,7 +109,7 @@ class TestBackwardCompat:
     def test_legacy_shape_still_validates(self, legacy_minimal_dict):
         result = AssemblerInput.model_validate(legacy_minimal_dict)
         # New StudyDesignInput fields fall back to their defaults.
-        assert result.study_design.intervention_model == ""
+        assert result.study_design.intervention_model is None
         assert result.study_design.arms == []
         assert result.study_design.interventions == []
         assert result.study_design.cells == []
