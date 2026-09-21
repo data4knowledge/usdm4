@@ -51,6 +51,11 @@ class TimelineAssembler(BaseAssembler):
         # registry keeps them unique across every timeline in the study.
         self._sai_name_registry: dict[str, int] = {}
         self._activity_name_registry: dict[str, str] = {}
+        # Epoch names come from the CT epoch terms, which are deliberately
+        # many-to-one: two screening periods, or three treatment cycles, all
+        # ask for the same house name. Registered under the QUALIFIED name, so
+        # `T1-SCR` and `T2-SCR` remain distinct in a multi-timeline study.
+        self._epoch_name_registry: dict[str, str] = {}
         self._multi_timeline: bool = False
         self._condition_links: dict = {}
         self._conditions: list[Condition] = []
@@ -225,13 +230,20 @@ class TimelineAssembler(BaseAssembler):
             timepoints = data["timepoints"]["items"]
             for index, item in enumerate(items):
                 label = item["text"]
-                name = f"EPOCH-{label.upper()}"
+                # Keyed on the identity, not the raw text: `Screening` and
+                # `Screening ` are one epoch stated twice, and a repeated SoA
+                # header cell routinely differs by no more than a stray space.
+                # Upper-casing alone left the two apart, so the protocol gained
+                # an epoch it never had.
+                name = f"EPOCH-{self._identity(label)}"
                 if name not in map:
                     epoch: StudyEpoch = self._builder.create(
                         StudyEpoch,
                         {
-                            "name": self._qualify(
-                                self._epoch_name(label, index + 1), t),
+                            "name": self._claim_epoch_name(
+                                self._qualify(self._epoch_name(label, index + 1), t),
+                                label,
+                            ),
                             "description": None,
                             "label": label,
                             "type": self._builder.klass_and_attribute_value(
@@ -417,7 +429,12 @@ class TimelineAssembler(BaseAssembler):
         Matched against the CDISC C99079 (SDTM Epoch) terms in
         `data/house_names.yaml` — SCREENING -> `SCR`, FOLLOW-UP -> `FU` — so
         the same phase carries the same name across protocols however the
-        document words it. Unmatched epochs generate from the label."""
+        document words it. Unmatched epochs generate from the label.
+
+        The result is the house name for this label alone and may already be
+        held by another epoch in the same study — the matching is many-to-one
+        by design. `_claim_epoch_name` is what makes it unique; call it on the
+        qualified form, never use this on its own."""
         key = self._name_key(label)
         if key:
             pairs = [(c, term["name"])
@@ -433,6 +450,52 @@ class TimelineAssembler(BaseAssembler):
             # than truncating a slug mid-word (`BONEMARROWSU`).
             return self._initials(label) or f"EP{index}"
         return f"EP{index}"
+
+    @staticmethod
+    def _identity(text: str) -> str:
+        """What counts as the SAME thing when deciding a name is taken.
+
+        Surrounding whitespace and case, nothing else. Deliberately NOT
+        ``_name_key``, which strips a trailing number: that is right for a
+        house-name lookup and wrong for identity, because it makes `Cycle 1`
+        and `Cycle 2` — two real epochs — indistinguishable.
+        """
+        return (text or "").strip().casefold()
+
+    def _claim_epoch_name(self, name: str, label: str) -> str:
+        """Claim ``name`` for ``label``, or the next free ordinal of it.
+
+        A name is a cross-reference key and has to be unique within the study,
+        however it was arrived at. Two epochs labelled `Period I - Screening`
+        and `Period II - Screening` both resolve to `SCR`; without this the
+        second raises a duplicate cross-reference in the builder and the
+        failure propagates until the study itself comes back None, so one
+        repeated name costs the whole document.
+
+        **Only a DIFFERENT epoch takes an ordinal.** Asking again for a name
+        already held by the same label hands back that same name, and the
+        builder refuses it exactly as it does today. Two epochs and one epoch
+        claimed twice are different situations: the first is real and needs two
+        names, the second is a fault upstream and should stay loud rather than
+        be quietly resolved into a second epoch that the protocol never had.
+
+        The ordinal goes on the LOSER, never the holder: renaming the first
+        `SCR` to `SCR1` would change the name of every epoch in every
+        single-phase study for the sake of the few that repeat one. Extending
+        the abbreviation from the label, the way an activity does, is wrong
+        here for the same reason — the CT term is the point of the name, and
+        `PIS`/`PIIS` would throw it away.
+        """
+        taken = self._epoch_name_registry
+        identity = self._identity(label)
+        if taken.get(name, identity) == identity:
+            taken[name] = identity
+            return name
+        ordinal = 2
+        while f"{name}{ordinal}" in taken:
+            ordinal += 1
+        taken[f"{name}{ordinal}"] = identity
+        return f"{name}{ordinal}"
 
     _ACT_STOPWORDS = {
         "of", "the", "and", "or", "a", "an", "for", "to", "in", "at", "by",
@@ -465,6 +528,12 @@ class TimelineAssembler(BaseAssembler):
         word that diverges rather than appending a number, so the name keeps
         meaning: `physical examination` -> `PE`, `participant education` ->
         `PEDU`, `participant eligibility` -> `PELI`.
+
+        A curated name can collide too, and by design: `house_names.yaml` maps
+        synonyms onto one name, so `adverse events` and `adverse event review`
+        both ask for `AE`. The first label to ask keeps it; a later one with
+        different text is named as though it were not curated at all, which is
+        what the extension rule above is for.
         """
         raw = (text or "").strip()
         if not raw:
@@ -477,28 +546,34 @@ class TimelineAssembler(BaseAssembler):
             # not cover. Only consulted to find a curated entry; the text
             # itself is never rewritten, so `CD4` cannot be truncated to `CD`.
             curated = table.get(key[:-1].strip())
-        if curated:
-            self._activity_name_registry.setdefault(curated, raw)
+        # The registry records WHICH activity holds a name, as an identity (see
+        # `_identity`), so the same activity asking twice gets its own name
+        # back while a different one has to be given another.
+        taken = self._activity_name_registry
+        me = self._identity(raw)
+        if curated and taken.get(curated, me) == me:
+            taken[curated] = me
             return curated
+        # A curated name already held by different text falls through: both are
+        # real activities and only one can carry it.
         words = self._significant_words(raw)
         if not words:
             return f"ACT{seq}"
         base = self._initials(raw)
-        taken = self._activity_name_registry
         if base not in taken:
-            taken[base] = raw
+            taken[base] = me
             return base
-        if taken[base] == raw:
+        if taken[base] == me:
             return base
         for extra in range(1, 4):                      # PE -> PEDU -> PEDUC
             longer = "".join(w[: 1 + extra] for w in words)[:8].upper()
             if longer not in taken:
-                taken[longer] = raw
+                taken[longer] = me
                 return longer
         n = 2
         while f"{base}{n}" in taken:
             n += 1
-        taken[f"{base}{n}"] = raw
+        taken[f"{base}{n}"] = me
         return f"{base}{n}"
 
     def _get_or_create_activity(self, item: dict, created: list[Activity]) -> Activity:
@@ -508,7 +583,7 @@ class TimelineAssembler(BaseAssembler):
         must be human-readable. Uniqueness holds because the registry is keyed
         by the normalised label (same label → same shared Activity); a
         label-less activity falls back to the ``ACTIVITY-{n}`` sequence."""
-        key = (item["name"] or "").strip().lower()
+        key = self._identity(item["name"])
         existing = self._activity_by_name.get(key)
         if existing is not None:
             return existing
