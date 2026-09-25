@@ -167,9 +167,12 @@ spans (D4), windows from the pattern with the printed text as `windowLabel`,
 text-only timing (D3), mixed units. Every instance gets a `Timing` — today a blank
 timepoint text loses all of a timeline's timings (design § 2). Cycle columns measured
 from their cycle's `Day 1` (single cycles only). Decisions D2, D3, D4 taken before the
-branch. **D2 taken 2026-09-25** — today's anchor rule stands; the only code is a warning
-when no column is ≥ 0 and a warning on a restart outside a cycle (D14), both carried by
-the first R4 build issue rather than a branch of their own.
+branch. **D2, D3, D4 taken 2026-09-25** (design § 9): D2 today's anchor rule plus a
+warning when no column is ≥ 0 and on a restart outside a cycle (D14); D3 a text-only or
+redacted timing is a zero timing plus a warning; D4 a span is decoded here to the timing at
+its start and a window forward to its end. Split: the first R4 issue is timing without
+cycles (every instance timed, D2 warnings, D3, spans, printed `windowLabel`); single
+cycles are the second.
 
 ## R5 — cycle ranges and the expander
 

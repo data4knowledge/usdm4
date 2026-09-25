@@ -229,7 +229,10 @@ Rules the grammar carries:
 - **An open-ended range is `Cycle n+`.** `Cycle 2-n`, `Cycle 2+`, `Cycles 2 and
   beyond` all become `Cycle 2+`; the printed words stay in `text`.
 - **A timing span** is a column whose scheduled time is a range (`-28 to -1`,
-  `≤28`). Whether a span is the column's timing or its window is decision D4.
+  `≤28`). The interface takes it in either form (D4): as a span, which `usdm4`
+  decodes to the timing at its start and a window forward to its end — what a
+  caller reading a document sends; or already decoded, as a point plus a window,
+  from a tool that holds decoded timings.
 
 - **A redacted value is `CCI`** in any field, ignoring case. It is never parsed: no
   timing, no window, no guessed number. A later rule may supply a default.
@@ -325,8 +328,11 @@ comes only from a regex on that text.
    follows hop by hop.
 4. **Windows** from the pattern: `windowLower`, `windowUpper` as ISO 8601 durations,
    `windowLabel` the printed text.
-5. **`pattern: null`** → a `Timing` carrying the printed text as its label and no
-   duration value (decision D3 fixes the exact form). Never a guessed number.
+5. **`pattern: null` or redacted** → decision D3, taken 2026-09-25: a zero timing
+   (`PT0M`, `After` the previous column — `Before` the next when it precedes the
+   anchor), `valueLabel` the printed text or `""`, and a warning naming the column.
+   Nothing more: no extension, no flag. Never a guessed number. In a timeline with
+   no readable timing the first column is the Fixed Reference.
 6. **Mixed units** are converted where exact (hours to minutes, weeks to days) and
    reported otherwise.
 
@@ -411,8 +417,8 @@ Taken one at a time, each recorded here with its date when taken.
 |---|---|---|
 | D1 | Names of the new schema classes and fields | **Taken 2026-09-25:** `ScheduleTimelineInput`, `ColumnInput`, `HeaderValue`, `HeaderNote`, `ActivityInput`, `CellInput`, `FootnoteInput`, `TimelineClassification`; fields as in § 3 |
 | D2 | The anchor rule | **Taken 2026-09-25:** today's rule — first column with a timing point ≥ 0, else the first column with a warning; no code beyond the warning (§ 6 R4.1). Checked against 72 drafted tables: `Week 0` and cycle tables anchor correctly under it; a narrower "`Day 1` or `Day 0`" rule was rejected (misses `Week 0`, needs cycle parsing, no better fallback) |
-| D3 | Form of a text-only timing (no parseable pattern) | `Timing` with label, `value` a zero duration flagged by an extension |
-| D4 | A timing span (`Day -28 to Day -1`): the column's timing, its window, or both | timing = span end, window = span |
+| D3 | Form of a text-only timing (no parseable pattern) | **Taken 2026-09-25:** a zero timing (`PT0M`) from the previous column, printed text as `valueLabel`, and a warning — nothing more. **Rejected:** an extension flag (Dave: no flags); measuring from the anchor (puts ED at Day 1 in the expander); no `Timing` (DDF00060 needs a duration, and the expander crashes on a missing one) |
+| D4 | A timing span (`Day -28 to Day -1`): the column's timing, its window, or both | **Taken 2026-09-25:** the interface takes both forms. A tool that already holds decoded timings sends a point and a window. A caller reading a document — `usdm4_protocol`, and the corpus ground truth — sends the span as printed, and `usdm4` decodes it to the timing at its start and a window forward to its end. Decoding lives here so that nobody has to check it by hand per protocol |
 | D5 | A copied column: one `Encounter` shared by both timelines, or one each | one shared |
 | D6 | A column with no epoch | inherit the previous column's; none on the first column is an error |
 | D7 | The exit condition text on a cycle loop | printed range text unless the caller supplies one |
