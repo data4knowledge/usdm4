@@ -1,4 +1,4 @@
-"""Plan — issue 63, part 63.6; issue 65.
+"""Plan — issue 63, part 63.6; issue 65; issue 66 (single cycles).
 
 The straight chain and its one anchor: anchor choice, the crossing-zero rule,
 mixed units (kept from before the restructure); and from issue 65 the U4-2
@@ -144,7 +144,12 @@ class TestAnchorWarnings:
         columns = [
             column("c1", timing="Day 1", cycle=value("Cycle 1")),
             column("c2", timing="Day 8", cycle=value("Cycle 1")),
-            column("c3", timing="Day 1", cycle=value("Cycle 2")),
+            column(
+                "c3",
+                timing="Day 1",
+                cycle=value("Cycle 2"),
+                cycle_length=value("21 days"),
+            ),
         ]
         Planner(errors).plan(parse_timeline(timeline(columns)))
         assert _messages(errors) == []
@@ -242,3 +247,208 @@ class TestTimeRange:
         plan = Planner(Errors()).plan(parse_timeline(timeline(columns)))
         assert plan.nodes[0].window_from == "window"
         assert self._window(plan.nodes[0]) == (1, 1, "day")
+
+
+def _cycle_column(id, timing, cycle=None, length=None):
+    extra = {}
+    if cycle is not None:
+        extra["cycle"] = value(cycle)
+    if length is not None:
+        extra["cycle_length"] = value(length)
+    return column(id, timing=timing, **extra)
+
+
+def _cycle_plan(specs, errors=None):
+    """``specs``: (timing, cycle, length) per column."""
+    columns = [_cycle_column(f"c{i + 1}", *spec) for i, spec in enumerate(specs)]
+    return Planner(errors or Errors()).plan(parse_timeline(timeline(columns)), 1)
+
+
+class TestSingleCycles:
+    """Issue 66 — design § 6 R4.3, U4-22–U4-26."""
+
+    def test_three_cycles_chain_from_each_day_one(self):
+        errors = Errors()
+        plan = _cycle_plan(
+            [
+                ("Day -28 to Day -1", None, None),
+                ("Day 1", "Cycle 1", "21 days"),
+                ("Day 8", "Cycle 1", "21 days"),
+                ("Day 15", "Cycle 1", "21 days"),
+                ("Day 1", "Cycle 2", "21 days"),
+                ("Day 8", "Cycle 2", "21 days"),
+                ("Day 15", "Cycle 2", "21 days"),
+                ("Day 1", "Cycle 3", "21 days"),
+                ("Day 8", "Cycle 3", "21 days"),
+                ("Day 90", None, None),
+            ],
+            errors,
+        )
+        assert plan.anchor == 1
+        assert _links(plan) == [
+            (BEFORE, 1, 28),
+            (FIXED, 1, 0),
+            (AFTER, 1, 7),
+            (AFTER, 1, 14),
+            (AFTER, 1, 21),  # C2D1 from the anchor
+            (AFTER, 4, 7),  # C2D8 from C2D1
+            (AFTER, 4, 14),
+            (AFTER, 1, 42),  # C3D1 from the anchor
+            (AFTER, 7, 7),
+            (AFTER, 1, 89),
+        ]
+        assert _messages(errors) == []
+
+    def test_cycle_one_needs_no_length(self):
+        errors = Errors()
+        plan = _cycle_plan(
+            [("Day 1", "Cycle 1", None), ("Day 8", "Cycle 1", None)], errors
+        )
+        assert _links(plan) == [(FIXED, 0, 0), (AFTER, 0, 7)]
+        assert _messages(errors) == []
+
+    def test_a_cycle_with_no_day_one_is_measured_from_the_anchor(self):
+        """U4-22: (n − 1) × length + (day − 1)."""
+        plan = _cycle_plan(
+            [
+                ("Day 1", "Cycle 1", "21 days"),
+                ("Day 8", "Cycle 3", "21 days"),
+                ("Day 15", "Cycle 3", "21 days"),
+            ]
+        )
+        assert _links(plan) == [(FIXED, 0, 0), (AFTER, 0, 49), (AFTER, 0, 56)]
+
+    def test_a_length_in_weeks_is_converted(self):
+        plan = _cycle_plan(
+            [("Day 1", "Cycle 1", "3 weeks"), ("Day 1", "Cycle 2", "3 weeks")]
+        )
+        assert _links(plan)[1] == (AFTER, 0, 21)
+
+    def test_a_length_that_does_not_convert_is_a_zero_timing(self):
+        errors = Errors()
+        plan = _cycle_plan(
+            [("Day 1", "Cycle 1", "1 month"), ("Day 1", "Cycle 2", "1 month")], errors
+        )
+        assert _links(plan)[1] == (AFTER, 0, 0)
+        assert not plan.nodes[1].timed
+        assert any(
+            "cycle length 1 months does not convert exactly to days" in m
+            for m in _messages(errors)
+        )
+
+    def test_a_missing_length_is_a_zero_timing(self):
+        """U4-23."""
+        errors = Errors()
+        plan = _cycle_plan(
+            [("Day 1", "Cycle 1", "21 days"), ("Day 1", "Cycle 2", None)], errors
+        )
+        assert _links(plan)[1] == (AFTER, 0, 0)
+        assert not plan.nodes[1].timed
+        assert plan.nodes[1].column.cycle_day.value == 1
+        assert (
+            "Timeline 1, column 'c2': cycle 2 has no readable length; a zero timing "
+            "is used"
+        ) in _messages(errors)
+
+    def test_a_length_on_one_column_serves_the_cycle(self):
+        plan = _cycle_plan(
+            [
+                ("Day 1", "Cycle 1", None),
+                ("Day 1", "Cycle 2", None),
+                ("Day 8", "Cycle 2", "21 days"),
+            ]
+        )
+        assert _links(plan) == [(FIXED, 0, 0), (AFTER, 0, 21), (AFTER, 1, 7)]
+
+    def test_a_second_length_in_a_cycle_is_warned(self):
+        errors = Errors()
+        _cycle_plan(
+            [
+                ("Day 1", "Cycle 1", None),
+                ("Day 1", "Cycle 2", "21 days"),
+                ("Day 8", "Cycle 2", "28 days"),
+            ],
+            errors,
+        )
+        assert any(
+            "cycle 2 prints a second length (28 days); the first is used" in m
+            for m in _messages(errors)
+        )
+
+    def test_a_negative_day_is_one_before_day_one(self):
+        """U4-24."""
+        plan = _cycle_plan(
+            [
+                ("Day 1", "Cycle 1", "21 days"),
+                ("Day -1", "Cycle 2", "21 days"),
+                ("Day 1", "Cycle 2", "21 days"),
+            ]
+        )
+        assert _links(plan) == [(FIXED, 0, 0), (BEFORE, 2, 1), (AFTER, 0, 21)]
+
+    def test_a_negative_day_with_no_day_one_is_placed_from_the_anchor(self):
+        plan = _cycle_plan(
+            [("Day 1", "Cycle 1", "21 days"), ("Day -1", "Cycle 2", "21 days")]
+        )
+        assert _links(plan)[1] == (AFTER, 0, 20)
+
+    def test_a_range_column_is_a_zero_timing(self):
+        """U4-25."""
+        errors = Errors()
+        plan = _cycle_plan(
+            [("Day 1", "Cycle 1", "21 days"), ("Day 1", "Cycle 2+", "21 days")], errors
+        )
+        assert _links(plan)[1] == (AFTER, 0, 0)
+        assert not plan.nodes[1].timed
+        assert (
+            "Timeline 1, column 'c2': cycle ranges are timed with R5; a zero timing "
+            "is used"
+        ) in _messages(errors)
+
+    def test_the_day_is_read_from_timing_only(self):
+        """U4-26: a day printed in the visit row is not read."""
+        columns = [
+            column("c1", visit="D1", cycle=value("Cycle 1")),
+            column("c2", visit="D8", cycle=value("Cycle 1")),
+        ]
+        plan = Planner(Errors()).plan(parse_timeline(timeline(columns)), 1)
+        assert [n.timed for n in plan.nodes] == [False, False]
+
+    def test_a_length_in_days_converts_to_weeks_only_when_exact(self):
+        errors = Errors()
+        plan = _cycle_plan(
+            [
+                ("Week 1", "Cycle 1", "14 days"),
+                ("Week 1", "Cycle 2", "14 days"),
+                ("Week 1", "Cycle 3", "15 days"),
+            ],
+            errors,
+        )
+        assert _links(plan)[:2] == [(FIXED, 0, 0), (AFTER, 0, 2)]
+        assert plan.nodes[1].unit == "week"
+        assert not plan.nodes[2].timed
+        assert any("does not convert exactly to weeks" in m for m in _messages(errors))
+
+    def test_a_non_cycle_anchor(self):
+        plan = _cycle_plan([("Day 1", None, None), ("Day 8", "Cycle 2", "21 days")])
+        assert _links(plan) == [(FIXED, 0, 0), (AFTER, 0, 28)]
+
+    def test_an_anchor_with_no_timing(self):
+        columns = [
+            column("c1", visit="V1"),
+            _cycle_column("c2", "Day -1", "Cycle 2", "21 days"),
+        ]
+        plan = Planner(Errors()).plan(parse_timeline(timeline(columns)), 1)
+        assert plan.anchor == 0
+        assert _links(plan)[1] == (AFTER, 0, 21)
+
+    def test_a_unit_other_than_the_anchor_is_warned(self):
+        errors = Errors()
+        plan = _cycle_plan(
+            [("Week 0", None, None), ("Day 8", "Cycle 2", "21 days")], errors
+        )
+        assert _links(plan)[1] == (AFTER, 0, 29)
+        assert any(
+            "timing unit 'day' differs from anchor unit 'week'; using 29" in m
+            for m in _messages(errors)
+        )

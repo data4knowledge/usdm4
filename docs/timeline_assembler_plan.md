@@ -176,7 +176,7 @@ of timing and window read from its pattern, else from the printed text — desig
 § 3.2); single cycles are the second. **#65 written 2026-09-25**, with U4-15–U4-21 taken
 during it (design § 9) — as built: design § 12. **#65 merged 2026-09-25.** **R4 part 2 — single cycles**:
 decisions U4-22–U4-26 taken 2026-09-25 (design § 9); tested on hand-written unit fixtures
-only — the NCT04557384 pin input carries no cycle fields and is left alone until R5.
+only — the NCT04557384 pin input carries no cycle fields and is left alone until R5. **#66 built 2026-09-25** (branch `66-r4-part-2-single-cycles`) — as built: design § 13. Open for R5: U4-27, cycle `Day 1` when cycles differ in length.
 
 ## R5 — cycle ranges and the expander
 

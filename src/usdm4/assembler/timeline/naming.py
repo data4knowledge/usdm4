@@ -244,13 +244,21 @@ class Naming:
         visit_text: str | None,
         t: int,
         index: int,
+        cycle: int | None = None,
     ) -> str:
-        """Human-readable SAI name for the timing sheet's from/to references:
-        derived from the timing text (``Day 1`` → ``D1``, ``Week 12`` →
-        ``W12``, ``Cycle 2 Day 1`` → ``C2D1``), else an upper-cased slug of the
-        timing or visit text, else the positional fallback ``T{t}-SAI-{n}``.
-        Uniqued across the study with a numeric suffix."""
-        base = self._sai_base_name(timing_text, timing_value, timing_unit, visit_text)
+        """Human-readable SAI name for the timing sheet's from/to references.
+        In a single-cycle column with a day timing, from the parsed cycle and
+        day (``cycle=2``, ``Day 8`` → ``C2D8``, issue 66); otherwise derived
+        from the timing text (``Day 1`` → ``D1``, ``Week 12`` → ``W12``,
+        ``Cycle 2 Day 1`` → ``C2D1``), else an upper-cased slug of the timing
+        or visit text, else the positional fallback ``T{t}-SAI-{n}``. Uniqued
+        across the study with a numeric suffix."""
+        if cycle is not None and timing_value is not None and timing_unit == "day":
+            base = f"C{cycle}D{timing_value}"
+        else:
+            base = self._sai_base_name(
+                timing_text, timing_value, timing_unit, visit_text
+            )
         return self._register_sai(base or f"T{t}-SAI-{index + 1}")
 
     def _register_sai(self, base: str) -> str:

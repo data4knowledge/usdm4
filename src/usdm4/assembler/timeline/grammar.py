@@ -8,8 +8,8 @@ Turning printed text into a pattern is the caller's job.
 
 Specified in ``docs/timeline_assembler_design.md`` § 4. Covered here: timing
 points, time ranges (issue 65), windows, and the free-text labels used for
-epochs and visits. Cycles are added with the next R4 issue. Printed text is
-read by ``printed.py``, not here.
+epochs and visits, and (issue 66, R4 part 2) cycles and cycle lengths.
+Printed text is read by ``printed.py``, not here.
 
 Rules common to every pattern:
 
@@ -42,6 +42,13 @@ _TIMING_POINT = re.compile(
 )
 _WINDOW = re.compile(
     rf"^-({_INT})\.\.\+({_INT}) ({_UNIT_PLURALS})$", re.IGNORECASE | re.ASCII
+)
+_CYCLE = re.compile(rf"^cycle ({_INT})$", re.IGNORECASE | re.ASCII)
+_CYCLE_RANGE = re.compile(
+    rf"^cycle ({_INT})(?:-({_INT})|(\+))$", re.IGNORECASE | re.ASCII
+)
+_CYCLE_LENGTH = re.compile(
+    rf"^([1-9][0-9]*) ({_UNIT_PLURALS})$", re.IGNORECASE | re.ASCII
 )
 
 
@@ -92,6 +99,32 @@ class TimeRange:
     end: int
 
 
+@dataclass(frozen=True)
+class CycleNumber:
+    """A single cycle, ``Cycle 2`` → ``CycleNumber(n=2)`` (issue 66). In its
+    columns the timing is the day within the cycle."""
+
+    n: int
+
+
+@dataclass(frozen=True)
+class CycleRange:
+    """A cycle range, ``Cycle 3-6`` → ``CycleRange(start=3, end=6)``,
+    ``Cycle 3+`` → ``CycleRange(start=3, end=None)`` (open-ended). Parsed
+    here; planned by R5 (U4-25)."""
+
+    start: int
+    end: int | None
+
+
+@dataclass(frozen=True)
+class CycleLength:
+    """A cycle length, ``21 days`` → ``CycleLength(n=21, unit="day")``."""
+
+    n: int
+    unit: str
+
+
 _TIMING_EXPECTED = "'<Unit> <int>', Unit one of " + ", ".join(
     unit.capitalize() for unit in UNITS
 )
@@ -99,6 +132,10 @@ _WINDOW_EXPECTED = "'-<int>..+<int> <units>', units one of " + ", ".join(
     f"{unit}s" for unit in UNITS
 )
 _TIME_RANGE_EXPECTED = "'<Unit> <int> to <Unit> <int>'"
+_CYCLE_EXPECTED = "'Cycle <int>', 'Cycle <int>-<int>' or 'Cycle <int>+'"
+_CYCLE_LENGTH_EXPECTED = "'<int> <units>', units one of " + ", ".join(
+    f"{unit}s" for unit in UNITS
+)
 
 
 def _text(kind: str, value, expected: str) -> str:
@@ -160,6 +197,34 @@ def parse_window(value: str) -> Window:
         upper=int(match.group(2)),
         unit=match.group(3).lower()[:-1],
     )
+
+
+def parse_cycle(value: str) -> CycleNumber | CycleRange:
+    """Parse a cycle: ``Cycle 2`` (single), ``Cycle 3-6`` or ``Cycle 3+``
+    (range). A range whose end is before its start is refused."""
+    text = _text("cycle", value, _CYCLE_EXPECTED)
+    match = _CYCLE.match(text)
+    if match:
+        return CycleNumber(n=int(match.group(1)))
+    match = _CYCLE_RANGE.match(text)
+    if not match:
+        raise PatternError("cycle", value, _CYCLE_EXPECTED)
+    start = int(match.group(1))
+    if match.group(3):
+        return CycleRange(start=start, end=None)
+    end = int(match.group(2))
+    if end < start:
+        raise PatternError("cycle", value, "an end not before the start")
+    return CycleRange(start=start, end=end)
+
+
+def parse_cycle_length(value: str) -> CycleLength:
+    """Parse a cycle length: ``21 days``, ``4 weeks``. Never zero."""
+    text = _text("cycle length", value, _CYCLE_LENGTH_EXPECTED)
+    match = _CYCLE_LENGTH.match(text)
+    if not match:
+        raise PatternError("cycle length", value, _CYCLE_LENGTH_EXPECTED)
+    return CycleLength(n=int(match.group(1)), unit=match.group(2).lower()[:-1])
 
 
 def parse_label(value: str, kind: str = "label") -> str:

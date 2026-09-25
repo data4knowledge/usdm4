@@ -27,6 +27,18 @@ Forms read — window: ``±3``, ``(±3 days)``, ``±15 min``, ``±1 hr``, ``+/-3
 takes the window row label's unit, else the timing's unit, else days with
 ``unit_defaulted`` set (U4-19).
 
+Forms read — cycle (issue 66): ``Cycle 2``, ``Cycle2``, ``C2``, ``C 2``, a bare ``2``
+(a cycle row); ranges ``Cycle 3-6``, ``Cycles 3-6``, ``C3-C6``, ``Cycle 3-n``,
+``Cycle 3+``, ``Cycles 2 and beyond``, ``Cycle 3 onwards``, ``Cycle 3 and
+subsequent``. A trailing parenthetical qualifier (``Cycle 2-n (if held)``) is
+not part of the value and is ignored. ``Subsequent Cycles`` names no number
+and is not read.
+
+Forms read — cycle length: ``21 days``, ``21 day``, ``21-day``, ``21-day
+cycle``, ``Cycle = 21 days``, ``Cycle length: 21 days``, ``(21 days)``,
+``4 weeks``. A length with no unit, or text naming two lengths (``21 days (or
+28 days for Cohort B)``), is not read.
+
 Text is normalised first: the Unicode minus and hyphens become ``-``,
 ``+/-`` becomes ``±``, ``<=`` becomes ``≤``, runs of space become one.
 """
@@ -35,6 +47,9 @@ import re
 from dataclasses import dataclass
 
 from usdm4.assembler.timeline.grammar import (
+    CycleLength,
+    CycleNumber,
+    CycleRange,
     PatternError,
     TimeRange,
     TimingPoint,
@@ -78,6 +93,21 @@ _SYMMETRIC_RE = re.compile(
 _ASYMMETRIC_RE = re.compile(
     rf"^\(?\s*-\s*(?P<lo>\d+)(?:\s*(?P<lu>{_UNIT}))?\s*/\s*\+\s*(?P<hi>\d+)"
     rf"(?:\s*(?P<hu>{_UNIT}))?\s*\)?$",
+    re.IGNORECASE,
+)
+_QUALIFIER_RE = re.compile(r"\s*\([^()]*\)\s*$")
+_CYCLE_WORD = r"(?:cycles?\s*|c\s*)"
+_CYCLE_RE = re.compile(rf"^(?:{_CYCLE_WORD})?(?P<n>\d+)$", re.IGNORECASE)
+_CYCLE_RANGE_RE = re.compile(
+    rf"^{_CYCLE_WORD}(?P<a>\d+)\s*(?:"
+    rf"-\s*(?:{_CYCLE_WORD})?(?P<b>\d+)"
+    r"|(?P<open>-\s*n|\+|\s+and\s+beyond|\s+onwards?|\s+and\s+subsequent)"
+    r")$",
+    re.IGNORECASE,
+)
+_CYCLE_LENGTH_RE = re.compile(
+    rf"^\(?\s*(?:cycle(?:\s+length)?\s*[=:]?\s*)?(?P<n>[1-9]\d*)\s*-?\s*"
+    rf"(?P<u>{_UNIT})(?:\s+cycles?)?\s*\)?$",
     re.IGNORECASE,
 )
 _LABEL_UNIT_RE = re.compile(rf"\b({_UNIT})\b", re.IGNORECASE)
@@ -238,3 +268,33 @@ def read_window(
             Window(int(match.group("lo")), int(match.group("hi")), unit), defaulted
         )
     return None
+
+
+def read_cycle(text: str | None) -> CycleNumber | CycleRange | None:
+    """Read a printed cycle: a single cycle or a range (issue 66). A trailing
+    parenthetical qualifier is ignored; anything else unread is ``None``."""
+    if is_blank(text):
+        return None
+    text = _QUALIFIER_RE.sub("", normalise(text)).strip()
+    match = _CYCLE_RE.match(text)
+    if match:
+        return CycleNumber(int(match.group("n")))
+    match = _CYCLE_RANGE_RE.match(text)
+    if not match:
+        return None
+    start = int(match.group("a"))
+    if match.group("open"):
+        return CycleRange(start, None)
+    end = int(match.group("b"))
+    return CycleRange(start, end) if end >= start else None
+
+
+def read_cycle_length(text: str | None) -> CycleLength | None:
+    """Read a printed cycle length (issue 66). ``None`` when it states no
+    unit or more than one length."""
+    if is_blank(text):
+        return None
+    match = _CYCLE_LENGTH_RE.match(normalise(text))
+    if not match:
+        return None
+    return CycleLength(int(match.group("n")), _WORD_TO_UNIT[match.group("u").lower()])

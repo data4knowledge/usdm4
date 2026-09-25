@@ -233,6 +233,17 @@ class TestSaiNames:
         )
         assert names == ["D5", "T1-SAI-2"]
 
+    def test_a_single_cycle_names_from_cycle_and_day(self, naming):
+        """Issue 66: the parsed cycle and day, whatever the text says."""
+        assert naming.sai_name("D8", 8, "day", None, 1, 0, cycle=2) == "C2D8"
+        assert naming.sai_name("Day -1", -1, "day", None, 1, 1, cycle=3) == "C3D-1"
+
+    def test_a_cycle_without_a_day_timing_names_from_text(self, naming):
+        assert naming.sai_name("Week 2", 2, "week", None, 1, 0, cycle=2) == "W2"
+        assert naming.sai_name("Pre-dose", None, None, None, 1, 1, cycle=2) == (
+            "PRE-DOSE"
+        )
+
     def test_names_are_unique_across_timelines(self, naming):
         assert naming.sai_name("Day 1", 1, "day", None, 1, 0) == "D1"
         assert naming.sai_name("Day 1", 1, "day", None, 2, 0) == "D1-2"

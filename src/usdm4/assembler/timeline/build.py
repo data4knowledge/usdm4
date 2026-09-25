@@ -36,6 +36,7 @@ from usdm4.api.study_epoch import StudyEpoch
 from usdm4.api.timing import Timing
 from usdm4.assembler.encoder import Encoder
 from usdm4.assembler.timeline.columns import ParsedTimeline
+from usdm4.assembler.timeline.grammar import CycleNumber
 from usdm4.assembler.timeline.naming import Naming
 from usdm4.assembler.timeline.plan import TimelinePlan
 from usdm4.builder.builder import Builder
@@ -351,6 +352,7 @@ class TimelineBuild:
                         None if column.is_redacted("visit") else column.visit_label,
                         self._t,
                         column.index,
+                        cycle=self._cycle_number(column),
                     ),
                     "description": None,
                     "label": column.timing_label or "",
@@ -370,6 +372,15 @@ class TimelineBuild:
         for index, sai in enumerate(results[:-1]):
             sai.defaultConditionId = results[index + 1].id
         return results
+
+    @staticmethod
+    def _cycle_number(column) -> int | None:
+        """The cycle number of a single-cycle column the plan timed (issue
+        66), else ``None``: a range or an untimed column is named from its
+        text."""
+        if isinstance(column.cycle, CycleNumber) and column.timing is not None:
+            return column.cycle.n
+        return None
 
     # ------------------------------------------------------------------
     # Timings — one per instance (issue 65), as the plan places them

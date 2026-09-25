@@ -1,13 +1,12 @@
 # Timeline assembler — design
 
-**Status: 2026-09-25. Issue 63 built** (branch `63-timeline-assembler`): the input
-schema (§ 3), the grammar for epoch, visit, timing points and windows (§ 4), the
-parse → plan → build → naming structure (§ 5), with R1–R3 and R9 as they were.
-Rules R4–R8 are later issues. § 2 records the assembler as it was BEFORE issue 63;
-§ 10 records what issue 63 built and the calls made on the way; § 11 issue 64; § 12
-issue 65 (R4 without cycles, merged to `main`). R4 part 2 (single cycles) is next,
-decisions U4-22–U4-26 taken for it. Decisions still open
-are in § 9, taken one at a time; the work order is in `timeline_assembler_plan.md`.
+**Status: 2026-09-25. Issues 63, 64 and 65 merged; issue 66 built** (R4 part 2,
+single cycles, branch `66-r4-part-2-single-cycles`). Built so far: the input schema
+(§ 3), the pattern grammar incl. time ranges and cycles (§ 4), parse → plan → build →
+naming (§ 5), R1–R3, R4 (timing, single cycles) and R9. R5–R8 are later issues. § 2
+records the assembler as it was BEFORE issue 63; §§ 10–13 record what issues 63–66
+built and the calls made on the way. Decisions are in § 9, taken one at a time — U4-27, the newest,
+is open; the work order is in `timeline_assembler_plan.md`.
 
 ## 1. What the assembler is for
 
@@ -447,6 +446,7 @@ Taken one at a time, each recorded here with its date when taken.
 | U4-24 | A negative day inside a cycle (`Day -1` predose) | **Taken 2026-09-25 (R4 part 2):** today's crossing-zero rule — `Day -1` is one day before the cycle's `Day 1` |
 | U4-25 | A cycle-range column (`Cycle n-m`, `Cycle n+`) before R5 | **Taken 2026-09-25 (R4 part 2):** the range is parsed, not planned; the column gets a U4-3 zero timing and a warning saying cycle ranges come with R5 |
 | U4-26 | Where a cycle column's day is read from | **Taken 2026-09-25 (R4 part 2):** the `timing` field only. A table printing the day in its visit row (`D1`) is stage 1's to assign to the timing role; `usdm4` never reads `visit` for timing |
+| U4-27 | Cycle *n*'s `Day 1` when cycles differ in length (NCT04557384: Cycle 1 `21 days`, Cycle 2 `21 days (or 28 days …)`) | **Open.** Proposal: the sum of the earlier cycles' own lengths, each from its own columns, falling back to cycle *n*'s where a cycle states none. Built today (#66): (*n* − 1) × cycle *n*'s length, no warning. Rule before R5 |
 
 ## 10. As built — issue 63 (2026-09-25)
 
@@ -548,3 +548,52 @@ R4 without cycles. Decisions U4-2–U4-4 and U4-15–U4-21 (§ 9).
     anchor; values unchanged (`PT0M`). Cycle reading is the next R4 issue.
   - `minimal`, `nct05565742`: unchanged. `nct05565742` raises the restart warning on
     its trailing `Day 0` after `Day 540` (a drafting error in that pinned input).
+
+## 13. As built — issue 66 (2026-09-25)
+
+R4 part 2, single cycles. Decisions U4-22–U4-26 (§ 9).
+
+- **Grammar.** `CycleNumber(n)` (`Cycle 2`), `CycleRange(start, end)` (`Cycle 3-6`;
+  `Cycle 3+` has `end=None`), `CycleLength(n, unit)` (`21 days`); `parse_cycle`,
+  `parse_cycle_length`. `Cycle 0` is accepted; a range ending before its start and a
+  zero length are refused.
+- **Printed-text reader.** `read_cycle`: `Cycle 2`, `Cycle2`, `C2`, `C 2`, a bare `2`;
+  ranges `Cycle 3-6`, `Cycles 3-6`, `C3-C6`, `Cycle 3-n`, `Cycle 3+`, `… and beyond`,
+  `… onwards`, `… and subsequent`. A trailing parenthetical (`Cycle 2-n (if held)`) is
+  ignored. `Subsequent Cycles` (no number) is not read. `read_cycle_length`: `21 days`,
+  `21-day cycle`, `Cycle = 21 days`, `Cycle length: 21 days`, `(21 days)`, `4 weeks`;
+  a length with no unit or two lengths (`21 days (or 28 days …)`) is not read.
+- **Parse** (`columns.py`). `Column.cycle`, `Column.cycle_length`: pattern, else
+  printed text, else nothing, each problem a warning naming timeline, column and
+  field; a redacted value is not read. `Column.cycle_day` holds the day within the
+  cycle when the plan takes a column's timing away.
+- **Plan** (`plan.py`). `_resolve_cycles` runs before the anchor is chosen. A
+  cycle's length is the first readable one among its own columns (a second,
+  different one is warned). Cycle *n*'s offset is (*n* − 1) × its length, converted
+  to the day's unit only where exact (`_convert`; weeks ↔ days ↔ hours ↔ minutes;
+  months and years never). A column in cycle *n* is `After` / `Before` its cycle's
+  first `Day 1` column by the day distance with the crossing-zero rule; a cycle's
+  `Day 1`, and every column of a cycle with no `Day 1` column, is measured from the
+  anchor on the timeline's own line (`_position`). No length (U4-23), no exact
+  conversion, or a range (U4-25) → timing removed, so U4-3's zero timing applies,
+  with a warning of its own.
+- **Naming.** `sai_name(..., cycle=n)`: a single cycle with a day timing is
+  `C{n}D{day}` (`C2D8`, `C3D-1`). The text regex (`Cycle 2 Day 1` → `C2D1`) stays as
+  the fallback for text-only columns.
+- **Tests.** Hand-written fixtures only (`test_grammar`, `test_printed`,
+  `test_columns`, `test_plan` `TestSingleCycles`, `test_naming`,
+  `test_timeline_assembler` end to end). Pins unchanged — no pinned input carries a
+  cycle field. `assembler/timeline/*` and `timeline_assembler.py` 100% coverage.
+
+**Calls made while building, not ruled:**
+- The length is cycle *n*'s own, as § 6 R4.3 and U4-23 say. Where cycles differ in
+  length, the correct `Day 1` is the sum of the earlier cycles' lengths, not
+  (*n* − 1) × cycle *n*'s. Not built; a warning is not raised either. Open as U4-27.
+- A cycle's length comes from any of its columns, not only an earlier one (the issue
+  said "the previous column"): a length printed on a later column of the cycle would
+  otherwise leave its `Day 1` untimed.
+- A cycle and day printed together in the timing field with no cycle field
+  (`Cycle 2 Day 1`) is still unread (U4-26: stage 1 splits it).
+- A column timed to zero for a cycle reason gets two warnings: the cycle reason and
+  U4-3's "no readable timing".
+

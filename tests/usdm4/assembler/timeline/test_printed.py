@@ -1,4 +1,4 @@
-"""The printed-text reader — issue 65.
+"""The printed-text reader — issue 65; cycles and cycle lengths, issue 66.
 
 The code under test imports ``usdm4.*`` while these tests import
 ``src.usdm4.*``, so returned values are compared by field.
@@ -9,6 +9,8 @@ import pytest
 from src.usdm4.assembler.timeline.printed import (
     is_blank,
     normalise,
+    read_cycle,
+    read_cycle_length,
     read_timing,
     read_window,
     unit_of_label,
@@ -273,3 +275,85 @@ class TestWindow:
     )
     def test_not_read(self, text):
         assert read_window(text, None, "day") is None
+
+
+class TestCycle:
+    """Issue 66."""
+
+    @pytest.mark.parametrize("text", ["Cycle 2", "Cycle2", "C2", "c 2", "2"])
+    def test_single(self, text):
+        cycle = read_cycle(text)
+        assert type(cycle).__name__ == "CycleNumber" and cycle.n == 2
+
+    @pytest.mark.parametrize(
+        "text, start, end",
+        [
+            ("Cycle 3-6", 3, 6),
+            ("Cycles 3-6", 3, 6),
+            ("C3-C6", 3, 6),
+            ("Cycle 3-n", 3, None),
+            ("Cycle 3 - N", 3, None),
+            ("Cycle 3+", 3, None),
+            ("Cycles 2 and beyond", 2, None),
+            ("Cycle 3 onwards", 3, None),
+            ("Cycle 3 and subsequent", 3, None),
+            ("Cycle 2-n (If combo therapy is held)", 2, None),
+        ],
+    )
+    def test_range(self, text, start, end):
+        cycle = read_cycle(text)
+        assert type(cycle).__name__ == "CycleRange"
+        assert (cycle.start, cycle.end) == (start, end)
+
+    @pytest.mark.parametrize(
+        "text",
+        [
+            None,
+            "",
+            "-",
+            "Subsequent Cycles",
+            "Short-term follow-up",
+            "Study Cycle",
+            "Cycle 6-3",
+            "Cycle 1 Day 1",
+            "D1",
+        ],
+    )
+    def test_not_read(self, text):
+        assert read_cycle(text) is None
+
+
+class TestCycleLength:
+    """Issue 66."""
+
+    @pytest.mark.parametrize(
+        "text, n, unit",
+        [
+            ("21 days", 21, "day"),
+            ("21 day", 21, "day"),
+            ("21-day", 21, "day"),
+            ("21-day cycle", 21, "day"),
+            ("28-day cycles", 28, "day"),
+            ("Cycle = 21 days", 21, "day"),
+            ("Cycle length: 21 days", 21, "day"),
+            ("(21 days)", 21, "day"),
+            ("4 weeks", 4, "week"),
+            ("1 month", 1, "month"),
+        ],
+    )
+    def test_read(self, text, n, unit):
+        length = read_cycle_length(text)
+        assert (length.n, length.unit) == (n, unit)
+
+    @pytest.mark.parametrize(
+        "text",
+        [
+            None,
+            "",
+            "21",
+            "0 days",
+            "Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen)",
+        ],
+    )
+    def test_not_read(self, text):
+        assert read_cycle_length(text) is None

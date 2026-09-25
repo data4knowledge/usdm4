@@ -1,4 +1,5 @@
-"""Plan — issue 63, part 63.4; issue 65 (R4, timing without cycles).
+"""Plan — issue 63, part 63.4; issue 65 (R4, timing without cycles); issue 66
+(R4 part 2, single cycles).
 
 From a ``ParsedTimeline``, the ordered sequence of nodes for one timeline, each
 with its timing reference. Pure: no builder, no USDM objects.
@@ -19,6 +20,18 @@ A straight chain, one activity-instance node per column. Issue 65 (design
 - **Time ranges (U4-4, U4-20)** are timed at their start with a window forward to
   their end; crossing zero loses a day when the table has no Day 0.
 
+Issue 66 (design § 6 R4.3, U4-22–U4-26). In a single-cycle column (``Cycle
+n``) the timing is the day within the cycle (U4-26: from the timing field
+only). Cycle *n*'s ``Day 1`` sits (*n* − 1) × cycle *n*'s length after Cycle
+1's ``Day 1``, and is timed from the anchor. Every other column of the cycle
+is timed from its cycle's ``Day 1`` column — a chain — or, when the cycle
+prints no ``Day 1`` column, from the anchor (U4-22). A cycle's length is its
+own columns' (the first readable one); a length is converted to the day's
+unit only where exact. Cycle *n* > 1 with no readable or convertible length
+(U4-23), and a cycle-range column (U4-25, ranges come with R5), get a zero
+timing and a warning. A negative day in a cycle follows the crossing-zero
+rule (U4-24).
+
 Delays, decisions (the cycle loop) and other exits come with later issues.
 """
 
@@ -28,13 +41,53 @@ from simple_error_log.error_location import KlassMethodLocation
 from simple_error_log.errors import Errors
 
 from usdm4.assembler.timeline.columns import Column, ParsedTimeline
-from usdm4.assembler.timeline.grammar import TimeRange, TimingPoint, Window
+from usdm4.assembler.timeline.grammar import (
+    CycleNumber,
+    CycleRange,
+    TimeRange,
+    TimingPoint,
+    Window,
+)
 
 BEFORE = "Before"
 FIXED = "Fixed Reference"
 AFTER = "After"
 
 _DAY_UNITS = ("day",)
+
+# Exact conversions only: (from, to) -> factor. Months and years have none.
+_EXACT = {
+    ("week", "day"): 7,
+    ("week", "hour"): 7 * 24,
+    ("week", "minute"): 7 * 24 * 60,
+    ("day", "hour"): 24,
+    ("day", "minute"): 24 * 60,
+    ("hour", "minute"): 60,
+}
+
+
+def _convert(n: int, unit: str, to: str) -> int | None:
+    """``n`` ``unit`` in ``to`` units, or ``None`` when not exact."""
+    if unit == to:
+        return n
+    factor = _EXACT.get((unit, to))
+    if factor is not None:
+        return n * factor
+    factor = _EXACT.get((to, unit))
+    if factor is not None and n % factor == 0:
+        return n // factor
+    return None
+
+
+@dataclass
+class _CycleSlot:
+    """A single-cycle column the plan can time: its cycle number, the day
+    within the cycle, and the offset of the cycle's ``Day 1`` from Cycle 1's
+    ``Day 1`` in the day's unit."""
+
+    n: int
+    day: TimingPoint
+    offset: int
 
 
 @dataclass
@@ -75,6 +128,7 @@ class Planner:
     def plan(self, timeline: ParsedTimeline, t: int | None = None) -> TimelinePlan:
         where = f"Timeline {t}" if t else "Timeline"
         columns = timeline.columns
+        slots = self._resolve_cycles(columns, where)
         anchor = self.find_anchor(columns)
         if not any(self._is_candidate(c) for c in columns):
             self._warn(
@@ -85,7 +139,9 @@ class Planner:
         self._resolve_up_to(columns, anchor, where)
         self._warn_restarts(columns, where)
         has_zero = self.has_zero_timepoint(columns)
-        nodes = [self._node(columns, c, anchor, has_zero, where) for c in columns]
+        nodes = [
+            self._node(columns, c, anchor, has_zero, where, slots) for c in columns
+        ]
         return TimelinePlan(anchor=anchor, nodes=nodes)
 
     def _node(
@@ -95,7 +151,9 @@ class Planner:
         anchor: int,
         has_zero: bool,
         where: str,
+        slots: dict[int, "_CycleSlot"] | None = None,
     ) -> InstanceNode:
+        slots = slots or {}
         window, window_from = column.window, column.window_from
         if window is None and column.time_range is not None:
             window, window_from = (
@@ -124,6 +182,10 @@ class Planner:
             return InstanceNode(
                 column, timing_type, relative_to, 0, "day", window, window_from, False
             )
+        elif column.index in slots:
+            return self._cycle_node(
+                columns, column, anchor, has_zero, slots, window, window_from, where
+            )
         else:
             timing_type = BEFORE if column.index < anchor else AFTER
             relative_to = anchor
@@ -136,6 +198,173 @@ class Planner:
             window=window,
             window_from=window_from,
             timed=column.timing is not None,
+        )
+
+    # ------------------------------------------------------------------
+    # Cycles — issue 66
+
+    def _resolve_cycles(
+        self, columns: list[Column], where: str
+    ) -> dict[int, _CycleSlot]:
+        """Place every single-cycle column (U4-22–U4-26). Columns that cannot
+        be timed — a cycle range (U4-25), a cycle with no usable length
+        (U4-23) — lose their timing (kept as ``cycle_day``) and so take the
+        zero timing of U4-3."""
+        lengths = self._cycle_lengths(columns, where)
+        slots: dict[int, _CycleSlot] = {}
+        for column in columns:
+            cycle = column.cycle
+            if cycle is None or column.timing is None:
+                continue
+            day = column.timing
+            if isinstance(cycle, CycleRange):
+                column.cycle_day, column.timing, column.time_range = day, None, None
+                self._warn(
+                    f"{where}, column '{column.id}': cycle ranges are timed with "
+                    "R5; a zero timing is used",
+                    "plan",
+                )
+                continue
+            offset = self._cycle_offset(cycle, day, lengths, column, where)
+            column.cycle_day = day
+            if offset is None:
+                column.timing, column.time_range = None, None
+                continue
+            slots[column.index] = _CycleSlot(cycle.n, day, offset)
+        return slots
+
+    def _cycle_lengths(self, columns: list[Column], where: str) -> dict:
+        """Each single cycle's length: the first readable one among its own
+        columns. A second, different length in the same cycle is warned."""
+        lengths: dict[int, object] = {}
+        for column in columns:
+            if not isinstance(column.cycle, CycleNumber) or not column.cycle_length:
+                continue
+            n = column.cycle.n
+            if n not in lengths:
+                lengths[n] = column.cycle_length
+            elif column.cycle_length != lengths[n]:
+                self._warn(
+                    f"{where}, column '{column.id}': cycle {n} prints a second "
+                    f"length ({column.cycle_length.n} {column.cycle_length.unit}s); "
+                    "the first is used",
+                    "plan",
+                )
+        return lengths
+
+    def _cycle_offset(
+        self,
+        cycle: CycleNumber,
+        day: TimingPoint,
+        lengths: dict,
+        column: Column,
+        where: str,
+    ) -> int | None:
+        """Cycle *n*'s ``Day 1`` from Cycle 1's, in the day's unit:
+        (*n* − 1) × cycle *n*'s length. ``None`` (with a warning) when cycle
+        *n* > 1 has no length, or one that does not convert exactly."""
+        if cycle.n == 1:
+            return 0
+        length = lengths.get(cycle.n)
+        if length is None:
+            self._warn(
+                f"{where}, column '{column.id}': cycle {cycle.n} has no readable "
+                "length; a zero timing is used",
+                "plan",
+            )
+            return None
+        converted = _convert(length.n, length.unit, day.unit)
+        if converted is None:
+            self._warn(
+                f"{where}, column '{column.id}': cycle length {length.n} "
+                f"{length.unit}s does not convert exactly to {day.unit}s; a zero "
+                "timing is used",
+                "plan",
+            )
+            return None
+        return (cycle.n - 1) * converted
+
+    @staticmethod
+    def _collapse(value: int, unit: str, has_zero: bool) -> int:
+        """A day number on a line with no Day 0 when the table prints none:
+        ``Day -1`` is one day before ``Day 1`` (crossing-zero rule, U4-24)."""
+        if unit in _DAY_UNITS and value < 0 and not has_zero:
+            return value + 1
+        return value
+
+    def _position(
+        self, column: Column, slots: dict[int, _CycleSlot], has_zero: bool
+    ) -> int:
+        """A column's place on the timeline's own line, in its timing unit:
+        for a cycle column the cycle's offset plus the day within it."""
+        slot = slots.get(column.index)
+        if slot is not None:
+            return slot.offset + self._collapse(slot.day.value, slot.day.unit, has_zero)
+        return self._collapse(column.timing.value, column.timing.unit, has_zero)
+
+    @staticmethod
+    def _day_one(
+        columns: list[Column], slot: _CycleSlot, slots: dict[int, _CycleSlot]
+    ) -> int | None:
+        """The index of the first ``Day 1`` column of the slot's cycle."""
+        for column in columns:
+            other = slots.get(column.index)
+            if (
+                other is not None
+                and other.n == slot.n
+                and other.day.unit in _DAY_UNITS
+                and other.day.value == 1
+            ):
+                return column.index
+        return None
+
+    def _cycle_node(
+        self,
+        columns: list[Column],
+        column: Column,
+        anchor: int,
+        has_zero: bool,
+        slots: dict[int, _CycleSlot],
+        window: Window | None,
+        window_from: str | None,
+        where: str,
+    ) -> InstanceNode:
+        """A single-cycle column: from its cycle's ``Day 1`` column, else from
+        the anchor (U4-22)."""
+        slot = slots[column.index]
+        unit = slot.day.unit
+        day_one = self._day_one(columns, slot, slots)
+        if day_one is not None and day_one != column.index:
+            relative_to = day_one
+            here = self._collapse(slot.day.value, unit, has_zero)
+            duration = abs(here - 1)
+            timing_type = AFTER if here >= 1 else BEFORE
+        else:
+            relative_to = anchor
+            anchor_column = columns[anchor]
+            here = self._position(column, slots, has_zero)
+            if anchor_column.timing is None:
+                duration = abs(here)
+            elif anchor_column.timing.unit != unit:
+                self._warn(
+                    f"{where}, column '{column.id}': timing unit '{unit}' differs "
+                    f"from anchor unit '{anchor_column.timing.unit}'; using "
+                    f"{abs(here)}",
+                    "plan",
+                )
+                duration = abs(here)
+            else:
+                duration = abs(here - self._position(anchor_column, slots, has_zero))
+            timing_type = BEFORE if column.index < anchor else AFTER
+        return InstanceNode(
+            column=column,
+            timing_type=timing_type,
+            relative_to=relative_to,
+            duration=duration,
+            unit=unit,
+            window=window,
+            window_from=window_from,
+            timed=True,
         )
 
     def _resolve_up_to(self, columns: list[Column], anchor: int, where: str) -> None:

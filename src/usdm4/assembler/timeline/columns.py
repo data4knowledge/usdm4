@@ -11,8 +11,11 @@ is set aside, and the field falls back to its printed text: the timeline is
 always built if at all possible. Every problem found reading a value is a
 warning naming the timeline, column and field. A time range
 (``Day -28 to Day -1``) sets ``time_range`` and, as the timing point, its
-start. ``cycle`` / ``cycle_length`` are carried as text until the next R4
-issue.
+start.
+
+Issue 66 (R4 part 2): ``cycle`` and ``cycle_length`` are read the same way —
+the pattern, else the printed text, else nothing — into ``Column.cycle``
+(a single cycle or a range) and ``Column.cycle_length``. The plan times them.
 
 Issue 64: a field whose pattern is the redaction ``CCI`` is never read; its
 name is recorded in ``Column.redacted`` and its printed text kept as the
@@ -30,12 +33,17 @@ from usdm4.assembler.schema.schedule_timeline_schema import (
     family_of,
 )
 from usdm4.assembler.timeline.grammar import (
+    CycleLength,
+    CycleNumber,
+    CycleRange,
     PatternError,
     TimeRange,
     TimingPoint,
     Window,
     is_redacted,
     is_time_range,
+    parse_cycle,
+    parse_cycle_length,
     parse_time_range,
     parse_timing,
     parse_window,
@@ -43,6 +51,8 @@ from usdm4.assembler.timeline.grammar import (
 from usdm4.assembler.timeline.printed import (
     UpTo,
     is_blank,
+    read_cycle,
+    read_cycle_length,
     read_timing,
     read_window,
 )
@@ -71,6 +81,11 @@ class Column:
     window_from: str | None = None
     cycle_label: str | None = None
     cycle_length_label: str | None = None
+    cycle: CycleNumber | CycleRange | None = None
+    cycle_length: CycleLength | None = None
+    # The day within the cycle as parsed, kept when the plan replaces
+    # ``timing`` with the timing from the start of the timeline (issue 66).
+    cycle_day: TimingPoint | None = None
     notes: list[dict] = field(default_factory=list)
     # Header field name -> footnote markers printed on that value.
     markers: dict[str, list[str]] = field(default_factory=dict)
@@ -208,6 +223,23 @@ def _read_window(column: Column, reader: _Reader, pattern: str | None) -> Window
     return read.window
 
 
+def _read_cycle_field(reader: _Reader, name: str, pattern: str | None, parse, read):
+    """A cycle or cycle length: the pattern, else the printed text, else
+    nothing. Problems are warnings naming the field."""
+    if pattern is not None:
+        try:
+            return parse(pattern)
+        except PatternError as e:
+            reader.warn(name, f"{e}; reading the printed text instead")
+    text = reader.text(name)
+    if is_blank(text):
+        return None
+    value = read(text)
+    if value is None:
+        reader.warn(name, f"printed text {text!r} not read")
+    return value
+
+
 def parse_column(
     index: int,
     data: dict,
@@ -267,6 +299,18 @@ def parse_column(
 
     column.cycle_label = _label(data.get("cycle"))
     column.cycle_length_label = _label(data.get("cycle_length"))
+    if not column.is_redacted("cycle"):
+        column.cycle = _read_cycle_field(
+            reader, "cycle", pattern_of("cycle"), parse_cycle, read_cycle
+        )
+    if not column.is_redacted("cycle_length"):
+        column.cycle_length = _read_cycle_field(
+            reader,
+            "cycle_length",
+            pattern_of("cycle_length"),
+            parse_cycle_length,
+            read_cycle_length,
+        )
     column.notes = list(data.get("notes") or [])
     return column
 

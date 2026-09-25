@@ -6,7 +6,10 @@ so grammar classes are compared by field and ``PatternError`` is caught as the
 
 Issue 65: each of timing and window is read from its pattern, else from its
 printed text, else nothing; a refused pattern is a warning and falls back to
-the text (U4-17). Cycle fields are not parsed until the next R4 issue.
+the text (U4-17).
+
+Issue 66: cycle and cycle length are read the same way — pattern, else
+printed text, else nothing.
 """
 
 import pytest
@@ -84,12 +87,62 @@ class TestColumn:
         assert _range(parsed) == ("day", -28, -1)
         assert (parsed.timing.unit, parsed.timing.value) == ("day", -28)
 
-    def test_cycle_fields_are_not_parsed(self):
+    def test_cycle_fields_from_the_pattern(self):
         parsed = parse_column(
-            0, _column(cycle=value("Cycle 3-n", "Cycle 3+"), cycle_length=value("x"))
+            0,
+            _column(
+                cycle=value("Cycle 3-n", "Cycle 3+"),
+                cycle_length=value("Cycle = 21 days", "21 days"),
+            ),
         )
         assert parsed.cycle_label == "Cycle 3-n"
-        assert parsed.cycle_length_label == "x"
+        assert (parsed.cycle.start, parsed.cycle.end) == (3, None)
+        assert (parsed.cycle_length.n, parsed.cycle_length.unit) == (21, "day")
+
+    def test_cycle_fields_from_the_printed_text(self):
+        errors = Errors()
+        parsed = parse_column(
+            0,
+            _column(
+                cycle={"text": "C2", "pattern": None},
+                cycle_length={"text": "21-day cycle", "pattern": None},
+            ),
+            errors=errors,
+        )
+        assert parsed.cycle.n == 2
+        assert (parsed.cycle_length.n, parsed.cycle_length.unit) == (21, "day")
+        assert errors.to_dict(0) == []
+
+    def test_a_refused_cycle_pattern_falls_back_to_the_text(self):
+        errors = Errors()
+        parsed = parse_column(
+            0, _column(cycle=value("Cycle 2", "C2")), errors=errors, t=1
+        )
+        assert parsed.cycle.n == 2
+        (item,) = errors.to_dict(0)
+        assert item["message"].startswith("Timeline 1, column 'c1', cycle: ")
+
+    def test_unreadable_cycle_fields_are_warned(self):
+        errors = Errors()
+        parsed = parse_column(
+            0,
+            _column(
+                cycle={"text": "Subsequent Cycles", "pattern": None},
+                cycle_length={"text": "x", "pattern": None},
+            ),
+            errors=errors,
+            t=1,
+        )
+        assert parsed.cycle is None and parsed.cycle_length is None
+        messages = [item["message"] for item in errors.to_dict(0)]
+        assert messages == [
+            "Timeline 1, column 'c1', cycle: printed text 'Subsequent Cycles' not read",
+            "Timeline 1, column 'c1', cycle_length: printed text 'x' not read",
+        ]
+
+    def test_a_redacted_cycle_is_not_read(self):
+        parsed = parse_column(0, _column(cycle=value("CCI", "CCI")))
+        assert parsed.cycle is None and parsed.cycle_label == "CCI"
 
     def test_a_refused_pattern_falls_back_to_the_text(self):
         errors = Errors()

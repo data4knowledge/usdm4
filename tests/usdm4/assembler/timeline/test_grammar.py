@@ -1,4 +1,4 @@
-"""The pattern grammar — issue 63, part 63.2.
+"""The pattern grammar — issue 63, part 63.2; cycles and cycle lengths, issue 66.
 
 Weighted to refusals: a grammar that accepts too much turns back into the
 heuristic parsing the rebuild replaces. Specification:
@@ -16,6 +16,8 @@ from src.usdm4.assembler.timeline.grammar import (
     Window,
     is_redacted,
     is_time_range,
+    parse_cycle,
+    parse_cycle_length,
     parse_label,
     parse_time_range,
     parse_timing,
@@ -270,3 +272,63 @@ class TestPatternError:
         message = str(error.value)
         assert "'D8'" in message
         assert "<Unit> <int>" in message
+
+
+class TestCycle:
+    """Issue 66 — `Cycle <int>`, `Cycle <int>-<int>`, `Cycle <int>+`."""
+
+    @pytest.mark.parametrize(
+        "text, n", [("Cycle 1", 1), ("cycle 12", 12), (" Cycle 0 ", 0)]
+    )
+    def test_single(self, text, n):
+        cycle = parse_cycle(text)
+        assert type(cycle).__name__ == "CycleNumber" and cycle.n == n
+
+    @pytest.mark.parametrize(
+        "text, start, end",
+        [("Cycle 3-6", 3, 6), ("Cycle 3-3", 3, 3), ("Cycle 3+", 3, None)],
+    )
+    def test_range(self, text, start, end):
+        cycle = parse_cycle(text)
+        assert type(cycle).__name__ == "CycleRange"
+        assert (cycle.start, cycle.end) == (start, end)
+
+    @pytest.mark.parametrize(
+        "text",
+        [
+            "Cycle 3-n",  # printed form
+            "C2",  # printed form
+            "2",
+            "Cycles 3-6",
+            "Cycle 6-3",  # end before start
+            "Cycle 01",
+            "Cycle  2",
+            "Cycle 2 Day 1",
+            "",
+        ],
+    )
+    def test_refused(self, text):
+        with pytest.raises(ValueError):
+            parse_cycle(text)
+
+    def test_not_a_string(self):
+        with pytest.raises(ValueError):
+            parse_cycle(None)
+
+
+class TestCycleLength:
+    """Issue 66 — `<int> <units>`."""
+
+    @pytest.mark.parametrize(
+        "text, n, unit", [("21 days", 21, "day"), ("4 Weeks", 4, "week")]
+    )
+    def test_accepted(self, text, n, unit):
+        length = parse_cycle_length(text)
+        assert (length.n, length.unit) == (n, unit)
+
+    @pytest.mark.parametrize(
+        "text", ["0 days", "21 day", "21", "Cycle = 21 days", "21-day", "21 furlongs"]
+    )
+    def test_refused(self, text):
+        with pytest.raises(ValueError):
+            parse_cycle_length(text)

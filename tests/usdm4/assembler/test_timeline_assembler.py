@@ -414,8 +414,8 @@ class TestTimings:
         assert any("differs from anchor unit" in m for m in messages(errors))
 
     def test_an_unreadable_timing_is_zero_after_the_previous_column(self, assembler):
-        """U4-3 — until the next R4 issue there is nothing to read a cycle day
-        with."""
+        """U4-3. A cycle and day printed together in the timing field, with no
+        cycle field, stay unread: splitting them is stage 1's (U4-26)."""
         tl = timeline(
             [
                 column("c1", timing="Day 1"),
@@ -429,6 +429,30 @@ class TestTimings:
         assert timing_types(t)[2] == "After"
         assert t.timings[2].relativeToScheduledInstanceId == t.instances[1].id
         assert t.timings[2].valueLabel == "Cycle 2 Day 1"
+
+    def test_single_cycles_are_timed_and_named(self, assembler, errors):
+        """Issue 66: C2D1 from the anchor, C2D8 from C2D1, names from the
+        parsed cycle and day, printed text kept as the labels."""
+        cycle = {
+            1: {"cycle": value("Cycle 1"), "cycle_length": value("21 days")},
+            2: {"cycle": value("C2", "Cycle 2"), "cycle_length": value("21 days")},
+        }
+        tl = timeline(
+            [
+                column("c1", timing="Day 1", **cycle[1]),
+                column("c2", timing=value("D8", "Day 8"), **cycle[1]),
+                column("c3", timing="Day 1", **cycle[2]),
+                column("c4", timing=value("D8", "Day 8"), **cycle[2]),
+            ]
+        )
+        assembler.execute([tl])
+        (t,) = assembler.timelines
+        assert [i.name for i in t.instances] == ["C1D1", "C1D8", "C2D1", "C2D8"]
+        assert [x.value for x in t.timings] == ["PT0M", "P7D", "P21D", "P7D"]
+        assert timing_types(t) == ["Fixed Reference", "After", "After", "After"]
+        assert t.timings[3].relativeToScheduledInstanceId == t.instances[2].id
+        assert t.timings[3].valueLabel == "D8"
+        assert not any("cycle" in m for m in messages(errors))
 
     def test_every_instance_is_timed(self, assembler, errors):
         """A blank timing used to get no Timing at all (design § 2)."""
