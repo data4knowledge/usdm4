@@ -308,9 +308,15 @@ comes only from a regex on that text.
 
 ### R4 — timing
 
-1. **Anchor.** Decision D2. Proposal: the first column whose timing is `Day 1` or
-   `Day 0`, or, in a cycle, the first `Day 1` of the first cycle. No such column → the
-   first column, as today, with a warning.
+1. **Anchor.** Decision D2, taken 2026-09-25: today's rule. The anchor is the first
+   column, in column order, whose timing point is ≥ 0 in any unit — screening runs
+   negative, the first event is `Day 0`, `Day 1`, `Week 0`, `Month 0`. In a cycle
+   column the timing is the day within the cycle, so this lands on Cycle 1 Day 1 with
+   no rule of its own. No such column → the first column, **with a warning** (today
+   it is silent). Durations are differences, so a late anchor (`Day 14` when nothing
+   earlier is timed) moves only the Fixed Reference, not the intervals. A timeline
+   whose values restart outside a cycle (a second `Day 1` after later days) is
+   warned: it is two periods and should be two timelines (D14).
 2. **Duration** from the pattern: point minus anchor in the column's unit, with
    today's crossing-zero rule for days kept exactly.
 3. **Cycle columns** are measured from their cycle's `Day 1`, and that `Day 1` from
@@ -404,7 +410,7 @@ Taken one at a time, each recorded here with its date when taken.
 | id | decision | proposal |
 |---|---|---|
 | D1 | Names of the new schema classes and fields | **Taken 2026-09-25:** `ScheduleTimelineInput`, `ColumnInput`, `HeaderValue`, `HeaderNote`, `ActivityInput`, `CellInput`, `FootnoteInput`, `TimelineClassification`; fields as in § 3 |
-| D2 | The anchor rule | § 6 R4.1 |
+| D2 | The anchor rule | **Taken 2026-09-25:** today's rule — first column with a timing point ≥ 0, else the first column with a warning; no code beyond the warning (§ 6 R4.1). Checked against 72 drafted tables: `Week 0` and cycle tables anchor correctly under it; a narrower "`Day 1` or `Day 0`" rule was rejected (misses `Week 0`, needs cycle parsing, no better fallback) |
 | D3 | Form of a text-only timing (no parseable pattern) | `Timing` with label, `value` a zero duration flagged by an extension |
 | D4 | A timing span (`Day -28 to Day -1`): the column's timing, its window, or both | timing = span end, window = span |
 | D5 | A copied column: one `Encounter` shared by both timelines, or one each | one shared |
@@ -415,6 +421,7 @@ Taken one at a time, each recorded here with its date when taken.
 | D10 | Gate versus window in text alone (R8) | open |
 | D11 | How the expander presents a loop | one pass, flagged as repeating |
 | D12 | Activity identity across timelines when names differ only by spacing or hyphenation | exact trimmed, case-folded match, as today |
+| D14 | Crossover periods whose day numbering restarts (a second `Day 1`) | **Working hypothesis 2026-09-25, to be proven on real cases:** one timeline per period. A `Timing` cannot cross timelines (DDF00046), so the link is an instance: the printed washout column (`Wash out 3 to 14 days`, `Minimum 2 wks after end of session 1`) becomes a linking instance in the earlier period, reached by a `Timing` that is the washout, and calling the next period through `timelineId`; the next period's `entryCondition` carries the printed text. Rejected for now: the last instance calling the next period with the washout as text only. Needs a stage-1 marking (periods as timelines, the washout column as the link) and a stage-2 rule; neither built |
 | D13 | How redacted (`CCI`) epochs group | **Taken 2026-09-25 (issue 64):** a consecutive run of redacted columns is one epoch; a run after a non-redacted epoch is a new one, named with an ordinal (`CCI`, `CCI2`) |
 
 ## 10. As built — issue 63 (2026-09-25)
