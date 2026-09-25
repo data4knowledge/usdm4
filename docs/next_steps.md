@@ -19,6 +19,56 @@ record of the rule generation process).
 
 Newest first. Cross-repo "save session" entries; pairs with `usdm4_protocol` and `udp_prism` logs.
 
+### 2026-09-25 — ISSUE 63 BUILT (GitHub 63, branch `63-timeline-assembler`): text input, grammar, parse → plan → build, behaviour kept
+- `usdm4 @ 63-timeline-assembler`. No sibling repo changed. Plan parts 63.1–63.7 done
+  (`docs/timeline_assembler_plan.md`); as built in `docs/timeline_assembler_design.md` § 10.
+
+**What changed.**
+- `src/usdm4/assembler/schema/schedule_timeline_schema.py` — the new input,
+  `ScheduleTimelineInput`: columns of header values (printed text + pattern form),
+  activities with cells, footnotes; structure only; unknown keys refused.
+  `AssemblerInput.soa` is `list[ScheduleTimelineInput] | None`. `schema/timeline_schema.py`
+  (`TimelineInput`) deleted.
+- `src/usdm4/assembler/timeline/grammar.py` — the pattern grammar for timing points,
+  windows and labels; `PatternError` on anything outside it.
+- `timeline/columns.py` (parse), `plan.py` (straight chain, one anchor, today's rules),
+  `build.py` (USDM objects in the old creation order), `naming.py` (moved unchanged);
+  `timeline_assembler.py` is the orchestrator, public surface unchanged.
+- `validate/corpus_adapter.py` — converts the corpus's retired-shape `soa` with the
+  63.5 rules (`timeline_input_to_schedule`), every table kept; `eval_corpus.py` reports
+  `soa_timelines_converted`.
+
+**The numbers.** Pin (`tests/usdm4/assembler/test_timeline_pin.py`): 4 of 5 inputs
+identical to the pre-issue output; 1 difference, re-saved with its reason
+(NCT04557384's PK timeline, caller unit `cycle`: anchor moves, 14 timings Before, Day 30
+P30D → PT0M — both wrong until R4). Full suite green (run by Dave), new modules at 100%
+coverage. Tests: `test_timeline_assembler.py` rewritten end to end; new
+`tests/usdm4/assembler/timeline/` (grammar, columns, plan, naming, helpers);
+`test_timeline_assembler_name_collisions.py` folded into `test_naming.py`.
+
+**Calls made.** TLF (family) still emitted for profiles only — its presence marks a
+profile downstream; the type extension waits. A timeline with a refused pattern or no
+columns is reported and not built. Defects kept on purpose and pinned in tests: blank
+timing → no `Timing` (R4), epoch-less column → empty-label epoch (D6), `Paricipant`
+typo and placeholder procedure code (design § 8).
+
+**Breaking change.** Every caller of `AssemblerInput.soa` breaks; `usdm4_protocol` stays
+on the previous release until its stage-1 work produces the new input. Version is
+Dave's to set.
+
+**Found, not this issue.** A plain `git status` from the Cowork sandbox left
+`.git/index.lock` behind (removed); use `git --no-optional-locks`.
+
+**Next.** R4 — timing from the pattern, the anchor rule (D2), text-only timing (D3),
+spans (D4), single cycles. Decide D2–D4 first. Corpus side: `protocol_corpus` issue 9
+(pattern forms in the ground truth).
+
+Re-verify:
+```
+python3 -m pytest tests/usdm4/assembler/test_timeline_pin.py tests/usdm4/assembler/timeline tests/usdm4/assembler/test_timeline_assembler.py -v
+python3 -m pytest tests -q
+```
+
 ### 2026-09-25 — ISSUE 63 OPENED (GitHub 63, branch `63-timeline-assembler`): the timeline assembler is rebuilt on a text input
 - `usdm4 @ 63-timeline-assembler`. Design and plan only; no code changed. Driven from
   `protocol_corpus` (register row `N70`, `docs/spec/soa_two_stage.md`).
@@ -447,7 +497,7 @@ exception path).
 Full context and the usdm4_protocol half: `usdm4_protocol/docs/next_steps.md` § Session
 Log, session 12 (2026-07-30).
 
-## 10. Timeline assembler upgrade (issue 63, branch `63-timeline-assembler`)
+## 10. Timeline assembler upgrade (issue 63 built 2026-09-25; R4–R8 to come)
 
 The timeline assembler is rebuilt on a text input with a pattern grammar, restructured
 into parse → plan → build, and extended with cycles, conditional timelines, profile

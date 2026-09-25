@@ -120,8 +120,16 @@ Branch `63-timeline-assembler`.
   100%; the d4k integration tests pass (CORE not run). `validate/corpus_adapter.py`
   and `validate/eval_corpus.py` still build the old `soa` shape — tooling, not tests;
   they break until moved (63.7 or a follow-up).
-- **63.7 Docs.** This file and the design updated to *as built*; `lessons_learned.md`
-  entry; session log entry in `next_steps.md`.
+- **63.7 Docs and the corpus tooling.** *Done 2026-09-25:* this file and the design
+  (§ 10, *as built*) updated; `lessons_learned.md` (restructure behind a pin); session log entry in
+  `next_steps.md`. `validate/corpus_adapter.py` now converts the retired shape
+  (which the corpus still drafts) into `ScheduleTimelineInput` with the 63.5 rules —
+  `timeline_input_to_schedule` — keeping every table instead of collapsing to the
+  main one; a table already in the new shape passes through. `AdapterReport` field
+  `soa_timelines_converted` replaces `soa_list_collapsed` / `soa_subtimelines_dropped`
+  (and `eval_corpus.py` reports it). Checked: converting the five old pin inputs
+  gives exactly the committed new ones, and NCT05565742's corpus ground truth
+  assembles through the adapter.
 
 **Gate.** Full test suite green (run in VSCode, not Cowork). Every difference from the
 pin explained. The d4k and CORE integration tests

@@ -18,7 +18,7 @@ The corpus extraction pipeline emits `unvalidated.content` blocks shaped *almost
 | `identification.identifiers[*].scope` | exactly one of `standard` / `non_standard` | both keys present (one `None`) after Pydantic normalisation | **Resolved.** Assembler now uses `scope.get("standard")` truthy check. |
 | `identification.identifiers[*].scope.non_standard.type` | a role label like `"sponsor"` | expected to be an ORG_CODES key like `pharma`, `cro`, `academic` | **Adapter-bridged.** Corpus owes USDM4 the schema-correct shape (`type: pharma, role: sponsor`). Until the corpus extractor is updated, the adapter remaps unknown `type` values to `role` and defaults `type` to `pharma`. |
 
-`validate/corpus_adapter.py` performs the smallest possible bridge: collapses `soa` to its first entry (loses sub-timelines until #6 ships), normalises `co-sponsor` → `co_sponsor`, drops role keys the assembler doesn't know (now redundant since the assembler skips them itself; safe to remove), and runs the input through Pydantic to inject defaults (also now redundant since the assembler does this itself; safe to remove).
+`validate/corpus_adapter.py` performs the smallest possible bridge: converts `soa` from the retired `TimelineInput` shape into `ScheduleTimelineInput`, every table kept (since issue 63, 2026-09-25; it used to collapse `soa` to its first entry), normalises `co-sponsor` → `co_sponsor`, drops role keys the assembler doesn't know (now redundant since the assembler skips them itself; safe to remove), and runs the input through Pydantic to inject defaults (also now redundant since the assembler does this itself; safe to remove).
 
 ## Headline numbers (with adapter, post-fix, no CORE)
 
@@ -142,7 +142,7 @@ The integration tests use a hand-rolled minimum `AssemblerInput` (not from the c
 
 Added:
 - `validate/eval_corpus.py` — corpus harness (assemble + d4k + optional CORE).
-- `validate/corpus_adapter.py` — corpus → `AssemblerInput` adapter. Now redundant for two of its three transforms (Pydantic injection and unknown-role-key dropping); the SoA list-collapse remains the only essential transform until Finding 6 ships.
+- `validate/corpus_adapter.py` — corpus → `AssemblerInput` adapter. Now redundant for two of its three transforms (Pydantic injection and unknown-role-key dropping); the SoA conversion to `ScheduleTimelineInput` (issue 63) is the essential transform until the corpus drafts the new shape itself.
 - `tests/usdm4/integration/` — pipeline regression tests with baseline assertions.
 
 Changed:

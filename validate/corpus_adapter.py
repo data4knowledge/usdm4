@@ -12,10 +12,13 @@ transform here corresponds to a tracked finding.
 
 Transforms applied:
 
-  * ``soa: [main, sub1, sub2, ...]`` (list) -> ``soa: <main>`` (single
-    TimelineInput) for compatibility with today's ``AssemblerInput.soa: TimelineInput | None``.
-    The first list element is taken as the main timeline; sub-timelines
-    are dropped (the assembler can't carry them yet).
+  * ``soa`` in the retired ``TimelineInput`` shape (parallel epochs / visits /
+    timepoints / windows lists with caller-parsed numbers) -> a list of
+    ``ScheduleTimelineInput`` (issue 63), one per table, every table kept.
+    The conversion is mechanical — the rules of
+    ``docs/timeline_assembler_plan.md`` 63.5 — and exists only because the
+    corpus still drafts the old shape; a table already in the new shape
+    (it has ``columns``) passes through untouched.
 
   * ``roles`` keys with hyphens (``co-sponsor``) are normalised to
     underscores (``co_sponsor``) to line up with
@@ -51,8 +54,7 @@ from usdm4.assembler.schema import AssemblerInput
 class AdapterReport:
     """What the adapter changed for one protocol — surfaces silent transforms."""
 
-    soa_list_collapsed: bool = False
-    soa_subtimelines_dropped: int = 0
+    soa_timelines_converted: int = 0
     role_keys_normalised: list[tuple[str, str]] = field(default_factory=list)
     role_keys_dropped: list[str] = field(default_factory=list)
     non_standard_type_remapped: list[str] = field(default_factory=list)
@@ -61,26 +63,154 @@ class AdapterReport:
     pydantic_defaults_injected: bool = False
 
 
+_SOA_UNITS = ("day", "week", "month", "year", "hour", "minute")
+
+
+def _singular(unit) -> str:
+    unit = (unit or "").strip().lower()
+    return unit[:-1] if unit.endswith("s") else unit
+
+
+def _as_int(value) -> int | None:
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value
+    if isinstance(value, float):
+        return int(value) if value.is_integer() else None
+    if isinstance(value, str):
+        try:
+            return int(value.strip())
+        except ValueError:
+            return None
+    return None
+
+
+def _header_value(text, pattern) -> dict | None:
+    text = text or ""
+    if not text.strip() and not (pattern or "").strip():
+        return None
+    return {"text": text, "pattern": pattern}
+
+
+def timeline_input_to_schedule(table: dict) -> dict:
+    """One retired ``TimelineInput`` table -> one ``ScheduleTimelineInput``.
+
+    Mechanical, no judgement (plan 63.5): one column per old timepoint
+    (``c1``, ``c2`` ...); epoch and visit text as ``{text, pattern: text}``,
+    blank -> null; timing ``{text, pattern: "<Unit> <value>"}`` when the old
+    value is an integer and its unit is in the grammar, else text only, and a
+    blank text with a zero value (a placeholder column) -> null; window ->
+    pattern ``-b..+a <units>``, text the old label (blank for a zero window);
+    activities flattened, children after their parent with ``parent`` set,
+    visit indexes -> cells (``X``) with their markers; conditions ->
+    footnotes; ``main_soa`` or no type -> ``main``, other tables ->
+    ``profile`` when they carried a ``table_family``, else ``unclassified``.
+    """
+    table_type = table.get("table_type") or "main_soa"
+    if table_type == "main_soa":
+        timeline_type = "main"
+    elif table.get("table_family"):
+        timeline_type = "profile"
+    else:
+        timeline_type = "unclassified"
+
+    def items(block: str) -> list:
+        return (table.get(block) or {}).get("items") or []
+
+    epochs, visits, windows = items("epochs"), items("visits"), items("windows")
+    columns = []
+    for i, timepoint in enumerate(items("timepoints")):
+        epoch = epochs[i].get("text", "") if i < len(epochs) else ""
+        visit = visits[i] if i < len(visits) else {"text": "", "references": []}
+        value = _as_int(timepoint.get("value"))
+        unit = _singular(timepoint.get("unit"))
+        text = timepoint.get("text") or ""
+        pattern = (
+            f"{unit.capitalize()} {value}"
+            if value is not None and unit in _SOA_UNITS
+            else None
+        )
+        if not text.strip() and not value:
+            pattern = None
+        column = {
+            "id": f"c{i + 1}",
+            "epoch": _header_value(epoch, epoch.strip() or None),
+            "visit": _header_value(
+                visit.get("text"), (visit.get("text") or "").strip() or None
+            ),
+            "timing": _header_value(text, pattern),
+            "markers": list(visit.get("references") or []),
+        }
+        if i < len(windows):
+            w = windows[i]
+            before, after, w_unit = (
+                w.get("before", 0),
+                w.get("after", 0),
+                w.get("unit", "day"),
+            )
+            column["window"] = {
+                "text": ""
+                if before == 0 and after == 0
+                else f"-{before}..+{after} {w_unit}",
+                "pattern": f"-{abs(before)}..+{abs(after)} {_singular(w_unit)}s",
+            }
+        columns.append(column)
+
+    def row(item: dict, parent: str | None = None) -> dict:
+        return {
+            "name": item["name"],
+            "parent": parent,
+            "markers": list(item.get("references") or []),
+            "bcs": list(((item.get("actions") or {}).get("bcs")) or []),
+            "cells": [
+                {
+                    "column": f"c{visit['index'] + 1}",
+                    "text": "X",
+                    "markers": list(visit.get("references") or []),
+                }
+                for visit in item.get("visits") or []
+            ],
+        }
+
+    activities = []
+    for item in items("activities"):
+        activities.append(row(item))
+        for child in item.get("children") or []:
+            activities.append(row(child, item["name"]))
+
+    return {
+        "type": timeline_type,
+        "title": table.get("table_title"),
+        "description": table.get("table_description"),
+        "classification": {
+            "orientation": table.get("table_orientation"),
+            "unit": table.get("table_unit"),
+            "placement": table.get("table_placement"),
+        },
+        "columns": columns,
+        "activities": activities,
+        "footnotes": [
+            {"marker": c.get("reference") or "", "text": c.get("text", "")}
+            for c in items("conditions")
+        ],
+    }
+
+
 def _adapt_soa(soa, report: AdapterReport):
     if soa is None:
         return None
-    if isinstance(soa, list):
-        report.soa_list_collapsed = True
-        if not soa:
-            return None
-        # Pick the main timeline if the entries are tagged, else first entry.
-        main_idx = 0
-        for i, entry in enumerate(soa):
-            if isinstance(entry, dict) and entry.get("table_type") == "main_soa":
-                main_idx = i
-                break
-        report.soa_subtimelines_dropped = max(0, len(soa) - 1)
-        main = copy.deepcopy(soa[main_idx])
-        # Strip non-AssemblerInput keys the corpus adds (table_type etc.).
-        if isinstance(main, dict):
-            main.pop("table_type", None)
-        return main
-    return soa
+    tables = soa if isinstance(soa, list) else [soa]
+    if not tables:
+        return None
+    out = []
+    for table in tables:
+        if isinstance(table, dict) and "columns" in table:
+            out.append(copy.deepcopy(table))
+        else:
+            out.append(timeline_input_to_schedule(table))
+            report.soa_timelines_converted += 1
+    return out
 
 
 def _adapt_non_standard_orgs(identifiers, report: AdapterReport):

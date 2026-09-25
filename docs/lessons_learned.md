@@ -1561,3 +1561,34 @@ more. Every assertion in the test still passed; the suite would have failed on c
 open. When a change alters how input reaches it, the test has to be rewritten to reach it
 deliberately — here by making the final ordering pass raise — and the case it used to cover keeps
 its own test.
+
+## Restructure behind a pin of the output, and the output includes the creation order (2026-09-25)
+
+Issue 63 replaced the timeline assembler's input and split one 1,200-line class into
+parse → plan → build → naming. It kept behaviour because the output was pinned
+BEFORE any code moved: five fixed inputs, everything the other assemblers read,
+saved as JSON by one `SAVE = True` run on the unchanged code
+(`tests/usdm4/assembler/test_timeline_pin.py`). Four reproduced byte for byte after
+the restructure; the fifth differed in exactly the one place the new grammar
+predicted, and that difference was listed with its reason before the expected file
+was re-saved.
+
+- **Ids are output.** The builder numbers ids per class in creation order, and CT
+  codes are objects too, so creating an epoch's `type` code a step earlier renumbers
+  every later `Code`. The build stage creates objects in the old order on purpose —
+  a "harmless" reordering is a diff in every downstream id.
+- **Pin first, then convert the fixtures once, mechanically.** The old inputs were
+  rewritten into the new schema by rules written down beside them (the plan, 63.5,
+  and `validate/corpus_adapter.timeline_input_to_schedule`), so a difference could
+  only come from the code.
+- **Refuse unknown keys at a public input.** The old schema's `extra="ignore"` once
+  hid `table_type` from the assembler; the new one refuses them, and the retired
+  shape fails loudly instead of assembling to nothing.
+- **Tests import `src.usdm4`, the code imports `usdm4`** — two copies of every class.
+  Exceptions and dataclasses compare by identity, so a test must catch the base
+  class (`ValueError`) and compare dataclasses field by field; a monkeypatch must
+  target the module object the code actually looks the name up in.
+- **Keep a known defect pinned, and say so in the test.** A blank timing still gets
+  no `Timing`; the test names the later rule (R4) that changes it, so fixing it is a
+  deliberate diff rather than a surprise.
+

@@ -1,9 +1,11 @@
 # Timeline assembler — design
 
-**Status: DRAFT, 2026-09-25, issue 63 (branch `63-timeline-assembler`).** This is the
-design the timeline assembler is rebuilt against. Nothing here is built yet except
-where a section says *today*. Decisions still open are listed in § 9 and are taken
-one at a time; the work order is in `timeline_assembler_plan.md`.
+**Status: 2026-09-25. Issue 63 built** (branch `63-timeline-assembler`): the input
+schema (§ 3), the grammar for epoch, visit, timing points and windows (§ 4), the
+parse → plan → build → naming structure (§ 5), with R1–R3 and R9 as they were.
+Rules R4–R8 are later issues. § 2 records the assembler as it was BEFORE issue 63;
+§ 10 records what issue 63 built and the calls made on the way. Decisions still open
+are in § 9, taken one at a time; the work order is in `timeline_assembler_plan.md`.
 
 ## 1. What the assembler is for
 
@@ -31,7 +33,7 @@ assembler.** A caller never hands over a number it has worked out from printed t
 it hands over text, in the pattern grammar (§ 4). Two callers reading the same
 schedule must reach the same timings through the same code.
 
-## 2. Today
+## 2. Today (before issue 63)
 
 One `TimelineInput` per timeline (`assembler/schema/timeline_schema.py`): six blocks —
 `epochs`, `visits`, `timepoints`, `windows`, `activities`, `conditions` — plus
@@ -376,7 +378,7 @@ Taken one at a time, each recorded here with its date when taken.
 
 | id | decision | proposal |
 |---|---|---|
-| D1 | Names of the new schema classes and fields | as in § 3 |
+| D1 | Names of the new schema classes and fields | **Taken 2026-09-25:** `ScheduleTimelineInput`, `ColumnInput`, `HeaderValue`, `HeaderNote`, `ActivityInput`, `CellInput`, `FootnoteInput`, `TimelineClassification`; fields as in § 3 |
 | D2 | The anchor rule | § 6 R4.1 |
 | D3 | Form of a text-only timing (no parseable pattern) | `Timing` with label, `value` a zero duration flagged by an extension |
 | D4 | A timing span (`Day -28 to Day -1`): the column's timing, its window, or both | timing = span end, window = span |
@@ -388,3 +390,36 @@ Taken one at a time, each recorded here with its date when taken.
 | D10 | Gate versus window in text alone (R8) | open |
 | D11 | How the expander presents a loop | one pass, flagged as repeating |
 | D12 | Activity identity across timelines when names differ only by spacing or hyphenation | exact trimmed, case-folded match, as today |
+
+## 10. As built — issue 63 (2026-09-25)
+
+- **Modules.** `assembler/schema/schedule_timeline_schema.py` (the input);
+  `assembler/timeline/grammar.py`, `columns.py` (parse), `plan.py`, `build.py`,
+  `naming.py`; `assembler/timeline_assembler.py` is the orchestrator with its public
+  surface unchanged. `TimelineInput` and `schema/timeline_schema.py` are gone;
+  `AssemblerInput.soa` is `list[ScheduleTimelineInput] | None` (a single dict is
+  refused).
+- **The schema checks structure only** and refuses unknown keys. Patterns are read in
+  the parse stage, so a timing span (`… to …`) and the cycle fields are carried as text
+  until R4.
+- **Behaviour kept exactly**, pinned by `tests/usdm4/assembler/test_timeline_pin.py`:
+  four of five pinned inputs reproduce the pre-issue output byte for byte. The fifth
+  differs in one timeline whose caller unit was `cycle` (not a grammar unit), which
+  moves its anchor — recorded in the plan, 63.5. Both outputs are wrong; R4 fixes it.
+- **Object creation order is part of the output.** The builder numbers ids per class
+  as objects are made, so `build.py` creates them in the old order: epochs,
+  encounters, activities, instances, timings, cell links, conditions, timeline.
+- **The profile marker.** The family extension (TLF) is emitted for `profile`
+  timelines only, value `profile`: downstream readers take its presence to mean
+  "profile". Orientation, unit and placement are emitted when given. The type
+  extension R1 calls for is not yet emitted.
+- **Failure policy.** A timeline whose patterns the grammar refuses, or with no
+  columns, is reported and not built. A built timeline's epochs, encounters and
+  conditions are added only once the whole timeline has built; activities are shared
+  and stay registered.
+- **Kept on purpose until a later rule:** a column with no timing text gets no
+  `Timing` (R4); an epoch-less column gets an epoch with an empty label (D6); the
+  `Paricipant identified` entry condition and the placeholder procedure code (§ 8).
+- **Dropped:** the `scheduledInstanceTimelineId` key, which was not an API field.
+- **Family names.** `unclassified` is its own family.
+

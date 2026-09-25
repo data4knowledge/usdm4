@@ -144,8 +144,7 @@ def _load_content(
         adapter_info = {
             k: v
             for k, v in {
-                "soa_list_collapsed": report.soa_list_collapsed,
-                "soa_subtimelines_dropped": report.soa_subtimelines_dropped,
+                "soa_timelines_converted": report.soa_timelines_converted,
                 # Tuples don't safe-dump cleanly — flatten to lists.
                 "role_keys_normalised": [list(t) for t in report.role_keys_normalised],
                 "role_keys_dropped": list(report.role_keys_dropped),
