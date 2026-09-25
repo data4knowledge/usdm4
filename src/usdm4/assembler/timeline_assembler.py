@@ -1,9 +1,9 @@
 """The timeline assembler — orchestrates parse → plan → build (issue 63).
 
 Input: a list of ``ScheduleTimelineInput`` dicts (validated and dumped by
-``Assembler``). Every header value is text — printed text plus a pattern form
-— and all parsing happens here, in ``timeline/columns.py`` with the grammar in
-``timeline/grammar.py``. Design: ``docs/timeline_assembler_design.md``.
+``Assembler``). Every header value is printed text, a pattern form, or both —
+and all parsing happens here, in ``timeline/columns.py`` with the grammar in
+``timeline/grammar.py`` and the printed-text reader in ``timeline/printed.py``. Design: ``docs/timeline_assembler_design.md``.
 
 The public surface is unchanged, because three callers read it: ``Assembler``
 calls ``execute`` and ``clear``; ``StudyDesignAssembler`` reads ``epochs``,
@@ -25,7 +25,6 @@ from usdm4.assembler.base_assembler import BaseAssembler
 from usdm4.assembler.encoder import Encoder
 from usdm4.assembler.timeline.build import SharedState, TimelineBuild
 from usdm4.assembler.timeline.columns import ParsedTimeline, parse_timeline
-from usdm4.assembler.timeline.grammar import PatternError
 from usdm4.assembler.timeline.plan import Planner
 from usdm4.builder.builder import Builder
 
@@ -49,9 +48,11 @@ class TimelineAssembler(BaseAssembler):
         """Assemble every timeline in ``data`` (a list of timeline dicts; one
         dict is accepted as a list of one).
 
-        Each timeline is parsed first. A timeline whose patterns the grammar
-        refuses, or that has no columns, is reported once and not built — it
-        can yield no instances, so nothing built from it would be reachable.
+        Each timeline is parsed first. A timeline is always built if at all
+        possible (D17): a bad pattern or unreadable text is a warning and the
+        field falls back. Only a timeline with no columns is reported and not
+        built — it can yield no instances, so nothing built from it would be
+        reachable.
         Exactly one built timeline carries ``mainTimeline``: the first of type
         ``main``, else the first. Ordinals are the timeline's own position in
         the input, so a skipped one leaves a gap (``TIMELINE-1``,
@@ -89,12 +90,7 @@ class TimelineAssembler(BaseAssembler):
         parsed: list[ParsedTimeline | None] = []
         for index, data in enumerate(timelines):
             location = KlassMethodLocation(self.MODULE, "_parse_all")
-            try:
-                timeline = parse_timeline(data)
-            except PatternError as e:
-                self._errors.error(f"Timeline {index + 1} not created: {e}", location)
-                parsed.append(None)
-                continue
+            timeline = parse_timeline(data, self._errors, index + 1)
             if not timeline.columns:
                 self._errors.error(
                     f"Timeline {index + 1} has no columns, not created "
@@ -121,7 +117,7 @@ class TimelineAssembler(BaseAssembler):
         self, timeline: ParsedTimeline, planner: Planner, t: int, is_main: bool
     ) -> None:
         try:
-            plan = planner.plan(timeline)
+            plan = planner.plan(timeline, t)
             built = TimelineBuild(
                 self._builder,
                 self._errors,

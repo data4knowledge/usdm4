@@ -16,7 +16,206 @@
           "instanceType": "ScheduleTimelineExit"
         }
       ],
-      "timings": [],
+      "timings": [
+        {
+          "id": "Timing_1",
+          "extensionAttributes": [],
+          "name": "TIM1",
+          "label": "",
+          "description": null,
+          "type": {
+            "id": "Code_22",
+            "extensionAttributes": [],
+            "code": "C201358",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Fixed Reference Timing Type",
+            "instanceType": "Code"
+          },
+          "value": "PT0M",
+          "valueLabel": "",
+          "relativeToFrom": {
+            "id": "Code_23",
+            "extensionAttributes": [],
+            "code": "C201355",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Start to Start",
+            "instanceType": "Code"
+          },
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_1",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_1",
+          "windowLower": "",
+          "windowUpper": "",
+          "windowLabel": "",
+          "instanceType": "Timing"
+        },
+        {
+          "id": "Timing_2",
+          "extensionAttributes": [],
+          "name": "TIM2",
+          "label": "",
+          "description": null,
+          "type": {
+            "id": "Code_24",
+            "extensionAttributes": [],
+            "code": "C201356",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "After Timing Type",
+            "instanceType": "Code"
+          },
+          "value": "PT0M",
+          "valueLabel": "",
+          "relativeToFrom": {
+            "id": "Code_25",
+            "extensionAttributes": [],
+            "code": "C201355",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Start to Start",
+            "instanceType": "Code"
+          },
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_2",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_1",
+          "windowLower": "",
+          "windowUpper": "",
+          "windowLabel": "",
+          "instanceType": "Timing"
+        },
+        {
+          "id": "Timing_3",
+          "extensionAttributes": [],
+          "name": "TIM3",
+          "label": "",
+          "description": null,
+          "type": {
+            "id": "Code_26",
+            "extensionAttributes": [],
+            "code": "C201356",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "After Timing Type",
+            "instanceType": "Code"
+          },
+          "value": "PT0M",
+          "valueLabel": "",
+          "relativeToFrom": {
+            "id": "Code_27",
+            "extensionAttributes": [],
+            "code": "C201355",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Start to Start",
+            "instanceType": "Code"
+          },
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_3",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_2",
+          "windowLower": "",
+          "windowUpper": "",
+          "windowLabel": "",
+          "instanceType": "Timing"
+        },
+        {
+          "id": "Timing_4",
+          "extensionAttributes": [],
+          "name": "TIM4",
+          "label": "",
+          "description": null,
+          "type": {
+            "id": "Code_28",
+            "extensionAttributes": [],
+            "code": "C201356",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "After Timing Type",
+            "instanceType": "Code"
+          },
+          "value": "PT0M",
+          "valueLabel": "",
+          "relativeToFrom": {
+            "id": "Code_29",
+            "extensionAttributes": [],
+            "code": "C201355",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Start to Start",
+            "instanceType": "Code"
+          },
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_4",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_3",
+          "windowLower": "",
+          "windowUpper": "",
+          "windowLabel": "",
+          "instanceType": "Timing"
+        },
+        {
+          "id": "Timing_5",
+          "extensionAttributes": [],
+          "name": "TIM5",
+          "label": "",
+          "description": null,
+          "type": {
+            "id": "Code_30",
+            "extensionAttributes": [],
+            "code": "C201356",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "After Timing Type",
+            "instanceType": "Code"
+          },
+          "value": "PT0M",
+          "valueLabel": "",
+          "relativeToFrom": {
+            "id": "Code_31",
+            "extensionAttributes": [],
+            "code": "C201355",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Start to Start",
+            "instanceType": "Code"
+          },
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_5",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_4",
+          "windowLower": "",
+          "windowUpper": "",
+          "windowLabel": "",
+          "instanceType": "Timing"
+        },
+        {
+          "id": "Timing_6",
+          "extensionAttributes": [],
+          "name": "TIM6",
+          "label": "",
+          "description": null,
+          "type": {
+            "id": "Code_32",
+            "extensionAttributes": [],
+            "code": "C201356",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "After Timing Type",
+            "instanceType": "Code"
+          },
+          "value": "PT0M",
+          "valueLabel": "",
+          "relativeToFrom": {
+            "id": "Code_33",
+            "extensionAttributes": [],
+            "code": "C201355",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Start to Start",
+            "instanceType": "Code"
+          },
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_6",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_5",
+          "windowLower": "",
+          "windowUpper": "",
+          "windowLabel": "",
+          "instanceType": "Timing"
+        }
+      ],
       "instances": [
         {
           "id": "ScheduledActivityInstance_1",

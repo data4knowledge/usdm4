@@ -372,7 +372,7 @@ class TimelineBuild:
         return results
 
     # ------------------------------------------------------------------
-    # Timings — every node from the plan's one anchor
+    # Timings — one per instance (issue 65), as the plan places them
 
     def _add_timings(self) -> list[Timing]:
         results: list[Timing] = []
@@ -380,8 +380,8 @@ class TimelineBuild:
             column = node.column
             this_sai = self._sai_for[column.index]
             to_sai = self._sai_for[node.relative_to]
-            window = column.window
-            label = column.timing_label or None
+            window = node.window
+            label = column.timing_label or ""
             timing = self._builder.create(
                 Timing,
                 {
@@ -389,14 +389,14 @@ class TimelineBuild:
                         Timing, "type", node.timing_type
                     ),
                     "value": self._encoder.iso8601_duration(node.duration, node.unit),
-                    "valueLabel": label,
+                    "valueLabel": self._value_label(column),
                     "name": self._qualify(f"TIM{column.index + 1}"),
                     "description": None,
                     "label": label,
                     "relativeToFrom": self._builder.klass_and_attribute_value(
                         Timing, "relativeToFrom", "start to start"
                     ),
-                    "windowLabel": self._window_label(column),
+                    "windowLabel": self._window_label(node),
                     "windowLower": self._encoder.iso8601_duration(
                         window.lower, window.unit
                     )
@@ -420,13 +420,27 @@ class TimelineBuild:
         return results
 
     @staticmethod
-    def _window_label(column) -> str | None:
-        """The window as printed, `""` for a zero window, None where there is
-        no window. House style: a label carries the protocol's words or it is
-        absent."""
-        if column.window is None:
-            return None
-        if column.window.lower == 0 and column.window.upper == 0:
+    def _value_label(column) -> str:
+        """The printed timing text, or ``""``. A time range is labelled with
+        its decoded start (``Day -28``) — D21; its printed text stays on
+        ``label``."""
+        if column.time_range is not None:
+            return f"{column.time_range.unit.capitalize()} {column.time_range.start}"
+        return column.timing_label or ""
+
+    @staticmethod
+    def _window_label(node) -> str | None:
+        """The window as printed. A window with no printed text of its own —
+        decoded from a time range (D21) or printed inside the timing cell —
+        is labelled in pattern form (``-0..+27 days``). A zero window from the
+        window field is ``""``. With no window, the printed window text if
+        any (unread or redacted), else None."""
+        column, window = node.column, node.window
+        if window is None:
+            return column.window_label or None
+        if node.window_from in ("range", "timing"):
+            return f"-{window.lower}..+{window.upper} {window.unit}s"
+        if window.lower == 0 and window.upper == 0:
             return ""
         return column.window_label
 

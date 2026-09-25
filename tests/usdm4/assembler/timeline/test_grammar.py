@@ -11,10 +11,13 @@ from src.usdm4.assembler.timeline.grammar import (
     REDACTED,
     UNITS,
     PatternError,
+    TimeRange,
     TimingPoint,
     Window,
     is_redacted,
+    is_time_range,
     parse_label,
+    parse_time_range,
     parse_timing,
     parse_window,
 )
@@ -97,7 +100,7 @@ class TestTiming:
             "Day 08",  # leading zero
             "Day −8",  # unicode minus
             "Day ٨",  # non-ASCII digit
-            "Day 1 to Day 7",  # span — R4
+            "Day 1 to Day 7",  # a time range, not a point
             "Cycle 1",  # cycle — R4
             "C2D8",  # printed cycle-day form
             "Day 8 (±3 days)",  # window glued on
@@ -115,6 +118,61 @@ class TestTiming:
     def test_non_text_refused(self, value):
         with pytest.raises(PatternError):
             parse_timing(value)
+
+
+class TestTimeRange:
+    """Issue 65 — a scheduled time printed as a range (D4)."""
+
+    @pytest.mark.parametrize(
+        "pattern, unit, start, end",
+        [
+            ("Day -28 to Day -1", "day", -28, -1),
+            ("Day -3 to Day 2", "day", -3, 2),
+            ("Day 1 to Day 1", "day", 1, 1),
+            ("Week 1 to Week 4", "week", 1, 4),
+            ("hour 0 to HOUR 2", "hour", 0, 2),
+            ("  Day 2 to Day 4 ", "day", 2, 4),
+            ("Day 2 TO Day 4", "day", 2, 4),
+        ],
+    )
+    def test_accepted(self, pattern, unit, start, end):
+        assert parse_time_range(pattern) == TimeRange(unit=unit, start=start, end=end)
+
+    @pytest.mark.parametrize(
+        "pattern, expected",
+        [
+            ("Day -28 to Week 1", "same unit"),
+            ("Day 5 to Day 2", "not before the start"),
+            ("Day 1 to Day 7 to Day 9", "<Unit> <int> to"),
+            ("Day 1", "<Unit> <int> to"),
+            ("-28 to -1", "<Unit> <int> to"),
+            ("Day -28 to -1", "<Unit> <int> to"),
+            ("Day 1  to Day 7", "<Unit> <int> to"),
+            ("Day −28 to Day −1", "<Unit> <int> to"),
+        ],
+    )
+    def test_refused(self, pattern, expected):
+        with pytest.raises(PatternError) as error:
+            parse_time_range(pattern)
+        assert error.value.kind == "time range"
+        assert expected in error.value.expected
+
+    @pytest.mark.parametrize("value", [None, 3, ["Day 1 to Day 2"]])
+    def test_non_text_refused(self, value):
+        with pytest.raises(PatternError):
+            parse_time_range(value)
+
+    @pytest.mark.parametrize(
+        "value, expected",
+        [
+            ("Day -28 to Day -1", True),
+            ("day 1 TO day 2", True),
+            ("Day 1", False),
+            (None, False),
+        ],
+    )
+    def test_is_time_range(self, value, expected):
+        assert is_time_range(value) is expected
 
 
 class TestWindow:
@@ -160,7 +218,7 @@ class TestWindow:
             "-3..+3 d",  # abbreviation
             "-3 to +3 days",
             "−3..+3 days",  # unicode minus
-            "Day -3 to Day 3",  # a span, not a window
+            "Day -3 to Day 3",  # a time range, not a window
             "Day 8",  # a timing, not a window
         ],
     )

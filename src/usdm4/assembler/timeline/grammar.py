@@ -7,8 +7,9 @@ value outside the grammar is refused with ``PatternError`` — never guessed at.
 Turning printed text into a pattern is the caller's job.
 
 Specified in ``docs/timeline_assembler_design.md`` § 4. Covered here: timing
-points, windows, and the free-text labels used for epochs and visits. Timing
-spans and cycles are added with rule R4.
+points, time ranges (issue 65), windows, and the free-text labels used for
+epochs and visits. Cycles are added with the next R4 issue. Printed text is
+read by ``printed.py``, not here.
 
 Rules common to every pattern:
 
@@ -79,12 +80,25 @@ class Window:
     unit: str
 
 
+@dataclass(frozen=True)
+class TimeRange:
+    """A time range, ``Day -28 to Day -1`` →
+    ``TimeRange(unit="day", start=-28, end=-1)`` (D4, issue 65): a scheduled
+    time printed as a range, decoded by the plan to a timing at its start
+    and a window forward to its end."""
+
+    unit: str
+    start: int
+    end: int
+
+
 _TIMING_EXPECTED = "'<Unit> <int>', Unit one of " + ", ".join(
     unit.capitalize() for unit in UNITS
 )
 _WINDOW_EXPECTED = "'-<int>..+<int> <units>', units one of " + ", ".join(
     f"{unit}s" for unit in UNITS
 )
+_TIME_RANGE_EXPECTED = "'<Unit> <int> to <Unit> <int>'"
 
 
 def _text(kind: str, value, expected: str) -> str:
@@ -106,6 +120,33 @@ def parse_timing(value: str) -> TimingPoint:
     if not match:
         raise PatternError("timing", value, _TIMING_EXPECTED)
     return TimingPoint(unit=match.group(1).lower(), value=int(match.group(2)))
+
+
+def parse_time_range(value: str) -> TimeRange:
+    """Parse a time range: ``Day -28 to Day -1``, ``Week 1 to Week 4``.
+
+    Both ends are timing points in the same unit, and the end is not before
+    the start (D4, issue 65)."""
+    text = _text("time range", value, _TIME_RANGE_EXPECTED)
+    parts = re.split(" to ", text, flags=re.IGNORECASE)
+    if len(parts) != 2:
+        raise PatternError("time range", value, _TIME_RANGE_EXPECTED)
+    start = _TIMING_POINT.match(parts[0])
+    end = _TIMING_POINT.match(parts[1])
+    if not start or not end:
+        raise PatternError("time range", value, _TIME_RANGE_EXPECTED)
+    unit = start.group(1).lower()
+    if end.group(1).lower() != unit:
+        raise PatternError("time range", value, "both ends in the same unit")
+    first, last = int(start.group(2)), int(end.group(2))
+    if last < first:
+        raise PatternError("time range", value, "an end not before the start")
+    return TimeRange(unit=unit, start=first, end=last)
+
+
+def is_time_range(value) -> bool:
+    """True when a timing pattern is written as a time range (``… to …``)."""
+    return isinstance(value, str) and " to " in value.strip().lower()
 
 
 def parse_window(value: str) -> Window:

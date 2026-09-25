@@ -4,12 +4,13 @@ The code under test imports ``usdm4.*`` while these tests import ``src.usdm4.*``
 so grammar classes are compared by field and ``PatternError`` is caught as the
 ``ValueError`` it is.
 
-``parse_timeline`` reads every pattern with the grammar and refuses the first
-bad one; until R4 a timing span is carried as text only, and cycle fields are
-never parsed.
+Issue 65: each of timing and window is read from its pattern, else from its
+printed text, else nothing; a refused pattern is a warning and falls back to
+the text (D17). Cycle fields are not parsed until the next R4 issue.
 """
 
 import pytest
+from simple_error_log.errors import Errors
 
 from src.usdm4.assembler.timeline.columns import parse_column, parse_timeline
 from tests.usdm4.assembler.timeline.helpers import activity, column, timeline, value
@@ -62,9 +63,12 @@ class TestColumn:
         assert parsed.timing_label == "Day 3"
         assert parsed.timing.value == 3
 
-    def test_text_only_is_carried_and_not_parsed(self):
+    def test_unreadable_text_is_carried_with_no_value(self):
+        errors = Errors()
         parsed = parse_column(
-            0, _column(timing={"text": "As clinically indicated", "pattern": None})
+            0,
+            _column(timing={"text": "As clinically indicated", "pattern": None}),
+            errors=errors,
         )
         parsed_none = parse_column(
             0, _column(timing={"text": "As needed", "pattern": "   "})
@@ -72,11 +76,13 @@ class TestColumn:
         assert parsed.timing_label == "As clinically indicated"
         assert parsed.timing is None
         assert parsed_none.timing is None
+        assert "'As clinically indicated' not read" in _messages(errors)[0]
 
-    def test_a_span_is_carried_as_text_until_r4(self):
+    def test_a_time_range_pattern_sets_the_range_and_its_start(self):
         parsed = parse_column(0, _column(timing=value("≤28", "Day -28 to Day -1")))
         assert parsed.timing_label == "≤28"
-        assert parsed.timing is None
+        assert _range(parsed) == ("day", -28, -1)
+        assert (parsed.timing.unit, parsed.timing.value) == ("day", -28)
 
     def test_cycle_fields_are_not_parsed(self):
         parsed = parse_column(
@@ -85,23 +91,175 @@ class TestColumn:
         assert parsed.cycle_label == "Cycle 3-n"
         assert parsed.cycle_length_label == "x"
 
-    @pytest.mark.parametrize(
-        "field, bad, kind",
-        [
-            ("timing", value("D8", "D8"), "timing"),
-            ("window", value("±3 days", "±3 days"), "window"),
-            ("epoch", {"text": "Screening", "pattern": "\t"}, None),
-        ],
-    )
-    def test_a_bad_pattern_is_refused(self, field, bad, kind):
-        data = _column(**{field: bad})
-        if kind is None:
-            # A blank pattern is no pattern: the text is the label.
-            assert parse_column(0, data).epoch_label == "Screening"
-            return
-        with pytest.raises(ValueError) as error:
-            parse_column(0, data)
-        assert error.value.kind == kind
+    def test_a_refused_pattern_falls_back_to_the_text(self):
+        errors = Errors()
+        parsed = parse_column(
+            0,
+            _column(timing=value("D8", "D8"), window=value("±3 days", "±3 days")),
+            errors=errors,
+            t=2,
+        )
+        assert (parsed.timing.unit, parsed.timing.value) == ("day", 8)
+        assert (parsed.window.lower, parsed.window.upper) == (3, 3)
+        messages = _messages(errors)
+        assert len(messages) == 2
+        assert messages[0].startswith("Timeline 2, column 'c1', timing:")
+        assert "reading the printed text instead" in messages[0]
+        assert messages[1].startswith("Timeline 2, column 'c1', window:")
+
+    def test_a_refused_pattern_with_unreadable_text_has_no_value(self):
+        errors = Errors()
+        parsed = parse_column(
+            0, _column(timing=value("Predose", "Predose")), errors=errors
+        )
+        assert parsed.timing is None
+        assert len(_messages(errors)) == 2
+        assert _messages(errors)[0].startswith("Column 'c1', timing:")
+
+    def test_a_refused_pattern_with_no_text_has_no_value(self):
+        errors = Errors()
+        parsed = parse_column(
+            0, _column(timing={"text": "", "pattern": "D8"}), errors=errors
+        )
+        assert parsed.timing is None
+        assert len(_messages(errors)) == 1
+
+    def test_a_blank_epoch_pattern_is_no_pattern(self):
+        data = _column(epoch={"text": "Screening", "pattern": "\t"})
+        assert parse_column(0, data).epoch_label == "Screening"
+
+
+class TestPrintedText:
+    """Issue 65 — text only, pattern only, or both; the pattern wins."""
+
+    def test_text_only_timing(self):
+        parsed = parse_column(0, _column(timing={"text": "D8", "pattern": None}))
+        assert (parsed.timing.unit, parsed.timing.value) == ("day", 8)
+        assert parsed.timing_label == "D8"
+
+    def test_text_only_window(self):
+        parsed = parse_column(
+            0,
+            _column(
+                timing={"text": "Week 4", "pattern": None},
+                window={"text": "±3", "pattern": None},
+            ),
+        )
+        assert (parsed.window.lower, parsed.window.unit) == (3, "week")
+        assert parsed.window_from == "window"
+
+    def test_the_pattern_wins(self):
+        parsed = parse_column(0, _column(timing=value("Day 9", "Day 8")))
+        assert parsed.timing.value == 8
+
+    def test_blank_or_dashes_are_nothing_and_not_warned(self):
+        errors = Errors()
+        parsed = parse_column(
+            0,
+            _column(
+                timing={"text": "—", "pattern": None},
+                window={"text": "---", "pattern": None},
+            ),
+            errors=errors,
+        )
+        assert parsed.timing is None and parsed.window is None
+        assert _messages(errors) == []
+
+    def test_a_bare_number_takes_the_row_label_unit(self):
+        parsed = parse_column(
+            0,
+            _column(timing={"text": "4", "pattern": None}),
+            rows={"timing": "Timing of Visit (Weeks)"},
+        )
+        assert (parsed.timing.unit, parsed.timing.value) == ("week", 4)
+
+    def test_a_bare_number_with_no_unit_is_days_with_a_warning(self):
+        errors = Errors()
+        parsed = parse_column(
+            0, _column(timing={"text": "15", "pattern": None}), errors=errors
+        )
+        assert (parsed.timing.unit, parsed.timing.value) == ("day", 15)
+        assert "no unit stated for '15'; read as days" in _messages(errors)[0]
+
+    def test_a_bare_window_with_no_unit_is_days_with_a_warning(self):
+        errors = Errors()
+        parsed = parse_column(
+            0,
+            _column(window={"text": "±3", "pattern": None}),
+            errors=errors,
+        )
+        assert parsed.window.unit == "day"
+        assert "window: no unit stated" in _messages(errors)[0]
+
+    def test_a_bare_window_takes_the_window_row_label(self):
+        parsed = parse_column(
+            0,
+            _column(
+                timing={"text": "Week 4", "pattern": None},
+                window={"text": "±3", "pattern": None},
+            ),
+            rows={"window": "Visit interval tolerance (days)"},
+        )
+        assert parsed.window.unit == "day"
+
+    def test_unreadable_window_text_is_warned(self):
+        errors = Errors()
+        parsed = parse_column(
+            0,
+            _column(window={"text": "See Section 1.3", "pattern": None}),
+            errors=errors,
+        )
+        assert parsed.window is None
+        assert parsed.window_label == "See Section 1.3"
+        assert "'See Section 1.3' not read" in _messages(errors)[0]
+
+    def test_a_printed_time_range(self):
+        parsed = parse_column(0, _column(timing={"text": "-28 to -1", "pattern": None}))
+        assert _range(parsed) == ("day", -28, -1)
+        assert parsed.timing.value == -28
+
+    def test_up_to_is_carried_for_the_plan(self):
+        parsed = parse_column(0, _column(timing={"text": "≤21", "pattern": None}))
+        assert parsed.timing is None
+        assert (parsed.up_to.unit, parsed.up_to.n) == ("day", 21)
+
+    def test_a_window_in_the_timing_cell(self):
+        parsed = parse_column(0, _column(timing={"text": "15 ± 3", "pattern": None}))
+        assert parsed.timing.value == 15
+        assert (parsed.window.lower, parsed.window.upper) == (3, 3)
+        assert parsed.window_from == "timing"
+
+    def test_the_window_field_beats_the_timing_cell_with_a_warning(self):
+        errors = Errors()
+        parsed = parse_column(
+            0,
+            _column(
+                timing={"text": "15 ± 3", "pattern": None},
+                window=value("±7", "-7..+7 days"),
+            ),
+            errors=errors,
+        )
+        assert parsed.window.lower == 7
+        assert parsed.window_from == "window"
+        assert any(
+            "the timing cell prints a window too" in m for m in _messages(errors)
+        )
+
+    def test_the_window_field_beats_a_time_range_with_a_warning(self):
+        errors = Errors()
+        parsed = parse_column(
+            0,
+            _column(timing=value("Day -3 to Day 3"), window=value("-1..+1 days")),
+            errors=errors,
+        )
+        assert parsed.window.lower == 1
+        assert "the timing is a time range" in _messages(errors)[0]
+
+    def test_a_redacted_value_is_never_read(self):
+        errors = Errors()
+        parsed = parse_column(0, _column(timing=value("Day 8", "CCI")), errors=errors)
+        assert parsed.timing is None
+        assert _messages(errors) == []
 
 
 class TestRedaction:
@@ -135,7 +293,7 @@ class TestRedaction:
         assert parsed.timing_label == "CCI"
 
     def test_text_cci_with_null_pattern_is_not_a_redaction(self):
-        # Only the PATTERN states a redaction; printed text is never read.
+        # Only the PATTERN states a redaction; printed `CCI` is unreadable text.
         parsed = parse_column(0, _column(timing={"text": "CCI", "pattern": None}))
         assert parsed.redacted == set()
 
@@ -206,7 +364,28 @@ class TestTimeline:
         assert parsed.activities[0]["name"] == "Consent"
         assert parsed.footnotes[0]["marker"] == "a"
 
-    def test_the_first_bad_pattern_stops_the_timeline(self):
+    def test_a_bad_pattern_does_not_stop_the_timeline(self):
+        errors = Errors()
         data = timeline([column("c1", timing="Day 1"), column("c2", timing="Wk 2")])
-        with pytest.raises(ValueError):
-            parse_timeline(data)
+        parsed = parse_timeline(data, errors, 3)
+        assert (parsed.columns[1].timing.unit, parsed.columns[1].timing.value) == (
+            "week",
+            2,
+        )
+        assert _messages(errors)[0].startswith("Timeline 3, column 'c2', timing:")
+
+    def test_rows_reach_the_columns(self):
+        data = timeline(
+            [column("c1", timing={"text": "15", "pattern": None})],
+            rows={"timing": "Hours post dose"},
+        )
+        assert parse_timeline(data).columns[0].timing.unit == "hour"
+
+
+def _messages(errors: Errors) -> list[str]:
+    return [item["message"] for item in errors.to_dict(0)]
+
+
+def _range(parsed) -> tuple:
+    r = parsed.time_range
+    return (r.unit, r.start, r.end)

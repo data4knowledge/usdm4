@@ -1,16 +1,20 @@
-"""Parse — issue 63, part 63.4.
+"""Parse — issue 63, part 63.4; issue 65.
 
 Turns one validated ``ScheduleTimelineInput`` (as a dict, the way the
 Assembler hands its input on) into a ``ParsedTimeline``: one ``Column`` record
-per column, every pattern read with the grammar. Pure: no builder, no USDM
-objects. A pattern the grammar refuses raises ``PatternError`` and the
-timeline is not built.
+per column. Pure: no builder, no USDM objects.
 
-Until rule R4 (``docs/timeline_assembler_plan.md``) a timing span
-(``Day -28 to Day -1``) is carried as text only, and ``cycle`` /
-``cycle_length`` are carried as text and not parsed.
+Issue 65 (design § 3.2, D16, D17): each of timing and window is read the same
+way — the pattern when there is one; else the printed text, read by
+``printed.py``; else nothing. A pattern the grammar refuses is a warning and
+is set aside, and the field falls back to its printed text: the timeline is
+always built if at all possible. Every problem found reading a value is a
+warning naming the timeline, column and field. A time range
+(``Day -28 to Day -1``) sets ``time_range`` and, as the timing point, its
+start. ``cycle`` / ``cycle_length`` are carried as text until the next R4
+issue.
 
-Issue 64: a field whose pattern is the redaction ``CCI`` is never parsed; its
+Issue 64: a field whose pattern is the redaction ``CCI`` is never read; its
 name is recorded in ``Column.redacted`` and its printed text kept as the
 label. Footnote markers are carried per header value (``Column.markers``),
 and the timeline's header row labels are carried as ``ParsedTimeline.rows``.
@@ -18,18 +22,32 @@ and the timeline's header row labels are carried as ``ParsedTimeline.rows``.
 
 from dataclasses import dataclass, field
 
+from simple_error_log.error_location import KlassMethodLocation
+from simple_error_log.errors import Errors
+
 from usdm4.assembler.schema.schedule_timeline_schema import (
     HEADER_FIELDS,
     family_of,
 )
 from usdm4.assembler.timeline.grammar import (
+    PatternError,
+    TimeRange,
     TimingPoint,
     Window,
     is_redacted,
-    parse_label,
+    is_time_range,
+    parse_time_range,
     parse_timing,
     parse_window,
 )
+from usdm4.assembler.timeline.printed import (
+    UpTo,
+    is_blank,
+    read_timing,
+    read_window,
+)
+
+MODULE = "usdm4.assembler.timeline.columns"
 
 
 @dataclass
@@ -42,8 +60,15 @@ class Column:
     visit_label: str | None = None
     timing_label: str | None = None
     timing: TimingPoint | None = None
+    # A scheduled time printed as a range; ``timing`` is then its start.
+    time_range: TimeRange | None = None
+    # A printed ``≤N``, placed by the plan (D18).
+    up_to: UpTo | None = None
     window_label: str | None = None
     window: Window | None = None
+    # Where ``window`` came from: ``"window"`` (the window field) or
+    # ``"timing"`` (a window printed in the timing cell, D16).
+    window_from: str | None = None
     cycle_label: str | None = None
     cycle_length_label: str | None = None
     notes: list[dict] = field(default_factory=list)
@@ -98,13 +123,103 @@ def _pattern(value: dict | None) -> str | None:
     return pattern if pattern is not None and pattern.strip() else None
 
 
-def _is_span(pattern: str) -> bool:
-    return " to " in pattern.strip().lower()
+class _Reader:
+    """Reads one column's header values, raising the warnings (D16)."""
+
+    def __init__(self, data: dict, rows: dict, errors: Errors | None, t):
+        self._data = data
+        self._rows = rows
+        self._errors = errors
+        self._where = (
+            f"Timeline {t}, column '{data['id']}'" if t else f"Column '{data['id']}'"
+        )
+
+    def warn(self, name: str, message: str) -> None:
+        if self._errors is not None:
+            self._errors.warning(
+                f"{self._where}, {name}: {message}",
+                KlassMethodLocation(MODULE, "parse_column"),
+            )
+
+    def text(self, name: str) -> str | None:
+        value = self._data.get(name)
+        return None if value is None else (value.get("text") or "")
+
+    def row(self, name: str) -> str | None:
+        return self._rows.get(name)
 
 
-def parse_column(index: int, data: dict) -> Column:
-    """Read one column's header values."""
+def _read_timing(column: Column, reader: _Reader, pattern: str | None) -> Window | None:
+    """Timing: the pattern, else the printed text, else nothing. Returns a
+    window printed in the timing cell, if any."""
+    if pattern is not None:
+        try:
+            if is_time_range(pattern):
+                column.time_range = parse_time_range(pattern)
+                column.timing = TimingPoint(
+                    column.time_range.unit, column.time_range.start
+                )
+            else:
+                column.timing = parse_timing(pattern)
+            return None
+        except PatternError as e:
+            reader.warn("timing", f"{e}; reading the printed text instead")
+    text = reader.text("timing")
+    if is_blank(text):
+        return None
+    read = read_timing(text, reader.row("timing"))
+    if read is None:
+        reader.warn("timing", f"printed text {text!r} not read")
+        return None
+    if read.unit_defaulted:
+        reader.warn("timing", f"no unit stated for {text!r}; read as days")
+    if isinstance(read.timing, TimeRange):
+        column.time_range = read.timing
+        column.timing = TimingPoint(read.timing.unit, read.timing.start)
+    elif isinstance(read.timing, UpTo):
+        column.up_to = read.timing
+    else:
+        column.timing = read.timing
+    return read.window
+
+
+def _timing_unit(column: Column) -> str | None:
+    if column.timing:
+        return column.timing.unit
+    return column.up_to.unit if column.up_to else None
+
+
+def _read_window(column: Column, reader: _Reader, pattern: str | None) -> Window | None:
+    """Window field: the pattern, else the printed text, else nothing."""
+    if pattern is not None:
+        try:
+            return parse_window(pattern)
+        except PatternError as e:
+            reader.warn("window", f"{e}; reading the printed text instead")
+    text = reader.text("window")
+    if is_blank(text):
+        return None
+    read = read_window(text, reader.row("window"), _timing_unit(column))
+    if read is None:
+        reader.warn("window", f"printed text {text!r} not read")
+        return None
+    if read.unit_defaulted:
+        reader.warn("window", f"no unit stated for {text!r}; read as days")
+    return read.window
+
+
+def parse_column(
+    index: int,
+    data: dict,
+    rows: dict | None = None,
+    errors: Errors | None = None,
+    t: int | None = None,
+) -> Column:
+    """Read one column's header values. ``rows`` are the timeline's header
+    row labels, where a bare number's unit is stated. Problems are warnings
+    on ``errors``; nothing here stops the timeline (D17)."""
     column = Column(index=index, id=data["id"])
+    reader = _Reader(data, rows or {}, errors, t)
 
     # Redaction and markers first: both apply to every field alike.
     for name in HEADER_FIELDS:
@@ -118,24 +233,37 @@ def parse_column(index: int, data: dict) -> Column:
             column.markers[name] = markers
 
     def pattern_of(name: str) -> str | None:
-        return None if name in column.redacted else _pattern(data.get(name))
+        return _pattern(data.get(name))
 
-    for name in ("epoch", "visit"):
-        pattern = pattern_of(name)
-        if pattern is not None:
-            parse_label(pattern, kind=name)
+    # Epoch and visit are free text: a pattern, when given, is the label only
+    # where no text was printed (``_label``); there is nothing to refuse.
     column.epoch_label = _label(data.get("epoch"))
     column.visit_label = _label(data.get("visit"))
 
     column.timing_label = _label(data.get("timing"))
-    pattern = pattern_of("timing")
-    if pattern is not None and not _is_span(pattern):
-        column.timing = parse_timing(pattern)
+    cell_window = None
+    if not column.is_redacted("timing"):
+        cell_window = _read_timing(column, reader, pattern_of("timing"))
 
     column.window_label = _label(data.get("window"))
-    pattern = pattern_of("window")
-    if pattern is not None:
-        column.window = parse_window(pattern)
+    field_window = None
+    if not column.is_redacted("window"):
+        field_window = _read_window(column, reader, pattern_of("window"))
+
+    if field_window is not None:
+        column.window, column.window_from = field_window, "window"
+        if cell_window is not None:
+            reader.warn(
+                "window",
+                "the timing cell prints a window too; the window field is used",
+            )
+        elif column.time_range is not None:
+            reader.warn(
+                "window",
+                "the timing is a time range; the window field is used",
+            )
+    elif cell_window is not None:
+        column.window, column.window_from = cell_window, "timing"
 
     column.cycle_label = _label(data.get("cycle"))
     column.cycle_length_label = _label(data.get("cycle_length"))
@@ -143,16 +271,23 @@ def parse_column(index: int, data: dict) -> Column:
     return column
 
 
-def parse_timeline(data: dict) -> ParsedTimeline:
-    """Read one timeline. Raises ``PatternError`` on the first bad pattern."""
+def parse_timeline(
+    data: dict, errors: Errors | None = None, t: int | None = None
+) -> ParsedTimeline:
+    """Read one timeline. Never raises for a bad value: problems are
+    warnings on ``errors`` (D17)."""
+    rows = dict(data.get("rows") or {})
     return ParsedTimeline(
         type=data["type"],
         family=family_of(data["type"]),
         title=data.get("title"),
         description=data.get("description"),
         classification=dict(data.get("classification") or {}),
-        columns=[parse_column(i, c) for i, c in enumerate(data.get("columns") or [])],
+        columns=[
+            parse_column(i, c, rows, errors, t)
+            for i, c in enumerate(data.get("columns") or [])
+        ],
         activities=list(data.get("activities") or []),
         footnotes=list(data.get("footnotes") or []),
-        rows=dict(data.get("rows") or {}),
+        rows=rows,
     )

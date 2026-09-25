@@ -5,6 +5,7 @@ plan → build structure. The behaviour pinned here is the behaviour the old
 tests pinned, reached through ``execute`` instead of private methods; naming,
 parsing and planning have their own tests in ``tests/usdm4/assembler/timeline``.
 Today's defects that later rules fix are pinned as they are, and say so.
+Issue 65 (R4, timing without cycles) fixed the timing ones.
 """
 
 import types
@@ -21,6 +22,7 @@ from src.usdm4.api.extensions_d4k import (
 from src.usdm4.assembler import timeline_assembler as timeline_assembler_module
 from src.usdm4.assembler.timeline_assembler import TimelineAssembler
 from src.usdm4.builder.builder import Builder
+from src.usdm4.expander.timepoint import Timepoint
 from tests.usdm4.assembler.timeline.helpers import (
     activity,
     column,
@@ -210,12 +212,15 @@ class TestSkippedTimelines:
         assembler.execute([self._empty(), self._empty()])
         assert assembler.timelines == []
 
-    def test_a_bad_pattern_stops_that_timeline_only(self, assembler, errors):
+    def test_a_bad_pattern_does_not_stop_the_timeline(self, assembler, errors):
+        """D17: always build the timeline if at all possible."""
         bad = timeline([column("c1", timing=value("D1", "D1"))])
         assembler.execute([bad, simple("profile")])
-        assert [t.name for t in assembler.timelines] == ["TIMELINE-2"]
+        assert [t.name for t in assembler.timelines] == ["TIMELINE-1", "TIMELINE-2"]
+        assert assembler.timelines[0].timings[0].valueLabel == "D1"
         assert any(
-            "Timeline 1 not created" in m and "'D1'" in m for m in messages(errors)
+            m.startswith("Timeline 1, column 'c1', timing:") and "'D1'" in m
+            for m in messages(errors)
         )
 
 
@@ -408,26 +413,116 @@ class TestTimings:
         assert assembler.timelines[0].timings[1].value == "P2W"
         assert any("differs from anchor unit" in m for m in messages(errors))
 
-    def test_a_text_only_timing_has_a_zero_duration(self, assembler):
-        """Until R4 there is nothing to read a cycle day with."""
+    def test_an_unreadable_timing_is_zero_after_the_previous_column(self, assembler):
+        """D3 — until the next R4 issue there is nothing to read a cycle day
+        with."""
         tl = timeline(
             [
                 column("c1", timing="Day 1"),
-                column("c2", timing={"text": "Cycle 2 Day 1", "pattern": None}),
+                column("c2", timing="Day 8"),
+                column("c3", timing={"text": "Cycle 2 Day 1", "pattern": None}),
             ]
         )
         assembler.execute([tl])
-        assert assembler.timelines[0].timings[1].value == "PT0M"
+        (t,) = assembler.timelines
+        assert t.timings[2].value == "PT0M"
+        assert timing_types(t)[2] == "After"
+        assert t.timings[2].relativeToScheduledInstanceId == t.instances[1].id
+        assert t.timings[2].valueLabel == "Cycle 2 Day 1"
 
-    def test_a_blank_timing_gets_no_timing_at_all(self, assembler):
-        """Today's defect, pinned (design § 2): ``valueLabel`` is required and
-        a column with no timing text has none, so its Timing is not created.
-        R4 gives every instance a Timing."""
+    def test_every_instance_is_timed(self, assembler, errors):
+        """A blank timing used to get no Timing at all (design § 2)."""
         tl = timeline([column("c1", visit="V1"), column("c2", timing="Day 7")])
         assembler.execute([tl])
         (t,) = assembler.timelines
-        assert len(t.instances) == 2
-        assert [x.valueLabel for x in t.timings] == ["Day 7"]
+        assert len(t.timings) == len(t.instances) == 2
+        assert [(x.valueLabel, x.label) for x in t.timings] == [
+            ("", ""),
+            ("Day 7", "Day 7"),
+        ]
+        assert timing_types(t) == ["Before", "Fixed Reference"]
+        assert any("column 'c1': no readable timing" in m for m in messages(errors))
+
+    def test_text_only_timing_is_read(self, assembler):
+        tl = timeline(
+            [
+                column("c1", timing={"text": "-7", "pattern": None}),
+                column("c2", timing={"text": "1", "pattern": None}),
+                column("c3", timing={"text": "15", "pattern": None}),
+            ],
+            rows={"timing": "Days from randomization"},
+        )
+        assembler.execute([tl])
+        (t,) = assembler.timelines
+        assert [x.value for x in t.timings] == ["P7D", "PT0M", "P14D"]
+        assert [x.valueLabel for x in t.timings] == ["-7", "1", "15"]
+
+    def test_a_time_range_is_labelled_decoded(self, assembler):
+        """D21: decoded start and window as labels, printed text as label."""
+        tl = timeline(
+            [
+                column("c1", timing=value("≤28", "Day -28 to Day -1")),
+                column("c2", timing="Day 1"),
+            ]
+        )
+        assembler.execute([tl])
+        timing = assembler.timelines[0].timings[0]
+        assert (timing.value, timing.valueLabel, timing.label) == (
+            "P28D",
+            "Day -28",
+            "≤28",
+        )
+        assert (timing.windowLabel, timing.windowLower, timing.windowUpper) == (
+            "-0..+27 days",
+            "",
+            "P27D",
+        )
+
+    def test_printed_up_to_before_the_anchor(self, assembler):
+        tl = timeline(
+            [
+                column("c1", timing={"text": "≤42", "pattern": None}),
+                column("c2", timing={"text": "1", "pattern": None}),
+            ],
+            rows={"timing": "Days from randomization"},
+        )
+        assembler.execute([tl])
+        timing = assembler.timelines[0].timings[0]
+        assert (timing.value, timing.valueLabel, timing.label) == (
+            "P42D",
+            "Day -42",
+            "≤42",
+        )
+        assert timing.windowUpper == "P41D"
+
+    def test_a_window_in_the_timing_cell(self, assembler):
+        tl = timeline(
+            [
+                column("c1", timing="Day 1"),
+                column("c2", timing={"text": "Day 15 ± 3", "pattern": None}),
+            ]
+        )
+        assembler.execute([tl])
+        timing = assembler.timelines[0].timings[1]
+        assert (timing.valueLabel, timing.windowLabel) == ("Day 15 ± 3", "-3..+3 days")
+        assert (timing.windowLower, timing.windowUpper) == ("P3D", "P3D")
+
+    def test_the_expander_follows_a_zero_timing_chain(self, assembler):
+        tl = timeline(
+            [
+                column("c1", timing={"text": "Screening", "pattern": None}),
+                column("c2", timing="Day -3"),
+                column("c3", timing="Day 1"),
+                column("c4", timing="Day 8"),
+                column("c5", timing={"text": "ET", "pattern": None}),
+            ]
+        )
+        assembler.execute([tl])
+        (t,) = assembler.timelines
+        ticks = [
+            Timepoint(None, t, sai, Errors(), 1, 0).tick // 86400 for sai in t.instances
+        ]
+        assert ticks == [-3, -3, 0, 7, 7]
 
     def test_hours(self, assembler):
         tl = timeline([column("c1", timing="Hour 0"), column("c2", timing="Hour 4")])
@@ -461,6 +556,22 @@ class TestWindows:
         timing = self._timing(assembler, None)
         assert (timing.windowLabel, timing.windowLower, timing.windowUpper) == (
             None,
+            "",
+            "",
+        )
+
+    def test_a_text_only_window(self, assembler):
+        timing = self._timing(assembler, {"text": "±2", "pattern": None})
+        assert (timing.windowLabel, timing.windowLower, timing.windowUpper) == (
+            "±2",
+            "P2D",
+            "P2D",
+        )
+
+    def test_an_unread_window_keeps_its_printed_label(self, assembler):
+        timing = self._timing(assembler, {"text": "See Section 1.3", "pattern": None})
+        assert (timing.windowLabel, timing.windowLower, timing.windowUpper) == (
+            "See Section 1.3",
             "",
             "",
         )
@@ -770,7 +881,7 @@ class TestRedaction:
         assembler.execute([tl])
         (timing,) = assembler.timelines[0].timings
         assert (timing.windowLower, timing.windowUpper) == ("", "")
-        assert timing.windowLabel is None
+        assert timing.windowLabel == "CCI"
 
     def test_a_consecutive_redacted_run_is_one_epoch(self, assembler):
         tl = timeline(

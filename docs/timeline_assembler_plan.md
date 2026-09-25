@@ -37,7 +37,7 @@ Branch `63-timeline-assembler`.
 - **63.2 Grammar** (`assembler/timeline/grammar.py`). Parse epoch, visit, timing points
   and window patterns into typed values — what today's build already uses. Unit
   tests for every one of those forms in design § 4 and for rejection of everything
-  outside it. Timing spans (D4) and cycle patterns are R4; until then a span or
+  outside it. Time ranges (D4) and cycle patterns are R4; until then a time range or
   cycle value is carried as text only. *Written 2026-09-25:* `parse_timing` →
   `TimingPoint(unit, value)`, `parse_window` → `Window(lower, upper, unit)`,
   `parse_label` (trimmed, non-empty), `PatternError(kind, value, expected)`; units
@@ -53,7 +53,7 @@ Branch `63-timeline-assembler`.
   `ColumnInput`, `HeaderValue` (`text`, `pattern`, `label`), `HeaderNote`, `CellInput`,
   `ActivityInput`, `FootnoteInput`, `TimelineClassification`, `TimelineType`,
   `FAMILY` / `family_of` (D1 taken as these names). Structure only — patterns are
-  parsed in the parse stage, so a span or cycle can be carried as text until R4.
+  parsed in the parse stage, so a time range or cycle can be carried as text until R4.
   Unknown keys refused (`extra="forbid"`). Checks inside one timeline: unique column
   ids, cells in known columns and at most one per column, known parents, unique
   footnote markers, `attaches_to` only on `profile`, `entry_condition` only on a
@@ -66,7 +66,7 @@ Branch `63-timeline-assembler`.
   (design § 5). `AssemblerInput.soa` becomes a list of `ScheduleTimelineInput` and
   `TimelineInput` is removed (moved here from 63.3). *Written 2026-09-25:*
   `assembler/timeline/columns.py` (parse: one `Column` per column, patterns read with
-  the grammar; a span is carried as text, cycle fields as text), `plan.py` (the
+  the grammar; a time range is carried as text, cycle fields as text), `plan.py` (the
   straight chain, one anchor, today's crossing-zero and mixed-unit rules),
   `build.py` (`TimelineBuild` per timeline, objects created in exactly the old order
   because the builder numbers ids as they are made; `SharedState` for activities
@@ -163,16 +163,18 @@ NCT05565742 (row labels, visit markers).
 
 Cycle and cycle-length patterns added to the grammar; cycle text used in instance
 names and labels (`C2D8`). Anchor rule (D2), timing from the pattern for points and
-spans (D4), windows from the pattern with the printed text as `windowLabel`,
+time ranges (D4), windows from the pattern with the printed text as `windowLabel`,
 text-only timing (D3), mixed units. Every instance gets a `Timing` — today a blank
 timepoint text loses all of a timeline's timings (design § 2). Cycle columns measured
 from their cycle's `Day 1` (single cycles only). Decisions D2, D3, D4 taken before the
 branch. **D2, D3, D4 taken 2026-09-25** (design § 9): D2 today's anchor rule plus a
 warning when no column is ≥ 0 and on a restart outside a cycle (D14); D3 a text-only or
-redacted timing is a zero timing plus a warning; D4 a span is decoded here to the timing at
-its start and a window forward to its end. Split: the first R4 issue is timing without
-cycles (every instance timed, D2 warnings, D3, spans, printed `windowLabel`); single
-cycles are the second.
+redacted timing is a zero timing plus a warning; D4 a time range is decoded here to the timing at
+its start and a window forward to its end. Split: the first R4 issue (#65) is timing without
+cycles (every instance timed, D2 warnings, D3, time ranges, printed `windowLabel`, and each
+of timing and window read from its pattern, else from the printed text — design
+§ 3.2); single cycles are the second. **#65 written 2026-09-25**, with D15–D21 taken
+during it (design § 9) — as built: design § 12.
 
 ## R5 — cycle ranges and the expander
 

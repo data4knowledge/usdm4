@@ -176,7 +176,7 @@
             "instanceType": "Code"
           },
           "relativeFromScheduledInstanceId": "ScheduledActivityInstance_5",
-          "relativeToScheduledInstanceId": "ScheduledActivityInstance_2",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_4",
           "windowLower": "P7D",
           "windowUpper": "P7D",
           "windowLabel": "-7..+7 day",
