@@ -45,14 +45,26 @@ Branch `63-timeline-assembler`.
   `Day 08`, `Day +8`, non-ASCII digits and minus. Tests
   `tests/usdm4/assembler/timeline/test_grammar.py`.
 - **63.3 Schema** (`assembler/schema/`). The timeline, column, value, activity, cell and
-  footnote models of design § 3, validated at the boundary as today
-  (`AssemblerInput` → `model_dump()`). `AssemblerInput.soa` becomes a list of the new
-  timeline model. `TimelineInput` is removed from the schema package. The schema is
-  complete from the start — `cycle`, `cycle_length`, `notes`, `entry_condition`,
-  `attaches_to` included — so later issues add rules, not fields. Fields a rule does
-  not use yet are carried, and their text reaches labels where design § 3.2 says so.
+  footnote models of design § 3. The schema is complete from the start — `cycle`,
+  `cycle_length`, `notes`, `entry_condition`, `attaches_to` included — so later issues
+  add rules, not fields. Fields a rule does not use yet are carried, and their text
+  reaches labels where design § 3.2 says so. *Written 2026-09-25:*
+  `assembler/schema/schedule_timeline_schema.py` — `ScheduleTimelineInput`,
+  `ColumnInput`, `HeaderValue` (`text`, `pattern`, `label`), `HeaderNote`, `CellInput`,
+  `ActivityInput`, `FootnoteInput`, `TimelineClassification`, `TimelineType`,
+  `FAMILY` / `family_of` (D1 taken as these names). Structure only — patterns are
+  parsed in the parse stage, so a span or cycle can be carried as text until R4.
+  Unknown keys refused (`extra="forbid"`). Checks inside one timeline: unique column
+  ids, cells in known columns and at most one per column, known parents, unique
+  footnote markers, `attaches_to` only on `profile`, `entry_condition` only on a
+  conditional type. Additive: exported beside `TimelineInput`, nothing reads it yet.
+  **Sequencing change:** switching `AssemblerInput.soa` to the new model and removing
+  `TimelineInput` moves to 63.4, so the branch stays green between parts — switching
+  here would break the assembler until it can read the new input. Tests
+  `tests/usdm4/assembler/schema/test_schedule_timeline_schema.py`.
 - **63.4 Restructure** into parse → plan → build, with naming moved out unchanged
-  (design § 5). The plan builds today's straight chain only; cycles, decisions and
+  (design § 5). `AssemblerInput.soa` becomes a list of `ScheduleTimelineInput` and
+  `TimelineInput` is removed (moved here from 63.3). The plan builds today's straight chain only; cycles, decisions and
   profile attachment are later issues. The public surface of `TimelineAssembler` does
   not change.
 - **63.5 Rewrite the pinned fixtures once in the new schema** and compare the output

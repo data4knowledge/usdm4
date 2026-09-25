@@ -149,7 +149,7 @@ supplied.
 | variant | `arm`, `cohort` |
 | conditional | `unscheduled`, `early_termination`, `adverse_event` |
 | profile | `profile` |
-| — | `unclassified` |
+| unclassified | `unclassified` |
 
 Exactly one timeline in a study design carries `mainTimeline`: the first `main`, or
 the first timeline if none is `main`. (Today's rule differs slightly: a table with no
