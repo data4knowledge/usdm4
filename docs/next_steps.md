@@ -19,6 +19,46 @@ record of the rule generation process).
 
 Newest first. Cross-repo "save session" entries; pairs with `usdm4_protocol` and `udp_prism` logs.
 
+### 2026-09-25 — ISSUE 63 OPENED (GitHub 63, branch `63-timeline-assembler`): the timeline assembler is rebuilt on a text input
+- `usdm4 @ 63-timeline-assembler`. Design and plan only; no code changed. Driven from
+  `protocol_corpus` (register row `N70`, `docs/spec/soa_two_stage.md`).
+
+**What it is.** The timeline assembler takes parallel positional lists with timing and
+window numbers already parsed by the caller, builds a straight instance chain, and times
+every column from one anchor. It has nowhere for a cycle, a cycle length or a second
+timing row, so they are lost before it sees them; a cycle-relative day (`D8` in cycle 3)
+is timed as 7 days after the anchor with no error; and no step exists where a delay or a
+`ScheduledDecisionInstance` can go, so a repeating cycle cannot be a loop.
+
+**Decided (Dave, 2026-09-25).**
+- The input is TEXT, in a small strict pattern grammar other code can generate easily.
+  Each header value carries the printed text (labels) and its pattern form (parsed). All
+  parsing is in `usdm4`; a caller never hands over a number worked out from printed text.
+- `TimelineInput` is retired for the schedule, not kept beside the new input. One input,
+  one parse path. Breaking change.
+- The assembler is restructured into parse → plan → build, naming in its own module,
+  behaviour kept for R1–R3; later rules are separate issues.
+- Cycles: a cycle has a length, a number or range, and days (CnDm). `Cycle n` is part of
+  the chain; `Cycle n-m` / `Cycle n+` is one pass, then a delay to fill the cycle length,
+  then a decision checking the exit condition that loops back or exits. Nothing is ever
+  expanded.
+
+**Files.** `docs/timeline_assembler_design.md` (the design: today, input schema, grammar,
+structure, rules R1–R9, the expander, open decisions D1–D12);
+`docs/timeline_assembler_plan.md` (the work order, gates, callers).
+
+**Found, not this issue.** `entryCondition` is hard-coded `"Paricipant identified"`; every
+BC mints a `Procedure` with placeholder code `12345`; `plannedDuration` is always `None`;
+`_add_timepoints` passes `scheduledInstanceTimelineId`, which is not an API field (the
+field is `timelineId`).
+
+**Found, and in scope later.** The expander recurses without end on a loop: a
+non-`days` decision condition takes the default, which in a cycle loop points back, and
+on the main timeline every pass has the same tick. The expander change therefore ships
+in the same branch as the cycle loop (plan step 3).
+
+**Next.** Issue 63 step 1: pin today's output, before any code moves.
+
 ### 2026-09-18 — ISSUE 58 CLOSED (GitHub 58, branch `58-assembler-orphans-and-timelines`): a table with no timepoint spine is skipped, not half-built
 - `usdm4 @ 58-assembler-orphans-and-timelines`. No `usdm4_protocol` change. Gated live from
   `protocol_corpus`, whose register row N20 scoped this; that repo's `memory.md` 2026-09-18 holds
@@ -406,3 +446,11 @@ exception path).
 
 Full context and the usdm4_protocol half: `usdm4_protocol/docs/next_steps.md` § Session
 Log, session 12 (2026-07-30).
+
+## 10. Timeline assembler upgrade (issue 63, branch `63-timeline-assembler`)
+
+The timeline assembler is rebuilt on a text input with a pattern grammar, restructured
+into parse → plan → build, and extended with cycles, conditional timelines, profile
+attachment and gates, one issue per step. Design: `docs/timeline_assembler_design.md`.
+Work order and gates: `docs/timeline_assembler_plan.md`. Open decisions D1–D12 are in the
+design, § 9.

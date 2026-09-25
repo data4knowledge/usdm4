@@ -1,0 +1,1486 @@
+{
+  "source": "Copied 2026-09-25 from a machine-drafted SoA (NCT04557384); a fixture only, not a reference. Frozen: never refreshed, so the pin stays comparable.",
+  "soa": [
+    {
+      "table_type": "main_soa",
+      "table_title": "Screening, On-Study, and Post-Treatment Schedule of Activities",
+      "parent_activities": [
+        "Sample collection"
+      ],
+      "has_cci_redactions": false,
+      "epochs": {
+        "found": true,
+        "items": [
+          {
+            "text": "Screening"
+          },
+          {
+            "text": "Screening"
+          },
+          {
+            "text": "On-Treatment"
+          },
+          {
+            "text": "On-Treatment"
+          },
+          {
+            "text": "On-Treatment"
+          },
+          {
+            "text": "On-Treatment"
+          },
+          {
+            "text": "On-Treatment"
+          },
+          {
+            "text": "On-Treatment"
+          },
+          {
+            "text": "On-Treatment"
+          },
+          {
+            "text": "On-Treatment"
+          },
+          {
+            "text": "On-Treatment"
+          },
+          {
+            "text": "On-Treatment"
+          },
+          {
+            "text": "On-Treatment"
+          },
+          {
+            "text": "On-Treatment"
+          },
+          {
+            "text": "Post-Treatment"
+          }
+        ]
+      },
+      "visits": {
+        "found": true,
+        "items": [
+          {
+            "text": "≤28",
+            "references": []
+          },
+          {
+            "text": "≤7",
+            "references": []
+          },
+          {
+            "text": "D1",
+            "references": []
+          },
+          {
+            "text": "D8",
+            "references": []
+          },
+          {
+            "text": "D15",
+            "references": []
+          },
+          {
+            "text": "D1",
+            "references": []
+          },
+          {
+            "text": "D8",
+            "references": []
+          },
+          {
+            "text": "D15",
+            "references": []
+          },
+          {
+            "text": "D22",
+            "references": []
+          },
+          {
+            "text": "DX",
+            "references": []
+          },
+          {
+            "text": "D1",
+            "references": []
+          },
+          {
+            "text": "D8",
+            "references": []
+          },
+          {
+            "text": "D15",
+            "references": []
+          },
+          {
+            "text": "D22",
+            "references": []
+          },
+          {
+            "text": "V801",
+            "references": []
+          }
+        ]
+      },
+      "timepoints": {
+        "found": false,
+        "items": [
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          }
+        ]
+      },
+      "windows": {
+        "found": true,
+        "items": [
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 3,
+            "after": 3,
+            "unit": "day"
+          },
+          {
+            "before": 3,
+            "after": 3,
+            "unit": "day"
+          },
+          {
+            "before": 3,
+            "after": 3,
+            "unit": "day"
+          },
+          {
+            "before": 3,
+            "after": 3,
+            "unit": "day"
+          },
+          {
+            "before": 3,
+            "after": 3,
+            "unit": "day"
+          },
+          {
+            "before": 3,
+            "after": 3,
+            "unit": "day"
+          },
+          {
+            "before": 3,
+            "after": 3,
+            "unit": "day"
+          },
+          {
+            "before": 3,
+            "after": 3,
+            "unit": "day"
+          },
+          {
+            "before": 3,
+            "after": 3,
+            "unit": "day"
+          },
+          {
+            "before": 3,
+            "after": 3,
+            "unit": "day"
+          },
+          {
+            "before": 3,
+            "after": 3,
+            "unit": "day"
+          },
+          {
+            "before": 3,
+            "after": 3,
+            "unit": "day"
+          },
+          {
+            "before": 3,
+            "after": 3,
+            "unit": "day"
+          }
+        ]
+      },
+      "activities": {
+        "found": true,
+        "items": [
+          {
+            "name": "Informed consent",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Inclusion/Exclusion criteria",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Medical history",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Cancer treatment history",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Concomitant medication",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Physical examination",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 10,
+                "references": []
+              },
+              {
+                "index": 14,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Vital signs",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 6,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 8,
+                "references": []
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 10,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              },
+              {
+                "index": 13,
+                "references": []
+              },
+              {
+                "index": 14,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": [
+              "cell-1"
+            ]
+          },
+          {
+            "name": "AE collection",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 14,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "ECOG PS",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 10,
+                "references": []
+              },
+              {
+                "index": 14,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "ECG",
+            "visits": [],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": [
+              "cell-2"
+            ]
+          },
+          {
+            "name": "Hematology",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 6,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 10,
+                "references": []
+              },
+              {
+                "index": 14,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Coagulation",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Clinical chemistry",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 6,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 10,
+                "references": []
+              },
+              {
+                "index": 14,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Urinalysis",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 6,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 8,
+                "references": []
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 10,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              },
+              {
+                "index": 13,
+                "references": []
+              },
+              {
+                "index": 14,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Pregnancy test",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 14,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": [
+              "cell-3"
+            ]
+          },
+          {
+            "name": "Thyroid panel",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 14,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": [
+              "cell-4"
+            ]
+          },
+          {
+            "name": "Radiologic imaging and measurement of palpable or visible lesions",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 14,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": [
+              "cell-5"
+            ]
+          },
+          {
+            "name": "Injection site assessments (solicited)",
+            "visits": [
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 6,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 8,
+                "references": []
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 10,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              },
+              {
+                "index": 13,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": [
+              "cell-6"
+            ]
+          },
+          {
+            "name": "Injection site assessments (spontaneous)",
+            "visits": [],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": [
+              "cell-7"
+            ]
+          },
+          {
+            "name": "Participant diary",
+            "visits": [],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": [
+              "cell-8"
+            ]
+          },
+          {
+            "name": "PK",
+            "visits": [],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": [
+              "cell-9"
+            ]
+          },
+          {
+            "name": "IG",
+            "visits": [],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": [
+              "cell-10"
+            ]
+          },
+          {
+            "name": "Administer ramucirumab",
+            "visits": [],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": [
+              "cell-11"
+            ]
+          },
+          {
+            "name": "Administer combination medications, if applicable (Cohorts B and C only)",
+            "visits": [],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": [
+              "cell-12"
+            ]
+          }
+        ]
+      },
+      "conditions": {
+        "found": true,
+        "items": [
+          {
+            "reference": "cell-1",
+            "text": "Measure vital signs (height [at baseline], weight, temperature, blood pressure, pulse rate, and respiration rate). On days with concurrent ECGs, vital signs, and/or PK sampling, these measurements should occur at approximately the same time. Vital sign measurements will be obtained: • Day 1 at predose (prior to SC ramucirumab dose, but within 90 minutes prior to predose blood draw) • C1D2 (24 hours postdose) • C1D8 • C1D15 • Any time for other specified visits, but prior to SC ramucirumab dose at same visit."
+          },
+          {
+            "reference": "cell-2",
+            "text": "Single, local. On days with concurrent measurements, see vital sign row for more details. Times are referenced to the end of dosing. ECGs will be obtained: • C1D1 at predose. • Every 6 weeks thereafter, predose. • Any other time as clinically indicated."
+          },
+          {
+            "reference": "cell-3",
+            "text": "Applies only to women of childbearing potential."
+          },
+          {
+            "reference": "cell-4",
+            "text": "See Appendix 2. Starting C1D1, then every 3 months thereafter."
+          },
+          {
+            "reference": "cell-5",
+            "text": "Perform according to RECIST 1.1, by the same method used at baseline, every 8 weeks (±7 days) for the first 6 months after C1D1 and every 12 weeks (±7 days) thereafter until radiographic disease progression, death, or study completion, whichever occurs first. Perform as scheduled, even if study treatment is delayed or omitted."
+          },
+          {
+            "reference": "cell-6",
+            "text": "Prior to each injection and at the designated timepoints, the investigator/investigator designee will ask the participant if they have any injection site concerns and record the participant's response. 1.Cycle 1 collection: a.C1D1: 5-15 min after injection is complete and 60 min after injection is complete b.C1D2 (approximately 24 hr after injection) c.C1D4 (± 1 day) d.C1D8: 5-15 min after injection and 60 min after injection e.C1D15: 5-15 min after injection and 60 min after injection 2.Cycle 2-n collection: a.5-15 min after injection and 60 min after injection. The findings from the assessment are recorded on the ISR questionnaire. All positive responses of pain require an additional assessment using the participant-completed Pain VAS. If there are ≥2 injections, the ISR questionnaire will be filled out separately for each site, after all injections have been administered. See Section 8.2.5 for details."
+          },
+          {
+            "reference": "cell-7",
+            "text": "ISR questionnaire completed outside of solicited assessment schedule. 1. May be triggered by participant anytime during the cycle based on diary. 2. If the participant indicates presence of pain during spontaneous ISR reporting, no VAS assessment is required. 3. If the participant indicates presence of pain during spontaneous ISR reporting, no VAS assessment is required."
+          },
+          {
+            "reference": "cell-8",
+            "text": "Participant will assess injection site(s) daily. If any ISR symptoms present, the participant should contact the investigator. Diary should be returned to the investigator at each weekly visit."
+          },
+          {
+            "reference": "cell-9",
+            "text": "See Section 1.3.1 for PK and IG."
+          },
+          {
+            "reference": "cell-10",
+            "text": "See Section 1.3.1 for PK and IG."
+          },
+          {
+            "reference": "cell-11",
+            "text": "See Section 6.1. Participants must be closely monitored for a 1-hour observation period following the administration of SC ramucirumab (see Section 6.1)."
+          },
+          {
+            "reference": "cell-12",
+            "text": "Begin Combination anti-cancer therapies along with weekly SC ramucirumab at Cycle-2. See details in Section 6.1. Erlotinib (1L EGFR+ NSCLC), docetaxel (2L NSCLC), paclitaxel (2L gastric), FOLFIRI (2L CRC)."
+          },
+          {
+            "reference": "a",
+            "text": "Short-term follow-up begins when the participant and investigator agree that the participant will no longer continue study treatment and lasts a minimum of 30 days following the last dose of study drug."
+          }
+        ]
+      }
+    },
+    {
+      "table_type": "subsidiary",
+      "table_title": "Continued Access Schedule of Activities",
+      "parent_activities": [],
+      "has_cci_redactions": false,
+      "epochs": {
+        "found": true,
+        "items": [
+          {
+            "text": "Study Treatment"
+          },
+          {
+            "text": "Follow-Up"
+          }
+        ]
+      },
+      "visits": {
+        "found": true,
+        "items": [
+          {
+            "text": "501-5XX",
+            "references": []
+          },
+          {
+            "text": "901",
+            "references": []
+          }
+        ]
+      },
+      "timepoints": {
+        "found": false,
+        "items": [
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          }
+        ]
+      },
+      "windows": {
+        "found": true,
+        "items": [
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          }
+        ]
+      },
+      "activities": {
+        "found": true,
+        "items": [
+          {
+            "name": "AE Collection",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 1,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "PK, IG, and exploratory hypersensitivity",
+            "visits": [],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": [
+              "cell-1"
+            ]
+          },
+          {
+            "name": "Administer ramucirumab",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          }
+        ]
+      },
+      "conditions": {
+        "found": true,
+        "items": [
+          {
+            "reference": "cell-1",
+            "text": "In the event of hypersensitivity, blood samples will be collected for PK, IG, and exploratory hypersensitivity analyses at the following time points, as close as possible to: (i) the onset of the hypersensitivity, (ii) the resolution of the hypersensitivity, and (iii) 30 (±3) days following the hypersensitivity."
+          },
+          {
+            "reference": "a",
+            "text": "Continued-access follow-up begins when the participant and the investigator agree that the participant will no longer continue treatment in the continued-access period and lasts a minimum of 30 days following the last dose of study drug. In all cases, no follow-up procedures will be performed for a participant who withdraws informed consent unless he or she has explicitly provided permission and consent."
+          }
+        ]
+      }
+    },
+    {
+      "table_type": "subsidiary",
+      "table_title": "Pharmacokinetic Sampling Schedule",
+      "parent_activities": [],
+      "has_cci_redactions": false,
+      "epochs": {
+        "found": false,
+        "items": [
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": ""
+          }
+        ]
+      },
+      "visits": {
+        "found": true,
+        "items": [
+          {
+            "text": "Sample 1",
+            "references": []
+          },
+          {
+            "text": "Sample 2",
+            "references": []
+          },
+          {
+            "text": "Sample 3",
+            "references": []
+          },
+          {
+            "text": "Sample 4",
+            "references": []
+          },
+          {
+            "text": "Sample 5",
+            "references": []
+          },
+          {
+            "text": "Sample 6",
+            "references": []
+          },
+          {
+            "text": "Sample 7",
+            "references": []
+          },
+          {
+            "text": "Sample 8",
+            "references": []
+          },
+          {
+            "text": "Sample 9",
+            "references": []
+          },
+          {
+            "text": "Sample 10",
+            "references": []
+          },
+          {
+            "text": "Sample 11",
+            "references": []
+          },
+          {
+            "text": "Sample 12",
+            "references": []
+          },
+          {
+            "text": "Sample 13",
+            "references": []
+          },
+          {
+            "text": "Sample 14",
+            "references": []
+          },
+          {
+            "text": "End of treatment",
+            "references": []
+          }
+        ]
+      },
+      "timepoints": {
+        "found": true,
+        "items": [
+          {
+            "text": "Cycle 1 Day 1",
+            "value": 1,
+            "unit": "cycle",
+            "references": []
+          },
+          {
+            "text": "Cycle 1 Day 2",
+            "value": 2,
+            "unit": "cycle",
+            "references": []
+          },
+          {
+            "text": "Cycle 1 Day 4",
+            "value": 4,
+            "unit": "cycle",
+            "references": []
+          },
+          {
+            "text": "Cycle 1 Day 8",
+            "value": 8,
+            "unit": "cycle",
+            "references": []
+          },
+          {
+            "text": "Cycle 1 Day 15",
+            "value": 15,
+            "unit": "cycle",
+            "references": []
+          },
+          {
+            "text": "Cycle 1 Day 18",
+            "value": 18,
+            "unit": "cycle",
+            "references": []
+          },
+          {
+            "text": "Cycle 2 Day 1",
+            "value": 1,
+            "unit": "cycle",
+            "references": []
+          },
+          {
+            "text": "Cycle 2 Day 8",
+            "value": 8,
+            "unit": "cycle",
+            "references": []
+          },
+          {
+            "text": "Cycle 2 Day 11",
+            "value": 11,
+            "unit": "cycle",
+            "references": []
+          },
+          {
+            "text": "Cycle 3 Day 1",
+            "value": 1,
+            "unit": "cycle",
+            "references": []
+          },
+          {
+            "text": "Cycle 3 Day 15",
+            "value": 15,
+            "unit": "cycle",
+            "references": []
+          },
+          {
+            "text": "Cycle 3 Day 18",
+            "value": 18,
+            "unit": "cycle",
+            "references": []
+          },
+          {
+            "text": "Cycle 4 Day 1",
+            "value": 1,
+            "unit": "cycle",
+            "references": []
+          },
+          {
+            "text": "Cycle 5 Day 1",
+            "value": 1,
+            "unit": "cycle",
+            "references": []
+          },
+          {
+            "text": "Day 30",
+            "value": 30,
+            "unit": "day",
+            "references": []
+          }
+        ]
+      },
+      "windows": {
+        "found": true,
+        "items": [
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 1,
+            "after": 1,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 1,
+            "after": 1,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 1,
+            "after": 1,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 1,
+            "after": 1,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          }
+        ]
+      },
+      "activities": {
+        "found": true,
+        "items": [
+          {
+            "name": "Ramucirumab PK Collection",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 6,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 8,
+                "references": []
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 10,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              },
+              {
+                "index": 13,
+                "references": []
+              },
+              {
+                "index": 14,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Immunogenicity Collection",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              },
+              {
+                "index": 14,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          }
+        ]
+      },
+      "conditions": {
+        "found": false,
+        "items": []
+      }
+    }
+  ]
+}

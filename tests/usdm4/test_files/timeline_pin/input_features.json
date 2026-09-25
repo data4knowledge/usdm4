@@ -1,0 +1,362 @@
+{
+  "source": "Hand-built for the pin: footnote markers on visits, activities and cells; an unanchored and an unmarked footnote; parent/child activities; a library BC and a surrogate BC; mixed units; a non-numeric timing; a classified profile timeline sharing an activity; a table with no timepoints (skipped).",
+  "soa": [
+    {
+      "table_type": "main_soa",
+      "table_title": "Schedule of Activities",
+      "table_description": "Main schedule",
+      "epochs": {
+        "items": [
+          {
+            "text": "Screening"
+          },
+          {
+            "text": "Treatment"
+          },
+          {
+            "text": "Treatment"
+          },
+          {
+            "text": "Treatment"
+          },
+          {
+            "text": "Follow-up"
+          }
+        ]
+      },
+      "visits": {
+        "items": [
+          {
+            "text": "V1",
+            "references": [
+              "a"
+            ]
+          },
+          {
+            "text": "V2",
+            "references": []
+          },
+          {
+            "text": "V3",
+            "references": []
+          },
+          {
+            "text": "V4",
+            "references": []
+          },
+          {
+            "text": "FU",
+            "references": []
+          }
+        ]
+      },
+      "timepoints": {
+        "items": [
+          {
+            "text": "Day -14",
+            "value": -14,
+            "unit": "day"
+          },
+          {
+            "text": "Day 1",
+            "value": 1,
+            "unit": "day"
+          },
+          {
+            "text": "Week 2",
+            "value": 2,
+            "unit": "week"
+          },
+          {
+            "text": "Day 29",
+            "value": 29,
+            "unit": "day"
+          },
+          {
+            "text": "Cycle 2 Day 1",
+            "value": "",
+            "unit": "day"
+          }
+        ]
+      },
+      "windows": {
+        "items": [
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 2,
+            "after": 2,
+            "unit": "day"
+          },
+          {
+            "before": 3,
+            "after": 3,
+            "unit": "day"
+          },
+          {
+            "before": 7,
+            "after": 7,
+            "unit": "day"
+          }
+        ]
+      },
+      "activities": {
+        "items": [
+          {
+            "name": "Informed consent",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              }
+            ],
+            "references": [
+              "b"
+            ]
+          },
+          {
+            "name": "Vital signs",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": [
+                  "c"
+                ]
+              },
+              {
+                "index": 3,
+                "references": []
+              }
+            ],
+            "actions": {
+              "bcs": [
+                "Sex",
+                "Unlisted Local Measurement"
+              ]
+            }
+          },
+          {
+            "name": "Laboratory",
+            "visits": [],
+            "children": [
+              {
+                "name": "Haematology",
+                "visits": [
+                  {
+                    "index": 1,
+                    "references": []
+                  },
+                  {
+                    "index": 3,
+                    "references": []
+                  }
+                ]
+              },
+              {
+                "name": "Chemistry",
+                "visits": [
+                  {
+                    "index": 1,
+                    "references": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Adverse events",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              }
+            ]
+          }
+        ]
+      },
+      "conditions": {
+        "items": [
+          {
+            "reference": "a",
+            "text": "Within 14 days of Day 1."
+          },
+          {
+            "reference": "b",
+            "text": "Before any study procedure."
+          },
+          {
+            "reference": "c",
+            "text": "Pre-dose."
+          },
+          {
+            "reference": "z",
+            "text": "Unanchored footnote."
+          },
+          {
+            "reference": "",
+            "text": "Footnote with no marker."
+          }
+        ]
+      }
+    },
+    {
+      "table_type": "subsidiary",
+      "table_title": "PK sampling",
+      "table_family": "profile",
+      "table_orientation": "transposed",
+      "table_unit": "hour",
+      "table_placement": "away",
+      "epochs": {
+        "items": [
+          {
+            "text": "Treatment"
+          },
+          {
+            "text": "Treatment"
+          },
+          {
+            "text": "Treatment"
+          }
+        ]
+      },
+      "visits": {
+        "items": [
+          {
+            "text": "Pre-dose",
+            "references": []
+          },
+          {
+            "text": "2 h",
+            "references": []
+          },
+          {
+            "text": "24 h",
+            "references": []
+          }
+        ]
+      },
+      "timepoints": {
+        "items": [
+          {
+            "text": "0 h",
+            "value": 0,
+            "unit": "hour"
+          },
+          {
+            "text": "2 h",
+            "value": 2,
+            "unit": "hour"
+          },
+          {
+            "text": "24 h",
+            "value": 24,
+            "unit": "hour"
+          }
+        ]
+      },
+      "windows": {
+        "items": [
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "hour"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "hour"
+          },
+          {
+            "before": 1,
+            "after": 1,
+            "unit": "hour"
+          }
+        ]
+      },
+      "activities": {
+        "items": [
+          {
+            "name": "PK sample",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              }
+            ]
+          },
+          {
+            "name": "Vital signs",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              }
+            ]
+          }
+        ]
+      },
+      "conditions": {
+        "items": []
+      }
+    },
+    {
+      "table_type": "subsidiary",
+      "table_title": "No spine",
+      "epochs": {
+        "items": []
+      },
+      "visits": {
+        "items": []
+      },
+      "timepoints": {
+        "items": []
+      },
+      "windows": {
+        "items": []
+      },
+      "activities": {
+        "items": [
+          {
+            "name": "Orphan",
+            "visits": []
+          }
+        ]
+      },
+      "conditions": {
+        "items": []
+      }
+    }
+  ]
+}

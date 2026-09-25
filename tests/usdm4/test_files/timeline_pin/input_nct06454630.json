@@ -1,0 +1,965 @@
+{
+  "source": "Copied 2026-09-25 from a machine-drafted SoA (NCT06454630); a fixture only, not a reference. Frozen: never refreshed, so the pin stays comparable.",
+  "soa": [
+    {
+      "table_type": "main_soa",
+      "table_title": "Schedule of Events",
+      "parent_activities": [
+        "Screening/Baseline",
+        "Treatment",
+        "Efficacy",
+        "Safety",
+        "Laboratory Testing",
+        "Pharmacokinetics and Immunogenicity Sampling",
+        "Biomarkers",
+        "Optional Pharmacogenomics samples"
+      ],
+      "has_cci_redactions": true,
+      "epochs": {
+        "found": true,
+        "items": [
+          {
+            "text": "Screening"
+          },
+          {
+            "text": "On-treatment"
+          },
+          {
+            "text": "On-treatment"
+          },
+          {
+            "text": "On-treatment"
+          },
+          {
+            "text": "Follow-up"
+          },
+          {
+            "text": "Follow-up"
+          }
+        ]
+      },
+      "visits": {
+        "found": true,
+        "items": [
+          {
+            "text": "Visit 1",
+            "references": []
+          },
+          {
+            "text": "Visit 2",
+            "references": []
+          },
+          {
+            "text": "Visit 3",
+            "references": [
+              "1",
+              "2"
+            ]
+          },
+          {
+            "text": "Visit 4",
+            "references": [
+              "1"
+            ]
+          },
+          {
+            "text": "Visit 5",
+            "references": []
+          },
+          {
+            "text": "End of Study/ Visit 6",
+            "references": []
+          }
+        ]
+      },
+      "timepoints": {
+        "found": false,
+        "items": [
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          }
+        ]
+      },
+      "windows": {
+        "found": false,
+        "items": [
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          }
+        ]
+      },
+      "activities": {
+        "found": true,
+        "items": [
+          {
+            "name": "Inclusion/Exclusion",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 1,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Informed consent",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Informed consent for pharmacogenomics research (optional)",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Informed consent for future biomedical research (optional)",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Medical History",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Demographics",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "FSH",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": [
+              "3"
+            ]
+          },
+          {
+            "name": "GFR",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "TKA",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Randomization",
+            "visits": [
+              {
+                "index": 1,
+                "references": [
+                  "4"
+                ]
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Administer REGN7508",
+            "visits": [
+              {
+                "index": 1,
+                "references": [
+                  "5"
+                ]
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Administer enoxaparin",
+            "visits": [
+              {
+                "index": 2,
+                "references": [
+                  "6"
+                ]
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Participant diary (for self-administration of enoxaparin)",
+            "visits": [
+              {
+                "index": 2,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Venography of the operated leg",
+            "visits": [
+              {
+                "index": 3,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Assessment for symptomatic VTE",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": [
+              "7"
+            ]
+          },
+          {
+            "name": "Height",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Weight",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Vital Signs",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Physical examination",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Electrocardiogram",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Assessment for surgical site bleeding",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Assessment for bleeding events",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Adverse events",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Concomitant medications and treatment",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Hematology",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 1,
+                "references": [
+                  "8"
+                ]
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Blood chemistry",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 1,
+                "references": [
+                  "8"
+                ]
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Coagulation panel",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 1,
+                "references": [
+                  "8"
+                ]
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Urinalysis",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Drug concentration sample (REGN7508)",
+            "visits": [
+              {
+                "index": 1,
+                "references": [
+                  "8"
+                ]
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "ADA (REGN7508)",
+            "visits": [
+              {
+                "index": 1,
+                "references": [
+                  "9"
+                ]
+              },
+              {
+                "index": 5,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "FXI concentration",
+            "visits": [
+              {
+                "index": 1,
+                "references": [
+                  "8"
+                ]
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Plasma for aPTT, PT (central lab)",
+            "visits": [
+              {
+                "index": 1,
+                "references": [
+                  "8"
+                ]
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Serum for exploratory research",
+            "visits": [
+              {
+                "index": 1,
+                "references": [
+                  "8"
+                ]
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Plasma for exploratory research",
+            "visits": [
+              {
+                "index": 1,
+                "references": [
+                  "8"
+                ]
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Whole blood sample for DNA isolation (optional)",
+            "visits": [
+              {
+                "index": 1,
+                "references": [
+                  "11"
+                ]
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": [
+              "10"
+            ]
+          }
+        ]
+      },
+      "conditions": {
+        "found": true,
+        "items": [
+          {
+            "reference": "1",
+            "text": "Assessments for this visit may be performed in the hospital if the participant has not yet been discharged."
+          },
+          {
+            "reference": "2",
+            "text": "If the participant is discharged prior to this visit, then information may be collected by telephone call; vital signs and assessments requiring blood draw may be omitted."
+          },
+          {
+            "reference": "3",
+            "text": "To be performed in women 55 years of age or younger."
+          },
+          {
+            "reference": "4",
+            "text": "Randomization will occur after completion of surgery on day 1."
+          },
+          {
+            "reference": "5",
+            "text": "Dosing will occur after the end of surgery, and at least after removal of the needle/catheter used for spinal/epidural anesthesia."
+          },
+          {
+            "reference": "6",
+            "text": "First dose will be given after the end of surgery."
+          },
+          {
+            "reference": "7",
+            "text": "May include confirmatory studies for DVT of the leg or PE, as described in Section 8.2.2.2. Confirmatory studies for suspected DVT of the leg or PE may be required more than once, per the discretion of the investigator."
+          },
+          {
+            "reference": "8",
+            "text": "Refer to Table 3 for detailed information on visit 2 samples."
+          },
+          {
+            "reference": "9",
+            "text": "Samples for ADA must be collected prior to dose administration on the same day that study drug is administrated. Refer to Table 3."
+          },
+          {
+            "reference": "10",
+            "text": "The genomics substudy ICF (DNA analysis) must be signed prior to performing this sample collection."
+          },
+          {
+            "reference": "11",
+            "text": "Samples for DNA extraction should be collected at the baseline visit (predose) but may also be collected at any later study visit."
+          }
+        ]
+      }
+    }
+  ]
+}

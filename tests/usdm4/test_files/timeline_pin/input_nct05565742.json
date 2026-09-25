@@ -1,0 +1,1573 @@
+{
+  "source": "Copied 2026-09-25 from a machine-drafted SoA (NCT05565742); a fixture only, not a reference. Frozen: never refreshed, so the pin stays comparable.",
+  "soa": [
+    {
+      "table_type": "main_soa",
+      "table_title": "Schedule of Activities",
+      "parent_activities": [
+        "Physical Evaluation",
+        "Laboratory Tests and Sample Collections",
+        "Stored Samples",
+        "Randomization and Dosing"
+      ],
+      "has_cci_redactions": false,
+      "epochs": {
+        "found": true,
+        "items": [
+          {
+            "text": "Period I - Pre-Screening"
+          },
+          {
+            "text": "Period II - Screening"
+          },
+          {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          {
+            "text": "Period III — Treatment and Assessment Period"
+          }
+        ]
+      },
+      "visits": {
+        "found": true,
+        "items": [
+          {
+            "text": "601",
+            "references": []
+          },
+          {
+            "text": "1",
+            "references": []
+          },
+          {
+            "text": "2",
+            "references": []
+          },
+          {
+            "text": "3",
+            "references": []
+          },
+          {
+            "text": "4",
+            "references": []
+          },
+          {
+            "text": "5",
+            "references": []
+          },
+          {
+            "text": "6",
+            "references": []
+          },
+          {
+            "text": "7",
+            "references": []
+          },
+          {
+            "text": "8",
+            "references": []
+          },
+          {
+            "text": "9",
+            "references": []
+          },
+          {
+            "text": "10",
+            "references": []
+          },
+          {
+            "text": "11",
+            "references": []
+          },
+          {
+            "text": "12",
+            "references": []
+          },
+          {
+            "text": "ED",
+            "references": []
+          }
+        ]
+      },
+      "timepoints": {
+        "found": true,
+        "items": [
+          {
+            "text": "≤42",
+            "value": -42,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "≤21",
+            "value": -21,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "—",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "15",
+            "value": 15,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "30",
+            "value": 30,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "60",
+            "value": 60,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "120",
+            "value": 120,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "180",
+            "value": 180,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "210",
+            "value": 210,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "240",
+            "value": 240,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "300",
+            "value": 300,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "360",
+            "value": 360,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "540",
+            "value": 540,
+            "unit": "day",
+            "references": []
+          },
+          {
+            "text": "ED",
+            "value": 0,
+            "unit": "day",
+            "references": []
+          }
+        ]
+      },
+      "windows": {
+        "found": true,
+        "items": [
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          },
+          {
+            "before": 3,
+            "after": 3,
+            "unit": "day"
+          },
+          {
+            "before": 3,
+            "after": 3,
+            "unit": "day"
+          },
+          {
+            "before": 3,
+            "after": 3,
+            "unit": "day"
+          },
+          {
+            "before": 7,
+            "after": 7,
+            "unit": "day"
+          },
+          {
+            "before": 7,
+            "after": 7,
+            "unit": "day"
+          },
+          {
+            "before": 7,
+            "after": 7,
+            "unit": "day"
+          },
+          {
+            "before": 7,
+            "after": 7,
+            "unit": "day"
+          },
+          {
+            "before": 7,
+            "after": 7,
+            "unit": "day"
+          },
+          {
+            "before": 7,
+            "after": 7,
+            "unit": "day"
+          },
+          {
+            "before": 14,
+            "after": 14,
+            "unit": "day"
+          },
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "day"
+          }
+        ]
+      },
+      "activities": {
+        "found": true,
+        "items": [
+          {
+            "name": "Prescreening informed consent",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Informed consent",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Inclusion and exclusion criteria, review and confirm",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Ascertainment of high risk for cardiovascular events",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Demographics",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Preexisting conditions and medical history, including relevant surgical history",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Prespecified medical history (indication and history of interest)",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Prior treatments for indication",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Substance use (alcohol, caffeine, and tobacco use)",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 6,
+                "references": []
+              },
+              {
+                "index": 10,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Concomitant medications",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 6,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 8,
+                "references": []
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 10,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              },
+              {
+                "index": 13,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "AEs",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 6,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 8,
+                "references": []
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 10,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              },
+              {
+                "index": 13,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Height",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Weight",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 6,
+                "references": []
+              },
+              {
+                "index": 10,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 13,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Vital signs",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 6,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 8,
+                "references": []
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 10,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              },
+              {
+                "index": 13,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Physical examination",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Symptom-directed physical assessment",
+            "visits": [],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": [
+              "cell-1"
+            ]
+          },
+          {
+            "name": "12-Lead ECG (local)",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 6,
+                "references": []
+              },
+              {
+                "index": 10,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Hematology",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 8,
+                "references": []
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Clinical chemistry",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 8,
+                "references": []
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              },
+              {
+                "index": 13,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Lipid panel",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              },
+              {
+                "index": 13,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Urinalysis",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              },
+              {
+                "index": 13,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "UACR",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              },
+              {
+                "index": 13,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Serum pregnancy",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "FSH",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "TSH",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "HbA1c",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 6,
+                "references": []
+              },
+              {
+                "index": 10,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 13,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Lp(a)",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              },
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 6,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 8,
+                "references": []
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 10,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              },
+              {
+                "index": 13,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "ApoB",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 6,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 8,
+                "references": []
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 10,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              },
+              {
+                "index": 13,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "hsCRP",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 6,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 8,
+                "references": []
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 10,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              },
+              {
+                "index": 13,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "HIV screening test",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "HCV screening test",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "HBV screening test",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "eGFR",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              },
+              {
+                "index": 13,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Postdose PK sample",
+            "visits": [
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": [
+              "cell-2"
+            ]
+          },
+          {
+            "name": "Immunogenicity (ADA)",
+            "visits": [
+              {
+                "index": 2,
+                "references": [
+                  "cell-3"
+                ]
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 6,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": [
+                  "cell-3"
+                ]
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              },
+              {
+                "index": 13,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "PK sample for immunogenicity",
+            "visits": [
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 6,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": [
+                  "cell-4"
+                ]
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              },
+              {
+                "index": 13,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": [
+              "cell-4"
+            ]
+          },
+          {
+            "name": "Optional genetics sample",
+            "visits": [
+              {
+                "index": 2,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Exploratory biomarker samples",
+            "visits": [
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Register visit with IWRS",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              },
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 3,
+                "references": []
+              },
+              {
+                "index": 4,
+                "references": []
+              },
+              {
+                "index": 5,
+                "references": []
+              },
+              {
+                "index": 6,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              },
+              {
+                "index": 8,
+                "references": []
+              },
+              {
+                "index": 9,
+                "references": []
+              },
+              {
+                "index": 10,
+                "references": []
+              },
+              {
+                "index": 11,
+                "references": []
+              },
+              {
+                "index": 12,
+                "references": []
+              },
+              {
+                "index": 13,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Randomization via IWRS",
+            "visits": [
+              {
+                "index": 2,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Dispense study intervention via IWRS",
+            "visits": [
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          },
+          {
+            "name": "Administer study intervention",
+            "visits": [
+              {
+                "index": 2,
+                "references": []
+              },
+              {
+                "index": 7,
+                "references": []
+              }
+            ],
+            "children": [],
+            "actions": {
+              "bcs": []
+            },
+            "references": []
+          }
+        ]
+      },
+      "conditions": {
+        "found": true,
+        "items": [
+          {
+            "reference": "cell-1",
+            "text": "Symptom-directed physical assessment will be conducted at the discretion of the PI or qualified personnel, per local regulations, as indicated based on participant status and standard of care."
+          },
+          {
+            "reference": "cell-2",
+            "text": "Visit 2: Collect 2 samples. 0.5 hours postdose. 4-9 hours postdose (minimum 2 hours). Visit 7: Collect 1 sample. 1. 24-36 hours postdose, will require participant to return 1 day after Visit 7."
+          },
+          {
+            "reference": "cell-3",
+            "text": "Visit 2 and 7 will be collected predose."
+          },
+          {
+            "reference": "cell-4",
+            "text": "Collect a time-matched PK sample for all scheduled and unscheduled immunogenicity samples. Visit 7 will be collected predose."
+          }
+        ]
+      }
+    }
+  ]
+}

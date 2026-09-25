@@ -1,0 +1,84 @@
+{
+  "source": "The minimal_timeline_data fixture from test_timeline_assembler.py.",
+  "soa": [
+    {
+      "epochs": {
+        "items": [
+          {
+            "text": "Screening"
+          },
+          {
+            "text": "Treatment"
+          }
+        ]
+      },
+      "visits": {
+        "items": [
+          {
+            "text": "Visit 1",
+            "references": []
+          },
+          {
+            "text": "Visit 2",
+            "references": []
+          }
+        ]
+      },
+      "timepoints": {
+        "items": [
+          {
+            "index": "0",
+            "text": "Day 1",
+            "value": "1",
+            "unit": "days"
+          },
+          {
+            "index": "1",
+            "text": "Day 7",
+            "value": "7",
+            "unit": "days"
+          }
+        ]
+      },
+      "windows": {
+        "items": [
+          {
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          },
+          {
+            "before": 1,
+            "after": 1,
+            "unit": "days"
+          }
+        ]
+      },
+      "activities": {
+        "items": [
+          {
+            "name": "Consent",
+            "visits": [
+              {
+                "index": 0,
+                "references": []
+              }
+            ]
+          },
+          {
+            "name": "Blood Draw",
+            "visits": [
+              {
+                "index": 1,
+                "references": []
+              }
+            ]
+          }
+        ]
+      },
+      "conditions": {
+        "items": []
+      }
+    }
+  ]
+}
