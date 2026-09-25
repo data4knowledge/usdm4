@@ -5,7 +5,6 @@ from usdm4.assembler.schema.population_schema import PopulationInput
 from usdm4.assembler.schema.amendments_schema import AmendmentsInput
 from usdm4.assembler.schema.study_design_schema import StudyDesignInput
 from usdm4.assembler.schema.study_schema import StudyInput
-from usdm4.assembler.schema.timeline_schema import TimelineInput
 from usdm4.assembler.schema.schedule_timeline_schema import ScheduleTimelineInput
 from usdm4.assembler.schema.objectives_schema import ObjectivesInput
 
@@ -17,7 +16,6 @@ __all__ = [
     "AmendmentsInput",
     "StudyDesignInput",
     "StudyInput",
-    "TimelineInput",
     "ScheduleTimelineInput",
     "ObjectivesInput",
 ]

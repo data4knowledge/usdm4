@@ -1,84 +1,87 @@
 {
   "source": "The minimal_timeline_data fixture from test_timeline_assembler.py.",
+  "converted": "2026-09-25, issue 63 part 63.5: rewritten once from the TimelineInput shape into ScheduleTimelineInput, mechanically (rules in docs/timeline_assembler_plan.md 63.5). The TimelineInput original is in git history.",
   "soa": [
     {
-      "epochs": {
-        "items": [
-          {
-            "text": "Screening"
-          },
-          {
-            "text": "Treatment"
-          }
-        ]
+      "type": "main",
+      "title": null,
+      "description": null,
+      "classification": {
+        "orientation": null,
+        "unit": null,
+        "placement": null
       },
-      "visits": {
-        "items": [
-          {
+      "columns": [
+        {
+          "id": "c1",
+          "epoch": {
+            "text": "Screening",
+            "pattern": "Screening"
+          },
+          "visit": {
             "text": "Visit 1",
-            "references": []
+            "pattern": "Visit 1"
           },
-          {
-            "text": "Visit 2",
-            "references": []
-          }
-        ]
-      },
-      "timepoints": {
-        "items": [
-          {
-            "index": "0",
+          "markers": [],
+          "timing": {
             "text": "Day 1",
-            "value": "1",
-            "unit": "days"
+            "pattern": "Day 1"
           },
-          {
-            "index": "1",
+          "window": {
+            "text": "",
+            "pattern": "-0..+0 days"
+          }
+        },
+        {
+          "id": "c2",
+          "epoch": {
+            "text": "Treatment",
+            "pattern": "Treatment"
+          },
+          "visit": {
+            "text": "Visit 2",
+            "pattern": "Visit 2"
+          },
+          "markers": [],
+          "timing": {
             "text": "Day 7",
-            "value": "7",
-            "unit": "days"
-          }
-        ]
-      },
-      "windows": {
-        "items": [
-          {
-            "before": 0,
-            "after": 0,
-            "unit": "days"
+            "pattern": "Day 7"
           },
-          {
-            "before": 1,
-            "after": 1,
-            "unit": "days"
+          "window": {
+            "text": "-1..+1 days",
+            "pattern": "-1..+1 days"
           }
-        ]
-      },
-      "activities": {
-        "items": [
-          {
-            "name": "Consent",
-            "visits": [
-              {
-                "index": 0,
-                "references": []
-              }
-            ]
-          },
-          {
-            "name": "Blood Draw",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              }
-            ]
-          }
-        ]
-      },
-      "conditions": {
-        "items": []
-      }
+        }
+      ],
+      "activities": [
+        {
+          "name": "Consent",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Blood Draw",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        }
+      ],
+      "footnotes": []
     }
   ]
 }

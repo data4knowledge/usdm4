@@ -64,12 +64,38 @@ Branch `63-timeline-assembler`.
   `tests/usdm4/assembler/schema/test_schedule_timeline_schema.py`.
 - **63.4 Restructure** into parse → plan → build, with naming moved out unchanged
   (design § 5). `AssemblerInput.soa` becomes a list of `ScheduleTimelineInput` and
-  `TimelineInput` is removed (moved here from 63.3). The plan builds today's straight chain only; cycles, decisions and
+  `TimelineInput` is removed (moved here from 63.3). *Written 2026-09-25:*
+  `assembler/timeline/columns.py` (parse: one `Column` per column, patterns read with
+  the grammar; a span is carried as text, cycle fields as text), `plan.py` (the
+  straight chain, one anchor, today's crossing-zero and mixed-unit rules),
+  `build.py` (`TimelineBuild` per timeline, objects created in exactly the old order
+  because the builder numbers ids as they are made; `SharedState` for activities
+  and BCs), `naming.py` (`Naming`, moved unchanged); `timeline_assembler.py` is the
+  orchestrator. A timeline whose patterns the grammar refuses, or with no columns, is
+  reported and not built; a built timeline's epochs, encounters and conditions are
+  added only once the whole timeline is built. `schema/timeline_schema.py` and its
+  test are deleted. TLF (family) is still emitted for profiles only — its presence
+  marks a profile to downstream readers; the type extension is left for R1's
+  completion. The `scheduledInstanceTimelineId` key is no longer passed. The plan builds today's straight chain only; cycles, decisions and
   profile attachment are later issues. The public surface of `TimelineAssembler` does
   not change.
 - **63.5 Rewrite the pinned fixtures once in the new schema** and compare the output
-  with the pin. The only allowed differences are those the new input causes by
-  design, each listed in the session log with its reason:
+  with the pin. *Done 2026-09-25, together with 63.4 (the restructure cannot be
+  checked without it).* Conversion rules, mechanical: one column per old timepoint
+  (`c1`, `c2` …); epoch and visit text → `{text, pattern: text}`, blank → null; timing
+  `{text, pattern: "<Unit> <value>"}` when the old value is an integer and its unit is
+  in the grammar, else text only, and a blank text with a zero value (a placeholder
+  column) → null; window → pattern `-b..+a <units>`, text the old label
+  (`-b..+a <unit>`, blank for a zero window); activities flattened, children after
+  their parent with `parent` set, visit indexes → cells (`X`) with their markers;
+  conditions → footnotes; `main_soa` or missing type → `main`, other tables →
+  `profile` when they carried a `table_family`, else `unclassified`. **Result: four of
+  five cases identical to the 63.1 pin; one difference, re-saved:** NCT04557384's PK
+  timeline was drafted with unit `cycle`, which the grammar has no word for, so its
+  cycle columns are text only; the anchor moves from C1D1 to its one `Day 30`
+  column, turning 14 `After` timings into `Before` and the `Day 30` timing from
+  `P30D` to `PT0M`. Both versions are wrong — this timeline needs R4's cycle timing.
+  Other differences the plan allowed for did not occur with these inputs:
   - timing taken from `pattern` instead of a caller's number;
   - an instance printed `C2D8` whose cycle is now in the `cycle` field and whose
     timing is `Day 8`: named `D8` until R4 puts the cycle back into the name;

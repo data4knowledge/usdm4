@@ -1,1573 +1,1700 @@
 {
   "source": "Copied 2026-09-25 from a machine-drafted SoA (NCT05565742); a fixture only, not a reference. Frozen: never refreshed, so the pin stays comparable.",
+  "converted": "2026-09-25, issue 63 part 63.5: rewritten once from the TimelineInput shape into ScheduleTimelineInput, mechanically (rules in docs/timeline_assembler_plan.md 63.5). The TimelineInput original is in git history.",
   "soa": [
     {
-      "table_type": "main_soa",
-      "table_title": "Schedule of Activities",
-      "parent_activities": [
-        "Physical Evaluation",
-        "Laboratory Tests and Sample Collections",
-        "Stored Samples",
-        "Randomization and Dosing"
-      ],
-      "has_cci_redactions": false,
-      "epochs": {
-        "found": true,
-        "items": [
-          {
-            "text": "Period I - Pre-Screening"
-          },
-          {
-            "text": "Period II - Screening"
-          },
-          {
-            "text": "Period III — Treatment and Assessment Period"
-          },
-          {
-            "text": "Period III — Treatment and Assessment Period"
-          },
-          {
-            "text": "Period III — Treatment and Assessment Period"
-          },
-          {
-            "text": "Period III — Treatment and Assessment Period"
-          },
-          {
-            "text": "Period III — Treatment and Assessment Period"
-          },
-          {
-            "text": "Period III — Treatment and Assessment Period"
-          },
-          {
-            "text": "Period III — Treatment and Assessment Period"
-          },
-          {
-            "text": "Period III — Treatment and Assessment Period"
-          },
-          {
-            "text": "Period III — Treatment and Assessment Period"
-          },
-          {
-            "text": "Period III — Treatment and Assessment Period"
-          },
-          {
-            "text": "Period III — Treatment and Assessment Period"
-          },
-          {
-            "text": "Period III — Treatment and Assessment Period"
-          }
-        ]
+      "type": "main",
+      "title": "Schedule of Activities",
+      "description": null,
+      "classification": {
+        "orientation": null,
+        "unit": null,
+        "placement": null
       },
-      "visits": {
-        "found": true,
-        "items": [
-          {
+      "columns": [
+        {
+          "id": "c1",
+          "epoch": {
+            "text": "Period I - Pre-Screening",
+            "pattern": "Period I - Pre-Screening"
+          },
+          "visit": {
             "text": "601",
-            "references": []
+            "pattern": "601"
           },
-          {
-            "text": "1",
-            "references": []
-          },
-          {
-            "text": "2",
-            "references": []
-          },
-          {
-            "text": "3",
-            "references": []
-          },
-          {
-            "text": "4",
-            "references": []
-          },
-          {
-            "text": "5",
-            "references": []
-          },
-          {
-            "text": "6",
-            "references": []
-          },
-          {
-            "text": "7",
-            "references": []
-          },
-          {
-            "text": "8",
-            "references": []
-          },
-          {
-            "text": "9",
-            "references": []
-          },
-          {
-            "text": "10",
-            "references": []
-          },
-          {
-            "text": "11",
-            "references": []
-          },
-          {
-            "text": "12",
-            "references": []
-          },
-          {
-            "text": "ED",
-            "references": []
-          }
-        ]
-      },
-      "timepoints": {
-        "found": true,
-        "items": [
-          {
+          "markers": [],
+          "timing": {
             "text": "≤42",
-            "value": -42,
-            "unit": "day",
-            "references": []
+            "pattern": "Day -42"
           },
-          {
+          "window": {
+            "text": "",
+            "pattern": "-0..+0 days"
+          }
+        },
+        {
+          "id": "c2",
+          "epoch": {
+            "text": "Period II - Screening",
+            "pattern": "Period II - Screening"
+          },
+          "visit": {
+            "text": "1",
+            "pattern": "1"
+          },
+          "markers": [],
+          "timing": {
             "text": "≤21",
-            "value": -21,
-            "unit": "day",
-            "references": []
+            "pattern": "Day -21"
           },
-          {
+          "window": {
+            "text": "",
+            "pattern": "-0..+0 days"
+          }
+        },
+        {
+          "id": "c3",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period",
+            "pattern": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "2",
+            "pattern": "2"
+          },
+          "markers": [],
+          "timing": {
             "text": "—",
-            "value": 0,
-            "unit": "day",
-            "references": []
+            "pattern": "Day 0"
           },
-          {
+          "window": {
+            "text": "",
+            "pattern": "-0..+0 days"
+          }
+        },
+        {
+          "id": "c4",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period",
+            "pattern": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "3",
+            "pattern": "3"
+          },
+          "markers": [],
+          "timing": {
             "text": "15",
-            "value": 15,
-            "unit": "day",
-            "references": []
+            "pattern": "Day 15"
           },
-          {
+          "window": {
+            "text": "-3..+3 day",
+            "pattern": "-3..+3 days"
+          }
+        },
+        {
+          "id": "c5",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period",
+            "pattern": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "4",
+            "pattern": "4"
+          },
+          "markers": [],
+          "timing": {
             "text": "30",
-            "value": 30,
-            "unit": "day",
-            "references": []
+            "pattern": "Day 30"
           },
-          {
+          "window": {
+            "text": "-3..+3 day",
+            "pattern": "-3..+3 days"
+          }
+        },
+        {
+          "id": "c6",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period",
+            "pattern": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "5",
+            "pattern": "5"
+          },
+          "markers": [],
+          "timing": {
             "text": "60",
-            "value": 60,
-            "unit": "day",
-            "references": []
+            "pattern": "Day 60"
           },
-          {
+          "window": {
+            "text": "-3..+3 day",
+            "pattern": "-3..+3 days"
+          }
+        },
+        {
+          "id": "c7",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period",
+            "pattern": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "6",
+            "pattern": "6"
+          },
+          "markers": [],
+          "timing": {
             "text": "120",
-            "value": 120,
-            "unit": "day",
-            "references": []
+            "pattern": "Day 120"
           },
-          {
+          "window": {
+            "text": "-7..+7 day",
+            "pattern": "-7..+7 days"
+          }
+        },
+        {
+          "id": "c8",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period",
+            "pattern": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "7",
+            "pattern": "7"
+          },
+          "markers": [],
+          "timing": {
             "text": "180",
-            "value": 180,
-            "unit": "day",
-            "references": []
+            "pattern": "Day 180"
           },
-          {
+          "window": {
+            "text": "-7..+7 day",
+            "pattern": "-7..+7 days"
+          }
+        },
+        {
+          "id": "c9",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period",
+            "pattern": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "8",
+            "pattern": "8"
+          },
+          "markers": [],
+          "timing": {
             "text": "210",
-            "value": 210,
-            "unit": "day",
-            "references": []
+            "pattern": "Day 210"
           },
-          {
+          "window": {
+            "text": "-7..+7 day",
+            "pattern": "-7..+7 days"
+          }
+        },
+        {
+          "id": "c10",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period",
+            "pattern": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "9",
+            "pattern": "9"
+          },
+          "markers": [],
+          "timing": {
             "text": "240",
-            "value": 240,
-            "unit": "day",
-            "references": []
+            "pattern": "Day 240"
           },
-          {
+          "window": {
+            "text": "-7..+7 day",
+            "pattern": "-7..+7 days"
+          }
+        },
+        {
+          "id": "c11",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period",
+            "pattern": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "10",
+            "pattern": "10"
+          },
+          "markers": [],
+          "timing": {
             "text": "300",
-            "value": 300,
-            "unit": "day",
-            "references": []
+            "pattern": "Day 300"
           },
-          {
+          "window": {
+            "text": "-7..+7 day",
+            "pattern": "-7..+7 days"
+          }
+        },
+        {
+          "id": "c12",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period",
+            "pattern": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "11",
+            "pattern": "11"
+          },
+          "markers": [],
+          "timing": {
             "text": "360",
-            "value": 360,
-            "unit": "day",
-            "references": []
+            "pattern": "Day 360"
           },
-          {
+          "window": {
+            "text": "-7..+7 day",
+            "pattern": "-7..+7 days"
+          }
+        },
+        {
+          "id": "c13",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period",
+            "pattern": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "12",
+            "pattern": "12"
+          },
+          "markers": [],
+          "timing": {
             "text": "540",
-            "value": 540,
-            "unit": "day",
-            "references": []
+            "pattern": "Day 540"
           },
-          {
+          "window": {
+            "text": "-14..+14 day",
+            "pattern": "-14..+14 days"
+          }
+        },
+        {
+          "id": "c14",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period",
+            "pattern": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
             "text": "ED",
-            "value": 0,
-            "unit": "day",
-            "references": []
+            "pattern": "ED"
+          },
+          "markers": [],
+          "timing": {
+            "text": "ED",
+            "pattern": "Day 0"
+          },
+          "window": {
+            "text": "",
+            "pattern": "-0..+0 days"
           }
-        ]
-      },
-      "windows": {
-        "found": true,
-        "items": [
-          {
-            "before": 0,
-            "after": 0,
-            "unit": "day"
-          },
-          {
-            "before": 0,
-            "after": 0,
-            "unit": "day"
-          },
-          {
-            "before": 0,
-            "after": 0,
-            "unit": "day"
-          },
-          {
-            "before": 3,
-            "after": 3,
-            "unit": "day"
-          },
-          {
-            "before": 3,
-            "after": 3,
-            "unit": "day"
-          },
-          {
-            "before": 3,
-            "after": 3,
-            "unit": "day"
-          },
-          {
-            "before": 7,
-            "after": 7,
-            "unit": "day"
-          },
-          {
-            "before": 7,
-            "after": 7,
-            "unit": "day"
-          },
-          {
-            "before": 7,
-            "after": 7,
-            "unit": "day"
-          },
-          {
-            "before": 7,
-            "after": 7,
-            "unit": "day"
-          },
-          {
-            "before": 7,
-            "after": 7,
-            "unit": "day"
-          },
-          {
-            "before": 7,
-            "after": 7,
-            "unit": "day"
-          },
-          {
-            "before": 14,
-            "after": 14,
-            "unit": "day"
-          },
-          {
-            "before": 0,
-            "after": 0,
-            "unit": "day"
-          }
-        ]
-      },
-      "activities": {
-        "found": true,
-        "items": [
-          {
-            "name": "Prescreening informed consent",
-            "visits": [
-              {
-                "index": 0,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+        }
+      ],
+      "activities": [
+        {
+          "name": "Prescreening informed consent",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Informed consent",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Inclusion and exclusion criteria, review and confirm",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Informed consent",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Ascertainment of high risk for cardiovascular events",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Demographics",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Preexisting conditions and medical history, including relevant surgical history",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Prespecified medical history (indication and history of interest)",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Prior treatments for indication",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Substance use (alcohol, caffeine, and tobacco use)",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Inclusion and exclusion criteria, review and confirm",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 2,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c7",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Ascertainment of high risk for cardiovascular events",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Demographics",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Concomitant medications",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Preexisting conditions and medical history, including relevant surgical history",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Prespecified medical history (indication and history of interest)",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c4",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Prior treatments for indication",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c5",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Substance use (alcohol, caffeine, and tobacco use)",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 6,
-                "references": []
-              },
-              {
-                "index": 10,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c6",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Concomitant medications",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 2,
-                "references": []
-              },
-              {
-                "index": 3,
-                "references": []
-              },
-              {
-                "index": 4,
-                "references": []
-              },
-              {
-                "index": 5,
-                "references": []
-              },
-              {
-                "index": 6,
-                "references": []
-              },
-              {
-                "index": 7,
-                "references": []
-              },
-              {
-                "index": 8,
-                "references": []
-              },
-              {
-                "index": 9,
-                "references": []
-              },
-              {
-                "index": 10,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              },
-              {
-                "index": 12,
-                "references": []
-              },
-              {
-                "index": 13,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c7",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "AEs",
-            "visits": [
-              {
-                "index": 0,
-                "references": []
-              },
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 2,
-                "references": []
-              },
-              {
-                "index": 3,
-                "references": []
-              },
-              {
-                "index": 4,
-                "references": []
-              },
-              {
-                "index": 5,
-                "references": []
-              },
-              {
-                "index": 6,
-                "references": []
-              },
-              {
-                "index": 7,
-                "references": []
-              },
-              {
-                "index": 8,
-                "references": []
-              },
-              {
-                "index": 9,
-                "references": []
-              },
-              {
-                "index": 10,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              },
-              {
-                "index": 12,
-                "references": []
-              },
-              {
-                "index": 13,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Height",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c9",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Weight",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 2,
-                "references": []
-              },
-              {
-                "index": 6,
-                "references": []
-              },
-              {
-                "index": 10,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              },
-              {
-                "index": 13,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c10",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Vital signs",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 2,
-                "references": []
-              },
-              {
-                "index": 3,
-                "references": []
-              },
-              {
-                "index": 4,
-                "references": []
-              },
-              {
-                "index": 5,
-                "references": []
-              },
-              {
-                "index": 6,
-                "references": []
-              },
-              {
-                "index": 7,
-                "references": []
-              },
-              {
-                "index": 8,
-                "references": []
-              },
-              {
-                "index": 9,
-                "references": []
-              },
-              {
-                "index": 10,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              },
-              {
-                "index": 12,
-                "references": []
-              },
-              {
-                "index": 13,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Physical examination",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              },
-              {
-                "index": 12,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Symptom-directed physical assessment",
-            "visits": [],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
             },
-            "references": [
-              "cell-1"
-            ]
-          },
-          {
-            "name": "12-Lead ECG (local)",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 6,
-                "references": []
-              },
-              {
-                "index": 10,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              },
-              {
-                "index": 12,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c14",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "AEs",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Hematology",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 4,
-                "references": []
-              },
-              {
-                "index": 5,
-                "references": []
-              },
-              {
-                "index": 7,
-                "references": []
-              },
-              {
-                "index": 8,
-                "references": []
-              },
-              {
-                "index": 9,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              },
-              {
-                "index": 12,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Clinical chemistry",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 2,
-                "references": []
-              },
-              {
-                "index": 3,
-                "references": []
-              },
-              {
-                "index": 4,
-                "references": []
-              },
-              {
-                "index": 5,
-                "references": []
-              },
-              {
-                "index": 7,
-                "references": []
-              },
-              {
-                "index": 8,
-                "references": []
-              },
-              {
-                "index": 9,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              },
-              {
-                "index": 12,
-                "references": []
-              },
-              {
-                "index": 13,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Lipid panel",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 2,
-                "references": []
-              },
-              {
-                "index": 5,
-                "references": []
-              },
-              {
-                "index": 7,
-                "references": []
-              },
-              {
-                "index": 9,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              },
-              {
-                "index": 12,
-                "references": []
-              },
-              {
-                "index": 13,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c4",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Urinalysis",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 5,
-                "references": []
-              },
-              {
-                "index": 7,
-                "references": []
-              },
-              {
-                "index": 9,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              },
-              {
-                "index": 12,
-                "references": []
-              },
-              {
-                "index": 13,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c5",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "UACR",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 5,
-                "references": []
-              },
-              {
-                "index": 7,
-                "references": []
-              },
-              {
-                "index": 9,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              },
-              {
-                "index": 12,
-                "references": []
-              },
-              {
-                "index": 13,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c6",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Serum pregnancy",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c7",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "FSH",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "TSH",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c9",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "HbA1c",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 6,
-                "references": []
-              },
-              {
-                "index": 10,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              },
-              {
-                "index": 13,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c10",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Lp(a)",
-            "visits": [
-              {
-                "index": 0,
-                "references": []
-              },
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 2,
-                "references": []
-              },
-              {
-                "index": 3,
-                "references": []
-              },
-              {
-                "index": 4,
-                "references": []
-              },
-              {
-                "index": 5,
-                "references": []
-              },
-              {
-                "index": 6,
-                "references": []
-              },
-              {
-                "index": 7,
-                "references": []
-              },
-              {
-                "index": 8,
-                "references": []
-              },
-              {
-                "index": 9,
-                "references": []
-              },
-              {
-                "index": 10,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              },
-              {
-                "index": 12,
-                "references": []
-              },
-              {
-                "index": 13,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "ApoB",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 2,
-                "references": []
-              },
-              {
-                "index": 5,
-                "references": []
-              },
-              {
-                "index": 6,
-                "references": []
-              },
-              {
-                "index": 7,
-                "references": []
-              },
-              {
-                "index": 8,
-                "references": []
-              },
-              {
-                "index": 9,
-                "references": []
-              },
-              {
-                "index": 10,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              },
-              {
-                "index": 12,
-                "references": []
-              },
-              {
-                "index": 13,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "hsCRP",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 2,
-                "references": []
-              },
-              {
-                "index": 5,
-                "references": []
-              },
-              {
-                "index": 6,
-                "references": []
-              },
-              {
-                "index": 7,
-                "references": []
-              },
-              {
-                "index": 8,
-                "references": []
-              },
-              {
-                "index": 9,
-                "references": []
-              },
-              {
-                "index": 10,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              },
-              {
-                "index": 12,
-                "references": []
-              },
-              {
-                "index": 13,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "HIV screening test",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c14",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Height",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Weight",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "HCV screening test",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "HBV screening test",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c7",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "eGFR",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 5,
-                "references": []
-              },
-              {
-                "index": 7,
-                "references": []
-              },
-              {
-                "index": 9,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              },
-              {
-                "index": 12,
-                "references": []
-              },
-              {
-                "index": 13,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Postdose PK sample",
-            "visits": [
-              {
-                "index": 2,
-                "references": []
-              },
-              {
-                "index": 7,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
             },
-            "references": [
-              "cell-2"
-            ]
-          },
-          {
-            "name": "Immunogenicity (ADA)",
-            "visits": [
-              {
-                "index": 2,
-                "references": [
-                  "cell-3"
-                ]
-              },
-              {
-                "index": 3,
-                "references": []
-              },
-              {
-                "index": 4,
-                "references": []
-              },
-              {
-                "index": 6,
-                "references": []
-              },
-              {
-                "index": 7,
-                "references": [
-                  "cell-3"
-                ]
-              },
-              {
-                "index": 9,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              },
-              {
-                "index": 12,
-                "references": []
-              },
-              {
-                "index": 13,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c14",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Vital signs",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "PK sample for immunogenicity",
-            "visits": [
-              {
-                "index": 3,
-                "references": []
-              },
-              {
-                "index": 4,
-                "references": []
-              },
-              {
-                "index": 6,
-                "references": []
-              },
-              {
-                "index": 7,
-                "references": [
-                  "cell-4"
-                ]
-              },
-              {
-                "index": 9,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              },
-              {
-                "index": 12,
-                "references": []
-              },
-              {
-                "index": 13,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
             },
-            "references": [
-              "cell-4"
-            ]
-          },
-          {
-            "name": "Optional genetics sample",
-            "visits": [
-              {
-                "index": 2,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c4",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Exploratory biomarker samples",
-            "visits": [
-              {
-                "index": 2,
-                "references": []
-              },
-              {
-                "index": 5,
-                "references": []
-              },
-              {
-                "index": 7,
-                "references": []
-              },
-              {
-                "index": 9,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              },
-              {
-                "index": 12,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c5",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Register visit with IWRS",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 2,
-                "references": []
-              },
-              {
-                "index": 3,
-                "references": []
-              },
-              {
-                "index": 4,
-                "references": []
-              },
-              {
-                "index": 5,
-                "references": []
-              },
-              {
-                "index": 6,
-                "references": []
-              },
-              {
-                "index": 7,
-                "references": []
-              },
-              {
-                "index": 8,
-                "references": []
-              },
-              {
-                "index": 9,
-                "references": []
-              },
-              {
-                "index": 10,
-                "references": []
-              },
-              {
-                "index": 11,
-                "references": []
-              },
-              {
-                "index": 12,
-                "references": []
-              },
-              {
-                "index": 13,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c6",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Randomization via IWRS",
-            "visits": [
-              {
-                "index": 2,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c7",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Dispense study intervention via IWRS",
-            "visits": [
-              {
-                "index": 2,
-                "references": []
-              },
-              {
-                "index": 7,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          },
-          {
-            "name": "Administer study intervention",
-            "visits": [
-              {
-                "index": 2,
-                "references": []
-              },
-              {
-                "index": 7,
-                "references": []
-              }
-            ],
-            "children": [],
-            "actions": {
-              "bcs": []
+            {
+              "column": "c9",
+              "text": "X",
+              "markers": []
             },
-            "references": []
-          }
-        ]
-      },
-      "conditions": {
-        "found": true,
-        "items": [
-          {
-            "reference": "cell-1",
-            "text": "Symptom-directed physical assessment will be conducted at the discretion of the PI or qualified personnel, per local regulations, as indicated based on participant status and standard of care."
-          },
-          {
-            "reference": "cell-2",
-            "text": "Visit 2: Collect 2 samples. 0.5 hours postdose. 4-9 hours postdose (minimum 2 hours). Visit 7: Collect 1 sample. 1. 24-36 hours postdose, will require participant to return 1 day after Visit 7."
-          },
-          {
-            "reference": "cell-3",
-            "text": "Visit 2 and 7 will be collected predose."
-          },
-          {
-            "reference": "cell-4",
-            "text": "Collect a time-matched PK sample for all scheduled and unscheduled immunogenicity samples. Visit 7 will be collected predose."
-          }
-        ]
-      }
+            {
+              "column": "c10",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c14",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Physical examination",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Symptom-directed physical assessment",
+          "parent": null,
+          "markers": [
+            "cell-1"
+          ],
+          "bcs": [],
+          "cells": []
+        },
+        {
+          "name": "12-Lead ECG (local)",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c7",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Hematology",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c5",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c6",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c9",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c10",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Clinical chemistry",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c4",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c5",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c6",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c9",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c10",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c14",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Lipid panel",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c6",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c10",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c14",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Urinalysis",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c6",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c10",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c14",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "UACR",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c6",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c10",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c14",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Serum pregnancy",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "FSH",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "TSH",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "HbA1c",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c7",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c14",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Lp(a)",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c4",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c5",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c6",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c7",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c9",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c10",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c14",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "ApoB",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c6",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c7",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c9",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c10",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c14",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "hsCRP",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c6",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c7",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c9",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c10",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c14",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "HIV screening test",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "HCV screening test",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "HBV screening test",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "eGFR",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c6",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c10",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c14",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Postdose PK sample",
+          "parent": null,
+          "markers": [
+            "cell-2"
+          ],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Immunogenicity (ADA)",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": [
+                "cell-3"
+              ]
+            },
+            {
+              "column": "c4",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c5",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c7",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": [
+                "cell-3"
+              ]
+            },
+            {
+              "column": "c10",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c14",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "PK sample for immunogenicity",
+          "parent": null,
+          "markers": [
+            "cell-4"
+          ],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c4",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c5",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c7",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": [
+                "cell-4"
+              ]
+            },
+            {
+              "column": "c10",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c14",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Optional genetics sample",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Exploratory biomarker samples",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c6",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c10",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Register visit with IWRS",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c4",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c5",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c6",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c7",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c9",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c10",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c14",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Randomization via IWRS",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Dispense study intervention via IWRS",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Administer study intervention",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        }
+      ],
+      "footnotes": [
+        {
+          "marker": "cell-1",
+          "text": "Symptom-directed physical assessment will be conducted at the discretion of the PI or qualified personnel, per local regulations, as indicated based on participant status and standard of care."
+        },
+        {
+          "marker": "cell-2",
+          "text": "Visit 2: Collect 2 samples. 0.5 hours postdose. 4-9 hours postdose (minimum 2 hours). Visit 7: Collect 1 sample. 1. 24-36 hours postdose, will require participant to return 1 day after Visit 7."
+        },
+        {
+          "marker": "cell-3",
+          "text": "Visit 2 and 7 will be collected predose."
+        },
+        {
+          "marker": "cell-4",
+          "text": "Collect a time-matched PK sample for all scheduled and unscheduled immunogenicity samples. Visit 7 will be collected predose."
+        }
+      ]
     }
   ]
 }

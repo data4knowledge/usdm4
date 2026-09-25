@@ -6,7 +6,7 @@ from usdm4.assembler.schema.population_schema import PopulationInput
 from usdm4.assembler.schema.amendments_schema import AmendmentsInput
 from usdm4.assembler.schema.study_design_schema import StudyDesignInput
 from usdm4.assembler.schema.study_schema import StudyInput
-from usdm4.assembler.schema.timeline_schema import TimelineInput
+from usdm4.assembler.schema.schedule_timeline_schema import ScheduleTimelineInput
 from usdm4.assembler.schema.objectives_schema import ObjectivesInput
 
 
@@ -26,12 +26,12 @@ class AssemblerInput(BaseModel):
     # protocol to gain a synthetic global-scope amendment after the
     # ``Assembler.execute`` change in 0.24.0.
     amendments: AmendmentsInput | None = None
-    # ``soa`` is presence-bearing (``None`` means no SoA supplied) and accepts
-    # either a single ``TimelineInput`` (one timeline — the historical shape) or
-    # a list of them (a main plus n subsidiary timelines). The assembler
-    # normalises a single dict to a one-element list; exactly one is flagged as
-    # the main timeline (see ``TimelineAssembler.execute``).
-    soa: TimelineInput | list[TimelineInput] | None = None
+    # ``soa`` is presence-bearing (``None`` means no SoA supplied): a list of
+    # timelines, each a ``ScheduleTimelineInput`` — header values as printed
+    # text plus a pattern form, parsed by the timeline assembler (issue 63;
+    # ``docs/timeline_assembler_design.md``). Exactly one built timeline is
+    # flagged as the main timeline (see ``TimelineAssembler.execute``).
+    soa: list[ScheduleTimelineInput] | None = None
     # ``objectives`` follows the same presence-bearing optional pattern:
     # ``None`` means "no objectives supplied" and the objectives assembler
     # is skipped entirely, leaving the study design's objectives/estimands/

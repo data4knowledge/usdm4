@@ -1,362 +1,385 @@
 {
   "source": "Hand-built for the pin: footnote markers on visits, activities and cells; an unanchored and an unmarked footnote; parent/child activities; a library BC and a surrogate BC; mixed units; a non-numeric timing; a classified profile timeline sharing an activity; a table with no timepoints (skipped).",
+  "converted": "2026-09-25, issue 63 part 63.5: rewritten once from the TimelineInput shape into ScheduleTimelineInput, mechanically (rules in docs/timeline_assembler_plan.md 63.5). The TimelineInput original is in git history.",
   "soa": [
     {
-      "table_type": "main_soa",
-      "table_title": "Schedule of Activities",
-      "table_description": "Main schedule",
-      "epochs": {
-        "items": [
-          {
-            "text": "Screening"
-          },
-          {
-            "text": "Treatment"
-          },
-          {
-            "text": "Treatment"
-          },
-          {
-            "text": "Treatment"
-          },
-          {
-            "text": "Follow-up"
-          }
-        ]
+      "type": "main",
+      "title": "Schedule of Activities",
+      "description": "Main schedule",
+      "classification": {
+        "orientation": null,
+        "unit": null,
+        "placement": null
       },
-      "visits": {
-        "items": [
-          {
+      "columns": [
+        {
+          "id": "c1",
+          "epoch": {
+            "text": "Screening",
+            "pattern": "Screening"
+          },
+          "visit": {
             "text": "V1",
-            "references": [
-              "a"
-            ]
+            "pattern": "V1"
           },
-          {
-            "text": "V2",
-            "references": []
-          },
-          {
-            "text": "V3",
-            "references": []
-          },
-          {
-            "text": "V4",
-            "references": []
-          },
-          {
-            "text": "FU",
-            "references": []
-          }
-        ]
-      },
-      "timepoints": {
-        "items": [
-          {
+          "markers": [
+            "a"
+          ],
+          "timing": {
             "text": "Day -14",
-            "value": -14,
-            "unit": "day"
+            "pattern": "Day -14"
           },
-          {
+          "window": {
+            "text": "",
+            "pattern": "-0..+0 days"
+          }
+        },
+        {
+          "id": "c2",
+          "epoch": {
+            "text": "Treatment",
+            "pattern": "Treatment"
+          },
+          "visit": {
+            "text": "V2",
+            "pattern": "V2"
+          },
+          "markers": [],
+          "timing": {
             "text": "Day 1",
-            "value": 1,
-            "unit": "day"
+            "pattern": "Day 1"
           },
-          {
+          "window": {
+            "text": "",
+            "pattern": "-0..+0 days"
+          }
+        },
+        {
+          "id": "c3",
+          "epoch": {
+            "text": "Treatment",
+            "pattern": "Treatment"
+          },
+          "visit": {
+            "text": "V3",
+            "pattern": "V3"
+          },
+          "markers": [],
+          "timing": {
             "text": "Week 2",
-            "value": 2,
-            "unit": "week"
+            "pattern": "Week 2"
           },
-          {
+          "window": {
+            "text": "-2..+2 day",
+            "pattern": "-2..+2 days"
+          }
+        },
+        {
+          "id": "c4",
+          "epoch": {
+            "text": "Treatment",
+            "pattern": "Treatment"
+          },
+          "visit": {
+            "text": "V4",
+            "pattern": "V4"
+          },
+          "markers": [],
+          "timing": {
             "text": "Day 29",
-            "value": 29,
-            "unit": "day"
+            "pattern": "Day 29"
           },
-          {
+          "window": {
+            "text": "-3..+3 day",
+            "pattern": "-3..+3 days"
+          }
+        },
+        {
+          "id": "c5",
+          "epoch": {
+            "text": "Follow-up",
+            "pattern": "Follow-up"
+          },
+          "visit": {
+            "text": "FU",
+            "pattern": "FU"
+          },
+          "markers": [],
+          "timing": {
             "text": "Cycle 2 Day 1",
-            "value": "",
-            "unit": "day"
+            "pattern": null
+          },
+          "window": {
+            "text": "-7..+7 day",
+            "pattern": "-7..+7 days"
           }
-        ]
-      },
-      "windows": {
-        "items": [
-          {
-            "before": 0,
-            "after": 0,
-            "unit": "day"
-          },
-          {
-            "before": 0,
-            "after": 0,
-            "unit": "day"
-          },
-          {
-            "before": 2,
-            "after": 2,
-            "unit": "day"
-          },
-          {
-            "before": 3,
-            "after": 3,
-            "unit": "day"
-          },
-          {
-            "before": 7,
-            "after": 7,
-            "unit": "day"
-          }
-        ]
-      },
-      "activities": {
-        "items": [
-          {
-            "name": "Informed consent",
-            "visits": [
-              {
-                "index": 0,
-                "references": []
-              }
-            ],
-            "references": [
-              "b"
-            ]
-          },
-          {
-            "name": "Vital signs",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 2,
-                "references": [
-                  "c"
-                ]
-              },
-              {
-                "index": 3,
-                "references": []
-              }
-            ],
-            "actions": {
-              "bcs": [
-                "Sex",
-                "Unlisted Local Measurement"
-              ]
+        }
+      ],
+      "activities": [
+        {
+          "name": "Informed consent",
+          "parent": null,
+          "markers": [
+            "b"
+          ],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
             }
-          },
-          {
-            "name": "Laboratory",
-            "visits": [],
-            "children": [
-              {
-                "name": "Haematology",
-                "visits": [
-                  {
-                    "index": 1,
-                    "references": []
-                  },
-                  {
-                    "index": 3,
-                    "references": []
-                  }
-                ]
-              },
-              {
-                "name": "Chemistry",
-                "visits": [
-                  {
-                    "index": 1,
-                    "references": []
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "name": "Adverse events",
-            "visits": [
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 2,
-                "references": []
-              },
-              {
-                "index": 3,
-                "references": []
-              },
-              {
-                "index": 4,
-                "references": []
-              }
-            ]
-          }
-        ]
-      },
-      "conditions": {
-        "items": [
-          {
-            "reference": "a",
-            "text": "Within 14 days of Day 1."
-          },
-          {
-            "reference": "b",
-            "text": "Before any study procedure."
-          },
-          {
-            "reference": "c",
-            "text": "Pre-dose."
-          },
-          {
-            "reference": "z",
-            "text": "Unanchored footnote."
-          },
-          {
-            "reference": "",
-            "text": "Footnote with no marker."
-          }
-        ]
-      }
+          ]
+        },
+        {
+          "name": "Vital signs",
+          "parent": null,
+          "markers": [],
+          "bcs": [
+            "Sex",
+            "Unlisted Local Measurement"
+          ],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": [
+                "c"
+              ]
+            },
+            {
+              "column": "c4",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Laboratory",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": []
+        },
+        {
+          "name": "Haematology",
+          "parent": "Laboratory",
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c4",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Chemistry",
+          "parent": "Laboratory",
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Adverse events",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c4",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c5",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        }
+      ],
+      "footnotes": [
+        {
+          "marker": "a",
+          "text": "Within 14 days of Day 1."
+        },
+        {
+          "marker": "b",
+          "text": "Before any study procedure."
+        },
+        {
+          "marker": "c",
+          "text": "Pre-dose."
+        },
+        {
+          "marker": "z",
+          "text": "Unanchored footnote."
+        },
+        {
+          "marker": "",
+          "text": "Footnote with no marker."
+        }
+      ]
     },
     {
-      "table_type": "subsidiary",
-      "table_title": "PK sampling",
-      "table_family": "profile",
-      "table_orientation": "transposed",
-      "table_unit": "hour",
-      "table_placement": "away",
-      "epochs": {
-        "items": [
-          {
-            "text": "Treatment"
-          },
-          {
-            "text": "Treatment"
-          },
-          {
-            "text": "Treatment"
-          }
-        ]
+      "type": "profile",
+      "title": "PK sampling",
+      "description": null,
+      "classification": {
+        "orientation": "transposed",
+        "unit": "hour",
+        "placement": "away"
       },
-      "visits": {
-        "items": [
-          {
+      "columns": [
+        {
+          "id": "c1",
+          "epoch": {
+            "text": "Treatment",
+            "pattern": "Treatment"
+          },
+          "visit": {
             "text": "Pre-dose",
-            "references": []
+            "pattern": "Pre-dose"
           },
-          {
-            "text": "2 h",
-            "references": []
-          },
-          {
-            "text": "24 h",
-            "references": []
-          }
-        ]
-      },
-      "timepoints": {
-        "items": [
-          {
+          "markers": [],
+          "timing": {
             "text": "0 h",
-            "value": 0,
-            "unit": "hour"
+            "pattern": "Hour 0"
           },
-          {
+          "window": {
+            "text": "",
+            "pattern": "-0..+0 hours"
+          }
+        },
+        {
+          "id": "c2",
+          "epoch": {
+            "text": "Treatment",
+            "pattern": "Treatment"
+          },
+          "visit": {
             "text": "2 h",
-            "value": 2,
-            "unit": "hour"
+            "pattern": "2 h"
           },
-          {
+          "markers": [],
+          "timing": {
+            "text": "2 h",
+            "pattern": "Hour 2"
+          },
+          "window": {
+            "text": "",
+            "pattern": "-0..+0 hours"
+          }
+        },
+        {
+          "id": "c3",
+          "epoch": {
+            "text": "Treatment",
+            "pattern": "Treatment"
+          },
+          "visit": {
             "text": "24 h",
-            "value": 24,
-            "unit": "hour"
-          }
-        ]
-      },
-      "windows": {
-        "items": [
-          {
-            "before": 0,
-            "after": 0,
-            "unit": "hour"
+            "pattern": "24 h"
           },
-          {
-            "before": 0,
-            "after": 0,
-            "unit": "hour"
+          "markers": [],
+          "timing": {
+            "text": "24 h",
+            "pattern": "Hour 24"
           },
-          {
-            "before": 1,
-            "after": 1,
-            "unit": "hour"
+          "window": {
+            "text": "-1..+1 hour",
+            "pattern": "-1..+1 hours"
           }
-        ]
-      },
-      "activities": {
-        "items": [
-          {
-            "name": "PK sample",
-            "visits": [
-              {
-                "index": 0,
-                "references": []
-              },
-              {
-                "index": 1,
-                "references": []
-              },
-              {
-                "index": 2,
-                "references": []
-              }
-            ]
-          },
-          {
-            "name": "Vital signs",
-            "visits": [
-              {
-                "index": 0,
-                "references": []
-              }
-            ]
-          }
-        ]
-      },
-      "conditions": {
-        "items": []
-      }
+        }
+      ],
+      "activities": [
+        {
+          "name": "PK sample",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Vital signs",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        }
+      ],
+      "footnotes": []
     },
     {
-      "table_type": "subsidiary",
-      "table_title": "No spine",
-      "epochs": {
-        "items": []
+      "type": "unclassified",
+      "title": "No spine",
+      "description": null,
+      "classification": {
+        "orientation": null,
+        "unit": null,
+        "placement": null
       },
-      "visits": {
-        "items": []
-      },
-      "timepoints": {
-        "items": []
-      },
-      "windows": {
-        "items": []
-      },
-      "activities": {
-        "items": [
-          {
-            "name": "Orphan",
-            "visits": []
-          }
-        ]
-      },
-      "conditions": {
-        "items": []
-      }
+      "columns": [],
+      "activities": [
+        {
+          "name": "Orphan",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": []
+        }
+      ],
+      "footnotes": []
     }
   ]
 }

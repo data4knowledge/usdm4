@@ -1,14 +1,14 @@
-"""Pin of the timeline assembler's output — issue 63, part 63.1.
+"""Pin of the timeline assembler's output — issue 63, parts 63.1 and 63.5.
 
-Records what ``TimelineAssembler`` builds today, for a fixed set of inputs in
-today's ``TimelineInput`` shape, BEFORE the assembler is restructured. Every
-later step of issue 63 must reproduce these files exactly, apart from the
-differences listed in ``docs/timeline_assembler_plan.md`` 63.5, each of
-which is recorded with its reason.
+63.1 recorded what ``TimelineAssembler`` built BEFORE the restructure, from
+inputs in the old ``TimelineInput`` shape. 63.5 rewrote those inputs once,
+mechanically, into ``ScheduleTimelineInput``; the restructured assembler
+reproduces the 63.1 output exactly, apart from the differences listed in
+``docs/timeline_assembler_plan.md`` 63.5, each recorded with its reason.
 
 Inputs live in ``tests/usdm4/test_files/timeline_pin/input_*.json`` (a
-``source`` note plus the ``soa`` list). Expected output is written next to
-them as ``expected_*.json``.
+``source`` note, a ``converted`` note, and the ``soa`` list). Expected output
+is written next to them as ``expected_*.json``.
 
 To (re)create the pin: set ``SAVE = True``, run this file once, set it back
 to ``False``, run again. Only ever re-save on purpose — a re-save is a
@@ -23,7 +23,9 @@ import pytest
 from simple_error_log.errors import Errors
 
 from src.usdm4.api.serialize import serialize_as_json
-from src.usdm4.assembler.schema.timeline_schema import TimelineInput
+from src.usdm4.assembler.schema.schedule_timeline_schema import (
+    ScheduleTimelineInput,
+)
 from src.usdm4.assembler.timeline_assembler import TimelineAssembler
 from src.usdm4.builder.builder import Builder
 from tests.usdm4.helpers.files import read_json_file, write_json_file
@@ -52,10 +54,9 @@ def builder():
 
 def _input(case: str) -> list[dict]:
     """The input as the Assembler hands it on: validated against
-    ``TimelineInput`` and dumped, so keys the schema does not declare are
-    dropped exactly as they are in production."""
+    ``ScheduleTimelineInput`` and dumped, exactly as in production."""
     data = json.loads(read_json_file(SUB_DIR, f"input_{case}.json"))
-    return [TimelineInput.model_validate(t).model_dump() for t in data["soa"]]
+    return [ScheduleTimelineInput.model_validate(t).model_dump() for t in data["soa"]]
 
 
 def _output(assembler: TimelineAssembler) -> str:

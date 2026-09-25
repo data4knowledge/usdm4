@@ -131,11 +131,8 @@ class Assembler:
 
             # Timelines data — truthy check, not key presence: ``soa`` is
             # always a key on the validated dict (Pydantic-injected default)
-            # but its value is ``None`` when no SoA was supplied. The timeline
-            # assembler indexes ``data["epochs"]["items"]`` etc. unconditionally
-            # and can't take ``None``. ``soa`` may be a single table dict or a
-            # list of tables (main + subsidiary timelines); the timeline
-            # assembler normalises either form.
+            # but its value is ``None`` when no SoA was supplied. ``soa`` is a
+            # list of ``ScheduleTimelineInput`` timelines (issue 63).
             if data.get("soa"):
                 self._timeline_assembler.execute(data["soa"])
 

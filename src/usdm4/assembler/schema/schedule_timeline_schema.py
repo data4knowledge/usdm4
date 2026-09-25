@@ -158,8 +158,8 @@ class TimelineClassification(_Model):
 
 
 class ScheduleTimelineInput(_Model):
-    """One timeline. Replaces ``TimelineInput`` once the assembler reads it
-    (issue 63, part 63.4)."""
+    """One timeline — ``AssemblerInput.soa`` is a list of these. Replaced
+    ``TimelineInput`` in issue 63, part 63.4."""
 
     type: TimelineType
     title: str | None = None
