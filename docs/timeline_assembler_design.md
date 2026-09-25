@@ -54,7 +54,7 @@ conditions → timeline. What that does and does not do:
   value is non-numeric gets a zero duration with no error; if only the anchor's value
   is non-numeric, the column's absolute value is used. Mixed units give a warning and
   the absolute value.
-- **Seen in the step-1 pin (2026-09-25).** A column with empty timepoint text gets
+- **Seen in the 63.1 pin (2026-09-25).** A column with empty timepoint text gets
   **no `Timing` at all**: `valueLabel` is required by the API and `_timing_value_label`
   returns `None`, so every timing of such a timeline fails and the timeline has
   instances but zero timings — two of the three real pinned schedules' main timelines.
@@ -222,8 +222,8 @@ The assembler is split into four stages. Each is its own module under
    into a typed value; build one column record per column. Pure functions, no USDM
    objects. An invalid input is reported with the timeline, column and field, and the
    timeline is not built.
-2. **Plan** (`plan.py`). From the column records, the ordered sequence of steps for
-   one timeline: activity instance, delay, decision, exit — each step with its timing
+2. **Plan** (`plan.py`). From the column records, the ordered sequence of nodes for
+   one timeline: activity instance, delay, decision, exit — each node with its timing
    reference (which instance it is measured from, `Before` / `After` / `Fixed
    Reference`, and the duration). Cycles live entirely here. Pure, unit-tested
    without the builder.
@@ -256,7 +256,7 @@ Numbered to match `protocol_corpus/docs/spec/soa_two_stage.md`.
 
 Each input timeline becomes a `ScheduleTimeline`: `name` `TIMELINE-<n>` (ordinal in
 the input, gaps kept when a timeline is not built), `label` from `title` or a default,
-`entryId` the first step, one `ScheduleTimelineExit`. `mainTimeline` per § 3.1. Type,
+`entryId` the first node, one `ScheduleTimelineExit`. `mainTimeline` per § 3.1. Type,
 family and classification as extension attributes. *Today:* all of this except the
 type extension; family is caller-supplied, not derived.
 
@@ -310,7 +310,7 @@ Nothing is ever expanded. A cycle has a length, a number or range, and days.
      minus the last day's offset within the cycle (21-day cycle, last day `Day 15`:
      21 − 14 = 7 days);
   2. **a decision** — a `ScheduledDecisionInstance` whose one `ConditionAssignment`
-     is the exit condition and leads to the step after the range (or the exit), and
+     is the exit condition and leads to the node after the range (or the exit), and
      whose `defaultConditionId` loops back to the range's first column.
 
   The exit condition's text is decision D7; the proposal is the printed range text

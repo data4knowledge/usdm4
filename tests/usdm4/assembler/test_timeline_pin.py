@@ -1,9 +1,9 @@
-"""Pin of the timeline assembler's output — issue 63, step 1.
+"""Pin of the timeline assembler's output — issue 63, part 63.1.
 
 Records what ``TimelineAssembler`` builds today, for a fixed set of inputs in
 today's ``TimelineInput`` shape, BEFORE the assembler is restructured. Every
 later step of issue 63 must reproduce these files exactly, apart from the
-differences listed in ``docs/timeline_assembler_plan.md`` step 1.5, each of
+differences listed in ``docs/timeline_assembler_plan.md`` 63.5, each of
 which is recorded with its reason.
 
 Inputs live in ``tests/usdm4/test_files/timeline_pin/input_*.json`` (a

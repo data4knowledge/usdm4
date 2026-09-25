@@ -55,9 +55,9 @@ field is `timelineId`).
 **Found, and in scope later.** The expander recurses without end on a loop: a
 non-`days` decision condition takes the default, which in a cycle loop points back, and
 on the main timeline every pass has the same tick. The expander change therefore ships
-in the same branch as the cycle loop (plan step 3).
+in the same branch as the cycle loop (R5 in the plan).
 
-**Next.** Issue 63 step 1: pin today's output, before any code moves.
+**Next.** 63.1: pin today's output, before any code moves. (Plan parts are 63.1–63.7, later issues R4–R8.)
 
 ### 2026-09-18 — ISSUE 58 CLOSED (GitHub 58, branch `58-assembler-orphans-and-timelines`): a table with no timepoint spine is skipped, not half-built
 - `usdm4 @ 58-assembler-orphans-and-timelines`. No `usdm4_protocol` change. Gated live from
