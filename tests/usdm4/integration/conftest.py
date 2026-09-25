@@ -112,45 +112,31 @@ def minimum_assembler_input() -> dict:
             "version": "1.0",
             "rationale": "Integration test",
         },
-        "soa": {
-            "epochs": {
-                "items": [
-                    {"text": "Screening"},
-                    {"text": "Treatment"},
-                ]
-            },
-            "visits": {
-                "items": [
-                    {"text": "Visit 1", "references": []},
-                    {"text": "Visit 2", "references": []},
-                ]
-            },
-            "timepoints": {
-                "items": [
-                    {"index": "0", "text": "Day 1", "value": "1", "unit": "days"},
-                    {"index": "1", "text": "Day 7", "value": "7", "unit": "days"},
-                ]
-            },
-            "windows": {
-                "items": [
-                    {"before": 0, "after": 0, "unit": "days"},
-                    {"before": 1, "after": 1, "unit": "days"},
-                ]
-            },
-            "activities": {
-                "items": [
+        "soa": [
+            {
+                "type": "main",
+                "columns": [
                     {
-                        "name": "Consent",
-                        "visits": [{"index": 0, "references": []}],
+                        "id": "c1",
+                        "epoch": {"text": "Screening", "pattern": "Screening"},
+                        "visit": {"text": "Visit 1", "pattern": "Visit 1"},
+                        "timing": {"text": "Day 1", "pattern": "Day 1"},
+                        "window": {"text": "", "pattern": "-0..+0 days"},
                     },
                     {
-                        "name": "Blood Draw",
-                        "visits": [{"index": 1, "references": []}],
+                        "id": "c2",
+                        "epoch": {"text": "Treatment", "pattern": "Treatment"},
+                        "visit": {"text": "Visit 2", "pattern": "Visit 2"},
+                        "timing": {"text": "Day 7", "pattern": "Day 7"},
+                        "window": {"text": "-1..+1 days", "pattern": "-1..+1 days"},
                     },
-                ]
-            },
-            "conditions": {"items": []},
-        },
+                ],
+                "activities": [
+                    {"name": "Consent", "cells": [{"column": "c1", "text": "X"}]},
+                    {"name": "Blood Draw", "cells": [{"column": "c2", "text": "X"}]},
+                ],
+            }
+        ],
     }
 
 

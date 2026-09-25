@@ -72,17 +72,28 @@ class TestAssemblerInputValidation:
         assert result.soa is None
 
     def test_soa_accepted_when_provided(self, minimal_valid_dict):
-        minimal_valid_dict["soa"] = {
-            "epochs": {"items": [{"text": "Screening"}]},
-            "visits": {"items": []},
-            "timepoints": {"items": []},
-            "windows": {"items": []},
-            "activities": {"items": []},
-            "conditions": {"items": []},
-        }
+        minimal_valid_dict["soa"] = [
+            {
+                "type": "main",
+                "columns": [
+                    {"id": "c1", "epoch": {"text": "Screening", "pattern": "Screening"}}
+                ],
+            }
+        ]
         result = AssemblerInput.model_validate(minimal_valid_dict)
         assert result.soa is not None
-        assert len(result.soa.epochs.items) == 1
+        assert result.soa[0].columns[0].epoch.label == "Screening"
+
+    def test_soa_in_the_retired_shape_is_refused(self, minimal_valid_dict):
+        """The old TimelineInput shape (issue 63) is not silently accepted."""
+        minimal_valid_dict["soa"] = [{"epochs": {"items": [{"text": "Screening"}]}}]
+        with pytest.raises(ValidationError):
+            AssemblerInput.model_validate(minimal_valid_dict)
+
+    def test_soa_must_be_a_list(self, minimal_valid_dict):
+        minimal_valid_dict["soa"] = {"type": "main"}
+        with pytest.raises(ValidationError):
+            AssemblerInput.model_validate(minimal_valid_dict)
 
     def test_extra_keys_ignored(self, minimal_valid_dict):
         minimal_valid_dict["unexpected"] = "data"

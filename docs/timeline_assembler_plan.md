@@ -102,9 +102,24 @@ Branch `63-timeline-assembler`.
   - `windowLabel`: today built from the numbers (`-1..+2 days`); in issue 63 it is
     built the same way from the parsed pattern, and becomes the printed text in R4
     (design R4.4).
-- **63.6 Rewrite the unit tests** in `test_timeline_assembler.py` (121 test functions,
-  123 collected) and `test_timeline_assembler_name_collisions.py` (19) against the new
-  schema. Tests of today's internal methods move to the module the method moved to.
+- **63.6 Rewrite the unit tests** against the new structure. The repo requires 100%
+  coverage. *Done 2026-09-25:* `tests/usdm4/assembler/test_timeline_assembler.py`
+  rewritten end to end through `execute` (state and dispatch, timelines and the main
+  flag, skipped timelines, extensions, epochs, encounters, instances, timings,
+  windows, activities and cells, BCs, footnotes); new `tests/usdm4/assembler/timeline/`
+  `test_naming.py` (the name-collision tests moved here — the old
+  `test_timeline_assembler_name_collisions.py` is deleted), `test_columns.py`,
+  `test_plan.py` and `helpers.py`. The four old-shape `soa` fixtures moved to the new
+  input (`test_assembler.py` ×2, `schema/test_assembler_input.py`, which also gains
+  "old shape refused" and "must be a list", and `tests/usdm4/integration/conftest.py`).
+  Today's defects the later rules fix are pinned as they are and say so (blank timing
+  gets no `Timing`; the `Paricipant` typo; placeholder procedure code; an epoch-less
+  column's empty epoch). The code under test imports `usdm4.*` while tests import
+  `src.usdm4.*`, so grammar classes are compared by field and `PatternError` caught as
+  `ValueError`. Checked in a sandbox subset: 406 tests pass and the new modules are at
+  100%; the d4k integration tests pass (CORE not run). `validate/corpus_adapter.py`
+  and `validate/eval_corpus.py` still build the old `soa` shape — tooling, not tests;
+  they break until moved (63.7 or a follow-up).
 - **63.7 Docs.** This file and the design updated to *as built*; `lessons_learned.md`
   entry; session log entry in `next_steps.md`.
 

@@ -1,2377 +1,680 @@
-import os
-import pathlib
+"""The timeline assembler, end to end — issue 63, part 63.6.
+
+Rewritten against the new input (``ScheduleTimelineInput``) and the parse →
+plan → build structure. The behaviour pinned here is the behaviour the old
+tests pinned, reached through ``execute`` instead of private methods; naming,
+parsing and planning have their own tests in ``tests/usdm4/assembler/timeline``.
+Today's defects that later rules fix are pinned as they are, and say so.
+"""
+
+import types
+
 import pytest
 from simple_error_log.errors import Errors
-from src.usdm4.assembler.timeline_assembler import TimelineAssembler
+
 from src.usdm4.api.extensions_d4k import (
     TLF_EXT_URL,
     TLO_EXT_URL,
     TLP_EXT_URL,
     TLU_EXT_URL,
 )
+from src.usdm4.assembler import timeline_assembler as timeline_assembler_module
+from src.usdm4.assembler.timeline_assembler import TimelineAssembler
 from src.usdm4.builder.builder import Builder
-
-
-def root_path():
-    """Get the root path for the usdm4 package."""
-    base = pathlib.Path(__file__).parent.parent.parent.parent.resolve()
-    return os.path.join(base, "src/usdm4")
+from tests.usdm4.assembler.timeline.helpers import (
+    activity,
+    column,
+    root_path,
+    simple,
+    timeline,
+    value,
+)
 
 
 @pytest.fixture(scope="module")
 def builder():
-    """Create a Builder instance for testing."""
     return Builder(root_path(), Errors())
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def errors():
-    """Create an Errors instance for testing."""
     return Errors()
 
 
 @pytest.fixture
-def timeline_assembler(builder, errors):
-    """Create a TimelineAssembler instance for testing."""
+def assembler(builder, errors):
     builder.clear()
     return TimelineAssembler(builder, errors)
 
 
-@pytest.fixture
-def minimal_timeline_data():
-    """Provide minimal valid timeline data for testing."""
-    return {
-        "epochs": {
-            "items": [
-                {"text": "Screening"},
-                {"text": "Treatment"},
-            ]
-        },
-        "visits": {
-            "items": [
-                {"text": "Visit 1", "references": []},
-                {"text": "Visit 2", "references": []},
-            ]
-        },
-        "timepoints": {
-            "items": [
-                {"index": "0", "text": "Day 1", "value": "1", "unit": "days"},
-                {"index": "1", "text": "Day 7", "value": "7", "unit": "days"},
-            ]
-        },
-        "windows": {
-            "items": [
-                {"before": 0, "after": 0, "unit": "days"},
-                {"before": 1, "after": 1, "unit": "days"},
-            ]
-        },
-        "activities": {
-            "items": [
-                {
-                    "name": "Consent",
-                    "visits": [{"index": 0, "references": []}],
-                },
-                {
-                    "name": "Blood Draw",
-                    "visits": [{"index": 1, "references": []}],
-                },
-            ]
-        },
-        "conditions": {"items": []},
-    }
-
-
-class TestTimelineAssemblerInitialization:
-    """Test TimelineAssembler initialization."""
-
-    def test_init_with_valid_parameters(self, builder, errors):
-        """Test TimelineAssembler initialization with valid parameters."""
-        assembler = TimelineAssembler(builder, errors)
-
-        assert assembler._builder is builder
-        assert assembler._errors is errors
-        assert (
-            assembler.MODULE == "usdm4.assembler.timeline_assembler.TimelineAssembler"
-        )
-
-        # Test initial state
-        assert assembler._timelines == []
-        assert assembler._epochs == []
-        assert assembler._encounters == []
-        assert assembler._activities == []
-        assert assembler._conditions == []
-        assert assembler._condition_links == {}
-        assert assembler._encoder is not None
-
-    def test_properties_initial_state(self, timeline_assembler):
-        """Test that properties return empty lists initially."""
-        assert timeline_assembler.timelines == []
-        assert timeline_assembler.epochs == []
-        assert timeline_assembler.encounters == []
-        assert timeline_assembler.activities == []
-        assert timeline_assembler.conditions == []
-
-
-class TestTimelineAssemblerExecution:
-    """Test TimelineAssembler execute method."""
-
-    def test_execute_with_minimal_valid_data(
-        self, timeline_assembler, minimal_timeline_data
-    ):
-        """Test execute with minimal valid data."""
-        timeline_assembler.execute(minimal_timeline_data)
-
-        # Verify timelines were created
-        assert len(timeline_assembler.timelines) == 1
-        timeline = timeline_assembler.timelines[0]
-        assert timeline.mainTimeline is True
-        assert timeline.name == "TIMELINE-1"
-
-        # Verify epochs were created
-        assert len(timeline_assembler.epochs) == 2
-
-        # Verify encounters were created
-        assert len(timeline_assembler.encounters) == 2
-
-        # Verify activities were created
-        assert len(timeline_assembler.activities) == 2
-
-    def test_execute_with_empty_data_fails_gracefully(self, timeline_assembler, errors):
-        """Test execute with empty data fails gracefully."""
-        initial_error_count = errors.error_count()
-
-        try:
-            timeline_assembler.execute({})
-        except Exception:
-            pass
-
-        # Should have logged errors
-        assert errors.error_count() >= initial_error_count
-
-    def test_execute_with_malformed_data(self, timeline_assembler, errors):
-        """Test execute with malformed data."""
-        initial_error_count = errors.error_count()
-
-        malformed_data = {
-            "epochs": "not a dict",
-            "visits": None,
-        }
-
-        try:
-            timeline_assembler.execute(malformed_data)
-        except Exception:
-            pass
-
-        # Should have logged errors
-        assert errors.error_count() >= initial_error_count
-
-
-class TestTimelineAssemblerEpochs:
-    """Test TimelineAssembler epoch creation."""
-
-    def test_add_epochs_creates_correct_number(
-        self, timeline_assembler, minimal_timeline_data
-    ):
-        """Test that epochs are created correctly."""
-        epochs = timeline_assembler._add_epochs(minimal_timeline_data)
-
-        assert len(epochs) == 2
-        assert epochs[0].label == "Screening"
-        assert epochs[1].label == "Treatment"
-
-    def test_add_epochs_with_duplicate_names(self, timeline_assembler):
-        """Test epochs with duplicate names are handled."""
-        data = {
-            "epochs": {
-                "items": [
-                    {"text": "Treatment"},
-                    {"text": "Treatment"},
-                ]
-            },
-            "timepoints": {"items": [{}, {}]},
-        }
-
-        epochs = timeline_assembler._add_epochs(data)
-
-        # Should only create one unique epoch
-        assert len(epochs) == 1
-
-    def test_add_epochs_with_exception(self, timeline_assembler, errors):
-        """Test epoch creation with exception."""
-        initial_error_count = errors.error_count()
-
-        data = {
-            "epochs": {
-                "items": None  # Will cause exception
-            }
-        }
-
-        epochs = timeline_assembler._add_epochs(data)
-
-        assert len(epochs) == 0
-        assert errors.error_count() > initial_error_count
-
-
-class TestTimelineAssemblerEncounters:
-    """Test TimelineAssembler encounter creation."""
-
-    def test_add_encounters_creates_correct_number(
-        self, timeline_assembler, minimal_timeline_data
-    ):
-        """Test that encounters are created correctly."""
-        encounters = timeline_assembler._add_encounters(minimal_timeline_data)
-
-        assert len(encounters) == 2
-        assert encounters[0].label == "Visit 1"
-        assert encounters[1].label == "Visit 2"
-
-    def test_add_encounters_with_references(self, timeline_assembler):
-        """Test encounters with condition references."""
-        data = {
-            "visits": {
-                "items": [
-                    {"text": "Visit 1", "references": ["ref1", "ref2"]},
-                ]
-            },
-            "timepoints": {"items": [{}]},
-        }
-
-        encounters = timeline_assembler._add_encounters(data)
-
-        assert len(encounters) == 1
-        # Check that references were tracked
-        assert "ref1" in timeline_assembler._condition_links
-        assert "ref2" in timeline_assembler._condition_links
-
-    def test_add_encounters_with_exception(self, timeline_assembler, errors):
-        """Test encounter creation with exception."""
-        initial_error_count = errors.error_count()
-
-        data = {
-            "visits": {
-                "items": None  # Will cause exception
-            }
-        }
-
-        encounters = timeline_assembler._add_encounters(data)
-
-        assert len(encounters) == 0
-        assert errors.error_count() > initial_error_count
-
-
-class TestTimelineAssemblerActivities:
-    """Test TimelineAssembler activity creation."""
-
-    def test_add_activities_creates_correct_number(
-        self, timeline_assembler, minimal_timeline_data
-    ):
-        """Test that activities are created correctly."""
-        activities = timeline_assembler._add_activities(minimal_timeline_data)
-
-        assert len(activities) == 2
-        assert activities[0].label == "Consent"
-        assert activities[1].label == "Blood Draw"
-
-    def test_add_activities_with_children(self, timeline_assembler):
-        """Test activities with child activities."""
-        data = {
-            "activities": {
-                "items": [
-                    {
-                        "name": "Parent Activity",
-                        "references": ["ref1"],
-                        "children": [
-                            {"name": "Child Activity", "references": ["ref2"]},
-                        ],
-                    },
-                ]
-            }
-        }
-
-        activities = timeline_assembler._add_activities(data)
-
-        # Should create parent and child
-        assert len(activities) == 2
-        # Parent should have child ID in childIds
-        assert len(activities[0].childIds) == 1
-
-    def test_add_activities_with_exception(self, timeline_assembler, errors):
-        """Test activity creation with exception."""
-        initial_error_count = errors.error_count()
-
-        data = {
-            "activities": {
-                "items": None  # Will cause exception
-            }
-        }
-
-        activities = timeline_assembler._add_activities(data)
-
-        assert len(activities) == 0
-        assert errors.error_count() > initial_error_count
-
-
-class TestTimelineAssemblerTimepoints:
-    """Test TimelineAssembler timepoint creation."""
-
-    def test_add_timepoints_creates_correct_number(self, timeline_assembler):
-        """Test that timepoints (SAIs) are created correctly."""
-        # First need to create epochs and encounters
-        data = {
-            "epochs": {"items": [{"text": "Screening"}]},
-            "visits": {"items": [{"text": "Visit 1", "references": []}]},
-            "timepoints": {
-                "items": [{"index": "0", "text": "Day 1", "value": "1", "unit": "days"}]
-            },
-        }
-
-        timeline_assembler._add_epochs(data)
-        timeline_assembler._add_encounters(data)
-        timepoints = timeline_assembler._add_timepoints(data)
-
-        assert len(timepoints) == 1
-        assert timepoints[0].label == "Day 1"
-
-    def test_add_timepoints_with_exception(self, timeline_assembler, errors):
-        """Test timepoint creation with exception."""
-        initial_error_count = errors.error_count()
-
-        data = {
-            "timepoints": {
-                "items": None  # Will cause exception
-            }
-        }
-
-        timepoints = timeline_assembler._add_timepoints(data)
-
-        assert len(timepoints) == 0
-        assert errors.error_count() > initial_error_count
-
-
-class TestTimelineAssemblerConditions:
-    """Test TimelineAssembler condition creation."""
-
-    def test_add_conditions_with_valid_references(self, timeline_assembler):
-        """Test condition creation with valid references."""
-        # Set up condition links
-        timeline_assembler._condition_links["ref1"] = {
-            "reference": "ref1",
-            "timepoint_index": [0],
-            "activity_id": ["act1"],
-        }
-
-        # Create timepoints first
-        data = {
-            "epochs": {"items": [{"text": "Screening"}]},
-            "visits": {"items": [{"text": "Visit 1", "references": []}]},
-            "timepoints": {
-                "items": [{"index": "0", "text": "Day 1", "value": "1", "unit": "days"}]
-            },
-            "conditions": {
-                "items": [{"reference": "ref1", "text": "If patient consents"}]
-            },
-        }
-
-        timeline_assembler._add_epochs(data)
-        timeline_assembler._add_encounters(data)
-        timeline_assembler._add_timepoints(data)
-        conditions = timeline_assembler._add_conditions(data)
-
-        assert len(conditions) == 1
-        assert conditions[0].text == "If patient consents"
-
-    def test_add_conditions_with_invalid_reference(self, timeline_assembler, errors):
-        """Test condition creation with invalid reference."""
-        data = {
-            "conditions": {
-                "items": [{"reference": "invalid_ref", "text": "Some condition"}]
-            },
-            "timepoints": {"items": []},
-        }
-
-        conditions = timeline_assembler._add_conditions(data)
-
-        # Should not create condition with invalid reference
-        assert len(conditions) == 0
-
-    def test_add_conditions_with_exception(self, timeline_assembler, errors):
-        """Test condition creation with exception."""
-        initial_error_count = errors.error_count()
-
-        data = {
-            "conditions": {"items": None},  # Will cause exception
-            "timepoints": {"items": []},
-        }
-
-        conditions = timeline_assembler._add_conditions(data)
-
-        assert len(conditions) == 0
-        assert errors.error_count() > initial_error_count
-
-
-class TestTimelineAssemblerConditionDiagnostics:
-    """Condition drop policy and per-timeline alignment diagnostics.
-
-    An unanchored condition is SKIPPED, never created with empty
-    ``contextIds``/``appliesToIds`` — ``usdm4_legacy_excel`` rejects a
-    condition with no ``appliesTo``, so creating them would break the Excel
-    round trip. Both drop reasons are counted and reported so the three
-    outcomes (aligned / no reference / no match) can be told apart from the
-    log alone.
-    """
-
-    @pytest.fixture
-    def own_errors(self):
-        """A per-test Errors so message assertions see only this test."""
-        return Errors()
-
-    @pytest.fixture
-    def assembler(self, builder, own_errors):
-        """A TimelineAssembler wired to the per-test Errors instance."""
-        builder.clear()
-        return TimelineAssembler(builder, own_errors)
-
-    @staticmethod
-    def _messages(errors):
-        """All logged messages, warnings and info included."""
-        return [item["message"] for item in errors.to_dict(level=Errors.INFO)]
-
-    @classmethod
-    def _summary(cls, errors):
-        """The single condition summary line. Fails if not exactly one."""
-        lines = [m for m in cls._messages(errors) if m.startswith("Conditions T")]
-        assert len(lines) == 1, f"expected one summary line, got {lines}"
-        return lines[0]
-
-    @staticmethod
-    def _aligned_data(condition_items):
-        """One timepoint, one activity, plus the given condition items."""
-        return {
-            "epochs": {"items": [{"text": "Screening"}]},
-            "visits": {"items": [{"text": "Visit 1", "references": []}]},
-            "timepoints": {
-                "items": [{"index": "0", "text": "Day 1", "value": "1", "unit": "days"}]
-            },
-            "conditions": {"items": condition_items},
-        }
-
-    def _prepare(self, assembler, condition_items):
-        """Build the timepoint spine so alignment can resolve, then run."""
-        data = self._aligned_data(condition_items)
-        assembler._add_epochs(data)
-        assembler._add_encounters(data)
-        assembler._add_timepoints(data)
-        return data
-
-    # -- U4-1: the drop policy ------------------------------------------
-
-    @pytest.mark.parametrize(
-        "item,label",
-        [
-            ({"reference": "", "text": "Empty string reference"}, "empty string"),
-            ({"reference": None, "text": "None reference"}, "None"),
-            ({"text": "No reference key at all"}, "missing key"),
-        ],
-    )
-    def test_unreferenced_condition_is_skipped_with_a_warning(
-        self, assembler, own_errors, item, label
-    ):
-        """An item the extractor could not reference is dropped, and said so."""
-        data = self._prepare(assembler, [item])
-
-        conditions = assembler._add_conditions(data)
-
-        assert conditions == [], f"{label} reference should not create a condition"
-        warnings = [m for m in self._messages(own_errors) if "no reference" in m]
-        assert len(warnings) == 1, f"{label} reference should warn exactly once"
-
-    def test_unreferenced_condition_is_never_created_unanchored(
-        self, assembler, own_errors
-    ):
-        """Pin the policy itself: skip, never create with empty anchors.
-
-        The alternative — creating the Condition with empty contextIds and
-        appliesToIds — is what this asserts against. It is rejected because
-        usdm4_legacy_excel errors on a condition with no appliesTo.
-        """
-        data = self._prepare(assembler, [{"reference": "", "text": "Unanchored"}])
-
-        assembler._add_conditions(data)
-
+def messages(errors: Errors) -> list[str]:
+    return [item["message"] for item in errors.to_dict(0)]
+
+
+def timing_types(tl) -> list[str]:
+    return [t.type.decode.replace(" Timing Type", "") for t in tl.timings]
+
+
+# ----------------------------------------------------------------------
+# State and dispatch
+
+
+class TestState:
+    def test_starts_empty(self, assembler):
+        assert assembler.timelines == []
+        assert assembler.epochs == []
+        assert assembler.encounters == []
+        assert assembler.activities == []
+        assert assembler.conditions == []
+        assert assembler.biomedical_concepts == []
+        assert assembler.biomedical_concept_surrogates == []
+
+    def test_clear_resets_everything(self, assembler):
+        assembler.execute([simple()])
+        assert assembler.timelines
+        assembler.clear()
+        assert assembler.timelines == []
+        assert assembler.epochs == []
+        assert assembler.encounters == []
+        assert assembler.activities == []
         assert assembler.conditions == []
 
-    def test_a_referenced_condition_still_survives_alongside_dropped_ones(
-        self, assembler, own_errors
+
+class TestDispatch:
+    @pytest.mark.parametrize("data", [None, []])
+    def test_nothing_in_nothing_out(self, assembler, data):
+        assembler.execute(data)
+        assert assembler.timelines == []
+
+    def test_a_single_dict_is_a_list_of_one(self, assembler):
+        assembler.execute(simple())
+        assert [t.name for t in assembler.timelines] == ["TIMELINE-1"]
+
+    def test_an_outer_failure_is_caught_and_reported(
+        self, assembler, errors, monkeypatch
     ):
-        """Dropping the unreferenced items must not lose the good one."""
-        assembler._condition_links["a"] = {
-            "reference": "a",
-            "timepoint_index": [0],
-            "activity_id": ["act1"],
-        }
-        data = self._prepare(
-            assembler,
-            [
-                {"reference": "", "text": "Dropped, no reference"},
-                {"reference": "a", "text": "Kept, aligns to a timepoint"},
-                {"reference": "zz", "text": "Dropped, nothing carries zz"},
-            ],
-        )
-
-        conditions = assembler._add_conditions(data)
-
-        assert len(conditions) == 1
-        assert conditions[0].text == "Kept, aligns to a timepoint"
-
-    # -- U4-2: the diagnostics ------------------------------------------
-
-    def test_summary_counts_every_outcome(self, assembler, own_errors):
-        """One line separating aligned from both kinds of drop."""
-        assembler._condition_links["a"] = {
-            "reference": "a",
-            "timepoint_index": [0],
-            "activity_id": ["act1"],
-        }
-        data = self._prepare(
-            assembler,
-            [
-                {"reference": "", "text": "No reference"},
-                {"reference": "a", "text": "Aligned"},
-                {"reference": "zz", "text": "No match"},
-            ],
-        )
-
-        assembler._add_conditions(data)
-
-        assert self._summary(own_errors) == (
-            "Conditions T1: in=3, referenced=2, aligned=1, "
-            "dropped_no_ref=1, dropped_no_match=1"
-        )
-
-    def test_summary_emitted_when_there_are_no_conditions(self, assembler, own_errors):
-        """A zero line is the signal that the extractor produced nothing.
-
-        That is a different failure from producing footnotes that could not
-        be anchored, so the line must appear rather than be suppressed.
-        """
-        data = self._prepare(assembler, [])
-
-        assembler._add_conditions(data)
-
-        assert self._summary(own_errors) == (
-            "Conditions T1: in=0, referenced=0, aligned=0, "
-            "dropped_no_ref=0, dropped_no_match=0"
-        )
-
-    def test_summary_emitted_on_the_exception_path(self, assembler, own_errors):
-        """A crash mid-assembly must not swallow the diagnostic."""
-        data = {
-            "conditions": {"items": None},  # len(None) raises
-            "timepoints": {"items": []},
-        }
-
-        conditions = assembler._add_conditions(data)
-
-        assert conditions == []
-        assert own_errors.error_count() > 0
-        assert self._summary(own_errors).startswith("Conditions T1: in=0")
-
-    def test_summary_names_the_timeline(self, assembler, own_errors):
-        """Multi-timeline studies need the counts attributed per table."""
-        data = self._prepare(assembler, [{"reference": "", "text": "No reference"}])
-
-        assembler._add_conditions(data, t=2)
-
-        assert self._summary(own_errors).startswith("Conditions T2:")
-
-    def test_all_aligned_reports_no_drops(self, assembler, own_errors):
-        """The healthy case reads as clean, so a real gap stands out."""
-        assembler._condition_links["a"] = {
-            "reference": "a",
-            "timepoint_index": [0],
-            "activity_id": ["act1"],
-        }
-        data = self._prepare(assembler, [{"reference": "a", "text": "Aligned"}])
-
-        assembler._add_conditions(data)
-
-        assert self._summary(own_errors) == (
-            "Conditions T1: in=1, referenced=1, aligned=1, "
-            "dropped_no_ref=0, dropped_no_match=0"
-        )
-
-
-class TestTimelineAssemblerTiming:
-    """Test TimelineAssembler timing creation."""
-
-    def test_add_timing_creates_correct_number(self, timeline_assembler):
-        """Test timing creation."""
-        data = {
-            "epochs": {"items": [{"text": "Screening"}, {"text": "Screening"}]},
-            "visits": {
-                "items": [
-                    {"text": "Visit 1", "references": []},
-                    {"text": "Visit 2", "references": []},
-                ]
-            },
-            "timepoints": {
-                "items": [
-                    {"index": "0", "text": "Day 1", "value": "1", "unit": "days"},
-                    {"index": "1", "text": "Day 7", "value": "7", "unit": "days"},
-                ]
-            },
-            "windows": {
-                "items": [
-                    {"before": 0, "after": 0, "unit": "days"},
-                    {"before": 1, "after": 1, "unit": "days"},
-                ]
-            },
-        }
-
-        timeline_assembler._add_epochs(data)
-        timeline_assembler._add_encounters(data)
-        timeline_assembler._add_timepoints(data)
-        timings = timeline_assembler._add_timing(data)
-
-        # Should create timing for each timepoint
-        assert len(timings) >= 1  # At least one timing created
-
-    def test_find_anchor_returns_correct_index(self, timeline_assembler):
-        """Test finding the anchor timepoint."""
-        data = {
-            "timepoints": {
-                "items": [
-                    {"index": "0", "value": -1, "sai_instance": None},
-                    {
-                        "index": "1",
-                        "value": 1,
-                        "sai_instance": None,
-                    },  # This should be the anchor
-                    {"index": "2", "value": 7, "sai_instance": None},
-                ]
-            }
-        }
-
-        anchor_index = timeline_assembler._find_anchor(data)
-
-        assert anchor_index == 1
-
-    def test_find_anchor_defaults_to_zero(self, timeline_assembler):
-        """Test finding anchor when no timepoint carries a usable value."""
-        data = {
-            "timepoints": {
-                "items": [
-                    {"index": "0", "value": "x"},
-                    {"index": "1", "value": ""},
-                ]
-            }
-        }
-
-        anchor_index = timeline_assembler._find_anchor(data)
-
-        assert anchor_index == 0
-
-    def test_find_anchor_ignores_input_index_field(self, timeline_assembler):
-        """The schema defaults ``index`` to 0 for every item when the producer
-        (e.g. ground truth) does not supply it — the anchor must be the
-        positional index, never the input's own index field."""
-        data = {
-            "timepoints": {
-                "items": [
-                    {"index": 0, "text": "Day -42", "value": -42, "unit": "day"},
-                    {"index": 0, "text": "Day -1", "value": -1, "unit": "day"},
-                    {"index": 0, "text": "Day 1", "value": 1, "unit": "day"},
-                    {"index": 0, "text": "Day 2", "value": 2, "unit": "day"},
-                ]
-            }
-        }
-
-        assert timeline_assembler._find_anchor(data) == 2
-
-    def test_find_anchor_skips_blank_placeholder_columns(self, timeline_assembler):
-        """A blank column (no text, zero value) must not be picked as anchor."""
-        data = {
-            "timepoints": {
-                "items": [
-                    {"text": "", "value": 0, "unit": "day"},
-                    {"text": "Day -1", "value": -1, "unit": "day"},
-                    {"text": "Day 1", "value": 1, "unit": "day"},
-                ]
-            }
-        }
-
-        assert timeline_assembler._find_anchor(data) == 2
-
-    def test_find_anchor_accepts_day_zero(self, timeline_assembler):
-        """An explicit Day 0 column is a valid anchor."""
-        data = {
-            "timepoints": {
-                "items": [
-                    {"text": "Day -7", "value": -7, "unit": "day"},
-                    {"text": "Day 0", "value": 0, "unit": "day"},
-                    {"text": "Day 7", "value": 7, "unit": "day"},
-                ]
-            }
-        }
-
-        assert timeline_assembler._find_anchor(data) == 1
-
-    @staticmethod
-    def _timing_data(timepoints: list[dict], windows: list[dict] | None = None):
-        """Build a full data dict (epochs/visits sized to match) so the
-        epoch/encounter/SAI chain can run ahead of ``_add_timing``."""
-        n = len(timepoints)
-        return {
-            "epochs": {"items": [{"text": f"Epoch {i + 1}"} for i in range(n)]},
-            "visits": {
-                "items": [
-                    {"text": f"Visit {i + 1}", "references": []} for i in range(n)
-                ]
-            },
-            "timepoints": {"items": timepoints},
-            "windows": {
-                "items": windows
-                if windows is not None
-                else [{"before": 0, "after": 0, "unit": "day"} for _ in range(n)]
-            },
-        }
-
-    def _run_timing(self, timeline_assembler, timepoints, windows=None):
-        data = self._timing_data(timepoints, windows)
-        timeline_assembler._add_epochs(data)
-        timeline_assembler._add_encounters(data)
-        timeline_assembler._add_timepoints(data)
-        return timeline_assembler._add_timing(data)
-
-    def test_timing_values_relative_to_anchor(self, timeline_assembler):
-        """Timing.value is the interval from the anchor, not the day number:
-        with a Day 1 anchor and 1-based day numbering (no Day 0), Day -42 is
-        42 days before, Day -1 is 1 day before, Day 2 is 1 day after and
-        Day 16 is 15 days after."""
-        timings = self._run_timing(
-            timeline_assembler,
-            [
-                {"text": "Day -42", "value": -42, "unit": "day"},
-                {"text": "Day -1", "value": -1, "unit": "day"},
-                {"text": "Day 1", "value": 1, "unit": "day"},
-                {"text": "Day 2", "value": 2, "unit": "day"},
-                {"text": "Day 16", "value": 16, "unit": "day"},
-            ],
-        )
-
-        assert [t.type.decode for t in timings] == [
-            "Before Timing Type",
-            "Before Timing Type",
-            "Fixed Reference Timing Type",
-            "After Timing Type",
-            "After Timing Type",
-        ]
-        assert [t.value for t in timings] == ["P42D", "P1D", "PT0M", "P1D", "P15D"]
-        anchor_id = timings[2].relativeFromScheduledInstanceId
-        for index, timing in enumerate(timings):
-            if index != 2:
-                assert timing.relativeToScheduledInstanceId == anchor_id
-
-    def test_timing_no_crossing_correction_with_day_zero(self, timeline_assembler):
-        """When the table has an explicit Day 0, day numbering is 0-based and
-        no crossing-zero correction applies: Day -1 to Day 0 is 1 day."""
-        timings = self._run_timing(
-            timeline_assembler,
-            [
-                {"text": "Day -1", "value": -1, "unit": "day"},
-                {"text": "Day 0", "value": 0, "unit": "day"},
-                {"text": "Day 1", "value": 1, "unit": "day"},
-            ],
-        )
-
-        assert [t.type.decode for t in timings] == [
-            "Before Timing Type",
-            "Fixed Reference Timing Type",
-            "After Timing Type",
-        ]
-        assert [t.value for t in timings] == ["P1D", "PT0M", "P1D"]
-
-    def test_timing_unit_mismatch_falls_back_to_abs(self, timeline_assembler):
-        """A timepoint in different units from the anchor falls back to the
-        absolute value (with a warning) rather than mixed-unit arithmetic."""
-        timings = self._run_timing(
-            timeline_assembler,
-            [
-                {"text": "Day 1", "value": 1, "unit": "day"},
-                {"text": "Week 12", "value": 12, "unit": "week"},
-            ],
-        )
-
-        assert [t.value for t in timings] == ["PT0M", "P12W"]
-
-    def test_timing_string_values_coerced(self, timeline_assembler):
-        """Numeric strings (the schema allows them) take part in the
-        anchor-relative arithmetic."""
-        timings = self._run_timing(
-            timeline_assembler,
-            [
-                {"text": "Day 1", "value": "1", "unit": "days"},
-                {"text": "Day 7", "value": "7", "unit": "days"},
-            ],
-        )
-
-        assert [t.value for t in timings] == ["PT0M", "P6D"]
-
-    def test_coerce_int_variants(self, timeline_assembler):
-        """All the value shapes the schema admits, plus the rejects."""
-        coerce = timeline_assembler._coerce_int
-        assert coerce(2) == 2
-        assert coerce(-42) == -42
-        assert coerce(2.0) == 2
-        assert coerce(2.5) is None
-        assert coerce("3") == 3
-        assert coerce(" 7 ") == 7
-        assert coerce("x") is None
-        assert coerce("") is None
-        assert coerce(True) is None
-        assert coerce(None) is None
-
-    def test_interval_falls_back_for_non_numeric_value(self, timeline_assembler):
-        """A non-numeric timepoint value falls back to the historical
-        abs-or-zero behaviour."""
-        timepoints = [
-            {"text": "Day 1", "value": 1, "unit": "day"},
-            {"text": "Unscheduled", "value": "n/a", "unit": "day"},
-        ]
-
-        assert timeline_assembler._interval_from_anchor(timepoints, 1, 0) == 0
-
-    def test_has_zero_timepoint(self, timeline_assembler):
-        """Zero detection skips blank placeholder columns (their value defaults
-        to 0) but honours a real Day 0."""
-        with_placeholder_only = [
-            {"text": "Day -1", "value": -1, "unit": "day"},
-            {"text": "", "value": 0, "unit": "day"},
-            {"text": "Day 1", "value": 1, "unit": "day"},
-        ]
-        with_real_day_zero = [
-            {"text": "Day -1", "value": -1, "unit": "day"},
-            {"text": "Day 0", "value": 0, "unit": "day"},
-            {"text": "Day 1", "value": 1, "unit": "day"},
-        ]
-
-        assert timeline_assembler._has_zero_timepoint(with_placeholder_only) is False
-        assert timeline_assembler._has_zero_timepoint(with_real_day_zero) is True
-
-    @staticmethod
-    def _name_data(timepoints: list[dict], visits: list[dict] | None = None):
-        return {
-            "timepoints": {"items": timepoints},
-            "visits": {
-                "items": visits or [{"text": "", "references": []} for _ in timepoints]
-            },
-        }
-
-    def test_sai_names_from_day_week_cycle_text(self, timeline_assembler):
-        """Timepoint text patterns compress to readable names."""
-        data = self._name_data(
-            [
-                {"text": "Day -42", "value": -42, "unit": "day"},
-                {"text": "Day 1", "value": 1, "unit": "day"},
-                {"text": "Week 12", "value": 12, "unit": "week"},
-                {"text": "Cycle 2 Day 1", "value": 22, "unit": "day"},
-            ]
-        )
-
-        names = [timeline_assembler._sai_name(data, i, 1) for i in range(4)]
-
-        assert names == ["D-42", "D1", "W12", "C2D1"]
-
-    def test_sai_names_bare_numbers_get_unit_prefix(self, timeline_assembler):
-        """A bare-number column takes the unit letter and the SIGNED value —
-        the text often drops the sign."""
-        data = self._name_data(
-            [
-                {"text": "-2", "value": -2, "unit": "weeks"},
-                {"text": "0", "value": 0, "unit": "weeks"},
-                {"text": "42", "value": -42, "unit": "day"},
-                {"text": "7", "value": None, "unit": "day"},
-                {"text": "3", "value": 3, "unit": "furlong"},
-            ]
-        )
-
-        names = [timeline_assembler._sai_name(data, i, 1) for i in range(5)]
-
-        assert names == ["W-2", "W0", "D-42", "D7", "3"]
-
-    def test_sai_names_slug_visit_fallback_and_dedupe(self, timeline_assembler):
-        """No timepoint text → slug of the visit text (slash → space,
-        truncated); duplicates get a numeric suffix; nothing at all → the
-        positional fallback."""
-        data = self._name_data(
-            [
-                {"text": "", "value": 0, "unit": "day"},
-                {"text": "", "value": 0, "unit": "day"},
-                {"text": "Day 1", "value": 1, "unit": "day"},
-                {"text": "Day 1", "value": 1, "unit": "day"},
-                {"text": "", "value": 0, "unit": "day"},
-                {"text": "", "value": 0, "unit": "day"},
-            ],
-            [
-                {"text": "Final Visit/ET", "references": []},
-                {"text": "A very long visit description indeed", "references": []},
-                {"text": "", "references": []},
-                {"text": "", "references": []},
-                {"text": "", "references": []},
-                {"text": "", "references": []},
-            ],
-        )
-
-        names = [timeline_assembler._sai_name(data, i, 1) for i in range(6)]
-
-        assert names == [
-            "FINAL VISIT ET",
-            "A VERY LONG VISIT DE",
-            "D1",
-            "D1-2",
-            "T1-SAI-5",
-            "T1-SAI-6",
-        ]
-
-    def test_sai_names_unusable_text_falls_through(self, timeline_assembler):
-        """Text that slugs to nothing (symbols only) is skipped in favour of
-        the visit text, or the positional fallback."""
-        data = self._name_data(
-            [
-                {"text": "###", "value": 0, "unit": "day"},
-                {"text": "###", "value": 0, "unit": "day"},
-            ],
-            [
-                {"text": "Day 5", "references": []},
-                {"text": "", "references": []},
-            ],
-        )
-
-        names = [timeline_assembler._sai_name(data, i, 1) for i in range(2)]
-
-        assert names == ["D5", "T1-SAI-2"]
-
-    def test_sai_names_flow_into_created_timepoints(self, timeline_assembler):
-        """The derived names land on the SAIs themselves (and so in the
-        timing sheet's from/to columns)."""
-        data = self._timing_data(
-            [
-                {"text": "Day -1", "value": -1, "unit": "day"},
-                {"text": "Day 1", "value": 1, "unit": "day"},
-                {"text": "Day 8", "value": 8, "unit": "day"},
-            ]
-        )
-        timeline_assembler._add_epochs(data)
-        timeline_assembler._add_encounters(data)
-
-        timepoints = timeline_assembler._add_timepoints(data)
-
-        assert [sai.name for sai in timepoints] == ["D-1", "D1", "D8"]
-
-    def test_window_label_formats_correctly(self, timeline_assembler):
-        """Test window label formatting."""
-        windows = [
-            {"before": 1, "after": 2, "unit": "days"},
-            {"before": 0, "after": 0, "unit": "days"},
-        ]
-
-        label1 = timeline_assembler._window_label(windows, 0)
-        label2 = timeline_assembler._window_label(windows, 1)
-
-        assert label1 == "-1..+2 days"
-        assert label2 == ""  # Empty when both before and after are 0
-
-    def test_window_label_out_of_range(self, timeline_assembler):
-        """Test window label with out of range index."""
-        windows = []
-
-        label = timeline_assembler._window_label(windows, 0)
-
-        assert label is None
-
-    def test_timing_value_label(self, timeline_assembler):
-        """Test timing value label."""
-        timepoints = [
-            {"text": "Day 1"},
-            {"text": ""},
-        ]
-
-        label1 = timeline_assembler._timing_value_label(timepoints, 0)
-        label2 = timeline_assembler._timing_value_label(timepoints, 1)
-
-        assert label1 == "Day 1"
-        assert label2 is None
-
-    def test_timing_value_label_out_of_range(self, timeline_assembler):
-        """Test timing value label with out of range index."""
-        timepoints = []
-
-        label = timeline_assembler._timing_value_label(timepoints, 0)
-
-        assert label is None
-
-
-class TestTimelineAssemblerConditionLinks:
-    """Test TimelineAssembler condition linking methods."""
-
-    def test_condition_timepoint_index_creates_link(self, timeline_assembler):
-        """Test condition timepoint index linking."""
-        timeline_assembler._condition_timepoint_index("ref1", 0)
-
-        assert "ref1" in timeline_assembler._condition_links
-        assert 0 in timeline_assembler._condition_links["ref1"]["timepoint_index"]
-
-    def test_condition_activity_id_creates_link(self, timeline_assembler):
-        """Test condition activity ID linking."""
-        timeline_assembler._condition_activity_id("ref1", "act1")
-
-        assert "ref1" in timeline_assembler._condition_links
-        assert "act1" in timeline_assembler._condition_links["ref1"]["activity_id"]
-
-    def test_condition_combined_creates_link(self, timeline_assembler):
-        """Test combined condition linking."""
-        timeline_assembler._condition_combined("ref1", 0, "act1")
-
-        assert "ref1" in timeline_assembler._condition_links
-        assert 0 in timeline_assembler._condition_links["ref1"]["timepoint_index"]
-        assert "act1" in timeline_assembler._condition_links["ref1"]["activity_id"]
-
-    def test_multiple_references_to_same_condition(self, timeline_assembler):
-        """Test multiple references to the same condition."""
-        timeline_assembler._condition_timepoint_index("ref1", 0)
-        timeline_assembler._condition_timepoint_index("ref1", 1)
-        timeline_assembler._condition_activity_id("ref1", "act1")
-        timeline_assembler._condition_activity_id("ref1", "act2")
-
-        assert len(timeline_assembler._condition_links["ref1"]["timepoint_index"]) == 2
-        assert len(timeline_assembler._condition_links["ref1"]["activity_id"]) == 2
-
-
-class TestTimelineAssemblerLinkingTimepoints:
-    """Test TimelineAssembler linking of timepoints and activities."""
-
-    def test_link_timepoints_and_activities_simple(self, timeline_assembler):
-        """Test linking timepoints and activities."""
-        # Prepare data with activities and timepoints
-        data = {
-            "epochs": {"items": [{"text": "Screening"}]},
-            "visits": {"items": [{"text": "Visit 1", "references": []}]},
-            "timepoints": {
-                "items": [{"index": "0", "text": "Day 1", "value": "1", "unit": "days"}]
-            },
-            "activities": {
-                "items": [
-                    {
-                        "name": "Activity 1",
-                        "visits": [{"index": 0, "references": []}],
-                    }
-                ]
-            },
-        }
-
-        timeline_assembler._add_epochs(data)
-        timeline_assembler._add_encounters(data)
-        timeline_assembler._add_activities(data)
-        timeline_assembler._add_timepoints(data)
-        timeline_assembler._link_timepoints_and_activities(data)
-
-        # Verify linking occurred
-        timepoint = data["timepoints"]["items"][0]["sai_instance"]
-        assert len(timepoint.activityIds) == 1
-
-    def test_link_timepoints_and_activities_with_children(self, timeline_assembler):
-        """Test linking with child activities."""
-        data = {
-            "epochs": {"items": [{"text": "Screening"}]},
-            "visits": {"items": [{"text": "Visit 1", "references": []}]},
-            "timepoints": {
-                "items": [{"index": "0", "text": "Day 1", "value": "1", "unit": "days"}]
-            },
-            "activities": {
-                "items": [
-                    {
-                        "name": "Parent",
-                        "children": [
-                            {
-                                "name": "Child",
-                                "index": 0,
-                                "visits": [{"index": 0, "references": []}],
-                            }
-                        ],
-                    }
-                ]
-            },
-        }
-
-        timeline_assembler._add_epochs(data)
-        timeline_assembler._add_encounters(data)
-        timeline_assembler._add_activities(data)
-        timeline_assembler._add_timepoints(data)
-        timeline_assembler._link_timepoints_and_activities(data)
-
-        # Verify child activity was linked
-        timepoint = data["timepoints"]["items"][0]["sai_instance"]
-        assert len(timepoint.activityIds) == 1
-
-    def test_link_timepoints_with_schema_default_empty_children(
-        self, timeline_assembler
+        def boom(*args, **kwargs):
+            raise RuntimeError("double link failed")
+
+        monkeypatch.setattr(assembler._builder, "double_link", boom)
+        assembler.execute([simple()])
+        assert any("creation of study design" in m for m in messages(errors))
+
+    def test_a_timeline_that_fails_to_build_adds_nothing(
+        self, assembler, errors, monkeypatch
     ):
-        """The AssemblerInput schema defaults ``children`` to ``[]`` on every
-        activity, so a flat activity arrives with an empty children list —
-        its own visits must still be linked (this was the bug that left every
-        generated workbook's SoA grid empty)."""
-        data = {
-            "epochs": {"items": [{"text": "Screening"}, {"text": "Treatment"}]},
-            "visits": {
-                "items": [
-                    {"text": "Visit 1", "references": []},
-                    {"text": "Visit 2", "references": []},
-                ]
-            },
-            "timepoints": {
-                "items": [
-                    {"text": "Day 1", "value": 1, "unit": "day"},
-                    {"text": "Day 8", "value": 8, "unit": "day"},
-                ]
-            },
-            "activities": {
-                "items": [
-                    {
-                        "name": "Flat Activity",
-                        "visits": [
-                            {"index": 0, "references": []},
-                            {"index": 1, "references": ["a"]},
-                        ],
-                        "children": [],
-                    },
-                    {
-                        "name": "Parent",
-                        "visits": [],
-                        "children": [
-                            {
-                                "name": "Child",
-                                "visits": [{"index": 1, "references": []}],
-                                "children": [],
-                            }
-                        ],
-                    },
-                ]
-            },
-        }
-
-        timeline_assembler._add_epochs(data)
-        timeline_assembler._add_encounters(data)
-        timeline_assembler._add_activities(data)
-        timeline_assembler._add_timepoints(data)
-        timeline_assembler._link_timepoints_and_activities(data)
-
-        sai_1 = data["timepoints"]["items"][0]["sai_instance"]
-        sai_2 = data["timepoints"]["items"][1]["sai_instance"]
-        assert len(sai_1.activityIds) == 1  # Flat Activity
-        assert len(sai_2.activityIds) == 2  # Flat Activity + Child
-        assert "a" in timeline_assembler._condition_links
-
-
-class TestTimelineAssemblerTimeline:
-    """Test TimelineAssembler timeline creation."""
-
-    def test_add_timeline_creates_timeline(self, timeline_assembler):
-        """Test timeline creation."""
-        data = {
-            "epochs": {"items": [{"text": "Screening"}]},
-            "visits": {"items": [{"text": "Visit 1", "references": []}]},
-            "timepoints": {
-                "items": [{"index": "0", "text": "Day 1", "value": "1", "unit": "days"}]
-            },
-            "windows": {"items": [{"before": 0, "after": 0, "unit": "days"}]},
-        }
-
-        timeline_assembler._add_epochs(data)
-        timeline_assembler._add_encounters(data)
-        timepoints = timeline_assembler._add_timepoints(data)
-        timings = timeline_assembler._add_timing(data)
-        timeline = timeline_assembler._add_timeline(data, timepoints, timings)
-
-        assert timeline is not None
-        assert timeline.mainTimeline is True
-        assert timeline.name == "TIMELINE-1"
-        assert len(timeline.instances) == 1
-        assert len(timeline.timings) == 1
-
-
-class TestTimelineAssemblerIntegration:
-    """Integration tests for TimelineAssembler."""
-
-    def test_full_execution_workflow(self, timeline_assembler, minimal_timeline_data):
-        """Test full execution workflow."""
-        timeline_assembler.execute(minimal_timeline_data)
-
-        # Verify all components were created
-        assert len(timeline_assembler.timelines) == 1
-        assert len(timeline_assembler.epochs) > 0
-        assert len(timeline_assembler.encounters) > 0
-        assert len(timeline_assembler.activities) > 0
-
-        # Verify timeline structure
-        timeline = timeline_assembler.timelines[0]
-        assert timeline.mainTimeline is True
-        assert len(timeline.instances) > 0
-        assert len(timeline.timings) > 0
-
-    def test_complex_timeline_with_conditions(self, timeline_assembler):
-        """Test complex timeline with conditions."""
-        data = {
-            "epochs": {"items": [{"text": "Screening"}, {"text": "Treatment"}]},
-            "visits": {
-                "items": [
-                    {"text": "Visit 1", "references": ["c1"]},
-                    {"text": "Visit 2", "references": []},
-                ]
-            },
-            "timepoints": {
-                "items": [
-                    {"index": "0", "text": "Day 1", "value": "1", "unit": "days"},
-                    {"index": "1", "text": "Day 7", "value": "7", "unit": "days"},
-                ]
-            },
-            "windows": {
-                "items": [
-                    {"before": 0, "after": 0, "unit": "days"},
-                    {"before": 1, "after": 1, "unit": "days"},
-                ]
-            },
-            "activities": {
-                "items": [
-                    {
-                        "name": "Consent",
-                        "references": ["c1"],
-                        "visits": [{"index": 0, "references": ["c1"]}],
-                    },
-                    {
-                        "name": "Blood Draw",
-                        "visits": [{"index": 1, "references": []}],
-                    },
-                ]
-            },
-            "conditions": {
-                "items": [{"reference": "c1", "text": "If patient consents"}]
-            },
-        }
-
-        timeline_assembler.execute(data)
-
-        # Verify conditions were created
-        assert len(timeline_assembler.conditions) == 1
-        assert timeline_assembler.conditions[0].text == "If patient consents"
-
-
-class TestTimelineAssemblerWindowsBoundsCheck:
-    """Test _timing when windows list is shorter than timepoints list.
-
-    Regression tests for the fix where ``windows[index]`` raised IndexError
-    when a study had fewer windows than timepoints.  The fix falls back to
-    ``_EMPTY_WINDOW`` (``{"before": 0, "after": 0, "unit": ""}``) so the
-    timing is still created with empty window bounds.
-    """
-
-    def test_timing_with_fewer_windows_than_timepoints(self, timeline_assembler):
-        """Timing should be created with empty window when index exceeds windows list."""
-        data = {
-            "epochs": {
-                "items": [
-                    {"text": "Screening"},
-                    {"text": "Treatment"},
-                    {"text": "Treatment"},
-                ]
-            },
-            "visits": {
-                "items": [
-                    {"text": "Visit 1", "references": []},
-                    {"text": "Visit 2", "references": []},
-                    {"text": "Visit 3", "references": []},
-                ]
-            },
-            "timepoints": {
-                "items": [
-                    {"index": "0", "text": "Day 1", "value": 1, "unit": "days"},
-                    {"index": "1", "text": "Day 7", "value": 7, "unit": "days"},
-                    {"index": "2", "text": "Day 14", "value": 14, "unit": "days"},
-                ]
-            },
-            "windows": {
-                "items": [
-                    {"before": 1, "after": 1, "unit": "days"},
-                    # Only 1 window for 3 timepoints
-                ]
-            },
-            "activities": {
-                "items": [
-                    {"name": "A1", "visits": [{"index": 0, "references": []}]},
-                    {"name": "A2", "visits": [{"index": 1, "references": []}]},
-                    {"name": "A3", "visits": [{"index": 2, "references": []}]},
-                ]
-            },
-            "conditions": {"items": []},
-        }
-
-        timeline_assembler.execute(data)
-
-        # All 3 timings should be created despite only 1 window
-        timeline = timeline_assembler.timelines[0]
-        assert len(timeline.timings) == 3
-
-    def test_timing_with_empty_windows_list(self, timeline_assembler):
-        """Timing should be created even when the windows list is completely empty."""
-        data = {
-            "epochs": {
-                "items": [
-                    {"text": "Screening"},
-                    {"text": "Treatment"},
-                ]
-            },
-            "visits": {
-                "items": [
-                    {"text": "Visit 1", "references": []},
-                    {"text": "Visit 2", "references": []},
-                ]
-            },
-            "timepoints": {
-                "items": [
-                    {"index": "0", "text": "Day 1", "value": 1, "unit": "days"},
-                    {"index": "1", "text": "Day 7", "value": 7, "unit": "days"},
-                ]
-            },
-            "windows": {
-                "items": []  # No windows at all
-            },
-            "activities": {
-                "items": [
-                    {"name": "A1", "visits": [{"index": 0, "references": []}]},
-                    {"name": "A2", "visits": [{"index": 1, "references": []}]},
-                ]
-            },
-            "conditions": {"items": []},
-        }
-
-        timeline_assembler.execute(data)
-
-        timeline = timeline_assembler.timelines[0]
-        assert len(timeline.timings) == 2
-
-        # Window bounds should be empty for all timings
-        for timing in timeline.timings:
-            assert timing.windowLower == ""
-            assert timing.windowUpper == ""
-
-    def test_timing_window_values_when_in_range(self, timeline_assembler):
-        """Timings within the windows range should still get proper window bounds."""
-        data = {
-            "epochs": {
-                "items": [
-                    {"text": "Screening"},
-                    {"text": "Treatment"},
-                    {"text": "Treatment"},
-                ]
-            },
-            "visits": {
-                "items": [
-                    {"text": "Visit 1", "references": []},
-                    {"text": "Visit 2", "references": []},
-                    {"text": "Visit 3", "references": []},
-                ]
-            },
-            "timepoints": {
-                "items": [
-                    {"index": "0", "text": "Day 1", "value": 1, "unit": "days"},
-                    {"index": "1", "text": "Day 7", "value": 7, "unit": "days"},
-                    {"index": "2", "text": "Day 14", "value": 14, "unit": "days"},
-                ]
-            },
-            "windows": {
-                "items": [
-                    {"before": 0, "after": 0, "unit": "days"},
-                    {"before": 2, "after": 3, "unit": "days"},
-                    # Missing third window — should fall back to _EMPTY_WINDOW
-                ]
-            },
-            "activities": {
-                "items": [
-                    {"name": "A1", "visits": [{"index": 0, "references": []}]},
-                    {"name": "A2", "visits": [{"index": 1, "references": []}]},
-                    {"name": "A3", "visits": [{"index": 2, "references": []}]},
-                ]
-            },
-            "conditions": {"items": []},
-        }
-
-        timeline_assembler.execute(data)
-
-        timeline = timeline_assembler.timelines[0]
-        assert len(timeline.timings) == 3
-
-        # Second timing (index 1) should have real window bounds
-        timing_with_window = timeline.timings[1]
-        assert timing_with_window.windowLower != ""
-        assert timing_with_window.windowUpper != ""
-
-        # Third timing (index 2) should have empty window bounds
-        timing_without_window = timeline.timings[2]
-        assert timing_without_window.windowLower == ""
-        assert timing_without_window.windowUpper == ""
-
-    def test_window_label_returns_question_marks_for_missing_window(
-        self, timeline_assembler
-    ):
-        """_window_label should return '???' when index exceeds windows list."""
-        windows = [{"before": 1, "after": 2, "unit": "days"}]
-
-        assert timeline_assembler._window_label(windows, 0) == "-1..+2 days"
-        assert timeline_assembler._window_label(windows, 1) is None
-        assert timeline_assembler._window_label(windows, 99) is None
-
-    def test_empty_window_constant(self, timeline_assembler):
-        """_EMPTY_WINDOW should have zero before/after and empty unit."""
-        ew = timeline_assembler._EMPTY_WINDOW
-        assert ew["before"] == 0
-        assert ew["after"] == 0
-        assert ew["unit"] == ""
-
-
-class TestTimelineAssemblerEdgeCases:
-    """Test TimelineAssembler edge cases."""
-
-    def test_empty_activities_list(self, timeline_assembler):
-        """Test with empty activities list."""
-        data = {"activities": {"items": []}}
-
-        activities = timeline_assembler._add_activities(data)
-
-        assert len(activities) == 0
-
-    def test_empty_timepoints_list(self, timeline_assembler):
-        """Test with empty timepoints list."""
-        data = {"timepoints": {"items": []}}
-
-        timepoints = timeline_assembler._add_timepoints(data)
-
-        assert len(timepoints) == 0
-
-    def test_missing_keys_in_data(self, timeline_assembler, errors):
-        """Test with missing keys in data."""
-        initial_error_count = errors.error_count()
-
-        data = {}  # Missing all required keys
-
-        try:
-            timeline_assembler.execute(data)
-        except Exception:
-            pass
-
-        assert errors.error_count() > initial_error_count
-
-
-class TestTimelineAssemblerExceptionCoverage:
-    """Test exception handling paths in TimelineAssembler."""
-
-    def test_add_timing_with_exception(self, timeline_assembler, errors):
-        """Test _add_timing method exception handling."""
-        initial_error_count = errors.error_count()
-
-        # Create data that will cause exception in _add_timing
-        # Use data that will fail during iteration
-        data = {
-            "timepoints": {
-                "items": [{"index": "0", "text": "Day 1", "value": "1", "unit": "days"}]
-            },
-            "windows": {
-                "items": [None]  # This None will cause an exception when accessed
-            },
-        }
-
-        # Create minimal setup but missing sai_instance which will cause error
-        timings = timeline_assembler._add_timing(data)
-
-        # Should return empty list and log exception
-        assert isinstance(timings, list)
-        assert errors.error_count() > initial_error_count
-
-    def test_timing_method_with_exception(self, timeline_assembler, errors):
-        """Test _timing method exception handling."""
-        initial_error_count = errors.error_count()
-
-        # Create data that will cause exception in _timing
-        data = {
-            "windows": {
-                "items": None  # Will cause exception
-            },
-            "timepoints": {"items": []},
-        }
-
-        timing = timeline_assembler._timing(data, 0, 0, "Fixed Reference", "id1", "id2")
-
-        # Should return None and log exception
-        assert timing is None
-        assert errors.error_count() > initial_error_count
-
-    def test_link_timepoints_and_activities_with_exception(
-        self, timeline_assembler, errors
-    ):
-        """Test _link_timepoints_and_activities exception handling."""
-        initial_error_count = errors.error_count()
-
-        # Create data that will cause exception during processing
-        data = {
-            "activities": {
-                "items": [
-                    {
-                        "name": "Activity",
-                        "visits": [{"index": 0, "references": []}],
-                        # Missing activity_instance which will cause AttributeError
-                    }
-                ]
-            },
-            "timepoints": {"items": [{}]},
-        }
-
-        result = timeline_assembler._link_timepoints_and_activities(data)
-
-        # Should return None and log exception
-        assert result is None
-        assert errors.error_count() > initial_error_count
-
-    def test_add_timeline_with_exception(self, timeline_assembler, errors):
-        """Test _add_timeline method exception handling."""
-        initial_error_count = errors.error_count()
-
-        # Create data that will cause exception
-        data = {}
-
-        # Pass None as instances to cause exception
-        timeline = timeline_assembler._add_timeline(data, None, [])
-
-        # Should return None and log exception
-        assert timeline is None
-        assert errors.error_count() > initial_error_count
-
-    def test_clear_method_resets_state(self, timeline_assembler):
-        """Test that clear method properly resets all internal state."""
-        # Add some data first
-        timeline_assembler._timelines.append("dummy")
-        timeline_assembler._epochs.append("dummy")
-        timeline_assembler._encounters.append("dummy")
-        timeline_assembler._activities.append("dummy")
-        timeline_assembler._conditions.append("dummy")
-        timeline_assembler._condition_links["test"] = "dummy"
-
-        # Clear the state
-        timeline_assembler.clear()
-
-        # Verify all lists and dicts are empty
-        assert timeline_assembler._timelines == []
-        assert timeline_assembler._epochs == []
-        assert timeline_assembler._encounters == []
-        assert timeline_assembler._activities == []
-        assert timeline_assembler._conditions == []
-        assert timeline_assembler._condition_links == {}
-
-
-class TestTimelineAssemblerBeforeTiming:
-    """Test _add_timing 'Before' branch (covers lines 370-373)."""
-
-    def test_timing_before_anchor(self, timeline_assembler):
-        """Test that timepoints before the anchor use 'Before' type."""
-        # Build data where first timepoint is before the anchor (value < 0),
-        # second timepoint is the anchor (value = 1, first non-negative)
-        data = {
-            "epochs": {
-                "items": [
-                    {"text": "Screening"},
-                    {"text": "Screening"},
-                    {"text": "Treatment"},
-                ]
-            },
-            "visits": {
-                "items": [
-                    {"text": "Pre-Visit", "references": []},
-                    {"text": "Visit 1", "references": []},
-                    {"text": "Visit 2", "references": []},
-                ]
-            },
-            "timepoints": {
-                "items": [
-                    {"index": "0", "text": "Day -7", "value": -7, "unit": "days"},
-                    {"index": "1", "text": "Day 1", "value": 1, "unit": "days"},
-                    {"index": "2", "text": "Day 14", "value": 14, "unit": "days"},
-                ]
-            },
-            "windows": {
-                "items": [
-                    {"before": 1, "after": 1, "unit": "days"},
-                    {"before": 0, "after": 0, "unit": "days"},
-                    {"before": 2, "after": 2, "unit": "days"},
-                ]
-            },
-        }
-
-        timeline_assembler._add_epochs(data)
-        timeline_assembler._add_encounters(data)
-        timeline_assembler._add_timepoints(data)
-        timings = timeline_assembler._add_timing(data)
-
-        # Should create 3 timings: one "Before", one "Fixed Reference", one "After"
-        assert len(timings) == 3
-
-    def test_full_execution_with_before_timing(self, timeline_assembler):
-        """Test full execution workflow with before-anchor timepoints."""
-        data = {
-            "epochs": {
-                "items": [
-                    {"text": "Screening"},
-                    {"text": "Screening"},
-                    {"text": "Treatment"},
-                ]
-            },
-            "visits": {
-                "items": [
-                    {"text": "Pre-Visit", "references": []},
-                    {"text": "Visit 1", "references": []},
-                    {"text": "Visit 2", "references": []},
-                ]
-            },
-            "timepoints": {
-                "items": [
-                    {"index": "0", "text": "Day -7", "value": -7, "unit": "days"},
-                    {"index": "1", "text": "Day 1", "value": 1, "unit": "days"},
-                    {"index": "2", "text": "Day 14", "value": 14, "unit": "days"},
-                ]
-            },
-            "windows": {
-                "items": [
-                    {"before": 1, "after": 1, "unit": "days"},
-                    {"before": 0, "after": 0, "unit": "days"},
-                    {"before": 2, "after": 2, "unit": "days"},
-                ]
-            },
-            "activities": {
-                "items": [
-                    {"name": "Consent", "visits": [{"index": 0, "references": []}]},
-                    {"name": "Assessment", "visits": [{"index": 1, "references": []}]},
-                    {"name": "Treatment", "visits": [{"index": 2, "references": []}]},
-                ]
-            },
-            "conditions": {"items": []},
-        }
-
-        timeline_assembler.execute(data)
-
-        assert len(timeline_assembler.timelines) == 1
-        timeline = timeline_assembler.timelines[0]
-        assert len(timeline.timings) == 3
-
-
-class TestTimelineAssemblerChildReferences:
-    """Test _condition_combined in child activities (covers line 490)."""
-
-    def test_link_children_with_references(self, timeline_assembler):
-        """Test linking child activities with condition references (covers lines 489-492)."""
-        data = {
-            "epochs": {"items": [{"text": "Screening"}]},
-            "visits": {
-                "items": [
-                    {"text": "Visit 1", "references": ["c1"]},
-                ]
-            },
-            "timepoints": {
-                "items": [
-                    {"index": "0", "text": "Day 1", "value": "1", "unit": "days"},
-                ]
-            },
-            "activities": {
-                "items": [
-                    {
-                        "name": "Parent",
-                        "children": [
-                            {
-                                "name": "Child",
-                                "index": 0,
-                                "visits": [{"index": 0, "references": ["c1"]}],
-                            }
-                        ],
-                    }
-                ]
-            },
-        }
-
-        timeline_assembler._add_epochs(data)
-        timeline_assembler._add_encounters(data)
-        timeline_assembler._add_activities(data)
-        timeline_assembler._add_timepoints(data)
-        timeline_assembler._link_timepoints_and_activities(data)
-
-        # Verify the condition link was created for child reference
-        assert "c1" in timeline_assembler._condition_links
-        link = timeline_assembler._condition_links["c1"]
-        assert 0 in link["timepoint_index"]
-        assert len(link["activity_id"]) >= 1
-
-
-class TestTimelineAssemblerBiomedicalConcepts:
-    """Test _get_biomedical_concepts method (covers lines 555-602)."""
-
-    def test_get_biomedical_concepts_with_no_actions(self, timeline_assembler):
-        """Test _get_biomedical_concepts when activity has no 'actions' key."""
-        activity = {"name": "Simple Activity"}
-
-        bc_ids, sbc_ids, procedures = timeline_assembler._get_biomedical_concepts(
-            activity
-        )
-
-        assert bc_ids == []
-        assert sbc_ids == []
-        assert procedures == []
-
-    def test_get_biomedical_concepts_with_surrogate_bc(self, timeline_assembler):
-        """Test _get_biomedical_concepts creates surrogate BC when not in library (covers lines 564-580)."""
-        activity = {
-            "name": "Activity With BCs",
-            "actions": {
-                "bcs": ["NonExistentBC"],
-            },
-        }
-
-        bc_ids, sbc_ids, procedures = timeline_assembler._get_biomedical_concepts(
-            activity
-        )
-
-        # Since "NonExistentBC" won't exist in CDISC BC library, should create surrogate
-        assert len(sbc_ids) >= 1
-        assert len(procedures) >= 1
-        # Surrogates should be added to the assembler's list
-        assert len(timeline_assembler._biomedical_concept_surrogates) >= 1
-
-    def test_get_biomedical_concepts_creates_procedure(self, timeline_assembler):
-        """Test _get_biomedical_concepts creates Procedure objects (covers lines 581-602)."""
-        activity = {
-            "name": "Activity With Procedure",
-            "actions": {
-                "bcs": ["AnotherNonExistentBC"],
-            },
-        }
-
-        bc_ids, sbc_ids, procedures = timeline_assembler._get_biomedical_concepts(
-            activity
-        )
-
-        # Should have created a procedure
-        assert len(procedures) >= 1
-        procedure = procedures[0]
-        assert procedure.label == "AnotherNonExistentBC"
-        assert procedure.procedureType == "Activity With Procedure"
-
-    def test_get_biomedical_concepts_with_multiple_bcs(self, timeline_assembler):
-        """Test _get_biomedical_concepts with multiple BC names."""
-        activity = {
-            "name": "Multi BC Activity",
-            "actions": {
-                "bcs": ["BC_One", "BC_Two", "BC_Three"],
-            },
-        }
-
-        bc_ids, sbc_ids, procedures = timeline_assembler._get_biomedical_concepts(
-            activity
-        )
-
-        # Should create surrogates and procedures for all three
-        assert len(sbc_ids) >= 3
-        assert len(procedures) >= 3
-
-    def test_activities_with_actions_integration(self, timeline_assembler):
-        """Test full activity creation with biomedical concepts."""
-        data = {
-            "activities": {
-                "items": [
-                    {
-                        "name": "BC Activity",
-                        "visits": [{"index": 0, "references": []}],
-                        "actions": {
-                            "bcs": ["TestBC"],
-                        },
-                    },
-                ]
-            }
-        }
-
-        activities = timeline_assembler._add_activities(data)
-
-        assert len(activities) == 1
-        activity = activities[0]
-        # Activity should have surrogate BC IDs
-        assert len(activity.bcSurrogateIds) >= 1
-        # Activity should have procedures
-        assert len(activity.definedProcedures) >= 1
-
-
-def _table(
-    epochs,
-    visits,
-    timepoints,
-    activities,
-    table_type="main_soa",
-    title=None,
-    table_description=None,
-    classification=None,
-):
-    """Build a single SoA table dict (one TimelineInput) for tests."""
-    n = len(timepoints)
-    data = {
-        "table_type": table_type,
-        "epochs": {"items": [{"text": e} for e in epochs]},
-        "visits": {"items": [{"text": v, "references": []} for v in visits]},
-        "timepoints": {
-            "items": [
-                {"index": str(i), "text": tp[0], "value": tp[1], "unit": "days"}
-                for i, tp in enumerate(timepoints)
-            ]
-        },
-        "windows": {"items": [{"before": 0, "after": 0, "unit": "days"}] * n},
-        "activities": {
-            "items": [
-                {"name": name, "visits": [{"index": i, "references": []} for i in idxs]}
-                for name, idxs in activities
-            ]
-        },
-        "conditions": {"items": []},
-    }
-    if title is not None:
-        data["table_title"] = title
-    if table_description is not None:
-        data["table_description"] = table_description
-    if classification:
-        data.update(classification)
-    return data
-
-
-class TestTimelineAssemblerMultipleTimelines:
-    """Multiple timelines: one main + n subsidiary (per-timeline namespacing,
-    shared activities). Covers the list-input path added for SoA arrays."""
-
-    def _main(self):
-        return _table(
-            ["Screening", "Treatment"],
-            ["Visit 1", "Visit 2"],
-            [("Day 1", 1), ("Day 7", 7)],
-            [("Consent", [0]), ("Blood Draw", [1])],
-            table_type="main_soa",
-            title="Main SoA",
-        )
-
-    def _subsidiary(self):
-        # Shares "Blood Draw" with the main table, adds "PK Sample".
-        return _table(
-            ["PK Phase"],
-            ["PK Visit"],
-            [("Day 7", 7)],
-            [("Blood Draw", [0]), ("PK Sample", [0])],
-            table_type="subsidiary",
-            title="PK/PD SoA",
-        )
-
-    def test_list_of_tables_creates_multiple_timelines(self, timeline_assembler):
-        timeline_assembler.execute([self._main(), self._subsidiary()])
-        assert len(timeline_assembler.timelines) == 2
-
-    def test_exactly_one_main_timeline(self, timeline_assembler):
-        timeline_assembler.execute([self._main(), self._subsidiary()])
-        mains = [t for t in timeline_assembler.timelines if t.mainTimeline]
-        assert len(mains) == 1
-        assert mains[0].name == "TIMELINE-1"
-
-    def test_main_chosen_by_table_type_regardless_of_order(self, timeline_assembler):
-        # Subsidiary first: the main_soa table must still be flagged main.
-        timeline_assembler.execute([self._subsidiary(), self._main()])
-        mains = [t for t in timeline_assembler.timelines if t.mainTimeline]
-        assert len(mains) == 1
-        assert mains[0].label == "Main SoA"
-
-    def test_subsidiary_label_from_table_title(self, timeline_assembler):
-        timeline_assembler.execute([self._main(), self._subsidiary()])
-        subs = [t for t in timeline_assembler.timelines if not t.mainTimeline]
-        assert len(subs) == 1
-        assert subs[0].label == "PK/PD SoA"
-
-    def test_description_defaults_to_the_generated_string(self, timeline_assembler):
-        """Unchanged behaviour when the caller supplies nothing."""
-        timeline_assembler.execute([self._main(), self._subsidiary()])
-        by_main = {t.mainTimeline: t for t in timeline_assembler.timelines}
-        assert by_main[True].description == "The main timeline"
-        assert by_main[False].description == "Subsidiary timeline 2"
-
-    def test_description_taken_from_the_input_when_supplied(self, timeline_assembler):
-        """The caller has classified the source table and needs somewhere to
-        say what kind of schedule it is."""
-        profile = _table(
-            ["PK Phase"],
-            ["PK Visit"],
-            [("Day 7", 7)],
-            [("PK Sample", [0])],
-            table_type="profile",
-            title="Profile \u2014 nominal timing (minutes)",
-            table_description="profile; family=unit_axis; orientation=vertical; unit=minute",
-        )
-        timeline_assembler.execute([self._main(), profile])
-        subs = [t for t in timeline_assembler.timelines if not t.mainTimeline]
-        assert subs[0].label == "Profile \u2014 nominal timing (minutes)"
-        assert subs[0].description == (
-            "profile; family=unit_axis; orientation=vertical; unit=minute"
-        )
-
-    def test_a_description_on_the_main_table_is_honoured_too(self, timeline_assembler):
-        main = _table(
-            ["Screening"],
-            ["Visit 1"],
-            [("Day 1", 1)],
-            [("Consent", [0])],
-            table_type="main_soa",
-            title="Main SoA",
-            table_description="schedule; source=printed in three column-blocks",
-        )
-        timeline_assembler.execute([main])
-        assert timeline_assembler.timelines[0].description == (
-            "schedule; source=printed in three column-blocks"
-        )
-
-    def test_no_extensions_when_the_caller_classifies_nothing(self, timeline_assembler):
-        """Every timeline had an empty list before, and still does."""
-        timeline_assembler.execute([self._main(), self._subsidiary()])
-        assert all(t.extensionAttributes == [] for t in timeline_assembler.timelines)
-
-    def test_a_classified_table_emits_four_flat_extensions(self, timeline_assembler):
-        profile = _table(
-            ["PK Phase"],
-            ["PK Visit"],
-            [("Day 7", 7)],
-            [("PK Sample", [0])],
-            table_type="profile",
-            title="Profile \u2014 nominal timing (minutes)",
-            classification={
-                "table_family": "unit_axis",
-                "table_orientation": "vertical",
-                "table_unit": "minute",
-                "table_placement": "remote",
-            },
-        )
-        timeline_assembler.execute([self._main(), profile])
-        subs = [t for t in timeline_assembler.timelines if not t.mainTimeline]
-        by_url = {e.url: e.valueString for e in subs[0].extensionAttributes}
-        assert by_url == {
-            TLF_EXT_URL: "unit_axis",
-            TLO_EXT_URL: "vertical",
-            TLU_EXT_URL: "minute",
-            TLP_EXT_URL: "remote",
-        }
-
-    def test_an_absent_classification_value_is_left_out(self, timeline_assembler):
-        """Placement cannot always be measured, and a guess would be worse than
-        silence."""
-        profile = _table(
-            ["PK Phase"],
-            ["PK Visit"],
-            [("Day 7", 7)],
-            [("PK Sample", [0])],
-            table_type="profile",
-            classification={
-                "table_family": "records",
-                "table_orientation": "vertical",
-                "table_unit": "minute",
-            },
-        )
-        timeline_assembler.execute([self._main(), profile])
-        subs = [t for t in timeline_assembler.timelines if not t.mainTimeline]
-        assert TLP_EXT_URL not in {e.url for e in subs[0].extensionAttributes}
-        assert len(subs[0].extensionAttributes) == 3
-
-    def test_the_extensions_are_findable_by_url(self, timeline_assembler):
-        """`get_extension` is how a consumer reads them — the reason for using
-        extensions rather than a string in the description."""
-        profile = _table(
-            ["PK Phase"],
-            ["PK Visit"],
-            [("Day 7", 7)],
-            [("PK Sample", [0])],
-            table_type="profile",
-            classification={"table_family": "unit_axis"},
-        )
-        timeline_assembler.execute([self._main(), profile])
-        subs = [t for t in timeline_assembler.timelines if not t.mainTimeline]
-        assert subs[0].get_extension(TLF_EXT_URL).valueString == "unit_axis"
-        assert subs[0].get_extension(TLU_EXT_URL) is None
-
-    def test_activities_shared_across_timelines(self, timeline_assembler):
-        timeline_assembler.execute([self._main(), self._subsidiary()])
-        # Consent, Blood Draw, PK Sample — Blood Draw shared, not duplicated.
-        labels = sorted(a.label for a in timeline_assembler.activities)
-        assert labels == ["Blood Draw", "Consent", "PK Sample"]
-
-    def test_shared_activity_referenced_by_both_timelines(self, timeline_assembler):
-        timeline_assembler.execute([self._main(), self._subsidiary()])
-        blood = next(
-            a for a in timeline_assembler.activities if a.label == "Blood Draw"
-        )
-        referencing = [
-            tl
-            for tl in timeline_assembler.timelines
-            if any(blood.id in sai.activityIds for sai in tl.instances)
-        ]
-        assert len(referencing) == 2
-
-    def test_entities_accumulate_across_tables(self, timeline_assembler):
-        timeline_assembler.execute([self._main(), self._subsidiary()])
-        # Epochs: 2 (main) + 1 (sub) = 3; encounters: 2 + 1 = 3.
-        assert len(timeline_assembler.epochs) == 3
-        assert len(timeline_assembler.encounters) == 3
-
-    def test_per_timeline_namespacing_avoids_collisions(self, timeline_assembler):
-        # If names collided across tables the builder would reject duplicates
-        # and produce fewer timelines / log errors. Two clean timelines proves
-        # the T{t}- namespacing worked.
-        timeline_assembler.execute([self._main(), self._subsidiary()])
-        assert len(timeline_assembler.timelines) == 2
-        epoch_names = [e.name for e in timeline_assembler.epochs]
-        assert len(epoch_names) == len(set(epoch_names))  # all unique
-        assert any(n.startswith("T2-") for n in epoch_names)
-
-    def test_single_dict_backward_compatible(self, timeline_assembler):
-        # The historical single-table dict form still yields one main timeline.
-        timeline_assembler.execute(self._main())
-        assert len(timeline_assembler.timelines) == 1
-        assert timeline_assembler.timelines[0].mainTimeline is True
-
-    def test_empty_list_creates_nothing(self, timeline_assembler):
-        timeline_assembler.execute([])
-        assert timeline_assembler.timelines == []
-
-
-class TestAssemblerInputSoaShape:
-    """AssemblerInput.soa accepts a single TimelineInput or a list of them."""
-
-    def _minimal(self, soa):
-        from src.usdm4.assembler.schema.assembler_input import AssemblerInput
-
-        base = {
-            "identification": {"titles": {"brief": "x", "official": "x"}},
-            "document": {},
-            "population": {},
-            "study_design": {},
-            "study": {},
-            "soa": soa,
-        }
-        return AssemblerInput.model_validate(base)
-
-    def test_soa_accepts_single_timeline(self):
-        one = {
-            "epochs": {"items": []},
-            "visits": {"items": []},
-            "timepoints": {"items": []},
-            "activities": {"items": []},
-            "conditions": {"items": []},
-        }
-        model = self._minimal(one)
-        assert not isinstance(model.soa, list)
-
-    def test_soa_accepts_list_of_timelines(self):
-        one = {
-            "epochs": {"items": []},
-            "visits": {"items": []},
-            "timepoints": {"items": []},
-            "activities": {"items": []},
-            "conditions": {"items": []},
-        }
-        model = self._minimal([one, one])
-        assert isinstance(model.soa, list)
-        assert len(model.soa) == 2
-
-    def test_soa_defaults_to_none(self):
-        one = None
-        model = self._minimal(one)
-        assert model.soa is None
-
-
-class TestTimelineAssemblerNormaliseAndDispatch:
-    """Cover the list/None/dispatch branches added for multi-timeline input."""
-
-    def test_execute_none_creates_nothing(self, timeline_assembler):
-        # ``_normalise(None)`` returns [] — no timelines, no error.
-        timeline_assembler.execute(None)
-        assert timeline_assembler.timelines == []
-
-    def test_execute_outer_exception_is_caught(
-        self, timeline_assembler, errors, monkeypatch
-    ):
-        # ``execute``'s own try/except. A non-dict table no longer reaches
-        # ``_main_index`` (it has no spine, so it is skipped), so the outer
-        # handler is exercised by making the final ordering pass raise.
-        def boom(*_args, **_kwargs):
-            raise RuntimeError("ordering failed")
-
-        monkeypatch.setattr(timeline_assembler._builder, "double_link", boom)
-        initial = errors.error_count()
-        timeline_assembler.execute(
-            [_table(["E"], ["V"], [("Day 1", 1)], [("A1", [0])])]
-        )
-        assert errors.error_count() > initial
-
-    def test_non_dict_table_is_skipped_not_raised(self, timeline_assembler, errors):
-        # A non-dict element has no spine. It is reported and skipped, and it
-        # does not stop the real table beside it from assembling.
-        initial = errors.error_count()
-        timeline_assembler.execute(
-            ["not a table", _table(["E"], ["V"], [("Day 1", 1)], [("A1", [0])])]
-        )
-        assert errors.error_count() > initial
-        assert [t.name for t in timeline_assembler.timelines] == ["TIMELINE-2"]
-        assert timeline_assembler.timelines[0].mainTimeline is True
-
-    def test_main_index_falls_back_to_first_when_no_main_soa(self, timeline_assembler):
-        # Two subsidiary tables, none flagged main_soa → first becomes main.
-        sub1 = _table(
-            ["E"],
-            ["V"],
-            [("Day 1", 1)],
-            [("A1", [0])],
-            table_type="subsidiary",
-            title="Sub 1",
-        )
-        sub2 = _table(
-            ["E"],
-            ["V"],
-            [("Day 1", 1)],
-            [("A2", [0])],
-            table_type="subsidiary",
-            title="Sub 2",
-        )
-        timeline_assembler.execute([sub1, sub2])
-        mains = [t for t in timeline_assembler.timelines if t.mainTimeline]
-        assert len(mains) == 1
-        assert mains[0].label == "Sub 1"
-
-
-def _spineless(activities, title=None):
-    """A table the extractor could not read a time axis from.
-
-    Neither a timing row nor a visit row was found, so both synthesis
-    fallbacks no-op and ``timepoints.items`` is empty. Its activities carry
-    no visits either: the column bound derived from the timepoints is -1, so
-    the grid is never read. Epochs and windows are empty for the same reason.
-    This is the shape the SoA extractor really hands over, not a contrivance.
-    """
-    data = {
-        "epochs": {"items": []},
-        "visits": {"items": []},
-        "timepoints": {"items": []},
-        "windows": {"items": []},
-        "activities": {"items": [{"name": n, "visits": []} for n in activities]},
-        "conditions": {"items": []},
-    }
-    if title is not None:
-        data["table_title"] = title
-    return data
-
-
-class TestTimelineAssemblerNoTimepointSpine:
-    """A table with no timepoints must be skipped, not half-built.
-
-    Weighted to must-not-fire: the skip is only ever allowed to take a table
-    that could not have produced a timeline anyway.
-    """
-
-    def _real(self, name="A1", title=None):
-        return _table(
-            ["Treatment"],
-            ["Visit 1", "Visit 2"],
-            [("Day 1", 1), ("Day 7", 7)],
-            [(name, [0])],
-            title=title,
-        )
-
-    # --- must not fire -----------------------------------------------------
-
-    def test_a_single_normal_table_is_unaffected(self, timeline_assembler):
-        timeline_assembler.execute(self._real())
-        assert [t.name for t in timeline_assembler.timelines] == ["TIMELINE-1"]
-        assert len(timeline_assembler.activities) == 1
-
-    def test_several_normal_tables_are_unaffected(self, timeline_assembler):
-        timeline_assembler.execute(
-            [self._real("A1"), self._real("A2"), self._real("A3")]
-        )
-        assert [t.name for t in timeline_assembler.timelines] == [
+        class Boom:
+            def __init__(self, *args, **kwargs):
+                pass
+
+            def build(self):
+                raise RuntimeError("build failed")
+
+        monkeypatch.setattr(timeline_assembler_module, "TimelineBuild", Boom)
+        assembler.execute([simple()])
+        assert assembler.timelines == []
+        assert assembler.epochs == []
+        assert any("creation of timeline 1" in m for m in messages(errors))
+
+
+# ----------------------------------------------------------------------
+# Timelines
+
+
+class TestTimelines:
+    def test_minimal_timeline(self, assembler):
+        assembler.execute([simple()])
+        (tl,) = assembler.timelines
+        assert tl.mainTimeline is True
+        assert tl.name == "TIMELINE-1"
+        assert tl.label == "Main timeline"
+        assert tl.description == "The main timeline"
+        assert len(tl.instances) == 2
+        assert tl.entryId == tl.instances[0].id
+        assert len(assembler.epochs) == 2
+        assert len(assembler.encounters) == 2
+        assert [a.label for a in assembler.activities] == ["Consent", "Blood Draw"]
+
+    def test_the_chain_runs_column_to_column_and_ends_at_the_exit(self, assembler):
+        assembler.execute([simple()])
+        (tl,) = assembler.timelines
+        first, last = tl.instances
+        assert first.defaultConditionId == last.id
+        assert first.timelineExitId is None
+        assert last.defaultConditionId is None
+        assert last.timelineExitId == tl.exits[0].id
+
+    def test_several_timelines_exactly_one_main(self, assembler):
+        assembler.execute([simple(), simple("profile"), simple("unclassified")])
+        assert [t.name for t in assembler.timelines] == [
             "TIMELINE-1",
             "TIMELINE-2",
             "TIMELINE-3",
         ]
+        assert [t.mainTimeline for t in assembler.timelines] == [True, False, False]
 
-    def test_a_one_timepoint_table_is_kept(self, timeline_assembler):
-        # The shortest real spine there is. One timepoint is a schedule; none
-        # is not, and the boundary between them is exactly this.
-        timeline_assembler.execute(
-            [_table(["E"], ["V"], [("Day 1", 1)], [("A1", [0])])]
+    def test_main_chosen_by_type_regardless_of_order(self, assembler):
+        assembler.execute([simple("profile"), simple("main")])
+        assert [t.mainTimeline for t in assembler.timelines] == [False, True]
+
+    def test_no_main_type_falls_back_to_the_first(self, assembler):
+        assembler.execute([simple("arm"), simple("cohort")])
+        assert [t.mainTimeline for t in assembler.timelines] == [True, False]
+
+    def test_labels_and_descriptions(self, assembler):
+        assembler.execute(
+            [
+                simple(description="The whole schedule"),
+                simple("profile", title="PK sampling"),
+            ]
         )
-        assert len(timeline_assembler.timelines) == 1
+        main, sub = assembler.timelines
+        assert (main.label, main.description) == ("Main timeline", "The whole schedule")
+        assert (sub.label, sub.description) == ("PK sampling", "Subsidiary timeline 2")
 
-    def test_a_timepoint_with_no_value_is_kept(self, timeline_assembler):
-        # Synthesised placeholder timepoints carry value 0. They are a spine.
-        timeline_assembler.execute(
-            [_table(["E"], ["V"], [("Screening", 0)], [("A1", [0])])]
+    def test_default_subsidiary_label(self, assembler):
+        assembler.execute([simple(), simple("unclassified")])
+        assert assembler.timelines[1].label == "Timeline 2"
+
+    def test_entry_condition_is_still_hard_coded(self, assembler):
+        """Design § 8 — out of scope for issue 63, pinned until fixed."""
+        assembler.execute([simple()])
+        assert assembler.timelines[0].entryCondition == "Paricipant identified"
+
+
+class TestSkippedTimelines:
+    def _empty(self, type="unclassified"):
+        return timeline([], [activity("Orphan")], type=type)
+
+    def test_a_timeline_with_no_columns_is_not_built(self, assembler, errors):
+        assembler.execute([simple(), self._empty()])
+        assert [t.name for t in assembler.timelines] == ["TIMELINE-1"]
+        assert any(
+            "Timeline 2 has no columns" in m and "1 activities" in m
+            for m in messages(errors)
         )
-        assert len(timeline_assembler.timelines) == 1
 
-    def test_table_type_still_steers_the_main_flag(self, timeline_assembler):
-        profile = self._real("A1", title="Profile")
-        profile["table_type"] = "profile"
-        timeline_assembler.execute([profile, self._real("A2", title="Schedule")])
-        mains = [t for t in timeline_assembler.timelines if t.mainTimeline]
-        assert len(mains) == 1
-        assert mains[0].label == "Schedule"
+    def test_it_leaves_no_orphan_activities(self, assembler):
+        assembler.execute([simple(), self._empty()])
+        assert "Orphan" not in [a.label for a in assembler.activities]
 
-    # --- must fire ---------------------------------------------------------
+    def test_ordinals_keep_their_position_so_a_skip_leaves_a_gap(self, assembler):
+        assembler.execute([simple(), self._empty(), simple("profile")])
+        assert [t.name for t in assembler.timelines] == ["TIMELINE-1", "TIMELINE-3"]
 
-    def test_spineless_table_creates_no_timeline(self, timeline_assembler):
-        timeline_assembler.execute([self._real(), _spineless(["junk1", "junk2"])])
-        assert [t.name for t in timeline_assembler.timelines] == ["TIMELINE-1"]
+    def test_the_main_flag_moves_to_a_built_timeline(self, assembler):
+        assembler.execute([self._empty("main"), simple("unclassified")])
+        assert [t.mainTimeline for t in assembler.timelines] == [True]
 
-    def test_spineless_table_leaves_no_orphan_activities(self, timeline_assembler):
-        timeline_assembler.execute([self._real(), _spineless(["junk1", "junk2"])])
-        linked = {
-            activity_id
-            for timeline in timeline_assembler.timelines
-            for instance in timeline.instances
-            for activity_id in (instance.activityIds or [])
+    def test_nothing_buildable_builds_nothing(self, assembler):
+        assembler.execute([self._empty(), self._empty()])
+        assert assembler.timelines == []
+
+    def test_a_bad_pattern_stops_that_timeline_only(self, assembler, errors):
+        bad = timeline([column("c1", timing=value("D1", "D1"))])
+        assembler.execute([bad, simple("profile")])
+        assert [t.name for t in assembler.timelines] == ["TIMELINE-2"]
+        assert any(
+            "Timeline 1 not created" in m and "'D1'" in m for m in messages(errors)
+        )
+
+
+class TestExtensions:
+    def _urls(self, tl):
+        return {e.url: e.valueString for e in tl.extensionAttributes}
+
+    def test_nothing_classified_nothing_emitted(self, assembler):
+        assembler.execute([simple()])
+        assert assembler.timelines[0].extensionAttributes == []
+
+    def test_a_profile_carries_the_family_and_its_classification(self, assembler):
+        assembler.execute(
+            [
+                simple(),
+                simple(
+                    "profile",
+                    classification={
+                        "orientation": "transposed",
+                        "unit": "hour",
+                        "placement": "away",
+                    },
+                ),
+            ]
+        )
+        assert self._urls(assembler.timelines[1]) == {
+            TLF_EXT_URL: "profile",
+            TLO_EXT_URL: "transposed",
+            TLU_EXT_URL: "hour",
+            TLP_EXT_URL: "away",
         }
-        assert [a.name for a in timeline_assembler.activities] == ["A1"]
-        assert all(a.id in linked for a in timeline_assembler.activities)
 
-    def test_spineless_table_is_reported_with_its_activity_count(
-        self, timeline_assembler, errors
-    ):
-        initial = errors.error_count()
-        timeline_assembler.execute([self._real(), _spineless(["junk1", "junk2"])])
-        assert errors.error_count() > initial
+    def test_an_absent_value_is_left_out(self, assembler):
+        assembler.execute([simple("profile", classification={"unit": "minute"})])
+        assert self._urls(assembler.timelines[0]) == {
+            TLF_EXT_URL: "profile",
+            TLU_EXT_URL: "minute",
+        }
 
-    def test_main_flag_moves_to_the_first_assemblable_table(self, timeline_assembler):
-        # The spineless table sorts first and would have taken the main flag
-        # with it, leaving the study with no main timeline at all.
-        timeline_assembler.execute(
-            [_spineless(["junk1"]), self._real("A1", title="Schedule")]
+    def test_the_family_marks_profiles_only(self, assembler):
+        """TLF's presence is what marks a profile to downstream readers."""
+        assembler.execute([simple("arm", classification={"orientation": "upright"})])
+        assert self._urls(assembler.timelines[0]) == {TLO_EXT_URL: "upright"}
+
+    def test_findable_by_url(self, assembler):
+        assembler.execute([simple("profile")])
+        assert assembler.timelines[0].get_extension(TLF_EXT_URL).valueString == (
+            "profile"
         )
-        mains = [t for t in timeline_assembler.timelines if t.mainTimeline]
-        assert len(mains) == 1
-        assert mains[0].name == "TIMELINE-2"
 
-    def test_ordinals_are_the_table_position_so_a_skip_leaves_a_gap(
-        self, timeline_assembler
-    ):
-        timeline_assembler.execute(
-            [self._real("A1"), _spineless(["junk1"]), self._real("A2")]
+
+# ----------------------------------------------------------------------
+# Epochs, encounters, instances
+
+
+class TestEpochs:
+    def test_one_per_distinct_period(self, assembler):
+        tl = timeline(
+            [
+                column("c1", "Screening"),
+                column("c2", "Treatment"),
+                column("c3", "treatment "),
+                column("c4", "Follow-up"),
+            ]
         )
-        assert [t.name for t in timeline_assembler.timelines] == [
-            "TIMELINE-1",
-            "TIMELINE-3",
+        assembler.execute([tl])
+        assert [e.name for e in assembler.epochs] == ["SCR", "TREAT", "FU"]
+        instances = assembler.timelines[0].instances
+        assert instances[1].epochId == instances[2].epochId
+
+    def test_colliding_house_names_both_created(self, assembler):
+        tl = timeline(
+            [
+                column("c1", "Period I - Screening"),
+                column("c2", "Period II - Screening"),
+            ]
+        )
+        assembler.execute([tl])
+        assert [e.name for e in assembler.epochs] == ["SCR", "SCR2"]
+        assert [e.label for e in assembler.epochs] == [
+            "Period I - Screening",
+            "Period II - Screening",
         ]
 
-    def test_every_table_spineless_creates_nothing(self, timeline_assembler):
-        timeline_assembler.execute([_spineless(["junk1"]), _spineless(["junk2"])])
-        assert timeline_assembler.timelines == []
-        assert timeline_assembler.activities == []
+    def test_a_column_with_no_epoch_gets_an_empty_labelled_epoch(self, assembler):
+        """Today's behaviour, kept until decision D6 is taken."""
+        assembler.execute([timeline([column("c1"), column("c2")])])
+        assert [(e.name, e.label) for e in assembler.epochs] == [("EP1", "")]
 
-    def test_a_missing_timepoints_key_is_spineless(self, timeline_assembler):
-        timeline_assembler.execute([{"activities": {"items": []}}, self._real()])
-        assert [t.name for t in timeline_assembler.timelines] == ["TIMELINE-2"]
+    def test_epochs_are_per_timeline(self, assembler):
+        assembler.execute([simple(), simple("profile")])
+        assert [e.name for e in assembler.epochs] == [
+            "T1-SCR",
+            "T1-TREAT",
+            "T2-SCR",
+            "T2-TREAT",
+        ]
 
-    def test_a_null_timepoints_block_is_spineless(self, timeline_assembler):
-        table = _spineless(["junk1"])
-        table["timepoints"] = None
-        timeline_assembler.execute([table, self._real()])
-        assert [t.name for t in timeline_assembler.timelines] == ["TIMELINE-2"]
+
+class TestEncounters:
+    def test_one_per_column_never_merged(self, assembler):
+        tl = timeline([column("c1", visit="D1"), column("c2", visit="D1")])
+        assembler.execute([tl])
+        assert [(e.name, e.label) for e in assembler.encounters] == [
+            ("E1", "D1"),
+            ("E2", "D1"),
+        ]
+        instances = assembler.timelines[0].instances
+        assert [i.encounterId for i in instances] == [
+            e.id for e in assembler.encounters
+        ]
+
+    def test_no_visit_is_an_empty_label(self, assembler):
+        assembler.execute([timeline([column("c1")])])
+        assert assembler.encounters[0].label == ""
+
+    def test_namespaced_per_timeline(self, assembler):
+        assembler.execute([simple(), simple("profile")])
+        assert [e.name for e in assembler.encounters] == [
+            "T1-E1",
+            "T1-E2",
+            "T2-E1",
+            "T2-E2",
+        ]
 
 
-class TestTimelineAssemblerBiomedicalConceptBranches:
-    """Cover the exists / creation-failure branches of _get_biomedical_concepts.
+class TestInstances:
+    def test_names_and_labels_from_the_timing_text(self, assembler):
+        tl = timeline(
+            [
+                column("c1", timing="Day -1"),
+                column("c2", timing="Day 1"),
+                column("c3", timing="Week 12"),
+                column("c4", timing={"text": "Cycle 2 Day 1", "pattern": None}),
+                column("c5", visit="Final Visit/ET"),
+            ]
+        )
+        assembler.execute([tl])
+        instances = assembler.timelines[0].instances
+        assert [i.name for i in instances] == [
+            "D-1",
+            "D1",
+            "W12",
+            "C2D1",
+            "FINAL VISIT ET",
+        ]
+        assert [i.label for i in instances] == [
+            "Day -1",
+            "Day 1",
+            "Week 12",
+            "Cycle 2 Day 1",
+            "",
+        ]
 
-    These are exercised deterministically via monkeypatch so coverage does not
-    depend on which biomedical-concept names happen to be in the CT cache."""
 
-    def test_existing_bc_is_used(self, timeline_assembler, monkeypatch):
-        import types
+# ----------------------------------------------------------------------
+# Timings
 
+
+class TestTimings:
+    def test_relative_to_one_anchor(self, assembler):
+        tl = timeline(
+            [
+                column("c1", timing="Day -7"),
+                column("c2", timing="Day 1"),
+                column("c3", timing="Day 8"),
+            ]
+        )
+        assembler.execute([tl])
+        (t,) = assembler.timelines
+        assert timing_types(t) == ["Before", "Fixed Reference", "After"]
+        assert [x.value for x in t.timings] == ["P7D", "PT0M", "P7D"]
+        anchor = t.instances[1].id
+        assert all(x.relativeToScheduledInstanceId == anchor for x in t.timings)
+        assert [x.relativeFromScheduledInstanceId for x in t.timings] == [
+            i.id for i in t.instances
+        ]
+        assert [x.name for x in t.timings] == ["TIM1", "TIM2", "TIM3"]
+        assert t.timings[0].relativeToFrom.decode == "Start to Start"
+
+    def test_value_labels_are_the_printed_text(self, assembler):
+        tl = timeline([column("c1", timing=value("D 1", "Day 1"))])
+        assembler.execute([tl])
+        timing = assembler.timelines[0].timings[0]
+        assert (timing.valueLabel, timing.label) == ("D 1", "D 1")
+
+    def test_mixed_units_use_the_absolute_value(self, assembler, errors):
+        tl = timeline([column("c1", timing="Day 1"), column("c2", timing="Week 2")])
+        assembler.execute([tl])
+        assert assembler.timelines[0].timings[1].value == "P2W"
+        assert any("differs from anchor unit" in m for m in messages(errors))
+
+    def test_a_text_only_timing_has_a_zero_duration(self, assembler):
+        """Until R4 there is nothing to read a cycle day with."""
+        tl = timeline(
+            [
+                column("c1", timing="Day 1"),
+                column("c2", timing={"text": "Cycle 2 Day 1", "pattern": None}),
+            ]
+        )
+        assembler.execute([tl])
+        assert assembler.timelines[0].timings[1].value == "PT0M"
+
+    def test_a_blank_timing_gets_no_timing_at_all(self, assembler):
+        """Today's defect, pinned (design § 2): ``valueLabel`` is required and
+        a column with no timing text has none, so its Timing is not created.
+        R4 gives every instance a Timing."""
+        tl = timeline([column("c1", visit="V1"), column("c2", timing="Day 7")])
+        assembler.execute([tl])
+        (t,) = assembler.timelines
+        assert len(t.instances) == 2
+        assert [x.valueLabel for x in t.timings] == ["Day 7"]
+
+    def test_hours(self, assembler):
+        tl = timeline([column("c1", timing="Hour 0"), column("c2", timing="Hour 4")])
+        assembler.execute([tl])
+        assert [x.value for x in assembler.timelines[0].timings] == ["PT0M", "PT4H"]
+
+
+class TestWindows:
+    def _timing(self, assembler, window):
+        assembler.execute([timeline([column("c1", timing="Day 1", window=window)])])
+        return assembler.timelines[0].timings[0]
+
+    def test_a_window(self, assembler):
+        timing = self._timing(assembler, value("(±3 days)", "-3..+3 days"))
+        assert timing.windowLabel == "(±3 days)"
+        assert (timing.windowLower, timing.windowUpper) == ("P3D", "P3D")
+
+    def test_an_asymmetric_window(self, assembler):
+        timing = self._timing(assembler, value("-0..+2 hours"))
+        assert (timing.windowLower, timing.windowUpper) == ("", "PT2H")
+
+    def test_a_zero_window_has_an_empty_label(self, assembler):
+        timing = self._timing(assembler, value("", "-0..+0 days"))
+        assert (timing.windowLabel, timing.windowLower, timing.windowUpper) == (
+            "",
+            "",
+            "",
+        )
+
+    def test_no_window(self, assembler):
+        timing = self._timing(assembler, None)
+        assert (timing.windowLabel, timing.windowLower, timing.windowUpper) == (
+            None,
+            "",
+            "",
+        )
+
+
+# ----------------------------------------------------------------------
+# Activities and cells
+
+
+class TestActivities:
+    def test_cells_link_activities_to_instances(self, assembler):
+        tl = timeline(
+            [column("c1"), column("c2")],
+            [activity("Consent", ["c1"]), activity("Vitals", ["c1", "c2"])],
+        )
+        assembler.execute([tl])
+        consent, vitals = assembler.activities
+        first, second = assembler.timelines[0].instances
+        assert first.activityIds == [consent.id, vitals.id]
+        assert second.activityIds == [vitals.id]
+
+    def test_parents_and_children(self, assembler):
+        tl = timeline(
+            [column("c1")],
+            [
+                activity("Laboratory"),
+                activity("Haematology", ["c1"], parent="Laboratory"),
+                activity("Chemistry", ["c1"], parent="Laboratory"),
+            ],
+        )
+        assembler.execute([tl])
+        lab, haem, chem = assembler.activities
+        assert lab.childIds == [haem.id, chem.id]
+        assert assembler.timelines[0].instances[0].activityIds == [haem.id, chem.id]
+
+    def test_a_child_listed_before_its_parent_is_still_linked(self, assembler):
+        tl = timeline(
+            [column("c1")],
+            [activity("Haematology", parent="Laboratory"), activity("Laboratory")],
+        )
+        assembler.execute([tl])
+        haem, lab = assembler.activities
+        assert lab.childIds == [haem.id]
+
+    def test_shared_across_timelines(self, assembler):
+        second = timeline(
+            [column("c1", timing="Hour 0")],
+            [activity("Blood Draw", ["c1"]), activity("PK Sample", ["c1"])],
+            type="profile",
+        )
+        assembler.execute([simple(), second])
+        assert [a.label for a in assembler.activities] == [
+            "Consent",
+            "Blood Draw",
+            "PK Sample",
+        ]
+        blood = assembler.activities[1]
+        assert blood.id in assembler.timelines[0].instances[1].activityIds
+        assert blood.id in assembler.timelines[1].instances[0].activityIds
+
+    def test_identity_is_space_and_case(self, assembler):
+        tl = timeline(
+            [column("c1"), column("c2")],
+            [activity("Vital signs", ["c1"]), activity("vital signs ", ["c2"])],
+        )
+        assembler.execute([tl])
+        assert len(assembler.activities) == 1
+
+    def test_activities_are_ordered_across_timelines(self, assembler):
+        assembler.execute([simple()])
+        consent, blood = assembler.activities
+        assert (consent.previousId, consent.nextId) == (None, blood.id)
+        assert (blood.previousId, blood.nextId) == (consent.id, None)
+
+
+class TestBiomedicalConcepts:
+    def _run(self, assembler, bcs):
+        assembler.execute([timeline([column("c1")], [activity("Vitals", bcs=bcs)])])
+        return assembler.activities[0]
+
+    def test_library_and_surrogate(self, assembler):
+        vitals = self._run(assembler, ["Sex", "Unlisted Local Measurement"])
+        assert [b.name for b in assembler.biomedical_concepts] == ["Sex"]
+        assert [s.name for s in assembler.biomedical_concept_surrogates] == [
+            "Unlisted Local Measurement"
+        ]
+        assert vitals.biomedicalConceptIds == [assembler.biomedical_concepts[0].id]
+        assert vitals.bcSurrogateIds == [assembler.biomedical_concept_surrogates[0].id]
+        assert [p.name for p in vitals.definedProcedures] == [
+            "Sex",
+            "Unlisted Local Measurement",
+        ]
+
+    def test_a_procedure_still_carries_the_placeholder_code(self, assembler):
+        """Design § 8 — out of scope for issue 63, pinned until fixed."""
+        vitals = self._run(assembler, ["Unlisted Local Measurement"])
+        assert vitals.definedProcedures[0].code.code == "12345"
+
+    def test_a_library_bc_that_fails_is_warned(self, assembler, errors, monkeypatch):
         monkeypatch.setattr(
-            timeline_assembler._builder.cdisc_bc_library, "exists", lambda name: True
+            assembler._builder.cdisc_bc_library, "exists", lambda name: True
         )
-        fake_bc = types.SimpleNamespace(id="BC-X")
-        monkeypatch.setattr(timeline_assembler._builder, "bc", lambda name: fake_bc)
+        monkeypatch.setattr(assembler._builder, "bc", lambda name: None)
+        vitals = self._run(assembler, ["Blood Pressure"])
+        assert vitals.biomedicalConceptIds == []
+        assert any("Failed to create BC" in m for m in messages(errors))
 
-        activity = {"name": "Vitals", "actions": {"bcs": ["Blood Pressure"]}}
-        bc_ids, sbc_ids, procedures = timeline_assembler._get_biomedical_concepts(
-            activity
+    def test_a_library_bc_is_used(self, assembler, monkeypatch):
+        fake = types.SimpleNamespace(id="BC-X")
+        monkeypatch.setattr(
+            assembler._builder.cdisc_bc_library, "exists", lambda name: True
         )
+        monkeypatch.setattr(assembler._builder, "bc", lambda name: fake)
+        vitals = self._run(assembler, ["Blood Pressure"])
+        assert vitals.biomedicalConceptIds == ["BC-X"]
 
-        assert "BC-X" in bc_ids
-        assert fake_bc in timeline_assembler._biomedical_concepts
-
-    def test_existing_bc_creation_failure_logs_warning(
-        self, timeline_assembler, monkeypatch, errors
+    @pytest.mark.parametrize(
+        "klass, message",
+        [
+            ("BiomedicalConceptSurrogate", "Failed to create surrogate BC"),
+            ("Procedure", "Failed to create procedure"),
+        ],
+    )
+    def test_a_create_that_fails_is_warned(
+        self, assembler, errors, monkeypatch, klass, message
     ):
-        monkeypatch.setattr(
-            timeline_assembler._builder.cdisc_bc_library, "exists", lambda name: True
-        )
-        monkeypatch.setattr(timeline_assembler._builder, "bc", lambda name: None)
-        initial = errors.count()
+        real_create = assembler._builder.create
 
-        activity = {"name": "Vitals", "actions": {"bcs": ["Blood Pressure"]}}
-        bc_ids, _, _ = timeline_assembler._get_biomedical_concepts(activity)
-
-        assert bc_ids == []  # nothing added when bc creation returns falsy
-        assert errors.count() > initial  # the failure was logged (warning)
-
-    def test_surrogate_creation_failure_logs_warning(
-        self, timeline_assembler, monkeypatch
-    ):
-        from usdm4.api.biomedical_concept_surrogate import BiomedicalConceptSurrogate
-
-        monkeypatch.setattr(
-            timeline_assembler._builder.cdisc_bc_library, "exists", lambda name: False
-        )
-        real_create = timeline_assembler._builder.create
-
-        def create(klass, params):
-            if klass is BiomedicalConceptSurrogate:
+        def create(k, params, *args, **kwargs):
+            if k.__name__ == klass:
                 return None
-            return real_create(klass, params)
+            return real_create(k, params, *args, **kwargs)
 
-        monkeypatch.setattr(timeline_assembler._builder, "create", create)
+        monkeypatch.setattr(assembler._builder, "create", create)
+        self._run(assembler, ["MadeUpBC"])
+        assert any(message in m for m in messages(errors))
 
-        activity = {"name": "Thing", "actions": {"bcs": ["MadeUpBC"]}}
-        _, sbc_ids, _ = timeline_assembler._get_biomedical_concepts(activity)
 
-        assert sbc_ids == []  # surrogate not added when creation returns falsy
+# ----------------------------------------------------------------------
+# Footnotes → conditions
 
-    def test_procedure_creation_failure_logs_warning(
-        self, timeline_assembler, monkeypatch
-    ):
-        from usdm4.api.procedure import Procedure
 
-        monkeypatch.setattr(
-            timeline_assembler._builder.cdisc_bc_library, "exists", lambda name: False
+class TestConditions:
+    def _run(self, assembler, footnotes, **kwargs):
+        tl = timeline(
+            [column("c1", visit="V1", markers=kwargs.get("visit", [])), column("c2")],
+            [
+                activity(
+                    "Consent",
+                    [{"column": "c2", "text": "X", "markers": kwargs.get("cell", [])}],
+                    markers=kwargs.get("activity", []),
+                )
+            ],
+            footnotes,
         )
-        real_create = timeline_assembler._builder.create
+        assembler.execute([tl])
+        return assembler.conditions
 
-        def create(klass, params):
-            if klass is Procedure:
-                return None
-            return real_create(klass, params)
+    def test_a_visit_marker_is_context_only(self, assembler):
+        (c,) = self._run(assembler, [{"marker": "a", "text": "Note."}], visit=["a"])
+        assert c.contextIds == [assembler.timelines[0].instances[0].id]
+        assert c.appliesToIds == []
+        assert (c.name, c.label, c.text) == ("COND1", "a", "Note.")
 
-        monkeypatch.setattr(timeline_assembler._builder, "create", create)
+    def test_an_activity_marker(self, assembler):
+        (c,) = self._run(assembler, [{"marker": "b", "text": "B."}], activity=["b"])
+        assert c.contextIds == [assembler.activities[0].id]
+        assert c.appliesToIds == []
 
-        activity = {"name": "Thing", "actions": {"bcs": ["MadeUpBC"]}}
-        _, _, procedures = timeline_assembler._get_biomedical_concepts(activity)
+    def test_a_cell_marker_is_context_and_applies_to(self, assembler):
+        (c,) = self._run(assembler, [{"marker": "c", "text": "C."}], cell=["c"])
+        assert c.contextIds == [assembler.timelines[0].instances[1].id]
+        assert c.appliesToIds == [assembler.activities[0].id]
 
-        assert procedures == []  # procedure not added when creation returns falsy
+    def test_one_marker_in_several_places(self, assembler):
+        (c,) = self._run(
+            assembler, [{"marker": "a", "text": "A."}], visit=["a"], cell=["a"]
+        )
+        instances = assembler.timelines[0].instances
+        assert c.contextIds == [instances[0].id, instances[1].id]
+        assert c.appliesToIds == [assembler.activities[0].id]
+
+    def test_unanchored_and_unmarked_footnotes_are_dropped_and_counted(
+        self, assembler, errors
+    ):
+        conditions = self._run(
+            assembler,
+            [
+                {"marker": "a", "text": "Kept."},
+                {"marker": "z", "text": "Nowhere."},
+                {"marker": "", "text": "No marker."},
+            ],
+            visit=["a"],
+        )
+        assert [c.name for c in conditions] == ["COND1"]
+        found = messages(errors)
+        assert any("Failed to align condition" in m for m in found)
+        assert any("Condition has no reference" in m for m in found)
+        assert any(
+            "Conditions T1: in=3, referenced=2, aligned=1, dropped_no_ref=1, "
+            "dropped_no_match=1" in m
+            for m in found
+        )
+
+    def test_a_summary_even_with_no_footnotes(self, assembler, errors):
+        self._run(assembler, [])
+        assert any("Conditions T1: in=0" in m for m in messages(errors))
+
+    def test_markers_are_scoped_to_one_timeline(self, assembler):
+        second = timeline(
+            [column("c1")], [activity("PK")], [{"marker": "a", "text": "Other."}]
+        )
+        first = timeline(
+            [column("c1", markers=["a"])], [], [{"marker": "a", "text": "Mine."}]
+        )
+        assembler.execute([first, second])
+        assert [c.text for c in assembler.conditions] == ["Mine."]
