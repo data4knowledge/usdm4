@@ -5,27 +5,27 @@ only, or both; with both the pattern is used (design § 3.2). This module
 reads the printed text when there is no usable pattern. It returns the same
 typed values the pattern grammar does (``TimingPoint``, ``TimeRange``,
 ``Window``), plus ``UpTo`` for a printed ``≤N``, which only the plan can place
-(D18). It returns ``None`` for text it cannot read; it never guesses a number.
+(U4-18). It returns ``None`` for text it cannot read; it never guesses a number.
 
 Pure functions, no errors object: the caller (``columns.py``) raises the
-warnings (D16), using the flags returned here.
+warnings (U4-16), using the flags returned here.
 
 Forms read — timing:
 
 - a point with a unit word: ``D8``, ``Day 8``, ``Wk 12``, ``Week 12``,
   ``Month 6``, ``Hour 4``, ``2 hr``, ``30 min``;
 - a bare number (``15``, ``-7``): unit from the timing row label, else days
-  with ``unit_defaulted`` set (D15);
+  with ``unit_defaulted`` set (U4-15);
 - a time range: ``-28 to -1``, ``Days -14 to -1``, ``3-5``, ``Between Day 2
   and Day 4``, ``Day -28 to Day -1``;
-- ``≤N`` (``<=N``): an ``UpTo`` for the plan (D18);
+- ``≤N`` (``<=N``): an ``UpTo`` for the plan (U4-18);
 - a point that prints its own window: ``15 ± 3``, ``30 (±3)``,
-  ``Day 8 ±3 days`` (D16).
+  ``Day 8 ±3 days`` (U4-16).
 
 Forms read — window: ``±3``, ``(±3 days)``, ``±15 min``, ``±1 hr``, ``+/-3``,
 ``-1/+2 days``, and the pattern form ``-3..+3 days``. A window with no unit
 takes the window row label's unit, else the timing's unit, else days with
-``unit_defaulted`` set (D19).
+``unit_defaulted`` set (U4-19).
 
 Text is normalised first: the Unicode minus and hyphens become ``-``,
 ``+/-`` becomes ``±``, ``<=`` becomes ``≤``, runs of space become one.
@@ -87,7 +87,7 @@ _BLANK_RE = re.compile(r"^[\s\-–—]*$")
 @dataclass(frozen=True)
 class UpTo:
     """A printed ``≤N``: up to N units. Only a column before the anchor can
-    be read, as ``Day -N to Day -1`` (D18) — the plan decides."""
+    be read, as ``Day -N to Day -1`` (U4-18) — the plan decides."""
 
     unit: str
     n: int
@@ -97,7 +97,7 @@ class UpTo:
 class ReadTiming:
     """What a printed timing held. ``window`` is a window printed in the
     timing cell itself (``15 ± 3``). ``unit_defaulted`` is set when a bare
-    number took days for want of a stated unit (D15)."""
+    number took days for want of a stated unit (U4-15)."""
 
     timing: TimingPoint | TimeRange | UpTo
     window: Window | None = None
@@ -212,7 +212,7 @@ def read_window(
     timing_unit: str | None = None,
 ) -> ReadWindow | None:
     """Read a printed window. A window with no unit takes the window row
-    label's unit, else ``timing_unit``, else days (D19)."""
+    label's unit, else ``timing_unit``, else days (U4-19)."""
     if is_blank(text):
         return None
     text = normalise(text)

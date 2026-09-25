@@ -6,7 +6,7 @@ so grammar classes are compared by field and ``PatternError`` is caught as the
 
 Issue 65: each of timing and window is read from its pattern, else from its
 printed text, else nothing; a refused pattern is a warning and falls back to
-the text (D17). Cycle fields are not parsed until the next R4 issue.
+the text (U4-17). Cycle fields are not parsed until the next R4 issue.
 """
 
 import pytest

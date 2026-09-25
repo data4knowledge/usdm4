@@ -37,7 +37,7 @@ Branch `63-timeline-assembler`.
 - **63.2 Grammar** (`assembler/timeline/grammar.py`). Parse epoch, visit, timing points
   and window patterns into typed values — what today's build already uses. Unit
   tests for every one of those forms in design § 4 and for rejection of everything
-  outside it. Time ranges (D4) and cycle patterns are R4; until then a time range or
+  outside it. Time ranges (U4-4) and cycle patterns are R4; until then a time range or
   cycle value is carried as text only. *Written 2026-09-25:* `parse_timing` →
   `TimingPoint(unit, value)`, `parse_window` → `Window(lower, upper, unit)`,
   `parse_label` (trimmed, non-empty), `PatternError(kind, value, expected)`; units
@@ -52,7 +52,7 @@ Branch `63-timeline-assembler`.
   `assembler/schema/schedule_timeline_schema.py` — `ScheduleTimelineInput`,
   `ColumnInput`, `HeaderValue` (`text`, `pattern`, `label`), `HeaderNote`, `CellInput`,
   `ActivityInput`, `FootnoteInput`, `TimelineClassification`, `TimelineType`,
-  `FAMILY` / `family_of` (D1 taken as these names). Structure only — patterns are
+  `FAMILY` / `family_of` (U4-1 taken as these names). Structure only — patterns are
   parsed in the parse stage, so a time range or cycle can be carried as text until R4.
   Unknown keys refused (`extra="forbid"`). Checks inside one timeline: unique column
   ids, cells in known columns and at most one per column, known parents, unique
@@ -146,7 +146,7 @@ them. As built: design § 11.
 
 - **Redaction.** `CCI` is a valid pattern in every field and is never parsed; the
   column records which fields are redacted. Redacted epochs group by consecutive run
-  (D13, taken 2026-09-25); a redacted timing or visit never names an instance.
+  (U4-13, taken 2026-09-25); a redacted timing or visit never names an instance.
 - **Markers per value.** `HeaderValue.markers` replaces `ColumnInput.markers`; every
   header value's markers link to the column's timepoint, each once.
 - **Row labels.** `ScheduleTimelineInput.rows`, header field → printed label. Carried;
@@ -162,32 +162,34 @@ NCT05565742 (row labels, visit markers).
 ## R4 — timing and single cycles
 
 Cycle and cycle-length patterns added to the grammar; cycle text used in instance
-names and labels (`C2D8`). Anchor rule (D2), timing from the pattern for points and
-time ranges (D4), windows from the pattern with the printed text as `windowLabel`,
-text-only timing (D3), mixed units. Every instance gets a `Timing` — today a blank
+names and labels (`C2D8`). Anchor rule (U4-2), timing from the pattern for points and
+time ranges (U4-4), windows from the pattern with the printed text as `windowLabel`,
+text-only timing (U4-3), mixed units. Every instance gets a `Timing` — today a blank
 timepoint text loses all of a timeline's timings (design § 2). Cycle columns measured
-from their cycle's `Day 1` (single cycles only). Decisions D2, D3, D4 taken before the
-branch. **D2, D3, D4 taken 2026-09-25** (design § 9): D2 today's anchor rule plus a
-warning when no column is ≥ 0 and on a restart outside a cycle (D14); D3 a text-only or
-redacted timing is a zero timing plus a warning; D4 a time range is decoded here to the timing at
+from their cycle's `Day 1` (single cycles only). Decisions U4-2, U4-3, U4-4 taken before the
+branch. **U4-2, U4-3, U4-4 taken 2026-09-25** (design § 9): U4-2 today's anchor rule plus a
+warning when no column is ≥ 0 and on a restart outside a cycle (U4-14); U4-3 a text-only or
+redacted timing is a zero timing plus a warning; U4-4 a time range is decoded here to the timing at
 its start and a window forward to its end. Split: the first R4 issue (#65) is timing without
-cycles (every instance timed, D2 warnings, D3, time ranges, printed `windowLabel`, and each
+cycles (every instance timed, U4-2 warnings, U4-3, time ranges, printed `windowLabel`, and each
 of timing and window read from its pattern, else from the printed text — design
-§ 3.2); single cycles are the second. **#65 written 2026-09-25**, with D15–D21 taken
-during it (design § 9) — as built: design § 12.
+§ 3.2); single cycles are the second. **#65 written 2026-09-25**, with U4-15–U4-21 taken
+during it (design § 9) — as built: design § 12. **#65 merged 2026-09-25.** **R4 part 2 — single cycles**:
+decisions U4-22–U4-26 taken 2026-09-25 (design § 9); tested on hand-written unit fixtures
+only — the NCT04557384 pin input carries no cycle fields and is left alone until R5.
 
 ## R5 — cycle ranges and the expander
 
 The delay and the decision loop for `Cycle n-m` / `Cycle n+` (design § 6 R5), the
-mixed single-then-range case, a missing cycle length (D8), the exit condition text
-(D7). The expander follows the loop for one pass (D11) — today it would recurse
+mixed single-then-range case, a missing cycle length (U4-8), the exit condition text
+(U4-7). The expander follows the loop for one pass (U4-11) — today it would recurse
 without end on the loop (design § 7), so the expander change ships in the same
 branch, never after. This is the first `ScheduledDecisionInstance` the assembler
 creates; unit tests cover the plan and the built USDM, and the expander on a loop.
 
 ## R6 — conditional timelines and copies
 
-Sibling timelines with `entryCondition`; a column in two timelines (D5).
+Sibling timelines with `entryCondition`; a column in two timelines (U4-5).
 
 ## R7 — profile attachment
 
@@ -195,7 +197,7 @@ Sibling timelines with `entryCondition`; a column in two timelines (D5).
 
 ## R8 — gates
 
-Only once D10 is taken.
+Only once U4-10 is taken.
 
 ## Outside this repo, alongside it
 

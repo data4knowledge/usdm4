@@ -83,7 +83,7 @@ class Window:
 @dataclass(frozen=True)
 class TimeRange:
     """A time range, ``Day -28 to Day -1`` →
-    ``TimeRange(unit="day", start=-28, end=-1)`` (D4, issue 65): a scheduled
+    ``TimeRange(unit="day", start=-28, end=-1)`` (U4-4, issue 65): a scheduled
     time printed as a range, decoded by the plan to a timing at its start
     and a window forward to its end."""
 
@@ -126,7 +126,7 @@ def parse_time_range(value: str) -> TimeRange:
     """Parse a time range: ``Day -28 to Day -1``, ``Week 1 to Week 4``.
 
     Both ends are timing points in the same unit, and the end is not before
-    the start (D4, issue 65)."""
+    the start (U4-4, issue 65)."""
     text = _text("time range", value, _TIME_RANGE_EXPECTED)
     parts = re.split(" to ", text, flags=re.IGNORECASE)
     if len(parts) != 2:

@@ -121,7 +121,7 @@ class TestTiming:
 
 
 class TestTimeRange:
-    """Issue 65 — a scheduled time printed as a range (D4)."""
+    """Issue 65 — a scheduled time printed as a range (U4-4)."""
 
     @pytest.mark.parametrize(
         "pattern, unit, start, end",

@@ -4,7 +4,7 @@ Turns one validated ``ScheduleTimelineInput`` (as a dict, the way the
 Assembler hands its input on) into a ``ParsedTimeline``: one ``Column`` record
 per column. Pure: no builder, no USDM objects.
 
-Issue 65 (design § 3.2, D16, D17): each of timing and window is read the same
+Issue 65 (design § 3.2, U4-16, U4-17): each of timing and window is read the same
 way — the pattern when there is one; else the printed text, read by
 ``printed.py``; else nothing. A pattern the grammar refuses is a warning and
 is set aside, and the field falls back to its printed text: the timeline is
@@ -62,12 +62,12 @@ class Column:
     timing: TimingPoint | None = None
     # A scheduled time printed as a range; ``timing`` is then its start.
     time_range: TimeRange | None = None
-    # A printed ``≤N``, placed by the plan (D18).
+    # A printed ``≤N``, placed by the plan (U4-18).
     up_to: UpTo | None = None
     window_label: str | None = None
     window: Window | None = None
     # Where ``window`` came from: ``"window"`` (the window field) or
-    # ``"timing"`` (a window printed in the timing cell, D16).
+    # ``"timing"`` (a window printed in the timing cell, U4-16).
     window_from: str | None = None
     cycle_label: str | None = None
     cycle_length_label: str | None = None
@@ -124,7 +124,7 @@ def _pattern(value: dict | None) -> str | None:
 
 
 class _Reader:
-    """Reads one column's header values, raising the warnings (D16)."""
+    """Reads one column's header values, raising the warnings (U4-16)."""
 
     def __init__(self, data: dict, rows: dict, errors: Errors | None, t):
         self._data = data
@@ -217,7 +217,7 @@ def parse_column(
 ) -> Column:
     """Read one column's header values. ``rows`` are the timeline's header
     row labels, where a bare number's unit is stated. Problems are warnings
-    on ``errors``; nothing here stops the timeline (D17)."""
+    on ``errors``; nothing here stops the timeline (U4-17)."""
     column = Column(index=index, id=data["id"])
     reader = _Reader(data, rows or {}, errors, t)
 
@@ -275,7 +275,7 @@ def parse_timeline(
     data: dict, errors: Errors | None = None, t: int | None = None
 ) -> ParsedTimeline:
     """Read one timeline. Never raises for a bad value: problems are
-    warnings on ``errors`` (D17)."""
+    warnings on ``errors`` (U4-17)."""
     rows = dict(data.get("rows") or {})
     return ParsedTimeline(
         type=data["type"],

@@ -213,7 +213,7 @@ class TestSkippedTimelines:
         assert assembler.timelines == []
 
     def test_a_bad_pattern_does_not_stop_the_timeline(self, assembler, errors):
-        """D17: always build the timeline if at all possible."""
+        """U4-17: always build the timeline if at all possible."""
         bad = timeline([column("c1", timing=value("D1", "D1"))])
         assembler.execute([bad, simple("profile")])
         assert [t.name for t in assembler.timelines] == ["TIMELINE-1", "TIMELINE-2"]
@@ -306,7 +306,7 @@ class TestEpochs:
         ]
 
     def test_a_column_with_no_epoch_gets_an_empty_labelled_epoch(self, assembler):
-        """Today's behaviour, kept until decision D6 is taken."""
+        """Today's behaviour, kept until decision U4-6 is taken."""
         assembler.execute([timeline([column("c1"), column("c2")])])
         assert [(e.name, e.label) for e in assembler.epochs] == [("EP1", "")]
 
@@ -414,7 +414,7 @@ class TestTimings:
         assert any("differs from anchor unit" in m for m in messages(errors))
 
     def test_an_unreadable_timing_is_zero_after_the_previous_column(self, assembler):
-        """D3 — until the next R4 issue there is nothing to read a cycle day
+        """U4-3 — until the next R4 issue there is nothing to read a cycle day
         with."""
         tl = timeline(
             [
@@ -458,7 +458,7 @@ class TestTimings:
         assert [x.valueLabel for x in t.timings] == ["-7", "1", "15"]
 
     def test_a_time_range_is_labelled_decoded(self, assembler):
-        """D21: decoded start and window as labels, printed text as label."""
+        """U4-21: decoded start and window as labels, printed text as label."""
         tl = timeline(
             [
                 column("c1", timing=value("≤28", "Day -28 to Day -1")),

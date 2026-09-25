@@ -4,19 +4,19 @@ From a ``ParsedTimeline``, the ordered sequence of nodes for one timeline, each
 with its timing reference. Pure: no builder, no USDM objects.
 
 A straight chain, one activity-instance node per column. Issue 65 (design
-§ 6 R4, decisions D2, D3, D4, D18, D20):
+§ 6 R4, decisions U4-2, U4-3, U4-4, U4-18, U4-20):
 
-- **Anchor (D2).** The first column whose timing point is ≥ 0; if none, the
+- **Anchor (U4-2).** The first column whose timing point is ≥ 0; if none, the
   first column, with a warning. A restart outside a cycle (a timing point
-  lower than an earlier one, same unit, no cycle text) is warned (D14).
+  lower than an earlier one, same unit, no cycle text) is warned (U4-14).
 - **Timed columns** are measured from the anchor, with today's crossing-zero
   and mixed-unit rules.
-- **Columns with no readable timing (D3)** get a zero duration: ``After`` the
+- **Columns with no readable timing (U4-3)** get a zero duration: ``After`` the
   previous column, or ``Before`` the next when they precede the anchor, and a
   warning. So every instance is timed.
-- **``≤N`` (D18)** is read as ``Day -N to Day -1`` only before the anchor;
+- **``≤N`` (U4-18)** is read as ``Day -N to Day -1`` only before the anchor;
   anywhere else it has no readable timing.
-- **Time ranges (D4, D20)** are timed at their start with a window forward to
+- **Time ranges (U4-4, U4-20)** are timed at their start with a window forward to
   their end; crossing zero loses a day when the table has no Day 0.
 
 Delays, decisions (the cycle loop) and other exits come with later issues.
@@ -45,7 +45,7 @@ class InstanceNode:
     ``unit`` give the distance, always non-negative. ``window`` is the node's
     window, from the window field, the timing cell, or a decoded time range
     (``window_from`` says which: ``"window"``, ``"timing"``, ``"range"``).
-    ``timed`` is False for a column with no readable timing (D3)."""
+    ``timed`` is False for a column with no readable timing (U4-3)."""
 
     column: Column
     timing_type: str
@@ -111,7 +111,7 @@ class Planner:
                     "plan",
                 )
         elif column.timing is None:
-            # D3: no readable timing — zero from the neighbour toward the anchor.
+            # U4-3: no readable timing — zero from the neighbour toward the anchor.
             self._warn(
                 f"{where}, column '{column.id}': no readable timing; a zero "
                 "timing is used",
@@ -139,7 +139,7 @@ class Planner:
         )
 
     def _resolve_up_to(self, columns: list[Column], anchor: int, where: str) -> None:
-        """D18: ``≤N`` before the anchor is ``Day -N to Day -1``; elsewhere it
+        """U4-18: ``≤N`` before the anchor is ``Day -N to Day -1``; elsewhere it
         is not read."""
         for column in columns:
             up_to = column.up_to
@@ -156,7 +156,7 @@ class Planner:
                 )
 
     def _warn_restarts(self, columns: list[Column], where: str) -> None:
-        """D14: a timing lower than an earlier one in the same unit, outside a
+        """U4-14: a timing lower than an earlier one in the same unit, outside a
         cycle, is two periods and should be two timelines."""
         highest: dict[str, int] = {}
         for column in columns:
@@ -174,7 +174,7 @@ class Planner:
 
     @staticmethod
     def range_window(time_range: TimeRange, has_zero: bool) -> Window:
-        """The window forward from a time range's start to its end (D4, D20)."""
+        """The window forward from a time range's start to its end (U4-4, U4-20)."""
         length = time_range.end - time_range.start
         if (
             time_range.unit in _DAY_UNITS

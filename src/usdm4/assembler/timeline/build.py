@@ -422,7 +422,7 @@ class TimelineBuild:
     @staticmethod
     def _value_label(column) -> str:
         """The printed timing text, or ``""``. A time range is labelled with
-        its decoded start (``Day -28``) — D21; its printed text stays on
+        its decoded start (``Day -28``) — U4-21; its printed text stays on
         ``label``."""
         if column.time_range is not None:
             return f"{column.time_range.unit.capitalize()} {column.time_range.start}"
@@ -431,7 +431,7 @@ class TimelineBuild:
     @staticmethod
     def _window_label(node) -> str | None:
         """The window as printed. A window with no printed text of its own —
-        decoded from a time range (D21) or printed inside the timing cell —
+        decoded from a time range (U4-21) or printed inside the timing cell —
         is labelled in pattern form (``-0..+27 days``). A zero window from the
         window field is ``""``. With no window, the printed window text if
         any (unread or redacted), else None."""

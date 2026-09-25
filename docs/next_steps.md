@@ -49,7 +49,7 @@ coverage. Tests: `test_timeline_assembler.py` rewritten end to end; new
 **Calls made.** TLF (family) still emitted for profiles only — its presence marks a
 profile downstream; the type extension waits. A timeline with a refused pattern or no
 columns is reported and not built. Defects kept on purpose and pinned in tests: blank
-timing → no `Timing` (R4), epoch-less column → empty-label epoch (D6), `Paricipant`
+timing → no `Timing` (R4), epoch-less column → empty-label epoch (U4-6), `Paricipant`
 typo and placeholder procedure code (design § 8).
 
 **Breaking change.** Every caller of `AssemblerInput.soa` breaks; `usdm4_protocol` stays
@@ -59,8 +59,8 @@ Dave's to set.
 **Found, not this issue.** A plain `git status` from the Cowork sandbox left
 `.git/index.lock` behind (removed); use `git --no-optional-locks`.
 
-**Next.** R4 — timing from the pattern, the anchor rule (D2), text-only timing (D3),
-spans (D4), single cycles. Decide D2–D4 first. Corpus side: `protocol_corpus` issue 9
+**Next.** R4 — timing from the pattern, the anchor rule (U4-2), text-only timing (U4-3),
+spans (U4-4), single cycles. Decide U4-2–U4-4 first. Corpus side: `protocol_corpus` issue 9
 (pattern forms in the ground truth).
 
 Re-verify:
@@ -94,7 +94,7 @@ is timed as 7 days after the anchor with no error; and no step exists where a de
   expanded.
 
 **Files.** `docs/timeline_assembler_design.md` (the design: today, input schema, grammar,
-structure, rules R1–R9, the expander, open decisions D1–D12);
+structure, rules R1–R9, the expander, open decisions U4-1–U4-12);
 `docs/timeline_assembler_plan.md` (the work order, gates, callers).
 
 **Found, not this issue.** `entryCondition` is hard-coded `"Paricipant identified"`; every
@@ -502,5 +502,5 @@ Log, session 12 (2026-07-30).
 The timeline assembler is rebuilt on a text input with a pattern grammar, restructured
 into parse → plan → build, and extended with cycles, conditional timelines, profile
 attachment and gates, one issue per step. Design: `docs/timeline_assembler_design.md`.
-Work order and gates: `docs/timeline_assembler_plan.md`. Open decisions D1–D12 are in the
+Work order and gates: `docs/timeline_assembler_plan.md`. Open decisions U4-1–U4-12 are in the
 design, § 9.

@@ -49,7 +49,7 @@ class TimelineAssembler(BaseAssembler):
         dict is accepted as a list of one).
 
         Each timeline is parsed first. A timeline is always built if at all
-        possible (D17): a bad pattern or unreadable text is a warning and the
+        possible (U4-17): a bad pattern or unreadable text is a warning and the
         field falls back. Only a timeline with no columns is reported and not
         built — it can yield no instances, so nothing built from it would be
         reachable.

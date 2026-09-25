@@ -5,7 +5,8 @@ schema (§ 3), the grammar for epoch, visit, timing points and windows (§ 4), t
 parse → plan → build → naming structure (§ 5), with R1–R3 and R9 as they were.
 Rules R4–R8 are later issues. § 2 records the assembler as it was BEFORE issue 63;
 § 10 records what issue 63 built and the calls made on the way; § 11 issue 64; § 12
-issue 65 (R4 without cycles, on branch `65-r4-part-1-timeline`). Decisions still open
+issue 65 (R4 without cycles, merged to `main`). R4 part 2 (single cycles) is next,
+decisions U4-22–U4-26 taken for it. Decisions still open
 are in § 9, taken one at a time; the work order is in `timeline_assembler_plan.md`.
 
 ## 1. What the assembler is for
@@ -98,7 +99,7 @@ recompute the same tick each time.
 ## 3. The input schema
 
 `TimelineInput` is retired for the schedule. `AssemblerInput.soa` becomes a list of
-timelines in the shape below. Field names are a proposal (decision D1).
+timelines in the shape below. Field names are a proposal (decision U4-1).
 
 ```yaml
 soa:
@@ -180,7 +181,7 @@ Every header value is `{text, pattern, markers}`.
 - Printed text the assembler cannot read, with no pattern, gets no value: the text is
   carried and R4.5 applies (zero timing plus a warning).
 - A `pattern` that is present and does not match the grammar raises a warning and is
-  set aside; the field is then read from its printed text, else gets no value (D17).
+  set aside; the field is then read from its printed text, else gets no value (U4-17).
 - `pattern: "CCI"` states the sponsor redacted the value (issue 64). It is valid in
   every field and is not the same as `null`: the value exists and was withheld. Only
   the pattern states a redaction — printed `CCI` text with a `null` pattern is
@@ -204,7 +205,7 @@ assembler puts them on labels or descriptions and never parses them.
 - **Logical tables.** Joining page fragments into tables and splitting a table into
   timelines is the caller's judgement. The assembler only ever sees timelines.
 - **Copies.** A column that belongs to two timelines (a combined `EOT/ET` column)
-  appears in both, with the same `id`. What that means in USDM is decision D5.
+  appears in both, with the same `id`. What that means in USDM is decision U4-5.
 - **Parsed numbers.** There are no `value`, `unit`, `before` or `after` fields.
 
 ## 4. The pattern grammar
@@ -234,7 +235,7 @@ Rules the grammar carries:
 - **An open-ended range is `Cycle n+`.** `Cycle 2-n`, `Cycle 2+`, `Cycles 2 and
   beyond` all become `Cycle 2+`; the printed words stay in `text`.
 - **A time range** is a column whose scheduled time is a range (`-28 to -1`,
-  `≤28`). The interface takes it in either form (D4): as a time range — printed text or
+  `≤28`). The interface takes it in either form (U4-4): as a time range — printed text or
   range pattern — which `usdm4` decodes to the timing at its start and a window
   forward to its end; or already decoded, as a point plus a window, from a tool that
   holds decoded timings.
@@ -252,7 +253,7 @@ The assembler is split into four stages. Each is its own module under
 1. **Parse** (`grammar.py`, `columns.py`). Validate the input; parse every `pattern`
    into a typed value; build one column record per column. Pure functions, no USDM
    objects. A bad pattern or unreadable text is a warning with the timeline, column and
-   field, and the field falls back (D17); the timeline is still built.
+   field, and the field falls back (U4-17); the timeline is still built.
 2. **Plan** (`plan.py`). From the column records, the ordered sequence of nodes for
    one timeline: activity instance, delay, decision, exit — each node with its timing
    reference (which instance it is measured from, `Before` / `After` / `Fixed
@@ -273,7 +274,7 @@ three callers depend on it: `Assembler` calls `execute` and `clear`;
 study cells look epochs up by `label`, upper-cased); `StudyAssembler` reads
 `conditions`, `biomedical_concepts` and `biomedical_concept_surrogates`.
 
-**Failure policy.** A timeline is always built if at all possible (D17). A bad pattern
+**Failure policy.** A timeline is always built if at all possible (U4-17). A bad pattern
 or unreadable printed text never stops it: the field falls back and a warning is
 reported once with its location. A timeline is not built only when nothing can be
 built — no columns — and is then reported. Once building, a timeline is built whole
@@ -296,9 +297,9 @@ type extension; family is caller-supplied, not derived.
 One `StudyEpoch` per distinct epoch text, identity as today (trimmed, case-folded),
 named by `naming.py`. Every instance carries its column's epoch. A column with no
 epoch takes the previous column's epoch; the first column with none is an input
-error (decision D6 confirms). A cycle is never an epoch. A redacted epoch (`CCI`)
+error (decision U4-6 confirms). A cycle is never an epoch. A redacted epoch (`CCI`)
 has no text to tell one from another, so a consecutive run of redacted columns is
-one epoch and a redacted run after a non-redacted epoch is a new one (D13).
+one epoch and a redacted run after a non-redacted epoch is a new one (U4-13).
 *Today:* one epoch per distinct text, matched to columns by position; no
 inheritance and no error for a missing epoch.
 
@@ -308,7 +309,7 @@ One `ScheduledActivityInstance` per column, in column order, labelled with the t
 text (or visit text where there is no timing), named by `_sai_name` using the cycle
 and day where there is one (`C2D8`). One `Encounter` per column, labelled with the
 visit text. An instance's `activityIds` are the activities with a cell in its
-column. The cell's printed text is kept (decision D9 for where); its markers link to
+column. The cell's printed text is kept (decision U4-9 for where); its markers link to
 footnotes (R9). A redacted timing or visit is never used in an instance name; with
 both redacted the name is positional (`T1-SAI-3`). *Today:* the same from positional lists and `visits[].index`, except
 that the instance label is the timepoint text with no visit fallback, and `C2D1`
@@ -316,7 +317,7 @@ comes only from a regex on that text.
 
 ### R4 — timing
 
-1. **Anchor.** Decision D2, taken 2026-09-25: today's rule. The anchor is the first
+1. **Anchor.** Decision U4-2, taken 2026-09-25: today's rule. The anchor is the first
    column, in column order, whose timing point is ≥ 0 in any unit — screening runs
    negative, the first event is `Day 0`, `Day 1`, `Week 0`, `Month 0`. In a cycle
    column the timing is the day within the cycle, so this lands on Cycle 1 Day 1 with
@@ -324,7 +325,7 @@ comes only from a regex on that text.
    it is silent). Durations are differences, so a late anchor (`Day 14` when nothing
    earlier is timed) moves only the Fixed Reference, not the intervals. A timeline
    whose values restart outside a cycle (a second `Day 1` after later days) is
-   warned: it is two periods and should be two timelines (D14).
+   warned: it is two periods and should be two timelines (U4-14).
 2. **Duration** from the pattern, else the printed text: point minus anchor in the column's unit, with
    today's crossing-zero rule for days kept exactly.
 3. **Cycle columns** are measured from their cycle's `Day 1`, and that `Day 1` from
@@ -333,7 +334,7 @@ comes only from a regex on that text.
    follows hop by hop.
 4. **Windows** from the pattern, else the printed text: `windowLower`, `windowUpper`
    as ISO 8601 durations, `windowLabel` the printed text.
-5. **No pattern and unreadable text, or redacted** → decision D3, taken 2026-09-25: a zero timing
+5. **No pattern and unreadable text, or redacted** → decision U4-3, taken 2026-09-25: a zero timing
    (`PT0M`, `After` the previous column — `Before` the next when it precedes the
    anchor), `valueLabel` the printed text or `""`, and a warning naming the column.
    Nothing more: no extension, no flag. Never a guessed number. In a timeline with
@@ -356,20 +357,20 @@ Nothing is ever expanded. A cycle has a length, a number or range, and days.
      is the exit condition and leads to the node after the range (or the exit), and
      whose `defaultConditionId` loops back to the range's first column.
 
-  The exit condition's text is decision D7; the proposal is the printed range text
+  The exit condition's text is decision U4-7; the proposal is the printed range text
   (`Cycle 3-n`, `Cycles 1-6`) unless the caller supplies one.
 - **Mixed** — single cycles then a range (`Cycle 1`, `Cycle 2`, `Cycle 3+`) — is the
   common case. The range's first `Day 1` is one cycle length after the previous
   cycle's `Day 1`.
 - **Cycle length missing or `pattern: null`.** The loop is still built; the delay is a
-  text-only timing (decision D8).
+  text-only timing (decision U4-8).
 
 ### R6 — conditional timelines and copies
 
 A conditional timeline (`unscheduled`, `early_termination`, `adverse_event`) is a
 sibling `ScheduleTimeline`; `entryCondition` is the printed `entry_condition` text. A
 column that appears in two timelines (same `id`) becomes an instance in each. Whether
-they share one `Encounter` is decision D5.
+they share one `Encounter` is decision U4-5.
 
 ### R7 — profile timelines
 
@@ -382,7 +383,7 @@ unattached and reported. Its timings are relative to its own anchor (usually
 
 A column whose timing is a duration with no anchored offset becomes a
 `ScheduledDecisionInstance`, not a window. How to tell a gate from a window in text
-alone is decision D10; not built until it is taken.
+alone is decision U4-10; not built until it is taken.
 
 ### R9 — footnotes
 
@@ -399,9 +400,9 @@ range, then the decision's exit branch. Today a loop recurses without end: a
 condition not of the form `days <op> <n>` logs an error and takes the default — which
 in the R5 loop points back to the range's start — and on the main timeline every pass
 recomputes the same tick, so a `days` condition either exits at once or never does
-(`expander.py`, no visited set). A printed range text as the exit condition (D7) is
+(`expander.py`, no visited set). A printed range text as the exit condition (U4-7) is
 exactly the non-`days` case. How the expanded view shows a repeating
-range (a flag on the pass, the condition text) is decision D11.
+range (a flag on the pass, the condition text) is decision U4-11.
 
 ## 8. Out of scope for this work, noted
 
@@ -420,27 +421,32 @@ Taken one at a time, each recorded here with its date when taken.
 
 | id | decision | proposal |
 |---|---|---|
-| D1 | Names of the new schema classes and fields | **Taken 2026-09-25:** `ScheduleTimelineInput`, `ColumnInput`, `HeaderValue`, `HeaderNote`, `ActivityInput`, `CellInput`, `FootnoteInput`, `TimelineClassification`; fields as in § 3 |
-| D2 | The anchor rule | **Taken 2026-09-25:** today's rule — first column with a timing point ≥ 0, else the first column with a warning; no code beyond the warning (§ 6 R4.1). Checked against 72 drafted tables: `Week 0` and cycle tables anchor correctly under it; a narrower "`Day 1` or `Day 0`" rule was rejected (misses `Week 0`, needs cycle parsing, no better fallback) |
-| D3 | Form of a timing with no readable value (no pattern, printed text unreadable, or redacted) | **Taken 2026-09-25:** a zero timing (`PT0M`) from the previous column, printed text as `valueLabel`, and a warning — nothing more. **Rejected:** an extension flag (Dave: no flags); measuring from the anchor (puts ED at Day 1 in the expander); no `Timing` (DDF00060 needs a duration, and the expander crashes on a missing one) |
-| D4 | A time range (`Day -28 to Day -1`): the column's timing, its window, or both | **Taken 2026-09-25:** the interface takes both forms. A tool that already holds decoded timings sends a point and a window. A caller reading a document — `usdm4_protocol`, and the corpus ground truth — sends the time range as printed (text, range pattern, or both), and `usdm4` decodes it to the timing at its start and a window forward to its end. Decoding lives here so that nobody has to check it by hand per protocol |
-| D5 | A copied column: one `Encounter` shared by both timelines, or one each | one shared |
-| D6 | A column with no epoch | inherit the previous column's; none on the first column is an error |
-| D7 | The exit condition text on a cycle loop | printed range text unless the caller supplies one |
-| D8 | A range with no readable cycle length | loop built, delay text-only |
-| D9 | Where a cell's printed text goes (`X`, `(X)`, `Predose`) | kept on the input only until a rule needs it |
-| D10 | Gate versus window in text alone (R8) | open |
-| D11 | How the expander presents a loop | one pass, flagged as repeating |
-| D12 | Activity identity across timelines when names differ only by spacing or hyphenation | exact trimmed, case-folded match, as today |
-| D14 | Crossover periods whose day numbering restarts (a second `Day 1`) | **Working hypothesis 2026-09-25, to be proven on real cases:** one timeline per period. A `Timing` cannot cross timelines (DDF00046), so the link is an instance: the printed washout column (`Wash out 3 to 14 days`, `Minimum 2 wks after end of session 1`) becomes a linking instance in the earlier period, reached by a `Timing` that is the washout, and calling the next period through `timelineId`; the next period's `entryCondition` carries the printed text. Rejected for now: the last instance calling the next period with the washout as text only. Needs a stage-1 marking (periods as timelines, the washout column as the link) and a stage-2 rule; neither built |
-| D15 | Printed timing text that is a bare number (`15`, `-7`) with no unit in the timeline's timing row label, or no row label | **Taken 2026-09-25 (#65):** days |
-| D16 | A timing cell that prints its own window (`15 ± 3`) when the column's window field also has a value | **Taken 2026-09-25 (#65):** the window field wins, with a warning. **Standing rule with it:** every problem found reading printed text — unreadable text, a conflict, a default applied — raises a warning naming the timeline, column and field |
-| D17 | A pattern the grammar refuses | **Taken 2026-09-25 (#65):** always build the timeline if at all possible. The bad pattern is a warning and is set aside; the field is read from its printed text, else gets no value (D3 for a timing). Replaces issue 63's "refused pattern → timeline not built" |
-| D18 | Printed `≤N` as a timing | **Taken 2026-09-25 (#65):** read as the time range `Day -N to Day -1` only in a column before the anchor. Anywhere else it is not read: a zero timing after the previous column, the printed text as `valueLabel`, and a warning |
-| D19 | Unit of a printed window with no unit (`±3`) | **Taken 2026-09-25 (#65):** the window row label's unit when it states one; else the column's timing unit; else days, with a warning |
-| D20 | Window length of a time range crossing zero (`Day -3 to Day 2`) | **Taken 2026-09-25 (#65):** today's crossing-zero rule — 4 days when the table has no Day 0, 5 when it has one (`Planner.has_zero_timepoint`) |
-| D21 | Labels of a decoded time range (`≤28` → `Day -28 to Day -1`) | **Taken 2026-09-25 (#65):** `valueLabel` the decoded start (`Day -28`), `windowLabel` the decoded window in pattern form (`-0..+27 days`), `Timing.label` the printed text (`≤28`). Time ranges only; a printed point and window keep their printed text on both labels |
-| D13 | How redacted (`CCI`) epochs group | **Taken 2026-09-25 (issue 64):** a consecutive run of redacted columns is one epoch; a run after a non-redacted epoch is a new one, named with an ordinal (`CCI`, `CCI2`) |
+| U4-1 | Names of the new schema classes and fields | **Taken 2026-09-25:** `ScheduleTimelineInput`, `ColumnInput`, `HeaderValue`, `HeaderNote`, `ActivityInput`, `CellInput`, `FootnoteInput`, `TimelineClassification`; fields as in § 3 |
+| U4-2 | The anchor rule | **Taken 2026-09-25:** today's rule — first column with a timing point ≥ 0, else the first column with a warning; no code beyond the warning (§ 6 R4.1). Checked against 72 drafted tables: `Week 0` and cycle tables anchor correctly under it; a narrower "`Day 1` or `Day 0`" rule was rejected (misses `Week 0`, needs cycle parsing, no better fallback) |
+| U4-3 | Form of a timing with no readable value (no pattern, printed text unreadable, or redacted) | **Taken 2026-09-25:** a zero timing (`PT0M`) from the previous column, printed text as `valueLabel`, and a warning — nothing more. **Rejected:** an extension flag (Dave: no flags); measuring from the anchor (puts ED at Day 1 in the expander); no `Timing` (DDF00060 needs a duration, and the expander crashes on a missing one) |
+| U4-4 | A time range (`Day -28 to Day -1`): the column's timing, its window, or both | **Taken 2026-09-25:** the interface takes both forms. A tool that already holds decoded timings sends a point and a window. A caller reading a document — `usdm4_protocol`, and the corpus ground truth — sends the time range as printed (text, range pattern, or both), and `usdm4` decodes it to the timing at its start and a window forward to its end. Decoding lives here so that nobody has to check it by hand per protocol |
+| U4-5 | A copied column: one `Encounter` shared by both timelines, or one each | one shared |
+| U4-6 | A column with no epoch | inherit the previous column's; none on the first column is an error |
+| U4-7 | The exit condition text on a cycle loop | printed range text unless the caller supplies one |
+| U4-8 | A range with no readable cycle length | loop built, delay text-only |
+| U4-9 | Where a cell's printed text goes (`X`, `(X)`, `Predose`) | kept on the input only until a rule needs it |
+| U4-10 | Gate versus window in text alone (R8) | open |
+| U4-11 | How the expander presents a loop | one pass, flagged as repeating |
+| U4-12 | Activity identity across timelines when names differ only by spacing or hyphenation | exact trimmed, case-folded match, as today |
+| U4-14 | Crossover periods whose day numbering restarts (a second `Day 1`) | **Working hypothesis 2026-09-25, to be proven on real cases:** one timeline per period. A `Timing` cannot cross timelines (DDF00046), so the link is an instance: the printed washout column (`Wash out 3 to 14 days`, `Minimum 2 wks after end of session 1`) becomes a linking instance in the earlier period, reached by a `Timing` that is the washout, and calling the next period through `timelineId`; the next period's `entryCondition` carries the printed text. Rejected for now: the last instance calling the next period with the washout as text only. Needs a stage-1 marking (periods as timelines, the washout column as the link) and a stage-2 rule; neither built |
+| U4-15 | Printed timing text that is a bare number (`15`, `-7`) with no unit in the timeline's timing row label, or no row label | **Taken 2026-09-25 (#65):** days |
+| U4-16 | A timing cell that prints its own window (`15 ± 3`) when the column's window field also has a value | **Taken 2026-09-25 (#65):** the window field wins, with a warning. **Standing rule with it:** every problem found reading printed text — unreadable text, a conflict, a default applied — raises a warning naming the timeline, column and field |
+| U4-17 | A pattern the grammar refuses | **Taken 2026-09-25 (#65):** always build the timeline if at all possible. The bad pattern is a warning and is set aside; the field is read from its printed text, else gets no value (U4-3 for a timing). Replaces issue 63's "refused pattern → timeline not built" |
+| U4-18 | Printed `≤N` as a timing | **Taken 2026-09-25 (#65):** read as the time range `Day -N to Day -1` only in a column before the anchor. Anywhere else it is not read: a zero timing after the previous column, the printed text as `valueLabel`, and a warning |
+| U4-19 | Unit of a printed window with no unit (`±3`) | **Taken 2026-09-25 (#65):** the window row label's unit when it states one; else the column's timing unit; else days, with a warning |
+| U4-20 | Window length of a time range crossing zero (`Day -3 to Day 2`) | **Taken 2026-09-25 (#65):** today's crossing-zero rule — 4 days when the table has no Day 0, 5 when it has one (`Planner.has_zero_timepoint`) |
+| U4-21 | Labels of a decoded time range (`≤28` → `Day -28 to Day -1`) | **Taken 2026-09-25 (#65):** `valueLabel` the decoded start (`Day -28`), `windowLabel` the decoded window in pattern form (`-0..+27 days`), `Timing.label` the printed text (`≤28`). Time ranges only; a printed point and window keep their printed text on both labels |
+| U4-13 | How redacted (`CCI`) epochs group | **Taken 2026-09-25 (issue 64):** a consecutive run of redacted columns is one epoch; a run after a non-redacted epoch is a new one, named with an ordinal (`CCI`, `CCI2`) |
+| U4-22 | A single cycle with no `Day 1` column | **Taken 2026-09-25 (R4 part 2):** its columns are measured from the anchor, at (*n* − 1) × cycle length + (day − 1) |
+| U4-23 | Cycle *n* > 1 with no readable cycle length | **Taken 2026-09-25 (R4 part 2):** U4-3 — a zero timing and a warning; never a guessed number. Cycle 1 needs no length |
+| U4-24 | A negative day inside a cycle (`Day -1` predose) | **Taken 2026-09-25 (R4 part 2):** today's crossing-zero rule — `Day -1` is one day before the cycle's `Day 1` |
+| U4-25 | A cycle-range column (`Cycle n-m`, `Cycle n+`) before R5 | **Taken 2026-09-25 (R4 part 2):** the range is parsed, not planned; the column gets a U4-3 zero timing and a warning saying cycle ranges come with R5 |
+| U4-26 | Where a cycle column's day is read from | **Taken 2026-09-25 (R4 part 2):** the `timing` field only. A table printing the day in its visit row (`D1`) is stage 1's to assign to the timing role; `usdm4` never reads `visit` for timing |
 
 ## 10. As built — issue 63 (2026-09-25)
 
@@ -469,7 +475,7 @@ Taken one at a time, each recorded here with its date when taken.
   conditions are added only once the whole timeline has built; activities are shared
   and stay registered.
 - **Kept on purpose until a later rule:** a column with no timing text gets no
-  `Timing` (R4); an epoch-less column gets an epoch with an empty label (D6); the
+  `Timing` (R4); an epoch-less column gets an epoch with an empty label (U4-6); the
   `Paricipant identified` entry condition and the placeholder procedure code (§ 8).
 - **Dropped:** the `scheduledInstanceTimelineId` key, which was not an API field.
 - **Family names.** `unclassified` is its own family.
@@ -482,7 +488,7 @@ timing logic — R4 reads what this adds.
 - **Redaction.** `grammar.REDACTED = "CCI"`, `grammar.is_redacted()`; accepted in every
   field. `parse_column` records a redacted field in `Column.redacted` and never parses
   it; the printed text stays the label. Build: a redacted timing or window makes no
-  value (as `pattern: null` does); a redacted epoch groups by consecutive run (D13);
+  value (as `pattern: null` does); a redacted epoch groups by consecutive run (U4-13);
   a redacted timing or visit never names an instance.
 - **Markers per value.** `HeaderValue.markers`; `ColumnInput.markers` is gone (refused
   as an unknown key). `Column.markers` is field → list; `Column.all_markers` is the
@@ -497,7 +503,7 @@ timing logic — R4 reads what this adds.
 
 ## 12. As built — issue 65 (2026-09-25)
 
-R4 without cycles. Decisions D2–D4 and D15–D21 (§ 9).
+R4 without cycles. Decisions U4-2–U4-4 and U4-15–U4-21 (§ 9).
 
 - **Grammar.** `TimeRange(unit, start, end)`, `parse_time_range`, `is_time_range`.
   Both ends one unit; end not before start.
@@ -509,22 +515,22 @@ R4 without cycles. Decisions D2–D4 and D15–D21 (§ 9).
   `+/-`, `<=`). Pure; returns `None` for text it cannot read.
 - **Parse** (`columns.py`). Each of timing and window: pattern, else printed text,
   else nothing. A refused pattern is a warning and the field falls back to its text
-  (D17) — `parse_timeline` no longer raises. `parse_column(index, data, rows, errors,
+  (U4-17) — `parse_timeline` no longer raises. `parse_column(index, data, rows, errors,
   t)`. `Column` gains `time_range`, `up_to`, `window_from` (`window` / `timing`). A
   window field beats a window printed in the timing cell, and beats a time range's
-  decoded window, each with a warning (D16). Epoch and visit patterns are no longer
+  decoded window, each with a warning (U4-16). Epoch and visit patterns are no longer
   checked: blank is already no pattern, so nothing can be refused.
-- **Plan** (`plan.py`). `plan(timeline, t)`. D2 warning when no column is ≥ 0; D14
+- **Plan** (`plan.py`). `plan(timeline, t)`. U4-2 warning when no column is ≥ 0; U4-14
   restart warning (a lower timing point, same unit, no cycle text). `≤N` resolved to
-  `Day -N to Day -1` before the anchor, else warned and unread (D18). A column with
+  `Day -N to Day -1` before the anchor, else warned and unread (U4-18). A column with
   no readable timing: `PT0M`, `After` the previous column, `Before` the next before
-  the anchor, warned (D3); the anchor itself with no timing is still the Fixed
+  the anchor, warned (U4-3); the anchor itself with no timing is still the Fixed
   Reference, warned. `InstanceNode` gains `window`, `window_from` (`window`, `timing`,
-  `range`) and `timed`. `range_window` applies the crossing-zero rule (D20).
+  `range`) and `timed`. `range_window` applies the crossing-zero rule (U4-20).
 - **Build.** Every instance has a `Timing`. `valueLabel` the printed text or `""`, the
-  decoded start for a time range (D21); `label` the printed text or `""`.
+  decoded start for a time range (U4-21); `label` the printed text or `""`.
   `windowLabel`: printed window text; pattern form for a window decoded from a time
-  range (D21) **or printed in the timing cell** (`-3..+3 days` — not a decision
+  range (U4-21) **or printed in the timing cell** (`-3..+3 days` — not a decision
   taken; chosen because the cell's printed text is already `valueLabel`); `""` for a
   zero window; the printed text when the window was redacted or unread.
 - **Orchestrator.** A timeline is skipped only when it has no columns.

@@ -1,9 +1,9 @@
 """Plan — issue 63, part 63.6; issue 65.
 
 The straight chain and its one anchor: anchor choice, the crossing-zero rule,
-mixed units (kept from before the restructure); and from issue 65 the D2
-warnings, the zero-timing chain for columns with no readable timing (D3),
-``≤N`` (D18) and time ranges (D4, D20).
+mixed units (kept from before the restructure); and from issue 65 the U4-2
+warnings, the zero-timing chain for columns with no readable timing (U4-3),
+``≤N`` (U4-18) and time ranges (U4-4, U4-20).
 """
 
 import pytest
@@ -119,7 +119,7 @@ class TestIntervals:
 
 
 class TestAnchorWarnings:
-    """D2."""
+    """U4-2."""
 
     def test_no_column_at_or_after_zero_is_warned(self):
         errors = Errors()
@@ -156,7 +156,7 @@ class TestAnchorWarnings:
 
 
 class TestNoReadableTiming:
-    """D3: every instance timed — zero from the neighbour toward the anchor."""
+    """U4-3: every instance timed — zero from the neighbour toward the anchor."""
 
     def test_after_the_anchor_is_after_the_previous_column(self):
         errors = Errors()
@@ -187,7 +187,7 @@ class TestNoReadableTiming:
 
 
 class TestUpTo:
-    """D18: ``≤N`` is read only before the anchor."""
+    """U4-18: ``≤N`` is read only before the anchor."""
 
     def test_before_the_anchor_is_a_time_range(self):
         plan = _plan([_text("≤42"), _text("≤21"), "Day 1"], rows={"timing": "Days"})
@@ -210,7 +210,7 @@ class TestUpTo:
 
 
 class TestTimeRange:
-    """D4, D20: timed at the start, window forward to the end."""
+    """U4-4, U4-20: timed at the start, window forward to the end."""
 
     def _window(self, node):
         return (node.window.lower, node.window.upper, node.window.unit)
