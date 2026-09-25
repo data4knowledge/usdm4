@@ -1294,7 +1294,7 @@ class TestStudyDesignAssemblerModelProvenance:
         timeline_with_epochs,
         stated,
     ):
-        """"Said something we could not read" is not "said nothing"."""
+        """ "Said something we could not read" is not "said nothing"."""
         study_design = self._design(
             study_design_assembler,
             population_assembler,

@@ -1,4 +1,4 @@
-"""The timeline assembler's new input — issue 63, part 63.3.
+"""The timeline assembler's new input — issue 63, part 63.3; issue 64.
 
 Structure only: the schema does not parse patterns (the parse stage does), so
 a pattern outside the grammar is accepted here. Specification:
@@ -10,6 +10,7 @@ from pydantic import ValidationError
 
 from src.usdm4.assembler.schema.schedule_timeline_schema import (
     FAMILY,
+    HEADER_FIELDS,
     ColumnInput,
     HeaderValue,
     ScheduleTimelineInput,
@@ -31,13 +32,12 @@ def _timeline(**overrides) -> dict:
             {
                 "id": "c2",
                 "epoch": {"text": "Treatment", "pattern": "Treatment"},
-                "visit": {"text": "C1 D8", "pattern": "D8"},
+                "visit": {"text": "C1 D8", "pattern": "D8", "markers": ["a"]},
                 "cycle": {"text": "Cycle 1", "pattern": "Cycle 1"},
                 "cycle_length": {"text": "Cycle = 21 days", "pattern": "21 days"},
                 "timing": {"text": "D8", "pattern": "Day 8"},
                 "window": {"text": "(±3 days)", "pattern": "-3..+3 days"},
                 "notes": [{"role": "timing_clarification", "text": "pre-dose"}],
-                "markers": ["a"],
             },
         ],
         "activities": [
@@ -72,6 +72,8 @@ class TestAccepted:
         assert timeline.columns[1].cycle.pattern == "Cycle 1"
         assert timeline.columns[1].notes[0].role == "timing_clarification"
         assert timeline.activities[1].cells[1].markers == ["c"]
+        assert timeline.columns[1].visit.markers == ["a"]
+        assert timeline.rows == {}
 
     def test_minimal_timeline(self):
         timeline = ScheduleTimelineInput.model_validate({"type": "main"})
@@ -119,7 +121,49 @@ class TestAccepted:
         assert timeline.classification.orientation == "transposed"
 
 
+class TestRows:
+    """Issue 64 — each header row's printed label, keyed by header field."""
+
+    def test_header_fields(self):
+        assert HEADER_FIELDS == (
+            "epoch",
+            "visit",
+            "cycle",
+            "cycle_length",
+            "timing",
+            "window",
+        )
+
+    def test_rows_accepted(self):
+        rows = {
+            "timing": "Days from randomization",
+            "window": "Visit interval tolerance (days)",
+        }
+        timeline = ScheduleTimelineInput.model_validate(_timeline(rows=rows))
+        assert timeline.rows == rows
+
+    def test_every_header_field_is_a_row_key(self):
+        rows = {name: f"{name} label" for name in HEADER_FIELDS}
+        assert ScheduleTimelineInput.model_validate(_timeline(rows=rows)).rows == rows
+
+    @pytest.mark.parametrize("key", ["timepoint", "Timing", "notes", ""])
+    def test_unknown_row_key_refused(self, key):
+        with pytest.raises(ValidationError, match="rows"):
+            ScheduleTimelineInput.model_validate(_timeline(rows={key: "x"}))
+
+
 class TestHeaderValue:
+    def test_markers(self):
+        value = HeaderValue(text="Visit 3", pattern="Visit 3", markers=["1", "2"])
+        assert value.markers == ["1", "2"]
+
+    def test_markers_default_empty(self):
+        assert HeaderValue(pattern="Day 1").markers == []
+
+    def test_cci_is_structurally_fine(self):
+        # Issue 64: the redaction pattern; the parse stage reads it.
+        assert HeaderValue(text="[CCI]", pattern="CCI").pattern == "CCI"
+
     def test_text_and_pattern(self):
         value = HeaderValue(text="D 15", pattern="Day 15")
         assert value.label == "D 15"
@@ -166,6 +210,13 @@ class TestRefused:
     def test_unknown_column_key(self):
         data = _timeline()
         data["columns"][0]["value"] = 1  # a caller-parsed number
+        with pytest.raises(ValidationError):
+            ScheduleTimelineInput.model_validate(data)
+
+    def test_markers_on_the_column_refused(self):
+        # Issue 64: markers moved onto the header value they are printed on.
+        data = _timeline()
+        data["columns"][0]["markers"] = ["a"]
         with pytest.raises(ValidationError):
             ScheduleTimelineInput.model_validate(data)
 

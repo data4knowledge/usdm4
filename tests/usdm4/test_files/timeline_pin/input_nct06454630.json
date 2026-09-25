@@ -22,7 +22,6 @@
             "text": "Visit 1",
             "pattern": "Visit 1"
           },
-          "markers": [],
           "timing": null,
           "window": {
             "text": "",
@@ -39,7 +38,6 @@
             "text": "Visit 2",
             "pattern": "Visit 2"
           },
-          "markers": [],
           "timing": null,
           "window": {
             "text": "",
@@ -54,12 +52,12 @@
           },
           "visit": {
             "text": "Visit 3",
-            "pattern": "Visit 3"
+            "pattern": "Visit 3",
+            "markers": [
+              "1",
+              "2"
+            ]
           },
-          "markers": [
-            "1",
-            "2"
-          ],
           "timing": null,
           "window": {
             "text": "",
@@ -74,11 +72,11 @@
           },
           "visit": {
             "text": "Visit 4",
-            "pattern": "Visit 4"
+            "pattern": "Visit 4",
+            "markers": [
+              "1"
+            ]
           },
-          "markers": [
-            "1"
-          ],
           "timing": null,
           "window": {
             "text": "",
@@ -95,7 +93,6 @@
             "text": "Visit 5",
             "pattern": "Visit 5"
           },
-          "markers": [],
           "timing": null,
           "window": {
             "text": "",
@@ -112,7 +109,6 @@
             "text": "End of Study/ Visit 6",
             "pattern": "End of Study/ Visit 6"
           },
-          "markers": [],
           "timing": null,
           "window": {
             "text": "",

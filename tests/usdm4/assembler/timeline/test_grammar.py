@@ -8,14 +8,40 @@ heuristic parsing the rebuild replaces. Specification:
 import pytest
 
 from src.usdm4.assembler.timeline.grammar import (
+    REDACTED,
     UNITS,
     PatternError,
     TimingPoint,
     Window,
+    is_redacted,
     parse_label,
     parse_timing,
     parse_window,
 )
+
+
+class TestRedacted:
+    """Issue 64 — the redaction pattern."""
+
+    def test_the_constant(self):
+        assert REDACTED == "CCI"
+
+    @pytest.mark.parametrize("value", ["CCI", "cci", "Cci", " CCI ", "\tCCI\n"])
+    def test_accepted(self, value):
+        assert is_redacted(value)
+
+    @pytest.mark.parametrize(
+        "value", [None, "", "  ", "[CCI]", "CCI 1", "Redacted", "C C I", 3, ["CCI"]]
+    )
+    def test_refused(self, value):
+        assert not is_redacted(value)
+
+    def test_the_parsers_still_refuse_it(self):
+        # A redaction is caught before parsing; the parsers never accept it.
+        with pytest.raises(PatternError):
+            parse_timing("CCI")
+        with pytest.raises(PatternError):
+            parse_window("CCI")
 
 
 class TestTiming:

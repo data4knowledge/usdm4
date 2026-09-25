@@ -128,11 +128,23 @@ class TimelineBuild:
     def _add_epochs(self) -> list[StudyEpoch]:
         results: list[StudyEpoch] = []
         by_identity: dict[str, StudyEpoch] = {}
+        # Issue 64: redacted epochs cannot be told apart by their text, so a
+        # consecutive run of redacted columns is one epoch and a redacted run
+        # after a non-redacted epoch is a new one.
+        redacted_run = 0
+        previous_redacted = False
         for column in self._timeline.columns:
             label = column.epoch_label or ""
             # Keyed on the identity, not the raw text: `Screening` and
             # `Screening ` are one epoch stated twice.
             key = self._naming.identity(label)
+            redacted = column.is_redacted("epoch")
+            if redacted:
+                if not previous_redacted:
+                    redacted_run += 1
+                # A NUL prefix cannot collide with any printed label.
+                key = f"\x00redacted:{redacted_run}"
+            previous_redacted = redacted
             if key not in by_identity:
                 epoch = self._builder.create(
                     StudyEpoch,
@@ -141,7 +153,10 @@ class TimelineBuild:
                             self._qualify(
                                 self._naming.epoch_name(label, column.index + 1)
                             ),
-                            label,
+                            # Identity for the name registry: the label, or
+                            # for a redacted run the run's own key, so a
+                            # second run takes an ordinal (`CCI2`).
+                            key if redacted else label,
                         ),
                         "description": None,
                         "label": label,
@@ -191,7 +206,9 @@ class TimelineBuild:
             )
             results.append(encounter)
             self._encounter_for[column.index] = encounter
-            for marker in column.visit_markers:
+            # Markers on any header value of the column link to its
+            # timepoint, each once (issue 64).
+            for marker in column.all_markers:
                 self._link(marker, timepoint=column.index)
         self._errors.info(
             f"Encounters: {len(results)}",
@@ -324,11 +341,14 @@ class TimelineBuild:
             sai = self._builder.create(
                 ScheduledActivityInstance,
                 {
+                    # A redacted value names nothing: every instance would
+                    # be `CCI`, `CCI-2` … (issue 64). Skip to the next
+                    # source, else the positional fallback.
                     "name": self._naming.sai_name(
-                        column.timing_label,
+                        None if column.is_redacted("timing") else column.timing_label,
                         column.timing.value if column.timing else None,
                         column.timing.unit if column.timing else None,
-                        column.visit_label,
+                        None if column.is_redacted("visit") else column.visit_label,
                         self._t,
                         column.index,
                     ),

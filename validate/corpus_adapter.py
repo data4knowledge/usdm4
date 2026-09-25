@@ -102,6 +102,8 @@ def timeline_input_to_schedule(table: dict) -> dict:
     value is an integer and its unit is in the grammar, else text only, and a
     blank text with a zero value (a placeholder column) -> null; window ->
     pattern ``-b..+a <units>``, text the old label (blank for a zero window);
+    a visit's markers onto the visit value (issue 64), or the first of
+    timing / epoch present when the visit is blank;
     activities flattened, children after their parent with ``parent`` set,
     visit indexes -> cells (``X``) with their markers; conditions ->
     footnotes; ``main_soa`` or no type -> ``main``, other tables ->
@@ -140,8 +142,16 @@ def timeline_input_to_schedule(table: dict) -> dict:
                 visit.get("text"), (visit.get("text") or "").strip() or None
             ),
             "timing": _header_value(text, pattern),
-            "markers": list(visit.get("references") or []),
         }
+        # Issue 64: markers sit on a header value. The old shape put them on
+        # the visit; a blank visit hands them to the next value present.
+        markers = list(visit.get("references") or [])
+        if markers:
+            holder = next(
+                (column[k] for k in ("visit", "timing", "epoch") if column[k]), None
+            )
+            if holder is not None:
+                holder["markers"] = markers
         if i < len(windows):
             w = windows[i]
             before, after, w_unit = (

@@ -36,7 +36,9 @@ class TestColumn:
         assert parsed.id == "c1"
         assert parsed.epoch_label == "Screening"
         assert parsed.visit_label == "V 1"
-        assert parsed.visit_markers == ["a"]
+        assert parsed.markers == {"visit": ["a"]}
+        assert parsed.all_markers == ["a"]
+        assert parsed.redacted == set()
         assert parsed.timing_label == "D 15"
         assert (parsed.timing.unit, parsed.timing.value) == ("day", 15)
         assert parsed.window_label == "(±3 days)"
@@ -102,7 +104,87 @@ class TestColumn:
         assert error.value.kind == kind
 
 
+class TestRedaction:
+    """Issue 64 — ``CCI`` is a valid pattern in every field and is never
+    parsed; the printed text stays the label."""
+
+    @pytest.mark.parametrize(
+        "field", ["epoch", "visit", "cycle", "cycle_length", "timing", "window"]
+    )
+    def test_cci_is_accepted_in_every_field(self, field):
+        parsed = parse_column(0, _column(**{field: value("CCI")}))
+        assert parsed.redacted == {field}
+        assert parsed.is_redacted(field)
+
+    @pytest.mark.parametrize("pattern", ["CCI", "cci", "  CCI  "])
+    def test_cci_matches_ignoring_case_and_space(self, pattern):
+        parsed = parse_column(0, _column(timing=value("[CCI]", pattern)))
+        assert parsed.redacted == {"timing"}
+
+    def test_redacted_timing_and_window_make_no_value(self):
+        parsed = parse_column(
+            0, _column(timing=value("[CCI]", "CCI"), window=value("Redacted", "CCI"))
+        )
+        assert parsed.timing is None
+        assert parsed.window is None
+        assert parsed.timing_label == "[CCI]"
+        assert parsed.window_label == "Redacted"
+
+    def test_pattern_only_cci_labels_with_cci(self):
+        parsed = parse_column(0, _column(timing={"text": "", "pattern": "CCI"}))
+        assert parsed.timing_label == "CCI"
+
+    def test_text_cci_with_null_pattern_is_not_a_redaction(self):
+        # Only the PATTERN states a redaction; printed text is never read.
+        parsed = parse_column(0, _column(timing={"text": "CCI", "pattern": None}))
+        assert parsed.redacted == set()
+
+    def test_other_fields_still_parse(self):
+        parsed = parse_column(0, _column(visit=value("CCI"), timing=value("Day 8")))
+        assert parsed.redacted == {"visit"}
+        assert parsed.timing.value == 8
+
+
+class TestMarkers:
+    """Issue 64 — markers are carried per header value."""
+
+    def test_markers_by_field(self):
+        parsed = parse_column(
+            0,
+            _column(
+                epoch=value("Screening", markers=["e"]),
+                visit=value("V1", markers=["1", "2"]),
+                timing=value("Day 1", markers=["t"]),
+            ),
+        )
+        assert parsed.markers == {"epoch": ["e"], "visit": ["1", "2"], "timing": ["t"]}
+        assert parsed.all_markers == ["e", "1", "2", "t"]
+
+    def test_a_marker_on_two_values_is_listed_once(self):
+        parsed = parse_column(
+            0,
+            _column(
+                visit=value("V1", markers=["a"]), timing=value("Day 1", markers=["a"])
+            ),
+        )
+        assert parsed.all_markers == ["a"]
+
+    def test_a_redacted_value_keeps_its_markers(self):
+        parsed = parse_column(0, _column(timing=value("CCI", markers=["x"])))
+        assert parsed.all_markers == ["x"]
+
+
 class TestTimeline:
+    def test_rows_are_carried(self):
+        data = timeline(
+            [column("c1", timing="Day 1")],
+            rows={"timing": "Days from randomization"},
+        )
+        assert parse_timeline(data).rows == {"timing": "Days from randomization"}
+
+    def test_rows_default_empty(self):
+        assert parse_timeline(timeline([column("c1", timing="Day 1")])).rows == {}
+
     def test_parse_timeline(self):
         data = timeline(
             [column("c1", "Screening", "V1", "Day 1"), column("c2", visit="V2")],

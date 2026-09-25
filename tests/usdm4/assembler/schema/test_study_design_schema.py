@@ -373,4 +373,3 @@ class TestAdministrationProductReferences:
             interventions=[{"name": "Drug A", "administrations": [{"route": "Oral"}]}],
         )
         assert design.interventions[0].administrations[0].product_name == ""
-

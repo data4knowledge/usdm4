@@ -20,11 +20,11 @@
           },
           "visit": {
             "text": "V1",
-            "pattern": "V1"
+            "pattern": "V1",
+            "markers": [
+              "a"
+            ]
           },
-          "markers": [
-            "a"
-          ],
           "timing": {
             "text": "Day -14",
             "pattern": "Day -14"
@@ -44,7 +44,6 @@
             "text": "V2",
             "pattern": "V2"
           },
-          "markers": [],
           "timing": {
             "text": "Day 1",
             "pattern": "Day 1"
@@ -64,7 +63,6 @@
             "text": "V3",
             "pattern": "V3"
           },
-          "markers": [],
           "timing": {
             "text": "Week 2",
             "pattern": "Week 2"
@@ -84,7 +82,6 @@
             "text": "V4",
             "pattern": "V4"
           },
-          "markers": [],
           "timing": {
             "text": "Day 29",
             "pattern": "Day 29"
@@ -104,7 +101,6 @@
             "text": "FU",
             "pattern": "FU"
           },
-          "markers": [],
           "timing": {
             "text": "Cycle 2 Day 1",
             "pattern": null
@@ -269,7 +265,6 @@
             "text": "Pre-dose",
             "pattern": "Pre-dose"
           },
-          "markers": [],
           "timing": {
             "text": "0 h",
             "pattern": "Hour 0"
@@ -289,7 +284,6 @@
             "text": "2 h",
             "pattern": "2 h"
           },
-          "markers": [],
           "timing": {
             "text": "2 h",
             "pattern": "Hour 2"
@@ -309,7 +303,6 @@
             "text": "24 h",
             "pattern": "24 h"
           },
-          "markers": [],
           "timing": {
             "text": "24 h",
             "pattern": "Hour 24"

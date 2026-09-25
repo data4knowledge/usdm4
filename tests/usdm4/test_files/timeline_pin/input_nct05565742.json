@@ -22,7 +22,6 @@
             "text": "601",
             "pattern": "601"
           },
-          "markers": [],
           "timing": {
             "text": "≤42",
             "pattern": "Day -42"
@@ -42,7 +41,6 @@
             "text": "1",
             "pattern": "1"
           },
-          "markers": [],
           "timing": {
             "text": "≤21",
             "pattern": "Day -21"
@@ -62,7 +60,6 @@
             "text": "2",
             "pattern": "2"
           },
-          "markers": [],
           "timing": {
             "text": "—",
             "pattern": "Day 0"
@@ -82,7 +79,6 @@
             "text": "3",
             "pattern": "3"
           },
-          "markers": [],
           "timing": {
             "text": "15",
             "pattern": "Day 15"
@@ -102,7 +98,6 @@
             "text": "4",
             "pattern": "4"
           },
-          "markers": [],
           "timing": {
             "text": "30",
             "pattern": "Day 30"
@@ -122,7 +117,6 @@
             "text": "5",
             "pattern": "5"
           },
-          "markers": [],
           "timing": {
             "text": "60",
             "pattern": "Day 60"
@@ -142,7 +136,6 @@
             "text": "6",
             "pattern": "6"
           },
-          "markers": [],
           "timing": {
             "text": "120",
             "pattern": "Day 120"
@@ -162,7 +155,6 @@
             "text": "7",
             "pattern": "7"
           },
-          "markers": [],
           "timing": {
             "text": "180",
             "pattern": "Day 180"
@@ -182,7 +174,6 @@
             "text": "8",
             "pattern": "8"
           },
-          "markers": [],
           "timing": {
             "text": "210",
             "pattern": "Day 210"
@@ -202,7 +193,6 @@
             "text": "9",
             "pattern": "9"
           },
-          "markers": [],
           "timing": {
             "text": "240",
             "pattern": "Day 240"
@@ -222,7 +212,6 @@
             "text": "10",
             "pattern": "10"
           },
-          "markers": [],
           "timing": {
             "text": "300",
             "pattern": "Day 300"
@@ -242,7 +231,6 @@
             "text": "11",
             "pattern": "11"
           },
-          "markers": [],
           "timing": {
             "text": "360",
             "pattern": "Day 360"
@@ -262,7 +250,6 @@
             "text": "12",
             "pattern": "12"
           },
-          "markers": [],
           "timing": {
             "text": "540",
             "pattern": "Day 540"
@@ -282,7 +269,6 @@
             "text": "ED",
             "pattern": "ED"
           },
-          "markers": [],
           "timing": {
             "text": "ED",
             "pattern": "Day 0"

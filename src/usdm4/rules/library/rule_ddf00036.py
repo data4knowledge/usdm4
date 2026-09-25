@@ -12,7 +12,6 @@ from usdm4.rules.rule_template import RuleTemplate
 from usdm4.rules.timing import is_fixed_reference
 
 
-
 class RuleDDF00036(RuleTemplate):
     """
     DDF00036: If timing type is "Fixed Reference" then the corresponding attribute relativeToFrom must be filled with "Start to Start".

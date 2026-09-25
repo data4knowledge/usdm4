@@ -138,6 +138,27 @@ pin explained. The d4k and CORE integration tests
 **Breaking change.** Every caller of `AssemblerInput.soa` breaks. The version number
 is Dave's to set; it should read as breaking.
 
+## Issue 64 — redaction, per-value markers, row labels
+
+Branch `64-timeline-inputs-new-features`. Raised from `protocol_corpus` issue 9: three
+things the protocol prints that the input dropped. Schema and grammar only; R4 uses
+them. As built: design § 11.
+
+- **Redaction.** `CCI` is a valid pattern in every field and is never parsed; the
+  column records which fields are redacted. Redacted epochs group by consecutive run
+  (D13, taken 2026-09-25); a redacted timing or visit never names an instance.
+- **Markers per value.** `HeaderValue.markers` replaces `ColumnInput.markers`; every
+  header value's markers link to the column's timepoint, each once.
+- **Row labels.** `ScheduleTimelineInput.rows`, header field → printed label. Carried;
+  R4 reads the anchor.
+- **Pin.** The three pin-input columns with markers had them moved onto the visit
+  value; expected output untouched. A pin difference is a bug.
+
+**Gate.** Full suite green (VSCode), pin unchanged, coverage held.
+
+**Test cases** (`protocol_corpus` ground truth): NCT06454630 (timing row redacted),
+NCT05565742 (row labels, visit markers).
+
 ## R4 — timing and single cycles
 
 Cycle and cycle-length patterns added to the grammar; cycle text used in instance

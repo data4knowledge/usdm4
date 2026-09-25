@@ -674,7 +674,144 @@ class TestConditions:
             [column("c1")], [activity("PK")], [{"marker": "a", "text": "Other."}]
         )
         first = timeline(
-            [column("c1", markers=["a"])], [], [{"marker": "a", "text": "Mine."}]
+            [column("c1", visit="V1", markers=["a"])],
+            [],
+            [{"marker": "a", "text": "Mine."}],
         )
         assembler.execute([first, second])
         assert [c.text for c in assembler.conditions] == ["Mine."]
+
+    # Issue 64: markers are carried per header value.
+
+    @pytest.mark.parametrize("field", ["epoch", "timing", "window"])
+    def test_a_marker_on_any_header_value_is_context(self, assembler, field):
+        texts = {"epoch": "Screening", "timing": "Day 1", "window": "-1..+1 days"}
+        tl = timeline(
+            [
+                column("c1", **{field: value(texts[field], markers=["m"])}),
+                column("c2", visit="V2"),
+            ],
+            [activity("Consent", ["c2"])],
+            [{"marker": "m", "text": "M."}],
+        )
+        assembler.execute([tl])
+        (c,) = assembler.conditions
+        assert c.contextIds == [assembler.timelines[0].instances[0].id]
+        assert c.appliesToIds == []
+
+    def test_one_marker_on_two_values_of_a_column_links_once(self, assembler):
+        tl = timeline(
+            [
+                column(
+                    "c1",
+                    visit=value("V1", markers=["a"]),
+                    timing=value("Day 1", markers=["a"]),
+                )
+            ],
+            [],
+            [{"marker": "a", "text": "A."}],
+        )
+        assembler.execute([tl])
+        (c,) = assembler.conditions
+        assert c.contextIds == [assembler.timelines[0].instances[0].id]
+
+
+# ----------------------------------------------------------------------
+# Redaction (issue 64)
+
+
+def _cci() -> dict:
+    return {"text": "CCI", "pattern": "CCI"}
+
+
+class TestRedaction:
+    def test_a_redacted_timing_builds(self, assembler, errors):
+        tl = timeline(
+            [
+                column("c1", "Screening", "Visit 1", _cci()),
+                column("c2", "Treatment", "Visit 2", _cci()),
+                column("c3", "Treatment", "Visit 3", _cci()),
+            ],
+            [activity("Consent", ["c1"]), activity("Dosing", ["c2", "c3"])],
+        )
+        assembler.execute([tl])
+        (built,) = assembler.timelines
+        assert len(built.instances) == 3
+        assert len(built.timings) == 3
+        assert not any("not created" in m for m in messages(errors))
+        # The printed text is carried as the label; no number is guessed.
+        assert [t.label for t in built.timings] == ["CCI", "CCI", "CCI"]
+        assert {t.value for t in built.timings} == {"PT0M"}
+
+    def test_a_redacted_timing_does_not_name_the_instance(self, assembler):
+        tl = timeline(
+            [
+                column("c1", visit="Visit 1", timing=_cci()),
+                column("c2", visit="Visit 2", timing=_cci()),
+            ],
+        )
+        assembler.execute([tl])
+        names = [i.name for i in assembler.timelines[0].instances]
+        assert names == ["VISIT 1", "VISIT 2"]
+
+    def test_redacted_timing_and_visit_fall_back_to_position(self, assembler):
+        tl = timeline(
+            [
+                column("c1", visit=_cci(), timing=_cci()),
+                column("c2", visit=_cci(), timing=_cci()),
+            ],
+        )
+        assembler.execute([tl])
+        names = [i.name for i in assembler.timelines[0].instances]
+        assert names == ["T1-SAI-1", "T1-SAI-2"]
+
+    def test_a_redacted_window_makes_no_window(self, assembler):
+        tl = timeline([column("c1", visit="V1", timing="Day 1", window=_cci())])
+        assembler.execute([tl])
+        (timing,) = assembler.timelines[0].timings
+        assert (timing.windowLower, timing.windowUpper) == ("", "")
+        assert timing.windowLabel is None
+
+    def test_a_consecutive_redacted_run_is_one_epoch(self, assembler):
+        tl = timeline(
+            [
+                column("c1", _cci(), "V1"),
+                column("c2", _cci(), "V2"),
+                column("c3", "Follow-up", "V3"),
+            ],
+        )
+        assembler.execute([tl])
+        assert [e.label for e in assembler.epochs] == ["CCI", "Follow-up"]
+        instances = assembler.timelines[0].instances
+        assert instances[0].epochId == instances[1].epochId
+
+    def test_separate_redacted_runs_are_separate_epochs(self, assembler):
+        tl = timeline(
+            [
+                column("c1", _cci(), "V1"),
+                column("c2", "Treatment", "V2"),
+                column("c3", _cci(), "V3"),
+                column("c4", _cci(), "V4"),
+            ],
+        )
+        assembler.execute([tl])
+        epochs = assembler.epochs
+        assert [e.label for e in epochs] == ["CCI", "Treatment", "CCI"]
+        assert epochs[0].name != epochs[2].name
+        instances = assembler.timelines[0].instances
+        assert instances[0].epochId != instances[2].epochId
+        assert instances[2].epochId == instances[3].epochId
+
+    def test_printed_cci_with_no_pattern_is_ordinary_text(self, assembler):
+        # Only the pattern states a redaction: text-only `CCI` epochs group by
+        # their text as before.
+        text_only = {"text": "CCI", "pattern": None}
+        tl = timeline(
+            [
+                column("c1", text_only, "V1"),
+                column("c2", "Treatment", "V2"),
+                column("c3", text_only, "V3"),
+            ],
+        )
+        assembler.execute([tl])
+        assert [e.label for e in assembler.epochs] == ["CCI", "Treatment"]

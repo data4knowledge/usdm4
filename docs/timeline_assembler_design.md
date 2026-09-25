@@ -110,16 +110,17 @@ soa:
       orientation: null
       unit: null
       placement: null
+    rows:                      # header field -> the row's printed label (issue 64)
+      timing: "Days from randomization"
     columns:                   # document order
       - id: c1                 # caller's key, unique within the timeline
         epoch:   {text: "Screening", pattern: "Screening"}
-        visit:   {text: "V1", pattern: "V1"}
+        visit:   {text: "V1", pattern: "V1", markers: [a]}  # markers on the value
         cycle:   null
         cycle_length: null
         timing:  {text: "≤28", pattern: "Day -28 to Day -1"}
         window:  {text: "", pattern: null}
         notes:   []            # further header rows, text only (§ 3.2)
-        markers: []            # footnote markers printed on this column's header
       - id: c4
         epoch:   {text: "On-Treatment", pattern: "On-Treatment"}
         visit:   {text: "D8", pattern: "D8"}
@@ -128,7 +129,10 @@ soa:
         timing:  {text: "D8", pattern: "Day 8"}
         window:  {text: "(±3 days)", pattern: "-3..+3 days"}
         notes:   []
-        markers: []
+      - id: c5
+        epoch:   {text: "CCI", pattern: "CCI"}         # redacted (issue 64)
+        visit:   {text: "Visit 5", pattern: "Visit 5"}
+        timing:  {text: "[CCI]", pattern: "CCI"}
     activities:                # body rows, document order
       - name: "Informed consent"   # as printed
         parent: null               # name of the grouping row, or null
@@ -162,7 +166,7 @@ beside the orientation, unit and placement extensions. Today the caller supplies
 
 ### 3.2 Values: printed text and pattern form
 
-Every header value is `{text, pattern}`.
+Every header value is `{text, pattern, markers}`.
 
 - `text` is what the document prints. It is used for labels, so the protocol's words
   survive into USDM. It is never parsed.
@@ -172,6 +176,19 @@ Every header value is `{text, pattern}`.
 - `pattern: null` means the caller states the value cannot be expressed in the
   grammar. The assembler carries the text and makes no timing from it (R4).
 - A `pattern` that is present and does not match the grammar is an input error.
+- `pattern: "CCI"` states the sponsor redacted the value (issue 64). It is valid in
+  every field and is not the same as `null`: the value exists and was withheld. Only
+  the pattern states a redaction — printed `CCI` text with a `null` pattern is
+  ordinary text.
+- `markers` are the footnote markers printed on this value (`Visit 3^1,2` →
+  `["1", "2"]`). A column carries no markers of its own; the value they are printed
+  on does (issue 64).
+
+`rows` (per timeline) maps a header field to the row's printed label — "Days from
+randomization", "Visit interval tolerance (days)", "Planned Time [h:min]". The label
+states the unit, the anchor and the clock format. Keys are the six header fields
+(`epoch`, `visit`, `cycle`, `cycle_length`, `timing`, `window`); anything else is
+refused. Carried, not yet read: R4 uses the anchor it states.
 
 `notes` holds every further header row the caller keeps — a second timing row, a
 timing clarification, an unassigned row — as `{role, text}`. Text only; the
@@ -199,6 +216,7 @@ single spaces, ASCII only — a window is written `-a..+b`, never with `±`.
 | cycle, range | `Cycle <int>-<int>` or `Cycle <int>+` | `Cycle 1-6`, `Cycle 3+` |
 | cycle length | `<int> <units>` | `21 days`, `4 weeks` |
 | epoch, visit | free text, trimmed | `Screening`, `V1`, `D8` |
+| any field, redacted | `CCI` | `CCI` |
 
 `<Unit>` is one of Day, Week, Month, Year, Hour, Minute. `<units>` is its plural,
 lower case.
@@ -212,6 +230,9 @@ Rules the grammar carries:
   beyond` all become `Cycle 2+`; the printed words stay in `text`.
 - **A timing span** is a column whose scheduled time is a range (`-28 to -1`,
   `≤28`). Whether a span is the column's timing or its window is decision D4.
+
+- **A redacted value is `CCI`** in any field, ignoring case. It is never parsed: no
+  timing, no window, no guessed number. A later rule may supply a default.
 
 Anything the grammar cannot express is `pattern: null`, stated by the caller.
 
@@ -267,9 +288,11 @@ type extension; family is caller-supplied, not derived.
 One `StudyEpoch` per distinct epoch text, identity as today (trimmed, case-folded),
 named by `naming.py`. Every instance carries its column's epoch. A column with no
 epoch takes the previous column's epoch; the first column with none is an input
-error (decision D6 confirms). A cycle is never an epoch. *Today:* one epoch per
-distinct text, matched to columns by position; no inheritance and no error for a
-missing epoch.
+error (decision D6 confirms). A cycle is never an epoch. A redacted epoch (`CCI`)
+has no text to tell one from another, so a consecutive run of redacted columns is
+one epoch and a redacted run after a non-redacted epoch is a new one (D13).
+*Today:* one epoch per distinct text, matched to columns by position; no
+inheritance and no error for a missing epoch.
 
 ### R3 — encounters, instances and cells
 
@@ -278,7 +301,8 @@ text (or visit text where there is no timing), named by `_sai_name` using the cy
 and day where there is one (`C2D8`). One `Encounter` per column, labelled with the
 visit text. An instance's `activityIds` are the activities with a cell in its
 column. The cell's printed text is kept (decision D9 for where); its markers link to
-footnotes (R9). *Today:* the same from positional lists and `visits[].index`, except
+footnotes (R9). A redacted timing or visit is never used in an instance name; with
+both redacted the name is positional (`T1-SAI-3`). *Today:* the same from positional lists and `visits[].index`, except
 that the instance label is the timepoint text with no visit fallback, and `C2D1`
 comes only from a regex on that text.
 
@@ -345,7 +369,8 @@ alone is decision D10; not built until it is taken.
 
 ### R9 — footnotes
 
-As today: markers on column headers, activity names and cells link footnotes to
+As today: markers on header values (any field — issue 64; a marker on two values of
+one column links once), activity names and cells link footnotes to
 instances and activities; a footnote whose marker is found becomes a `Condition`
 with its text verbatim, `contextIds` and `appliesToIds` as today; an unanchored
 footnote is dropped and counted. Never resolved into logic.
@@ -390,6 +415,7 @@ Taken one at a time, each recorded here with its date when taken.
 | D10 | Gate versus window in text alone (R8) | open |
 | D11 | How the expander presents a loop | one pass, flagged as repeating |
 | D12 | Activity identity across timelines when names differ only by spacing or hyphenation | exact trimmed, case-folded match, as today |
+| D13 | How redacted (`CCI`) epochs group | **Taken 2026-09-25 (issue 64):** a consecutive run of redacted columns is one epoch; a run after a non-redacted epoch is a new one, named with an ordinal (`CCI`, `CCI2`) |
 
 ## 10. As built — issue 63 (2026-09-25)
 
@@ -423,3 +449,23 @@ Taken one at a time, each recorded here with its date when taken.
 - **Dropped:** the `scheduledInstanceTimelineId` key, which was not an API field.
 - **Family names.** `unclassified` is its own family.
 
+## 11. As built — issue 64 (2026-09-25)
+
+Three things the protocol prints that the input dropped. Schema and grammar only; no
+timing logic — R4 reads what this adds.
+
+- **Redaction.** `grammar.REDACTED = "CCI"`, `grammar.is_redacted()`; accepted in every
+  field. `parse_column` records a redacted field in `Column.redacted` and never parses
+  it; the printed text stays the label. Build: a redacted timing or window makes no
+  value (as `pattern: null` does); a redacted epoch groups by consecutive run (D13);
+  a redacted timing or visit never names an instance.
+- **Markers per value.** `HeaderValue.markers`; `ColumnInput.markers` is gone (refused
+  as an unknown key). `Column.markers` is field → list; `Column.all_markers` is the
+  union in field order, each once, and is what links to the timepoint.
+- **Row labels.** `ScheduleTimelineInput.rows` (header field → printed label, keys
+  checked against `HEADER_FIELDS`); carried to `ParsedTimeline.rows`. Nothing reads it.
+- **Pin inputs** moved their column markers onto the visit value (3 columns:
+  `features` 1, `nct06454630` 2). Expected output is unchanged — the pin is the proof
+  the move is behaviour-neutral. `validate/corpus_adapter.py` does the same move
+  (to timing, then epoch, when the visit is blank).
+- **Breaking** for any caller that put `markers` on the column. Unreleased since #63.

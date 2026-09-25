@@ -50,6 +50,18 @@ FAMILY: dict[str, str] = {
 }
 
 
+# The header fields of a column, in the order they are read. Also the only
+# keys ``ScheduleTimelineInput.rows`` accepts.
+HEADER_FIELDS: tuple[str, ...] = (
+    "epoch",
+    "visit",
+    "cycle",
+    "cycle_length",
+    "timing",
+    "window",
+)
+
+
 def family_of(timeline_type: str) -> str:
     """The family a timeline type belongs to. Derived, never supplied."""
     return FAMILY[timeline_type]
@@ -67,10 +79,15 @@ class HeaderValue(_Model):
     - ``text`` only (``pattern`` null): the caller states the value cannot be
       expressed in the grammar; it is carried as text and never parsed.
     - both empty: not a value — leave the field null instead.
+
+    ``pattern: "CCI"`` states the sponsor redacted the value (issue 64) —
+    valid in every field. ``markers`` are the footnote markers printed on
+    THIS value (``Visit 3^1,2`` → ``markers: ["1", "2"]``).
     """
 
     text: str = ""
     pattern: str | None = None
+    markers: list[str] = []
 
     @model_validator(mode="after")
     def _not_empty(self) -> "HeaderValue":
@@ -96,7 +113,8 @@ class HeaderNote(_Model):
 
 
 class ColumnInput(_Model):
-    """One column of the schedule, in document order."""
+    """One column of the schedule, in document order. Footnote markers sit
+    on the header value they are printed on, not on the column (issue 64)."""
 
     id: str
     epoch: HeaderValue | None = None
@@ -106,7 +124,6 @@ class ColumnInput(_Model):
     timing: HeaderValue | None = None
     window: HeaderValue | None = None
     notes: list[HeaderNote] = []
-    markers: list[str] = []
 
     @model_validator(mode="after")
     def _id_not_blank(self) -> "ColumnInput":
@@ -167,6 +184,10 @@ class ScheduleTimelineInput(_Model):
     entry_condition: str | None = None
     attaches_to: str | None = None
     classification: TimelineClassification = TimelineClassification()
+    # Header field -> the row's printed label ("Days from randomization").
+    # Carries the unit, the anchor and the clock format as printed. Issue 64:
+    # carried, not yet read — rule R4 uses it.
+    rows: dict[str, str] = {}
     columns: list[ColumnInput] = []
     activities: list[ActivityInput] = []
     footnotes: list[FootnoteInput] = []
@@ -177,6 +198,13 @@ class ScheduleTimelineInput(_Model):
 
     @model_validator(mode="after")
     def _check_references(self) -> "ScheduleTimelineInput":
+        unknown_rows = sorted(set(self.rows) - set(HEADER_FIELDS))
+        if unknown_rows:
+            raise ValueError(
+                f"rows keys must be header fields {list(HEADER_FIELDS)}; "
+                f"unknown: {unknown_rows}"
+            )
+
         column_ids = [c.id for c in self.columns]
         duplicates = sorted({x for x in column_ids if column_ids.count(x) > 1})
         if duplicates:

@@ -12,7 +12,6 @@ from usdm4.rules.rule_template import RuleTemplate
 from usdm4.rules.timing import is_fixed_reference
 
 
-
 class RuleDDF00011(RuleTemplate):
     """
     DDF00011: Anchor timings (e.g. type is "Fixed Reference") must be related to a scheduled activity instance via a relativeFromScheduledInstance relationship.

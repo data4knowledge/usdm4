@@ -88,7 +88,10 @@ class TestRuleDDF00009:
                     "instances": [{"id": "SAI1"}, {"id": "SAI2"}],
                     "timings": [
                         {
-                            "type": {"code": "C201358", "decode": "Fixed Reference Timing Type"},
+                            "type": {
+                                "code": "C201358",
+                                "decode": "Fixed Reference Timing Type",
+                            },
                             # Target is NOT one of this timeline's instances
                             "relativeToScheduledInstanceId": "SAI_elsewhere",
                         }
@@ -112,7 +115,10 @@ class TestRuleDDF00009:
                     "instances": [],
                     "timings": [
                         {
-                            "type": {"code": "C201358", "decode": "Fixed Reference Timing Type"},
+                            "type": {
+                                "code": "C201358",
+                                "decode": "Fixed Reference Timing Type",
+                            },
                             "relativeToScheduledInstanceId": "SAI1",
                         }
                     ],
@@ -147,7 +153,10 @@ class TestRuleDDF00009:
                     "instances": [{"id": "SAI1"}],
                     "timings": [
                         {
-                            "type": {"code": "C201358", "decode": "Fixed Reference Timing Type"},
+                            "type": {
+                                "code": "C201358",
+                                "decode": "Fixed Reference Timing Type",
+                            },
                             "relativeToScheduledInstanceId": "SAI1",
                         }
                     ],

@@ -13,7 +13,6 @@ from usdm4.rules.rule_template import RuleTemplate
 from usdm4.rules.timing import is_fixed_reference
 
 
-
 class RuleDDF00031(RuleTemplate):
     """
     DDF00031: If timing type is not "Fixed Reference" then it must point to two scheduled instances (e.g. the relativeFromScheduledInstance and relativeToScheduledInstance attributes must not be missing and must not be equal to each other).

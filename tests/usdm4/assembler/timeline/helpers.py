@@ -15,23 +15,33 @@ def root_path() -> str:
     return os.path.join(base, "src/usdm4")
 
 
-def value(text: str | None = None, pattern: str | None = None) -> dict:
+def value(
+    text: str | None = None,
+    pattern: str | None = None,
+    markers: list[str] | None = None,
+) -> dict:
     """A header value. ``value("Day 1")`` is printed text and pattern alike."""
     if pattern is None and text is not None:
         pattern = text
-    return {"text": text or "", "pattern": pattern}
+    data = {"text": text or "", "pattern": pattern}
+    if markers:
+        data["markers"] = list(markers)
+    return data
 
 
 def column(
     id: str,
     epoch: str | None = None,
-    visit: str | None = None,
+    visit: str | dict | None = None,
     timing: str | dict | None = None,
     window: str | dict | None = None,
     markers: list[str] | None = None,
     **extra,
 ) -> dict:
-    """A column. String arguments are used as printed text and pattern."""
+    """A column. String arguments are used as printed text and pattern.
+
+    ``markers`` is a shorthand for markers on the VISIT value (issue 64 moved
+    them off the column); it needs a visit."""
 
     def _v(x):
         if x is None or isinstance(x, dict):
@@ -44,8 +54,10 @@ def column(
         "visit": _v(visit),
         "timing": _v(timing),
         "window": _v(window),
-        "markers": markers or [],
     }
+    if markers:
+        assert data["visit"] is not None, "markers= needs a visit"
+        data["visit"] = {**data["visit"], "markers": list(markers)}
     data.update(extra)
     return data
 

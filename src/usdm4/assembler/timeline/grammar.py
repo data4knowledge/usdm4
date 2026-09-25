@@ -17,12 +17,20 @@ Rules common to every pattern:
 - keywords (``Day``, ``days`` …) are matched ignoring case;
 - ASCII only — digits are ``0``-``9``, the sign is ``-`` (a window is written
   ``-3..+3 days``, never with ``±``).
+
+A redacted value — the sponsor printed ``CCI`` in place of it — has the
+pattern ``CCI`` in every field (issue 64). It is a statement that the value
+exists and was withheld, which is not the same as ``pattern: null`` (the
+value is there but the grammar cannot express it). ``is_redacted`` tests for
+it; the parse functions below never see it.
 """
 
 import re
 from dataclasses import dataclass
 
 UNITS = ("day", "week", "month", "year", "hour", "minute")
+
+REDACTED = "CCI"
 
 _UNIT_KEYWORDS = "|".join(UNITS)
 _UNIT_PLURALS = "|".join(f"{unit}s" for unit in UNITS)
@@ -83,6 +91,12 @@ def _text(kind: str, value, expected: str) -> str:
     if not isinstance(value, str):
         raise PatternError(kind, value, expected)
     return value.strip()
+
+
+def is_redacted(value) -> bool:
+    """True when a pattern is the redaction ``CCI`` (any case, trimmed).
+    Valid in every field."""
+    return isinstance(value, str) and value.strip().upper() == REDACTED
 
 
 def parse_timing(value: str) -> TimingPoint:
