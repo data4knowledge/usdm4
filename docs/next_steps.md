@@ -19,13 +19,15 @@ record of the rule generation process).
 
 This repo is **machine A** of three parallel threads (plan: `protocol_corpus/docs/next_steps.md`).
 Work here, one issue each: cycle reading (#68, merged) → R5 cycle loop (#69, merged) → R6
-(#70, merged) → R7 (#71, closed, not yet merged); R8 waits on U4-10. Copied columns (U4-5 shared `Encounter`)
-wait on `protocol_corpus` `N78`, a schema change. The
+(#70, merged) → R7 (#71, merged) → **structured input (#73, built, branch `73-update-schema`)** →
+R8 (#72, branch `72-r8-variable-delay`). Copied columns (U4-5 shared `Encounter`)
+wait on `protocol_corpus` `N78`, a schema change (kept out of #73). The
 expander is its own issue (decide U4-11 first): it is off the build path but blocks the
 next release once R5 is merged. Order and schema checks: `timeline_assembler_plan.md`
 § *Order from here*. **The timeline input schema
 (`src/usdm4/assembler/schema/schedule_timeline_schema.py`) is frozen** — `usdm4_protocol` (machine B)
-builds against it; a change needs its own issue, merged first, with B and C told. Gate here: tests
+builds against it; a change needs its own issue, merged first, with B and C told. #73 is
+that change (U4-35): B and C must be told before it merges. Gate here: tests
 and pins only. Corpus figures are run and quoted on machine C only. Nothing is written to
 `protocol_corpus` from here.
 
@@ -34,7 +36,74 @@ and pins only. Corpus figures are run and quoted on machine C only. Nothing is w
 Newest first. This repo's own log: every session that works a `usdm4` issue is entered here in
 full, whichever Claude project drove it (see `CLAUDE.md` § *Session log*).
 
-### 2026-09-26 — ISSUE 71 CLOSED, NOT YET MERGED (GitHub 71, branch `71-r7-profile-attachment`): profiles hang off the activity they name
+### 2026-09-26 — ISSUE 73 BUILT (GitHub 73, branch `73-update-schema`): structured input, `usdm4` never reads printed text
+- `usdm4 @ 73-update-schema`. Driven from the USDM4 project (machine A). Started as R8 (#72, branch
+  `72-r8-variable-delay`, docs only so far); R8 needed the input to carry a delay, which became #73.
+- `protocol_corpus` touched: read only (`docs/issues.md`, `docs/spec/`, ground truths of NCT03069989,
+  NCT03360071, NCT03421379, NCT04050553 — searched for washout columns). Nothing written.
+- **State:** built; **full suite green (Dave, VSCode)**; not merged. **B and C not yet told.**
+
+**Decisions (Dave), design § 9.**
+- U4-10 reframed: a gate is a variable delay (`Washout 2-10 days`), built with R5's loop — start node →
+  1-day delay → decision; exit `(≥ 2 days and washed out) or 10 days`, else back to the start node.
+  `Screening ≤28 days` / `Run-in 2 weeks` are ordinary timings. Open: the exit text.
+- U4-14: in theory not needed — a crossover period chains after the washout gate like a cycle; to prove
+  on R8's test case (NCT03069989 checked by Dave; NCT03421379 old-shape).
+- U4-35 (new): `usdm4` is algorithm only; the caller structures every value; `text` carried, never read,
+  used only as a label (empty → rendered). Units `minutes … years`. Cycle `{first, last}`. Cycle length
+  `{value, unit}`. Time range `{start, end, unit}` in printed numbers — a range is not a window; USDM
+  storage and Day 0 arithmetic are `usdm4`'s (briefly taken as "stage 1 sends timing + window",
+  reversed). `day_zero` flag, default Day 1; a printed Day 0 with the flag false is a warning, flag
+  used. `redacted: true` replaces `CCI`. Delay `{min, max, unit}`. N78 kept out.
+- Not ruled by Dave (Claude's addition, flagged): a value with text and no structure is accepted as
+  "could not structure" — carried as its label, not read, warned. The pins need it (e.g. course lists
+  `1, 2, 3, 4`, window `d1`, which the old code could not read either).
+
+**What changed.** Design § 19 lists it. Schema rewritten (value objects, `day_zero`, `delay`);
+`timeline/values.py` new; `columns.py` rewritten; `plan.py` (Day 0 from the flag, `≤N` and
+`has_zero_timepoint` gone); `build.py` (cell-window label path gone); `grammar.py`, `printed.py` and
+their tests deleted; `validate/corpus_adapter.py` emits the structured form. Tests: compact fixture
+notation converted by `tests/usdm4/assembler/timeline/structure.py`; `test_columns.py` and schema tests
+rewritten; printed-text tests deleted or rewritten. Pin inputs converted by a one-off script run on the
+OLD parse (`convert_pins.py`, a one-off kept outside the repo) — every expected output unchanged. Docs: design § 3, § 4
+(retired), § 9, § 19; plan; this file.
+
+**The numbers.** Sandbox (Python 3.10, no `cdisc-rules-engine`, `PYTHONPATH=src:.`):
+`tests/usdm4/assembler` 1,356 pass, 2 skipped; the 8 pins unchanged; `schedule_timeline_schema.py`,
+`columns.py`, `values.py`, `build.py`, `timeline_assembler.py` 100%; `plan.py` 99% over the timeline
+tests alone, the same two lines as before the change (454/596 then, 458/600 now). Ruff: no new findings
+beyond the baseline; format clean. Full suite green in VSCode (Dave), after a fix: the
+integration fixture (`tests/usdm4/integration/conftest.py`) still sent `{text, pattern}` — converted.
+
+**Rejected.** Pattern strings for the delay (`2 to 10 days`) — text in, however strict. A structured
+`delay` only, patterns kept elsewhere (a mixed interface). Stage 1 sending a range as timing + window
+(pushes a USDM workaround and the Day 0 arithmetic onto B and C). Inferring Day 0 from the columns.
+
+**Found, not this issue.**
+- NCT03069989's reviewed header has no timing row: every day value and the washout
+  `(7-28 days between doses)` sit in the visit row, unstructured. It needs structured timings and a
+  `delay` in its ground truth before it can be R8's pin.
+- The only real gates found are crossover washouts (NCT03069989, NCT03421379); the scan searched the
+  word "washout" only.
+
+**Process slip.** A version-control command was run by mistake while deleting files; it left an empty
+index lock file in the repo's version-control folder, removed at once. Nothing else changed. The rule
+stands: Claude runs no version-control commands in Dave's repos.
+
+**Next** (in order: B and C are blocked by #73 until told; R8 needs #73's `delay`).
+1. Review and merge #73.
+2. Tell B (`usdm4_protocol` emits the structured form) and C (`assemble_ground_truth`, the columns
+   screen and ground-truth storage; issue 13's "range as start + window" is replaced by the range form;
+   `day_zero` per protocol).
+3. R8 (#72): U4-10 exit text, then build on NCT03069989 (patterns/structure needed in its ground truth).
+4. N78; U4-11 and the expander before the next release.
+
+Re-verify:
+```
+python3 -m pytest tests/usdm4/assembler/timeline tests/usdm4/assembler/test_timeline_assembler.py tests/usdm4/assembler/test_timeline_pin.py tests/usdm4/assembler/schema -q
+```
+
+### 2026-09-26 — ISSUE 71 MERGED (GitHub 71, branch `71-r7-profile-attachment`): profiles hang off the activity they name
 - `usdm4 @ 71-r7-profile-attachment`. Driven from the USDM4 project (machine A).
 - `protocol_corpus` touched: read `docs/issues.md`, the `ground_truth.yaml` of the seven protocols with a
   profile timeline, and NCT02674152's `build/` drafts; `scripts/draft_patterns.py` run read-only. **One
@@ -967,7 +1036,7 @@ exception path).
 Full context and the usdm4_protocol half: `usdm4_protocol/docs/next_steps.md` § Session
 Log, session 12 (2026-07-30).
 
-## 10. Timeline assembler upgrade (issues 63–70 merged; 71 (R7) closed 2026-09-26, not yet merged; R8, N78 and the expander to come)
+## 10. Timeline assembler upgrade (issues 63–71 merged; 73 (structured input) built 2026-09-26; R8 (#72), N78 and the expander to come)
 
 The timeline assembler is rebuilt on a text input with a pattern grammar, restructured
 into parse → plan → build, and extended with cycles, conditional timelines, profile

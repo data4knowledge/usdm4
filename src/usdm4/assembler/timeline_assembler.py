@@ -1,9 +1,10 @@
 """The timeline assembler — orchestrates parse → plan → build (issue 63).
 
 Input: a list of ``ScheduleTimelineInput`` dicts (validated and dumped by
-``Assembler``). Every header value is printed text, a pattern form, or both —
-and all parsing happens here, in ``timeline/columns.py`` with the grammar in
-``timeline/grammar.py`` and the printed-text reader in ``timeline/printed.py``. Design: ``docs/timeline_assembler_design.md``.
+``Assembler``). Every header value is structured by the caller (issue 73,
+U4-35); ``usdm4`` never reads printed text — ``timeline/columns.py`` copies the
+values across, printed text kept only as labels. Design:
+``docs/timeline_assembler_design.md``.
 
 The public surface is unchanged, because three callers read it: ``Assembler``
 calls ``execute`` and ``clear``; ``StudyDesignAssembler`` reads ``epochs``,
@@ -49,8 +50,8 @@ class TimelineAssembler(BaseAssembler):
         dict is accepted as a list of one).
 
         Each timeline is parsed first. A timeline is always built if at all
-        possible (U4-17): a bad pattern or unreadable text is a warning and the
-        field falls back. Only a timeline with no columns is reported and not
+        possible (U4-17): a value sent as text only is a warning and is not
+        read. Only a timeline with no columns is reported and not
         built — it can yield no instances, so nothing built from it would be
         reachable.
         Exactly one built timeline carries ``mainTimeline``: the first of type

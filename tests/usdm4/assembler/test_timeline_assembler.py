@@ -497,14 +497,15 @@ class TestSkippedTimelines:
         assembler.execute([self._empty(), self._empty()])
         assert assembler.timelines == []
 
-    def test_a_bad_pattern_does_not_stop_the_timeline(self, assembler, errors):
-        """U4-17: always build the timeline if at all possible."""
-        bad = timeline([column("c1", timing=value("D1", "D1"))])
-        assembler.execute([bad, simple("profile")])
+    def test_a_text_only_timing_does_not_stop_the_timeline(self, assembler, errors):
+        """U4-17: always build the timeline if at all possible. Issue 73: a
+        timing sent as text only is not read (U4-35), labelled, warned."""
+        text_only = timeline([column("c1", timing={"text": "D1"})])
+        assembler.execute([text_only, simple("profile")])
         assert [t.name for t in assembler.timelines] == ["TIMELINE-1", "TIMELINE-2"]
         assert assembler.timelines[0].timings[0].valueLabel == "D1"
         assert any(
-            m.startswith("Timeline 1, column 'c1', timing:") and "'D1'" in m
+            m.startswith("Timeline 1, column 'c1': no readable timing")
             for m in messages(errors)
         )
 
@@ -801,12 +802,14 @@ class TestTimings:
         assert timing_types(t) == ["Before", "Fixed Reference"]
         assert any("column 'c1': no readable timing" in m for m in messages(errors))
 
-    def test_text_only_timing_is_read(self, assembler):
+    def test_structured_timings_keep_their_printed_labels(self, assembler):
+        """Issue 73: the caller structures bare numbers (unit from the row
+        label); the printed text is the label."""
         tl = timeline(
             [
-                column("c1", timing={"text": "-7", "pattern": None}),
-                column("c2", timing={"text": "1", "pattern": None}),
-                column("c3", timing={"text": "15", "pattern": None}),
+                column("c1", timing={"text": "-7", "value": -7, "unit": "days"}),
+                column("c2", timing={"text": "1", "value": 1, "unit": "days"}),
+                column("c3", timing={"text": "15", "value": 15, "unit": "days"}),
             ],
             rows={"timing": "Days from randomization"},
         )
@@ -836,11 +839,16 @@ class TestTimings:
             "P27D",
         )
 
-    def test_printed_up_to_before_the_anchor(self, assembler):
+    def test_up_to_structured_by_the_caller(self, assembler):
+        """Issue 73: ``≤42`` before the anchor is the caller's to structure,
+        as a range (was U4-18, read by ``usdm4``)."""
         tl = timeline(
             [
-                column("c1", timing={"text": "≤42", "pattern": None}),
-                column("c2", timing={"text": "1", "pattern": None}),
+                column(
+                    "c1",
+                    timing={"text": "≤42", "start": -42, "end": -1, "unit": "days"},
+                ),
+                column("c2", timing={"text": "1", "value": 1, "unit": "days"}),
             ],
             rows={"timing": "Days from randomization"},
         )
@@ -853,11 +861,17 @@ class TestTimings:
         )
         assert timing.windowUpper == "P41D"
 
-    def test_a_window_in_the_timing_cell(self, assembler):
+    def test_a_window_printed_in_the_timing_cell(self, assembler):
+        """Issue 73: the caller puts it in the window field with no text of
+        its own; the label is rendered."""
         tl = timeline(
             [
                 column("c1", timing="Day 1"),
-                column("c2", timing={"text": "Day 15 ± 3", "pattern": None}),
+                column(
+                    "c2",
+                    timing={"text": "Day 15 ± 3", "value": 15, "unit": "days"},
+                    window={"before": 3, "after": 3, "unit": "days"},
+                ),
             ]
         )
         assembler.execute([tl])
@@ -918,8 +932,10 @@ class TestWindows:
             "",
         )
 
-    def test_a_text_only_window(self, assembler):
-        timing = self._timing(assembler, {"text": "±2", "pattern": None})
+    def test_a_bare_window_structured_by_the_caller(self, assembler):
+        timing = self._timing(
+            assembler, {"text": "±2", "before": 2, "after": 2, "unit": "days"}
+        )
         assert (timing.windowLabel, timing.windowLower, timing.windowUpper) == (
             "±2",
             "P2D",

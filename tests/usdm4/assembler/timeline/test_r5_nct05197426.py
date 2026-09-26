@@ -22,6 +22,7 @@ from src.usdm4.assembler.schema.schedule_timeline_schema import (
 from src.usdm4.assembler.timeline_assembler import TimelineAssembler
 from src.usdm4.builder.builder import Builder
 from tests.usdm4.assembler.timeline.helpers import root_path
+from tests.usdm4.assembler.timeline.structure import convert_column
 from tests.usdm4.helpers.files import read_json_file
 
 
@@ -188,7 +189,7 @@ def _col(i, timing, cycle=None, length=None, epoch="Treatment"):
 
 def _build(builder, specs):
     builder.clear()
-    columns = [_col(i + 1, *spec) for i, spec in enumerate(specs)]
+    columns = [convert_column(_col(i + 1, *spec)) for i, spec in enumerate(specs)]
     soa = {
         "type": "main",
         "columns": columns,

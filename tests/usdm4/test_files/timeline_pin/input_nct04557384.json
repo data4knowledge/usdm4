@@ -11,248 +11,6 @@
         "unit": null,
         "placement": null
       },
-      "columns": [
-        {
-          "id": "c1",
-          "epoch": {
-            "text": "Screening",
-            "pattern": "Screening"
-          },
-          "visit": {
-            "text": "≤28",
-            "pattern": "≤28"
-          },
-          "timing": null,
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        },
-        {
-          "id": "c2",
-          "epoch": {
-            "text": "Screening",
-            "pattern": "Screening"
-          },
-          "visit": {
-            "text": "≤7",
-            "pattern": "≤7"
-          },
-          "timing": null,
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        },
-        {
-          "id": "c3",
-          "epoch": {
-            "text": "On-Treatment",
-            "pattern": "On-Treatment"
-          },
-          "visit": {
-            "text": "D1",
-            "pattern": "D1"
-          },
-          "timing": null,
-          "window": {
-            "text": "-3..+3 day",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c4",
-          "epoch": {
-            "text": "On-Treatment",
-            "pattern": "On-Treatment"
-          },
-          "visit": {
-            "text": "D8",
-            "pattern": "D8"
-          },
-          "timing": null,
-          "window": {
-            "text": "-3..+3 day",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c5",
-          "epoch": {
-            "text": "On-Treatment",
-            "pattern": "On-Treatment"
-          },
-          "visit": {
-            "text": "D15",
-            "pattern": "D15"
-          },
-          "timing": null,
-          "window": {
-            "text": "-3..+3 day",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c6",
-          "epoch": {
-            "text": "On-Treatment",
-            "pattern": "On-Treatment"
-          },
-          "visit": {
-            "text": "D1",
-            "pattern": "D1"
-          },
-          "timing": null,
-          "window": {
-            "text": "-3..+3 day",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c7",
-          "epoch": {
-            "text": "On-Treatment",
-            "pattern": "On-Treatment"
-          },
-          "visit": {
-            "text": "D8",
-            "pattern": "D8"
-          },
-          "timing": null,
-          "window": {
-            "text": "-3..+3 day",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c8",
-          "epoch": {
-            "text": "On-Treatment",
-            "pattern": "On-Treatment"
-          },
-          "visit": {
-            "text": "D15",
-            "pattern": "D15"
-          },
-          "timing": null,
-          "window": {
-            "text": "-3..+3 day",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c9",
-          "epoch": {
-            "text": "On-Treatment",
-            "pattern": "On-Treatment"
-          },
-          "visit": {
-            "text": "D22",
-            "pattern": "D22"
-          },
-          "timing": null,
-          "window": {
-            "text": "-3..+3 day",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c10",
-          "epoch": {
-            "text": "On-Treatment",
-            "pattern": "On-Treatment"
-          },
-          "visit": {
-            "text": "DX",
-            "pattern": "DX"
-          },
-          "timing": null,
-          "window": {
-            "text": "-3..+3 day",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c11",
-          "epoch": {
-            "text": "On-Treatment",
-            "pattern": "On-Treatment"
-          },
-          "visit": {
-            "text": "D1",
-            "pattern": "D1"
-          },
-          "timing": null,
-          "window": {
-            "text": "-3..+3 day",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c12",
-          "epoch": {
-            "text": "On-Treatment",
-            "pattern": "On-Treatment"
-          },
-          "visit": {
-            "text": "D8",
-            "pattern": "D8"
-          },
-          "timing": null,
-          "window": {
-            "text": "-3..+3 day",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c13",
-          "epoch": {
-            "text": "On-Treatment",
-            "pattern": "On-Treatment"
-          },
-          "visit": {
-            "text": "D15",
-            "pattern": "D15"
-          },
-          "timing": null,
-          "window": {
-            "text": "-3..+3 day",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c14",
-          "epoch": {
-            "text": "On-Treatment",
-            "pattern": "On-Treatment"
-          },
-          "visit": {
-            "text": "D22",
-            "pattern": "D22"
-          },
-          "timing": null,
-          "window": {
-            "text": "-3..+3 day",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c15",
-          "epoch": {
-            "text": "Post-Treatment",
-            "pattern": "Post-Treatment"
-          },
-          "visit": {
-            "text": "V801",
-            "pattern": "V801"
-          },
-          "timing": null,
-          "window": {
-            "text": "-3..+3 day",
-            "pattern": "-3..+3 days"
-          }
-        }
-      ],
       "activities": [
         {
           "name": "Informed consent",
@@ -932,6 +690,233 @@
           "marker": "a",
           "text": "Short-term follow-up begins when the participant and investigator agree that the participant will no longer continue study treatment and lasts a minimum of 30 days following the last dose of study drug."
         }
+      ],
+      "columns": [
+        {
+          "id": "c1",
+          "epoch": {
+            "text": "Screening"
+          },
+          "visit": {
+            "text": "≤28"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c2",
+          "epoch": {
+            "text": "Screening"
+          },
+          "visit": {
+            "text": "≤7"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c3",
+          "epoch": {
+            "text": "On-Treatment"
+          },
+          "visit": {
+            "text": "D1"
+          },
+          "window": {
+            "text": "-3..+3 day",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c4",
+          "epoch": {
+            "text": "On-Treatment"
+          },
+          "visit": {
+            "text": "D8"
+          },
+          "window": {
+            "text": "-3..+3 day",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c5",
+          "epoch": {
+            "text": "On-Treatment"
+          },
+          "visit": {
+            "text": "D15"
+          },
+          "window": {
+            "text": "-3..+3 day",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c6",
+          "epoch": {
+            "text": "On-Treatment"
+          },
+          "visit": {
+            "text": "D1"
+          },
+          "window": {
+            "text": "-3..+3 day",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c7",
+          "epoch": {
+            "text": "On-Treatment"
+          },
+          "visit": {
+            "text": "D8"
+          },
+          "window": {
+            "text": "-3..+3 day",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c8",
+          "epoch": {
+            "text": "On-Treatment"
+          },
+          "visit": {
+            "text": "D15"
+          },
+          "window": {
+            "text": "-3..+3 day",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c9",
+          "epoch": {
+            "text": "On-Treatment"
+          },
+          "visit": {
+            "text": "D22"
+          },
+          "window": {
+            "text": "-3..+3 day",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c10",
+          "epoch": {
+            "text": "On-Treatment"
+          },
+          "visit": {
+            "text": "DX"
+          },
+          "window": {
+            "text": "-3..+3 day",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c11",
+          "epoch": {
+            "text": "On-Treatment"
+          },
+          "visit": {
+            "text": "D1"
+          },
+          "window": {
+            "text": "-3..+3 day",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c12",
+          "epoch": {
+            "text": "On-Treatment"
+          },
+          "visit": {
+            "text": "D8"
+          },
+          "window": {
+            "text": "-3..+3 day",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c13",
+          "epoch": {
+            "text": "On-Treatment"
+          },
+          "visit": {
+            "text": "D15"
+          },
+          "window": {
+            "text": "-3..+3 day",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c14",
+          "epoch": {
+            "text": "On-Treatment"
+          },
+          "visit": {
+            "text": "D22"
+          },
+          "window": {
+            "text": "-3..+3 day",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c15",
+          "epoch": {
+            "text": "Post-Treatment"
+          },
+          "visit": {
+            "text": "V801"
+          },
+          "window": {
+            "text": "-3..+3 day",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          }
+        }
       ]
     },
     {
@@ -943,40 +928,6 @@
         "unit": null,
         "placement": null
       },
-      "columns": [
-        {
-          "id": "c1",
-          "epoch": {
-            "text": "Study Treatment",
-            "pattern": "Study Treatment"
-          },
-          "visit": {
-            "text": "501-5XX",
-            "pattern": "501-5XX"
-          },
-          "timing": null,
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        },
-        {
-          "id": "c2",
-          "epoch": {
-            "text": "Follow-Up",
-            "pattern": "Follow-Up"
-          },
-          "visit": {
-            "text": "901",
-            "pattern": "901"
-          },
-          "timing": null,
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        }
-      ],
       "activities": [
         {
           "name": "AE Collection",
@@ -1028,6 +979,38 @@
           "marker": "a",
           "text": "Continued-access follow-up begins when the participant and the investigator agree that the participant will no longer continue treatment in the continued-access period and lasts a minimum of 30 days following the last dose of study drug. In all cases, no follow-up procedures will be performed for a participant who withdraws informed consent unless he or she has explicitly provided permission and consent."
         }
+      ],
+      "columns": [
+        {
+          "id": "c1",
+          "epoch": {
+            "text": "Study Treatment"
+          },
+          "visit": {
+            "text": "501-5XX"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c2",
+          "epoch": {
+            "text": "Follow-Up"
+          },
+          "visit": {
+            "text": "901"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        }
       ]
     },
     {
@@ -1039,248 +1022,6 @@
         "unit": null,
         "placement": null
       },
-      "columns": [
-        {
-          "id": "c1",
-          "epoch": null,
-          "visit": {
-            "text": "Sample 1",
-            "pattern": "Sample 1"
-          },
-          "timing": {
-            "text": "Cycle 1 Day 1",
-            "pattern": null
-          },
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        },
-        {
-          "id": "c2",
-          "epoch": null,
-          "visit": {
-            "text": "Sample 2",
-            "pattern": "Sample 2"
-          },
-          "timing": {
-            "text": "Cycle 1 Day 2",
-            "pattern": null
-          },
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        },
-        {
-          "id": "c3",
-          "epoch": null,
-          "visit": {
-            "text": "Sample 3",
-            "pattern": "Sample 3"
-          },
-          "timing": {
-            "text": "Cycle 1 Day 4",
-            "pattern": null
-          },
-          "window": {
-            "text": "-1..+1 day",
-            "pattern": "-1..+1 days"
-          }
-        },
-        {
-          "id": "c4",
-          "epoch": null,
-          "visit": {
-            "text": "Sample 4",
-            "pattern": "Sample 4"
-          },
-          "timing": {
-            "text": "Cycle 1 Day 8",
-            "pattern": null
-          },
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        },
-        {
-          "id": "c5",
-          "epoch": null,
-          "visit": {
-            "text": "Sample 5",
-            "pattern": "Sample 5"
-          },
-          "timing": {
-            "text": "Cycle 1 Day 15",
-            "pattern": null
-          },
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        },
-        {
-          "id": "c6",
-          "epoch": null,
-          "visit": {
-            "text": "Sample 6",
-            "pattern": "Sample 6"
-          },
-          "timing": {
-            "text": "Cycle 1 Day 18",
-            "pattern": null
-          },
-          "window": {
-            "text": "-1..+1 day",
-            "pattern": "-1..+1 days"
-          }
-        },
-        {
-          "id": "c7",
-          "epoch": null,
-          "visit": {
-            "text": "Sample 7",
-            "pattern": "Sample 7"
-          },
-          "timing": {
-            "text": "Cycle 2 Day 1",
-            "pattern": null
-          },
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        },
-        {
-          "id": "c8",
-          "epoch": null,
-          "visit": {
-            "text": "Sample 8",
-            "pattern": "Sample 8"
-          },
-          "timing": {
-            "text": "Cycle 2 Day 8",
-            "pattern": null
-          },
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        },
-        {
-          "id": "c9",
-          "epoch": null,
-          "visit": {
-            "text": "Sample 9",
-            "pattern": "Sample 9"
-          },
-          "timing": {
-            "text": "Cycle 2 Day 11",
-            "pattern": null
-          },
-          "window": {
-            "text": "-1..+1 day",
-            "pattern": "-1..+1 days"
-          }
-        },
-        {
-          "id": "c10",
-          "epoch": null,
-          "visit": {
-            "text": "Sample 10",
-            "pattern": "Sample 10"
-          },
-          "timing": {
-            "text": "Cycle 3 Day 1",
-            "pattern": null
-          },
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        },
-        {
-          "id": "c11",
-          "epoch": null,
-          "visit": {
-            "text": "Sample 11",
-            "pattern": "Sample 11"
-          },
-          "timing": {
-            "text": "Cycle 3 Day 15",
-            "pattern": null
-          },
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        },
-        {
-          "id": "c12",
-          "epoch": null,
-          "visit": {
-            "text": "Sample 12",
-            "pattern": "Sample 12"
-          },
-          "timing": {
-            "text": "Cycle 3 Day 18",
-            "pattern": null
-          },
-          "window": {
-            "text": "-1..+1 day",
-            "pattern": "-1..+1 days"
-          }
-        },
-        {
-          "id": "c13",
-          "epoch": null,
-          "visit": {
-            "text": "Sample 13",
-            "pattern": "Sample 13"
-          },
-          "timing": {
-            "text": "Cycle 4 Day 1",
-            "pattern": null
-          },
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        },
-        {
-          "id": "c14",
-          "epoch": null,
-          "visit": {
-            "text": "Sample 14",
-            "pattern": "Sample 14"
-          },
-          "timing": {
-            "text": "Cycle 5 Day 1",
-            "pattern": null
-          },
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        },
-        {
-          "id": "c15",
-          "epoch": null,
-          "visit": {
-            "text": "End of treatment",
-            "pattern": "End of treatment"
-          },
-          "timing": {
-            "text": "Day 30",
-            "pattern": "Day 30"
-          },
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        }
-      ],
       "activities": [
         {
           "name": "Ramucirumab PK Collection",
@@ -1404,7 +1145,237 @@
           ]
         }
       ],
-      "footnotes": []
+      "footnotes": [],
+      "columns": [
+        {
+          "id": "c1",
+          "visit": {
+            "text": "Sample 1"
+          },
+          "timing": {
+            "text": "Cycle 1 Day 1"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c2",
+          "visit": {
+            "text": "Sample 2"
+          },
+          "timing": {
+            "text": "Cycle 1 Day 2"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c3",
+          "visit": {
+            "text": "Sample 3"
+          },
+          "timing": {
+            "text": "Cycle 1 Day 4"
+          },
+          "window": {
+            "text": "-1..+1 day",
+            "before": 1,
+            "after": 1,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c4",
+          "visit": {
+            "text": "Sample 4"
+          },
+          "timing": {
+            "text": "Cycle 1 Day 8"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c5",
+          "visit": {
+            "text": "Sample 5"
+          },
+          "timing": {
+            "text": "Cycle 1 Day 15"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c6",
+          "visit": {
+            "text": "Sample 6"
+          },
+          "timing": {
+            "text": "Cycle 1 Day 18"
+          },
+          "window": {
+            "text": "-1..+1 day",
+            "before": 1,
+            "after": 1,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c7",
+          "visit": {
+            "text": "Sample 7"
+          },
+          "timing": {
+            "text": "Cycle 2 Day 1"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c8",
+          "visit": {
+            "text": "Sample 8"
+          },
+          "timing": {
+            "text": "Cycle 2 Day 8"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c9",
+          "visit": {
+            "text": "Sample 9"
+          },
+          "timing": {
+            "text": "Cycle 2 Day 11"
+          },
+          "window": {
+            "text": "-1..+1 day",
+            "before": 1,
+            "after": 1,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c10",
+          "visit": {
+            "text": "Sample 10"
+          },
+          "timing": {
+            "text": "Cycle 3 Day 1"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c11",
+          "visit": {
+            "text": "Sample 11"
+          },
+          "timing": {
+            "text": "Cycle 3 Day 15"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c12",
+          "visit": {
+            "text": "Sample 12"
+          },
+          "timing": {
+            "text": "Cycle 3 Day 18"
+          },
+          "window": {
+            "text": "-1..+1 day",
+            "before": 1,
+            "after": 1,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c13",
+          "visit": {
+            "text": "Sample 13"
+          },
+          "timing": {
+            "text": "Cycle 4 Day 1"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c14",
+          "visit": {
+            "text": "Sample 14"
+          },
+          "timing": {
+            "text": "Cycle 5 Day 1"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c15",
+          "visit": {
+            "text": "End of treatment"
+          },
+          "timing": {
+            "text": "Day 30",
+            "value": 30,
+            "unit": "days"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        }
+      ]
     }
-  ]
+  ],
+  "structured": "Issue 73 (U4-35): converted mechanically from text + pattern to the structured form by the old parse; each value is what the old code read, text is the old label."
 }

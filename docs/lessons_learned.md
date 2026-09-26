@@ -1654,3 +1654,21 @@ than the frozen schema can carry. The pin had to be cut to course 1 Day 1.
 - **The corpus "profiles" are mostly schedules.** Activity-level attachment is the only form the
   frozen schema allows; on real data it nests a whole course-by-course schedule in every visit
   that ticks the activity.
+
+## Convert fixtures with the old code when the input contract changes (2026-09-26)
+
+Issue 73 replaced text + pattern with structured values. The pin inputs were converted by a
+one-off script that ran the OLD parse on each input and wrote down what the old code had read
+— each timing, window, cycle and the Day 0 the old plan inferred — so the new input states
+exactly what the old input meant. Every expected output then stayed byte-identical, and the pin
+proved the refactor instead of being re-saved to agree with it. Hand-converting would have mixed
+"what the protocol says" with "what the old reader managed", and a re-save would have hidden both.
+
+## A reader in the wrong layer hides in the fallback, not the main path (2026-09-26)
+
+`usdm4` took a strict pattern grammar, which looked like structured input — but every field fell
+back to reading printed text when the pattern was missing, and the planner decided Day 0 from
+whether a `Day 0` column was printed. The principle "`usdm4` is algorithm only" was broken by the
+fallbacks and inferences, not the grammar. When a layer must not interpret text, list every
+place it decides something from what is (or is not) printed, including emptiness checks
+(`is_placeholder` read whether the timing label was blank).

@@ -7,304 +7,6 @@
       "title": "Screening and On-treatment Procedural Outline (CA055005)",
       "description": null,
       "rows": {},
-      "columns": [
-        {
-          "id": "scr",
-          "epoch": {
-            "text": "Screening",
-            "pattern": "Screening"
-          },
-          "visit": {
-            "text": "Screening",
-            "pattern": null
-          },
-          "timing": {
-            "text": "Day -28 to -1",
-            "pattern": "Day -28 to Day -1"
-          }
-        },
-        {
-          "id": "rand",
-          "epoch": {
-            "text": "Randomization",
-            "pattern": "Randomization"
-          },
-          "visit": {
-            "text": "Randomization",
-            "pattern": null
-          },
-          "timing": {
-            "text": "Day -3 to Day 1",
-            "pattern": "Day -3 to Day 1"
-          }
-        },
-        {
-          "id": "c1d1",
-          "epoch": {
-            "text": "Treatment Cycle 1",
-            "pattern": "Treatment Cycle 1"
-          },
-          "visit": {
-            "text": "During Treatment Cycle 1 Day 1 (1 Cycle = 4 Weeks)",
-            "pattern": null
-          },
-          "cycle": {
-            "text": "Cycle 1",
-            "pattern": "Cycle 1"
-          },
-          "cycle_length": {
-            "text": "1 Cycle = 4 Weeks",
-            "pattern": "4 weeks"
-          },
-          "timing": {
-            "text": "Day 1",
-            "pattern": "Day 1"
-          }
-        },
-        {
-          "id": "c1d8",
-          "epoch": {
-            "text": "Treatment Cycle 1",
-            "pattern": "Treatment Cycle 1"
-          },
-          "visit": {
-            "text": "During Treatment Cycle 1 Days 8, 15, and 22",
-            "pattern": null
-          },
-          "cycle": {
-            "text": "Cycle 1",
-            "pattern": "Cycle 1"
-          },
-          "cycle_length": {
-            "text": "1 Cycle = 4 Weeks",
-            "pattern": "4 weeks"
-          },
-          "timing": {
-            "text": "Days 8, 15, and 22",
-            "pattern": "Day 8"
-          },
-          "window": {
-            "text": "± 3 days",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c1d15",
-          "epoch": {
-            "text": "Treatment Cycle 1",
-            "pattern": "Treatment Cycle 1"
-          },
-          "visit": {
-            "text": "During Treatment Cycle 1 Days 8, 15, and 22",
-            "pattern": null
-          },
-          "cycle": {
-            "text": "Cycle 1",
-            "pattern": "Cycle 1"
-          },
-          "cycle_length": {
-            "text": "1 Cycle = 4 Weeks",
-            "pattern": "4 weeks"
-          },
-          "timing": {
-            "text": "Days 8, 15, and 22",
-            "pattern": "Day 15"
-          },
-          "window": {
-            "text": "± 3 days",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c1d22",
-          "epoch": {
-            "text": "Treatment Cycle 1",
-            "pattern": "Treatment Cycle 1"
-          },
-          "visit": {
-            "text": "During Treatment Cycle 1 Days 8, 15, and 22",
-            "pattern": null
-          },
-          "cycle": {
-            "text": "Cycle 1",
-            "pattern": "Cycle 1"
-          },
-          "cycle_length": {
-            "text": "1 Cycle = 4 Weeks",
-            "pattern": "4 weeks"
-          },
-          "timing": {
-            "text": "Days 8, 15, and 22",
-            "pattern": "Day 22"
-          },
-          "window": {
-            "text": "± 3 days",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c2d1",
-          "epoch": {
-            "text": "Treatment Cycle 2",
-            "pattern": "Treatment Cycle 2"
-          },
-          "visit": {
-            "text": "During Treatment Cycle 2 Day 1",
-            "pattern": null
-          },
-          "cycle": {
-            "text": "Cycle 2",
-            "pattern": "Cycle 2"
-          },
-          "cycle_length": {
-            "text": "1 Cycle = 4 Weeks",
-            "pattern": "4 weeks"
-          },
-          "timing": {
-            "text": "Day 1",
-            "pattern": "Day 1"
-          },
-          "window": {
-            "text": "± 3 days",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c2d8",
-          "epoch": {
-            "text": "Treatment Cycle 2",
-            "pattern": "Treatment Cycle 2"
-          },
-          "visit": {
-            "text": "During Treatment Cycle 2 Days 8, 15, and 22",
-            "pattern": null
-          },
-          "cycle": {
-            "text": "Cycle 2",
-            "pattern": "Cycle 2"
-          },
-          "cycle_length": {
-            "text": "1 Cycle = 4 Weeks",
-            "pattern": "4 weeks"
-          },
-          "timing": {
-            "text": "Days 8, 15, and 22",
-            "pattern": "Day 8"
-          },
-          "window": {
-            "text": "± 3 days",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c2d15",
-          "epoch": {
-            "text": "Treatment Cycle 2",
-            "pattern": "Treatment Cycle 2"
-          },
-          "visit": {
-            "text": "During Treatment Cycle 2 Days 8, 15, and 22",
-            "pattern": null
-          },
-          "cycle": {
-            "text": "Cycle 2",
-            "pattern": "Cycle 2"
-          },
-          "cycle_length": {
-            "text": "1 Cycle = 4 Weeks",
-            "pattern": "4 weeks"
-          },
-          "timing": {
-            "text": "Days 8, 15, and 22",
-            "pattern": "Day 15"
-          },
-          "window": {
-            "text": "± 3 days",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c2d22",
-          "epoch": {
-            "text": "Treatment Cycle 2",
-            "pattern": "Treatment Cycle 2"
-          },
-          "visit": {
-            "text": "During Treatment Cycle 2 Days 8, 15, and 22",
-            "pattern": null
-          },
-          "cycle": {
-            "text": "Cycle 2",
-            "pattern": "Cycle 2"
-          },
-          "cycle_length": {
-            "text": "1 Cycle = 4 Weeks",
-            "pattern": "4 weeks"
-          },
-          "timing": {
-            "text": "Days 8, 15, and 22",
-            "pattern": "Day 22"
-          },
-          "window": {
-            "text": "± 3 days",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c3pd1",
-          "epoch": {
-            "text": "Treatment Cycle 3 and beyond",
-            "pattern": "Treatment Cycle 3 and beyond"
-          },
-          "visit": {
-            "text": "During Treatment Cycle 3 and beyond Day 1",
-            "pattern": null
-          },
-          "cycle": {
-            "text": "Cycle 3 and beyond",
-            "pattern": "Cycle 3+"
-          },
-          "cycle_length": {
-            "text": "1 Cycle = 4 Weeks",
-            "pattern": "4 weeks"
-          },
-          "timing": {
-            "text": "Day 1",
-            "pattern": "Day 1"
-          },
-          "window": {
-            "text": "± 3 days",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c3pd15",
-          "epoch": {
-            "text": "Treatment Cycle 3 and beyond",
-            "pattern": "Treatment Cycle 3 and beyond"
-          },
-          "visit": {
-            "text": "During Treatment Cycle 3 and beyond Day 15",
-            "pattern": null
-          },
-          "cycle": {
-            "text": "Cycle 3 and beyond",
-            "pattern": "Cycle 3+"
-          },
-          "cycle_length": {
-            "text": "1 Cycle = 4 Weeks",
-            "pattern": "4 weeks"
-          },
-          "timing": {
-            "text": "Day 15",
-            "pattern": "Day 15"
-          },
-          "window": {
-            "text": "± 3 days",
-            "pattern": "-3..+3 days"
-          }
-        }
-      ],
       "activities": [
         {
           "name": "Safety Assessments"
@@ -507,7 +209,334 @@
           ]
         }
       ],
-      "footnotes": []
+      "footnotes": [],
+      "columns": [
+        {
+          "id": "scr",
+          "epoch": {
+            "text": "Screening"
+          },
+          "visit": {
+            "text": "Screening"
+          },
+          "timing": {
+            "text": "Day -28 to -1",
+            "start": -28,
+            "end": -1,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "rand",
+          "epoch": {
+            "text": "Randomization"
+          },
+          "visit": {
+            "text": "Randomization"
+          },
+          "timing": {
+            "text": "Day -3 to Day 1",
+            "start": -3,
+            "end": 1,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c1d1",
+          "epoch": {
+            "text": "Treatment Cycle 1"
+          },
+          "visit": {
+            "text": "During Treatment Cycle 1 Day 1 (1 Cycle = 4 Weeks)"
+          },
+          "timing": {
+            "text": "Day 1",
+            "value": 1,
+            "unit": "days"
+          },
+          "cycle": {
+            "text": "Cycle 1",
+            "first": 1,
+            "last": 1
+          },
+          "cycle_length": {
+            "text": "1 Cycle = 4 Weeks",
+            "value": 4,
+            "unit": "weeks"
+          }
+        },
+        {
+          "id": "c1d8",
+          "epoch": {
+            "text": "Treatment Cycle 1"
+          },
+          "visit": {
+            "text": "During Treatment Cycle 1 Days 8, 15, and 22"
+          },
+          "timing": {
+            "text": "Days 8, 15, and 22",
+            "value": 8,
+            "unit": "days"
+          },
+          "window": {
+            "text": "± 3 days",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          },
+          "cycle": {
+            "text": "Cycle 1",
+            "first": 1,
+            "last": 1
+          },
+          "cycle_length": {
+            "text": "1 Cycle = 4 Weeks",
+            "value": 4,
+            "unit": "weeks"
+          }
+        },
+        {
+          "id": "c1d15",
+          "epoch": {
+            "text": "Treatment Cycle 1"
+          },
+          "visit": {
+            "text": "During Treatment Cycle 1 Days 8, 15, and 22"
+          },
+          "timing": {
+            "text": "Days 8, 15, and 22",
+            "value": 15,
+            "unit": "days"
+          },
+          "window": {
+            "text": "± 3 days",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          },
+          "cycle": {
+            "text": "Cycle 1",
+            "first": 1,
+            "last": 1
+          },
+          "cycle_length": {
+            "text": "1 Cycle = 4 Weeks",
+            "value": 4,
+            "unit": "weeks"
+          }
+        },
+        {
+          "id": "c1d22",
+          "epoch": {
+            "text": "Treatment Cycle 1"
+          },
+          "visit": {
+            "text": "During Treatment Cycle 1 Days 8, 15, and 22"
+          },
+          "timing": {
+            "text": "Days 8, 15, and 22",
+            "value": 22,
+            "unit": "days"
+          },
+          "window": {
+            "text": "± 3 days",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          },
+          "cycle": {
+            "text": "Cycle 1",
+            "first": 1,
+            "last": 1
+          },
+          "cycle_length": {
+            "text": "1 Cycle = 4 Weeks",
+            "value": 4,
+            "unit": "weeks"
+          }
+        },
+        {
+          "id": "c2d1",
+          "epoch": {
+            "text": "Treatment Cycle 2"
+          },
+          "visit": {
+            "text": "During Treatment Cycle 2 Day 1"
+          },
+          "timing": {
+            "text": "Day 1",
+            "value": 1,
+            "unit": "days"
+          },
+          "window": {
+            "text": "± 3 days",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          },
+          "cycle": {
+            "text": "Cycle 2",
+            "first": 2,
+            "last": 2
+          },
+          "cycle_length": {
+            "text": "1 Cycle = 4 Weeks",
+            "value": 4,
+            "unit": "weeks"
+          }
+        },
+        {
+          "id": "c2d8",
+          "epoch": {
+            "text": "Treatment Cycle 2"
+          },
+          "visit": {
+            "text": "During Treatment Cycle 2 Days 8, 15, and 22"
+          },
+          "timing": {
+            "text": "Days 8, 15, and 22",
+            "value": 8,
+            "unit": "days"
+          },
+          "window": {
+            "text": "± 3 days",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          },
+          "cycle": {
+            "text": "Cycle 2",
+            "first": 2,
+            "last": 2
+          },
+          "cycle_length": {
+            "text": "1 Cycle = 4 Weeks",
+            "value": 4,
+            "unit": "weeks"
+          }
+        },
+        {
+          "id": "c2d15",
+          "epoch": {
+            "text": "Treatment Cycle 2"
+          },
+          "visit": {
+            "text": "During Treatment Cycle 2 Days 8, 15, and 22"
+          },
+          "timing": {
+            "text": "Days 8, 15, and 22",
+            "value": 15,
+            "unit": "days"
+          },
+          "window": {
+            "text": "± 3 days",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          },
+          "cycle": {
+            "text": "Cycle 2",
+            "first": 2,
+            "last": 2
+          },
+          "cycle_length": {
+            "text": "1 Cycle = 4 Weeks",
+            "value": 4,
+            "unit": "weeks"
+          }
+        },
+        {
+          "id": "c2d22",
+          "epoch": {
+            "text": "Treatment Cycle 2"
+          },
+          "visit": {
+            "text": "During Treatment Cycle 2 Days 8, 15, and 22"
+          },
+          "timing": {
+            "text": "Days 8, 15, and 22",
+            "value": 22,
+            "unit": "days"
+          },
+          "window": {
+            "text": "± 3 days",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          },
+          "cycle": {
+            "text": "Cycle 2",
+            "first": 2,
+            "last": 2
+          },
+          "cycle_length": {
+            "text": "1 Cycle = 4 Weeks",
+            "value": 4,
+            "unit": "weeks"
+          }
+        },
+        {
+          "id": "c3pd1",
+          "epoch": {
+            "text": "Treatment Cycle 3 and beyond"
+          },
+          "visit": {
+            "text": "During Treatment Cycle 3 and beyond Day 1"
+          },
+          "timing": {
+            "text": "Day 1",
+            "value": 1,
+            "unit": "days"
+          },
+          "window": {
+            "text": "± 3 days",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          },
+          "cycle": {
+            "text": "Cycle 3 and beyond",
+            "first": 3,
+            "last": null
+          },
+          "cycle_length": {
+            "text": "1 Cycle = 4 Weeks",
+            "value": 4,
+            "unit": "weeks"
+          }
+        },
+        {
+          "id": "c3pd15",
+          "epoch": {
+            "text": "Treatment Cycle 3 and beyond"
+          },
+          "visit": {
+            "text": "During Treatment Cycle 3 and beyond Day 15"
+          },
+          "timing": {
+            "text": "Day 15",
+            "value": 15,
+            "unit": "days"
+          },
+          "window": {
+            "text": "± 3 days",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          },
+          "cycle": {
+            "text": "Cycle 3 and beyond",
+            "first": 3,
+            "last": null
+          },
+          "cycle_length": {
+            "text": "1 Cycle = 4 Weeks",
+            "value": 4,
+            "unit": "weeks"
+          }
+        }
+      ]
     }
-  ]
+  ],
+  "structured": "Issue 73 (U4-35): converted mechanically from text + pattern to the structured form by the old parse; each value is what the old code read, text is the old label."
 }

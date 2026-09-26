@@ -184,9 +184,10 @@ Cycle reading → R5 → R6 → R7, one issue each, each merged when its gate pa
 expander is its own issue, off the build path: nothing that builds USDM from a
 protocol calls it (not the assembler, `validate/`, `usdm4_protocol` or the corpus
 tooling — only `usdm4`'s own tests). It gates the **release**, not the build: no
-`usdm4` release is cut once R5 is merged until the expander issue is merged too. R8
-waits on U4-10. **The input schema is frozen** (`next_steps.md` § Working arrangement);
-every issue below is checked against it.
+`usdm4` release is cut once R5 is merged until the expander issue is merged too.
+**The input schema is frozen** (`next_steps.md` § Working arrangement); every issue
+below is checked against it. **Issue 73 changes it** (structured input, U4-35 — design
+§ 3, § 19): merged before R8 (#72), B and C told.
 
 ## Cycle reading — the three gaps NCT02107703 prints
 
@@ -266,10 +267,10 @@ activity-level attachment (out of scope) nests the whole schedule in every PK vi
 
 ## R8 — gates
 
-Only once U4-10 is taken (reframed 2026-09-26: the gate is R5's delay + decision loop;
-loop target taken — start node → 1-day delay → decision, loop back to the start node;
-open are the upper bound and the exit text — design § 9). Recognition
-needs no schema change: a duration with no anchored offset, between anchored columns.
+Issue #72, after #73. U4-10 (design § 9): the gate is R5's loop — start node → 1-day
+delay → decision, `(≥ min days and washed out) or max days` exits, else back to the
+start node; open is the exit text only. The gate arrives as the column's `delay`
+value (#73), so nothing is recognised from text.
 Candidate test cases: NCT03069989, NCT03421379 (crossover washouts; both old-shape,
 `N69` — headers reviewed before a pin). Must-not-fire: NCT03360071 (`Washout` at
 `Week 1-2`, an anchored range). The period after the gate is chained like a cycle, so

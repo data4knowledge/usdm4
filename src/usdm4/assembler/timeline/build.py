@@ -40,9 +40,9 @@ from usdm4.api.study_epoch import StudyEpoch
 from usdm4.api.timing import Timing
 from usdm4.assembler.encoder import Encoder
 from usdm4.assembler.timeline.columns import ParsedTimeline
-from usdm4.assembler.timeline.grammar import CycleNumber, CycleRange
 from usdm4.assembler.timeline.naming import Naming
 from usdm4.assembler.timeline.plan import DECISION, END, TimelinePlan
+from usdm4.assembler.timeline.values import CycleNumber, CycleRange
 from usdm4.builder.builder import Builder
 
 
@@ -564,8 +564,8 @@ class TimelineBuild:
     @staticmethod
     def _window_label(node) -> str | None:
         """The window as printed. A window with no printed text of its own —
-        decoded from a time range (U4-21) or printed inside the timing cell —
-        is labelled in pattern form (``-0..+27 days``). A zero window from the
+        a time range's span (U4-21) — is labelled in rendered form
+        (``-0..+27 days``). A zero window from the
         window field is ``""``. With no window, the printed window text if
         any (unread or redacted), else None."""
         column, window = node.column, node.window
@@ -573,7 +573,7 @@ class TimelineBuild:
             return None
         if window is None:
             return column.window_label or None
-        if node.window_from in ("range", "timing"):
+        if node.window_from == "range":
             return f"-{window.lower}..+{window.upper} {window.unit}s"
         if window.lower == 0 and window.upper == 0:
             return ""

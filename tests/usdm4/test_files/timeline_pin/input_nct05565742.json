@@ -11,274 +11,6 @@
         "unit": null,
         "placement": null
       },
-      "columns": [
-        {
-          "id": "c1",
-          "epoch": {
-            "text": "Period I - Pre-Screening",
-            "pattern": "Period I - Pre-Screening"
-          },
-          "visit": {
-            "text": "601",
-            "pattern": "601"
-          },
-          "timing": {
-            "text": "≤42",
-            "pattern": "Day -42"
-          },
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        },
-        {
-          "id": "c2",
-          "epoch": {
-            "text": "Period II - Screening",
-            "pattern": "Period II - Screening"
-          },
-          "visit": {
-            "text": "1",
-            "pattern": "1"
-          },
-          "timing": {
-            "text": "≤21",
-            "pattern": "Day -21"
-          },
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        },
-        {
-          "id": "c3",
-          "epoch": {
-            "text": "Period III — Treatment and Assessment Period",
-            "pattern": "Period III — Treatment and Assessment Period"
-          },
-          "visit": {
-            "text": "2",
-            "pattern": "2"
-          },
-          "timing": {
-            "text": "—",
-            "pattern": "Day 0"
-          },
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        },
-        {
-          "id": "c4",
-          "epoch": {
-            "text": "Period III — Treatment and Assessment Period",
-            "pattern": "Period III — Treatment and Assessment Period"
-          },
-          "visit": {
-            "text": "3",
-            "pattern": "3"
-          },
-          "timing": {
-            "text": "15",
-            "pattern": "Day 15"
-          },
-          "window": {
-            "text": "-3..+3 day",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c5",
-          "epoch": {
-            "text": "Period III — Treatment and Assessment Period",
-            "pattern": "Period III — Treatment and Assessment Period"
-          },
-          "visit": {
-            "text": "4",
-            "pattern": "4"
-          },
-          "timing": {
-            "text": "30",
-            "pattern": "Day 30"
-          },
-          "window": {
-            "text": "-3..+3 day",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c6",
-          "epoch": {
-            "text": "Period III — Treatment and Assessment Period",
-            "pattern": "Period III — Treatment and Assessment Period"
-          },
-          "visit": {
-            "text": "5",
-            "pattern": "5"
-          },
-          "timing": {
-            "text": "60",
-            "pattern": "Day 60"
-          },
-          "window": {
-            "text": "-3..+3 day",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c7",
-          "epoch": {
-            "text": "Period III — Treatment and Assessment Period",
-            "pattern": "Period III — Treatment and Assessment Period"
-          },
-          "visit": {
-            "text": "6",
-            "pattern": "6"
-          },
-          "timing": {
-            "text": "120",
-            "pattern": "Day 120"
-          },
-          "window": {
-            "text": "-7..+7 day",
-            "pattern": "-7..+7 days"
-          }
-        },
-        {
-          "id": "c8",
-          "epoch": {
-            "text": "Period III — Treatment and Assessment Period",
-            "pattern": "Period III — Treatment and Assessment Period"
-          },
-          "visit": {
-            "text": "7",
-            "pattern": "7"
-          },
-          "timing": {
-            "text": "180",
-            "pattern": "Day 180"
-          },
-          "window": {
-            "text": "-7..+7 day",
-            "pattern": "-7..+7 days"
-          }
-        },
-        {
-          "id": "c9",
-          "epoch": {
-            "text": "Period III — Treatment and Assessment Period",
-            "pattern": "Period III — Treatment and Assessment Period"
-          },
-          "visit": {
-            "text": "8",
-            "pattern": "8"
-          },
-          "timing": {
-            "text": "210",
-            "pattern": "Day 210"
-          },
-          "window": {
-            "text": "-7..+7 day",
-            "pattern": "-7..+7 days"
-          }
-        },
-        {
-          "id": "c10",
-          "epoch": {
-            "text": "Period III — Treatment and Assessment Period",
-            "pattern": "Period III — Treatment and Assessment Period"
-          },
-          "visit": {
-            "text": "9",
-            "pattern": "9"
-          },
-          "timing": {
-            "text": "240",
-            "pattern": "Day 240"
-          },
-          "window": {
-            "text": "-7..+7 day",
-            "pattern": "-7..+7 days"
-          }
-        },
-        {
-          "id": "c11",
-          "epoch": {
-            "text": "Period III — Treatment and Assessment Period",
-            "pattern": "Period III — Treatment and Assessment Period"
-          },
-          "visit": {
-            "text": "10",
-            "pattern": "10"
-          },
-          "timing": {
-            "text": "300",
-            "pattern": "Day 300"
-          },
-          "window": {
-            "text": "-7..+7 day",
-            "pattern": "-7..+7 days"
-          }
-        },
-        {
-          "id": "c12",
-          "epoch": {
-            "text": "Period III — Treatment and Assessment Period",
-            "pattern": "Period III — Treatment and Assessment Period"
-          },
-          "visit": {
-            "text": "11",
-            "pattern": "11"
-          },
-          "timing": {
-            "text": "360",
-            "pattern": "Day 360"
-          },
-          "window": {
-            "text": "-7..+7 day",
-            "pattern": "-7..+7 days"
-          }
-        },
-        {
-          "id": "c13",
-          "epoch": {
-            "text": "Period III — Treatment and Assessment Period",
-            "pattern": "Period III — Treatment and Assessment Period"
-          },
-          "visit": {
-            "text": "12",
-            "pattern": "12"
-          },
-          "timing": {
-            "text": "540",
-            "pattern": "Day 540"
-          },
-          "window": {
-            "text": "-14..+14 day",
-            "pattern": "-14..+14 days"
-          }
-        },
-        {
-          "id": "c14",
-          "epoch": {
-            "text": "Period III — Treatment and Assessment Period",
-            "pattern": "Period III — Treatment and Assessment Period"
-          },
-          "visit": {
-            "text": "ED",
-            "pattern": "ED"
-          },
-          "timing": {
-            "text": "ED",
-            "pattern": "Day 0"
-          },
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        }
-      ],
       "activities": [
         {
           "name": "Prescreening informed consent",
@@ -1680,7 +1412,291 @@
           "marker": "cell-4",
           "text": "Collect a time-matched PK sample for all scheduled and unscheduled immunogenicity samples. Visit 7 will be collected predose."
         }
+      ],
+      "day_zero": true,
+      "columns": [
+        {
+          "id": "c1",
+          "epoch": {
+            "text": "Period I - Pre-Screening"
+          },
+          "visit": {
+            "text": "601"
+          },
+          "timing": {
+            "text": "≤42",
+            "value": -42,
+            "unit": "days"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c2",
+          "epoch": {
+            "text": "Period II - Screening"
+          },
+          "visit": {
+            "text": "1"
+          },
+          "timing": {
+            "text": "≤21",
+            "value": -21,
+            "unit": "days"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c3",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "2"
+          },
+          "timing": {
+            "text": "—",
+            "value": 0,
+            "unit": "days"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c4",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "3"
+          },
+          "timing": {
+            "text": "15",
+            "value": 15,
+            "unit": "days"
+          },
+          "window": {
+            "text": "-3..+3 day",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c5",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "4"
+          },
+          "timing": {
+            "text": "30",
+            "value": 30,
+            "unit": "days"
+          },
+          "window": {
+            "text": "-3..+3 day",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c6",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "5"
+          },
+          "timing": {
+            "text": "60",
+            "value": 60,
+            "unit": "days"
+          },
+          "window": {
+            "text": "-3..+3 day",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c7",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "6"
+          },
+          "timing": {
+            "text": "120",
+            "value": 120,
+            "unit": "days"
+          },
+          "window": {
+            "text": "-7..+7 day",
+            "before": 7,
+            "after": 7,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c8",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "7"
+          },
+          "timing": {
+            "text": "180",
+            "value": 180,
+            "unit": "days"
+          },
+          "window": {
+            "text": "-7..+7 day",
+            "before": 7,
+            "after": 7,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c9",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "8"
+          },
+          "timing": {
+            "text": "210",
+            "value": 210,
+            "unit": "days"
+          },
+          "window": {
+            "text": "-7..+7 day",
+            "before": 7,
+            "after": 7,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c10",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "9"
+          },
+          "timing": {
+            "text": "240",
+            "value": 240,
+            "unit": "days"
+          },
+          "window": {
+            "text": "-7..+7 day",
+            "before": 7,
+            "after": 7,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c11",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "10"
+          },
+          "timing": {
+            "text": "300",
+            "value": 300,
+            "unit": "days"
+          },
+          "window": {
+            "text": "-7..+7 day",
+            "before": 7,
+            "after": 7,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c12",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "11"
+          },
+          "timing": {
+            "text": "360",
+            "value": 360,
+            "unit": "days"
+          },
+          "window": {
+            "text": "-7..+7 day",
+            "before": 7,
+            "after": 7,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c13",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "12"
+          },
+          "timing": {
+            "text": "540",
+            "value": 540,
+            "unit": "days"
+          },
+          "window": {
+            "text": "-14..+14 day",
+            "before": 14,
+            "after": 14,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c14",
+          "epoch": {
+            "text": "Period III — Treatment and Assessment Period"
+          },
+          "visit": {
+            "text": "ED"
+          },
+          "timing": {
+            "text": "ED",
+            "value": 0,
+            "unit": "days"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        }
       ]
     }
-  ]
+  ],
+  "structured": "Issue 73 (U4-35): converted mechanically from text + pattern to the structured form by the old parse; each value is what the old code read, text is the old label."
 }

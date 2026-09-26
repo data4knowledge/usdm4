@@ -1,5 +1,6 @@
 """The timeline assembler's parts — issue 63.
 
-``grammar`` reads the pattern form of header values. Parse, plan, build and
-naming follow in later parts of the issue (``docs/timeline_assembler_plan.md``).
+``columns`` (parse) copies the caller's structured values into ``values``
+records; ``plan``, ``build`` and ``naming`` turn them into USDM
+(``docs/timeline_assembler_design.md``).
 """

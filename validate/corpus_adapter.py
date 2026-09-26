@@ -86,22 +86,22 @@ def _as_int(value) -> int | None:
     return None
 
 
-def _header_value(text, pattern) -> dict | None:
+def _label_value(text) -> dict | None:
+    """An epoch or visit: its text, or null when blank."""
     text = text or ""
-    if not text.strip() and not (pattern or "").strip():
-        return None
-    return {"text": text, "pattern": pattern}
+    return {"text": text} if text.strip() else None
 
 
 def timeline_input_to_schedule(table: dict) -> dict:
     """One retired ``TimelineInput`` table -> one ``ScheduleTimelineInput``.
 
     Mechanical, no judgement (plan 63.5): one column per old timepoint
-    (``c1``, ``c2`` ...); epoch and visit text as ``{text, pattern: text}``,
-    blank -> null; timing ``{text, pattern: "<Unit> <value>"}`` when the old
-    value is an integer and its unit is in the grammar, else text only, and a
-    blank text with a zero value (a placeholder column) -> null; window ->
-    pattern ``-b..+a <units>``, text the old label (blank for a zero window);
+    (``c1``, ``c2`` ...); epoch and visit ``{text}``, blank -> null; timing
+    ``{text, value, unit}`` when the old value is an integer and its unit is
+    known, else text only, and a blank text with a zero value (a placeholder
+    column) -> null; window -> ``{text, before, after, unit}``, text the old
+    label (blank for a zero window); ``day_zero`` true when a non-placeholder
+    column is timed at day 0 (issue 73, U4-35: structured input);
     a visit's markers onto the visit value (issue 64), or the first of
     timing / epoch present when the visit is blank;
     activities flattened, children after their parent with ``parent`` set,
@@ -122,26 +122,26 @@ def timeline_input_to_schedule(table: dict) -> dict:
 
     epochs, visits, windows = items("epochs"), items("visits"), items("windows")
     columns = []
+    day_zero = False
     for i, timepoint in enumerate(items("timepoints")):
         epoch = epochs[i].get("text", "") if i < len(epochs) else ""
         visit = visits[i] if i < len(visits) else {"text": "", "references": []}
         value = _as_int(timepoint.get("value"))
         unit = _singular(timepoint.get("unit"))
         text = timepoint.get("text") or ""
-        pattern = (
-            f"{unit.capitalize()} {value}"
-            if value is not None and unit in _SOA_UNITS
-            else None
-        )
         if not text.strip() and not value:
-            pattern = None
+            timing = None
+        elif value is not None and unit in _SOA_UNITS:
+            timing = {"text": text, "value": value, "unit": f"{unit}s"}
+            if value == 0 and unit == "day":
+                day_zero = True
+        else:
+            timing = {"text": text} if text.strip() else None
         column = {
             "id": f"c{i + 1}",
-            "epoch": _header_value(epoch, epoch.strip() or None),
-            "visit": _header_value(
-                visit.get("text"), (visit.get("text") or "").strip() or None
-            ),
-            "timing": _header_value(text, pattern),
+            "epoch": _label_value(epoch),
+            "visit": _label_value(visit.get("text")),
+            "timing": timing,
         }
         # Issue 64: markers sit on a header value. The old shape put them on
         # the visit; a blank visit hands them to the next value present.
@@ -159,12 +159,23 @@ def timeline_input_to_schedule(table: dict) -> dict:
                 w.get("after", 0),
                 w.get("unit", "day"),
             )
-            column["window"] = {
-                "text": ""
-                if before == 0 and after == 0
-                else f"-{before}..+{after} {w_unit}",
-                "pattern": f"-{abs(before)}..+{abs(after)} {_singular(w_unit)}s",
-            }
+            label = (
+                "" if before == 0 and after == 0 else f"-{before}..+{after} {w_unit}"
+            )
+            before, after = _as_int(before), _as_int(after)
+            if (
+                before is not None
+                and after is not None
+                and _singular(w_unit) in _SOA_UNITS
+            ):
+                column["window"] = {
+                    "text": label,
+                    "before": abs(before),
+                    "after": abs(after),
+                    "unit": f"{_singular(w_unit)}s",
+                }
+            elif label.strip():
+                column["window"] = {"text": label}
         columns.append(column)
 
     def row(item: dict, parent: str | None = None) -> dict:
@@ -191,6 +202,7 @@ def timeline_input_to_schedule(table: dict) -> dict:
 
     return {
         "type": timeline_type,
+        "day_zero": day_zero,
         "title": table.get("table_title"),
         "description": table.get("table_description"),
         "classification": {

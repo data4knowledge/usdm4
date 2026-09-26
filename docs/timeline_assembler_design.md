@@ -1,12 +1,11 @@
 # Timeline assembler — design
 
-**Status: 2026-09-26. Issues 63–68 merged** (cycle reading: bare ranges,
-cycle length unit from the row labels, branch `68-cycle-and-ranges`). Built so far: the input schema
-(§ 3), the pattern grammar incl. time ranges and cycles (§ 4), parse → plan → build →
-naming (§ 5), R1–R3, R4 (timing, single cycles) and R9. R5–R8 are later issues. § 2
-records the assembler as it was BEFORE issue 63; §§ 10–15 record what issues 63–68
-built and the calls made on the way. Decisions are in § 9, taken one at a time; none is
-open. The work order is in `timeline_assembler_plan.md`.
+**Status: 2026-09-26. Issues 63–71 merged; issue 73 (structured input, U4-35) built
+on branch `73-update-schema`.** Built: the input schema (§ 3, structured since issue
+73), parse → plan → build → naming (§ 5), R1–R7 and R9. R8 is issue 72, after 73. § 2
+records the assembler as it was BEFORE issue 63; §§ 10–19 record what each issue built
+and the calls made on the way. Decisions are in § 9. The work order is in
+`timeline_assembler_plan.md`.
 
 ## 1. What the assembler is for
 
@@ -97,8 +96,10 @@ recompute the same tick each time.
 
 ## 3. The input schema
 
-`TimelineInput` is retired for the schedule. `AssemblerInput.soa` becomes a list of
-timelines in the shape below. Field names are a proposal (decision U4-1).
+`AssemblerInput.soa` is a list of timelines in the shape below. Since issue 73
+(U4-35) every header value is **structured by the caller**; `usdm4` never reads
+printed text. The pattern grammar that was here (text + `pattern`) is retired —
+§ 4 records it.
 
 ```yaml
 soa:
@@ -107,39 +108,39 @@ soa:
     description: null                          # optional prose
     entry_condition: null      # printed text; conditional timelines (R6)
     attaches_to: null          # activity name; profile timelines (R7)
+    day_zero: false            # does the protocol number a Day 0? default Day 1 (U4-35)
     classification:            # optional; today's table_orientation/unit/placement
-                               # (table_family is no longer supplied — § 3.1)
       orientation: null
       unit: null
       placement: null
-    rows:                      # header field -> the row's printed label (issue 64)
+    rows:                      # header field -> the row's printed label; carried, never read
       timing: "Days from randomization"
     columns:                   # document order
       - id: c1                 # caller's key, unique within the timeline
-        epoch:   {text: "Screening", pattern: "Screening"}
-        visit:   {text: "V1", pattern: "V1", markers: [a]}  # markers on the value
-        cycle:   null
-        cycle_length: null
-        timing:  {text: "≤28", pattern: "Day -28 to Day -1"}
-        window:  {text: "", pattern: null}
+        epoch:   {text: "Screening"}
+        visit:   {text: "V1", markers: [a]}           # markers on the value
+        timing:  {text: "≤28", start: -28, end: -1, unit: days}   # a range
         notes:   []            # further header rows, text only (§ 3.2)
       - id: c4
-        epoch:   {text: "On-Treatment", pattern: "On-Treatment"}
-        visit:   {text: "D8", pattern: "D8"}
-        cycle:   {text: "Cycle 1", pattern: "Cycle 1"}
-        cycle_length: {text: "Cycle = 21 days", pattern: "21 days"}
-        timing:  {text: "D8", pattern: "Day 8"}
-        window:  {text: "(±3 days)", pattern: "-3..+3 days"}
-        notes:   []
+        epoch:   {text: "On-Treatment"}
+        visit:   {text: "D8"}
+        cycle:   {text: "Cycle 1", first: 1, last: 1}
+        cycle_length: {text: "Cycle = 21 days", value: 21, unit: days}
+        timing:  {text: "D8", value: 8, unit: days}
+        window:  {text: "(±3 days)", before: 3, after: 3, unit: days}
       - id: c5
-        epoch:   {text: "CCI", pattern: "CCI"}         # redacted (issue 64)
-        visit:   {text: "Visit 5", pattern: "Visit 5"}
-        timing:  {text: "[CCI]", pattern: "CCI"}
+        epoch:   {text: "CCI", redacted: true}        # redacted (issue 64)
+        visit:   {text: "Visit 5"}
+        timing:  {text: "[CCI]", redacted: true}
+      - id: c6
+        epoch:   {text: "Wash-out"}
+        visit:   {text: "(7-28 days between doses)"}
+        delay:   {min: 7, max: 28, unit: days}        # R8; no timing or window here
     activities:                # body rows, document order
       - name: "Informed consent"   # as printed
         parent: null               # name of the grouping row, or null
         markers: [a]               # footnote markers on the name
-        bcs: []                    # biomedical concept names (today's actions.bcs)
+        bcs: []                    # biomedical concept names
         cells:                     # one per non-empty cell
           - {column: c1, text: "X", markers: []}
     footnotes:
@@ -166,83 +167,70 @@ Type and family are emitted as d4k extension attributes on the `ScheduleTimeline
 beside the orientation, unit and placement extensions. Today the caller supplies
 `table_family`; from now it is derived from the type and never supplied.
 
-### 3.2 Values: printed text and pattern form
+### 3.2 Values: structured, with the printed text carried (U4-35)
 
-Every header value is `{text, pattern, markers}`.
+`usdm4` is algorithm only. Turning printed text into structure is the caller's job
+(`usdm4_protocol`, which may use AI; `protocol_corpus`'s ground truth; any
+algorithmic source). Every value carries `text`, `markers` and `redacted` beside its
+structure:
 
-- `text` is what the document prints. It is used for labels, so the protocol's words
-  survive into USDM.
-- `pattern` is the same value in the pattern grammar (§ 4).
-- **A caller may supply text only, pattern only, or both.** Each field (timing,
-  window, and later cycle and cycle length) is read the same way: the pattern when
-  there is one; else the printed text, read by the assembler; else nothing. With
-  pattern only, the label defaults to the pattern.
-- Printed text the assembler cannot read, with no pattern, gets no value: the text is
-  carried and R4.5 applies (zero timing plus a warning).
-- A `pattern` that is present and does not match the grammar raises a warning and is
-  set aside; the field is then read from its printed text, else gets no value (U4-17).
-- `pattern: "CCI"` states the sponsor redacted the value (issue 64). It is valid in
-  every field and is not the same as `null`: the value exists and was withheld. Only
-  the pattern states a redaction — printed `CCI` text with a `null` pattern is
-  ordinary text.
+| value | structure | example |
+|---|---|---|
+| epoch, visit | the text is the value | `{text: "Screening"}` |
+| timing, point | `value`, `unit` — the printed number | `{value: 1, unit: days}` |
+| timing, range | `start`, `end`, `unit` — printed numbers | `{start: -28, end: -1, unit: days}` |
+| window | `before`, `after`, `unit` — distances, never negative | `{before: 3, after: 3, unit: days}` |
+| cycle | `first`, `last` (`null` open-ended; `first == last` a single cycle) | `{first: 3, last: null}` |
+| cycle length | `value > 0`, `unit` | `{value: 21, unit: days}` |
+| delay (R8) | `min`, `max` (optional, `≥ min`), `unit`; no timing or window on the column | `{min: 2, max: 10, unit: days}` |
+
+- **Units** are `minutes | hours | days | weeks | months | years`, nothing else.
+- **Day numbers are as printed.** `usdm4` applies the Day 0 rule from the timeline's
+  `day_zero` flag (default Day 1). A `Day 0` timing with the flag at Day 1 is a
+  warning; the flag is used.
+- **A range is not a window**: the visit falls anywhere in the span. How it is stored
+  in USDM (a timing at its start, a window forward to its end — `Timing` has no range)
+  is `usdm4`'s business, Day 0 arithmetic included.
+- **`text`** is the source as printed, for debug and after-the-event analysis. Never
+  read or interpreted; its one use is as a label, copied verbatim into USDM. Empty when
+  the caller structured the value from an algorithmic source — the label is then
+  rendered from the structure (`Day 1`, `-3..+3 days`, `Cycle 3+`), in the retired
+  grammar's form.
+- **Text only.** A value with text and no structure states the caller could not
+  structure it. Carried as the label, never read, warned; a text-only timing is a
+  zero timing plus a warning (R4.5, U4-3).
+- **`redacted: true`** states the sponsor printed `CCI` in place of the value (issue
+  64). The structured fields must then be empty. Printed `CCI` not flagged is text.
+- **Validation** refuses a partly structured value, a redacted value with structure,
+  an empty value (use `null`), an unknown unit or key.
 - `markers` are the footnote markers printed on this value (`Visit 3^1,2` →
-  `["1", "2"]`). A column carries no markers of its own; the value they are printed
-  on does (issue 64).
+  `["1", "2"]`). A column carries no markers of its own (issue 64).
 
-`rows` (per timeline) maps a header field to the row's printed label — "Days from
-randomization", "Visit interval tolerance (days)", "Planned Time [h:min]". The label
-states the unit, the anchor and the clock format. Keys are the six header fields
-(`epoch`, `visit`, `cycle`, `cycle_length`, `timing`, `window`); anything else is
-refused. Carried, not yet read: R4 uses the anchor it states.
+`rows` (per timeline) maps a header field to the row's printed label. Keys are the six
+header fields; anything else is refused. Carried for analysis, never read (a bare
+number's unit comes from the caller, not from the row label).
 
 `notes` holds every further header row the caller keeps — a second timing row, a
-timing clarification, an unassigned row — as `{role, text}`. Text only; the
-assembler puts them on labels or descriptions and never parses them.
+timing clarification, an unassigned row — as `{role, text}`. Text only; never read.
 
 ### 3.3 What the schema deliberately leaves out
 
 - **Logical tables.** Joining page fragments into tables and splitting a table into
   timelines is the caller's judgement. The assembler only ever sees timelines.
 - **Copies.** A column that belongs to two timelines (a combined `EOT/ET` column)
-  appears in both, with the same `id`. What that means in USDM is decision U4-5.
-- **Parsed numbers.** There are no `value`, `unit`, `before` or `after` fields.
+  appears in both, with the same `id`. What that means in USDM is decision U4-5 (N78).
 
-## 4. The pattern grammar
+## 4. The pattern grammar — retired (issue 73)
 
-Strict and small on purpose. One way to write each thing. Case-insensitive keywords,
-single spaces, ASCII only — a window is written `-a..+b`, never with `±`.
-
-| value | pattern | examples |
-|---|---|---|
-| timing, point | `<Unit> <int>` | `Day 1`, `Day -7`, `Week 12`, `Month 6`, `Year 2`, `Hour 4`, `Minute 30` |
-| time range | `<Unit> <int> to <Unit> <int>` | `Day -28 to Day -1` |
-| window | `-<int>..+<int> <units>` | `-3..+3 days`, `-0..+2 hours`, `-7..+0 days` |
-| cycle, single | `Cycle <int>` | `Cycle 1`, `Cycle 2` |
-| cycle, range | `Cycle <int>-<int>` or `Cycle <int>+` | `Cycle 1-6`, `Cycle 3+` |
-| cycle length | `<int> <units>` | `21 days`, `4 weeks` |
-| epoch, visit | free text, trimmed | `Screening`, `V1`, `D8` |
-| any field, redacted | `CCI` | `CCI` |
-
-`<Unit>` is one of Day, Week, Month, Year, Hour, Minute. `<units>` is its plural,
-lower case.
-
-Rules the grammar carries:
-
-- **In a cycle column, `timing` is the day within the cycle.** `Day 8` in a column
-  whose cycle is `Cycle 3` means C3D8. The printed `C3D8` stays in `text`. There is
-  one way to write it.
-- **An open-ended range is `Cycle n+`.** `Cycle 2-n`, `Cycle 2+`, `Cycles 2 and
-  beyond` all become `Cycle 2+`; the printed words stay in `text`.
-- **A time range** is a column whose scheduled time is a range (`-28 to -1`,
-  `≤28`). The interface takes it in either form (U4-4): as a time range — printed text or
-  range pattern — which `usdm4` decodes to the timing at its start and a window
-  forward to its end; or already decoded, as a point plus a window, from a tool that
-  holds decoded timings.
-
-- **A redacted value is `CCI`** in any field, ignoring case. It is never parsed: no
-  timing, no window, no guessed number. A later rule may supply a default.
-
-Anything the grammar cannot express is `pattern: null`, stated by the caller.
+Issues 63–71 took each header value as printed text plus a *pattern form*
+(`Day 1`, `Day -28 to Day -1`, `-3..+3 days`, `Cycle 3+`, `21 days`, `CCI`), parsed
+by `timeline/grammar.py`, with `timeline/printed.py` reading printed text when there
+was no pattern. Both are deleted: that was `usdm4` reading text (U4-35). The
+grammar's notation survives in two places only — as the rendered label of a value sent
+with no text, and as the compact fixture notation of the tests
+(`tests/usdm4/assembler/timeline/structure.py`). Retired with it: `≤N` read by
+`usdm4` (U4-18), a window read from the timing cell (U4-16), units from row labels
+(U4-28), time ranges decoded from text (U4-4's text path).
 
 ## 5. Structure
 
@@ -480,7 +468,7 @@ Taken one at a time, each recorded here with its date when taken.
 | U4-32 | `attaches_to` names an activity with children | **Taken 2026-09-26 (Dave, R7):** not attached, reported as an error — DDF00160 forbids `timelineId` on a parent activity |
 | U4-33 | `attaches_to` names an activity that exists but is scheduled on no other timeline | **Taken 2026-09-26 (Dave, R7):** attached, with a warning |
 | U4-34 | Two profiles naming the same activity (`Activity.timelineId` holds one timeline) | **Taken 2026-09-26 (Dave, R7):** the first profile in input order is attached; each later one is not attached, reported as an error naming both profiles and the activity, and built unattached. **Rejected:** a warning only (hides a lost link); a made-up wrapper activity holding both (invents structure the protocol does not print) |
-| U4-35 | Structured input — who turns printed text into structure | **Taken 2026-09-26 (Dave, from R8):** `usdm4` is algorithm only and never reads printed text; the caller (stage 1, may use AI; or an algorithmic source) supplies every header value as a structured object, e.g. `timing: {value: 1, unit: "days"}` (the printed day number — `usdm4` applies the crossing-zero rule), `window: {before: 3, after: 3, unit: "days"}`, `delay: {min: 2, max: 10, unit: "days"}`. Each value carries its source `text` for debug and after-the-event analysis — **never read or interpreted**; empty when the caller structured it from an algorithmic source. The one use: copied verbatim into USDM labels (`Timing.label`, instance and `Encounter` labels, `windowLabel`), as today (Dave, 2026-09-26). Empty `text` → the label is rendered from the structure (`Day 1`), as today's fallback to the pattern. Replaces the pattern grammar (§ 4) and the printed-text readers; supersedes the schema docstring's "a caller never hands over a number it has worked out from printed text". One schema issue, merged before R8, B and C told; N78's `copy_of` may ride it. **Units (Dave, 2026-09-26):** `"minutes" | "hours" | "days" | "weeks" | "months" | "years"`, nothing else accepted; stage 1 normalises. **Cycle (Dave, 2026-09-26):** `{first: 3, last: null}` — `last: null` open-ended (`Cycle 3+`), `{first: 1, last: 6}` a range, `{first: 2, last: 2}` a single cycle (`first`/`last`, not `from`/`to` — `from` is a Python keyword). **Cycle length (Dave, 2026-09-26):** `{value: 21, unit: "days"}` — one `{value, unit}` type shared with the timing point; `value > 0` for a cycle length, a timing may be negative. **Time range (Dave, 2026-09-26):** no range form — stage 1 sends its start as the timing and a window forward to its end (`Day -28 to Day -1` → `timing: {value: -28, unit: "days"}`, `window: {before: 0, after: 27, unit: "days"}`), as the corpus already does (protocol_corpus issue 13); retires U4-4's decoding in `usdm4`. **Redaction (Dave, 2026-09-26):** `redacted: bool = False` on every value object, replacing `pattern: "CCI"`; when true the structured fields are empty (refused otherwise) and `text` carries what was printed for the label; `usdm4` treats it as today (no timing, a warning). Nothing left open |
+| U4-35 | Structured input — who turns printed text into structure | **Taken 2026-09-26 (Dave, from R8):** `usdm4` is algorithm only and never reads printed text; the caller (stage 1, may use AI; or an algorithmic source) supplies every header value as a structured object, e.g. `timing: {value: 1, unit: "days"}` (the printed day number — `usdm4` applies the crossing-zero rule), `window: {before: 3, after: 3, unit: "days"}`, `delay: {min: 2, max: 10, unit: "days"}`. Each value carries its source `text` for debug and after-the-event analysis — **never read or interpreted**; empty when the caller structured it from an algorithmic source. The one use: copied verbatim into USDM labels (`Timing.label`, instance and `Encounter` labels, `windowLabel`), as today (Dave, 2026-09-26). Empty `text` → the label is rendered from the structure (`Day 1`), as today's fallback to the pattern. Replaces the pattern grammar (§ 4) and the printed-text readers; supersedes the schema docstring's "a caller never hands over a number it has worked out from printed text". One schema issue, merged before R8, B and C told; N78's `copy_of` may ride it. **Units (Dave, 2026-09-26):** `"minutes" | "hours" | "days" | "weeks" | "months" | "years"`, nothing else accepted; stage 1 normalises. **Cycle (Dave, 2026-09-26):** `{first: 3, last: null}` — `last: null` open-ended (`Cycle 3+`), `{first: 1, last: 6}` a range, `{first: 2, last: 2}` a single cycle (`first`/`last`, not `from`/`to` — `from` is a Python keyword). **Cycle length (Dave, 2026-09-26):** `{value: 21, unit: "days"}` — one `{value, unit}` type shared with the timing point; `value > 0` for a cycle length, a timing may be negative. **Time range (Dave, 2026-09-26):** a range is not a window — the visit falls anywhere in the span. The input says what the protocol says: `timing: {start: -28, end: -1, unit: "days"}` (printed day numbers). How it is stored in USDM (today: timing at the start, window forward to the end — `Timing` has no range) is `usdm4`'s business, as is the Day 0 arithmetic. The protocol_corpus issue 13 convention (range sent as start + window) is replaced. *(Briefly taken the same day as "no range form, stage 1 sends timing + window" — reversed: it pushed a USDM workaround into the input and the Day 0 arithmetic onto the callers.)* **Day 0 (Dave, 2026-09-26):** a timeline-level flag says whether the protocol numbers a Day 0; default Day 1 (no Day 0). Replaces inferring it from a printed `Day 0` column (`has_zero_timepoint`). A `Day 0` timing when the flag says Day 1 is a warning (Dave, 2026-09-26); the flag is used. **Redaction (Dave, 2026-09-26):** `redacted: bool = False` on every value object, replacing `pattern: "CCI"`; when true the structured fields are empty (refused otherwise) and `text` carries what was printed for the label; `usdm4` treats it as today (no timing, a warning). Nothing left open |
 
 ## 10. As built — issue 63 (2026-09-25)
 
@@ -780,3 +768,39 @@ drafts whose roles are wrong: the `Week` row is drafted as the timing and the
 `Day; visit window` row as the window, so V1's three days all time as `Week 1` and
 every window is unread; course lists (`1, 2, 3, 4`) are not read. Frozen as drafted —
 a fixture, not a reference.
+
+## 19. As built — issue 73 (2026-09-26)
+
+Structured input (U4-35). Branch `73-update-schema`.
+
+- `schema/schedule_timeline_schema.py` — `HeaderValue {text, pattern}` replaced by value
+  objects: `LabelValue` (epoch, visit), `TimingValue` (point or range), `WindowValue`,
+  `CycleValue`, `QuantityValue` (cycle length), `DelayValue` (new, R8). Each carries
+  `text`, `markers`, `redacted`; validation per § 3.2. `ColumnInput.delay`;
+  `ScheduleTimelineInput.day_zero`; `VALUE_FIELDS` = header fields + `delay`. The
+  docstring's "a caller never hands over a number it has worked out from printed text"
+  replaced by U4-35.
+- `timeline/values.py` (new) — the parsed value types (moved from `grammar.py`), `Delay`,
+  and `render_*` for labels when a value has no text.
+- `timeline/columns.py` — copies the structure across; no fallback to text. Text only:
+  a warning for window, cycle, cycle length, delay (a timing is warned by the plan,
+  U4-3). `Column.up_to` gone; `window_from` is `"window"` or `"range"`; `Column.delay`;
+  `ParsedTimeline.day_zero`. A delay is carried with a warning ("not built until R8").
+- `timeline/plan.py` — Day 0 from `day_zero`, not inferred (`has_zero_timepoint`
+  deleted); a printed `Day 0` with the flag false is warned, flag used.
+  `_resolve_up_to` deleted. `is_placeholder` is "no readable timing" (it read the
+  label's emptiness before). `interval_from_anchor` takes `has_zero`.
+- `timeline/build.py` — the "window printed in the timing cell" label path gone.
+- Deleted: `timeline/grammar.py`, `timeline/printed.py` and their tests.
+- `validate/corpus_adapter.py` — emits the structured form; `day_zero` true when a
+  non-placeholder column is timed at day 0 (what the plan used to infer); a window in
+  an unknown unit is text only.
+- Tests: fixtures keep their compact notation, turned into structured objects by
+  `tests/usdm4/assembler/timeline/structure.py` (test code only). `test_columns.py`
+  and the schema tests rewritten against the contract itself. Printed-text reading
+  tests deleted or rewritten as caller-structured equivalents.
+- Pins: all 8 inputs converted mechanically by the OLD parse (each structured value is
+  what the old code read; text is the old label; `day_zero` is what the old plan
+  inferred; `≤N` before the anchor as the range it resolved to; a window read from the
+  timing cell moved to the window field with no text). **Every expected output
+  unchanged.**

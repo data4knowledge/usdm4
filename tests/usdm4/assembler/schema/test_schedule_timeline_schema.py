@@ -1,8 +1,9 @@
-"""The timeline assembler's new input — issue 63, part 63.3; issue 64.
+"""The timeline assembler's input — issue 63, part 63.3; issue 64; structured
+in issue 73 (U4-35).
 
-Structure only: the schema does not parse patterns (the parse stage does), so
-a pattern outside the grammar is accepted here. Specification:
-``docs/timeline_assembler_design.md`` § 3.
+Every header value is a structured object carrying its printed ``text``,
+``markers`` and ``redacted``; the caller structures, ``usdm4`` never reads
+text. Specification: ``docs/timeline_assembler_design.md`` § 3, § 9 U4-35.
 """
 
 import pytest
@@ -11,9 +12,15 @@ from pydantic import ValidationError
 from src.usdm4.assembler.schema.schedule_timeline_schema import (
     FAMILY,
     HEADER_FIELDS,
+    VALUE_FIELDS,
     ColumnInput,
-    HeaderValue,
+    CycleValue,
+    DelayValue,
+    LabelValue,
+    QuantityValue,
     ScheduleTimelineInput,
+    TimingValue,
+    WindowValue,
     family_of,
 )
 
@@ -25,18 +32,27 @@ def _timeline(**overrides) -> dict:
         "columns": [
             {
                 "id": "c1",
-                "epoch": {"text": "Screening", "pattern": "Screening"},
-                "visit": {"text": "V1", "pattern": "V1"},
-                "timing": {"text": "≤28", "pattern": "Day -28 to Day -1"},
+                "epoch": {"text": "Screening"},
+                "visit": {"text": "V1"},
+                "timing": {"text": "≤28", "start": -28, "end": -1, "unit": "days"},
             },
             {
                 "id": "c2",
-                "epoch": {"text": "Treatment", "pattern": "Treatment"},
-                "visit": {"text": "C1 D8", "pattern": "D8", "markers": ["a"]},
-                "cycle": {"text": "Cycle 1", "pattern": "Cycle 1"},
-                "cycle_length": {"text": "Cycle = 21 days", "pattern": "21 days"},
-                "timing": {"text": "D8", "pattern": "Day 8"},
-                "window": {"text": "(±3 days)", "pattern": "-3..+3 days"},
+                "epoch": {"text": "Treatment"},
+                "visit": {"text": "C1 D8", "markers": ["a"]},
+                "cycle": {"text": "Cycle 1", "first": 1, "last": 1},
+                "cycle_length": {
+                    "text": "Cycle = 21 days",
+                    "value": 21,
+                    "unit": "days",
+                },
+                "timing": {"text": "D8", "value": 8, "unit": "days"},
+                "window": {
+                    "text": "(±3 days)",
+                    "before": 3,
+                    "after": 3,
+                    "unit": "days",
+                },
                 "notes": [{"role": "timing_clarification", "text": "pre-dose"}],
             },
         ],
@@ -69,23 +85,33 @@ class TestAccepted:
         assert timeline.type == "main"
         assert timeline.family == "planned"
         assert [c.id for c in timeline.columns] == ["c1", "c2"]
-        assert timeline.columns[1].cycle.pattern == "Cycle 1"
+        assert timeline.columns[1].cycle.first == 1
+        assert timeline.columns[0].timing.is_range
+        assert timeline.columns[1].timing.structured
         assert timeline.columns[1].notes[0].role == "timing_clarification"
         assert timeline.activities[1].cells[1].markers == ["c"]
         assert timeline.columns[1].visit.markers == ["a"]
         assert timeline.rows == {}
+        assert timeline.day_zero is False
 
     def test_minimal_timeline(self):
         timeline = ScheduleTimelineInput.model_validate({"type": "main"})
         assert timeline.columns == []
         assert timeline.activities == []
 
-    def test_pattern_outside_the_grammar_is_structurally_fine(self):
-        # The parse stage refuses it, not the schema.
+    def test_day_zero_flag(self):
+        timeline = ScheduleTimelineInput.model_validate(_timeline(day_zero=True))
+        assert timeline.day_zero is True
+
+    def test_a_delay_column(self):
         column = ColumnInput.model_validate(
-            {"id": "c1", "timing": {"text": "D8", "pattern": "D8"}}
+            {
+                "id": "c1",
+                "visit": {"text": "(7-28 days between doses)"},
+                "delay": {"min": 7, "max": 28, "unit": "days"},
+            }
         )
-        assert column.timing.pattern == "D8"
+        assert (column.delay.min, column.delay.max) == (7, 28)
 
     def test_round_trip_through_model_dump(self):
         timeline = ScheduleTimelineInput.model_validate(_timeline())
@@ -152,36 +178,123 @@ class TestRows:
             ScheduleTimelineInput.model_validate(_timeline(rows={key: "x"}))
 
 
-class TestHeaderValue:
-    def test_markers(self):
-        value = HeaderValue(text="Visit 3", pattern="Visit 3", markers=["1", "2"])
-        assert value.markers == ["1", "2"]
+class TestValues:
+    """U4-35: structured, text only, or redacted — never a mix."""
 
-    def test_markers_default_empty(self):
-        assert HeaderValue(pattern="Day 1").markers == []
+    def test_value_fields(self):
+        assert VALUE_FIELDS == HEADER_FIELDS + ("delay",)
 
-    def test_cci_is_structurally_fine(self):
-        # Issue 64: the redaction pattern; the parse stage reads it.
-        assert HeaderValue(text="[CCI]", pattern="CCI").pattern == "CCI"
-
-    def test_text_and_pattern(self):
-        value = HeaderValue(text="D 15", pattern="Day 15")
-        assert value.label == "D 15"
-
-    def test_pattern_only_labels_with_the_pattern(self):
-        assert HeaderValue(pattern="Day 15").label == "Day 15"
-
-    def test_text_only_is_an_unparseable_value(self):
-        value = HeaderValue(text="As clinically indicated")
-        assert value.pattern is None
-        assert value.label == "As clinically indicated"
+    def test_markers_and_text_default_empty(self):
+        value = TimingValue(value=1, unit="days")
+        assert (value.text, value.markers, value.redacted) == ("", [], False)
 
     @pytest.mark.parametrize(
-        "data", [{}, {"text": ""}, {"text": "  ", "pattern": " "}, {"pattern": ""}]
+        "model, data",
+        [
+            (TimingValue, {"value": 1, "unit": "days"}),
+            (TimingValue, {"start": -3, "end": 3, "unit": "days"}),
+            (WindowValue, {"before": 0, "after": 0, "unit": "hours"}),
+            (CycleValue, {"first": 3}),
+            (CycleValue, {"first": 1, "last": 6}),
+            (QuantityValue, {"value": 4, "unit": "weeks"}),
+            (DelayValue, {"min": 2, "max": 10, "unit": "days"}),
+            (DelayValue, {"min": 2, "unit": "days"}),
+        ],
     )
-    def test_empty_value_refused(self, data):
+    def test_structured(self, model, data):
+        assert model.model_validate(data).structured
+
+    @pytest.mark.parametrize(
+        "model", [TimingValue, WindowValue, CycleValue, QuantityValue, DelayValue]
+    )
+    def test_text_only_is_not_structured(self, model):
+        value = model.model_validate({"text": "As clinically indicated"})
+        assert not value.structured
+
+    @pytest.mark.parametrize(
+        "model",
+        [LabelValue, TimingValue, WindowValue, CycleValue, QuantityValue, DelayValue],
+    )
+    def test_redacted_needs_no_text_and_is_not_structured(self, model):
+        value = model.model_validate({"redacted": True})
+        assert value.redacted
+        if model is not LabelValue:
+            assert not value.structured
+
+    @pytest.mark.parametrize(
+        "model",
+        [LabelValue, TimingValue, WindowValue, CycleValue, QuantityValue, DelayValue],
+    )
+    @pytest.mark.parametrize("data", [{}, {"text": ""}, {"text": "  "}])
+    def test_an_empty_value_is_refused(self, model, data):
+        with pytest.raises(ValidationError, match="null"):
+            model.model_validate(data)
+
+    @pytest.mark.parametrize(
+        "model, data",
+        [
+            (TimingValue, {"value": 1, "unit": "days"}),
+            (WindowValue, {"before": 1, "after": 1, "unit": "days"}),
+            (CycleValue, {"first": 1}),
+            (QuantityValue, {"value": 21, "unit": "days"}),
+            (DelayValue, {"min": 2, "unit": "days"}),
+        ],
+    )
+    def test_redacted_with_structure_is_refused(self, model, data):
+        with pytest.raises(ValidationError, match="redacted"):
+            model.model_validate({**data, "redacted": True})
+
+    @pytest.mark.parametrize(
+        "model, data, match",
+        [
+            (TimingValue, {"value": 1}, "unit"),
+            (TimingValue, {"unit": "days"}, "a value, or a start and an end"),
+            (
+                TimingValue,
+                {"value": 1, "start": 1, "end": 2, "unit": "days"},
+                "not both",
+            ),
+            (TimingValue, {"start": 1, "unit": "days"}, "both its start and its end"),
+            (TimingValue, {"start": 3, "end": 1, "unit": "days"}, "before its start"),
+            (WindowValue, {"before": 1, "unit": "days"}, "missing"),
+            (WindowValue, {"before": -1, "after": 1, "unit": "days"}, "negative"),
+            (CycleValue, {"last": 3}, "missing"),
+            (CycleValue, {"first": -1}, "negative"),
+            (CycleValue, {"first": 3, "last": 2}, "before its first"),
+            (QuantityValue, {"value": 21}, "missing"),
+            (QuantityValue, {"value": 0, "unit": "days"}, "more than 0"),
+            (DelayValue, {"max": 10, "unit": "days"}, "missing"),
+            (DelayValue, {"min": -1, "unit": "days"}, "negative"),
+            (DelayValue, {"min": 5, "max": 2, "unit": "days"}, "less than its min"),
+        ],
+    )
+    def test_bad_structure_is_refused(self, model, data, match):
+        with pytest.raises(ValidationError, match=match):
+            model.model_validate(data)
+
+    @pytest.mark.parametrize("unit", ["day", "Days", "d", "cycles", "months "])
+    def test_only_the_plural_units_are_accepted(self, unit):
         with pytest.raises(ValidationError):
-            HeaderValue.model_validate(data)
+            TimingValue.model_validate({"value": 1, "unit": unit})
+
+    @pytest.mark.parametrize(
+        "unit", ["minutes", "hours", "days", "weeks", "months", "years"]
+    )
+    def test_the_units(self, unit):
+        assert TimingValue.model_validate({"value": 1, "unit": unit}).unit == unit
+
+    def test_timing_point_and_range(self):
+        assert not TimingValue(value=1, unit="days").is_range
+        assert TimingValue(start=1, end=3, unit="days").is_range
+
+    def test_cycle_single_range_and_open(self):
+        assert not CycleValue(first=2, last=2).is_range
+        assert CycleValue(first=1, last=6).is_range
+        assert CycleValue(first=3).is_range
+
+    def test_the_pattern_key_is_gone(self):
+        with pytest.raises(ValidationError):
+            TimingValue.model_validate({"text": "Day 1", "pattern": "Day 1"})
 
 
 class TestRefused:
@@ -209,7 +322,7 @@ class TestRefused:
 
     def test_unknown_column_key(self):
         data = _timeline()
-        data["columns"][0]["value"] = 1  # a caller-parsed number
+        data["columns"][0]["value"] = 1  # not a column field
         with pytest.raises(ValidationError):
             ScheduleTimelineInput.model_validate(data)
 
@@ -220,9 +333,19 @@ class TestRefused:
         with pytest.raises(ValidationError):
             ScheduleTimelineInput.model_validate(data)
 
-    def test_unknown_header_value_key(self):
+    def test_unknown_value_key(self):
         with pytest.raises(ValidationError):
-            HeaderValue.model_validate({"text": "Day 1", "value": 1})
+            TimingValue.model_validate({"text": "Day 1", "value": 1, "day": 1})
+
+    @pytest.mark.parametrize("field", ["timing", "window"])
+    def test_a_delay_with_a_timing_or_window_is_refused(self, field):
+        data = {
+            "id": "c1",
+            "delay": {"min": 2, "unit": "days"},
+            field: {"text": "x"},
+        }
+        with pytest.raises(ValidationError, match="no anchored time"):
+            ColumnInput.model_validate(data)
 
     def test_duplicate_column_id(self):
         data = _timeline()

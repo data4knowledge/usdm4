@@ -12,286 +12,6 @@
         "timing": "Week",
         "window": "Day; visit window [days]"
       },
-      "columns": [
-        {
-          "id": "c1",
-          "epoch": {
-            "text": "Screen",
-            "pattern": "Screen"
-          },
-          "visit": {
-            "text": "Screen",
-            "pattern": "Screen"
-          },
-          "window": {
-            "text": "-21 to -1",
-            "pattern": null
-          }
-        },
-        {
-          "id": "c2",
-          "epoch": {
-            "text": "Treatment courses",
-            "pattern": "Treatment courses"
-          },
-          "visit": {
-            "text": "V1",
-            "pattern": "V1"
-          },
-          "cycle": {
-            "text": "1, 2, 3, 4",
-            "pattern": null
-          },
-          "timing": {
-            "text": "w1",
-            "pattern": "Week 1"
-          },
-          "window": {
-            "text": "d1",
-            "pattern": null
-          }
-        },
-        {
-          "id": "c3",
-          "epoch": {
-            "text": "Treatment courses",
-            "pattern": "Treatment courses"
-          },
-          "visit": {
-            "text": "V1",
-            "pattern": "V1"
-          },
-          "cycle": {
-            "text": "1, 2, 3, 4",
-            "pattern": null
-          },
-          "timing": {
-            "text": "w1",
-            "pattern": "Week 1"
-          },
-          "window": {
-            "text": "d2",
-            "pattern": null
-          }
-        },
-        {
-          "id": "c4",
-          "epoch": {
-            "text": "Treatment courses",
-            "pattern": "Treatment courses"
-          },
-          "visit": {
-            "text": "V1",
-            "pattern": "V1"
-          },
-          "cycle": {
-            "text": "1, 2, 3, 4",
-            "pattern": null
-          },
-          "timing": {
-            "text": "w1",
-            "pattern": "Week 1"
-          },
-          "window": {
-            "text": "d3; +1d (1,2)*",
-            "pattern": null
-          }
-        },
-        {
-          "id": "c5",
-          "epoch": {
-            "text": "Treatment courses",
-            "pattern": "Treatment courses"
-          },
-          "visit": {
-            "text": "V2",
-            "pattern": "V2"
-          },
-          "cycle": {
-            "text": "1, 2, 3, 4",
-            "pattern": null
-          },
-          "timing": {
-            "text": "w2",
-            "pattern": "Week 2"
-          },
-          "window": {
-            "text": "d8; -1/+2d",
-            "pattern": null
-          }
-        },
-        {
-          "id": "c6",
-          "epoch": {
-            "text": "Treatment courses",
-            "pattern": "Treatment courses"
-          },
-          "visit": {
-            "text": "V3",
-            "pattern": "V3"
-          },
-          "cycle": {
-            "text": "1, 2, 3, 4",
-            "pattern": null
-          },
-          "timing": {
-            "text": "w3",
-            "pattern": "Week 3"
-          },
-          "window": {
-            "text": "d15; -1/+2d",
-            "pattern": null
-          }
-        },
-        {
-          "id": "c7",
-          "epoch": {
-            "text": "Treatment courses",
-            "pattern": "Treatment courses"
-          },
-          "visit": {
-            "text": "V4",
-            "pattern": "V4"
-          },
-          "cycle": {
-            "text": "1, 2, 3, 4",
-            "pattern": null
-          },
-          "timing": {
-            "text": "Imaging",
-            "pattern": null
-          },
-          "window": {
-            "text": "d18; +/-3d (2,4)*",
-            "pattern": null
-          }
-        },
-        {
-          "id": "c8",
-          "epoch": {
-            "text": "Treatment courses",
-            "pattern": "Treatment courses"
-          },
-          "visit": {
-            "text": "V1",
-            "pattern": "V1"
-          },
-          "cycle": {
-            "text": "5, 6",
-            "pattern": null
-          },
-          "timing": {
-            "text": "w1",
-            "pattern": "Week 1"
-          },
-          "window": {
-            "text": "d1",
-            "pattern": null
-          }
-        },
-        {
-          "id": "c9",
-          "epoch": {
-            "text": "Treatment courses",
-            "pattern": "Treatment courses"
-          },
-          "visit": {
-            "text": "V2",
-            "pattern": "V2"
-          },
-          "cycle": {
-            "text": "5, 6",
-            "pattern": null
-          },
-          "timing": {
-            "text": "w2",
-            "pattern": "Week 2"
-          },
-          "window": {
-            "text": "d8; -1d/ +2d",
-            "pattern": null
-          }
-        },
-        {
-          "id": "c10",
-          "epoch": {
-            "text": "Treatment courses",
-            "pattern": "Treatment courses"
-          },
-          "visit": {
-            "text": "V3",
-            "pattern": "V3"
-          },
-          "cycle": {
-            "text": "5, 6",
-            "pattern": null
-          },
-          "timing": {
-            "text": "Imaging",
-            "pattern": null
-          },
-          "window": {
-            "text": "d18; +/-3d (6)*",
-            "pattern": null
-          }
-        },
-        {
-          "id": "c11",
-          "epoch": {
-            "text": "Treatment courses",
-            "pattern": "Treatment courses"
-          },
-          "visit": {
-            "text": "V1",
-            "pattern": "V1"
-          },
-          "cycle": {
-            "text": "7^18 ongoing",
-            "pattern": null
-          },
-          "timing": {
-            "text": "w1",
-            "pattern": "Week 1"
-          },
-          "window": {
-            "text": "d1",
-            "pattern": null
-          }
-        },
-        {
-          "id": "c12",
-          "epoch": {
-            "text": "EOT",
-            "pattern": "EOT"
-          },
-          "window": {
-            "text": "EoT (when defined)",
-            "pattern": null
-          }
-        },
-        {
-          "id": "c13",
-          "epoch": {
-            "text": "EoR",
-            "pattern": "EoR"
-          },
-          "window": {
-            "text": "Last admin +42d; -2/+3d",
-            "pattern": null
-          }
-        },
-        {
-          "id": "c14",
-          "epoch": {
-            "text": "FU / EoFU",
-            "pattern": "FU / EoFU"
-          },
-          "window": {
-            "text": "every 6 weeks (+/-3d) until PD",
-            "pattern": null
-          }
-        }
-      ],
       "activities": [
         {
           "name": "Informed consent / IRT call",
@@ -1015,7 +735,244 @@
           ]
         }
       ],
-      "footnotes": []
+      "footnotes": [],
+      "columns": [
+        {
+          "id": "c1",
+          "epoch": {
+            "text": "Screen"
+          },
+          "visit": {
+            "text": "Screen"
+          },
+          "window": {
+            "text": "-21 to -1"
+          }
+        },
+        {
+          "id": "c2",
+          "epoch": {
+            "text": "Treatment courses"
+          },
+          "visit": {
+            "text": "V1"
+          },
+          "timing": {
+            "text": "w1",
+            "value": 1,
+            "unit": "weeks"
+          },
+          "window": {
+            "text": "d1"
+          },
+          "cycle": {
+            "text": "1, 2, 3, 4"
+          }
+        },
+        {
+          "id": "c3",
+          "epoch": {
+            "text": "Treatment courses"
+          },
+          "visit": {
+            "text": "V1"
+          },
+          "timing": {
+            "text": "w1",
+            "value": 1,
+            "unit": "weeks"
+          },
+          "window": {
+            "text": "d2"
+          },
+          "cycle": {
+            "text": "1, 2, 3, 4"
+          }
+        },
+        {
+          "id": "c4",
+          "epoch": {
+            "text": "Treatment courses"
+          },
+          "visit": {
+            "text": "V1"
+          },
+          "timing": {
+            "text": "w1",
+            "value": 1,
+            "unit": "weeks"
+          },
+          "window": {
+            "text": "d3; +1d (1,2)*"
+          },
+          "cycle": {
+            "text": "1, 2, 3, 4"
+          }
+        },
+        {
+          "id": "c5",
+          "epoch": {
+            "text": "Treatment courses"
+          },
+          "visit": {
+            "text": "V2"
+          },
+          "timing": {
+            "text": "w2",
+            "value": 2,
+            "unit": "weeks"
+          },
+          "window": {
+            "text": "d8; -1/+2d"
+          },
+          "cycle": {
+            "text": "1, 2, 3, 4"
+          }
+        },
+        {
+          "id": "c6",
+          "epoch": {
+            "text": "Treatment courses"
+          },
+          "visit": {
+            "text": "V3"
+          },
+          "timing": {
+            "text": "w3",
+            "value": 3,
+            "unit": "weeks"
+          },
+          "window": {
+            "text": "d15; -1/+2d"
+          },
+          "cycle": {
+            "text": "1, 2, 3, 4"
+          }
+        },
+        {
+          "id": "c7",
+          "epoch": {
+            "text": "Treatment courses"
+          },
+          "visit": {
+            "text": "V4"
+          },
+          "timing": {
+            "text": "Imaging"
+          },
+          "window": {
+            "text": "d18; +/-3d (2,4)*"
+          },
+          "cycle": {
+            "text": "1, 2, 3, 4"
+          }
+        },
+        {
+          "id": "c8",
+          "epoch": {
+            "text": "Treatment courses"
+          },
+          "visit": {
+            "text": "V1"
+          },
+          "timing": {
+            "text": "w1",
+            "value": 1,
+            "unit": "weeks"
+          },
+          "window": {
+            "text": "d1"
+          },
+          "cycle": {
+            "text": "5, 6"
+          }
+        },
+        {
+          "id": "c9",
+          "epoch": {
+            "text": "Treatment courses"
+          },
+          "visit": {
+            "text": "V2"
+          },
+          "timing": {
+            "text": "w2",
+            "value": 2,
+            "unit": "weeks"
+          },
+          "window": {
+            "text": "d8; -1d/ +2d"
+          },
+          "cycle": {
+            "text": "5, 6"
+          }
+        },
+        {
+          "id": "c10",
+          "epoch": {
+            "text": "Treatment courses"
+          },
+          "visit": {
+            "text": "V3"
+          },
+          "timing": {
+            "text": "Imaging"
+          },
+          "window": {
+            "text": "d18; +/-3d (6)*"
+          },
+          "cycle": {
+            "text": "5, 6"
+          }
+        },
+        {
+          "id": "c11",
+          "epoch": {
+            "text": "Treatment courses"
+          },
+          "visit": {
+            "text": "V1"
+          },
+          "timing": {
+            "text": "w1",
+            "value": 1,
+            "unit": "weeks"
+          },
+          "window": {
+            "text": "d1"
+          },
+          "cycle": {
+            "text": "7^18 ongoing"
+          }
+        },
+        {
+          "id": "c12",
+          "epoch": {
+            "text": "EOT"
+          },
+          "window": {
+            "text": "EoT (when defined)"
+          }
+        },
+        {
+          "id": "c13",
+          "epoch": {
+            "text": "EoR"
+          },
+          "window": {
+            "text": "Last admin +42d; -2/+3d"
+          }
+        },
+        {
+          "id": "c14",
+          "epoch": {
+            "text": "FU / EoFU"
+          },
+          "window": {
+            "text": "every 6 weeks (+/-3d) until PD"
+          }
+        }
+      ]
     },
     {
       "type": "profile",
@@ -1024,208 +981,6 @@
       "rows": {
         "timing": "CRF Time / planned time"
       },
-      "columns": [
-        {
-          "id": "p1",
-          "visit": {
-            "text": "V1",
-            "pattern": "V1"
-          },
-          "timing": {
-            "text": "-0:05",
-            "pattern": "Minute -5"
-          },
-          "notes": [
-            {
-              "role": "cycle",
-              "text": "1***"
-            },
-            {
-              "role": "time_offset",
-              "text": "Day 1"
-            },
-            {
-              "role": "unassigned",
-              "text": "Before start of BI 836880 infusion"
-            }
-          ]
-        },
-        {
-          "id": "p2",
-          "visit": {
-            "text": "V1",
-            "pattern": "V1"
-          },
-          "timing": {
-            "text": "0:00",
-            "pattern": "Minute 0"
-          },
-          "notes": [
-            {
-              "role": "cycle",
-              "text": "1***"
-            },
-            {
-              "role": "time_offset",
-              "text": "Day 1"
-            },
-            {
-              "role": "unassigned",
-              "text": "Start of BI 836880 infusion"
-            }
-          ]
-        },
-        {
-          "id": "p3",
-          "visit": {
-            "text": "V1",
-            "pattern": "V1"
-          },
-          "timing": {
-            "text": "1:30**",
-            "pattern": "Minute 90"
-          },
-          "notes": [
-            {
-              "role": "cycle",
-              "text": "1***"
-            },
-            {
-              "role": "time_offset",
-              "text": "Day 1"
-            },
-            {
-              "role": "unassigned",
-              "text": "Before end of infusion"
-            }
-          ]
-        },
-        {
-          "id": "p4",
-          "visit": {
-            "text": "V1",
-            "pattern": "V1"
-          },
-          "timing": {
-            "text": "1:30**",
-            "pattern": "Minute 90"
-          },
-          "notes": [
-            {
-              "role": "cycle",
-              "text": "1***"
-            },
-            {
-              "role": "time_offset",
-              "text": "Day 1"
-            },
-            {
-              "role": "unassigned",
-              "text": "Immediately after end of infusion*"
-            }
-          ]
-        },
-        {
-          "id": "p5",
-          "visit": {
-            "text": "V1",
-            "pattern": "V1"
-          },
-          "timing": {
-            "text": "2:00",
-            "pattern": "Minute 120"
-          },
-          "notes": [
-            {
-              "role": "cycle",
-              "text": "1***"
-            },
-            {
-              "role": "time_offset",
-              "text": "Day 1"
-            },
-            {
-              "role": "unassigned",
-              "text": "0.5h after the end of infusion"
-            }
-          ]
-        },
-        {
-          "id": "p6",
-          "visit": {
-            "text": "V1",
-            "pattern": "V1"
-          },
-          "timing": {
-            "text": "3:00",
-            "pattern": "Minute 180"
-          },
-          "notes": [
-            {
-              "role": "cycle",
-              "text": "1***"
-            },
-            {
-              "role": "time_offset",
-              "text": "Day 1"
-            },
-            {
-              "role": "unassigned",
-              "text": "1.5h after the end of infusion"
-            }
-          ]
-        },
-        {
-          "id": "p7",
-          "visit": {
-            "text": "V1",
-            "pattern": "V1"
-          },
-          "timing": {
-            "text": "5:00",
-            "pattern": "Minute 300"
-          },
-          "notes": [
-            {
-              "role": "cycle",
-              "text": "1***"
-            },
-            {
-              "role": "time_offset",
-              "text": "Day 1"
-            },
-            {
-              "role": "unassigned",
-              "text": "3.5h after the end of infusion"
-            }
-          ]
-        },
-        {
-          "id": "p8",
-          "visit": {
-            "text": "V1",
-            "pattern": "V1"
-          },
-          "timing": {
-            "text": "8:00",
-            "pattern": "Minute 480"
-          },
-          "notes": [
-            {
-              "role": "cycle",
-              "text": "1***"
-            },
-            {
-              "role": "time_offset",
-              "text": "Day 1"
-            },
-            {
-              "role": "unassigned",
-              "text": "6.5h after the end of infusion"
-            }
-          ]
-        }
-      ],
       "activities": [
         {
           "name": "PK: BI 836880",
@@ -1302,7 +1057,211 @@
           ]
         }
       ],
-      "footnotes": []
+      "footnotes": [],
+      "day_zero": true,
+      "columns": [
+        {
+          "id": "p1",
+          "visit": {
+            "text": "V1"
+          },
+          "timing": {
+            "text": "-0:05",
+            "value": -5,
+            "unit": "minutes"
+          },
+          "notes": [
+            {
+              "role": "cycle",
+              "text": "1***"
+            },
+            {
+              "role": "time_offset",
+              "text": "Day 1"
+            },
+            {
+              "role": "unassigned",
+              "text": "Before start of BI 836880 infusion"
+            }
+          ]
+        },
+        {
+          "id": "p2",
+          "visit": {
+            "text": "V1"
+          },
+          "timing": {
+            "text": "0:00",
+            "value": 0,
+            "unit": "minutes"
+          },
+          "notes": [
+            {
+              "role": "cycle",
+              "text": "1***"
+            },
+            {
+              "role": "time_offset",
+              "text": "Day 1"
+            },
+            {
+              "role": "unassigned",
+              "text": "Start of BI 836880 infusion"
+            }
+          ]
+        },
+        {
+          "id": "p3",
+          "visit": {
+            "text": "V1"
+          },
+          "timing": {
+            "text": "1:30**",
+            "value": 90,
+            "unit": "minutes"
+          },
+          "notes": [
+            {
+              "role": "cycle",
+              "text": "1***"
+            },
+            {
+              "role": "time_offset",
+              "text": "Day 1"
+            },
+            {
+              "role": "unassigned",
+              "text": "Before end of infusion"
+            }
+          ]
+        },
+        {
+          "id": "p4",
+          "visit": {
+            "text": "V1"
+          },
+          "timing": {
+            "text": "1:30**",
+            "value": 90,
+            "unit": "minutes"
+          },
+          "notes": [
+            {
+              "role": "cycle",
+              "text": "1***"
+            },
+            {
+              "role": "time_offset",
+              "text": "Day 1"
+            },
+            {
+              "role": "unassigned",
+              "text": "Immediately after end of infusion*"
+            }
+          ]
+        },
+        {
+          "id": "p5",
+          "visit": {
+            "text": "V1"
+          },
+          "timing": {
+            "text": "2:00",
+            "value": 120,
+            "unit": "minutes"
+          },
+          "notes": [
+            {
+              "role": "cycle",
+              "text": "1***"
+            },
+            {
+              "role": "time_offset",
+              "text": "Day 1"
+            },
+            {
+              "role": "unassigned",
+              "text": "0.5h after the end of infusion"
+            }
+          ]
+        },
+        {
+          "id": "p6",
+          "visit": {
+            "text": "V1"
+          },
+          "timing": {
+            "text": "3:00",
+            "value": 180,
+            "unit": "minutes"
+          },
+          "notes": [
+            {
+              "role": "cycle",
+              "text": "1***"
+            },
+            {
+              "role": "time_offset",
+              "text": "Day 1"
+            },
+            {
+              "role": "unassigned",
+              "text": "1.5h after the end of infusion"
+            }
+          ]
+        },
+        {
+          "id": "p7",
+          "visit": {
+            "text": "V1"
+          },
+          "timing": {
+            "text": "5:00",
+            "value": 300,
+            "unit": "minutes"
+          },
+          "notes": [
+            {
+              "role": "cycle",
+              "text": "1***"
+            },
+            {
+              "role": "time_offset",
+              "text": "Day 1"
+            },
+            {
+              "role": "unassigned",
+              "text": "3.5h after the end of infusion"
+            }
+          ]
+        },
+        {
+          "id": "p8",
+          "visit": {
+            "text": "V1"
+          },
+          "timing": {
+            "text": "8:00",
+            "value": 480,
+            "unit": "minutes"
+          },
+          "notes": [
+            {
+              "role": "cycle",
+              "text": "1***"
+            },
+            {
+              "role": "time_offset",
+              "text": "Day 1"
+            },
+            {
+              "role": "unassigned",
+              "text": "6.5h after the end of infusion"
+            }
+          ]
+        }
+      ]
     }
-  ]
+  ],
+  "structured": "Issue 73 (U4-35): converted mechanically from text + pattern to the structured form by the old parse; each value is what the old code read, text is the old label."
 }

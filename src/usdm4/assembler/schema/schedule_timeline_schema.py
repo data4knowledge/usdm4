@@ -1,23 +1,41 @@
-"""The timeline assembler's new input — issue 63, part 63.3.
+"""The timeline assembler's input — issue 63; structured in issue 73 (U4-35).
 
-One ``ScheduleTimelineInput`` per timeline. Every header value is text: the
-text as printed (``text``, used for labels) and its pattern form (``pattern``,
-parsed by ``usdm4.assembler.timeline.grammar``). A caller never hands over a
-number it has worked out from printed text. Specification:
-``docs/timeline_assembler_design.md`` § 3.
+One ``ScheduleTimelineInput`` per timeline. ``usdm4`` is algorithm only and
+never reads printed text: the caller (``usdm4_protocol``, which may use AI;
+``protocol_corpus``'s ground truth; or any algorithmic source) turns the
+printed schedule into structure, and hands every header value over as a
+structured object. Specification: ``docs/timeline_assembler_design.md`` § 3
+and § 9 U4-35.
 
-This module checks STRUCTURE only — required fields, types, and references
-inside one timeline (column ids, cell columns, activity parents, footnote
-markers). It does not parse patterns: that happens in the assembler's parse
-stage, so a pattern the grammar cannot yet read (a timing span, a cycle) can be
-carried as text until the rule that reads it exists.
+Every value object carries:
 
-Unknown keys are refused (``extra="forbid"``). The input this replaces dropped
-them silently, which once hid a classification field from the assembler for
-some time; a contract other programs generate should say when it is misused.
+- ``text`` — the source as printed, for debug and after-the-event analysis.
+  Never read or interpreted. Its one use is as a label, copied verbatim into
+  USDM; when it is empty the label is rendered from the structure. Empty when
+  the caller structured the value from an algorithmic source.
+- ``markers`` — the footnote markers printed on THIS value
+  (``Visit 3^1,2`` → ``["1", "2"]``, issue 64).
+- ``redacted`` — the sponsor printed ``CCI`` in place of the value. The
+  structured fields must then be empty.
+
+A value whose structured fields are all empty and that is not redacted is
+*text only*: the caller states the value is printed but could not be
+structured. It is carried as a label and never read (U4-3: a text-only timing
+is a zero timing plus a warning).
+
+Day numbers (timing, time ranges) are the numbers as printed; ``usdm4``
+applies the Day 0 rule using the timeline's ``day_zero`` flag.
+
+This module checks STRUCTURE only — required fields, types, value ranges and
+references inside one timeline (column ids, cell columns, activity parents,
+footnote markers).
+
+Unknown keys are refused (``extra="forbid"``). An input that dropped them
+silently once hid a classification field from the assembler for some time; a
+contract other programs generate should say when it is misused.
 """
 
-from typing import Literal
+from typing import ClassVar, Literal
 
 from pydantic import BaseModel, ConfigDict, model_validator
 
@@ -49,9 +67,11 @@ FAMILY: dict[str, str] = {
     "unclassified": "unclassified",
 }
 
+# The only units accepted (U4-35). The caller normalises; nothing else is read.
+Unit = Literal["minutes", "hours", "days", "weeks", "months", "years"]
 
-# The header fields of a column, in the order they are read. Also the only
-# keys ``ScheduleTimelineInput.rows`` accepts.
+# The printed header rows of a column, in the order they are read. Also the
+# only keys ``ScheduleTimelineInput.rows`` accepts.
 HEADER_FIELDS: tuple[str, ...] = (
     "epoch",
     "visit",
@@ -60,6 +80,10 @@ HEADER_FIELDS: tuple[str, ...] = (
     "timing",
     "window",
 )
+
+# Every value a column can carry: the header rows plus ``delay`` (R8), which
+# is printed in whichever row the protocol uses.
+VALUE_FIELDS: tuple[str, ...] = HEADER_FIELDS + ("delay",)
 
 
 def family_of(timeline_type: str) -> str:
@@ -71,42 +95,210 @@ class _Model(BaseModel):
     model_config = ConfigDict(strict=False, extra="forbid")
 
 
-class HeaderValue(_Model):
-    """One header value: as printed, and in the pattern grammar.
-
-    - ``pattern`` only: a caller using the assembler directly; the label
-      defaults to the pattern.
-    - ``text`` only (``pattern`` null): the caller states the value cannot be
-      expressed in the grammar; it is carried as text and never parsed.
-    - both empty: not a value — leave the field null instead.
-
-    ``pattern: "CCI"`` states the sponsor redacted the value (issue 64) —
-    valid in every field. ``markers`` are the footnote markers printed on
-    THIS value (``Visit 3^1,2`` → ``markers: ["1", "2"]``).
-    """
+class _Value(_Model):
+    """What every header value carries besides its structure."""
 
     text: str = ""
-    pattern: str | None = None
     markers: list[str] = []
+    redacted: bool = False
+
+    # The structured fields of the subclass; all set, or all empty.
+    _STRUCTURE: ClassVar[tuple[str, ...]] = ()
+    # The fields that must be set for the value to be structured (a subclass
+    # may have optional ones, e.g. a cycle's ``last``).
+    _REQUIRED: ClassVar[tuple[str, ...]] = ()
+
+    def _set(self) -> list[str]:
+        return [name for name in self._STRUCTURE if getattr(self, name) is not None]
+
+    @property
+    def structured(self) -> bool:
+        """True when the value carries its structure (not text only, not
+        redacted)."""
+        return not self.redacted and all(
+            getattr(self, name) is not None for name in self._REQUIRED
+        )
+
+    def _check_value(self) -> None:
+        """Shared rules: a redacted value carries no structure; a value with
+        no structure is text only and needs its text; a structured value has
+        every required field."""
+        name = type(self).__name__
+        set_fields = self._set()
+        if self.redacted:
+            if set_fields:
+                raise ValueError(
+                    f"a redacted {name} carries no structure; set: {set_fields}"
+                )
+            return
+        if not set_fields:
+            if not self.text.strip():
+                raise ValueError(
+                    f"a {name} needs its structure, printed text, or redacted; "
+                    "use null for a value that is not there"
+                )
+            return
+        missing = [f for f in self._REQUIRED if getattr(self, f) is None]
+        if missing:
+            raise ValueError(f"a {name} is missing {missing}")
+
+
+class LabelValue(_Value):
+    """An epoch or visit: free text. The text is the value."""
 
     @model_validator(mode="after")
-    def _not_empty(self) -> "HeaderValue":
-        if not self.text.strip() and not (self.pattern or "").strip():
+    def _check(self) -> "LabelValue":
+        if not self.redacted and not self.text.strip():
             raise ValueError(
-                "a header value needs printed text or a pattern; "
-                "use null for a value that is not there"
+                "an epoch or visit needs its text, or redacted; use null for a "
+                "value that is not there"
             )
         return self
 
+
+class TimingValue(_Value):
+    """A scheduled time, in printed day (week, hour …) numbers.
+
+    - a point: ``{value: 1, unit: "days"}`` (``Day 1``);
+    - a range: ``{start: -28, end: -1, unit: "days"}`` (``Day -28 to Day -1``)
+      — the visit falls anywhere in the span; how that is stored in USDM is
+      ``usdm4``'s business (U4-35).
+    """
+
+    value: int | None = None
+    start: int | None = None
+    end: int | None = None
+    unit: Unit | None = None
+
+    _STRUCTURE: ClassVar[tuple[str, ...]] = ("value", "start", "end", "unit")
+
     @property
-    def label(self) -> str:
-        """The text to use as a label: as printed, else the pattern."""
-        return self.text.strip() or (self.pattern or "").strip()
+    def structured(self) -> bool:
+        if self.redacted or self.unit is None:
+            return False
+        return self.value is not None or self.start is not None
+
+    @property
+    def is_range(self) -> bool:
+        return self.start is not None
+
+    @model_validator(mode="after")
+    def _check(self) -> "TimingValue":
+        if self.redacted or not self._set():
+            self._check_value()
+            return self
+        if self.unit is None:
+            raise ValueError("a timing needs its unit")
+        point = self.value is not None
+        range_ = self.start is not None or self.end is not None
+        if point and range_:
+            raise ValueError(
+                "a timing is a point (value) or a range (start, end), not both"
+            )
+        if not point and not range_:
+            raise ValueError("a timing needs a value, or a start and an end")
+        if range_:
+            if self.start is None or self.end is None:
+                raise ValueError("a time range needs both its start and its end")
+            if self.end < self.start:
+                raise ValueError(
+                    f"a time range's end ({self.end}) is before its start "
+                    f"({self.start})"
+                )
+        return self
+
+
+class WindowValue(_Value):
+    """A window: ``{before: 3, after: 3, unit: "days"}`` (``±3 days``), both
+    distances from the scheduled time, never negative."""
+
+    before: int | None = None
+    after: int | None = None
+    unit: Unit | None = None
+
+    _STRUCTURE: ClassVar[tuple[str, ...]] = ("before", "after", "unit")
+    _REQUIRED: ClassVar[tuple[str, ...]] = ("before", "after", "unit")
+
+    @model_validator(mode="after")
+    def _check(self) -> "WindowValue":
+        self._check_value()
+        for name in ("before", "after"):
+            value = getattr(self, name)
+            if value is not None and value < 0:
+                raise ValueError(f"a window's {name} may not be negative ({value})")
+        return self
+
+
+class CycleValue(_Value):
+    """A cycle: ``{first: 2, last: 2}`` a single cycle, ``{first: 1, last: 6}``
+    a range, ``{first: 3, last: null}`` open-ended (``Cycle 3+``)."""
+
+    first: int | None = None
+    last: int | None = None
+
+    _STRUCTURE: ClassVar[tuple[str, ...]] = ("first", "last")
+    _REQUIRED: ClassVar[tuple[str, ...]] = ("first",)
+
+    @property
+    def is_range(self) -> bool:
+        return self.last is None or self.last != self.first
+
+    @model_validator(mode="after")
+    def _check(self) -> "CycleValue":
+        self._check_value()
+        if self.first is not None and self.first < 0:
+            raise ValueError(f"a cycle number may not be negative ({self.first})")
+        if self.first is not None and self.last is not None and self.last < self.first:
+            raise ValueError(
+                f"a cycle range's last ({self.last}) is before its first ({self.first})"
+            )
+        return self
+
+
+class QuantityValue(_Value):
+    """A cycle length: ``{value: 21, unit: "days"}``. Never zero."""
+
+    value: int | None = None
+    unit: Unit | None = None
+
+    _STRUCTURE: ClassVar[tuple[str, ...]] = ("value", "unit")
+    _REQUIRED: ClassVar[tuple[str, ...]] = ("value", "unit")
+
+    @model_validator(mode="after")
+    def _check(self) -> "QuantityValue":
+        self._check_value()
+        if self.value is not None and self.value <= 0:
+            raise ValueError(f"a cycle length must be more than 0 ({self.value})")
+        return self
+
+
+class DelayValue(_Value):
+    """A variable delay (R8, U4-10): ``{min: 2, max: 10, unit: "days"}``
+    (``Washout 2-10 days``). ``max`` null: no printed maximum. Accepted and
+    carried; built by R8."""
+
+    min: int | None = None
+    max: int | None = None
+    unit: Unit | None = None
+
+    _STRUCTURE: ClassVar[tuple[str, ...]] = ("min", "max", "unit")
+    _REQUIRED: ClassVar[tuple[str, ...]] = ("min", "unit")
+
+    @model_validator(mode="after")
+    def _check(self) -> "DelayValue":
+        self._check_value()
+        if self.min is not None and self.min < 0:
+            raise ValueError(f"a delay's min may not be negative ({self.min})")
+        if self.min is not None and self.max is not None and self.max < self.min:
+            raise ValueError(
+                f"a delay's max ({self.max}) is less than its min ({self.min})"
+            )
+        return self
 
 
 class HeaderNote(_Model):
     """A further header row kept as text only — a second timing row, a timing
-    clarification, an unassigned row. Never parsed."""
+    clarification, an unassigned row. Never read."""
 
     role: str
     text: str
@@ -114,21 +306,29 @@ class HeaderNote(_Model):
 
 class ColumnInput(_Model):
     """One column of the schedule, in document order. Footnote markers sit
-    on the header value they are printed on, not on the column (issue 64)."""
+    on the value they are printed on, not on the column (issue 64)."""
 
     id: str
-    epoch: HeaderValue | None = None
-    visit: HeaderValue | None = None
-    cycle: HeaderValue | None = None
-    cycle_length: HeaderValue | None = None
-    timing: HeaderValue | None = None
-    window: HeaderValue | None = None
+    epoch: LabelValue | None = None
+    visit: LabelValue | None = None
+    cycle: CycleValue | None = None
+    cycle_length: QuantityValue | None = None
+    timing: TimingValue | None = None
+    window: WindowValue | None = None
+    delay: DelayValue | None = None
     notes: list[HeaderNote] = []
 
     @model_validator(mode="after")
-    def _id_not_blank(self) -> "ColumnInput":
+    def _check(self) -> "ColumnInput":
         if not self.id.strip():
             raise ValueError("a column id may not be blank")
+        if self.delay is not None and (
+            self.timing is not None or self.window is not None
+        ):
+            raise ValueError(
+                f"column {self.id!r}: a delay has no anchored time, so no timing "
+                "or window on the same column"
+            )
         return self
 
 
@@ -176,17 +376,19 @@ class TimelineClassification(_Model):
 
 class ScheduleTimelineInput(_Model):
     """One timeline — ``AssemblerInput.soa`` is a list of these. Replaced
-    ``TimelineInput`` in issue 63, part 63.4."""
+    ``TimelineInput`` in issue 63; structured in issue 73."""
 
     type: TimelineType
     title: str | None = None
     description: str | None = None
     entry_condition: str | None = None
     attaches_to: str | None = None
+    # Whether the protocol numbers a Day 0 (U4-35). Default: Day 1, no Day 0
+    # — ``Day -1`` is the day before ``Day 1``.
+    day_zero: bool = False
     classification: TimelineClassification = TimelineClassification()
     # Header field -> the row's printed label ("Days from randomization").
-    # Carries the unit, the anchor and the clock format as printed. Issue 64:
-    # carried, not yet read — rule R4 uses it.
+    # Carried for analysis; never read.
     rows: dict[str, str] = {}
     columns: list[ColumnInput] = []
     activities: list[ActivityInput] = []

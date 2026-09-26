@@ -15,10 +15,12 @@ A straight chain, one activity-instance node per column. Issue 65 (design
 - **Columns with no readable timing (U4-3)** get a zero duration: ``After`` the
   previous column, or ``Before`` the next when they precede the anchor, and a
   warning. So every instance is timed.
-- **``≤N`` (U4-18)** is read as ``Day -N to Day -1`` only before the anchor;
-  anywhere else it has no readable timing.
 - **Time ranges (U4-4, U4-20)** are timed at their start with a window forward to
-  their end; crossing zero loses a day when the table has no Day 0.
+  their end; crossing zero loses a day when the protocol has no Day 0.
+- **Day 0 (U4-35)** comes from the timeline's ``day_zero`` flag, never from the
+  columns; a ``Day 0`` timing when the flag says Day 1 is warned and the flag
+  is used. ``≤N`` and windows printed in the timing cell are the caller's to
+  structure (issue 73).
 
 Issue 66 (design § 6 R4.3, U4-23–U4-26), issue 67 (U4-22, U4-27). In a
 single-cycle column (``Cycle n``) the timing is the day within the cycle
@@ -52,7 +54,7 @@ from simple_error_log.error_location import KlassMethodLocation
 from simple_error_log.errors import Errors
 
 from usdm4.assembler.timeline.columns import Column, ParsedTimeline
-from usdm4.assembler.timeline.grammar import (
+from usdm4.assembler.timeline.values import (
     CycleLength,
     CycleNumber,
     CycleRange,
@@ -147,8 +149,8 @@ class InstanceNode:
     ``relative_to`` is the key of the node it is measured from: a column
     index, or a start marker's key (``C2D1``). ``duration`` and ``unit`` give
     the distance, always non-negative. ``window`` is the node's window, from
-    the window field, the timing cell, or a decoded time range
-    (``window_from`` says which: ``"window"``, ``"timing"``, ``"range"``).
+    the window field or a time range's span (``window_from`` says which:
+    ``"window"``, ``"range"``).
     ``timed`` is False for a node with no readable timing (U4-3).
 
     A cycle's start marker (U4-22) has no ``column``: ``marker`` is its key,
@@ -223,9 +225,9 @@ class Planner:
                 "is the anchor",
                 "plan",
             )
-        self._resolve_up_to(columns, anchor_column, where)
         self._warn_restarts(columns, where)
-        has_zero = self.has_zero_timepoint(columns)
+        has_zero = timeline.day_zero
+        self._warn_day_zero(columns, has_zero, where)
         ctx = _Context(
             columns=columns,
             slots=slots,
@@ -424,7 +426,9 @@ class Planner:
             timing_type = BEFORE if column.index < ctx.anchor_position else AFTER
             relative_to = anchor
         if isinstance(anchor, int):
-            duration = self.interval_from_anchor(columns, column.index, anchor)
+            duration = self.interval_from_anchor(
+                columns, column.index, anchor, ctx.has_zero
+            )
         else:
             duration = self._interval(
                 column.timing, ctx, f"column '{column.id}'", column.timing_label
@@ -651,20 +655,17 @@ class Planner:
             timed=timed,
         )
 
-    def _resolve_up_to(self, columns: list[Column], anchor: int, where: str) -> None:
-        """U4-18: ``≤N`` before the anchor is ``Day -N to Day -1``; elsewhere it
-        is not read."""
+    def _warn_day_zero(self, columns: list[Column], has_zero: bool, where: str) -> None:
+        """U4-35: a ``Day 0`` timing when the flag says the protocol numbers
+        from Day 1 is warned; the flag is used."""
+        if has_zero:
+            return
         for column in columns:
-            up_to = column.up_to
-            if up_to is None:
-                continue
-            if column.index < anchor:
-                column.time_range = TimeRange(up_to.unit, -up_to.n, -1)
-                column.timing = TimingPoint(up_to.unit, -up_to.n)
-            else:
+            timing = column.timing
+            if timing is not None and timing.unit in _DAY_UNITS and timing.value == 0:
                 self._warn(
-                    f"{where}, column '{column.id}', timing: '≤{up_to.n}' is read "
-                    "only before the anchor",
+                    f"{where}, column '{column.id}': Day 0 printed but the "
+                    "timeline numbers from Day 1 (day_zero false); the flag is used",
                     "plan",
                 )
 
@@ -703,10 +704,9 @@ class Planner:
 
     @classmethod
     def is_placeholder(cls, column: Column) -> bool:
-        """A blank SoA column: no timing text and no (or zero) value. These
-        carry no timing information — e.g. an unlabelled ET/unscheduled
-        column."""
-        return not (column.timing_label or "").strip() and not cls._value(column)
+        """A column with no readable timing — e.g. an unlabelled
+        ET/unscheduled column, or one sent as text only."""
+        return column.timing is None
 
     @classmethod
     def _is_candidate(cls, column: Column) -> bool:
@@ -724,26 +724,15 @@ class Planner:
                 return column.index
         return 0
 
-    @classmethod
-    def has_zero_timepoint(cls, columns: list[Column]) -> bool:
-        """True if the table numbers days from zero (an explicit Day 0 column
-        exists), in which case no crossing-zero correction applies."""
-        for column in columns:
-            if cls.is_placeholder(column):
-                continue
-            if cls._value(column) == 0:
-                return True
-        return False
-
     def interval_from_anchor(
-        self, columns: list[Column], index: int, anchor_index: int
+        self, columns: list[Column], index: int, anchor_index: int, has_zero: bool
     ) -> int:
         """Duration between a column and the anchor.
 
         USDM ``Timing.value`` is the interval relative to the referenced
         instance, NOT the protocol's day number: Day 16 relative to a Day 1
-        anchor is 15 days. When day numbering is 1-based (no Day 0 in the
-        table), an interval crossing zero loses a day: Day -1 to Day 1 is 1
+        anchor is 15 days. When day numbering is 1-based (``day_zero``
+        false, U4-35), an interval crossing zero loses a day: Day -1 to Day 1 is 1
         day. Falls back to the absolute value when the anchor has no value or
         the units differ."""
         column = columns[index]
@@ -767,7 +756,7 @@ class Planner:
         if (
             unit in _DAY_UNITS
             and (value < 0 < anchor_value or anchor_value < 0 < value)
-            and not self.has_zero_timepoint(columns)
+            and not has_zero
         ):
             delta -= 1
         return delta

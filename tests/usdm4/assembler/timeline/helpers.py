@@ -8,6 +8,7 @@ import os
 import pathlib
 
 from src.usdm4.assembler.schema.schedule_timeline_schema import ScheduleTimelineInput
+from tests.usdm4.assembler.timeline.structure import convert_column
 
 
 def root_path() -> str:
@@ -20,7 +21,9 @@ def value(
     pattern: str | None = None,
     markers: list[str] | None = None,
 ) -> dict:
-    """A header value. ``value("Day 1")`` is printed text and pattern alike."""
+    """A header value in compact notation. ``value("Day 1")`` is printed text
+    and notation alike; ``column`` / ``timeline`` turn it into the structured
+    form (``structure.py``, issue 73)."""
     if pattern is None and text is not None:
         pattern = text
     data = {"text": text or "", "pattern": pattern}
@@ -91,7 +94,7 @@ def timeline(
 ) -> dict:
     data = {
         "type": type,
-        "columns": columns,
+        "columns": [convert_column(c) for c in columns],
         "activities": activities or [],
         "footnotes": footnotes or [],
     }

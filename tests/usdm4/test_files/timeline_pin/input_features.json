@@ -11,106 +11,6 @@
         "unit": null,
         "placement": null
       },
-      "columns": [
-        {
-          "id": "c1",
-          "epoch": {
-            "text": "Screening",
-            "pattern": "Screening"
-          },
-          "visit": {
-            "text": "V1",
-            "pattern": "V1",
-            "markers": [
-              "a"
-            ]
-          },
-          "timing": {
-            "text": "Day -14",
-            "pattern": "Day -14"
-          },
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        },
-        {
-          "id": "c2",
-          "epoch": {
-            "text": "Treatment",
-            "pattern": "Treatment"
-          },
-          "visit": {
-            "text": "V2",
-            "pattern": "V2"
-          },
-          "timing": {
-            "text": "Day 1",
-            "pattern": "Day 1"
-          },
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 days"
-          }
-        },
-        {
-          "id": "c3",
-          "epoch": {
-            "text": "Treatment",
-            "pattern": "Treatment"
-          },
-          "visit": {
-            "text": "V3",
-            "pattern": "V3"
-          },
-          "timing": {
-            "text": "Week 2",
-            "pattern": "Week 2"
-          },
-          "window": {
-            "text": "-2..+2 day",
-            "pattern": "-2..+2 days"
-          }
-        },
-        {
-          "id": "c4",
-          "epoch": {
-            "text": "Treatment",
-            "pattern": "Treatment"
-          },
-          "visit": {
-            "text": "V4",
-            "pattern": "V4"
-          },
-          "timing": {
-            "text": "Day 29",
-            "pattern": "Day 29"
-          },
-          "window": {
-            "text": "-3..+3 day",
-            "pattern": "-3..+3 days"
-          }
-        },
-        {
-          "id": "c5",
-          "epoch": {
-            "text": "Follow-up",
-            "pattern": "Follow-up"
-          },
-          "visit": {
-            "text": "FU",
-            "pattern": "FU"
-          },
-          "timing": {
-            "text": "Cycle 2 Day 1",
-            "pattern": null
-          },
-          "window": {
-            "text": "-7..+7 day",
-            "pattern": "-7..+7 days"
-          }
-        }
-      ],
       "activities": [
         {
           "name": "Informed consent",
@@ -243,6 +143,109 @@
           "marker": "",
           "text": "Footnote with no marker."
         }
+      ],
+      "columns": [
+        {
+          "id": "c1",
+          "epoch": {
+            "text": "Screening"
+          },
+          "visit": {
+            "text": "V1",
+            "markers": [
+              "a"
+            ]
+          },
+          "timing": {
+            "text": "Day -14",
+            "value": -14,
+            "unit": "days"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c2",
+          "epoch": {
+            "text": "Treatment"
+          },
+          "visit": {
+            "text": "V2"
+          },
+          "timing": {
+            "text": "Day 1",
+            "value": 1,
+            "unit": "days"
+          },
+          "window": {
+            "text": "-0..+0 days",
+            "before": 0,
+            "after": 0,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c3",
+          "epoch": {
+            "text": "Treatment"
+          },
+          "visit": {
+            "text": "V3"
+          },
+          "timing": {
+            "text": "Week 2",
+            "value": 2,
+            "unit": "weeks"
+          },
+          "window": {
+            "text": "-2..+2 day",
+            "before": 2,
+            "after": 2,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c4",
+          "epoch": {
+            "text": "Treatment"
+          },
+          "visit": {
+            "text": "V4"
+          },
+          "timing": {
+            "text": "Day 29",
+            "value": 29,
+            "unit": "days"
+          },
+          "window": {
+            "text": "-3..+3 day",
+            "before": 3,
+            "after": 3,
+            "unit": "days"
+          }
+        },
+        {
+          "id": "c5",
+          "epoch": {
+            "text": "Follow-up"
+          },
+          "visit": {
+            "text": "FU"
+          },
+          "timing": {
+            "text": "Cycle 2 Day 1"
+          },
+          "window": {
+            "text": "-7..+7 day",
+            "before": 7,
+            "after": 7,
+            "unit": "days"
+          }
+        }
       ]
     },
     {
@@ -254,65 +257,6 @@
         "unit": "hour",
         "placement": "away"
       },
-      "columns": [
-        {
-          "id": "c1",
-          "epoch": {
-            "text": "Treatment",
-            "pattern": "Treatment"
-          },
-          "visit": {
-            "text": "Pre-dose",
-            "pattern": "Pre-dose"
-          },
-          "timing": {
-            "text": "0 h",
-            "pattern": "Hour 0"
-          },
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 hours"
-          }
-        },
-        {
-          "id": "c2",
-          "epoch": {
-            "text": "Treatment",
-            "pattern": "Treatment"
-          },
-          "visit": {
-            "text": "2 h",
-            "pattern": "2 h"
-          },
-          "timing": {
-            "text": "2 h",
-            "pattern": "Hour 2"
-          },
-          "window": {
-            "text": "",
-            "pattern": "-0..+0 hours"
-          }
-        },
-        {
-          "id": "c3",
-          "epoch": {
-            "text": "Treatment",
-            "pattern": "Treatment"
-          },
-          "visit": {
-            "text": "24 h",
-            "pattern": "24 h"
-          },
-          "timing": {
-            "text": "24 h",
-            "pattern": "Hour 24"
-          },
-          "window": {
-            "text": "-1..+1 hour",
-            "pattern": "-1..+1 hours"
-          }
-        }
-      ],
       "activities": [
         {
           "name": "PK sample",
@@ -351,7 +295,70 @@
           ]
         }
       ],
-      "footnotes": []
+      "footnotes": [],
+      "day_zero": true,
+      "columns": [
+        {
+          "id": "c1",
+          "epoch": {
+            "text": "Treatment"
+          },
+          "visit": {
+            "text": "Pre-dose"
+          },
+          "timing": {
+            "text": "0 h",
+            "value": 0,
+            "unit": "hours"
+          },
+          "window": {
+            "text": "-0..+0 hours",
+            "before": 0,
+            "after": 0,
+            "unit": "hours"
+          }
+        },
+        {
+          "id": "c2",
+          "epoch": {
+            "text": "Treatment"
+          },
+          "visit": {
+            "text": "2 h"
+          },
+          "timing": {
+            "text": "2 h",
+            "value": 2,
+            "unit": "hours"
+          },
+          "window": {
+            "text": "-0..+0 hours",
+            "before": 0,
+            "after": 0,
+            "unit": "hours"
+          }
+        },
+        {
+          "id": "c3",
+          "epoch": {
+            "text": "Treatment"
+          },
+          "visit": {
+            "text": "24 h"
+          },
+          "timing": {
+            "text": "24 h",
+            "value": 24,
+            "unit": "hours"
+          },
+          "window": {
+            "text": "-1..+1 hour",
+            "before": 1,
+            "after": 1,
+            "unit": "hours"
+          }
+        }
+      ]
     },
     {
       "type": "unclassified",
@@ -362,7 +369,6 @@
         "unit": null,
         "placement": null
       },
-      "columns": [],
       "activities": [
         {
           "name": "Orphan",
@@ -372,7 +378,9 @@
           "cells": []
         }
       ],
-      "footnotes": []
+      "footnotes": [],
+      "columns": []
     }
-  ]
+  ],
+  "structured": "Issue 73 (U4-35): converted mechanically from text + pattern to the structured form by the old parse; each value is what the old code read, text is the old label."
 }

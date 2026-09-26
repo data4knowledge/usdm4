@@ -75,14 +75,12 @@ class TestAssemblerInputValidation:
         minimal_valid_dict["soa"] = [
             {
                 "type": "main",
-                "columns": [
-                    {"id": "c1", "epoch": {"text": "Screening", "pattern": "Screening"}}
-                ],
+                "columns": [{"id": "c1", "epoch": {"text": "Screening"}}],
             }
         ]
         result = AssemblerInput.model_validate(minimal_valid_dict)
         assert result.soa is not None
-        assert result.soa[0].columns[0].epoch.label == "Screening"
+        assert result.soa[0].columns[0].epoch.text == "Screening"
 
     def test_soa_in_the_retired_shape_is_refused(self, minimal_valid_dict):
         """The old TimelineInput shape (issue 63) is not silently accepted."""

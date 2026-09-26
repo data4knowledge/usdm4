@@ -27,9 +27,9 @@ class AssemblerInput(BaseModel):
     # ``Assembler.execute`` change in 0.24.0.
     amendments: AmendmentsInput | None = None
     # ``soa`` is presence-bearing (``None`` means no SoA supplied): a list of
-    # timelines, each a ``ScheduleTimelineInput`` — header values as printed
-    # text plus a pattern form, parsed by the timeline assembler (issue 63;
-    # ``docs/timeline_assembler_design.md``). Exactly one built timeline is
+    # timelines, each a ``ScheduleTimelineInput`` — header values structured
+    # by the caller, printed text carried as labels only (issues 63, 73;
+    # ``docs/timeline_assembler_design.md`` U4-35). Exactly one built timeline is
     # flagged as the main timeline (see ``TimelineAssembler.execute``).
     soa: list[ScheduleTimelineInput] | None = None
     # ``objectives`` follows the same presence-bearing optional pattern:

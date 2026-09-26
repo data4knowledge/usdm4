@@ -3,8 +3,9 @@
 
 The straight chain and its one anchor: anchor choice, the crossing-zero rule,
 mixed units (kept from before the restructure); and from issue 65 the U4-2
-warnings, the zero-timing chain for columns with no readable timing (U4-3),
-``≤N`` (U4-18) and time ranges (U4-4, U4-20).
+warnings, the zero-timing chain for columns with no readable timing (U4-3)
+and time ranges (U4-4, U4-20). Issue 73 (U4-35): Day 0 comes from the
+timeline's ``day_zero`` flag; ``≤N`` is the caller's to structure.
 """
 
 import pytest
@@ -80,16 +81,26 @@ class TestIntervals:
             (AFTER, 7, "day"),
         ]
 
-    def test_no_correction_when_the_table_has_a_day_zero(self):
-        plan = _plan(["Day -7", "Day 0", "Day 7"])
+    def test_no_correction_when_the_protocol_has_a_day_zero(self):
+        plan = _plan(["Day -7", "Day 0", "Day 7"], day_zero=True)
         assert [n.duration for n in plan.nodes] == [7, 0, 7]
 
-    def test_a_day_zero_anywhere_stops_the_correction(self):
-        """The anchor is the first non-negative column, so a Day 0 printed
-        after it still says the table counts from zero."""
-        plan = _plan(["Day -7", "Day 1", "Day 0"])
-        assert plan.anchor == 1
+    def test_the_flag_not_the_columns_stops_the_correction(self):
+        """U4-35: ``day_zero`` says the protocol counts from zero, whether or
+        not a Day 0 column is printed."""
+        plan = _plan(["Day -7", "Day 1"], day_zero=True)
         assert plan.nodes[0].duration == 8
+
+    def test_a_printed_day_zero_with_the_flag_at_day_1_is_warned(self):
+        """U4-35: warned, and the flag is used — the correction still applies."""
+        errors = Errors()
+        plan = _plan(["Day -7", "Day 1", "Day 0"], errors)
+        assert plan.anchor == 1
+        assert plan.nodes[0].duration == 7
+        assert (
+            "Timeline 1, column 'c3': Day 0 printed but the timeline numbers "
+            "from Day 1 (day_zero false); the flag is used"
+        ) in _messages(errors)
 
     def test_a_blank_column_does_not_count_as_day_zero(self):
         plan = _plan(["Day -7", None, "Day 1", "Day 8"])
@@ -143,7 +154,7 @@ class TestAnchorWarnings:
 
     def test_a_restart_outside_a_cycle_is_warned(self):
         errors = Errors()
-        _plan(["Day 1", "Day 540", "Day 0"], errors)
+        _plan(["Day 1", "Day 540", "Day 0"], errors, day_zero=True)
         (message,) = _messages(errors)
         assert "column 'c3': timing restarts (day 0 after day 540)" in message
 
@@ -199,29 +210,6 @@ class TestNoReadableTiming:
         assert any("no column has a timing of 0 or more" in m for m in messages)
 
 
-class TestUpTo:
-    """U4-18: ``≤N`` is read only before the anchor."""
-
-    def test_before_the_anchor_is_a_time_range(self):
-        plan = _plan([_text("≤42"), _text("≤21"), "Day 1"], rows={"timing": "Days"})
-        first = plan.nodes[0]
-        assert (first.column.time_range.start, first.column.time_range.end) == (
-            -42,
-            -1,
-        )
-        assert _links(plan)[:2] == [(BEFORE, 2, 42), (BEFORE, 2, 21)]
-        assert (first.window.lower, first.window.upper) == (0, 41)
-        assert first.window_from == "range"
-
-    def test_after_the_anchor_is_not_read(self):
-        errors = Errors()
-        plan = _plan(["Day 1", _text("≤30")], errors, rows={"timing": "Days"})
-        assert _links(plan)[1] == (AFTER, 0, 0)
-        assert any(
-            "'≤30' is read only before the anchor" in m for m in _messages(errors)
-        )
-
-
 class TestTimeRange:
     """U4-4, U4-20: timed at the start, window forward to the end."""
 
@@ -238,7 +226,7 @@ class TestTimeRange:
         assert self._window(plan.nodes[0]) == (0, 4, "day")
 
     def test_crossing_zero_with_a_day_zero_does_not(self):
-        plan = _plan(["Day -3 to Day 2", "Day 0"])
+        plan = _plan(["Day -3 to Day 2", "Day 1"], day_zero=True)
         assert self._window(plan.nodes[0]) == (0, 5, "day")
 
     def test_other_units_never_lose_one(self):
@@ -342,7 +330,7 @@ class TestSingleCycles:
     def test_a_length_that_does_not_convert_is_a_zero_timing(self):
         errors = Errors()
         plan = _cycle_plan(
-            [("Day 1", "Cycle 1", "1 month"), ("Day 1", "Cycle 2", "1 month")], errors
+            [("Day 1", "Cycle 1", "1 months"), ("Day 1", "Cycle 2", "1 months")], errors
         )
         assert _links(plan)[1] == (AFTER, 0, 0)
         assert not plan.nodes[1].timed
@@ -595,8 +583,10 @@ class TestCycleDayOne:
 
 
 class TestNct02107703Headers:
-    """Issue 68: NCT02107703's cycle headers, as printed (design U4-28). The
-    ranges are read and then planned as U4-25 says until R5."""
+    """Issue 68: NCT02107703's cycle headers. Since issue 73 the caller
+    structures them (U4-35): ``≤28`` → a range, ``15±3`` → a timing and a
+    window, ``2-3`` → cycles 2 to 3, ``4 and Beyond`` → cycle 4 open-ended,
+    the bare ``28`` → 28 days from the row label."""
 
     ROWS = {
         "cycle": "Cycle",
@@ -605,39 +595,29 @@ class TestNct02107703Headers:
     }
 
     def _parsed(self, errors):
-        def col(id, cycle, timing):
-            return column(
-                id,
-                timing=_text(timing),
-                cycle=_text(cycle) if cycle else None,
-                cycle_length=_text("28") if cycle else None,
-            )
+        def col(id, cycle, timing, window=None):
+            data = {"id": id, "timing": timing}
+            if cycle:
+                data["cycle"] = cycle
+                data["cycle_length"] = {"text": "28", "value": 28, "unit": "days"}
+            if window:
+                data["window"] = window
+            return data
 
+        day_1 = {"text": "1", "value": 1, "unit": "days"}
         columns = [
-            col("c1", None, "≤28"),
-            col("c2", "1", "1"),
-            col("c3", "1", "15±3"),
-            col("c4", "2-3", "1"),
-            col("c5", "4 and Beyond (if Applicable)", "1"),
+            col("c1", None, {"text": "≤28", "start": -28, "end": -1, "unit": "days"}),
+            col("c2", {"text": "1", "first": 1, "last": 1}, day_1),
+            col(
+                "c3",
+                {"text": "1", "first": 1, "last": 1},
+                {"text": "15±3", "value": 15, "unit": "days"},
+                {"text": "", "before": 3, "after": 3, "unit": "days"},
+            ),
+            col("c4", {"text": "2-3", "first": 2, "last": 3}, day_1),
+            col("c5", {"text": "4 and Beyond (if Applicable)", "first": 4}, day_1),
         ]
         return parse_timeline(timeline(columns, rows=self.ROWS), errors, 1)
-
-    def test_every_cycle_header_is_read(self):
-        errors = Errors()
-        parsed = self._parsed(errors)
-        cycles = [c.cycle for c in parsed.columns[1:]]
-        assert [type(c).__name__ for c in cycles] == [
-            "CycleNumber",
-            "CycleNumber",
-            "CycleRange",
-            "CycleRange",
-        ]
-        assert (cycles[2].start, cycles[2].end) == (2, 3)
-        assert (cycles[3].start, cycles[3].end) == (4, None)
-        assert [
-            (c.cycle_length.n, c.cycle_length.unit) for c in parsed.columns[1:]
-        ] == [(28, "day")] * 4
-        assert errors.to_dict(0) == []
 
     def test_the_ranges_are_timed_and_loop(self):
         """Issue 69: ``2-3`` is timed from cycle 1's Day 1, ``4 and Beyond``
