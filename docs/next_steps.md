@@ -19,15 +19,15 @@ record of the rule generation process).
 
 This repo is **machine A** of three parallel threads (plan: `protocol_corpus/docs/next_steps.md`).
 Work here, one issue each: cycle reading (#68, merged) → R5 cycle loop (#69, merged) → R6
-(#70, merged) → R7 (#71, merged) → **structured input (#73, built, branch `73-update-schema`)** →
+(#70, merged) → R7 (#71, merged) → **structured input (#73, merged)** →
 R8 (#72, branch `72-r8-variable-delay`). Copied columns (U4-5 shared `Encounter`)
 wait on `protocol_corpus` `N78`, a schema change (kept out of #73). The
 expander is its own issue (decide U4-11 first): it is off the build path but blocks the
 next release once R5 is merged. Order and schema checks: `timeline_assembler_plan.md`
 § *Order from here*. **The timeline input schema
 (`src/usdm4/assembler/schema/schedule_timeline_schema.py`) is frozen** — `usdm4_protocol` (machine B)
-builds against it; a change needs its own issue, merged first, with B and C told. #73 is
-that change (U4-35): B and C must be told before it merges. Gate here: tests
+builds against it; a change needs its own issue, merged first, with B and C told. #73 was
+that change (U4-35), merged 2026-09-26: B and C must be told — not yet done. Gate here: tests
 and pins only. Corpus figures are run and quoted on machine C only. Nothing is written to
 `protocol_corpus` from here.
 
@@ -36,12 +36,12 @@ and pins only. Corpus figures are run and quoted on machine C only. Nothing is w
 Newest first. This repo's own log: every session that works a `usdm4` issue is entered here in
 full, whichever Claude project drove it (see `CLAUDE.md` § *Session log*).
 
-### 2026-09-26 — ISSUE 73 BUILT (GitHub 73, branch `73-update-schema`): structured input, `usdm4` never reads printed text
+### 2026-09-26 — ISSUE 73 MERGED (GitHub 73, branch `73-update-schema`): structured input, `usdm4` never reads printed text
 - `usdm4 @ 73-update-schema`. Driven from the USDM4 project (machine A). Started as R8 (#72, branch
   `72-r8-variable-delay`, docs only so far); R8 needed the input to carry a delay, which became #73.
 - `protocol_corpus` touched: read only (`docs/issues.md`, `docs/spec/`, ground truths of NCT03069989,
   NCT03360071, NCT03421379, NCT04050553 — searched for washout columns). Nothing written.
-- **State:** built; **full suite green (Dave, VSCode)**; not merged. **B and C not yet told.**
+- **State:** full suite green (Dave, VSCode); **merged to `main`**. **B and C not yet told.**
 
 **Decisions (Dave), design § 9.**
 - U4-10 reframed: a gate is a variable delay (`Washout 2-10 days`), built with R5's loop — start node →
@@ -91,7 +91,7 @@ index lock file in the repo's version-control folder, removed at once. Nothing e
 stands: Claude runs no version-control commands in Dave's repos.
 
 **Next** (in order: B and C are blocked by #73 until told; R8 needs #73's `delay`).
-1. Review and merge #73.
+1. ~~Merge #73~~ — done.
 2. Tell B (`usdm4_protocol` emits the structured form) and C (`assemble_ground_truth`, the columns
    screen and ground-truth storage; issue 13's "range as start + window" is replaced by the range form;
    `day_zero` per protocol).
@@ -1036,7 +1036,7 @@ exception path).
 Full context and the usdm4_protocol half: `usdm4_protocol/docs/next_steps.md` § Session
 Log, session 12 (2026-07-30).
 
-## 10. Timeline assembler upgrade (issues 63–71 merged; 73 (structured input) built 2026-09-26; R8 (#72), N78 and the expander to come)
+## 10. Timeline assembler upgrade (issues 63–71 merged; 73 (structured input) merged 2026-09-26; R8 (#72), N78 and the expander to come)
 
 The timeline assembler is rebuilt on a text input with a pattern grammar, restructured
 into parse → plan → build, and extended with cycles, conditional timelines, profile

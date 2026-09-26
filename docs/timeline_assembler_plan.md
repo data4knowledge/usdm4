@@ -1,7 +1,9 @@
 # Timeline assembler — plan of work
 
 **Status: 2026-09-26. Rate of change: per issue. Retired when the last issue below is
-closed.** The design is `timeline_assembler_design.md`; this file is the order the
+closed.** Issues 63–71 and 73 merged. Sections for merged issues are the record of
+what was planned; where they mention patterns or printed-text reading, issue 73
+(U4-35) has since replaced that input — design § 3, § 19. The design is `timeline_assembler_design.md`; this file is the order the
 work is done in, what each issue delivers and how each is gated. One issue, one
 branch. Each later issue is raised on GitHub when the one before it is merged.
 
@@ -278,21 +280,22 @@ this issue also tests U4-14's withdrawal.
 
 ## Outside R5–R8
 
-U4-14 (crossover periods) needs a stage-1 marking for the washout link, which the
-schema has no place for. When it is taken up it is a schema issue, merged first, with
-`usdm4_protocol` and `protocol_corpus` told. Not part of R6.
+U4-14 (crossover periods): in theory not needed since 2026-09-26 — a period chains
+after the washout gate (R8) like a cycle, on one timeline. Proven or withdrawn on R8's
+test case (design § 9).
 
 ## Outside this repo, alongside it
 
 - **`usdm4_protocol`** stays on the last `usdm4` release with `TimelineInput` until its
-  stage-1 work produces the new input: timelines by type, every header row by role,
-  each value as printed text plus pattern form, cells with their text. That is its
+  stage-1 work produces the new input: timelines by type, every value structured
+  (U4-35, issue 73) with its printed text carried, cells with their text. That is its
   own plan in `usdm4_protocol`, driven from `protocol_corpus` `N70`.
 - **`protocol_corpus`** maps its reviewer-stated ground truth into the new input with
-  no judgement, and builds the reference USDM through this assembler. The pattern form
-  of each header value is drafted by a corpus script (which must not reuse
-  `usdm4_protocol`'s code) and checked by the reviewer, never typed —
-  `protocol_corpus` issue 9.
+  no judgement, and builds the reference USDM through this assembler. Since issue 73
+  each value is sent structured (U4-35); the corpus's pattern form (`protocol_corpus`
+  issues 9, 13) is its own drafting and review notation, mapped to the structured
+  form in `assemble_ground_truth`. A range goes as `timing: {start, end, unit}`, not
+  start + window.
 - **Other callers** of `AssemblerInput.soa` are not known from this repo. Check before
   the release.
 

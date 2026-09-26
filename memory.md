@@ -95,9 +95,9 @@
   test_tag_resolver_integration.py. Changes still uncommitted — Dave
   commits himself.
 
-## 2026-09-26 — #73 structured timeline input built (branch 73-update-schema)
+## 2026-09-26 — #73 structured timeline input merged
 
 - U4-35: usdm4 never reads printed text; caller sends structured values, `text` = label only.
   Grammar + printed readers deleted; `day_zero` flag; `delay` field (R8, #72 builds it).
 - Pins converted by the old parse; all 8 expected outputs unchanged. Sandbox green (assembler
-  tests 1,356); full suite green in VSCode. Merge, then tell B and C. Details: docs/next_steps.md.
+  tests 1,356); full suite green in VSCode; merged. Next: tell B and C. Details: docs/next_steps.md.
