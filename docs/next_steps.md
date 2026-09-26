@@ -33,6 +33,77 @@ and pins only. Corpus figures are run and quoted on machine C only. Nothing is w
 Newest first. This repo's own log: every session that works a `usdm4` issue is entered here in
 full, whichever Claude project drove it (see `CLAUDE.md` § *Session log*).
 
+### 2026-09-26 — ISSUE 68 MERGED (GitHub 68, branch `68-cycle-and-ranges`): cycle ranges with no cycle word, cycle length unit from the row labels; order after R4 re-planned
+- `usdm4 @ 68-cycle-and-ranges`. Driven from the USDM4 project (machine A). `protocol_corpus` read
+  only (its `docs/next_steps.md` and NCT02107703's `build/timepoints.yaml` row labels); nothing
+  written there.
+
+**Plan re-ordered first (before the branch).** `timeline_assembler_plan.md` gains § *Order from
+here*: cycle reading (#68) → R5 → R6 → R7; R8 waits on U4-10. The expander is split out of R5
+into its own issue: nothing that builds USDM from a protocol calls it (no import in `usdm4/src`
+outside `expander/`, `usdm4/validate`, `usdm4_protocol`, or live `protocol_corpus` code — only
+`scripts/archive/review_gt.py`), so it gates the **release**, not the build. Once R5 is merged, no
+release is cut until the expander issue is merged. R5's tests must not expand a looped timeline.
+Each rule checked against the frozen input schema: U4-7's "unless the caller supplies one" has no
+field (only a `HeaderNote` side channel); R6's `entry_condition` is accepted only for family
+`conditional`; R8's gate must be told from printed text alone; U4-14 needs a schema issue of its
+own. Design § 7 and this file's *Working arrangement* updated to match.
+
+**What it was.** NCT02107703 prints `2-3` and `4 and Beyond (if Applicable)` in its cycle row and
+`28` under `Approximate Duration (days)`. `_CYCLE_RE` made the cycle word optional but
+`_CYCLE_RANGE_RE` required it, so a bare range was unread; `_CYCLE_LENGTH_RE` required a unit in the
+value and `read_cycle_length` never saw a row label, unlike `read_timing` and `read_window`. All
+three unread, so R5 could build no loop on its first test case.
+
+**Decision (Dave), design § 9.** U4-28: a bare cycle length takes the cycle length row label's
+unit, else the timing row label's ("there should be a unit stated in the timing row"); none → not
+read, warned, never days. Taken as the row *label*; the unit of the timing values themselves (as
+U4-19 does for windows) was not added — ask before adding it.
+
+**What changed.**
+- `src/usdm4/assembler/timeline/printed.py` — `_CYCLE_RANGE_RE` cycle word optional (`2-3`,
+  `3-n`, `4+`, `4 and beyond`, `3 onwards`); `_CYCLE_LENGTH_RE` unit optional;
+  `read_cycle_length(text, row_label, timing_row_label)`; module docstring.
+- `src/usdm4/assembler/timeline/columns.py` — `_read_cycle_length` passes `rows.cycle_length` and
+  `rows.timing`; a bare number with no unit anywhere gets its own warning (`_WARNED` sentinel stops
+  the generic "not read" warning doubling it).
+- `tests/usdm4/assembler/timeline/test_printed.py` — new range forms; must-not-fire (`6-3`,
+  `1 Day 1`, `and beyond`); bare length with each label, label precedence, value unit wins, no
+  unit anywhere, two lengths still refused.
+- `tests/usdm4/assembler/timeline/test_columns.py` — row labels reach the reader, timing-row
+  fallback, the no-unit warning text, pattern still wins.
+- `tests/usdm4/assembler/timeline/test_plan.py` — `TestNct02107703Headers`: every header read, no
+  warnings; ranges keep U4-25's zero timing until R5.
+- Docs: design § 7 note, § 9 U4-28, § 15 as built; plan § *Order from here*, cycle-reading,
+  R5, expander, R6–R8 schema notes; this file's *Working arrangement*.
+
+**The numbers.** Sandbox (Python 3.10, `cdisc-rules-engine` not installable, run with
+`PYTHONPATH=src:.`): timeline, assembler and pin tests 566 pass; the new tests 0.44 s;
+`columns.py`, `printed.py` 100%. `plan.py` lines 304 and 447 uncovered **by that subset** — not
+touched here, likely covered elsewhere in the full run; unconfirmed. Pins unchanged. Ruff check and
+format clean. Full suite green (Dave, VSCode); merged.
+
+**Slowness, measured.** Not from #68: in the subset, the only slow tests are
+`test_timeline_pin[minimal]` and `TestState::test_clear_resets_everything`, 13 s each — the first
+builder/CT load, unchanged code. Both readers return in ~1 ms on 5,000–10,000-character inputs, so
+no regex backtracking. The full-suite cause is not found; CORE integration tests were not run here.
+
+**Rejected.** Folding the reading gaps into R5 (R5 is already the first decision instance; reading
+and planning are separate stages). Keeping the expander in R5's branch (the reason was release
+safety, not build need). Defaulting a unitless cycle length to days as U4-15 does for timing.
+
+**Found, not this issue.** Local branches `65`, `66`, `67` are merged into `main`.
+
+**Next.**
+1. U4-7 and U4-8, then R5 on NCT02107703 (rule it formally as the test case when opening).
+2. U4-11, then the expander issue — any time before the release containing R5.
+3. U4-5, then R6; R7.
+
+Re-verify:
+```
+python3 -m pytest tests/usdm4/assembler/timeline tests/usdm4/assembler/test_timeline_assembler.py tests/usdm4/assembler/test_timeline_pin.py
+```
+
 ### 2026-09-26 — ISSUE 67 BUILT (GitHub 67, branch `67-cycles`): cycle Day 1 chained, start marker when none printed
 Back-filled 2026-09-26 from `protocol_corpus/memory.md` (entry of the same date). Until then this repo's
 sessions were logged only in the corpus.
@@ -687,10 +758,10 @@ exception path).
 Full context and the usdm4_protocol half: `usdm4_protocol/docs/next_steps.md` § Session
 Log, session 12 (2026-07-30).
 
-## 10. Timeline assembler upgrade (issue 63 built 2026-09-25; R4–R8 to come)
+## 10. Timeline assembler upgrade (issues 63–67 merged, 68 merged 2026-09-26; R5–R8 and the expander to come)
 
 The timeline assembler is rebuilt on a text input with a pattern grammar, restructured
 into parse → plan → build, and extended with cycles, conditional timelines, profile
 attachment and gates, one issue per step. Design: `docs/timeline_assembler_design.md`.
-Work order and gates: `docs/timeline_assembler_plan.md`. Open decisions U4-1–U4-12 are in the
+Work order and gates: `docs/timeline_assembler_plan.md`. Decisions U4-1–U4-28 (open and taken) are in the
 design, § 9.

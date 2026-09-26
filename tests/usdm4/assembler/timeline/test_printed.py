@@ -298,6 +298,14 @@ class TestCycle:
             ("Cycle 3 onwards", 3, None),
             ("Cycle 3 and subsequent", 3, None),
             ("Cycle 2-n (If combo therapy is held)", 2, None),
+            # Issue 68: a range with no cycle word.
+            ("2-3", 2, 3),
+            ("2 - 3", 2, 3),
+            ("3-n", 3, None),
+            ("4+", 4, None),
+            ("4 and Beyond (if Applicable)", 4, None),
+            ("3 onwards", 3, None),
+            ("2 and subsequent", 2, None),
         ],
     )
     def test_range(self, text, start, end):
@@ -315,7 +323,10 @@ class TestCycle:
             "Short-term follow-up",
             "Study Cycle",
             "Cycle 6-3",
+            "6-3",
             "Cycle 1 Day 1",
+            "1 Day 1",
+            "and beyond",
             "D1",
         ],
     )
@@ -357,3 +368,40 @@ class TestCycleLength:
     )
     def test_not_read(self, text):
         assert read_cycle_length(text) is None
+
+    def test_a_bare_number_takes_the_cycle_length_row_label_unit(self):
+        """Issue 68, U4-28: NCT02107703 prints ``28`` under ``Approximate
+        Duration (days)``."""
+        length = read_cycle_length("28", "Approximate Duration (days)")
+        assert (length.n, length.unit) == (28, "day")
+
+    def test_a_bare_number_in_brackets(self):
+        length = read_cycle_length("(4)", "Cycle length (weeks)")
+        assert (length.n, length.unit) == (4, "week")
+
+    def test_a_bare_number_falls_back_to_the_timing_row_label_unit(self):
+        """U4-28: the cycle length row states no unit, the timing row does."""
+        length = read_cycle_length("28", "Cycle length", "Relative day within a cycle")
+        assert (length.n, length.unit) == (28, "day")
+
+    def test_the_cycle_length_row_label_beats_the_timing_row_label(self):
+        length = read_cycle_length("4", "Duration (weeks)", "Study Day")
+        assert (length.n, length.unit) == (4, "week")
+
+    def test_a_unit_in_the_value_beats_both_row_labels(self):
+        length = read_cycle_length("21 days", "Duration (weeks)", "Week")
+        assert (length.n, length.unit) == (21, "day")
+
+    @pytest.mark.parametrize(
+        "row_label, timing_row_label",
+        [(None, None), ("Duration", None), ("Duration", "Visit timing"), ("", "")],
+    )
+    def test_a_bare_number_with_no_unit_anywhere_is_not_read(
+        self, row_label, timing_row_label
+    ):
+        """U4-28: never guessed."""
+        assert read_cycle_length("28", row_label, timing_row_label) is None
+
+    def test_two_lengths_are_still_not_read_with_a_row_label(self):
+        text = "Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen)"
+        assert read_cycle_length(text, "Duration (days)") is None

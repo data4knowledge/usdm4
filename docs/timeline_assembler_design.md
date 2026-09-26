@@ -1,10 +1,10 @@
 # Timeline assembler — design
 
-**Status: 2026-09-26. Issues 63–65 merged; issues 66 and 67 built** (cycle `Day 1`: the
-chain and the start marker, branch `67-cycles`). Built so far: the input schema
+**Status: 2026-09-26. Issues 63–68 merged** (cycle reading: bare ranges,
+cycle length unit from the row labels, branch `68-cycle-and-ranges`). Built so far: the input schema
 (§ 3), the pattern grammar incl. time ranges and cycles (§ 4), parse → plan → build →
 naming (§ 5), R1–R3, R4 (timing, single cycles) and R9. R5–R8 are later issues. § 2
-records the assembler as it was BEFORE issue 63; §§ 10–14 record what issues 63–67
+records the assembler as it was BEFORE issue 63; §§ 10–15 record what issues 63–68
 built and the calls made on the way. Decisions are in § 9, taken one at a time; none is
 open. The work order is in `timeline_assembler_plan.md`.
 
@@ -452,6 +452,7 @@ Taken one at a time, each recorded here with its date when taken.
 | U4-25 | A cycle-range column (`Cycle n-m`, `Cycle n+`) before R5 | **Taken 2026-09-25 (R4 part 2):** the range is parsed, not planned; the column gets a U4-3 zero timing and a warning saying cycle ranges come with R5 |
 | U4-26 | Where a cycle column's day is read from | **Taken 2026-09-25 (R4 part 2):** the `timing` field only. A table printing the day in its visit row (`D1`) is stage 1's to assign to the timing role; `usdm4` never reads `visit` for timing |
 | U4-27 | Cycle *n*'s `Day 1` | **Taken 2026-09-26 (Dave, #67):** a cycle starts at `Day 1`; cycle *n*'s `Day 1` is timed `After` cycle *n* − 1's `Day 1` by cycle *n* − 1's length — a chain. Cycle 1's `Day 1` is Day 1 of the timeline, timed from the anchor. #66 built (*n* − 1) × cycle *n*'s own length, right only when every cycle has the same length. (The example first recorded here, a length printed as `21 days (or 28 days …)`, is a length that differs by cohort, not between cycles; it is not read, U4-23) |
+| U4-28 | Unit of a printed cycle length that is a bare number (`28`) | **Taken 2026-09-26 (Dave, #68):** the cycle length row label's unit (`Approximate Duration (days)`), else the timing row label's (`Relative day within a cycle`). With no unit in either, not read, with a warning saying so — never defaulted to days (unlike U4-15); U4-23 then applies |
 
 ## 10. As built — issue 63 (2026-09-25)
 
@@ -645,3 +646,17 @@ Cycle `Day 1`: the chain and the start marker. Decisions U4-22 (re-taken), U4-23
 - A table beginning at cycle *n* > 1 whose anchor is that cycle's `Day 1` is fixed
   there; no warning about the missing earlier cycle.
 
+## 15. As built — issue 68 (2026-09-26)
+
+Cycle reading; the three headers NCT02107703 prints. Decision U4-28 (§ 9). Reading
+only — the input schema is unchanged.
+
+- `printed.py` — `_CYCLE_RANGE_RE`: the cycle word is optional, so `2-3`, `3-n`, `4+`,
+  `4 and Beyond (if Applicable)`, `3 onwards` are ranges. `_CYCLE_LENGTH_RE`: the unit
+  is optional; `read_cycle_length(text, row_label, timing_row_label)` gives a bare
+  number the cycle length row label's unit, else the timing row label's, else `None`.
+- `columns.py` — `_read_cycle_length` passes `rows.cycle_length` and `rows.timing`, and
+  warns a bare number with no unit anywhere as such (not the generic "not read").
+- Tests: `test_printed.py` (`TestCycle`, `TestCycleLength`), `test_columns.py`,
+  `test_plan.py` (`TestNct02107703Headers`: every header read, ranges still U4-25 zero
+  timings until R5).

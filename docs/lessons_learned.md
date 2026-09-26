@@ -1592,3 +1592,26 @@ was re-saved.
   no `Timing`; the test names the later rule (R4) that changes it, so fixing it is a
   deliberate diff rather than a surprise.
 
+## Tie work together by its reason, and check the callers before you do (2026-09-26)
+
+The timeline design said the expander change "ships in the same branch as R5, never after". The
+reason was real — R5's loop makes the unfixed expander recurse without end — but the reason only
+required *not after*. A search for callers showed nothing on the protocol → USDM build path uses
+the expander (only `usdm4`'s own tests), so it gates the release, not the build. Splitting it out
+made R5 smaller and left B and C unaffected.
+
+- **When a design binds two pieces of work, write down what breaks if they are split.** Here:
+  a release in which the assembler emits a loop the expander cannot walk. That names the real
+  gate (the release) and the real ordering (no later than).
+- **Check the callers before accepting a coupling.** One grep across the sibling repos settled it.
+- **Under a frozen input schema, read every open decision against the schema.** U4-7's "unless the
+  caller supplies one" looked harmless and had no field to arrive in; the only route was a
+  `HeaderNote` side channel, which the project rules out.
+
+## A bare number never guesses a length (2026-09-26)
+
+U4-15 lets a unitless timing default to days. U4-28 refuses the same for a cycle length: a wrong
+cycle length moves every later cycle's `Day 1` through the U4-27 chain, where a wrong timing moves
+one column. Units come from what is printed — the value, the field's row label, then the timing
+row label — and otherwise the field is unread with a warning that says why.
+

@@ -223,6 +223,9 @@ def _read_window(column: Column, reader: _Reader, pattern: str | None) -> Window
     return read.window
 
 
+_WARNED = object()  # a reader that has already warned why it read nothing
+
+
 def _read_cycle_field(reader: _Reader, name: str, pattern: str | None, parse, read):
     """A cycle or cycle length: the pattern, else the printed text, else
     nothing. Problems are warnings naming the field."""
@@ -235,9 +238,26 @@ def _read_cycle_field(reader: _Reader, name: str, pattern: str | None, parse, re
     if is_blank(text):
         return None
     value = read(text)
+    if value is _WARNED:
+        return None
     if value is None:
         reader.warn(name, f"printed text {text!r} not read")
     return value
+
+
+def _read_cycle_length(reader: _Reader, text: str):
+    """A printed cycle length; a bare number takes its unit from the cycle
+    length row label, else the timing row label (issue 68, U4-28). A bare
+    number with no unit stated anywhere is warned as such and not read."""
+    length = read_cycle_length(text, reader.row("cycle_length"), reader.row("timing"))
+    if length is None and read_cycle_length(text, "days") is not None:
+        reader.warn(
+            "cycle_length",
+            f"no unit stated for {text!r} in the value, the cycle length row "
+            "label or the timing row label; not read",
+        )
+        return _WARNED
+    return length
 
 
 def parse_column(
@@ -309,7 +329,7 @@ def parse_column(
             "cycle_length",
             pattern_of("cycle_length"),
             parse_cycle_length,
-            read_cycle_length,
+            lambda text: _read_cycle_length(reader, text),
         )
     column.notes = list(data.get("notes") or [])
     return column

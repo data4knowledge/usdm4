@@ -1,4 +1,5 @@
-"""Plan — issue 63, part 63.6; issue 65; issue 66 (single cycles).
+"""Plan — issue 63, part 63.6; issue 65; issue 66 (single cycles); issue 68
+(cycle reading, NCT02107703's header shape).
 
 The straight chain and its one anchor: anchor choice, the crossing-zero rule,
 mixed units (kept from before the restructure); and from issue 65 the U4-2
@@ -597,3 +598,62 @@ class TestCycleDayOne:
             (AFTER, "C2D1", 28),
         ]
         assert _day_one_at(plan, 2) == 49
+
+
+class TestNct02107703Headers:
+    """Issue 68: NCT02107703's cycle headers, as printed (design U4-28). The
+    ranges are read and then planned as U4-25 says until R5."""
+
+    ROWS = {
+        "cycle": "Cycle",
+        "cycle_length": "Approximate Duration (days)",
+        "timing": "Relative day within a cycle",
+    }
+
+    def _parsed(self, errors):
+        def col(id, cycle, timing):
+            return column(
+                id,
+                timing=_text(timing),
+                cycle=_text(cycle) if cycle else None,
+                cycle_length=_text("28") if cycle else None,
+            )
+
+        columns = [
+            col("c1", None, "≤28"),
+            col("c2", "1", "1"),
+            col("c3", "1", "15±3"),
+            col("c4", "2-3", "1"),
+            col("c5", "4 and Beyond (if Applicable)", "1"),
+        ]
+        return parse_timeline(timeline(columns, rows=self.ROWS), errors, 1)
+
+    def test_every_cycle_header_is_read(self):
+        errors = Errors()
+        parsed = self._parsed(errors)
+        cycles = [c.cycle for c in parsed.columns[1:]]
+        assert [type(c).__name__ for c in cycles] == [
+            "CycleNumber",
+            "CycleNumber",
+            "CycleRange",
+            "CycleRange",
+        ]
+        assert (cycles[2].start, cycles[2].end) == (2, 3)
+        assert (cycles[3].start, cycles[3].end) == (4, None)
+        assert [
+            (c.cycle_length.n, c.cycle_length.unit) for c in parsed.columns[1:]
+        ] == [(28, "day")] * 4
+        assert errors.to_dict(0) == []
+
+    def test_the_ranges_are_zero_timings_until_r5(self):
+        errors = Errors()
+        plan = Planner(errors).plan(self._parsed(errors), 1)
+        timed = {n.column.id: n.timed for n in plan.nodes if not n.marker}
+        assert timed["c4"] is False and timed["c5"] is False
+        assert timed["c2"] is True and timed["c3"] is True
+        assert [m for m in _messages(errors) if "cycle ranges" in m] == [
+            "Timeline 1, column 'c4': cycle ranges are timed with R5; a zero timing "
+            "is used",
+            "Timeline 1, column 'c5': cycle ranges are timed with R5; a zero timing "
+            "is used",
+        ]

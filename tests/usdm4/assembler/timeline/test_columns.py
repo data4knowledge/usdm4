@@ -140,6 +140,57 @@ class TestColumn:
             "Timeline 1, column 'c1', cycle_length: printed text 'x' not read",
         ]
 
+    def test_a_bare_cycle_length_takes_its_row_label_unit(self):
+        """Issue 68, U4-28."""
+        errors = Errors()
+        data = timeline(
+            [
+                column(
+                    "c1",
+                    cycle={"text": "2-3", "pattern": None},
+                    cycle_length={"text": "28", "pattern": None},
+                )
+            ],
+            rows={"cycle_length": "Approximate Duration (days)"},
+        )
+        parsed = parse_timeline(data, errors, 1).columns[0]
+        assert (parsed.cycle.start, parsed.cycle.end) == (2, 3)
+        assert (parsed.cycle_length.n, parsed.cycle_length.unit) == (28, "day")
+        assert errors.to_dict(0) == []
+
+    def test_a_bare_cycle_length_falls_back_to_the_timing_row_label(self):
+        """U4-28."""
+        errors = Errors()
+        data = timeline(
+            [column("c1", cycle_length={"text": "4", "pattern": None})],
+            rows={"cycle_length": "Duration", "timing": "Week of cycle"},
+        )
+        parsed = parse_timeline(data, errors, 1).columns[0]
+        assert (parsed.cycle_length.n, parsed.cycle_length.unit) == (4, "week")
+        assert errors.to_dict(0) == []
+
+    def test_a_bare_cycle_length_with_no_unit_anywhere_is_warned(self):
+        """U4-28: not read, and the warning says why."""
+        errors = Errors()
+        data = timeline(
+            [column("c1", cycle_length={"text": "28", "pattern": None})],
+            rows={"cycle_length": "Duration"},
+        )
+        parsed = parse_timeline(data, errors, 1).columns[0]
+        assert parsed.cycle_length is None
+        assert [item["message"] for item in errors.to_dict(0)] == [
+            "Timeline 1, column 'c1', cycle_length: no unit stated for '28' in the "
+            "value, the cycle length row label or the timing row label; not read"
+        ]
+
+    def test_a_cycle_length_pattern_still_wins_over_the_row_label(self):
+        data = timeline(
+            [column("c1", cycle_length=value("28", "4 weeks"))],
+            rows={"cycle_length": "Approximate Duration (days)"},
+        )
+        parsed = parse_timeline(data).columns[0]
+        assert (parsed.cycle_length.n, parsed.cycle_length.unit) == (4, "week")
+
     def test_a_redacted_cycle_is_not_read(self):
         parsed = parse_column(0, _column(cycle=value("CCI", "CCI")))
         assert parsed.cycle is None and parsed.cycle_label == "CCI"

@@ -190,6 +190,8 @@ every issue below is checked against it.
 
 ## Cycle reading — the three gaps NCT02107703 prints
 
+**#68 merged 2026-09-26** (branch `68-cycle-and-ranges`), U4-28 taken — as built: design § 15.
+
 Reading only, `printed.py` / `columns.py`; no schema change (`rows` already takes
 `cycle_length`). Without it R5 builds no loop on its first test case.
 
