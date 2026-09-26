@@ -266,8 +266,14 @@ activity-level attachment (out of scope) nests the whole schedule in every PK vi
 
 ## R8 — gates
 
-Only once U4-10 is taken. Under the frozen schema the gate must be told from printed
-text alone; an answer that needs the caller to mark a gate column is a schema change.
+Only once U4-10 is taken (reframed 2026-09-26: the gate is R5's delay + decision loop;
+loop target taken — start node → 1-day delay → decision, loop back to the start node;
+open are the upper bound and the exit text — design § 9). Recognition
+needs no schema change: a duration with no anchored offset, between anchored columns.
+Candidate test cases: NCT03069989, NCT03421379 (crossover washouts; both old-shape,
+`N69` — headers reviewed before a pin). Must-not-fire: NCT03360071 (`Washout` at
+`Week 1-2`, an anchored range). The period after the gate is chained like a cycle, so
+this issue also tests U4-14's withdrawal.
 
 ## Outside R5–R8
 

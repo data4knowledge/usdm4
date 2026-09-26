@@ -386,9 +386,25 @@ unattached and reported. Its timings are relative to its own anchor (usually
 
 ### R8 — gates
 
-A column whose timing is a duration with no anchored offset becomes a
-`ScheduledDecisionInstance`, not a window. How to tell a gate from a window in text
-alone is decision U4-10; not built until it is taken.
+A gate is a variable delay between two anchored columns — e.g. `Washout 2-10 days`: wait
+at least 2 days, move on when a condition is met, at most 10. It is not a window (a
+tolerance around an anchored offset) and not a timing anchored to Day 0 (`Screening ≤28
+days`, `Run-in 2 weeks` are ordinary R4 timings — their position relative to the anchor
+settles them, as `usdm4` has always done).
+
+A gate is built with R5's loop construct (Dave, 2026-09-26; U4-10 (a)):
+1. **a start node** — an instance with no visit, after the previous column;
+2. **a delay** — a `Timing` of 1 day;
+3. **a decision** — a `ScheduledDecisionInstance` whose condition (`≥ 2 days and washed
+   out`) exits to the next column and whose default loops back to the start node.
+
+Recognition is not the open question: a column whose timing is a duration with no
+anchored offset, positioned between anchored columns. Open, U4-10: how the loop differs
+from a cycle's (below). Not built until taken.
+
+The known gates are crossover washouts between periods whose day numbering restarts
+(NCT03069989, NCT03421379). The next period's `Day 1` is chained after the gate, as a
+cycle's is — one timeline, which in theory makes U4-14 unnecessary (Dave, 2026-09-26).
 
 ### R9 — footnotes
 
@@ -439,10 +455,10 @@ Taken one at a time, each recorded here with its date when taken.
 | U4-7 | The exit condition text on a cycle loop | **Taken 2026-09-26 (Dave):** the fixed text `cycle exit condition`. **Noted, not crucial now:** the real exit rule (e.g. progression, unacceptable toxicity) is usually in the protocol body, not the SoA; finding it needs a search wider than the SoA. **Rejected:** printed range text (a heading, not a condition); caller-supplied text (no field in the frozen schema) |
 | U4-8 | A range with no readable cycle length | **Taken 2026-09-26 (Dave):** the loop is built; the cycle length is the largest day number printed in the range (`D8` → 8 days, `D15` → 15 days), with a warning. It is a lower bound: the real length (21, 28 days) is usually longer. **Noted, not crucial now:** the true length may be stated outside the SoA; finding it needs a wider search. **Open edge:** a range printing only `Day 1` gives a 1-day cycle — settle when R5 hits it. **Rejected:** a text-only delay (DDF00060 needs a duration; the expander crashes, as U4-3). Ranges only; U4-23 (single cycles) is unchanged |
 | U4-9 | Where a cell's printed text goes (`X`, `(X)`, `Predose`) | kept on the input only until a rule needs it |
-| U4-10 | Gate versus window in text alone (R8) | open |
+| U4-10 | The gate loop (R8) | **Reframed 2026-09-26 (Dave):** a gate is a variable delay, built as R5's delay + decision loop; recognising it (duration, no anchored offset, between anchored columns) is not in question. **(a) Taken 2026-09-26 (Dave):** start node → 1-day delay → decision. The decision's condition is "≥ min days and washed out" (e.g. `≥ 2 days and washed out`) and exits to the next column; the default loops back to the start node. The minimum lives in the condition, not the delay; the start node is an instance with no visit (as the cycle start marker, U4-22). **(b) Taken 2026-09-26 (Dave):** the maximum is in the exit condition — `(≥ 2 days and washed out) or 10 days`; no second branch. **Open:** (c) the exit condition text — by analogy with U4-7, a fixed string. **Was:** "gate versus window in text alone" — wrong framing |
 | U4-11 | How the expander presents a loop | one pass, flagged as repeating |
 | U4-12 | Activity identity across timelines when names differ only by spacing or hyphenation | exact trimmed, case-folded match, as today |
-| U4-14 | Crossover periods whose day numbering restarts (a second `Day 1`) | **Working hypothesis 2026-09-25, to be proven on real cases:** one timeline per period. A `Timing` cannot cross timelines (DDF00046), so the link is an instance: the printed washout column (`Wash out 3 to 14 days`, `Minimum 2 wks after end of session 1`) becomes a linking instance in the earlier period, reached by a `Timing` that is the washout, and calling the next period through `timelineId`; the next period's `entryCondition` carries the printed text. Rejected for now: the last instance calling the next period with the washout as text only. Needs a stage-1 marking (periods as timelines, the washout column as the link) and a stage-2 rule; neither built |
+| U4-14 | Crossover periods whose day numbering restarts (a second `Day 1`) | **2026-09-26 (Dave): in theory not needed.** One timeline: a period is chained like a cycle (R5, U4-27) — Period *n*'s `Day 1` comes after the washout gate (R8, U4-10), which joins the two periods. To prove on R8's test case (NCT03069989 `(7-28 days between doses)`, NCT03421379 `3 to 14 days`); if it holds, U4-14 is withdrawn and the restart warning becomes "restart with no gate before it". **Was — working hypothesis 2026-09-25, to be proven on real cases:** one timeline per period. A `Timing` cannot cross timelines (DDF00046), so the link is an instance: the printed washout column (`Wash out 3 to 14 days`, `Minimum 2 wks after end of session 1`) becomes a linking instance in the earlier period, reached by a `Timing` that is the washout, and calling the next period through `timelineId`; the next period's `entryCondition` carries the printed text. Rejected for now: the last instance calling the next period with the washout as text only. Needs a stage-1 marking (periods as timelines, the washout column as the link) and a stage-2 rule; neither built |
 | U4-15 | Printed timing text that is a bare number (`15`, `-7`) with no unit in the timeline's timing row label, or no row label | **Taken 2026-09-25 (#65):** days |
 | U4-16 | A timing cell that prints its own window (`15 ± 3`) when the column's window field also has a value | **Taken 2026-09-25 (#65):** the window field wins, with a warning. **Standing rule with it:** every problem found reading printed text — unreadable text, a conflict, a default applied — raises a warning naming the timeline, column and field |
 | U4-17 | A pattern the grammar refuses | **Taken 2026-09-25 (#65):** always build the timeline if at all possible. The bad pattern is a warning and is set aside; the field is read from its printed text, else gets no value (U4-3 for a timing). Replaces issue 63's "refused pattern → timeline not built" |
@@ -464,6 +480,7 @@ Taken one at a time, each recorded here with its date when taken.
 | U4-32 | `attaches_to` names an activity with children | **Taken 2026-09-26 (Dave, R7):** not attached, reported as an error — DDF00160 forbids `timelineId` on a parent activity |
 | U4-33 | `attaches_to` names an activity that exists but is scheduled on no other timeline | **Taken 2026-09-26 (Dave, R7):** attached, with a warning |
 | U4-34 | Two profiles naming the same activity (`Activity.timelineId` holds one timeline) | **Taken 2026-09-26 (Dave, R7):** the first profile in input order is attached; each later one is not attached, reported as an error naming both profiles and the activity, and built unattached. **Rejected:** a warning only (hides a lost link); a made-up wrapper activity holding both (invents structure the protocol does not print) |
+| U4-35 | Structured input — who turns printed text into structure | **Taken 2026-09-26 (Dave, from R8):** `usdm4` is algorithm only and never reads printed text; the caller (stage 1, may use AI; or an algorithmic source) supplies every header value as a structured object, e.g. `timing: {value: 1, unit: "days"}` (the printed day number — `usdm4` applies the crossing-zero rule), `window: {before: 3, after: 3, unit: "days"}`, `delay: {min: 2, max: 10, unit: "days"}`. Each value carries its source `text` for debug and after-the-event analysis — **never read or interpreted**; empty when the caller structured it from an algorithmic source. The one use: copied verbatim into USDM labels (`Timing.label`, instance and `Encounter` labels, `windowLabel`), as today (Dave, 2026-09-26). Empty `text` → the label is rendered from the structure (`Day 1`), as today's fallback to the pattern. Replaces the pattern grammar (§ 4) and the printed-text readers; supersedes the schema docstring's "a caller never hands over a number it has worked out from printed text". One schema issue, merged before R8, B and C told; N78's `copy_of` may ride it. **Units (Dave, 2026-09-26):** `"minutes" | "hours" | "days" | "weeks" | "months" | "years"`, nothing else accepted; stage 1 normalises. **Cycle (Dave, 2026-09-26):** `{first: 3, last: null}` — `last: null` open-ended (`Cycle 3+`), `{first: 1, last: 6}` a range, `{first: 2, last: 2}` a single cycle (`first`/`last`, not `from`/`to` — `from` is a Python keyword). **Cycle length (Dave, 2026-09-26):** `{value: 21, unit: "days"}` — one `{value, unit}` type shared with the timing point; `value > 0` for a cycle length, a timing may be negative. **Time range (Dave, 2026-09-26):** no range form — stage 1 sends its start as the timing and a window forward to its end (`Day -28 to Day -1` → `timing: {value: -28, unit: "days"}`, `window: {before: 0, after: 27, unit: "days"}`), as the corpus already does (protocol_corpus issue 13); retires U4-4's decoding in `usdm4`. **Redaction (Dave, 2026-09-26):** `redacted: bool = False` on every value object, replacing `pattern: "CCI"`; when true the structured fields are empty (refused otherwise) and `text` carries what was printed for the label; `usdm4` treats it as today (no timing, a warning). Nothing left open |
 
 ## 10. As built — issue 63 (2026-09-25)
 
