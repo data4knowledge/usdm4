@@ -1,0 +1,513 @@
+{
+  "source": "Hand-written 2026-09-26 for R5: the input a correct stage 1 would hand usdm4 for NCT05197426's schedule (header as reviewed in protocol_corpus, 2026-09-26). Printed columns 'Days 8, 15, and 22' are split into one column per day; the cycle length '1 Cycle = 4 Weeks' is stated on every cycle column. Activities are a subset and their cells are illustrative, not read from the PDF. A fixture, not a reference.",
+  "converted": "Not converted; written directly in the ScheduleTimelineInput shape.",
+  "soa": [
+    {
+      "type": "main",
+      "title": "Screening and On-treatment Procedural Outline (CA055005)",
+      "description": null,
+      "rows": {},
+      "columns": [
+        {
+          "id": "scr",
+          "epoch": {
+            "text": "Screening",
+            "pattern": "Screening"
+          },
+          "visit": {
+            "text": "Screening",
+            "pattern": null
+          },
+          "timing": {
+            "text": "Day -28 to -1",
+            "pattern": "Day -28 to Day -1"
+          }
+        },
+        {
+          "id": "rand",
+          "epoch": {
+            "text": "Randomization",
+            "pattern": "Randomization"
+          },
+          "visit": {
+            "text": "Randomization",
+            "pattern": null
+          },
+          "timing": {
+            "text": "Day -3 to Day 1",
+            "pattern": "Day -3 to Day 1"
+          }
+        },
+        {
+          "id": "c1d1",
+          "epoch": {
+            "text": "Treatment Cycle 1",
+            "pattern": "Treatment Cycle 1"
+          },
+          "visit": {
+            "text": "During Treatment Cycle 1 Day 1 (1 Cycle = 4 Weeks)",
+            "pattern": null
+          },
+          "cycle": {
+            "text": "Cycle 1",
+            "pattern": "Cycle 1"
+          },
+          "cycle_length": {
+            "text": "1 Cycle = 4 Weeks",
+            "pattern": "4 weeks"
+          },
+          "timing": {
+            "text": "Day 1",
+            "pattern": "Day 1"
+          }
+        },
+        {
+          "id": "c1d8",
+          "epoch": {
+            "text": "Treatment Cycle 1",
+            "pattern": "Treatment Cycle 1"
+          },
+          "visit": {
+            "text": "During Treatment Cycle 1 Days 8, 15, and 22",
+            "pattern": null
+          },
+          "cycle": {
+            "text": "Cycle 1",
+            "pattern": "Cycle 1"
+          },
+          "cycle_length": {
+            "text": "1 Cycle = 4 Weeks",
+            "pattern": "4 weeks"
+          },
+          "timing": {
+            "text": "Days 8, 15, and 22",
+            "pattern": "Day 8"
+          },
+          "window": {
+            "text": "± 3 days",
+            "pattern": "-3..+3 days"
+          }
+        },
+        {
+          "id": "c1d15",
+          "epoch": {
+            "text": "Treatment Cycle 1",
+            "pattern": "Treatment Cycle 1"
+          },
+          "visit": {
+            "text": "During Treatment Cycle 1 Days 8, 15, and 22",
+            "pattern": null
+          },
+          "cycle": {
+            "text": "Cycle 1",
+            "pattern": "Cycle 1"
+          },
+          "cycle_length": {
+            "text": "1 Cycle = 4 Weeks",
+            "pattern": "4 weeks"
+          },
+          "timing": {
+            "text": "Days 8, 15, and 22",
+            "pattern": "Day 15"
+          },
+          "window": {
+            "text": "± 3 days",
+            "pattern": "-3..+3 days"
+          }
+        },
+        {
+          "id": "c1d22",
+          "epoch": {
+            "text": "Treatment Cycle 1",
+            "pattern": "Treatment Cycle 1"
+          },
+          "visit": {
+            "text": "During Treatment Cycle 1 Days 8, 15, and 22",
+            "pattern": null
+          },
+          "cycle": {
+            "text": "Cycle 1",
+            "pattern": "Cycle 1"
+          },
+          "cycle_length": {
+            "text": "1 Cycle = 4 Weeks",
+            "pattern": "4 weeks"
+          },
+          "timing": {
+            "text": "Days 8, 15, and 22",
+            "pattern": "Day 22"
+          },
+          "window": {
+            "text": "± 3 days",
+            "pattern": "-3..+3 days"
+          }
+        },
+        {
+          "id": "c2d1",
+          "epoch": {
+            "text": "Treatment Cycle 2",
+            "pattern": "Treatment Cycle 2"
+          },
+          "visit": {
+            "text": "During Treatment Cycle 2 Day 1",
+            "pattern": null
+          },
+          "cycle": {
+            "text": "Cycle 2",
+            "pattern": "Cycle 2"
+          },
+          "cycle_length": {
+            "text": "1 Cycle = 4 Weeks",
+            "pattern": "4 weeks"
+          },
+          "timing": {
+            "text": "Day 1",
+            "pattern": "Day 1"
+          },
+          "window": {
+            "text": "± 3 days",
+            "pattern": "-3..+3 days"
+          }
+        },
+        {
+          "id": "c2d8",
+          "epoch": {
+            "text": "Treatment Cycle 2",
+            "pattern": "Treatment Cycle 2"
+          },
+          "visit": {
+            "text": "During Treatment Cycle 2 Days 8, 15, and 22",
+            "pattern": null
+          },
+          "cycle": {
+            "text": "Cycle 2",
+            "pattern": "Cycle 2"
+          },
+          "cycle_length": {
+            "text": "1 Cycle = 4 Weeks",
+            "pattern": "4 weeks"
+          },
+          "timing": {
+            "text": "Days 8, 15, and 22",
+            "pattern": "Day 8"
+          },
+          "window": {
+            "text": "± 3 days",
+            "pattern": "-3..+3 days"
+          }
+        },
+        {
+          "id": "c2d15",
+          "epoch": {
+            "text": "Treatment Cycle 2",
+            "pattern": "Treatment Cycle 2"
+          },
+          "visit": {
+            "text": "During Treatment Cycle 2 Days 8, 15, and 22",
+            "pattern": null
+          },
+          "cycle": {
+            "text": "Cycle 2",
+            "pattern": "Cycle 2"
+          },
+          "cycle_length": {
+            "text": "1 Cycle = 4 Weeks",
+            "pattern": "4 weeks"
+          },
+          "timing": {
+            "text": "Days 8, 15, and 22",
+            "pattern": "Day 15"
+          },
+          "window": {
+            "text": "± 3 days",
+            "pattern": "-3..+3 days"
+          }
+        },
+        {
+          "id": "c2d22",
+          "epoch": {
+            "text": "Treatment Cycle 2",
+            "pattern": "Treatment Cycle 2"
+          },
+          "visit": {
+            "text": "During Treatment Cycle 2 Days 8, 15, and 22",
+            "pattern": null
+          },
+          "cycle": {
+            "text": "Cycle 2",
+            "pattern": "Cycle 2"
+          },
+          "cycle_length": {
+            "text": "1 Cycle = 4 Weeks",
+            "pattern": "4 weeks"
+          },
+          "timing": {
+            "text": "Days 8, 15, and 22",
+            "pattern": "Day 22"
+          },
+          "window": {
+            "text": "± 3 days",
+            "pattern": "-3..+3 days"
+          }
+        },
+        {
+          "id": "c3pd1",
+          "epoch": {
+            "text": "Treatment Cycle 3 and beyond",
+            "pattern": "Treatment Cycle 3 and beyond"
+          },
+          "visit": {
+            "text": "During Treatment Cycle 3 and beyond Day 1",
+            "pattern": null
+          },
+          "cycle": {
+            "text": "Cycle 3 and beyond",
+            "pattern": "Cycle 3+"
+          },
+          "cycle_length": {
+            "text": "1 Cycle = 4 Weeks",
+            "pattern": "4 weeks"
+          },
+          "timing": {
+            "text": "Day 1",
+            "pattern": "Day 1"
+          },
+          "window": {
+            "text": "± 3 days",
+            "pattern": "-3..+3 days"
+          }
+        },
+        {
+          "id": "c3pd15",
+          "epoch": {
+            "text": "Treatment Cycle 3 and beyond",
+            "pattern": "Treatment Cycle 3 and beyond"
+          },
+          "visit": {
+            "text": "During Treatment Cycle 3 and beyond Day 15",
+            "pattern": null
+          },
+          "cycle": {
+            "text": "Cycle 3 and beyond",
+            "pattern": "Cycle 3+"
+          },
+          "cycle_length": {
+            "text": "1 Cycle = 4 Weeks",
+            "pattern": "4 weeks"
+          },
+          "timing": {
+            "text": "Day 15",
+            "pattern": "Day 15"
+          },
+          "window": {
+            "text": "± 3 days",
+            "pattern": "-3..+3 days"
+          }
+        }
+      ],
+      "activities": [
+        {
+          "name": "Safety Assessments"
+        },
+        {
+          "name": "Physical Examination",
+          "parent": "Safety Assessments",
+          "cells": [
+            {
+              "column": "scr",
+              "text": "X"
+            },
+            {
+              "column": "c1d1",
+              "text": "X"
+            },
+            {
+              "column": "c2d1",
+              "text": "X"
+            },
+            {
+              "column": "c3pd1",
+              "text": "X"
+            }
+          ]
+        },
+        {
+          "name": "Vital Signs",
+          "parent": "Safety Assessments",
+          "cells": [
+            {
+              "column": "scr",
+              "text": "X"
+            },
+            {
+              "column": "c1d1",
+              "text": "X"
+            },
+            {
+              "column": "c1d8",
+              "text": "X"
+            },
+            {
+              "column": "c1d15",
+              "text": "X"
+            },
+            {
+              "column": "c1d22",
+              "text": "X"
+            },
+            {
+              "column": "c2d1",
+              "text": "X"
+            },
+            {
+              "column": "c2d8",
+              "text": "X"
+            },
+            {
+              "column": "c2d15",
+              "text": "X"
+            },
+            {
+              "column": "c2d22",
+              "text": "X"
+            },
+            {
+              "column": "c3pd1",
+              "text": "X"
+            },
+            {
+              "column": "c3pd15",
+              "text": "X"
+            }
+          ]
+        },
+        {
+          "name": "Laboratory Tests"
+        },
+        {
+          "name": "Hematology",
+          "parent": "Laboratory Tests",
+          "cells": [
+            {
+              "column": "scr",
+              "text": "X"
+            },
+            {
+              "column": "c1d1",
+              "text": "X"
+            },
+            {
+              "column": "c1d8",
+              "text": "X"
+            },
+            {
+              "column": "c1d15",
+              "text": "X"
+            },
+            {
+              "column": "c1d22",
+              "text": "X"
+            },
+            {
+              "column": "c2d1",
+              "text": "X"
+            },
+            {
+              "column": "c2d8",
+              "text": "X"
+            },
+            {
+              "column": "c2d15",
+              "text": "X"
+            },
+            {
+              "column": "c2d22",
+              "text": "X"
+            },
+            {
+              "column": "c3pd1",
+              "text": "X"
+            },
+            {
+              "column": "c3pd15",
+              "text": "X"
+            }
+          ]
+        },
+        {
+          "name": "Serum Chemistry",
+          "parent": "Laboratory Tests",
+          "cells": [
+            {
+              "column": "scr",
+              "text": "X"
+            },
+            {
+              "column": "c1d1",
+              "text": "X"
+            },
+            {
+              "column": "c1d15",
+              "text": "X"
+            },
+            {
+              "column": "c2d1",
+              "text": "X"
+            },
+            {
+              "column": "c2d15",
+              "text": "X"
+            },
+            {
+              "column": "c3pd1",
+              "text": "X"
+            },
+            {
+              "column": "c3pd15",
+              "text": "X"
+            }
+          ]
+        },
+        {
+          "name": "Study Intervention"
+        },
+        {
+          "name": "Randomization",
+          "parent": "Study Intervention",
+          "cells": [
+            {
+              "column": "rand",
+              "text": "X"
+            }
+          ]
+        },
+        {
+          "name": "Pharmacokinetic Assessments"
+        },
+        {
+          "name": "Pharmacokinetics",
+          "parent": "Pharmacokinetic Assessments",
+          "cells": [
+            {
+              "column": "c1d1",
+              "text": "X"
+            },
+            {
+              "column": "c1d8",
+              "text": "X"
+            },
+            {
+              "column": "c2d1",
+              "text": "X"
+            },
+            {
+              "column": "c3pd1",
+              "text": "X"
+            }
+          ]
+        }
+      ],
+      "footnotes": []
+    }
+  ]
+}

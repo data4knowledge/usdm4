@@ -33,11 +33,17 @@ column with no printed ``Day 1`` the marker is the anchor. Every other
 column of a cycle is timed from its cycle's ``Day 1``. A cycle's length is
 its own columns' (the first readable one), converted to the cycle's unit
 only where exact. A ``Day 1`` whose previous cycle is not in the timeline, or
-has no readable or convertible length (U4-23), and a cycle-range column
-(U4-25, ranges come with R5), get a zero timing and a warning. A negative day
-in a cycle follows the crossing-zero rule (U4-24).
+has no readable or convertible length (U4-23), gets a zero timing and a
+warning. A negative day in a cycle follows the crossing-zero rule (U4-24).
 
-Delays, decisions (the cycle loop) and other exits come with later issues.
+Issue 69 (R5, design § 6 R5, U4-7, U4-8). A cycle range (``Cycle n-m``,
+``Cycle n+``) is timed like a single cycle numbered ``n``: its ``Day 1`` from
+the previous cycle's ``Day 1`` — a range covering cycle *n* − 1 counts — and
+its other days from its own ``Day 1``. A range with no readable length takes
+the largest day printed in it, with a warning (U4-8). After the range's last
+column come a decision node — timed ``After`` that column by the rest of the
+cycle, looping back to the range's ``Day 1`` — and, when the range is the
+last column, an end node (a decision cannot target the timeline exit).
 """
 
 from dataclasses import dataclass
@@ -47,6 +53,7 @@ from simple_error_log.errors import Errors
 
 from usdm4.assembler.timeline.columns import Column, ParsedTimeline
 from usdm4.assembler.timeline.grammar import (
+    CycleLength,
     CycleNumber,
     CycleRange,
     TimeRange,
@@ -75,6 +82,15 @@ _EXACT = {
 }
 
 
+def _cycle_n(cycle) -> int | None:
+    """A cycle's number — a range's first cycle — or ``None``."""
+    if isinstance(cycle, CycleNumber):
+        return cycle.n
+    if isinstance(cycle, CycleRange):
+        return cycle.start
+    return None
+
+
 def _convert(n: int, unit: str, to: str) -> int | None:
     """``n`` ``unit`` in ``to`` units, or ``None`` when not exact."""
     if unit == to:
@@ -90,11 +106,12 @@ def _convert(n: int, unit: str, to: str) -> int | None:
 
 @dataclass
 class _CycleSlot:
-    """A single-cycle column the plan can time: its cycle number and the day
-    within the cycle."""
+    """A cycle column the plan can time: its cycle number (a range's first
+    cycle), the day within the cycle and, for a range, the range."""
 
     n: int
     day: TimingPoint
+    range: CycleRange | None = None
 
 
 @dataclass
@@ -110,6 +127,17 @@ class _CycleStart:
     first: int
     unit: str
     column: int | None = None
+    range: CycleRange | None = None
+
+    def covers(self, n: int) -> bool:
+        """True when cycle ``n`` is this cycle, or inside this range."""
+        if self.range is None:
+            return self.n == n
+        return self.range.start <= n and (self.range.end is None or n <= self.range.end)
+
+
+DECISION = "decision"
+END = "end"
 
 
 @dataclass
@@ -125,7 +153,11 @@ class InstanceNode:
 
     A cycle's start marker (U4-22) has no ``column``: ``marker`` is its key,
     ``cycle`` its cycle number and ``epoch_column`` the column whose epoch it
-    takes."""
+    takes.
+
+    A range's decision and end nodes (R5) have no column either; ``kind`` is
+    ``DECISION`` or ``END``. A decision's ``loop_to`` is the key of the
+    range's ``Day 1`` node, its default; its exit is the next node."""
 
     column: Column | None
     timing_type: str
@@ -138,6 +170,8 @@ class InstanceNode:
     marker: str | None = None
     cycle: int | None = None
     epoch_column: int | None = None
+    kind: str | None = None
+    loop_to: int | str | None = None
 
     @property
     def key(self) -> int | str:
@@ -180,6 +214,7 @@ class Planner:
         where = f"Timeline {t}" if t else "Timeline"
         columns = timeline.columns
         slots, lengths = self._resolve_cycles(columns, where)
+        self._range_lengths(columns, slots, lengths, where)
         starts = self._cycle_starts(columns, slots, where)
         anchor_column = self.find_anchor(columns)
         if not any(self._is_candidate(c) for c in columns):
@@ -208,7 +243,122 @@ class Planner:
                 previous = nodes[-1].key if nodes else None
                 nodes.append(self._marker_node(ctx, start, previous))
             nodes.append(self._node(ctx, column, nodes[-1].key if nodes else None))
-        return TimelinePlan(anchor=ctx.anchor, nodes=nodes)
+        return TimelinePlan(anchor=ctx.anchor, nodes=self._add_loops(ctx, nodes))
+
+    # ------------------------------------------------------------------
+    # Cycle ranges — issue 69 (R5)
+
+    def _add_loops(
+        self, ctx: "_Context", nodes: list[InstanceNode]
+    ) -> list[InstanceNode]:
+        """After each range's last column, its decision node; and when that
+        column is the timeline's last, an end node after the decision."""
+        last_of: dict[int, int] = {}
+        for column in ctx.columns:
+            slot = ctx.slots.get(column.index)
+            if slot is not None and slot.range is not None:
+                last_of[slot.n] = column.index
+        if not last_of:
+            return nodes
+        result: list[InstanceNode] = []
+        for node in nodes:
+            result.append(node)
+            if node.column is None:
+                continue
+            slot = ctx.slots.get(node.column.index)
+            if slot is None or last_of.get(slot.n) != node.column.index:
+                continue
+            decision = self._decision_node(ctx, ctx.starts[slot.n], node.column)
+            result.append(decision)
+            if node is nodes[-1]:
+                result.append(
+                    InstanceNode(
+                        column=None,
+                        timing_type=AFTER,
+                        relative_to=decision.key,
+                        duration=0,
+                        unit=decision.unit,
+                        marker=f"C{slot.n}END",
+                        cycle=slot.n,
+                        epoch_column=node.column.index,
+                        kind=END,
+                    )
+                )
+        return result
+
+    def _decision_node(
+        self, ctx: "_Context", start: _CycleStart, last: Column
+    ) -> InstanceNode:
+        """The range's decision, ``After`` its last column by the rest of the
+        cycle: the length less the last day's offset in the cycle (28 days,
+        last day ``Day 15``: 14 days)."""
+        what = f"cycle {start.n} decision"
+        length = ctx.lengths.get(start.n)
+        day = ctx.slots[last.index].day
+        delay, timed = 0, False
+        if length is None:
+            reason = "the range has no readable length"
+        else:
+            converted = _convert(length.n, length.unit, start.unit)
+            offset = self._collapse(day.value, day.unit, ctx.has_zero) - 1
+            if converted is None:
+                reason = (
+                    f"the range's length {length.n} {length.unit}s does not "
+                    f"convert exactly to {start.unit}s"
+                )
+            elif converted < offset:
+                reason = (
+                    f"the last day ({day.value}) is beyond the length "
+                    f"({converted} {start.unit}s)"
+                )
+            else:
+                delay, timed, reason = converted - offset, True, None
+        if reason:
+            self._warn(f"{ctx.where}, {what}: {reason}; a zero delay is used", "plan")
+        return InstanceNode(
+            column=None,
+            timing_type=AFTER,
+            relative_to=last.index,
+            duration=delay,
+            unit=start.unit,
+            timed=timed,
+            marker=f"C{start.n}DEC",
+            cycle=start.n,
+            epoch_column=last.index,
+            kind=DECISION,
+            # The pass starts at the range's first node: its start marker,
+            # else its first column — a predose ``Day -1`` before ``Day 1``.
+            loop_to=start.key if start.column is None else start.first,
+        )
+
+    def _range_lengths(
+        self,
+        columns: list[Column],
+        slots: dict[int, _CycleSlot],
+        lengths: dict,
+        where: str,
+    ) -> None:
+        """U4-8: a range with no readable length takes the largest day
+        printed in it (``Day 15`` → 15 days), with a warning."""
+        largest: dict[int, TimingPoint] = {}
+        for column in columns:
+            slot = slots.get(column.index)
+            if slot is None or slot.range is None or slot.n in lengths:
+                continue
+            best = largest.get(slot.n)
+            if best is None or (
+                slot.day.unit == best.unit and slot.day.value > best.value
+            ):
+                largest[slot.n] = slot.day
+        for n, day in largest.items():
+            if day.value < 1:
+                continue
+            lengths[n] = CycleLength(day.value, day.unit)
+            self._warn(
+                f"{where}, cycle {n}: the range has no readable length; the "
+                f"largest day printed in it is used ({day.value} {day.unit}s)",
+                "plan",
+            )
 
     def _anchor(
         self,
@@ -322,10 +472,9 @@ class Planner:
     def _resolve_cycles(
         self, columns: list[Column], where: str
     ) -> tuple[dict[int, _CycleSlot], dict]:
-        """Find every single-cycle column the plan can time (U4-25, U4-26),
-        and each cycle's length. A cycle-range column (U4-25) loses its
-        timing (kept as ``cycle_day``) and so takes the zero timing of
-        U4-3."""
+        """Find every cycle column the plan can time (U4-26) — a single cycle
+        or a range (R5), a range numbered by its first cycle — and each
+        cycle's length."""
         lengths = self._cycle_lengths(columns, where)
         slots: dict[int, _CycleSlot] = {}
         for column in columns:
@@ -335,14 +484,9 @@ class Planner:
             day = column.timing
             column.cycle_day = day
             if isinstance(cycle, CycleRange):
-                column.timing, column.time_range = None, None
-                self._warn(
-                    f"{where}, column '{column.id}': cycle ranges are timed with "
-                    "R5; a zero timing is used",
-                    "plan",
-                )
-                continue
-            slots[column.index] = _CycleSlot(cycle.n, day)
+                slots[column.index] = _CycleSlot(cycle.start, day, cycle)
+            else:
+                slots[column.index] = _CycleSlot(cycle.n, day)
         return slots, lengths
 
     def _cycle_starts(
@@ -354,8 +498,9 @@ class Planner:
         readable day gets no node."""
         first: dict[int, int] = {}
         for column in columns:
-            if isinstance(column.cycle, CycleNumber):
-                first.setdefault(column.cycle.n, column.index)
+            n = _cycle_n(column.cycle)
+            if n is not None:
+                first.setdefault(n, column.index)
         starts: dict[int, _CycleStart] = {}
         for column in columns:
             slot = slots.get(column.index)
@@ -368,6 +513,7 @@ class Planner:
                     key=f"C{slot.n}D1",
                     first=first[slot.n],
                     unit=slot.day.unit,
+                    range=slot.range,
                 )
                 starts[slot.n] = start
             if (
@@ -386,13 +532,14 @@ class Planner:
         return starts
 
     def _cycle_lengths(self, columns: list[Column], where: str) -> dict:
-        """Each single cycle's length: the first readable one among its own
-        columns. A second, different length in the same cycle is warned."""
+        """Each cycle's length — a range's keyed by its first cycle: the first
+        readable one among its own columns. A second, different length in the
+        same cycle is warned."""
         lengths: dict[int, object] = {}
         for column in columns:
-            if not isinstance(column.cycle, CycleNumber) or not column.cycle_length:
+            n = _cycle_n(column.cycle)
+            if n is None or not column.cycle_length:
                 continue
-            n = column.cycle.n
             if n not in lengths:
                 lengths[n] = column.cycle_length
             elif column.cycle_length != lengths[n]:
@@ -426,8 +573,10 @@ class Planner:
         if start.key == ctx.anchor:
             return FIXED, ctx.anchor, 0, start.unit, True
         if start.n > 1:
-            before = ctx.starts.get(start.n - 1)
-            length = ctx.lengths.get(start.n - 1)
+            before = next(
+                (s for s in ctx.starts.values() if s.covers(start.n - 1)), None
+            )
+            length = ctx.lengths.get(before.n) if before is not None else None
             reason = None
             if before is None:
                 reason = f"cycle {start.n - 1} is not in the timeline"

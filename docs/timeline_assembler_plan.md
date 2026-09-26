@@ -205,17 +205,21 @@ Reading only, `printed.py` / `columns.py`; no schema change (`rows` already take
 
 ## R5 — cycle ranges
 
+**#69, branch `69-r5-cycle-decision-loop`, built 2026-09-26** — as built: design § 16.
+Gate pending (full suite, VSCode).
+
 The delay and the decision loop for `Cycle n-m` / `Cycle n+` (design § 6 R5), the
 mixed single-then-range case, a missing cycle length (U4-8), the exit condition text
 (U4-7). This is the first `ScheduledDecisionInstance` the assembler creates; unit
 tests cover the plan and the built USDM. **No test in this issue expands a looped
 timeline** — the expander would recurse without end until its own issue is merged.
-Decide U4-7 and U4-8 before the branch. U4-7's proposal ("unless the caller supplies
-one") has no field in the frozen schema; only a `HeaderNote` side channel could carry
-it — to settle when U4-7 is taken.
+U4-7 and U4-8 taken 2026-09-26 (design § 9): exit condition text `cycle exit
+condition`; a missing cycle length is the largest day number printed in the range,
+with a warning. Both may later need a search wider than the SoA; not needed for R5.
 
-Test case: NCT02107703 (cycles `1`, `2-3`, `4 and Beyond`, length 28) — candidate,
-to be ruled when the issue is opened.
+Test case: **NCT05197426** (Dave, 2026-09-26; header reviewed 2026-09-26) — Cycle 1,
+Cycle 2, then `Cycle 3 and beyond` on Day 1 and Day 15; 4-week cycle. NCT02107703
+(one Day 1 column per range, range as the last column) is kept as an edge test only.
 
 ## Expander — follow a loop for one pass
 

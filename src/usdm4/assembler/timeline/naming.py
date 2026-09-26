@@ -261,6 +261,16 @@ class Naming:
             )
         return self._register_sai(base or f"T{t}-SAI-{index + 1}")
 
+    def decision_name(self, cycle: str | int | None, t: int) -> str:
+        """A cycle range's decision (issue 69): ``C3+DEC``. Uniqued across
+        the study with the SAI names."""
+        return self._register_sai(f"C{cycle}DEC" if cycle is not None else f"T{t}-DEC")
+
+    def end_name(self, t: int) -> str:
+        """The end instance after a range that is the last column (issue
+        69): ``T1-END``."""
+        return self._register_sai(f"T{t}-END")
+
     def _register_sai(self, base: str) -> str:
         count = self._sai_name_registry.get(base, 0) + 1
         self._sai_name_registry[base] = count

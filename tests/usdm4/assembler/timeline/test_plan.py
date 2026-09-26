@@ -11,7 +11,14 @@ import pytest
 from simple_error_log.errors import Errors
 
 from src.usdm4.assembler.timeline.columns import parse_timeline
-from src.usdm4.assembler.timeline.plan import AFTER, BEFORE, FIXED, Planner
+from src.usdm4.assembler.timeline.plan import (
+    AFTER,
+    BEFORE,
+    DECISION,
+    END,
+    FIXED,
+    Planner,
+)
 from tests.usdm4.assembler.timeline.helpers import column, timeline, value
 
 
@@ -266,7 +273,8 @@ def _cycle_plan(specs, errors=None):
 
 
 def _marker_keys(plan):
-    return [n.key for n in plan.nodes if n.column is None]
+    """Start markers only (U4-22) — not a range's decision or end node."""
+    return [n.key for n in plan.nodes if n.column is None and n.kind is None]
 
 
 def _day_one_at(plan, key) -> int:
@@ -409,20 +417,6 @@ class TestSingleCycles:
             [("Day 1", "Cycle 1", "21 days"), ("Day -1", "Cycle 2", "21 days")]
         )
         assert _links(plan) == [(FIXED, 0, 0), (AFTER, 0, 21), (BEFORE, "C2D1", 1)]
-
-    def test_a_range_column_is_a_zero_timing(self):
-        """U4-25. A range is R5's; it gets no start marker."""
-        errors = Errors()
-        plan = _cycle_plan(
-            [("Day 1", "Cycle 1", "21 days"), ("Day 1", "Cycle 2+", "21 days")], errors
-        )
-        assert _links(plan)[1] == (AFTER, 0, 0)
-        assert not plan.nodes[1].timed
-        assert _marker_keys(plan) == []
-        assert (
-            "Timeline 1, column 'c2': cycle ranges are timed with R5; a zero timing "
-            "is used"
-        ) in _messages(errors)
 
     def test_the_day_is_read_from_timing_only(self):
         """U4-26: a day printed in the visit row is not read, and a cycle with
@@ -645,15 +639,151 @@ class TestNct02107703Headers:
         ] == [(28, "day")] * 4
         assert errors.to_dict(0) == []
 
-    def test_the_ranges_are_zero_timings_until_r5(self):
+    def test_the_ranges_are_timed_and_loop(self):
+        """Issue 69: ``2-3`` is timed from cycle 1's Day 1, ``4 and Beyond``
+        from the ``2-3`` range (it covers cycle 3); each gets a decision, and
+        the last range an end node."""
         errors = Errors()
         plan = Planner(errors).plan(self._parsed(errors), 1)
-        timed = {n.column.id: n.timed for n in plan.nodes if not n.marker}
-        assert timed["c4"] is False and timed["c5"] is False
-        assert timed["c2"] is True and timed["c3"] is True
-        assert [m for m in _messages(errors) if "cycle ranges" in m] == [
-            "Timeline 1, column 'c4': cycle ranges are timed with R5; a zero timing "
-            "is used",
-            "Timeline 1, column 'c5': cycle ranges are timed with R5; a zero timing "
-            "is used",
-        ]
+        keys = [n.key for n in plan.nodes]
+        assert keys == [0, 1, 2, 3, "C2DEC", 4, "C4DEC", "C4END"]
+        nodes = {n.key: n for n in plan.nodes}
+        assert (nodes[3].timing_type, nodes[3].relative_to, nodes[3].duration) == (
+            AFTER,
+            1,
+            28,
+        )
+        assert (nodes[4].relative_to, nodes[4].duration) == (3, 28)
+        assert nodes["C2DEC"].loop_to == 3 and nodes["C4DEC"].loop_to == 4
+        assert (nodes["C2DEC"].relative_to, nodes["C2DEC"].duration) == (3, 28)
+        assert (nodes["C4END"].relative_to, nodes["C4END"].duration) == ("C4DEC", 0)
+        assert [m for m in _messages(errors) if "cycle" in m] == []
+
+
+class TestRanges:
+    """Issue 69 (R5): cycle ranges, their decision and end nodes."""
+
+    def test_a_range_is_timed_from_the_previous_cycle(self):
+        plan = _cycle_plan(
+            [("Day 1", "Cycle 1", "21 days"), ("Day 1", "Cycle 2+", "21 days")]
+        )
+        assert _links(plan)[1] == (AFTER, 0, 21)
+        assert plan.nodes[1].timed
+
+    def test_decision_after_the_last_day_by_the_rest_of_the_cycle(self):
+        plan = _cycle_plan(
+            [
+                ("Day 1", "Cycle 1", "28 days"),
+                ("Day 1", "Cycle 2+", "28 days"),
+                ("Day 15", "Cycle 2+", "28 days"),
+            ]
+        )
+        decision = plan.nodes[3]
+        assert decision.kind == DECISION and decision.key == "C2DEC"
+        assert (decision.timing_type, decision.relative_to, decision.duration) == (
+            AFTER,
+            2,
+            14,
+        )
+        assert decision.loop_to == 1 and decision.epoch_column == 2
+        assert decision.timed
+
+    def test_end_node_only_when_the_range_is_last(self):
+        plan = _cycle_plan(
+            [
+                ("Day 1", "Cycle 1", "21 days"),
+                ("Day 1", "Cycle 2-4", "21 days"),
+                ("Day 30", None, None),
+            ]
+        )
+        assert [n.key for n in plan.nodes] == [0, 1, "C2DEC", 2]
+        last = _cycle_plan(
+            [("Day 1", "Cycle 1", "21 days"), ("Day 1", "Cycle 2-4", "21 days")]
+        )
+        end = last.nodes[-1]
+        assert (end.kind, end.key, end.relative_to, end.duration) == (
+            END,
+            "C2END",
+            "C2DEC",
+            0,
+        )
+
+    def test_a_range_with_no_day_1_loops_to_its_marker(self):
+        plan = _cycle_plan(
+            [
+                ("Day 1", "Cycle 1", "21 days"),
+                ("Day 8", "Cycle 2+", "21 days"),
+            ]
+        )
+        assert [n.key for n in plan.nodes] == [0, "C2D1", 1, "C2DEC", "C2END"]
+        nodes = {n.key: n for n in plan.nodes}
+        assert nodes["C2DEC"].loop_to == "C2D1"
+        assert nodes["C2DEC"].duration == 21 - 7
+
+    def test_no_length_takes_the_largest_day(self):
+        """U4-8: Day 1, Day 8, Day 15 → a 15-day cycle; the delay is 1 day."""
+        errors = Errors()
+        plan = _cycle_plan(
+            [
+                ("Day 1", "Cycle 1", "28 days"),
+                ("Day 1", "Cycle 2+", None),
+                ("Day 8", "Cycle 2+", None),
+                ("Day 15", "Cycle 2+", None),
+            ],
+            errors,
+        )
+        assert plan.nodes[4].duration == 1
+        assert (
+            "Timeline 1, cycle 2: the range has no readable length; the largest "
+            "day printed in it is used (15 days)"
+        ) in _messages(errors)
+
+    def test_no_length_and_no_positive_day_is_a_zero_delay(self):
+        errors = Errors()
+        plan = _cycle_plan(
+            [("Day 1", "Cycle 1", "28 days"), ("Day -1", "Cycle 2+", None)], errors
+        )
+        decision = plan.nodes[-2]
+        assert (decision.duration, decision.timed) == (0, False)
+        assert (
+            "Timeline 1, cycle 2 decision: the range has no readable length; a "
+            "zero delay is used"
+        ) in _messages(errors)
+
+    def test_a_length_that_does_not_convert_is_a_zero_delay(self):
+        errors = Errors()
+        plan = _cycle_plan(
+            [("Week 1", "Cycle 1", "2 weeks"), ("Week 1", "Cycle 2+", "10 days")],
+            errors,
+        )
+        assert plan.nodes[-2].duration == 0
+        assert (
+            "Timeline 1, cycle 2 decision: the range's length 10 days does not "
+            "convert exactly to weeks; a zero delay is used"
+        ) in _messages(errors)
+
+    def test_a_last_day_beyond_the_length_is_a_zero_delay(self):
+        errors = Errors()
+        plan = _cycle_plan(
+            [("Day 1", "Cycle 1", "21 days"), ("Day 29", "Cycle 2+", "21 days")],
+            errors,
+        )
+        assert plan.nodes[-2].duration == 0
+        assert (
+            "Timeline 1, cycle 2 decision: the last day (29) is beyond the length "
+            "(21 days); a zero delay is used"
+        ) in _messages(errors)
+
+    def test_the_largest_day_ignores_other_units(self):
+        errors = Errors()
+        plan = _cycle_plan(
+            [
+                ("Day 1", "Cycle 1", "28 days"),
+                ("Day 1", "Cycle 2+", None),
+                ("Week 3", "Cycle 2+", None),
+                ("Day 8", "Cycle 2+", None),
+            ],
+            errors,
+        )
+        assert "largest day printed in it is used (8 days)" in _messages(errors)[0]
+        assert plan.nodes[1].key == 1

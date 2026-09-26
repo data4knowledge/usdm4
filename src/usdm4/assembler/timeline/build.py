@@ -31,14 +31,18 @@ from usdm4.api.extensions_d4k import (
 from usdm4.api.procedure import Procedure
 from usdm4.api.schedule_timeline import ScheduleTimeline
 from usdm4.api.schedule_timeline_exit import ScheduleTimelineExit
-from usdm4.api.scheduled_instance import ScheduledActivityInstance
+from usdm4.api.scheduled_instance import (
+    ConditionAssignment,
+    ScheduledActivityInstance,
+    ScheduledDecisionInstance,
+)
 from usdm4.api.study_epoch import StudyEpoch
 from usdm4.api.timing import Timing
 from usdm4.assembler.encoder import Encoder
 from usdm4.assembler.timeline.columns import ParsedTimeline
-from usdm4.assembler.timeline.grammar import CycleNumber
+from usdm4.assembler.timeline.grammar import CycleNumber, CycleRange
 from usdm4.assembler.timeline.naming import Naming
-from usdm4.assembler.timeline.plan import TimelinePlan
+from usdm4.assembler.timeline.plan import DECISION, END, TimelinePlan
 from usdm4.builder.builder import Builder
 
 
@@ -69,6 +73,10 @@ class TimelineBuild:
     """Builds ONE timeline. ``t`` is its ordinal in the input."""
 
     MODULE = "usdm4.assembler.timeline.build.TimelineBuild"
+
+    # U4-7: the exit condition of a cycle loop. The real rule is usually in
+    # the protocol body, not the SoA; fixed text until something reads it.
+    EXIT_CONDITION = "cycle exit condition"
 
     # The SoA input's classification and the d4k extension each is emitted
     # as. One concept per URL, matching every other d4k extension. TLF names
@@ -334,11 +342,18 @@ class TimelineBuild:
     # ------------------------------------------------------------------
     # Scheduled activity instances — a straight chain
 
-    def _add_instances(self) -> list[ScheduledActivityInstance]:
-        results: list[ScheduledActivityInstance] = []
+    def _add_instances(
+        self,
+    ) -> list[ScheduledActivityInstance | ScheduledDecisionInstance]:
+        results: list[ScheduledActivityInstance | ScheduledDecisionInstance] = []
         for node in self._plan.nodes:
             if node.column is None:
-                sai = self._add_start_marker(node)
+                if node.kind == DECISION:
+                    sai = self._add_decision(node)
+                elif node.kind == END:
+                    sai = self._add_end(node)
+                else:
+                    sai = self._add_start_marker(node)
                 self._sai_for[node.key] = sai
                 results.append(sai)
                 continue
@@ -376,7 +391,62 @@ class TimelineBuild:
         )
         for index, sai in enumerate(results[:-1]):
             sai.defaultConditionId = results[index + 1].id
+        self._wire_decisions(results)
         return results
+
+    def _wire_decisions(
+        self, results: list[ScheduledActivityInstance | ScheduledDecisionInstance]
+    ) -> None:
+        """R5: a decision's default loops back to its range's ``Day 1``; its
+        one condition leads on to the next instance (U4-7)."""
+        for index, node in enumerate(self._plan.nodes):
+            if node.kind != DECISION:
+                continue
+            decision = results[index]
+            onward = results[index + 1]
+            decision.defaultConditionId = self._sai_for[node.loop_to].id
+            assignment = self._builder.create(
+                ConditionAssignment,
+                {"condition": self.EXIT_CONDITION, "conditionTargetId": onward.id},
+            )
+            decision.conditionAssignments = [assignment] if assignment else []
+
+    def _add_decision(self, node) -> ScheduledDecisionInstance:
+        """A cycle range's decision (R5): after the range's last column, in
+        its epoch. Wired once every instance exists."""
+        return self._builder.create(
+            ScheduledDecisionInstance,
+            {
+                "name": self._naming.decision_name(self._cycle_label(node), self._t),
+                "description": f"End of a pass of cycle {self._cycle_label(node)}",
+                "label": "",
+                "defaultConditionId": None,
+                "epochId": self._epoch_for[node.epoch_column].id,
+                "conditionAssignments": [],
+            },
+        )
+
+    def _add_end(self, node) -> ScheduledActivityInstance:
+        """The instance after a range that is the last column (R5): a
+        decision cannot target the timeline exit, so this carries it. Not a
+        visit — no encounter, no activities."""
+        return self._builder.create(
+            ScheduledActivityInstance,
+            {
+                "name": self._naming.end_name(self._t),
+                "description": f"End of cycle {self._cycle_label(node)}",
+                "label": "",
+                "timelineExitId": None,
+                "encounterId": None,
+                "defaultConditionId": None,
+                "epochId": self._epoch_for[node.epoch_column].id,
+                "activityIds": [],
+            },
+        )
+
+    def _cycle_label(self, node) -> str:
+        """The range a decision or end node closes, as ``3+`` or ``2-3``."""
+        return self._cycle_number(self._timeline.columns[node.epoch_column])
 
     def _add_start_marker(self, node) -> ScheduledActivityInstance:
         """A cycle's start marker (issue 67): the cycle's ``Day 1`` when the
@@ -386,7 +456,13 @@ class TimelineBuild:
             ScheduledActivityInstance,
             {
                 "name": self._naming.sai_name(
-                    None, 1, "day", None, self._t, node.epoch_column, cycle=node.cycle
+                    None,
+                    1,
+                    "day",
+                    None,
+                    self._t,
+                    node.epoch_column,
+                    cycle=self._cycle_label(node) or node.cycle,
                 ),
                 "description": f"Start of cycle {node.cycle}; no Day 1 column "
                 "is printed",
@@ -400,12 +476,19 @@ class TimelineBuild:
         )
 
     @staticmethod
-    def _cycle_number(column) -> int | None:
-        """The cycle number of a single-cycle column the plan timed (issue
-        66), else ``None``: a range or an untimed column is named from its
-        text."""
-        if isinstance(column.cycle, CycleNumber) and column.timing is not None:
+    def _cycle_number(column) -> int | str | None:
+        """The cycle of a cycle column the plan timed — ``2`` (issue 66), or
+        for a range ``3+`` / ``2-3`` (issue 69) — else ``None``: an untimed
+        column is named from its text."""
+        if column.timing is None:
+            return None
+        if isinstance(column.cycle, CycleNumber):
             return column.cycle.n
+        if isinstance(column.cycle, CycleRange):
+            cycle = column.cycle
+            return (
+                f"{cycle.start}+" if cycle.end is None else f"{cycle.start}-{cycle.end}"
+            )
         return None
 
     # ------------------------------------------------------------------

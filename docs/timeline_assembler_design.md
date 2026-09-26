@@ -356,14 +356,19 @@ Nothing is ever expanded. A cycle has a length, a number or range, and days.
      is the exit condition and leads to the node after the range (or the exit), and
      whose `defaultConditionId` loops back to the range's first column.
 
-  The exit condition's text is decision U4-7; the proposal is the printed range text
-  (`Cycle 3-n`, `Cycles 1-6`) unless the caller supplies one.
+  The exit condition's text is the fixed string `cycle exit condition` (U4-7).
 - **Mixed** — single cycles then a range (`Cycle 1`, `Cycle 2`, `Cycle 3+`) — is the
   common case. The range's `Day 1` is the previous cycle's length after the previous
   cycle's `Day 1` (U4-27). A range that prints no `Day 1` has a start marker
   (U4-22), and the decision loops back to it.
-- **Cycle length missing or `pattern: null`.** The loop is still built; the delay is a
-  text-only timing (decision U4-8).
+- **Range as the last column.** A decision cannot target the timeline exit, so an end
+  instance is added after the decision — a `ScheduledActivityInstance` with no
+  encounter and no activities, like a start marker (U4-22) — carrying the
+  `timelineExitId`. The decision's exit branch leads to it (Dave, 2026-09-26).
+- **Cycle length missing or `pattern: null`.** The loop is still built; the cycle
+  length is the largest day number printed in the range (`D1`, `D8`, `D15` → 15 days),
+  with a warning (U4-8). The delay is then 15 − 14 = 1 day: the next pass starts the
+  day after the last printed day.
 
 ### R6 — conditional timelines and copies
 
@@ -431,8 +436,8 @@ Taken one at a time, each recorded here with its date when taken.
 | U4-4 | A time range (`Day -28 to Day -1`): the column's timing, its window, or both | **Taken 2026-09-25:** the interface takes both forms. A tool that already holds decoded timings sends a point and a window. A caller reading a document — `usdm4_protocol`, and the corpus ground truth — sends the time range as printed (text, range pattern, or both), and `usdm4` decodes it to the timing at its start and a window forward to its end. Decoding lives here so that nobody has to check it by hand per protocol |
 | U4-5 | A copied column: one `Encounter` shared by both timelines, or one each | one shared |
 | U4-6 | A column with no epoch | inherit the previous column's; none on the first column is an error |
-| U4-7 | The exit condition text on a cycle loop | printed range text unless the caller supplies one |
-| U4-8 | A range with no readable cycle length | loop built, delay text-only |
+| U4-7 | The exit condition text on a cycle loop | **Taken 2026-09-26 (Dave):** the fixed text `cycle exit condition`. **Noted, not crucial now:** the real exit rule (e.g. progression, unacceptable toxicity) is usually in the protocol body, not the SoA; finding it needs a search wider than the SoA. **Rejected:** printed range text (a heading, not a condition); caller-supplied text (no field in the frozen schema) |
+| U4-8 | A range with no readable cycle length | **Taken 2026-09-26 (Dave):** the loop is built; the cycle length is the largest day number printed in the range (`D8` → 8 days, `D15` → 15 days), with a warning. It is a lower bound: the real length (21, 28 days) is usually longer. **Noted, not crucial now:** the true length may be stated outside the SoA; finding it needs a wider search. **Open edge:** a range printing only `Day 1` gives a 1-day cycle — settle when R5 hits it. **Rejected:** a text-only delay (DDF00060 needs a duration; the expander crashes, as U4-3). Ranges only; U4-23 (single cycles) is unchanged |
 | U4-9 | Where a cell's printed text goes (`X`, `(X)`, `Predose`) | kept on the input only until a rule needs it |
 | U4-10 | Gate versus window in text alone (R8) | open |
 | U4-11 | How the expander presents a loop | one pass, flagged as repeating |
@@ -449,7 +454,7 @@ Taken one at a time, each recorded here with its date when taken.
 | U4-22 | A single cycle with no `Day 1` column | **Re-taken 2026-09-26 (#67; was: its columns measured from the anchor at (*n* − 1) × cycle length + (day − 1)):** every cycle has a `Day 1` node. With no printed `Day 1` column, a start marker is added before the cycle's first column — a `ScheduledActivityInstance` `C{n}D1` with no encounter and no activities, in that column's epoch; it is not a visit. The cycle's other columns are timed from it. When the anchor falls on a column of that cycle, the marker is the anchor |
 | U4-23 | Cycle *n* > 1 with no readable cycle length | **Taken 2026-09-25 (R4 part 2); narrowed 2026-09-26 (#67):** the length that matters is cycle *n* − 1's (U4-27). When it cannot be read or converted exactly, or cycle *n* − 1 is not in the timeline, cycle *n*'s `Day 1` gets U4-3's zero timing and a warning; never a guessed number. Its other columns are still timed from that `Day 1`. The last cycle needs no length until R5's delay |
 | U4-24 | A negative day inside a cycle (`Day -1` predose) | **Taken 2026-09-25 (R4 part 2):** today's crossing-zero rule — `Day -1` is one day before the cycle's `Day 1` |
-| U4-25 | A cycle-range column (`Cycle n-m`, `Cycle n+`) before R5 | **Taken 2026-09-25 (R4 part 2):** the range is parsed, not planned; the column gets a U4-3 zero timing and a warning saying cycle ranges come with R5 |
+| U4-25 | A cycle-range column (`Cycle n-m`, `Cycle n+`) before R5 | **Superseded 2026-09-26 by #69 (R5, § 16).** Was, taken 2026-09-25 (R4 part 2): the range is parsed, not planned; the column gets a U4-3 zero timing and a warning saying cycle ranges come with R5 |
 | U4-26 | Where a cycle column's day is read from | **Taken 2026-09-25 (R4 part 2):** the `timing` field only. A table printing the day in its visit row (`D1`) is stage 1's to assign to the timing role; `usdm4` never reads `visit` for timing |
 | U4-27 | Cycle *n*'s `Day 1` | **Taken 2026-09-26 (Dave, #67):** a cycle starts at `Day 1`; cycle *n*'s `Day 1` is timed `After` cycle *n* − 1's `Day 1` by cycle *n* − 1's length — a chain. Cycle 1's `Day 1` is Day 1 of the timeline, timed from the anchor. #66 built (*n* − 1) × cycle *n*'s own length, right only when every cycle has the same length. (The example first recorded here, a length printed as `21 days (or 28 days …)`, is a length that differs by cohort, not between cycles; it is not read, U4-23) |
 | U4-28 | Unit of a printed cycle length that is a bare number (`28`) | **Taken 2026-09-26 (Dave, #68):** the cycle length row label's unit (`Approximate Duration (days)`), else the timing row label's (`Relative day within a cycle`). With no unit in either, not read, with a warning saying so — never defaulted to days (unlike U4-15); U4-23 then applies |
@@ -660,3 +665,38 @@ only — the input schema is unchanged.
 - Tests: `test_printed.py` (`TestCycle`, `TestCycleLength`), `test_columns.py`,
   `test_plan.py` (`TestNct02107703Headers`: every header read, ranges still U4-25 zero
   timings until R5).
+
+## 16. As built — issue 69 (2026-09-26)
+
+R5, cycle ranges (§ 6 R5, U4-7, U4-8, end instance). Supersedes U4-25. No input schema
+change.
+
+- `plan.py` — a range column is a cycle slot numbered by its first cycle; its `Day 1`
+  (or U4-22 marker) is chained from the previous cycle's `Day 1`, found by
+  `_CycleStart.covers` so a range covering cycle *n* − 1 counts (`2-3` then `4+`).
+  Ranges take lengths like single cycles; none readable → U4-8, the largest day printed
+  in the range (same unit as the first), warned. `_add_loops` puts a `DECISION` node
+  after each range's last column — `After` it by length − (last day − 1), `loop_to` the
+  range's first node (its start marker, else its first column, so a predose `Day -1`
+  printed before `Day 1` is inside the loop) — and an `END` node after the decision when that column is the
+  last. No length, a length that does not convert exactly, or a last day beyond the
+  length: zero delay, warned.
+- `build.py` — `ScheduledDecisionInstance` in the range's epoch; its default loops back;
+  one `ConditionAssignment`, `cycle exit condition`, to the next instance. The end
+  instance: no encounter, no activities; it is the last instance, so it takes the exit.
+  Range instances, and a range's start marker, are named `C3+D1`, `C2-3D1`.
+- `naming.py` — `decision_name` (`C3+DEC`), `end_name` (`T1-END`).
+- Tests: `test_plan.py` `TestRanges`, `TestNct02107703Headers` (ranges timed and
+  looped); `test_r5_nct05197426.py` (the built USDM, and other shapes on structured
+  input: bounded then open range, no `Day 1`, predose `Day -1`, weeks); pin `nct05197426` added. Existing
+  pins unchanged.
+
+**Calls made while building, not ruled:**
+- The loop returns to the range's first column, not `Day 1`, when a day is printed
+  before `Day 1` in the range (§ 6 R5 said first column; the #69 issue text said Day 1).
+- Printed text is supported but not held to the structured form's standard (Dave):
+  `1 Cycle = 4 Weeks` is not read as a length; the structured `4 weeks` is.
+- A column after a range with no readable timing keeps U4-3's zero timing after the
+  previous *column* (the range's last day), not after the decision the exit leads to.
+- A single cycle and a range with the same first cycle (`Cycle 2`, `Cycle 2-n (if …)`)
+  share one cycle slot.

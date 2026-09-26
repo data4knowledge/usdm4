@@ -19,7 +19,7 @@ record of the rule generation process).
 
 This repo is **machine A** of three parallel threads (plan: `protocol_corpus/docs/next_steps.md`).
 Work here, one issue each: cycle reading (the three gaps NCT02107703 prints) → R5 cycle
-loop → R6 → R7; R8 waits on U4-10. Decide U4-7/U4-8 before R5 and U4-5 before R6. The
+loop → R6 → R7; R8 waits on U4-10. U4-7/U4-8 taken (2026-09-26); decide U4-5 before R6. The
 expander is its own issue (decide U4-11 first): it is off the build path but blocks the
 next release once R5 is merged. Order and schema checks: `timeline_assembler_plan.md`
 § *Order from here*. **The timeline input schema
@@ -95,7 +95,7 @@ safety, not build need). Defaulting a unitless cycle length to days as U4-15 doe
 **Found, not this issue.** Local branches `65`, `66`, `67` are merged into `main`.
 
 **Next.**
-1. U4-7 and U4-8, then R5 on NCT02107703 (rule it formally as the test case when opening).
+1. ~~U4-7 and U4-8~~ (taken 2026-09-26, design § 9), then R5 on NCT05197426 (Dave, 2026-09-26; NCT02107703 an edge test only).
 2. U4-11, then the expander issue — any time before the release containing R5.
 3. U4-5, then R6; R7.
 
