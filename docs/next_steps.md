@@ -15,6 +15,16 @@ record of the rule generation process).
 > first-chain-head rules", that index has the row-by-row breakdown with
 > file counts and authority pointers. Look there first.
 
+## Working arrangement — three machines (2026-09-26)
+
+This repo is **machine A** of three parallel threads (plan: `protocol_corpus/docs/next_steps.md`).
+Work here: `usdm4` R5 cycle loop, R6, R7, one issue each; R8 waits on U4-10; decide U4-7/U4-8
+before R5 and U4-5 before R6. **The timeline input schema
+(`src/usdm4/assembler/schema/schedule_timeline_schema.py`) is frozen** — `usdm4_protocol` (machine B)
+builds against it; a change needs its own issue, merged first, with B and C told. Gate here: tests
+and pins only. Corpus figures are run and quoted on machine C only. Nothing is written to
+`protocol_corpus` from here.
+
 ## Session Log
 
 Newest first. This repo's own log: every session that works a `usdm4` issue is entered here in
