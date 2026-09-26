@@ -99,6 +99,15 @@ done
 
 The wrapper at `src/usdm4/core/core_validator.py` filters a known set of CRE non-finding error strings out of the findings list and into `execution_errors`. The authoritative list of sentinels and the rationale for each is maintained in `docs/cre_issues.md` (Issue 5); do not duplicate it here.
 
+## Session log
+
+This repo keeps its own session log: `docs/next_steps.md` § *Session Log*, newest first, plus
+`docs/lessons_learned.md` for durable lessons. Every session that works a `usdm4` issue or branch
+writes a full entry here, whichever Claude project drove it — including sessions run from the
+`protocol_corpus` project. The corpus `memory.md` then carries only a short pointer (the issue, the
+corpus gate figure, and that the full entry is here). A cold start in this repo must be able to
+resume from this repo alone.
+
 ## Notes
 
 - Version is defined in `src/usdm4/__info__.py`

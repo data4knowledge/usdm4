@@ -17,7 +17,184 @@ record of the rule generation process).
 
 ## Session Log
 
-Newest first. Cross-repo "save session" entries; pairs with `usdm4_protocol` and `udp_prism` logs.
+Newest first. This repo's own log: every session that works a `usdm4` issue is entered here in
+full, whichever Claude project drove it (see `CLAUDE.md` § *Session log*).
+
+### 2026-09-26 — ISSUE 67 BUILT (GitHub 67, branch `67-cycles`): cycle Day 1 chained, start marker when none printed
+Back-filled 2026-09-26 from `protocol_corpus/memory.md` (entry of the same date). Until then this repo's
+sessions were logged only in the corpus.
+
+- `usdm4 @ 67-cycles`. Driven from `protocol_corpus` (register row `N70`).
+
+**What it was.** `plan._cycle_offset` (#66) put cycle *n*'s `Day 1` at (*n* − 1) × cycle *n*'s OWN
+length from Cycle 1 — right only when all lengths are equal. A cycle printing no `Day 1` had its
+columns timed from the anchor, with no node to hang from and nothing for R5's loop to return to.
+
+**Decisions (Dave), design § 9.** U4-27 taken: cycle *n*'s `Day 1` = cycle *n* − 1's `Day 1` +
+cycle *n* − 1's length. U4-22 re-taken: a cycle with no printed `Day 1` gets a start marker
+`C{n}D1` — an instance, not a visit (no encounter, no activities). U4-23 narrowed to the previous
+cycle's length.
+
+**What changed.**
+- `src/usdm4/assembler/timeline/plan.py` — `_CycleStart` (printed column or marker `C{n}D1`);
+  `_cycle_starts` (first column with day 1 in days or weeks, else a marker before the cycle's first
+  column; none for a cycle with no readable day); `_start_timing` (anchor fixed; *n* > 1 `After`
+  cycle *n* − 1's `Day 1` by its length, exact conversion only; cycle 1 from the anchor as Day 1;
+  else zero after the previous node + warning); `_marker_node`; `_cycle_node` times other columns
+  from their cycle's `Day 1` node; `_anchor` makes the marker the anchor when the anchor column is
+  in its cycle; `_interval`; `_Context`. `InstanceNode` gains `marker`, `cycle`, `epoch_column`,
+  `key`; `relative_to` and `TimelinePlan.anchor` are node keys (column index or `C{n}D1`).
+  `_cycle_offset`, `_position`, `_day_one` removed.
+- `src/usdm4/assembler/timeline/build.py` — `_add_start_marker`: SAI `C{n}D1`, no encounter, no
+  activities, epoch of the cycle's first column; timing `TIMC{n}D1`; SAIs and timings keyed by node key.
+- `tests/usdm4/assembler/timeline/test_plan.py` — `TestSingleCycles` rewritten to the chain; new
+  `TestCycleDayOne`; `TestAnchorWarnings.test_a_restart_in_a_cycle_column_is_not_warned` fixture moved
+  its length to Cycle 1.
+- `tests/usdm4/assembler/test_timeline_assembler.py` — end to end with a marker.
+- `docs/timeline_assembler_design.md` — status, § 9 U4-22/U4-23/U4-27, R5 *Mixed*, § 13 note,
+  new § 14 as built. `docs/timeline_assembler_plan.md` — status line.
+
+**Behaviour changes.** Equal lengths: every `Day 1` lands where it did, but cycle *n* > 2's `Day 1`
+is now relative to the previous `Day 1`, not the anchor. An unchainable `Day 1` is zero-timed but
+its cycle's other columns keep their timing from it (#66 zeroed them all). `Cycle 2` with no
+`Cycle 1` gets a zero `C2D1` and a warning (was 28 days). `Week 1` counts as a printed cycle start.
+
+**The numbers.** Full suite passes (Dave, VSCode). Corpus gate (measured set, `usdm4_protocol`
+`0.11.0.a10`): timelines 83 / 104, activities 1 / 104, unchanged — no rung reads timings.
+
+**Rejected.** Summing earlier lengths as a "proposal"; splitting U4-27 and the marker into two issues.
+
+**Next.** (1) Choose R5's test case — a simple cycle-range table (candidate NCT02107703, headers to
+review first). (2) R5 cycle loop, then R6–R8. Decisions still proposals in § 9: U4-5–U4-12, U4-14.
+
+Re-verify:
+```
+python3 -m pytest tests/usdm4/assembler/timeline tests/usdm4/assembler/test_timeline_assembler.py tests/usdm4/assembler/test_timeline_pin.py
+```
+
+### 2026-09-25 — ISSUE 66 BUILT (GitHub 66, branch `66-r4-part-2-single-cycles`): single cycles timed and named
+Back-filled 2026-09-26 from `protocol_corpus/memory.md`.
+
+- `usdm4 @ 66-r4-part-2-single-cycles`. R4 part 2 (design § 6 R4.3).
+
+**What it was.** `cycle` and `cycle_length` reached the assembler as label text only; nothing read
+them, so every cycle column was timed as if its day were a study day, and `C2D1` names came only
+from a regex on timing text.
+
+**Decisions (Dave), design § 9.** U4-22 a single cycle with no `Day 1` column measured from the
+anchor (re-taken in #67). U4-23 cycle *n* > 1 with no readable length: zero timing plus a warning.
+U4-24 a negative day in a cycle: `Day -1` one day before `Day 1`. U4-25 a cycle-range column before
+R5: range parsed, not planned; zero timing plus a warning. U4-26 the day is read from `timing` only,
+never `visit`. Test input: hand-written unit fixtures only; the NCT04557384 pin input carries no
+cycle fields and is left for R5. Decision ids renamed `D<n>` → `U4-<n>` (clashed with day tokens).
+
+**What changed.**
+- `src/usdm4/assembler/timeline/grammar.py` — `CycleNumber`, `CycleRange` (`end=None` for
+  `Cycle n+`), `CycleLength`; `parse_cycle`, `parse_cycle_length`.
+- `src/usdm4/assembler/timeline/printed.py` — `read_cycle` (`Cycle 2`, `C2`, `C 2`, bare `2`;
+  `Cycle 3-n`, `Cycles 3-6`, `C3-C6`, `Cycle 3+`, `… and beyond`, `… onwards`; trailing `(…)` ignored;
+  `Subsequent Cycles` unread), `read_cycle_length` (`21 days`, `21-day cycle`, `Cycle = 21 days`,
+  `(21 days)`; two lengths in one value unread).
+- `src/usdm4/assembler/timeline/columns.py` — `Column.cycle`, `Column.cycle_length` read
+  pattern → text → nothing, warnings naming timeline/column/field; `Column.cycle_day`.
+- `src/usdm4/assembler/timeline/plan.py` — `_resolve_cycles` before the anchor; a cycle's length from
+  any of its own columns (a second different length warned); exact conversion only; U4-23/U4-25
+  remove the timing so U4-3 applies.
+- `naming.py`, `build.py` — `sai_name(..., cycle=n)` → `C{n}D{day}`; text regex kept as fallback.
+- Tests: `test_grammar.py`, `test_printed.py`, `test_columns.py`, `test_plan.py` (`TestSingleCycles`),
+  `test_naming.py`, `test_timeline_assembler.py` (`C1D1 C1D8 C2D1 C2D8`, `PT0M P7D P21D P7D`).
+- Docs: design status banner, § 9 U4-22–U4-27, § 13 as built; plan R4 status.
+
+**The numbers.** Sandbox: timeline, assembler and pin tests 531 pass; `assembler/timeline/*` and
+`timeline_assembler.py` 100% coverage. Full suite passes (Dave, VSCode). Pins unchanged. Corpus gate
+unchanged (timelines 83 / 104, activities 1 / 104).
+
+**Found, not this issue.** `naming.py` carries three ruff findings (RUF012 ×2, BLE001) that predate
+the branch.
+
+Re-verify: as #67.
+
+### 2026-09-25 — ISSUE 65 BUILT (GitHub 65, branch `65-r4-part-1-timeline`): every instance timed, printed text read, time ranges decoded
+Back-filled 2026-09-26 from `protocol_corpus/memory.md`.
+
+- `usdm4 @ 65-r4-part-1-timeline`. R4 without cycles.
+
+**What it was.** The assembler read only `pattern`. A caller holding only printed text got no
+timings; a blank timing text built no `Timing` (`valueLabel` required, got `None`); a time range
+(`Day -28 to Day -1`) was carried as text and timed at 0 from the anchor; a refused pattern dropped
+the whole timeline.
+
+**Decisions (Dave), design § 9.** Input restated: a caller sends printed text only, pattern only, or
+both; with both, the pattern is used; the assembler reads printed text itself. U4-2 anchor = first
+column with a timing ≥ 0, warning when none. U4-3 a text-only or `CCI` timing is `PT0M` `After` the
+previous column plus a warning, nothing more. U4-4 a printed time range is sent as printed and
+decoded here. U4-15 a bare number with no unit → days. U4-16 a window printed in the timing cell
+loses to the window field, with a warning. U4-17 always build the timeline if at all possible — a
+refused pattern warns and falls back to printed text. U4-18 `≤N` is `Day -N to Day -1` only before
+the anchor. U4-19 a window with no unit takes the window row label's unit, else the timing's, else
+days with a warning. U4-20 a time range crossing zero: `Day -3 to Day 2` is 4 days with no Day 0.
+U4-21 labels of a decoded range: `valueLabel` the decoded start, `windowLabel` the window in pattern
+form, `Timing.label` the printed text. Term: a scheduled time printed as a range is a **time range**,
+never a "span".
+
+**What changed.**
+- `grammar.py` — `TimeRange`, `parse_time_range`, `is_time_range`.
+- `printed.py` (new) — `read_timing`, `read_window`, `unit_of_label`, `is_blank`, `normalise`.
+- `columns.py` — per field: pattern, else text, else nothing; refused pattern warns and falls back.
+- `plan.py` — anchor warning, restart warning, `≤N`, zero-timing chain, `range_window`.
+- `build.py` — every instance timed; labels per U4-21.
+- `timeline_assembler.py` — no timeline dropped for a bad pattern.
+- Tests: `test_printed.py` (new), `test_grammar.py`, `test_columns.py`, `test_plan.py`,
+  `test_timeline_assembler.py`. Pin re-saved for `features`, `nct06454630`, `nct04557384`, every
+  difference in design § 12.
+- Docs: design §§ 1, 3.2, 4, 5, R4, § 9, § 12 as built; plan R4.
+
+**The numbers.** Full suite passes (Dave, VSCode); `assembler/timeline/*` 100% coverage. Corpus gate
+unchanged (timelines 83 / 104, activities 1 / 104) — no rung reads timings.
+
+**Not this issue.** NCT05565742's pinned input has a trailing `Day 0` after `Day 540` (a drafting
+error); the restart warning fires on it. Mixed units (R4.6) not built.
+
+**Found.** In the Cowork sandbox even a read-only `git status` leaves `.git/index.lock`; use
+`git --no-optional-locks`.
+
+Re-verify: as #67.
+
+### 2026-09-25 — ISSUE 64 BUILT (GitHub 64, branch `64-timeline-inputs-new-features`): redaction, per-value markers, row labels
+Back-filled 2026-09-26 from `protocol_corpus/memory.md`.
+
+- `usdm4 @ 64-timeline-inputs-new-features`. Input gaps found by `protocol_corpus` issue 9.
+
+**What changed.**
+- `grammar.py` — `REDACTED = "CCI"`, `is_redacted()` (any case, trimmed); caught before the parsers.
+- `schema/schedule_timeline_schema.py` — `HEADER_FIELDS`; `HeaderValue.markers`;
+  `ColumnInput.markers` removed (now refused); `ScheduleTimelineInput.rows` (header field → printed
+  label, keys checked).
+- `columns.py` — `Column.redacted` (set of fields), `Column.markers` (field → list, replaces
+  `visit_markers`), `Column.all_markers`; a redacted field is never parsed, printed text stays the
+  label; `ParsedTimeline.rows`.
+- `build.py` — redacted epochs group by consecutive run (U4-13: a run after a non-redacted epoch is a
+  new epoch, `CCI` / `CCI2`); a redacted timing or visit never names an instance (both redacted →
+  `T1-SAI-n`); every header value's markers link to the timepoint, once per column.
+- `validate/corpus_adapter.py` — markers onto the visit value, else timing, else epoch.
+- Pin inputs — markers moved onto the visit value in 3 columns; expected output untouched.
+- Tests: `test_grammar.py`, `test_columns.py`, `test_schedule_timeline_schema.py`,
+  `test_timeline_assembler.py` (TestRedaction, per-value markers), `helpers.py`.
+- Docs: design § 3, § 4, R2, R3, R9, U4-13, new § 11; plan #64 entry.
+- Six unrelated files show whitespace-only changes from a repo-wide `ruff format`.
+
+**The numbers.** Full suite green, pin unchanged (Dave, VSCode).
+
+**Rejected.** One issue for the input gaps and R4 together. Redacted epochs as all one epoch, or one
+per column.
+
+**Not this issue.** A marker printed on a header row kept as a `note` has no home
+(`HeaderNote` is `{role, text}`).
+
+Re-verify:
+```
+python3 -m pytest tests/usdm4/assembler/timeline tests/usdm4/assembler/schema/test_schedule_timeline_schema.py tests/usdm4/assembler/test_timeline_assembler.py tests/usdm4/assembler/test_timeline_pin.py -v
+```
 
 ### 2026-09-25 — ISSUE 63 BUILT (GitHub 63, branch `63-timeline-assembler`): text input, grammar, parse → plan → build, behaviour kept
 - `usdm4 @ 63-timeline-assembler`. No sibling repo changed. Plan parts 63.1–63.7 done
