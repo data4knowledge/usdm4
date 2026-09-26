@@ -18,8 +18,11 @@ record of the rule generation process).
 ## Working arrangement — three machines (2026-09-26)
 
 This repo is **machine A** of three parallel threads (plan: `protocol_corpus/docs/next_steps.md`).
-Work here: `usdm4` R5 cycle loop, R6, R7, one issue each; R8 waits on U4-10; decide U4-7/U4-8
-before R5 and U4-5 before R6. **The timeline input schema
+Work here, one issue each: cycle reading (the three gaps NCT02107703 prints) → R5 cycle
+loop → R6 → R7; R8 waits on U4-10. Decide U4-7/U4-8 before R5 and U4-5 before R6. The
+expander is its own issue (decide U4-11 first): it is off the build path but blocks the
+next release once R5 is merged. Order and schema checks: `timeline_assembler_plan.md`
+§ *Order from here*. **The timeline input schema
 (`src/usdm4/assembler/schema/schedule_timeline_schema.py`) is frozen** — `usdm4_protocol` (machine B)
 builds against it; a change needs its own issue, merged first, with B and C told. Gate here: tests
 and pins only. Corpus figures are run and quoted on machine C only. Nothing is written to

@@ -1,6 +1,6 @@
 # Timeline assembler — plan of work
 
-**Status: 2026-09-25. Rate of change: per issue. Retired when the last issue below is
+**Status: 2026-09-26. Rate of change: per issue. Retired when the last issue below is
 closed.** The design is `timeline_assembler_design.md`; this file is the order the
 work is done in, what each issue delivers and how each is gated. One issue, one
 branch. Each later issue is raised on GitHub when the one before it is merged.
@@ -178,26 +178,73 @@ during it (design § 9) — as built: design § 12. **#65 merged 2026-09-25.** *
 decisions U4-22–U4-26 taken 2026-09-25 (design § 9); tested on hand-written unit fixtures
 only — the NCT04557384 pin input carries no cycle fields and is left alone until R5. **#66 built 2026-09-25** (branch `66-r4-part-2-single-cycles`) — as built: design § 13. **#67 built 2026-09-26** (branch `67-cycles`): every cycle has a `Day 1` node — printed, or a start marker `C{n}D1` that is not a visit (U4-22 re-taken) — and cycle *n*'s `Day 1` is chained from cycle *n* − 1's by cycle *n* − 1's length (U4-27 taken). As built: design § 14.
 
-## R5 — cycle ranges and the expander
+## Order from here (2026-09-26)
+
+Cycle reading → R5 → R6 → R7, one issue each, each merged when its gate passes. The
+expander is its own issue, off the build path: nothing that builds USDM from a
+protocol calls it (not the assembler, `validate/`, `usdm4_protocol` or the corpus
+tooling — only `usdm4`'s own tests). It gates the **release**, not the build: no
+`usdm4` release is cut once R5 is merged until the expander issue is merged too. R8
+waits on U4-10. **The input schema is frozen** (`next_steps.md` § Working arrangement);
+every issue below is checked against it.
+
+## Cycle reading — the three gaps NCT02107703 prints
+
+Reading only, `printed.py` / `columns.py`; no schema change (`rows` already takes
+`cycle_length`). Without it R5 builds no loop on its first test case.
+
+- `read_cycle`: a bare range (`2-3`; a bare `1` is already read).
+- `read_cycle`: `… and beyond` / `onwards` with no leading `Cycle`
+  (`4 and Beyond (if Applicable)`; the trailing `(…)` is already ignored).
+- `read_cycle_length`: a bare number takes its unit from the cycle-length row label
+  (`28` under `Approximate Duration (days)`), as timing and window already do.
+
+**Gate.** Full suite green (VSCode), pins unchanged, coverage held.
+
+## R5 — cycle ranges
 
 The delay and the decision loop for `Cycle n-m` / `Cycle n+` (design § 6 R5), the
 mixed single-then-range case, a missing cycle length (U4-8), the exit condition text
-(U4-7). The expander follows the loop for one pass (U4-11) — today it would recurse
-without end on the loop (design § 7), so the expander change ships in the same
-branch, never after. This is the first `ScheduledDecisionInstance` the assembler
-creates; unit tests cover the plan and the built USDM, and the expander on a loop.
+(U4-7). This is the first `ScheduledDecisionInstance` the assembler creates; unit
+tests cover the plan and the built USDM. **No test in this issue expands a looped
+timeline** — the expander would recurse without end until its own issue is merged.
+Decide U4-7 and U4-8 before the branch. U4-7's proposal ("unless the caller supplies
+one") has no field in the frozen schema; only a `HeaderNote` side channel could carry
+it — to settle when U4-7 is taken.
+
+Test case: NCT02107703 (cycles `1`, `2-3`, `4 and Beyond`, length 28) — candidate,
+to be ruled when the issue is opened.
+
+## Expander — follow a loop for one pass
+
+Design § 7: take one pass through the range, then the decision's exit branch; never
+unroll. Built and tested on hand-written USDM with a decision loop — it needs nothing
+from R5 and can be done before, alongside or after it. Decide U4-11 first. Must be
+merged before the next `usdm4` release that contains R5. Before release, check whether
+SDW or `usdm4_pj` call this expander; if they do, they are consumers of the change.
 
 ## R6 — conditional timelines and copies
 
-Sibling timelines with `entryCondition`; a column in two timelines (U4-5).
+Sibling timelines with `entryCondition`; a column in two timelines (U4-5). Decide U4-5
+first. Schema check: `entry_condition` is accepted only when the type's family is
+`conditional` — confirm `unscheduled`, `early_termination` and `adverse_event` all map
+there, or R6 needs a schema change.
 
 ## R7 — profile attachment
 
-`attaches_to` → `Activity.timelineId`; unattached profiles reported.
+`attaches_to` → `Activity.timelineId`; unattached profiles reported. Schema already
+carries it.
 
 ## R8 — gates
 
-Only once U4-10 is taken.
+Only once U4-10 is taken. Under the frozen schema the gate must be told from printed
+text alone; an answer that needs the caller to mark a gate column is a schema change.
+
+## Outside R5–R8
+
+U4-14 (crossover periods) needs a stage-1 marking for the washout link, which the
+schema has no place for. When it is taken up it is a schema issue, merged first, with
+`usdm4_protocol` and `protocol_corpus` told. Not part of R6.
 
 ## Outside this repo, alongside it
 

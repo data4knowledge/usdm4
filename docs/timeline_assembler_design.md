@@ -404,6 +404,10 @@ recomputes the same tick, so a `days` condition either exits at once or never do
 exactly the non-`days` case. How the expanded view shows a repeating
 range (a flag on the pass, the condition text) is decision U4-11.
 
+Nothing that builds USDM from a protocol calls the expander, so this change is its own
+issue, not part of R5's branch; it must be merged before any release containing R5
+(plan § *Order from here*).
+
 ## 8. Out of scope for this work, noted
 
 Seen while reading the code; each is its own issue if wanted.
