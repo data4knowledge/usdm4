@@ -60,7 +60,7 @@ def test_read_raises_on_parse_error(tmp_path, monkeypatch):
     def bomb(*args, **kwargs):
         raise RuntimeError("bad yaml")
 
-    monkeypatch.setattr("src.usdm4.file_cache.file_cache.yaml.safe_load", bomb)
+    monkeypatch.setattr("src.usdm4.file_cache.file_cache.yaml.load", bomb)
 
     with pytest.raises(Exception) as ex:
         fc.read()
