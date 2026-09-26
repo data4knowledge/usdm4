@@ -179,9 +179,100 @@ class TestTimelines:
         assert assembler.timelines[1].label == "Timeline 2"
 
     def test_entry_condition_is_still_hard_coded(self, assembler):
-        """Design § 8 — out of scope for issue 63, pinned until fixed."""
+        """Design § 8 — out of scope for issue 63, pinned until fixed. R6
+        leaves every non-conditional family on it."""
         assembler.execute([simple()])
         assert assembler.timelines[0].entryCondition == "Paricipant identified"
+
+
+class TestConditionalTimelines:
+    """R6 (#70): a conditional timeline is a sibling timeline entered on its
+    printed entry condition, else on a default from its type (U4-29)."""
+
+    CONDITIONAL = ["unscheduled", "early_termination", "adverse_event"]
+
+    def test_every_conditional_type_has_a_default(self):
+        from src.usdm4.assembler.schema.schedule_timeline_schema import FAMILY
+        from src.usdm4.assembler.timeline.build import TimelineBuild
+
+        conditional = {t for t, f in FAMILY.items() if f == "conditional"}
+        assert set(TimelineBuild.CONDITIONAL_ENTRY_CONDITIONS) == conditional
+
+    @pytest.mark.parametrize("type", CONDITIONAL)
+    def test_printed_entry_condition_is_used(self, assembler, errors, type):
+        text = "Participant discontinues study treatment"
+        assembler.execute([simple(), simple(type, entry_condition=text)])
+        assert assembler.timelines[1].entryCondition == text
+        assert not any("no entry condition" in m for m in messages(errors))
+
+    def test_printed_entry_condition_is_trimmed(self, assembler):
+        assembler.execute(
+            [simple(), simple("unscheduled", entry_condition="  If needed \n")]
+        )
+        assert assembler.timelines[1].entryCondition == "If needed"
+
+    @pytest.mark.parametrize(
+        "type, default",
+        [
+            ("unscheduled", "Unscheduled visit"),
+            ("early_termination", "Early termination"),
+            ("adverse_event", "Adverse event"),
+        ],
+    )
+    def test_no_entry_condition_takes_the_type_default_and_warns(
+        self, assembler, errors, type, default
+    ):
+        assembler.execute([simple(), simple(type)])
+        assert assembler.timelines[1].entryCondition == default
+        assert (
+            f"Timeline 2 ({type}) has no entry condition; '{default}' used"
+            in messages(errors)
+        )
+
+    def test_blank_entry_condition_is_no_entry_condition(self, assembler, errors):
+        assembler.execute([simple(), simple("early_termination", entry_condition=" ")])
+        assert assembler.timelines[1].entryCondition == "Early termination"
+        assert any("no entry condition" in m for m in messages(errors))
+
+    @pytest.mark.parametrize(
+        "type", ["main", "arm", "cohort", "profile", "unclassified"]
+    )
+    def test_other_families_keep_the_fixed_text_and_do_not_warn(
+        self, assembler, errors, type
+    ):
+        assembler.execute([simple(type)])
+        assert assembler.timelines[0].entryCondition == "Paricipant identified"
+        assert not any("no entry condition" in m for m in messages(errors))
+
+    def test_conditional_timeline_is_a_sibling_not_main(self, assembler):
+        assembler.execute([simple(), simple("early_termination")])
+        main, et = assembler.timelines
+        assert (main.mainTimeline, et.mainTimeline) == (True, False)
+        assert et.entryId == et.instances[0].id
+        assert et.exits and et.instances[-1].timelineExitId == et.exits[0].id
+
+    def test_a_copied_column_gets_its_own_encounter_for_now(self, assembler):
+        """U4-5 interim (2026-09-26): column ids are scoped to one timeline,
+        so a visit printed in two timelines is two Encounters until a copy
+        reference exists (`protocol_corpus` register N78). Pinned so the change is seen when it lands."""
+        main = timeline(
+            [
+                column("c1", "Treatment", "V1", "Day 1"),
+                column("c2", "Treatment", "ED", "Day 1"),
+            ]
+        )
+        et = timeline(
+            [column("c2", "Treatment", "ED", "Day 1")], type="early_termination"
+        )
+        assembler.execute([main, et])
+        assert [(e.name, e.label) for e in assembler.encounters] == [
+            ("T1-E1", "V1"),
+            ("T1-E2", "ED"),
+            ("T2-E1", "ED"),
+        ]
+        ed_main = assembler.timelines[0].instances[1].encounterId
+        ed_et = assembler.timelines[1].instances[0].encounterId
+        assert ed_main != ed_et
 
 
 class TestSkippedTimelines:

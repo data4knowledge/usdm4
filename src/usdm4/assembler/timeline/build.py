@@ -78,6 +78,16 @@ class TimelineBuild:
     # the protocol body, not the SoA; fixed text until something reads it.
     EXIT_CONDITION = "cycle exit condition"
 
+    # R6. Planned, variant, profile and unclassified timelines: the fixed text
+    # of old, typo included (design § 8). Conditional timelines with no
+    # printed entry condition: a default from the type (U4-29).
+    PLANNED_ENTRY_CONDITION = "Paricipant identified"
+    CONDITIONAL_ENTRY_CONDITIONS = {
+        "unscheduled": "Unscheduled visit",
+        "early_termination": "Early termination",
+        "adverse_event": "Adverse event",
+    }
+
     # The SoA input's classification and the d4k extension each is emitted
     # as. One concept per URL, matching every other d4k extension. TLF names
     # the family and is emitted for profiles only — its presence is what marks
@@ -683,8 +693,7 @@ class TimelineBuild:
                 "name": f"TIMELINE-{self._t}",
                 "description": description,
                 "label": title,
-                # Hard-coded, typo included — design § 8, out of scope here.
-                "entryCondition": "Paricipant identified",
+                "entryCondition": self._entry_condition(),
                 "entryId": instances[0].id,
                 "exits": [exit],
                 "plannedDuration": None,
@@ -693,6 +702,24 @@ class TimelineBuild:
                 "extensionAttributes": self._extensions(),
             },
         )
+
+    def _entry_condition(self) -> str:
+        """R6. A conditional timeline is entered on its printed
+        ``entry_condition``; with none printed, a default from its type and a
+        warning (U4-29). Every other family keeps the fixed text, typo
+        included — design § 8, out of scope here."""
+        if self._timeline.family != "conditional":
+            return self.PLANNED_ENTRY_CONDITION
+        text = (self._timeline.entry_condition or "").strip()
+        if text:
+            return text
+        default = self.CONDITIONAL_ENTRY_CONDITIONS[self._timeline.type]
+        self._errors.warning(
+            f"Timeline {self._t} ({self._timeline.type}) has no entry condition; "
+            f"'{default}' used",
+            KlassMethodLocation(self.MODULE, "_entry_condition"),
+        )
+        return default
 
     def _extensions(self) -> list[ExtensionAttribute]:
         extensions: list[ExtensionAttribute] = []

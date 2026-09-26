@@ -18,8 +18,9 @@ record of the rule generation process).
 ## Working arrangement — three machines (2026-09-26)
 
 This repo is **machine A** of three parallel threads (plan: `protocol_corpus/docs/next_steps.md`).
-Work here, one issue each: cycle reading (the three gaps NCT02107703 prints) → R5 cycle
-loop → R6 → R7; R8 waits on U4-10. U4-7/U4-8 taken (2026-09-26); decide U4-5 before R6. The
+Work here, one issue each: cycle reading (#68, merged) → R5 cycle loop (#69, merged) → R6
+(#70, closed, not yet merged) → R7; R8 waits on U4-10. Copied columns (U4-5 shared `Encounter`)
+wait on `protocol_corpus` `N78`, a schema change. The
 expander is its own issue (decide U4-11 first): it is off the build path but blocks the
 next release once R5 is merged. Order and schema checks: `timeline_assembler_plan.md`
 § *Order from here*. **The timeline input schema
@@ -32,6 +33,146 @@ and pins only. Corpus figures are run and quoted on machine C only. Nothing is w
 
 Newest first. This repo's own log: every session that works a `usdm4` issue is entered here in
 full, whichever Claude project drove it (see `CLAUDE.md` § *Session log*).
+
+### 2026-09-26 — ISSUE 70 CLOSED, NOT YET MERGED (GitHub 70, branch `70-r6-copied-columns`): conditional timelines entered on their printed condition; copied columns deferred to N78
+- `usdm4 @ 70-r6-copied-columns`. Driven from the USDM4 project (machine A).
+- `protocol_corpus` touched in passing: read `docs/issues.md`, `docs/next_steps.md` and
+  NCT05565742's `ground_truth.yaml` / `build/soa_headers.yaml`; **one write**, at Dave's request —
+  register row `N78` in `docs/issues.md` (open count 13 → 14), the copied-column fix. This departs
+  from *Working arrangement* ("nothing is written to `protocol_corpus` from here"); Dave asked.
+- #69 (R5) was merged before this session; its entry, back-filled this session, is below.
+- **State:** full suite green (Dave, VSCode); GitHub issue closed; branch not yet merged into `main`.
+
+**What it was.** Every timeline got `entryCondition` `Paricipant identified`, including a
+conditional one (`unscheduled`, `early_termination`, `adverse_event`); the printed
+`entry_condition` was validated by the schema and then dropped — `ParsedTimeline` had no field for
+it. R6 as designed also shared an `Encounter` between timelines by column `id`. That cannot work:
+the schema scopes column ids to one timeline, `validate/corpus_adapter.py` numbers them `c1…` per
+timeline, and the `features` and `nct04557384` pins reuse `c1`/`c2` in several timelines for
+different visits. Sharing by id would merge unrelated visits silently.
+
+**Decisions (Dave), design § 9.**
+- U4-5: target one shared `Encounter`, an instance per timeline. **Interim: one `Encounter` per
+  timeline**, until an explicit copy reference exists — a schema change, logged as `protocol_corpus`
+  `N78`, not a GitHub issue.
+- U4-29: a conditional timeline with no printed `entry_condition` takes a default from its type
+  (`Unscheduled visit`, `Early termination`, `Adverse event`) and a warning. The strings are
+  Claude's; Dave took the rule.
+- U4-30: when copies print different visit text, the first timeline in input order sets the label,
+  with a warning. Taken, not built — needs N78.
+- Test case NCT05565742: `ED` is a real copy — completers reach it after Visit 12, discontinuers
+  enter it from the ET timeline (Dave). Claude's objection that ED did not belong in main was wrong
+  and withdrawn.
+- R6 schema check: all three conditional types map to family `conditional`; no schema change.
+
+**What changed.**
+- `src/usdm4/assembler/timeline/columns.py` — `ParsedTimeline.entry_condition`, carried from the input.
+- `src/usdm4/assembler/timeline/build.py` — `_entry_condition`: conditional → printed text
+  trimmed, else the type default plus warning; other families → `PLANNED_ENTRY_CONDITION` (old
+  text, typo kept, design § 8). `CONDITIONAL_ENTRY_CONDITIONS` table.
+- `tests/usdm4/assembler/test_timeline_assembler.py` — `TestConditionalTimelines`: printed text per
+  type, trimming, blank = none, defaults and warning text, other families unchanged and silent,
+  sibling not main, a guard that every conditional type in `FAMILY` has a default, and the copied
+  column's two `Encounter`s pinned (points at N78).
+- `tests/usdm4/assembler/test_timeline_pin.py` — case `nct05565742_r6`.
+- `tests/usdm4/test_files/timeline_pin/input_nct05565742_r6.json` (new) — the frozen `nct05565742`
+  main timeline unchanged, plus an `early_termination` timeline: column `c14` (ED), the 16
+  activities marked in it, footnote `cell-4`, no title, no entry condition. The frozen
+  `input_nct05565742.json` is untouched. `expected_nct05565742_r6.json` (new) — saved from the
+  built output.
+- Docs: design § 9 U4-5 (target + interim), U4-29, U4-30; § 17 as built. Plan: #69 merged, R6
+  status and test case. This file: *Working arrangement*, § 10 heading.
+
+**The numbers.** Sandbox (Python 3.10, no `cdisc-rules-engine`, `PYTHONPATH=src:.`): timeline,
+assembler, schema and pin tests 798 pass; `build.py` and `columns.py` 100%. Ruff check and format
+clean. The new pin builds TIMELINE-1 (14 instances, `Paricipant identified`) and TIMELINE-2 (1
+instance, `Early termination`, warned); 15 encounters, 42 activities (none duplicated — shared by
+name), 5 conditions. Existing pins unchanged. Full suite green (Dave, VSCode). Corpus gate not run
+(machine C).
+
+**Rejected.** Sharing by bare column id (silent merges in existing pins). Making ids span the
+assembly (every caller renumbers or merges wrongly). Matching on id plus printed text (a guess;
+contradicts U4-30). Re-saving the frozen `nct05565742` pin with the ED timeline — a new case
+instead. A title for the ED timeline (none printed).
+
+**Found, not this issue.**
+- The ED timeline's instance is named `ED-2`, not `T2-ED`: `sai_name` de-duplicates across
+  timelines instead of qualifying. Existing behaviour.
+- The main timeline still warns `timing restarts (day 0 after day 540)` on column `c14` — the ED
+  column's pattern `Day 0` in the frozen input (noted under #65).
+
+**Next.**
+1. R7 — profile attachment (`attaches_to` → `Activity.timelineId`); schema already carries it.
+2. N78 — copy reference on `ColumnInput`: a schema issue, merged first, `usdm4_protocol` and
+   `protocol_corpus` told; then the shared `Encounter` and U4-30.
+3. U4-11 and the expander issue — before the next release, since R5 is merged.
+4. R8 waits on U4-10.
+R7 first: nothing blocks it, and N78 needs B and C coordinated.
+
+Re-verify:
+```
+python3 -m pytest tests/usdm4/assembler/timeline tests/usdm4/assembler/test_timeline_assembler.py tests/usdm4/assembler/test_timeline_pin.py tests/usdm4/assembler/schema -q
+```
+
+### 2026-09-26 — ISSUE 69 MERGED (GitHub 69, branch `69-r5-cycle-decision-loop`): cycle ranges built as a delay and a decision loop; CT/BC cache load 5x faster
+Back-filled 2026-09-26 (the #70 session) from design § 16, the plan's R5 section and the branch's
+two commits. The #69 session wrote no entry here; figures below are only those recorded in those
+sources.
+
+- `usdm4 @ 69-r5-cycle-decision-loop`. Driven from the USDM4 project (machine A). No sibling repo
+  written.
+
+**What it was.** A cycle-range column (`Cycle 3 and beyond`, `2-3`, `4+`) was parsed but not
+planned: U4-25 gave it a zero timing and a warning. There was no loop, so a repeating cycle was one
+pass with nothing to return to, and the assembler had never built a `ScheduledDecisionInstance`.
+
+**Decisions (Dave), design § 9.**
+- U4-7: the exit condition text is the fixed `cycle exit condition`. The real rule (progression,
+  toxicity) is usually in the protocol body. Rejected: the printed range text (a heading, not a
+  condition); caller-supplied text (no field in the frozen schema).
+- U4-8: a range with no readable length is looped with the largest day printed in the range as
+  its length (`D15` → 15 days), warned — a lower bound. Open edge: a range printing only `Day 1`
+  gives a 1-day cycle. Rejected: a text-only delay (DDF00060; the expander crashes).
+- Test case NCT05197426 (headers reviewed 2026-09-26): Cycle 1, Cycle 2, then `Cycle 3 and beyond`
+  on Day 1 and Day 15, 4-week cycle. NCT02107703 kept as an edge test only.
+- U4-25 superseded.
+
+**What changed.**
+- `src/usdm4/assembler/timeline/plan.py` — a range column is a cycle slot numbered by its first
+  cycle; its `Day 1` (or U4-22 marker) chains from the previous cycle's `Day 1`, found by
+  `_CycleStart.covers` so a range covering cycle *n* − 1 counts (`2-3` then `4+`). Ranges take
+  lengths like single cycles, else U4-8. `_add_loops`: a `DECISION` node after each range's last
+  column, `After` it by length − (last day − 1), `loop_to` the range's first node; an `END` node
+  after the decision when that column is the last. No length, an inexact conversion, or a last day
+  beyond the length: zero delay, warned.
+- `src/usdm4/assembler/timeline/build.py` — `ScheduledDecisionInstance` in the range's epoch; its
+  default loops back; one `ConditionAssignment` (`cycle exit condition`) to the next instance.
+  End instance: no encounter, no activities, takes the exit. Range names `C3+D1`, `C2-3D1`.
+- `src/usdm4/assembler/timeline/naming.py` — `decision_name` (`C3+DEC`), `end_name` (`T1-END`).
+- `src/usdm4/file_cache/file_cache.py` — YAML read with `CSafeLoader` when PyYAML has libyaml, else
+  `SafeLoader`; same result. Commit comment: 15 MB CT cache 18 s → 3 s, read by every `Builder`.
+  This is the cause the #68 entry could not find (13 s first builder/CT load).
+  `tests/usdm4/file_cache/test_file_cache.py` patches `yaml.load` to match.
+- Tests: `test_plan.py` `TestRanges`, `TestNct02107703Headers` (ranges timed and looped); new
+  `test_r5_nct05197426.py` (16 tests: single cycles, the range, and other shapes on structured
+  input — bounded then open range, no `Day 1`, predose `Day -1`, weeks); pin `nct05197426` added.
+  Existing pins unchanged. No test expands a looped timeline.
+- Docs: design § 9 U4-7, U4-8, U4-25; § 16 as built; plan R5; this file's *Working arrangement*.
+
+**Calls made while building, not ruled.**
+- The loop returns to the range's first column, not `Day 1`, when a day is printed before `Day 1`
+  in the range.
+- Printed text supported but not held to the structured form's standard (Dave): `1 Cycle = 4
+  Weeks` is not read as a length; the structured `4 weeks` is.
+- A column after a range with no readable timing keeps U4-3's zero timing after the previous
+  column, not after the decision.
+- A single cycle and a range with the same first cycle share one cycle slot.
+
+**The numbers.** Full suite green (Dave, VSCode); merged. Sandbox counts and coverage were not
+recorded.
+
+**Consequence.** R5 is merged, so no `usdm4` release is cut until the expander issue is merged
+(plan § *Order from here*).
 
 ### 2026-09-26 — ISSUE 68 MERGED (GitHub 68, branch `68-cycle-and-ranges`): cycle ranges with no cycle word, cycle length unit from the row labels; order after R4 re-planned
 - `usdm4 @ 68-cycle-and-ranges`. Driven from the USDM4 project (machine A). `protocol_corpus` read
@@ -758,7 +899,7 @@ exception path).
 Full context and the usdm4_protocol half: `usdm4_protocol/docs/next_steps.md` § Session
 Log, session 12 (2026-07-30).
 
-## 10. Timeline assembler upgrade (issues 63–67 merged, 68 merged 2026-09-26; R5–R8 and the expander to come)
+## 10. Timeline assembler upgrade (issues 63–69 merged; 70 (R6) closed 2026-09-26, not yet merged; R7, R8, N78 and the expander to come)
 
 The timeline assembler is rebuilt on a text input with a pattern grammar, restructured
 into parse → plan → build, and extended with cycles, conditional timelines, profile

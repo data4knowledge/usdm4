@@ -1615,3 +1615,14 @@ cycle length moves every later cycle's `Day 1` through the U4-27 chain, where a 
 one column. Units come from what is printed — the value, the field's row label, then the timing
 row label — and otherwise the field is unread with a warning that says why.
 
+## An id is only an identity within the scope that checks it (2026-09-26)
+
+R6's design said a column "in two timelines (same `id`)" is one visit. The schema checks column
+ids unique per timeline only, and every caller numbers them `c1…` per timeline, so across
+timelines the same id routinely names different visits (`features`, `nct04557384` pins). Keying a
+shared `Encounter` on it would have merged unrelated visits with no error.
+
+- **Before keying cross-scope identity on an id, find where uniqueness is enforced and how callers
+  mint it.** The validator's scope is the id's scope; anything wider is a new contract.
+- **A silent merge is worse than a visible duplicate.** When the identity can't be trusted, build the safe interim (one `Encounter` each), pin it in a test, and log the real fix
+  (an explicit reference on the input — `protocol_corpus` `N78`).

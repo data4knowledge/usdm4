@@ -119,6 +119,8 @@ class ParsedTimeline:
     activities: list[dict]
     footnotes: list[dict]
     rows: dict[str, str] = field(default_factory=dict)
+    # Printed text; the schema accepts it for conditional timelines only (R6).
+    entry_condition: str | None = None
 
     @property
     def column_index(self) -> dict[str, int]:
@@ -354,4 +356,5 @@ def parse_timeline(
         activities=list(data.get("activities") or []),
         footnotes=list(data.get("footnotes") or []),
         rows=rows,
+        entry_condition=data.get("entry_condition"),
     )

@@ -205,8 +205,7 @@ Reading only, `printed.py` / `columns.py`; no schema change (`rows` already take
 
 ## R5 — cycle ranges
 
-**#69, branch `69-r5-cycle-decision-loop`, built 2026-09-26** — as built: design § 16.
-Gate pending (full suite, VSCode).
+**#69 merged 2026-09-26** (branch `69-r5-cycle-decision-loop`) — as built: design § 16.
 
 The delay and the decision loop for `Cycle n-m` / `Cycle n+` (design § 6 R5), the
 mixed single-then-range case, a missing cycle length (U4-8), the exit condition text
@@ -231,10 +230,16 @@ SDW or `usdm4_pj` call this expander; if they do, they are consumers of the chan
 
 ## R6 — conditional timelines and copies
 
-Sibling timelines with `entryCondition`; a column in two timelines (U4-5). Decide U4-5
-first. Schema check: `entry_condition` is accepted only when the type's family is
-`conditional` — confirm `unscheduled`, `early_termination` and `adverse_event` all map
-there, or R6 needs a schema change.
+**#70, branch `70-r6-copied-columns`, closed 2026-09-26, not yet merged** — as built: design § 17.
+Full suite green (Dave, VSCode). Copied columns deferred: one `Encounter` per timeline until
+a copy reference exists (U4-5 interim; fix logged as `protocol_corpus` `N78`, a schema issue). Test case NCT05565742
+(main + ED).
+
+Sibling timelines with `entryCondition`; a column in two timelines (U4-5). U4-5 target
+2026-09-26: one shared `Encounter`, an instance per timeline (design § 9). Schema check
+done 2026-09-26: `unscheduled`, `early_termination` and `adverse_event` all map to family
+`conditional` (`FAMILY` in `schedule_timeline_schema.py`), so `entry_condition` is
+accepted where R6 needs it — no schema change.
 
 ## R7 — profile attachment
 

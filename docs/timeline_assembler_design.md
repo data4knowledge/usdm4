@@ -434,7 +434,7 @@ Taken one at a time, each recorded here with its date when taken.
 | U4-2 | The anchor rule | **Taken 2026-09-25:** today's rule — first column with a timing point ≥ 0, else the first column with a warning; no code beyond the warning (§ 6 R4.1). Checked against 72 drafted tables: `Week 0` and cycle tables anchor correctly under it; a narrower "`Day 1` or `Day 0`" rule was rejected (misses `Week 0`, needs cycle parsing, no better fallback) |
 | U4-3 | Form of a timing with no readable value (no pattern, printed text unreadable, or redacted) | **Taken 2026-09-25:** a zero timing (`PT0M`) from the previous column, printed text as `valueLabel`, and a warning — nothing more. **Rejected:** an extension flag (Dave: no flags); measuring from the anchor (puts ED at Day 1 in the expander); no `Timing` (DDF00060 needs a duration, and the expander crashes on a missing one) |
 | U4-4 | A time range (`Day -28 to Day -1`): the column's timing, its window, or both | **Taken 2026-09-25:** the interface takes both forms. A tool that already holds decoded timings sends a point and a window. A caller reading a document — `usdm4_protocol`, and the corpus ground truth — sends the time range as printed (text, range pattern, or both), and `usdm4` decodes it to the timing at its start and a window forward to its end. Decoding lives here so that nobody has to check it by hand per protocol |
-| U4-5 | A copied column: one `Encounter` shared by both timelines, or one each | one shared |
+| U4-5 | A copied column: one `Encounter` shared by both timelines, or one each | **Target, taken 2026-09-26 (Dave):** one shared `Encounter`; each timeline gets its own `ScheduledActivityInstance`, so timing and activities can differ per timeline. **Interim, 2026-09-26 (Dave, #70): one `Encounter` each, until a copy can be identified.** Column ids are scoped to one timeline (schema, and every caller numbers them `c1…` per timeline — `features` and `nct04557384` pins reuse `c1` for different visits), so a shared id does not mean a shared visit; sharing by id would silently merge unrelated visits. The fix — an explicit copy reference on the input — is a schema change, logged as `protocol_corpus` register row `N78`. **Rejected:** ids spanning the assembly (silent merges from every existing caller); matching on id plus printed text (a guess) |
 | U4-6 | A column with no epoch | inherit the previous column's; none on the first column is an error |
 | U4-7 | The exit condition text on a cycle loop | **Taken 2026-09-26 (Dave):** the fixed text `cycle exit condition`. **Noted, not crucial now:** the real exit rule (e.g. progression, unacceptable toxicity) is usually in the protocol body, not the SoA; finding it needs a search wider than the SoA. **Rejected:** printed range text (a heading, not a condition); caller-supplied text (no field in the frozen schema) |
 | U4-8 | A range with no readable cycle length | **Taken 2026-09-26 (Dave):** the loop is built; the cycle length is the largest day number printed in the range (`D8` → 8 days, `D15` → 15 days), with a warning. It is a lower bound: the real length (21, 28 days) is usually longer. **Noted, not crucial now:** the true length may be stated outside the SoA; finding it needs a wider search. **Open edge:** a range printing only `Day 1` gives a 1-day cycle — settle when R5 hits it. **Rejected:** a text-only delay (DDF00060 needs a duration; the expander crashes, as U4-3). Ranges only; U4-23 (single cycles) is unchanged |
@@ -458,6 +458,8 @@ Taken one at a time, each recorded here with its date when taken.
 | U4-26 | Where a cycle column's day is read from | **Taken 2026-09-25 (R4 part 2):** the `timing` field only. A table printing the day in its visit row (`D1`) is stage 1's to assign to the timing role; `usdm4` never reads `visit` for timing |
 | U4-27 | Cycle *n*'s `Day 1` | **Taken 2026-09-26 (Dave, #67):** a cycle starts at `Day 1`; cycle *n*'s `Day 1` is timed `After` cycle *n* − 1's `Day 1` by cycle *n* − 1's length — a chain. Cycle 1's `Day 1` is Day 1 of the timeline, timed from the anchor. #66 built (*n* − 1) × cycle *n*'s own length, right only when every cycle has the same length. (The example first recorded here, a length printed as `21 days (or 28 days …)`, is a length that differs by cohort, not between cycles; it is not read, U4-23) |
 | U4-28 | Unit of a printed cycle length that is a bare number (`28`) | **Taken 2026-09-26 (Dave, #68):** the cycle length row label's unit (`Approximate Duration (days)`), else the timing row label's (`Relative day within a cycle`). With no unit in either, not read, with a warning saying so — never defaulted to days (unlike U4-15); U4-23 then applies |
+| U4-29 | `entryCondition` of a conditional timeline with no printed `entry_condition` | **Taken 2026-09-26 (Dave, #70):** default text from the timeline type, with a warning — `unscheduled` → `Unscheduled visit`, `early_termination` → `Early termination`, `adverse_event` → `Adverse event`. **Rejected:** today's fixed `Paricipant identified` (says nothing about why the timeline is entered) |
+| U4-30 | Label of a shared `Encounter` (U4-5) when the printed visit text differs between the copies | **Taken 2026-09-26 (Dave, #70); not built — applies once U4-5's shared `Encounter` is.** The first timeline in input order sets the label (and the name, `T{t}-E{n}`); a warning names both texts. **Rejected:** the main timeline's text (an extra rule; main is almost always first) |
 
 ## 10. As built — issue 63 (2026-09-25)
 
@@ -700,3 +702,24 @@ change.
   previous *column* (the range's last day), not after the decision the exit leads to.
 - A single cycle and a range with the same first cycle (`Cycle 2`, `Cycle 2-n (if …)`)
   share one cycle slot.
+
+## 17. As built — issue 70 (2026-09-26)
+
+R6, conditional timelines (§ 6 R6, U4-29). Copied columns deferred (U4-5 interim). No
+input schema change.
+
+- `columns.py` — `ParsedTimeline.entry_condition` carried from the input.
+- `build.py` — `_entry_condition`: a conditional timeline takes its printed
+  `entry_condition`, trimmed; blank or absent → the type's default
+  (`CONDITIONAL_ENTRY_CONDITIONS`) and a warning. Every other family keeps
+  `PLANNED_ENTRY_CONDITION`, the old fixed text, typo included (§ 8).
+- A copied column (NCT05565742's `ED`, in main and in the early-termination timeline)
+  builds one `Encounter` per timeline — U4-5 interim, fix logged as `protocol_corpus` `N78`. U4-30 not built.
+- Tests: `test_timeline_assembler.py` `TestConditionalTimelines` (defaults per type,
+  printed text, blank, other families unchanged, a guard that every conditional type
+  has a default, the copied column's two encounters pinned); pin `nct05565742_r6`
+  added (the frozen `nct05565742` main timeline plus the ED timeline from the corpus
+  ground truth, timeline 2). Existing pins unchanged.
+
+**Seen, not this issue.** The ED timeline's instance is named `ED-2`, not `T2-ED`:
+`sai_name` de-duplicates across timelines rather than qualifying. Existing behaviour.
