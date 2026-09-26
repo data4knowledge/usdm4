@@ -1626,3 +1626,31 @@ shared `Encounter` on it would have merged unrelated visits with no error.
   mint it.** The validator's scope is the id's scope; anything wider is a new contract.
 - **A silent merge is worse than a visible duplicate.** When the identity can't be trusted, build the safe interim (one `Encounter` each), pin it in a test, and log the real fix
   (an explicit reference on the input — `protocol_corpus` `N78`).
+
+## A field the schema accepts is not a field the build reads (2026-09-26)
+
+R6 and R7 each found the same defect: `entry_condition` and `attaches_to` were declared on
+`ScheduleTimelineInput`, validated (family checks included), and then dropped — `parse_timeline`
+never copied them onto `ParsedTimeline`. A caller got no error and no effect.
+
+- **When a rule consumes a schema field, trace it from the schema to the object that uses it
+  first.** The validator passing proves nothing about the build.
+- **Frozen-schema fields added "for a later rule" are the ones at risk.** Every field on
+  `ScheduleTimelineInput` is now carried; check the next one added the same way.
+
+## Pick a test case from its headers, not its row names (2026-09-26)
+
+NCT02674152 was proposed for R7 from its activity names (a `Pharmacokinetics` row on main, a PK
+profile beside it). Its column headers, read after Dave had accepted it, showed a 48-column,
+course-spanning PK schedule with a day and a clock time per column — not an Hour-0 profile, and more
+than the frozen schema can carry. The pin had to be cut to course 1 Day 1.
+
+- **Read `build/timepoints.yaml` (or `draft_patterns.py show <ID>`) before proposing a case.** The
+  header shape decides what the case can exercise; the row names do not.
+- **A fixture built from unreviewed drafts freezes the drafts' errors.** NCT02674152's main timing
+  roles are wrong (`Week` as timing), so the pin carries wrong USDM. Say so in the fixture's
+  `source` note and the as-built section, so a later change to that output is not mistaken for a
+  regression.
+- **The corpus "profiles" are mostly schedules.** Activity-level attachment is the only form the
+  frozen schema allows; on real data it nests a whole course-by-course schedule in every visit
+  that ticks the activity.

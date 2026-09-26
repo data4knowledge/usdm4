@@ -19,7 +19,7 @@ record of the rule generation process).
 
 This repo is **machine A** of three parallel threads (plan: `protocol_corpus/docs/next_steps.md`).
 Work here, one issue each: cycle reading (#68, merged) → R5 cycle loop (#69, merged) → R6
-(#70, closed, not yet merged) → R7; R8 waits on U4-10. Copied columns (U4-5 shared `Encounter`)
+(#70, merged) → R7 (#71, closed, not yet merged); R8 waits on U4-10. Copied columns (U4-5 shared `Encounter`)
 wait on `protocol_corpus` `N78`, a schema change. The
 expander is its own issue (decide U4-11 first): it is off the build path but blocks the
 next release once R5 is merged. Order and schema checks: `timeline_assembler_plan.md`
@@ -34,7 +34,75 @@ and pins only. Corpus figures are run and quoted on machine C only. Nothing is w
 Newest first. This repo's own log: every session that works a `usdm4` issue is entered here in
 full, whichever Claude project drove it (see `CLAUDE.md` § *Session log*).
 
-### 2026-09-26 — ISSUE 70 CLOSED, NOT YET MERGED (GitHub 70, branch `70-r6-copied-columns`): conditional timelines entered on their printed condition; copied columns deferred to N78
+### 2026-09-26 — ISSUE 71 CLOSED, NOT YET MERGED (GitHub 71, branch `71-r7-profile-attachment`): profiles hang off the activity they name
+- `usdm4 @ 71-r7-profile-attachment`. Driven from the USDM4 project (machine A).
+- `protocol_corpus` touched: read `docs/issues.md`, the `ground_truth.yaml` of the seven protocols with a
+  profile timeline, and NCT02674152's `build/` drafts; `scripts/draft_patterns.py` run read-only. **One
+  write**, at Dave's request: resolved a stash-pop conflict in `docs/issues.md` (upstream N76/N77 kept,
+  the local N78 row kept; open count 14). Not staged — Dave marks it resolved in GitHub Desktop.
+- #70 (R6) found merged at session start (`main` @ e70966b); docs said "not yet merged" — corrected.
+- **State:** full suite green (Dave, VSCode); GitHub issue closed; branch not yet merged into `main`.
+
+**What it was.** `attaches_to` was accepted by the schema (profile timelines only) and then dropped:
+`ParsedTimeline` had no field, and `Activity.timelineId` was always `None`. No profile was ever attached.
+
+**Decisions (Dave), design § 9.**
+- U4-31: a loop — the attached activity reached again through the profile it calls, directly or through
+  other profiles — is not attached, error. Sharing an activity is fine; looping is not.
+- U4-32: a parent activity is not attached, error (DDF00160).
+- U4-33: an activity scheduled on no other timeline is attached, with a warning.
+- U4-34: two profiles on one activity — the first in input order is attached, a later one is an error.
+- Test case NCT02674152, profile attached to `Pharmacokinetics` (Dave). Pin fixture option A (Dave): the
+  profile as printed is a 48-column course-spanning PK schedule, each column a day plus a clock time; only
+  course 1 Day 1 (8 columns) is used, timed in minutes from the start of infusion.
+
+**What changed.**
+- `src/usdm4/assembler/timeline/columns.py` — `ParsedTimeline.attaches_to`.
+- `src/usdm4/assembler/timeline_assembler.py` — `_build_one` returns the built timeline;
+  `_attach_profiles`, `_activity_ids`, `_reaches`; the pass runs after every timeline is built.
+- `tests/usdm4/assembler/test_timeline_assembler.py` — `TestProfileAttachment`, 18 tests.
+- `tests/usdm4/assembler/test_timeline_pin.py` — case `nct02674152_r7`.
+- `tests/usdm4/test_files/timeline_pin/input_nct02674152_r7.json` (new) — built by a one-off script from
+  the corpus drafts: main table A as drafted (each value's printed text, the `draft_patterns` pattern only
+  where flagged `ok`), 22 body rows; profile course 1 Day 1, `Minute -5` … `Minute 480`, course/day/time
+  point as notes. Footnote markers dropped (no footnote text drafted). `expected_nct02674152_r7.json`
+  (new) — saved from the built output.
+- Docs: design § 9 U4-31–U4-34, § 18 as built. Plan: R6 merged, R7 decisions, test case, fixture. This
+  file: *Working arrangement*, § 10 heading, the #70 entry's title.
+
+**The numbers.** Sandbox (Python 3.10, no `cdisc-rules-engine`, `PYTHONPATH=src:.`): timeline, assembler,
+schema and pin tests 817 pass; `timeline_assembler.py` and `columns.py` 100%. Ruff: no new findings
+(three existing — two blind `except` in `timeline_assembler.py`, one in the R6 test class); format clean.
+The new pin builds TIMELINE-1 (14 instances) and TIMELINE-2 (8 instances, `PT5M` before … `PT480M` after
+the `0:00` anchor); `Pharmacokinetics.timelineId` = TIMELINE-2; no attachment message. Existing pins
+unchanged. Full suite green (Dave, VSCode). Corpus gate not run (machine C).
+
+**Rejected.** The full 48-column profile in the pin (brittle: pins degraded output unrelated to R7).
+Attaching to `Administration of BI 836880` (Dave chose `Pharmacokinetics`). A warning only for U4-34
+(hides a lost link); a wrapper activity holding two profiles (invents structure).
+
+**Found, not this issue.**
+- Corpus profiles are mostly course-spanning PK schedules (NCT02674152, NCT03433898), not single-anchor
+  profiles. Activity-level attachment nests the whole schedule in every visit that ticks the activity;
+  per-visit attachment (`ScheduledActivityInstance.timelineId`) needs a column reference the frozen schema
+  lacks. Not logged — a schema row if a real case needs it.
+- NCT02674152's table A header draft has its roles wrong: `Week` drafted as the timing, the
+  `Day; visit window` row as the window. Unreviewed; the reviewer fixes it on the columns screen.
+- No corpus ground truth records `attaches_to`; the corpus mapping needs it before the reference USDM
+  carries an attachment (`soa_two_stage.md` lists profile attachment as still to state).
+
+**Next.**
+1. Merge #71.
+2. N78 — copy reference on `ColumnInput`: a schema issue, merged first, B and C told.
+3. U4-11 and the expander issue — before the next release.
+4. R8 waits on U4-10.
+
+Re-verify:
+```
+python3 -m pytest tests/usdm4/assembler/timeline tests/usdm4/assembler/test_timeline_assembler.py tests/usdm4/assembler/test_timeline_pin.py tests/usdm4/assembler/schema -q
+```
+
+### 2026-09-26 — ISSUE 70 MERGED (GitHub 70, branch `70-r6-copied-columns`): conditional timelines entered on their printed condition; copied columns deferred to N78
 - `usdm4 @ 70-r6-copied-columns`. Driven from the USDM4 project (machine A).
 - `protocol_corpus` touched in passing: read `docs/issues.md`, `docs/next_steps.md` and
   NCT05565742's `ground_truth.yaml` / `build/soa_headers.yaml`; **one write**, at Dave's request —
@@ -899,10 +967,10 @@ exception path).
 Full context and the usdm4_protocol half: `usdm4_protocol/docs/next_steps.md` § Session
 Log, session 12 (2026-07-30).
 
-## 10. Timeline assembler upgrade (issues 63–69 merged; 70 (R6) closed 2026-09-26, not yet merged; R7, R8, N78 and the expander to come)
+## 10. Timeline assembler upgrade (issues 63–70 merged; 71 (R7) closed 2026-09-26, not yet merged; R8, N78 and the expander to come)
 
 The timeline assembler is rebuilt on a text input with a pattern grammar, restructured
 into parse → plan → build, and extended with cycles, conditional timelines, profile
 attachment and gates, one issue per step. Design: `docs/timeline_assembler_design.md`.
-Work order and gates: `docs/timeline_assembler_plan.md`. Decisions U4-1–U4-28 (open and taken) are in the
+Work order and gates: `docs/timeline_assembler_plan.md`. Decisions U4-1–U4-34 (open and taken) are in the
 design, § 9.

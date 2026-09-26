@@ -1,0 +1,1308 @@
+{
+  "source": "Built 2026-09-26 for issue 71 (R7) from protocol_corpus NCT02674152 drafts (build/timepoints.yaml via scripts/draft_patterns.py, build/soa_body.yaml; both drafts, not reviewed). Main: table A as drafted, 14 columns, 22 body rows (the CCI rows are not in the body draft); each header value's printed text, with the generated pattern only where draft_patterns flags it ok, else text only. Profile (table B, option A, Dave): course 1 Day 1 only, the first 8 of 48 printed columns, timed in minutes from start of infusion (-0:05 -> Minute -5); course, day and time point kept as notes. attaches_to: Pharmacokinetics (Dave). Footnote markers dropped: no footnote text is drafted. A fixture only, not a reference.",
+  "converted": "Written directly in ScheduleTimelineInput shape; never in TimelineInput.",
+  "soa": [
+    {
+      "type": "main",
+      "title": "Flow Chart",
+      "rows": {
+        "epoch": "Trial Periods",
+        "visit": "Visit",
+        "cycle": "Course",
+        "timing": "Week",
+        "window": "Day; visit window [days]"
+      },
+      "columns": [
+        {
+          "id": "c1",
+          "epoch": {
+            "text": "Screen",
+            "pattern": "Screen"
+          },
+          "visit": {
+            "text": "Screen",
+            "pattern": "Screen"
+          },
+          "window": {
+            "text": "-21 to -1",
+            "pattern": null
+          }
+        },
+        {
+          "id": "c2",
+          "epoch": {
+            "text": "Treatment courses",
+            "pattern": "Treatment courses"
+          },
+          "visit": {
+            "text": "V1",
+            "pattern": "V1"
+          },
+          "cycle": {
+            "text": "1, 2, 3, 4",
+            "pattern": null
+          },
+          "timing": {
+            "text": "w1",
+            "pattern": "Week 1"
+          },
+          "window": {
+            "text": "d1",
+            "pattern": null
+          }
+        },
+        {
+          "id": "c3",
+          "epoch": {
+            "text": "Treatment courses",
+            "pattern": "Treatment courses"
+          },
+          "visit": {
+            "text": "V1",
+            "pattern": "V1"
+          },
+          "cycle": {
+            "text": "1, 2, 3, 4",
+            "pattern": null
+          },
+          "timing": {
+            "text": "w1",
+            "pattern": "Week 1"
+          },
+          "window": {
+            "text": "d2",
+            "pattern": null
+          }
+        },
+        {
+          "id": "c4",
+          "epoch": {
+            "text": "Treatment courses",
+            "pattern": "Treatment courses"
+          },
+          "visit": {
+            "text": "V1",
+            "pattern": "V1"
+          },
+          "cycle": {
+            "text": "1, 2, 3, 4",
+            "pattern": null
+          },
+          "timing": {
+            "text": "w1",
+            "pattern": "Week 1"
+          },
+          "window": {
+            "text": "d3; +1d (1,2)*",
+            "pattern": null
+          }
+        },
+        {
+          "id": "c5",
+          "epoch": {
+            "text": "Treatment courses",
+            "pattern": "Treatment courses"
+          },
+          "visit": {
+            "text": "V2",
+            "pattern": "V2"
+          },
+          "cycle": {
+            "text": "1, 2, 3, 4",
+            "pattern": null
+          },
+          "timing": {
+            "text": "w2",
+            "pattern": "Week 2"
+          },
+          "window": {
+            "text": "d8; -1/+2d",
+            "pattern": null
+          }
+        },
+        {
+          "id": "c6",
+          "epoch": {
+            "text": "Treatment courses",
+            "pattern": "Treatment courses"
+          },
+          "visit": {
+            "text": "V3",
+            "pattern": "V3"
+          },
+          "cycle": {
+            "text": "1, 2, 3, 4",
+            "pattern": null
+          },
+          "timing": {
+            "text": "w3",
+            "pattern": "Week 3"
+          },
+          "window": {
+            "text": "d15; -1/+2d",
+            "pattern": null
+          }
+        },
+        {
+          "id": "c7",
+          "epoch": {
+            "text": "Treatment courses",
+            "pattern": "Treatment courses"
+          },
+          "visit": {
+            "text": "V4",
+            "pattern": "V4"
+          },
+          "cycle": {
+            "text": "1, 2, 3, 4",
+            "pattern": null
+          },
+          "timing": {
+            "text": "Imaging",
+            "pattern": null
+          },
+          "window": {
+            "text": "d18; +/-3d (2,4)*",
+            "pattern": null
+          }
+        },
+        {
+          "id": "c8",
+          "epoch": {
+            "text": "Treatment courses",
+            "pattern": "Treatment courses"
+          },
+          "visit": {
+            "text": "V1",
+            "pattern": "V1"
+          },
+          "cycle": {
+            "text": "5, 6",
+            "pattern": null
+          },
+          "timing": {
+            "text": "w1",
+            "pattern": "Week 1"
+          },
+          "window": {
+            "text": "d1",
+            "pattern": null
+          }
+        },
+        {
+          "id": "c9",
+          "epoch": {
+            "text": "Treatment courses",
+            "pattern": "Treatment courses"
+          },
+          "visit": {
+            "text": "V2",
+            "pattern": "V2"
+          },
+          "cycle": {
+            "text": "5, 6",
+            "pattern": null
+          },
+          "timing": {
+            "text": "w2",
+            "pattern": "Week 2"
+          },
+          "window": {
+            "text": "d8; -1d/ +2d",
+            "pattern": null
+          }
+        },
+        {
+          "id": "c10",
+          "epoch": {
+            "text": "Treatment courses",
+            "pattern": "Treatment courses"
+          },
+          "visit": {
+            "text": "V3",
+            "pattern": "V3"
+          },
+          "cycle": {
+            "text": "5, 6",
+            "pattern": null
+          },
+          "timing": {
+            "text": "Imaging",
+            "pattern": null
+          },
+          "window": {
+            "text": "d18; +/-3d (6)*",
+            "pattern": null
+          }
+        },
+        {
+          "id": "c11",
+          "epoch": {
+            "text": "Treatment courses",
+            "pattern": "Treatment courses"
+          },
+          "visit": {
+            "text": "V1",
+            "pattern": "V1"
+          },
+          "cycle": {
+            "text": "7^18 ongoing",
+            "pattern": null
+          },
+          "timing": {
+            "text": "w1",
+            "pattern": "Week 1"
+          },
+          "window": {
+            "text": "d1",
+            "pattern": null
+          }
+        },
+        {
+          "id": "c12",
+          "epoch": {
+            "text": "EOT",
+            "pattern": "EOT"
+          },
+          "window": {
+            "text": "EoT (when defined)",
+            "pattern": null
+          }
+        },
+        {
+          "id": "c13",
+          "epoch": {
+            "text": "EoR",
+            "pattern": "EoR"
+          },
+          "window": {
+            "text": "Last admin +42d; -2/+3d",
+            "pattern": null
+          }
+        },
+        {
+          "id": "c14",
+          "epoch": {
+            "text": "FU / EoFU",
+            "pattern": "FU / EoFU"
+          },
+          "window": {
+            "text": "every 6 weeks (+/-3d) until PD",
+            "pattern": null
+          }
+        }
+      ],
+      "activities": [
+        {
+          "name": "Informed consent / IRT call",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Demographics",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Medical history",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Review of in-/ exclusion criteria",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Height",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Weight",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "ECOG performance status",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "body temperature",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c5",
+              "text": "X (1,2)*",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Blood pressure, heart rate",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c2",
+              "text": "X (2x)**",
+              "markers": []
+            },
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c4",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c5",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c6",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X (2x)",
+              "markers": []
+            },
+            {
+              "column": "c9",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c11",
+              "text": "X (2x)",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "12-lead ECG",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c2",
+              "text": "X (2x)**",
+              "markers": []
+            },
+            {
+              "column": "c3",
+              "text": "X (1,2)*",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X (2x)",
+              "markers": []
+            },
+            {
+              "column": "c11",
+              "text": "X (2x)",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Echocardiography",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c2",
+              "text": "if clinically indicated",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "General safety laboratory parameters",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c4",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c5",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c6",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c9",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Serum pregnancy test",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Concomitant therapy",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c4",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c5",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c6",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c9",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Physical examination",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c4",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c5",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c6",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c9",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Adverse events",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c1",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c4",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c5",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c6",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c9",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Eligibility for treatment / IRT call",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Administration of BI 836880",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c11",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Pharmacokinetics",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c2",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c3",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c4",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c5",
+              "text": "X (1,2,4)*",
+              "markers": []
+            },
+            {
+              "column": "c6",
+              "text": "X (1,2,4)*",
+              "markers": []
+            },
+            {
+              "column": "c8",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c11",
+              "text": "X (7-12)*",
+              "markers": []
+            },
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c14",
+              "text": "X (FU1)*",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Reason for treatment discontinuation",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c12",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Patients status",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c14",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "Next line of anti-cancer therapy",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "c13",
+              "text": "X",
+              "markers": []
+            },
+            {
+              "column": "c14",
+              "text": "X",
+              "markers": []
+            }
+          ]
+        }
+      ],
+      "footnotes": []
+    },
+    {
+      "type": "profile",
+      "title": "Blood sampling scheme for PK, in courses 1, 2, 3 and from course 4 onwards",
+      "attaches_to": "Pharmacokinetics",
+      "rows": {
+        "timing": "CRF Time / planned time"
+      },
+      "columns": [
+        {
+          "id": "p1",
+          "visit": {
+            "text": "V1",
+            "pattern": "V1"
+          },
+          "timing": {
+            "text": "-0:05",
+            "pattern": "Minute -5"
+          },
+          "notes": [
+            {
+              "role": "cycle",
+              "text": "1***"
+            },
+            {
+              "role": "time_offset",
+              "text": "Day 1"
+            },
+            {
+              "role": "unassigned",
+              "text": "Before start of BI 836880 infusion"
+            }
+          ]
+        },
+        {
+          "id": "p2",
+          "visit": {
+            "text": "V1",
+            "pattern": "V1"
+          },
+          "timing": {
+            "text": "0:00",
+            "pattern": "Minute 0"
+          },
+          "notes": [
+            {
+              "role": "cycle",
+              "text": "1***"
+            },
+            {
+              "role": "time_offset",
+              "text": "Day 1"
+            },
+            {
+              "role": "unassigned",
+              "text": "Start of BI 836880 infusion"
+            }
+          ]
+        },
+        {
+          "id": "p3",
+          "visit": {
+            "text": "V1",
+            "pattern": "V1"
+          },
+          "timing": {
+            "text": "1:30**",
+            "pattern": "Minute 90"
+          },
+          "notes": [
+            {
+              "role": "cycle",
+              "text": "1***"
+            },
+            {
+              "role": "time_offset",
+              "text": "Day 1"
+            },
+            {
+              "role": "unassigned",
+              "text": "Before end of infusion"
+            }
+          ]
+        },
+        {
+          "id": "p4",
+          "visit": {
+            "text": "V1",
+            "pattern": "V1"
+          },
+          "timing": {
+            "text": "1:30**",
+            "pattern": "Minute 90"
+          },
+          "notes": [
+            {
+              "role": "cycle",
+              "text": "1***"
+            },
+            {
+              "role": "time_offset",
+              "text": "Day 1"
+            },
+            {
+              "role": "unassigned",
+              "text": "Immediately after end of infusion*"
+            }
+          ]
+        },
+        {
+          "id": "p5",
+          "visit": {
+            "text": "V1",
+            "pattern": "V1"
+          },
+          "timing": {
+            "text": "2:00",
+            "pattern": "Minute 120"
+          },
+          "notes": [
+            {
+              "role": "cycle",
+              "text": "1***"
+            },
+            {
+              "role": "time_offset",
+              "text": "Day 1"
+            },
+            {
+              "role": "unassigned",
+              "text": "0.5h after the end of infusion"
+            }
+          ]
+        },
+        {
+          "id": "p6",
+          "visit": {
+            "text": "V1",
+            "pattern": "V1"
+          },
+          "timing": {
+            "text": "3:00",
+            "pattern": "Minute 180"
+          },
+          "notes": [
+            {
+              "role": "cycle",
+              "text": "1***"
+            },
+            {
+              "role": "time_offset",
+              "text": "Day 1"
+            },
+            {
+              "role": "unassigned",
+              "text": "1.5h after the end of infusion"
+            }
+          ]
+        },
+        {
+          "id": "p7",
+          "visit": {
+            "text": "V1",
+            "pattern": "V1"
+          },
+          "timing": {
+            "text": "5:00",
+            "pattern": "Minute 300"
+          },
+          "notes": [
+            {
+              "role": "cycle",
+              "text": "1***"
+            },
+            {
+              "role": "time_offset",
+              "text": "Day 1"
+            },
+            {
+              "role": "unassigned",
+              "text": "3.5h after the end of infusion"
+            }
+          ]
+        },
+        {
+          "id": "p8",
+          "visit": {
+            "text": "V1",
+            "pattern": "V1"
+          },
+          "timing": {
+            "text": "8:00",
+            "pattern": "Minute 480"
+          },
+          "notes": [
+            {
+              "role": "cycle",
+              "text": "1***"
+            },
+            {
+              "role": "time_offset",
+              "text": "Day 1"
+            },
+            {
+              "role": "unassigned",
+              "text": "6.5h after the end of infusion"
+            }
+          ]
+        }
+      ],
+      "activities": [
+        {
+          "name": "PK: BI 836880",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "p1",
+              "text": "x",
+              "markers": []
+            },
+            {
+              "column": "p4",
+              "text": "x",
+              "markers": []
+            },
+            {
+              "column": "p5",
+              "text": "x",
+              "markers": []
+            },
+            {
+              "column": "p6",
+              "text": "x",
+              "markers": []
+            },
+            {
+              "column": "p7",
+              "text": "x",
+              "markers": []
+            },
+            {
+              "column": "p8",
+              "text": "x",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "ECG",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "p1",
+              "text": "X (3x)",
+              "markers": []
+            },
+            {
+              "column": "p3",
+              "text": "X (3x)",
+              "markers": []
+            }
+          ]
+        },
+        {
+          "name": "BP",
+          "parent": null,
+          "markers": [],
+          "bcs": [],
+          "cells": [
+            {
+              "column": "p1",
+              "text": "X (3x)",
+              "markers": []
+            },
+            {
+              "column": "p3",
+              "text": "X (3x)",
+              "markers": []
+            }
+          ]
+        }
+      ],
+      "footnotes": []
+    }
+  ]
+}

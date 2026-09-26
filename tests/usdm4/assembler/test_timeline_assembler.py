@@ -275,6 +275,200 @@ class TestConditionalTimelines:
         assert ed_main != ed_et
 
 
+class TestProfileAttachment:
+    """R7 (#71): a profile hangs off the activity its ``attaches_to`` names —
+    ``Activity.timelineId`` is the profile (design § 6 R7, U4-31–U4-34)."""
+
+    @staticmethod
+    def _profile(attaches_to=None, rows=("PK Sample",)):
+        return timeline(
+            [column("h1", timing="Hour 0"), column("h2", timing="Hour 1")],
+            [activity(name, ["h1", "h2"]) for name in rows],
+            type="profile",
+            attaches_to=attaches_to,
+        )
+
+    @staticmethod
+    def _activity(assembler, label):
+        return next(a for a in assembler.activities if a.label == label)
+
+    @staticmethod
+    def _attach_messages(errors):
+        return [m for m in messages(errors) if m.startswith("Profile timeline")]
+
+    def test_attached(self, assembler, errors):
+        assembler.execute([simple(), self._profile("Blood Draw")])
+        blood = self._activity(assembler, "Blood Draw")
+        assert blood.timelineId == assembler.timelines[1].id
+        assert self._attach_messages(errors) == []
+
+    def test_only_the_named_activity_is_attached(self, assembler):
+        assembler.execute([simple(), self._profile("Blood Draw")])
+        others = [a for a in assembler.activities if a.label != "Blood Draw"]
+        assert [a.timelineId for a in others] == [None, None]
+
+    def test_name_is_matched_on_identity(self, assembler):
+        assembler.execute([simple(), self._profile("  blood DRAW ")])
+        blood = self._activity(assembler, "Blood Draw")
+        assert blood.timelineId == assembler.timelines[1].id
+
+    def test_profile_before_main_in_input_order(self, assembler, errors):
+        assembler.execute([self._profile("Blood Draw"), simple()])
+        profile, main = assembler.timelines
+        assert main.mainTimeline and not profile.mainTimeline
+        assert self._activity(assembler, "Blood Draw").timelineId == profile.id
+        assert self._attach_messages(errors) == []
+
+    def test_no_attaches_to_is_built_unattached_and_warned(self, assembler, errors):
+        assembler.execute([simple(), self._profile()])
+        assert len(assembler.timelines) == 2
+        assert all(a.timelineId is None for a in assembler.activities)
+        assert self._attach_messages(errors) == [
+            "Profile timeline 2 has no attaches_to; built unattached"
+        ]
+
+    def test_blank_attaches_to_is_no_attaches_to(self, assembler, errors):
+        assembler.execute([simple(), self._profile("  ")])
+        assert all(a.timelineId is None for a in assembler.activities)
+        assert self._attach_messages(errors) == [
+            "Profile timeline 2 has no attaches_to; built unattached"
+        ]
+
+    def test_unknown_activity_is_built_unattached_and_warned(self, assembler, errors):
+        assembler.execute([simple(), self._profile("Dosing")])
+        assert all(a.timelineId is None for a in assembler.activities)
+        assert self._attach_messages(errors) == [
+            (
+                "Profile timeline 2 attaches to 'Dosing', which is not an activity; "
+                "built unattached"
+            )
+        ]
+
+    def test_direct_loop_is_not_attached(self, assembler, errors):
+        """U4-31: the profile schedules the activity it hangs off. Sharing
+        the activity is fine; attaching would be a loop."""
+        profile = self._profile("Blood Draw", rows=("Blood Draw", "PK Sample"))
+        assembler.execute([simple(), profile])
+        blood = self._activity(assembler, "Blood Draw")
+        assert blood.timelineId is None
+        # Still shared: scheduled on both timelines.
+        main, prof = assembler.timelines
+        assert blood.id in main.instances[1].activityIds
+        assert blood.id in prof.instances[0].activityIds
+        assert self._attach_messages(errors) == [
+            (
+                "Profile timeline 2 attaches to 'Blood Draw', which the profile itself "
+                "reaches; not attached (loop)"
+            )
+        ]
+
+    def test_loop_through_another_profile_is_not_attached(self, assembler, errors):
+        """U4-31, checked over the whole attachment graph: A hangs off Blood
+        Draw and schedules PK Sample; B would hang off PK Sample and
+        schedules Blood Draw, which calls A, which schedules PK Sample."""
+        a = self._profile("Blood Draw", rows=("PK Sample",))
+        b = self._profile("PK Sample", rows=("Blood Draw",))
+        assembler.execute([simple(), a, b])
+        prof_a = assembler.timelines[1]
+        assert self._activity(assembler, "Blood Draw").timelineId == prof_a.id
+        assert self._activity(assembler, "PK Sample").timelineId is None
+        assert self._attach_messages(errors) == [
+            (
+                "Profile timeline 3 attaches to 'PK Sample', which the profile itself "
+                "reaches; not attached (loop)"
+            )
+        ]
+
+    def test_a_chain_without_a_loop_is_attached(self, assembler, errors):
+        """A hangs off Blood Draw and schedules PK Sample; B hangs off PK
+        Sample and schedules ECG. Nested, not a loop."""
+        a = self._profile("Blood Draw", rows=("PK Sample",))
+        b = self._profile("PK Sample", rows=("ECG",))
+        assembler.execute([simple(), a, b])
+        _, prof_a, prof_b = assembler.timelines
+        assert self._activity(assembler, "Blood Draw").timelineId == prof_a.id
+        assert self._activity(assembler, "PK Sample").timelineId == prof_b.id
+        assert self._attach_messages(errors) == []
+
+    def test_a_timeline_reached_twice_is_not_a_loop(self, assembler, errors):
+        """A diamond: the new profile reaches profile Q twice (through PK
+        Sample directly, and through Consent → P → PK Sample). Walked once,
+        and no loop."""
+        q = self._profile("PK Sample", rows=("ECG",))
+        p = self._profile("Consent", rows=("PK Sample",))
+        r = self._profile("Blood Draw", rows=("Consent", "PK Sample"))
+        assembler.execute([simple(), q, p, r])
+        _, prof_q, prof_p, prof_r = assembler.timelines
+        assert self._activity(assembler, "PK Sample").timelineId == prof_q.id
+        assert self._activity(assembler, "Consent").timelineId == prof_p.id
+        assert self._activity(assembler, "Blood Draw").timelineId == prof_r.id
+        assert self._attach_messages(errors) == []
+
+    def test_parent_activity_is_an_error(self, assembler, errors):
+        """U4-32: DDF00160 forbids timelineId on an activity with children."""
+        main = timeline(
+            [column("c1", "Treatment", "V1", "Day 1")],
+            [
+                activity("Laboratory"),
+                activity("Haematology", ["c1"], parent="Laboratory"),
+            ],
+        )
+        assembler.execute([main, self._profile("Laboratory")])
+        assert self._activity(assembler, "Laboratory").timelineId is None
+        assert self._attach_messages(errors) == [
+            (
+                "Profile timeline 2 attaches to 'Laboratory', which has child "
+                "activities; not attached (DDF00160)"
+            )
+        ]
+
+    def test_unscheduled_activity_is_attached_and_warned(self, assembler, errors):
+        """U4-33: the activity exists but has no cell on any other timeline."""
+        main = timeline(
+            [column("c1", "Treatment", "V1", "Day 1")],
+            [activity("Consent", ["c1"]), activity("Pharmacokinetics")],
+        )
+        assembler.execute([main, self._profile("Pharmacokinetics")])
+        pk = self._activity(assembler, "Pharmacokinetics")
+        assert pk.timelineId == assembler.timelines[1].id
+        assert self._attach_messages(errors) == [
+            (
+                "Profile timeline 2 attaches to 'Pharmacokinetics', which is scheduled "
+                "on no other timeline; attached"
+            )
+        ]
+
+    def test_two_profiles_on_one_activity_first_wins(self, assembler, errors):
+        """U4-34: Activity.timelineId holds one timeline; the first profile
+        in input order is attached, a later one is an error."""
+        pk = self._profile("Blood Draw", rows=("PK Sample",))
+        ecg = self._profile("Blood Draw", rows=("ECG",))
+        assembler.execute([simple(), pk, ecg])
+        prof_pk = assembler.timelines[1]
+        assert self._activity(assembler, "Blood Draw").timelineId == prof_pk.id
+        assert self._attach_messages(errors) == [
+            (
+                "Profile timeline 3 attaches to 'Blood Draw', already attached to "
+                "profile timeline 2; not attached"
+            )
+        ]
+
+    def test_a_refused_profile_does_not_block_a_later_one(self, assembler, errors):
+        """Only a successful attachment claims the activity for U4-34."""
+        looping = self._profile("Blood Draw", rows=("Blood Draw",))
+        good = self._profile("Blood Draw", rows=("PK Sample",))
+        assembler.execute([simple(), looping, good])
+        prof_good = assembler.timelines[2]
+        assert self._activity(assembler, "Blood Draw").timelineId == prof_good.id
+        assert len(self._attach_messages(errors)) == 1
+
+    @pytest.mark.parametrize("type", ["main", "arm", "early_termination"])
+    def test_other_families_attach_nothing(self, assembler, errors, type):
+        assembler.execute([simple(), simple(type)])
+        assert all(a.timelineId is None for a in assembler.activities)
+        assert self._attach_messages(errors) == []
+
+
 class TestSkippedTimelines:
     def _empty(self, type="unclassified"):
         return timeline([], [activity("Orphan")], type=type)

@@ -230,7 +230,7 @@ SDW or `usdm4_pj` call this expander; if they do, they are consumers of the chan
 
 ## R6 — conditional timelines and copies
 
-**#70, branch `70-r6-copied-columns`, closed 2026-09-26, not yet merged** — as built: design § 17.
+**#70 merged 2026-09-26** (branch `70-r6-copied-columns`) — as built: design § 17.
 Full suite green (Dave, VSCode). Copied columns deferred: one `Encounter` per timeline until
 a copy reference exists (U4-5 interim; fix logged as `protocol_corpus` `N78`, a schema issue). Test case NCT05565742
 (main + ED).
@@ -243,8 +243,26 @@ accepted where R6 needs it — no schema change.
 
 ## R7 — profile attachment
 
+**#71, branch `71-r7-profile-attachment`, closed 2026-09-26, not yet merged** (full suite green, Dave, VSCode) — as built: design § 18.
+
 `attaches_to` → `Activity.timelineId`; unattached profiles reported. Schema already
-carries it.
+carries it; `ParsedTimeline` drops it today (as R6 found for `entry_condition`).
+Attachment is a pass after every timeline is built — the named activity usually sits
+on another timeline, possibly later in the input. Decisions U4-31–U4-34 taken
+2026-09-26 (loop → not attached, error; parent activity → error; unscheduled
+activity → attached, warning; two profiles on one activity → first in input order,
+later ones error). Test case: **NCT02674152** (Dave, 2026-09-26) — main "Flow
+Chart" plus one profile, "Blood sampling scheme for PK and ECG recording in courses
+1, 2, 3 and from course 4 onwards" (rows `PK: BI 836880`, `ECG`, `BP`), attached to
+main's `Pharmacokinetics` row. No name clash with main (`12-lead ECG`,
+`Blood pressure, heart rate`), so no loop. The profile as printed is a 48-column,
+course-spanning PK schedule, each column a day plus a clock time; the schema carries
+one timing per column, and main's course lists (`1, 2, 3, 4`) are not read. **Pin
+fixture (Dave, 2026-09-26, option A):** main as printed plus the profile's course 1
+Day 1 columns only (8), timed in minutes from start of infusion (`-0:05` → `Minute
+-5`); a fixture, not a reference. Rejected: all 48 columns (pins unrelated degraded
+output). Finding: corpus profiles are mostly course-spanning PK schedules, so the
+activity-level attachment (out of scope) nests the whole schedule in every PK visit.
 
 ## R8 — gates
 

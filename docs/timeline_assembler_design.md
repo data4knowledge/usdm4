@@ -460,6 +460,10 @@ Taken one at a time, each recorded here with its date when taken.
 | U4-28 | Unit of a printed cycle length that is a bare number (`28`) | **Taken 2026-09-26 (Dave, #68):** the cycle length row label's unit (`Approximate Duration (days)`), else the timing row label's (`Relative day within a cycle`). With no unit in either, not read, with a warning saying so — never defaulted to days (unlike U4-15); U4-23 then applies |
 | U4-29 | `entryCondition` of a conditional timeline with no printed `entry_condition` | **Taken 2026-09-26 (Dave, #70):** default text from the timeline type, with a warning — `unscheduled` → `Unscheduled visit`, `early_termination` → `Early termination`, `adverse_event` → `Adverse event`. **Rejected:** today's fixed `Paricipant identified` (says nothing about why the timeline is entered) |
 | U4-30 | Label of a shared `Encounter` (U4-5) when the printed visit text differs between the copies | **Taken 2026-09-26 (Dave, #70); not built — applies once U4-5's shared `Encounter` is.** The first timeline in input order sets the label (and the name, `T{t}-E{n}`); a warning names both texts. **Rejected:** the main timeline's text (an extra rule; main is almost always first) |
+| U4-31 | A profile attachment that would make a loop (the attached activity is reached again through the profile it calls, directly or through another profile) | **Taken 2026-09-26 (Dave, R7):** not attached, reported as an error; the profile is built unattached. Sharing an activity between timelines is fine (U4-12 unchanged); a loop is not — they are different things. Checked over the whole attachment graph, not just the direct case |
+| U4-32 | `attaches_to` names an activity with children | **Taken 2026-09-26 (Dave, R7):** not attached, reported as an error — DDF00160 forbids `timelineId` on a parent activity |
+| U4-33 | `attaches_to` names an activity that exists but is scheduled on no other timeline | **Taken 2026-09-26 (Dave, R7):** attached, with a warning |
+| U4-34 | Two profiles naming the same activity (`Activity.timelineId` holds one timeline) | **Taken 2026-09-26 (Dave, R7):** the first profile in input order is attached; each later one is not attached, reported as an error naming both profiles and the activity, and built unattached. **Rejected:** a warning only (hides a lost link); a made-up wrapper activity holding both (invents structure the protocol does not print) |
 
 ## 10. As built — issue 63 (2026-09-25)
 
@@ -723,3 +727,39 @@ input schema change.
 
 **Seen, not this issue.** The ED timeline's instance is named `ED-2`, not `T2-ED`:
 `sai_name` de-duplicates across timelines rather than qualifying. Existing behaviour.
+
+## 18. As built — issue 71 (2026-09-26)
+
+R7, profile attachment (§ 6 R7, U4-31–U4-34). No input schema change.
+
+- `columns.py` — `ParsedTimeline.attaches_to` carried from the input (the schema
+  accepted it and it was dropped, as R6 found for `entry_condition`).
+- `timeline_assembler.py` — `_attach_profiles`, a pass after every timeline is built
+  and before `double_link`: the named activity usually sits on another timeline,
+  possibly later in the input. The name is matched on identity (U4-12) in
+  `SharedState.activity_by_name`; `Activity.timelineId` is set to the profile.
+  Not attached, profile built unattached: no `attaches_to` or an unknown name
+  (warning); a parent activity (error, DDF00160, U4-32); an activity already taken
+  by an earlier profile (error, U4-34 — only a successful attachment claims it); a
+  loop (error, U4-31). Scheduled on no other timeline: attached, warning (U4-33).
+- The loop check (`_reaches`) walks from the profile through every activity its
+  instances schedule and every timeline those activities already call; the target
+  activity found anywhere on that walk is a loop. A timeline reached twice (a
+  diamond) is walked once and is not a loop.
+- `build.py` unchanged: activities are still created with `timelineId = None`.
+  `ScheduledActivityInstance.timelineId` stays `None` — per-visit attachment needs a
+  column reference the frozen schema lacks (out of scope).
+- Tests: `test_timeline_assembler.py` `TestProfileAttachment` (18: attached,
+  identity match, profile before main, no/blank/unknown `attaches_to`, direct loop,
+  loop through a second profile, a chain, a diamond, parent, unscheduled, two
+  profiles, a refused profile not blocking a later one, other families). Pin
+  `nct02674152_r7` added: main table A as drafted plus the profile's course 1 Day 1
+  columns (8 of 48), `attaches_to: Pharmacokinetics` — `Pharmacokinetics` calls
+  TIMELINE-2, no attachment message. Existing pins unchanged (`features` has a
+  profile with no `attaches_to`: a new warning, no output change).
+
+**Seen, not this issue.** The pin's main timeline is built from unreviewed header
+drafts whose roles are wrong: the `Week` row is drafted as the timing and the
+`Day; visit window` row as the window, so V1's three days all time as `Week 1` and
+every window is unread; course lists (`1, 2, 3, 4`) are not read. Frozen as drafted —
+a fixture, not a reference.

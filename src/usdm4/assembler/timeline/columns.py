@@ -121,6 +121,9 @@ class ParsedTimeline:
     rows: dict[str, str] = field(default_factory=dict)
     # Printed text; the schema accepts it for conditional timelines only (R6).
     entry_condition: str | None = None
+    # The name of the activity a profile hangs off; the schema accepts it for
+    # profile timelines only (R7). Resolved once every timeline is built.
+    attaches_to: str | None = None
 
     @property
     def column_index(self) -> dict[str, int]:
@@ -357,4 +360,5 @@ def parse_timeline(
         footnotes=list(data.get("footnotes") or []),
         rows=rows,
         entry_condition=data.get("entry_condition"),
+        attaches_to=data.get("attaches_to"),
     )

@@ -67,8 +67,17 @@ class TimelineAssembler(BaseAssembler):
             # carry a `T{t}-` prefix only where more than one timeline is built.
             self._state.naming.multi_timeline = len(keep) > 1
             planner = Planner(self._errors)
+            built: list[tuple[ParsedTimeline, ScheduleTimeline, int]] = []
             for index in keep:
-                self._build_one(parsed[index], planner, index + 1, index == main)
+                timeline = self._build_one(
+                    parsed[index], planner, index + 1, index == main
+                )
+                if timeline is not None:
+                    built.append((parsed[index], timeline, index + 1))
+            # R7. The activity a profile hangs off usually sits on another
+            # timeline, possibly later in the input, so profiles are attached
+            # only once every timeline is built.
+            self._attach_profiles(built)
             # One global ordering pass across every timeline's activities, so
             # previousId/nextId are consistent and shared activities are linked
             # once.
@@ -115,7 +124,7 @@ class TimelineAssembler(BaseAssembler):
 
     def _build_one(
         self, timeline: ParsedTimeline, planner: Planner, t: int, is_main: bool
-    ) -> None:
+    ) -> ScheduleTimeline | None:
         try:
             plan = planner.plan(timeline, t)
             built = TimelineBuild(
@@ -133,12 +142,126 @@ class TimelineAssembler(BaseAssembler):
             self._conditions += built.conditions
             if built.timeline:
                 self._timelines.append(built.timeline)
+            return built.timeline
         except Exception as e:
             self._errors.exception(
                 f"Failed during creation of timeline {t}",
                 e,
                 KlassMethodLocation(self.MODULE, "_build_one"),
             )
+            return None
+
+    # ------------------------------------------------------------------
+    # R7 — profile attachment
+
+    def _attach_profiles(
+        self, built: list[tuple[ParsedTimeline, ScheduleTimeline, int]]
+    ) -> None:
+        """Hang each profile timeline off the activity its ``attaches_to``
+        names: ``Activity.timelineId`` is set to the profile. The name is
+        matched on activity identity (U4-12) across every built timeline.
+
+        Not attached, profile built unattached:
+        - no ``attaches_to``, or no activity by that name — warning;
+        - the activity has children — error (U4-32, DDF00160);
+        - the activity is already attached to an earlier profile — error
+          (U4-34: first in input order wins);
+        - attaching would make a loop, directly or through other profiles —
+          error (U4-31).
+        Attached with a warning: the activity is scheduled on no other
+        timeline (U4-33)."""
+        location = KlassMethodLocation(self.MODULE, "_attach_profiles")
+        activity_by_id = {a.id: a for a in self._state.activities}
+        timeline_by_id = {tl.id: tl for _, tl, _ in built}
+        attached_by: dict[str, int] = {}
+        for parsed, profile, t in built:
+            if parsed.family != "profile":
+                continue
+            name = (parsed.attaches_to or "").strip()
+            if not name:
+                self._errors.warning(
+                    f"Profile timeline {t} has no attaches_to; built unattached",
+                    location,
+                )
+                continue
+            activity = self._state.activity_by_name.get(
+                self._state.naming.identity(name)
+            )
+            if activity is None:
+                self._errors.warning(
+                    f"Profile timeline {t} attaches to '{name}', which is not an "
+                    f"activity; built unattached",
+                    location,
+                )
+                continue
+            if activity.childIds:
+                self._errors.error(
+                    f"Profile timeline {t} attaches to '{name}', which has child "
+                    f"activities; not attached (DDF00160)",
+                    location,
+                )
+                continue
+            if activity.id in attached_by:
+                self._errors.error(
+                    f"Profile timeline {t} attaches to '{name}', already attached "
+                    f"to profile timeline {attached_by[activity.id]}; not attached",
+                    location,
+                )
+                continue
+            if self._reaches(profile, activity.id, activity_by_id, timeline_by_id):
+                self._errors.error(
+                    f"Profile timeline {t} attaches to '{name}', which the profile "
+                    f"itself reaches; not attached (loop)",
+                    location,
+                )
+                continue
+            if not any(
+                activity.id in self._activity_ids(other)
+                for _, other, _ in built
+                if other is not profile
+            ):
+                self._errors.warning(
+                    f"Profile timeline {t} attaches to '{name}', which is scheduled "
+                    f"on no other timeline; attached",
+                    location,
+                )
+            activity.timelineId = profile.id
+            attached_by[activity.id] = t
+
+    @staticmethod
+    def _activity_ids(timeline: ScheduleTimeline) -> set[str]:
+        """Every activity an instance of ``timeline`` schedules. Decision
+        instances schedule none."""
+        ids: set[str] = set()
+        for instance in timeline.instances:
+            ids.update(getattr(instance, "activityIds", None) or [])
+        return ids
+
+    @classmethod
+    def _reaches(
+        cls,
+        timeline: ScheduleTimeline,
+        activity_id: str,
+        activity_by_id: dict[str, Activity],
+        timeline_by_id: dict[str, ScheduleTimeline],
+    ) -> bool:
+        """True when ``activity_id`` is scheduled on ``timeline`` or on any
+        timeline reached from it through an activity's ``timelineId`` — so
+        attaching ``timeline`` to that activity would close a loop."""
+        seen: set[str] = set()
+        todo = [timeline]
+        while todo:
+            current = todo.pop()
+            if current.id in seen:
+                continue
+            seen.add(current.id)
+            for scheduled in cls._activity_ids(current):
+                if scheduled == activity_id:
+                    return True
+                sub = activity_by_id.get(scheduled)
+                if sub is not None and sub.timelineId in timeline_by_id:
+                    todo.append(timeline_by_id[sub.timelineId])
+        return False
 
     @property
     def timelines(self) -> list[ScheduleTimeline]:
