@@ -1,12 +1,12 @@
 # Timeline assembler — design
 
-**Status: 2026-09-25. Issues 63, 64 and 65 merged; issue 66 built** (R4 part 2,
-single cycles, branch `66-r4-part-2-single-cycles`). Built so far: the input schema
+**Status: 2026-09-26. Issues 63–65 merged; issues 66 and 67 built** (cycle `Day 1`: the
+chain and the start marker, branch `67-cycles`). Built so far: the input schema
 (§ 3), the pattern grammar incl. time ranges and cycles (§ 4), parse → plan → build →
 naming (§ 5), R1–R3, R4 (timing, single cycles) and R9. R5–R8 are later issues. § 2
-records the assembler as it was BEFORE issue 63; §§ 10–13 record what issues 63–66
-built and the calls made on the way. Decisions are in § 9, taken one at a time — U4-27, the newest,
-is open; the work order is in `timeline_assembler_plan.md`.
+records the assembler as it was BEFORE issue 63; §§ 10–14 record what issues 63–67
+built and the calls made on the way. Decisions are in § 9, taken one at a time; none is
+open. The work order is in `timeline_assembler_plan.md`.
 
 ## 1. What the assembler is for
 
@@ -359,8 +359,9 @@ Nothing is ever expanded. A cycle has a length, a number or range, and days.
   The exit condition's text is decision U4-7; the proposal is the printed range text
   (`Cycle 3-n`, `Cycles 1-6`) unless the caller supplies one.
 - **Mixed** — single cycles then a range (`Cycle 1`, `Cycle 2`, `Cycle 3+`) — is the
-  common case. The range's first `Day 1` is one cycle length after the previous
-  cycle's `Day 1`.
+  common case. The range's `Day 1` is the previous cycle's length after the previous
+  cycle's `Day 1` (U4-27). A range that prints no `Day 1` has a start marker
+  (U4-22), and the decision loops back to it.
 - **Cycle length missing or `pattern: null`.** The loop is still built; the delay is a
   text-only timing (decision U4-8).
 
@@ -441,12 +442,12 @@ Taken one at a time, each recorded here with its date when taken.
 | U4-20 | Window length of a time range crossing zero (`Day -3 to Day 2`) | **Taken 2026-09-25 (#65):** today's crossing-zero rule — 4 days when the table has no Day 0, 5 when it has one (`Planner.has_zero_timepoint`) |
 | U4-21 | Labels of a decoded time range (`≤28` → `Day -28 to Day -1`) | **Taken 2026-09-25 (#65):** `valueLabel` the decoded start (`Day -28`), `windowLabel` the decoded window in pattern form (`-0..+27 days`), `Timing.label` the printed text (`≤28`). Time ranges only; a printed point and window keep their printed text on both labels |
 | U4-13 | How redacted (`CCI`) epochs group | **Taken 2026-09-25 (issue 64):** a consecutive run of redacted columns is one epoch; a run after a non-redacted epoch is a new one, named with an ordinal (`CCI`, `CCI2`) |
-| U4-22 | A single cycle with no `Day 1` column | **Taken 2026-09-25 (R4 part 2):** its columns are measured from the anchor, at (*n* − 1) × cycle length + (day − 1) |
-| U4-23 | Cycle *n* > 1 with no readable cycle length | **Taken 2026-09-25 (R4 part 2):** U4-3 — a zero timing and a warning; never a guessed number. Cycle 1 needs no length |
+| U4-22 | A single cycle with no `Day 1` column | **Re-taken 2026-09-26 (#67; was: its columns measured from the anchor at (*n* − 1) × cycle length + (day − 1)):** every cycle has a `Day 1` node. With no printed `Day 1` column, a start marker is added before the cycle's first column — a `ScheduledActivityInstance` `C{n}D1` with no encounter and no activities, in that column's epoch; it is not a visit. The cycle's other columns are timed from it. When the anchor falls on a column of that cycle, the marker is the anchor |
+| U4-23 | Cycle *n* > 1 with no readable cycle length | **Taken 2026-09-25 (R4 part 2); narrowed 2026-09-26 (#67):** the length that matters is cycle *n* − 1's (U4-27). When it cannot be read or converted exactly, or cycle *n* − 1 is not in the timeline, cycle *n*'s `Day 1` gets U4-3's zero timing and a warning; never a guessed number. Its other columns are still timed from that `Day 1`. The last cycle needs no length until R5's delay |
 | U4-24 | A negative day inside a cycle (`Day -1` predose) | **Taken 2026-09-25 (R4 part 2):** today's crossing-zero rule — `Day -1` is one day before the cycle's `Day 1` |
 | U4-25 | A cycle-range column (`Cycle n-m`, `Cycle n+`) before R5 | **Taken 2026-09-25 (R4 part 2):** the range is parsed, not planned; the column gets a U4-3 zero timing and a warning saying cycle ranges come with R5 |
 | U4-26 | Where a cycle column's day is read from | **Taken 2026-09-25 (R4 part 2):** the `timing` field only. A table printing the day in its visit row (`D1`) is stage 1's to assign to the timing role; `usdm4` never reads `visit` for timing |
-| U4-27 | Cycle *n*'s `Day 1` when cycles differ in length (NCT04557384: Cycle 1 `21 days`, Cycle 2 `21 days (or 28 days …)`) | **Open.** Proposal: the sum of the earlier cycles' own lengths, each from its own columns, falling back to cycle *n*'s where a cycle states none. Built today (#66): (*n* − 1) × cycle *n*'s length, no warning. Rule before R5 |
+| U4-27 | Cycle *n*'s `Day 1` | **Taken 2026-09-26 (Dave, #67):** a cycle starts at `Day 1`; cycle *n*'s `Day 1` is timed `After` cycle *n* − 1's `Day 1` by cycle *n* − 1's length — a chain. Cycle 1's `Day 1` is Day 1 of the timeline, timed from the anchor. #66 built (*n* − 1) × cycle *n*'s own length, right only when every cycle has the same length. (The example first recorded here, a length printed as `21 days (or 28 days …)`, is a length that differs by cohort, not between cycles; it is not read, U4-23) |
 
 ## 10. As built — issue 63 (2026-09-25)
 
@@ -586,9 +587,8 @@ R4 part 2, single cycles. Decisions U4-22–U4-26 (§ 9).
   cycle field. `assembler/timeline/*` and `timeline_assembler.py` 100% coverage.
 
 **Calls made while building, not ruled:**
-- The length is cycle *n*'s own, as § 6 R4.3 and U4-23 say. Where cycles differ in
-  length, the correct `Day 1` is the sum of the earlier cycles' lengths, not
-  (*n* − 1) × cycle *n*'s. Not built; a warning is not raised either. Open as U4-27.
+- The length is cycle *n*'s own, as § 6 R4.3 and U4-23 said. Wrong where cycles
+  differ in length; replaced by the chain in #67 (§ 14, U4-27).
 - A cycle's length comes from any of its columns, not only an earlier one (the issue
   said "the previous column"): a length printed on a later column of the cycle would
   otherwise leave its `Day 1` untimed.
@@ -596,4 +596,48 @@ R4 part 2, single cycles. Decisions U4-22–U4-26 (§ 9).
   (`Cycle 2 Day 1`) is still unread (U4-26: stage 1 splits it).
 - A column timed to zero for a cycle reason gets two warnings: the cycle reason and
   U4-3's "no readable timing".
+
+## 14. As built — issue 67 (2026-09-26)
+
+Cycle `Day 1`: the chain and the start marker. Decisions U4-22 (re-taken), U4-23
+(narrowed), U4-27 (§ 9).
+
+- **Plan** (`plan.py`). `_resolve_cycles` finds the timeable single-cycle columns and
+  the lengths; no offsets. `_cycle_starts` gives each cycle with a readable day a
+  `Day 1` node: its first column whose day is `1` in days or weeks, else a marker keyed
+  `C{n}D1`, placed before the cycle's first column (any column carrying that cycle
+  number). A cycle none of whose columns has a readable day gets no marker. A marker
+  is logged at info level.
+- **Node keys.** `InstanceNode.relative_to` and `TimelinePlan.anchor` are node keys: a
+  column index, or a marker's `C{n}D1`. A marker node has `column=None`, `marker`,
+  `cycle` and `epoch_column`; `InstanceNode.key` returns the key either way.
+- **Timing.** A cycle's `Day 1` (`_start_timing`): the anchor is fixed; cycle *n* > 1
+  is `After` cycle *n* − 1's `Day 1` by cycle *n* − 1's length, converted to cycle
+  *n*'s unit only where exact; cycle 1 is Day 1 of the timeline, from the anchor. Any
+  other cycle column is `After` / `Before` its cycle's `Day 1` node by (day − 1), with
+  the crossing-zero rule. A `Day 1` that cannot be chained is a zero timing `After` the
+  previous node, with a warning naming the reason.
+- **Anchor.** Chosen as before (first column with a timing ≥ 0). When that column
+  belongs to a cycle whose `Day 1` is a marker, the marker is the anchor, at Day 1;
+  columns outside the cycle are measured from it with the crossing-zero rule
+  (`_interval`).
+- **Build** (`build.py`). A marker node becomes a `ScheduledActivityInstance` named
+  `C{n}D1`, `encounterId` `None`, no activities, the epoch of its cycle's first column,
+  description `Start of cycle n; no Day 1 column is printed`. Its `Timing` is
+  `TIMC{n}D1` with empty labels. No encounter is created for it; encounters stay one
+  per column.
+- **Equal lengths.** Every `Day 1` lands where #66 placed it; what changes is the
+  reference — cycle *n* > 2's `Day 1` is now relative to cycle *n* − 1's `Day 1`, not
+  the anchor.
+- **Tests.** `test_plan` `TestSingleCycles` (rewritten to the chain) and
+  `TestCycleDayOne`; `test_timeline_assembler` end to end with a marker. Pins
+  unchanged — no pinned input carries a cycle field.
+
+**Calls made while building, not ruled:**
+- `Week 1` counts as a printed cycle start, like `Day 1`, because #66 already measured
+  week-counted cycles from value 1. The marker is still named `C{n}D1`.
+- A `Day 1` that cannot be chained is zero-timed, but the cycle's other columns keep
+  their timing from it. #66 zero-timed every column of such a cycle.
+- A table beginning at cycle *n* > 1 whose anchor is that cycle's `Day 1` is fixed
+  there; no warning about the missing earlier cycle.
 

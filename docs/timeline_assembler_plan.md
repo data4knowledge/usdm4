@@ -176,7 +176,7 @@ of timing and window read from its pattern, else from the printed text — desig
 § 3.2); single cycles are the second. **#65 written 2026-09-25**, with U4-15–U4-21 taken
 during it (design § 9) — as built: design § 12. **#65 merged 2026-09-25.** **R4 part 2 — single cycles**:
 decisions U4-22–U4-26 taken 2026-09-25 (design § 9); tested on hand-written unit fixtures
-only — the NCT04557384 pin input carries no cycle fields and is left alone until R5. **#66 built 2026-09-25** (branch `66-r4-part-2-single-cycles`) — as built: design § 13. Open for R5: U4-27, cycle `Day 1` when cycles differ in length.
+only — the NCT04557384 pin input carries no cycle fields and is left alone until R5. **#66 built 2026-09-25** (branch `66-r4-part-2-single-cycles`) — as built: design § 13. **#67 built 2026-09-26** (branch `67-cycles`): every cycle has a `Day 1` node — printed, or a start marker `C{n}D1` that is not a visit (U4-22 re-taken) — and cycle *n*'s `Day 1` is chained from cycle *n* − 1's by cycle *n* − 1's length (U4-27 taken). As built: design § 14.
 
 ## R5 — cycle ranges and the expander
 

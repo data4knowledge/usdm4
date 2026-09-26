@@ -454,6 +454,55 @@ class TestTimings:
         assert t.timings[3].valueLabel == "D8"
         assert not any("cycle" in m for m in messages(errors))
 
+    def test_a_cycle_with_no_day_one_gets_a_start_marker(self, assembler, errors):
+        """Issue 67: C2 prints no Day 1, so a C2D1 instance marks its start —
+        no encounter, no activities, the cycle's epoch — timed from C1D1 by
+        cycle 1's length; C3D1 from C2D1 by cycle 2's length."""
+        cycle = {
+            n: {"cycle": value(f"Cycle {n}"), "cycle_length": value(length)}
+            for n, length in ((1, "21 days"), (2, "28 days"), (3, "28 days"))
+        }
+        tl = timeline(
+            [
+                column("c1", epoch="Treatment", timing="Day 1", **cycle[1]),
+                column("c2", epoch="Treatment", timing="Day 8", **cycle[1]),
+                column("c3", epoch="Treatment 2", timing="Day 8", **cycle[2]),
+                column("c4", epoch="Treatment 2", timing="Day 15", **cycle[2]),
+                column("c5", epoch="Treatment 2", timing="Day 1", **cycle[3]),
+            ],
+            activities=[activity("Vitals", ["c1", "c3"])],
+        )
+        assembler.execute([tl])
+        (t,) = assembler.timelines
+        names = [i.name for i in t.instances]
+        assert names == ["C1D1", "C1D8", "C2D1", "C2D8", "C2D15", "C3D1"]
+        marker = t.instances[2]
+        assert marker.encounterId is None
+        assert marker.activityIds == []
+        assert marker.epochId == t.instances[3].epochId != t.instances[0].epochId
+        assert t.instances[1].defaultConditionId == marker.id
+        assert marker.defaultConditionId == t.instances[3].id
+        assert len(assembler.encounters) == 5
+        assert len(t.timings) == len(t.instances) == 6
+        by_id = {i.id: i.name for i in t.instances}
+        links = [
+            (
+                by_id[x.relativeFromScheduledInstanceId],
+                x.value,
+                by_id[x.relativeToScheduledInstanceId],
+            )
+            for x in t.timings
+        ]
+        assert links == [
+            ("C1D1", "PT0M", "C1D1"),
+            ("C1D8", "P7D", "C1D1"),
+            ("C2D1", "P21D", "C1D1"),
+            ("C2D8", "P7D", "C2D1"),
+            ("C2D15", "P14D", "C2D1"),
+            ("C3D1", "P28D", "C2D1"),
+        ]
+        assert (t.timings[2].valueLabel, t.timings[2].label) == ("", "")
+
     def test_every_instance_is_timed(self, assembler, errors):
         """A blank timing used to get no Timing at all (design § 2)."""
         tl = timeline([column("c1", visit="V1"), column("c2", timing="Day 7")])

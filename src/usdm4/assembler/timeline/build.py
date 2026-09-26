@@ -337,6 +337,11 @@ class TimelineBuild:
     def _add_instances(self) -> list[ScheduledActivityInstance]:
         results: list[ScheduledActivityInstance] = []
         for node in self._plan.nodes:
+            if node.column is None:
+                sai = self._add_start_marker(node)
+                self._sai_for[node.key] = sai
+                results.append(sai)
+                continue
             column = node.column
             encounter = self._encounter_for.get(column.index)
             sai = self._builder.create(
@@ -373,6 +378,27 @@ class TimelineBuild:
             sai.defaultConditionId = results[index + 1].id
         return results
 
+    def _add_start_marker(self, node) -> ScheduledActivityInstance:
+        """A cycle's start marker (issue 67): the cycle's ``Day 1`` when the
+        schedule prints none. Not a visit — no encounter, no activities — in
+        the epoch of the cycle's first column."""
+        return self._builder.create(
+            ScheduledActivityInstance,
+            {
+                "name": self._naming.sai_name(
+                    None, 1, "day", None, self._t, node.epoch_column, cycle=node.cycle
+                ),
+                "description": f"Start of cycle {node.cycle}; no Day 1 column "
+                "is printed",
+                "label": "",
+                "timelineExitId": None,
+                "encounterId": None,
+                "defaultConditionId": None,
+                "epochId": self._epoch_for[node.epoch_column].id,
+                "activityIds": [],
+            },
+        )
+
     @staticmethod
     def _cycle_number(column) -> int | None:
         """The cycle number of a single-cycle column the plan timed (issue
@@ -389,10 +415,11 @@ class TimelineBuild:
         results: list[Timing] = []
         for node in self._plan.nodes:
             column = node.column
-            this_sai = self._sai_for[column.index]
+            this_sai = self._sai_for[node.key]
             to_sai = self._sai_for[node.relative_to]
             window = node.window
-            label = column.timing_label or ""
+            label = (column.timing_label or "") if column else ""
+            name = f"TIM{column.index + 1}" if column else f"TIM{node.marker}"
             timing = self._builder.create(
                 Timing,
                 {
@@ -401,7 +428,7 @@ class TimelineBuild:
                     ),
                     "value": self._encoder.iso8601_duration(node.duration, node.unit),
                     "valueLabel": self._value_label(column),
-                    "name": self._qualify(f"TIM{column.index + 1}"),
+                    "name": self._qualify(name),
                     "description": None,
                     "label": label,
                     "relativeToFrom": self._builder.klass_and_attribute_value(
@@ -434,7 +461,9 @@ class TimelineBuild:
     def _value_label(column) -> str:
         """The printed timing text, or ``""``. A time range is labelled with
         its decoded start (``Day -28``) — U4-21; its printed text stays on
-        ``label``."""
+        ``label``. A start marker (no column) has none."""
+        if column is None:
+            return ""
         if column.time_range is not None:
             return f"{column.time_range.unit.capitalize()} {column.time_range.start}"
         return column.timing_label or ""
@@ -447,6 +476,8 @@ class TimelineBuild:
         window field is ``""``. With no window, the printed window text if
         any (unread or redacted), else None."""
         column, window = node.column, node.window
+        if column is None:
+            return None
         if window is None:
             return column.window_label or None
         if node.window_from in ("range", "timing"):
