@@ -21,6 +21,7 @@ from src.usdm4.assembler.schema.schedule_timeline_schema import (
     ScheduleTimelineInput,
     TimingValue,
     WindowValue,
+    check_copies,
     family_of,
 )
 
@@ -421,3 +422,99 @@ class TestFamily:
     def test_every_type_has_a_family(self):
         types = ScheduleTimelineInput.model_fields["type"].annotation.__args__
         assert set(types) == set(FAMILY)
+
+
+class TestCopies:
+    """Issue 75 (U4-37): a column printed in two timelines names its original
+    — an earlier timeline's id and column id — with ``copy_of``."""
+
+    @staticmethod
+    def _tl(id, columns, type="main"):
+        return ScheduleTimelineInput.model_validate(
+            {"type": type, "id": id, "columns": columns}
+        )
+
+    @staticmethod
+    def _col(id, copy_of=None, **extra):
+        data = {"id": id, "visit": {"text": "ED"}, **extra}
+        if copy_of:
+            data["copy_of"] = {"timeline": copy_of[0], "column": copy_of[1]}
+        return data
+
+    def _pair(self, copy_of=("main", "c2"), main_columns=None):
+        main = self._tl("main", main_columns or [self._col("c1"), self._col("c2")])
+        et = self._tl("et", [self._col("c1", copy_of)], "early_termination")
+        return [main, et]
+
+    def test_accepted(self):
+        timelines = self._pair()
+        check_copies(timelines)
+        ref = timelines[1].columns[0].copy_of
+        assert (ref.timeline, ref.column) == ("main", "c2")
+
+    def test_id_and_copy_of_default_to_none(self):
+        tl = ScheduleTimelineInput.model_validate(_timeline())
+        assert tl.id is None
+        assert tl.columns[0].copy_of is None
+
+    def test_no_ids_no_copies_is_fine(self):
+        check_copies([ScheduleTimelineInput.model_validate(_timeline())] * 2)
+
+    def test_copy_of_needs_both_parts(self):
+        with pytest.raises(ValidationError):
+            ColumnInput.model_validate({"id": "c1", "copy_of": {"timeline": "main"}})
+
+    def test_copy_of_refuses_unknown_keys(self):
+        with pytest.raises(ValidationError):
+            ColumnInput.model_validate(
+                {"id": "c1", "copy_of": {"timeline": "m", "column": "c", "x": 1}}
+            )
+
+    def test_a_gate_cannot_be_a_copy(self):
+        with pytest.raises(ValidationError, match="gate is not a visit"):
+            ColumnInput.model_validate(
+                {
+                    "id": "c1",
+                    "delay": {"min": 7, "unit": "days"},
+                    "copy_of": {"timeline": "main", "column": "c2"},
+                }
+            )
+
+    def test_duplicate_timeline_ids(self):
+        with pytest.raises(ValueError, match="unique; repeated: 'main'"):
+            check_copies([self._tl("main", []), self._tl("main", [])])
+
+    def test_blank_timeline_id(self):
+        with pytest.raises(ValueError, match="timeline 1: an id may not be blank"):
+            check_copies([self._tl(" ", [])])
+
+    def test_unknown_timeline(self):
+        with pytest.raises(ValueError, match="'nope', which is not a timeline id"):
+            check_copies(self._pair(copy_of=("nope", "c2")))
+
+    def test_later_timeline(self):
+        main = self._tl("main", [self._col("c1", ("et", "c1"))])
+        et = self._tl("et", [self._col("c1")], "early_termination")
+        with pytest.raises(ValueError, match="not earlier in the input"):
+            check_copies([main, et])
+
+    def test_own_timeline(self):
+        main = self._tl("main", [self._col("c1"), self._col("c2", ("main", "c1"))])
+        with pytest.raises(ValueError, match="not earlier in the input"):
+            check_copies([main])
+
+    def test_unknown_column(self):
+        with pytest.raises(ValueError, match="'c9', which is not a column"):
+            check_copies(self._pair(copy_of=("main", "c9")))
+
+    def test_copy_of_a_copy(self):
+        main = self._tl("main", [self._col("c1")])
+        et = self._tl("et", [self._col("c1", ("main", "c1"))], "early_termination")
+        un = self._tl("un", [self._col("c1", ("et", "c1"))], "unscheduled")
+        with pytest.raises(ValueError, match="itself a copy; name its original"):
+            check_copies([main, et, un])
+
+    def test_copy_of_a_gate(self):
+        gate = {"id": "g1", "delay": {"min": 7, "unit": "days"}}
+        with pytest.raises(ValueError, match="which is a gate, not a visit"):
+            check_copies(self._pair(copy_of=("main", "g1"), main_columns=[gate]))

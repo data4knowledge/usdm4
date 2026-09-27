@@ -21,12 +21,9 @@ Normal development: one issue at a time, gate is tests and pins. The three-machi
 (A/B/C) is dropped. Test inputs are written here in `usdm4`'s structured form — nothing waits on
 `protocol_corpus` ground truth.
 
-1. **R8 (#74, branch `74-r8-washout-variable-delay`)** — built 2026-09-27; full suite green
-   (Dave, VSCode); merge next. As built: design § 20.
-2. **U4-11, then the expander issue** — blocks the next release (R5 is merged; the expander
-   recurses on a loop).
-3. **N78 — copied columns** (U4-5 shared `Encounter`, U4-30): a copy reference on `ColumnInput`,
-   a schema change in its own issue.
+1. **The expander issue — last** (Dave, 2026-09-27). U4-11, how a loop is shown, is its first
+   decision. Nothing that uses `usdm4` depends on it, so it waits. Known defect until then: the
+   expander recurses without end on a looped timeline (R5, R8).
 
 Order and schema checks: `timeline_assembler_plan.md` § *Order from here*.
 
@@ -35,11 +32,77 @@ Order and schema checks: `timeline_assembler_plan.md` § *Order from here*.
 Newest first. This repo's own log: every session that works a `usdm4` issue is entered here in
 full, whichever Claude project drove it (see `CLAUDE.md` § *Session log*).
 
+### 2026-09-27 — ISSUE 75 MERGED (GitHub 75, branch `75-copied-column-and-shared-encounter`): a copied column shares one Encounter; no epoch sent, none linked
+- `usdm4 @ 75-copied-column-and-shared-encounter`. Driven from the USDM4 project. No sibling repo
+  read or written. N78 (the `protocol_corpus` register row) is this issue.
+- **State:** full suite green (Dave, VSCode, 2026-09-27); **merged to `main`**, issue closed.
+- Before the issue: #74 found already merged to `main`; the docs saying "merge next" corrected
+  (`next_steps.md`, `memory.md`, plan status and R8, design status). The plan's R7 section still
+  said #71 "not yet merged" — corrected. The expander moved to **last** (Dave): nothing that uses
+  `usdm4` depends on it, so it does not gate a release; plan § *Order from here*, § *Expander* and
+  design § 7 reworded.
+
+**What it was.** A column printed in two timelines (NCT05565742's `ED`, in main and early
+termination) built one `Encounter` per timeline (U4-5 interim, #70): column ids are scoped to one
+timeline, so nothing in the input said two columns were one visit. Separately, a column with no
+epoch built a `StudyEpoch` with an empty label and linked its instance to it (U4-6, proposed, never
+built) — `T2-EP1` in the R7 pin, `T3-EP1` in `nct04557384`.
+
+**Decisions (Dave), design § 9.**
+- U4-37 (new): `ScheduleTimelineInput` gains an `id`; `ColumnInput.copy_of` is `{timeline,
+  column}`. Rejected: a timeline by its position (breaks silently when a caller reorders).
+- The copy pattern shares only the visit (`Encounter`). A subsidiary timeline rarely links to
+  epochs, so none is sent for its columns.
+- U4-6 taken, in this issue: no epoch sent, no `StudyEpoch` built, `epochId` `None`.
+- Claude's, in the issue text, not objected to: `id` optional (no caller breaks); the original must
+  be in an earlier timeline; original not built → the copy gets its own `Encounter`, warned.
+
+**What changed.**
+- `src/usdm4/assembler/schema/schedule_timeline_schema.py` — `CopyOf`; `ColumnInput.copy_of` (a
+  gate cannot be a copy); `ScheduleTimelineInput.id`; `check_copies` (ids unique, not blank;
+  `copy_of` names an earlier timeline and a column in it; the original is not a copy, not a gate).
+- `src/usdm4/assembler/schema/assembler_input.py` — `_check_timeline_copies` calls `check_copies`.
+- `src/usdm4/assembler/timeline/columns.py` — `Column.copy_of`, `ParsedTimeline.id`.
+- `src/usdm4/assembler/timeline/build.py` — `SharedState.encounter_by_column`; `_copied_encounter`
+  (reuse, U4-30 warning, not-built fallback); `_add_epochs` skips a column with no epoch (a blank
+  ends a redacted run); `_epoch_id` gives `None` for it at every instance kind.
+- Tests: `test_schedule_timeline_schema.py` `TestCopies` (14); `test_assembler_input.py` (1);
+  `test_timeline_assembler.py` `TestCopiedColumns` (9) replaces the interim two-encounter test,
+  epoch tests (3) replace the empty-label one; `test_timeline_pin.py` runs `check_copies`.
+- Pins: `input_nct05565742_r6.json` — ids `main`, `et`; ET `c14` `copy_of` main `c14`, its epoch
+  removed. Expected re-saved: `nct05565742_r6`, `nct02674152_r7`, `nct04557384`.
+- Docs: design § 3.3, R6, § 9 U4-5/U4-6/U4-30/U4-37, new § 21, status; plan R6 and status; this file.
+
+**The numbers.** Sandbox (Python 3.10, no `cdisc-rules-engine`, `PYTHONPATH=src:.`): timeline,
+assembler, pin and schema tests 607 pass; the rest of `tests/usdm4/assembler` 813 pass, 2 skipped.
+`build.py`, `columns.py`, `schedule_timeline_schema.py`, `assembler_input.py` 100%; `plan.py` 99%,
+lines 573 and 715 as before. Pins: `nct05565742_r6` encounters 15 → 14, epochs 4 → 3, T2's instance
+on `T1-E14`; `nct02674152_r7` epochs 6 → 5; `nct04557384` epochs 6 → 5; every other difference in
+the three is `Code` id renumbering (one fewer epoch type code). Other six pins unchanged. Ruff: two
+new ISC004 in the new tests fixed; format clean. Full suite green (Dave, VSCode).
+
+**Rejected.** A timeline named by position. Leaving the epoch in the r6 pin (a duplicate
+`T2-PITAP`). Removing it without U4-6 (an empty-label `T2-EP1` instead — no better). Logging epoch
+duplication as its own issue (Dave: sub-timelines do not link to epochs; the fix is U4-6).
+
+**Found, not this issue.** `usdm4_protocol` gets the shared `Encounter` only once it emits timeline
+ids and `copy_of`, and sends no epoch for a subsidiary timeline's columns. A project memory note
+("given up on the expander") was misread as abandoning the work; it meant "last" — reworded.
+
+**Next.**
+1. ~~Merge #75~~ — done.
+2. The expander issue (U4-11 is part of it) — last.
+
+Re-verify:
+```
+python3 -m pytest tests/usdm4/assembler/timeline tests/usdm4/assembler/test_timeline_assembler.py tests/usdm4/assembler/test_timeline_pin.py tests/usdm4/assembler/schema -q
+```
+
 ### 2026-09-27 — ISSUE 74 BUILT (GitHub 74, branch `74-r8-washout-variable-delay`): a washout is a gate; the period after it has its own anchor
 - `usdm4 @ 74-r8-washout-variable-delay`. Driven from the USDM4 project. #72 closed unbuilt (it held
   docs only); R8 raised again as #74. The three-machine arrangement dropped (Dave): next steps live
   here; test inputs are written in `usdm4`'s structured form, not taken from `protocol_corpus`.
-- **State:** full suite green (Dave, VSCode, 2026-09-27); not yet merged.
+- **State:** full suite green (Dave, VSCode, 2026-09-27); **merged to `main`**.
 - `protocol_corpus`: read only — NCT03069989's `ground_truth.yaml`, `build/timepoints.yaml` and the
   source PDF text, early in the session; then set aside (Dave: out of date; not used for `usdm4`
   work). Nothing written.
@@ -87,7 +150,7 @@ not period-named), as `ED-2` in #70. `gate_condition` pluralises naively (`≥ 1
 `render_delay` does.
 
 **Next.**
-1. Merge #74 (full suite green).
+1. ~~Merge #74~~ — done.
 2. U4-11, then the expander issue — before the next release.
 3. N78, copied columns.
 
@@ -171,7 +234,7 @@ python3 -m pytest tests/usdm4/assembler/timeline tests/usdm4/assembler/test_time
   write**, at Dave's request: resolved a stash-pop conflict in `docs/issues.md` (upstream N76/N77 kept,
   the local N78 row kept; open count 14). Not staged — Dave marks it resolved in GitHub Desktop.
 - #70 (R6) found merged at session start (`main` @ e70966b); docs said "not yet merged" — corrected.
-- **State:** full suite green (Dave, VSCode); GitHub issue closed; branch not yet merged into `main`.
+- **State:** full suite green (Dave, VSCode); GitHub issue closed; **merged to `main`**.
 
 **What it was.** `attaches_to` was accepted by the schema (profile timelines only) and then dropped:
 `ParsedTimeline` had no field, and `Activity.timelineId` was always `None`. No profile was ever attached.
@@ -239,7 +302,7 @@ python3 -m pytest tests/usdm4/assembler/timeline tests/usdm4/assembler/test_time
   register row `N78` in `docs/issues.md` (open count 13 → 14), the copied-column fix. This departs
   from *Working arrangement* ("nothing is written to `protocol_corpus` from here"); Dave asked.
 - #69 (R5) was merged before this session; its entry, back-filled this session, is below.
-- **State:** full suite green (Dave, VSCode); GitHub issue closed; branch not yet merged into `main`.
+- **State:** full suite green (Dave, VSCode); GitHub issue closed; **merged to `main`**.
 
 **What it was.** Every timeline got `entryCondition` `Paricipant identified`, including a
 conditional one (`unscheduled`, `early_termination`, `adverse_event`); the printed

@@ -107,5 +107,11 @@
 - Normal development: next steps live in docs/next_steps.md § *Next steps*. Test inputs are
   written in usdm4's structured form here; no dependency on protocol_corpus ground truth.
 - R8 built on #74 (branch 74-r8-washout-variable-delay): gate = washout column + 1-day decision loop;
-  period after a gate has its own anchor (U4-36). Full suite green (Dave, VSCode); merge pending.
+  period after a gate has its own anchor (U4-36). Full suite green (Dave, VSCode); merged.
   Details: docs/next_steps.md, design § 20.
+
+## 2026-09-27 — #75 copied columns merged
+
+- `copy_of` on `ColumnInput` + timeline `id` (U4-37): a copied column shares one `Encounter`.
+  U4-6: no epoch sent, none linked. Full suite green (Dave, VSCode); merged.
+- Expander is the LAST issue (Dave): not a release gate. Details: docs/next_steps.md, design § 21.

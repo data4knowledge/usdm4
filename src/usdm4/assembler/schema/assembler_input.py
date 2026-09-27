@@ -6,7 +6,10 @@ from usdm4.assembler.schema.population_schema import PopulationInput
 from usdm4.assembler.schema.amendments_schema import AmendmentsInput
 from usdm4.assembler.schema.study_design_schema import StudyDesignInput
 from usdm4.assembler.schema.study_schema import StudyInput
-from usdm4.assembler.schema.schedule_timeline_schema import ScheduleTimelineInput
+from usdm4.assembler.schema.schedule_timeline_schema import (
+    ScheduleTimelineInput,
+    check_copies,
+)
 from usdm4.assembler.schema.objectives_schema import ObjectivesInput
 
 
@@ -82,6 +85,14 @@ class AssemblerInput(BaseModel):
                         f"references undeclared intervention {ref!r}; "
                         f"declared interventions: {declared}"
                     )
+        return self
+
+    @model_validator(mode="after")
+    def _check_timeline_copies(self) -> "AssemblerInput":
+        """A copied column names an earlier timeline's column (issue 75).
+        Across timelines, so checked here where every timeline is visible."""
+        if self.soa:
+            check_copies(self.soa)
         return self
 
     @classmethod

@@ -50,6 +50,8 @@ class Column:
 
     index: int
     id: str
+    # (timeline id, column id) of the column this one repeats (issue 75).
+    copy_of: tuple[str, str] | None = None
     epoch_label: str | None = None
     visit_label: str | None = None
     timing_label: str | None = None
@@ -110,6 +112,8 @@ class ParsedTimeline:
     attaches_to: str | None = None
     # Whether the protocol numbers a Day 0 (U4-35); default Day 1.
     day_zero: bool = False
+    # The caller's id, for references across timelines (issue 75, U4-37).
+    id: str | None = None
 
     @property
     def column_index(self) -> dict[str, int]:
@@ -240,6 +244,9 @@ def parse_column(
         _READERS[name](column, value, reader)
 
     column.notes = list(data.get("notes") or [])
+    copy_of = data.get("copy_of")
+    if copy_of:
+        column.copy_of = (copy_of["timeline"], copy_of["column"])
     return column
 
 
@@ -251,6 +258,7 @@ def parse_timeline(
     return ParsedTimeline(
         type=data["type"],
         family=family_of(data["type"]),
+        id=data.get("id"),
         title=data.get("title"),
         description=data.get("description"),
         classification=dict(data.get("classification") or {}),

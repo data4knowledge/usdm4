@@ -1,9 +1,9 @@
 # Timeline assembler — design
 
-**Status: 2026-09-27. Issues 63–71 and 73 (structured input, U4-35) merged; R8 built on
-issue 74.** Built: the input schema (§ 3, structured since issue
+**Status: 2026-09-27. Issues 63–71, 73 (structured input, U4-35) and 74 (R8) and
+75 (copied columns) merged.** Built: the input schema (§ 3, structured since issue
 73), parse → plan → build → naming (§ 5), R1–R9. § 2
-records the assembler as it was BEFORE issue 63; §§ 10–20 record what each issue built
+records the assembler as it was BEFORE issue 63; §§ 10–21 record what each issue built
 and the calls made on the way. Decisions are in § 9. The work order is in
 `timeline_assembler_plan.md`.
 
@@ -217,8 +217,10 @@ timing clarification, an unassigned row — as `{role, text}`. Text only; never 
 
 - **Logical tables.** Joining page fragments into tables and splitting a table into
   timelines is the caller's judgement. The assembler only ever sees timelines.
-- **Copies.** A column that belongs to two timelines (a combined `EOT/ET` column)
-  appears in both, with the same `id`. What that means in USDM is decision U4-5 (N78).
+- **Copies.** A column printed in two timelines (a combined `EOT/ET` column) appears
+  in both; the later one names the original with `copy_of` — the original's timeline
+  `id` and column `id` (issue 75, U4-37). A shared column `id` means nothing: ids are
+  scoped to one timeline.
 
 ## 4. The pattern grammar — retired (issue 73)
 
@@ -363,8 +365,8 @@ Nothing is ever expanded. A cycle has a length, a number or range, and days.
 
 A conditional timeline (`unscheduled`, `early_termination`, `adverse_event`) is a
 sibling `ScheduleTimeline`; `entryCondition` is the printed `entry_condition` text. A
-column that appears in two timelines (same `id`) becomes an instance in each. Whether
-they share one `Encounter` is decision U4-5.
+column that appears in two timelines becomes an instance in each, sharing one
+`Encounter` when the later one names the original with `copy_of` (U4-5, issue 75).
 
 ### R7 — profile timelines
 
@@ -415,7 +417,7 @@ exactly the non-`days` case. How the expanded view shows a repeating
 range (a flag on the pass, the condition text) is decision U4-11.
 
 Nothing that builds USDM from a protocol calls the expander, so this change is its own
-issue, not part of R5's branch; it must be merged before any release containing R5
+issue, not part of R5's branch; it is the last issue worked and does not gate a release
 (plan § *Order from here*).
 
 ## 8. Out of scope for this work, noted
@@ -439,13 +441,14 @@ Taken one at a time, each recorded here with its date when taken.
 | U4-2 | The anchor rule | **Taken 2026-09-25:** today's rule — first column with a timing point ≥ 0, else the first column with a warning; no code beyond the warning (§ 6 R4.1). Checked against 72 drafted tables: `Week 0` and cycle tables anchor correctly under it; a narrower "`Day 1` or `Day 0`" rule was rejected (misses `Week 0`, needs cycle parsing, no better fallback) |
 | U4-3 | Form of a timing with no readable value (no pattern, printed text unreadable, or redacted) | **Taken 2026-09-25:** a zero timing (`PT0M`) from the previous column, printed text as `valueLabel`, and a warning — nothing more. **Rejected:** an extension flag (Dave: no flags); measuring from the anchor (puts ED at Day 1 in the expander); no `Timing` (DDF00060 needs a duration, and the expander crashes on a missing one) |
 | U4-4 | A time range (`Day -28 to Day -1`): the column's timing, its window, or both | **Text path superseded by U4-35 (#73):** a range arrives as `timing: {start, end, unit}`; `usdm4` stores it as the timing at its start and a window forward to its end. Was: **Taken 2026-09-25:** the interface takes both forms. A tool that already holds decoded timings sends a point and a window. A caller reading a document — `usdm4_protocol`, and the corpus ground truth — sends the time range as printed (text, range pattern, or both), and `usdm4` decodes it to the timing at its start and a window forward to its end. Decoding lives here so that nobody has to check it by hand per protocol |
-| U4-5 | A copied column: one `Encounter` shared by both timelines, or one each | **Target, taken 2026-09-26 (Dave):** one shared `Encounter`; each timeline gets its own `ScheduledActivityInstance`, so timing and activities can differ per timeline. **Interim, 2026-09-26 (Dave, #70): one `Encounter` each, until a copy can be identified.** Column ids are scoped to one timeline (schema, and every caller numbers them `c1…` per timeline — `features` and `nct04557384` pins reuse `c1` for different visits), so a shared id does not mean a shared visit; sharing by id would silently merge unrelated visits. The fix — an explicit copy reference on the input — is a schema change, logged as `protocol_corpus` register row `N78`. **Rejected:** ids spanning the assembly (silent merges from every existing caller); matching on id plus printed text (a guess) |
-| U4-6 | A column with no epoch | inherit the previous column's; none on the first column is an error |
+| U4-5 | A copied column: one `Encounter` shared by both timelines, or one each | **Target, taken 2026-09-26 (Dave):** one shared `Encounter`; each timeline gets its own `ScheduledActivityInstance`, so timing and activities can differ per timeline. **Built #75 (2026-09-27):** `copy_of` (U4-37) names the original; the copy shares its `Encounter`. **Interim, 2026-09-26 (Dave, #70), closed by #75: one `Encounter` each, until a copy can be identified.** Column ids are scoped to one timeline (schema, and every caller numbers them `c1…` per timeline — `features` and `nct04557384` pins reuse `c1` for different visits), so a shared id does not mean a shared visit; sharing by id would silently merge unrelated visits. The fix — an explicit copy reference on the input — is a schema change, logged as `protocol_corpus` register row `N78`. **Rejected:** ids spanning the assembly (silent merges from every existing caller); matching on id plus printed text (a guess) |
+| U4-6 | A column with no epoch | **Taken 2026-09-27 (Dave, #75):** no epoch sent, no `StudyEpoch` built and the instance's `epochId` is `None` — a subsidiary timeline rarely links to epochs. **Was (proposal, never built):** inherit the previous column's; none on the first column an error. Before #75 an empty-label epoch was built |
 | U4-7 | The exit condition text on a cycle loop | **Taken 2026-09-26 (Dave):** the fixed text `cycle exit condition`. **Noted, not crucial now:** the real exit rule (e.g. progression, unacceptable toxicity) is usually in the protocol body, not the SoA; finding it needs a search wider than the SoA. **Rejected:** printed range text (a heading, not a condition); caller-supplied text (no field in the frozen schema) |
 | U4-8 | A range with no readable cycle length | **Taken 2026-09-26 (Dave):** the loop is built; the cycle length is the largest day number printed in the range (`D8` → 8 days, `D15` → 15 days), with a warning. It is a lower bound: the real length (21, 28 days) is usually longer. **Noted, not crucial now:** the true length may be stated outside the SoA; finding it needs a wider search. **Open edge:** a range printing only `Day 1` gives a 1-day cycle — settle when R5 hits it. **Rejected:** a text-only delay (DDF00060 needs a duration; the expander crashes, as U4-3). Ranges only; U4-23 (single cycles) is unchanged |
 | U4-9 | Where a cell's printed text goes (`X`, `(X)`, `Predose`) | kept on the input only until a rule needs it |
 | U4-10 | The gate loop (R8) | **Reframed 2026-09-26 (Dave):** a gate is a variable delay, built as R5's delay + decision loop; recognising it (duration, no anchored offset, between anchored columns) is not in question. **(a) Taken 2026-09-26 (Dave):** start node → 1-day delay → decision. The decision's condition is "≥ min days and washed out" (e.g. `≥ 2 days and washed out`) and exits to the next column; the default loops back to the start node. The minimum lives in the condition, not the delay; the start node is an instance with no visit (as the cycle start marker, U4-22). **(b) Taken 2026-09-26 (Dave):** the maximum is in the exit condition — `(≥ 2 days and washed out) or 10 days`; no second branch. **(c) Taken 2026-09-27 (Dave):** the exit condition text is filled from the delay — `≥ {min} {unit} and washed out, or {max} {unit}` (`≥ 7 days and washed out, or 28 days`); with no `max`, the `, or …` part is dropped. **Was:** "gate versus window in text alone" — wrong framing |
 | U4-36 | Day numbering after a gate (R8) | **Taken 2026-09-27 (Dave):** the period after a gate gets a new anchor at its `Day 1`; its other columns (`Baseline PET`, `Day -1`, `Day 2`) are timed from it. DDF00009 asks for at least one anchor per timeline, so a second is allowed. An anchor is a Fixed Reference: no duration back to the gate — the gap is the variable delay; the periods are linked by the instance chain (the decision's exit) |
+| U4-37 | How a copied column names its original (N78, U4-5) | **Taken 2026-09-27 (Dave):** `ScheduleTimelineInput` gains an `id`; `ColumnInput.copy_of` is `{timeline, column}` — the original's timeline id and column id. A copy shares only the original's `Encounter` (the visit); it has its own instance, timing and activities, and normally no epoch — a subsidiary timeline rarely links to epochs. **Rejected:** referring to a timeline by its position in the input (breaks silently when a caller reorders timelines) |
 | U4-11 | How the expander presents a loop | one pass, flagged as repeating |
 | U4-12 | Activity identity across timelines when names differ only by spacing or hyphenation | exact trimmed, case-folded match, as today |
 | U4-14 | Crossover periods whose day numbering restarts (a second `Day 1`) | **Withdrawn 2026-09-27 (#74):** proven on NCT03069989 — one timeline, the period after the gate has its own anchor (U4-36); the restart warning is now "restart with no gate before it". **2026-09-26 (Dave): in theory not needed.** One timeline: a period is chained like a cycle (R5, U4-27) — Period *n*'s `Day 1` comes after the washout gate (R8, U4-10), which joins the two periods. To prove on R8's test case (NCT03069989 `(7-28 days between doses)`, NCT03421379 `3 to 14 days`); if it holds, U4-14 is withdrawn and the restart warning becomes "restart with no gate before it". **Was — working hypothesis 2026-09-25, to be proven on real cases:** one timeline per period. A `Timing` cannot cross timelines (DDF00046), so the link is an instance: the printed washout column (`Wash out 3 to 14 days`, `Minimum 2 wks after end of session 1`) becomes a linking instance in the earlier period, reached by a `Timing` that is the washout, and calling the next period through `timelineId`; the next period's `entryCondition` carries the printed text. Rejected for now: the last instance calling the next period with the washout as text only. Needs a stage-1 marking (periods as timelines, the washout column as the link) and a stage-2 rule; neither built |
@@ -465,7 +468,7 @@ Taken one at a time, each recorded here with its date when taken.
 | U4-27 | Cycle *n*'s `Day 1` | **Taken 2026-09-26 (Dave, #67):** a cycle starts at `Day 1`; cycle *n*'s `Day 1` is timed `After` cycle *n* − 1's `Day 1` by cycle *n* − 1's length — a chain. Cycle 1's `Day 1` is Day 1 of the timeline, timed from the anchor. #66 built (*n* − 1) × cycle *n*'s own length, right only when every cycle has the same length. (The example first recorded here, a length printed as `21 days (or 28 days …)`, is a length that differs by cohort, not between cycles; it is not read, U4-23) |
 | U4-28 | Unit of a printed cycle length that is a bare number (`28`) | **Superseded by U4-35 (#73): the caller structures this; `usdm4` no longer reads the text.** Was: **Taken 2026-09-26 (Dave, #68):** the cycle length row label's unit (`Approximate Duration (days)`), else the timing row label's (`Relative day within a cycle`). With no unit in either, not read, with a warning saying so — never defaulted to days (unlike U4-15); U4-23 then applies |
 | U4-29 | `entryCondition` of a conditional timeline with no printed `entry_condition` | **Taken 2026-09-26 (Dave, #70):** default text from the timeline type, with a warning — `unscheduled` → `Unscheduled visit`, `early_termination` → `Early termination`, `adverse_event` → `Adverse event`. **Rejected:** today's fixed `Paricipant identified` (says nothing about why the timeline is entered) |
-| U4-30 | Label of a shared `Encounter` (U4-5) when the printed visit text differs between the copies | **Taken 2026-09-26 (Dave, #70); not built — applies once U4-5's shared `Encounter` is.** The first timeline in input order sets the label (and the name, `T{t}-E{n}`); a warning names both texts. **Rejected:** the main timeline's text (an extra rule; main is almost always first) |
+| U4-30 | Label of a shared `Encounter` (U4-5) when the printed visit text differs between the copies | **Taken 2026-09-26 (Dave, #70); built #75.** The first timeline in input order sets the label (and the name, `T{t}-E{n}`); a warning names both texts. **Rejected:** the main timeline's text (an extra rule; main is almost always first) |
 | U4-31 | A profile attachment that would make a loop (the attached activity is reached again through the profile it calls, directly or through another profile) | **Taken 2026-09-26 (Dave, R7):** not attached, reported as an error; the profile is built unattached. Sharing an activity between timelines is fine (U4-12 unchanged); a loop is not — they are different things. Checked over the whole attachment graph, not just the direct case |
 | U4-32 | `attaches_to` names an activity with children | **Taken 2026-09-26 (Dave, R7):** not attached, reported as an error — DDF00160 forbids `timelineId` on a parent activity |
 | U4-33 | `attaches_to` names an activity that exists but is scheduled on no other timeline | **Taken 2026-09-26 (Dave, R7):** attached, with a warning |
@@ -844,3 +847,27 @@ withdrawn.
 
 **Seen, not this issue.** Period 2's instances are named `D-1-2`, `D1-2`, `D2-2`: `sai_name`
 de-duplicates rather than naming the period (as `ED-2` in § 17).
+
+## 21. As built — issue 75 (2026-09-27)
+
+Copied columns (U4-5 target, U4-30, U4-37) and no epoch sent (U4-6). Branch
+`75-copied-column-and-shared-encounter`. Schema change, additive: no caller breaks.
+
+- **Schema.** `ScheduleTimelineInput.id` (optional). `ColumnInput.copy_of`
+  `{timeline, column}` (`CopyOf`). A gate column cannot be a copy. `check_copies`, called
+  by `AssemblerInput`: ids unique and not blank; `copy_of` names an EARLIER timeline and a
+  column in it; the original is not itself a copy and not a gate.
+- **Parse.** `ParsedTimeline.id`; `Column.copy_of` as `(timeline id, column id)`.
+- **Build.** `SharedState.encounter_by_column` — every `Encounter` of a timeline with an
+  id, keyed `(timeline id, column id)`. A copy reuses the original's `Encounter` and does
+  not list it again; its instance, timing and activities are its own. Different visit
+  text: the original's label kept, warned (U4-30). Original not found (the check was not
+  run, or its timeline failed): own `Encounter`, warned.
+- **Epochs (U4-6).** A column with no epoch sent builds no `StudyEpoch`; its instance's
+  `epochId` is `None`. A blank column ends a redacted run (U4-13).
+- **Pins.** `nct05565742_r6` input: timeline ids `main`, `et`; ET `c14` `copy_of` main
+  `c14`, its epoch removed. Re-saved: 15 → 14 encounters, T2's instance on `T1-E14`,
+  `T2-PITAP` gone. `nct02674152_r7` (`T2-EP1`) and `nct04557384` (`T3-EP1`) re-saved:
+  the empty-label epoch gone, its instances' `epochId` `None`. Every other difference in
+  the three is `Code` id renumbering (one fewer epoch type code). Other pins unchanged.
+

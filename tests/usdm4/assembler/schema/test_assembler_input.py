@@ -88,6 +88,21 @@ class TestAssemblerInputValidation:
         with pytest.raises(ValidationError):
             AssemblerInput.model_validate(minimal_valid_dict)
 
+    def test_soa_copies_are_checked_across_timelines(self, minimal_valid_dict):
+        """Issue 75: ``copy_of`` is checked here, where every timeline is
+        visible."""
+        minimal_valid_dict["soa"] = [
+            {"type": "main", "id": "main", "columns": [{"id": "c1"}]},
+            {
+                "type": "early_termination",
+                "columns": [
+                    {"id": "c1", "copy_of": {"timeline": "main", "column": "c9"}}
+                ],
+            },
+        ]
+        with pytest.raises(ValidationError, match="'c9', which is not a column"):
+            AssemblerInput.model_validate(minimal_valid_dict)
+
     def test_soa_must_be_a_list(self, minimal_valid_dict):
         minimal_valid_dict["soa"] = {"type": "main"}
         with pytest.raises(ValidationError):

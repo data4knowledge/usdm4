@@ -59,6 +59,9 @@ class SharedState:
     biomedical_concept_surrogates: list[BiomedicalConceptSurrogate] = field(
         default_factory=list
     )
+    # (timeline id, column id) -> the column's Encounter, for copied columns
+    # (issue 75). Only timelines with an id register.
+    encounter_by_column: dict[tuple[str, str], Encounter] = field(default_factory=dict)
 
 
 @dataclass
@@ -154,10 +157,15 @@ class TimelineBuild:
         previous_redacted = False
         for column in self._timeline.columns:
             label = column.epoch_label or ""
+            redacted = column.is_redacted("epoch")
+            # Issue 75: no epoch sent, none linked (U4-6) — a subsidiary
+            # timeline rarely links to epochs.
+            if not redacted and not label.strip():
+                previous_redacted = False
+                continue
             # Keyed on the identity, not the raw text: `Screening` and
             # `Screening ` are one epoch stated twice.
             key = self._naming.identity(label)
-            redacted = column.is_redacted("epoch")
             if redacted:
                 if not previous_redacted:
                     redacted_run += 1
@@ -193,6 +201,12 @@ class TimelineBuild:
         )
         return results
 
+    def _epoch_id(self, index: int) -> str | None:
+        """The id of the epoch of the column at ``index``; ``None`` when no
+        epoch was sent (issue 75)."""
+        epoch = self._epoch_for.get(index)
+        return epoch.id if epoch else None
+
     # ------------------------------------------------------------------
     # Encounters
 
@@ -205,6 +219,11 @@ class TimelineBuild:
                 self._link(marker, timepoint=column.index)
             # A gate's column is not a visit (R8, U4-10 (a)): no Encounter.
             if Planner.is_gate(column):
+                continue
+            shared = self._copied_encounter(column)
+            if shared is not None:
+                # Issue 75: the same visit; not listed again.
+                self._encounter_for[column.index] = shared
                 continue
             encounter = self._builder.create(
                 Encounter,
@@ -232,11 +251,44 @@ class TimelineBuild:
             )
             results.append(encounter)
             self._encounter_for[column.index] = encounter
+            if self._timeline.id is not None:
+                self._state.encounter_by_column[(self._timeline.id, column.id)] = (
+                    encounter
+                )
         self._errors.info(
             f"Encounters: {len(results)}",
             KlassMethodLocation(self.MODULE, "_add_encounters"),
         )
         return results
+
+    def _copied_encounter(self, column) -> Encounter | None:
+        """The original's ``Encounter`` for a copied column (issue 75, U4-5),
+        else ``None`` and the column builds its own.
+
+        The original's timeline sets the label (U4-30): a copy printing
+        different visit text is warned, naming both. A copy whose original was
+        not built gets its own ``Encounter``, warned."""
+        if column.copy_of is None:
+            return None
+        location = KlassMethodLocation(self.MODULE, "_add_encounters")
+        where = f"Timeline {self._t}, column '{column.id}'"
+        timeline_id, column_id = column.copy_of
+        encounter = self._state.encounter_by_column.get(column.copy_of)
+        if encounter is None:
+            self._errors.warning(
+                f"{where}: copy of timeline '{timeline_id}' column '{column_id}', "
+                f"which was not built; given its own encounter",
+                location,
+            )
+            return None
+        text = (column.visit_label or "").strip()
+        if text and text != (encounter.label or "").strip():
+            self._errors.warning(
+                f"{where}: copy prints visit '{text}', the original "
+                f"'{encounter.label}'; the original's label kept",
+                location,
+            )
+        return encounter
 
     # ------------------------------------------------------------------
     # Activities
@@ -397,7 +449,7 @@ class TimelineBuild:
                     "timelineExitId": None,
                     "encounterId": encounter.id if encounter else None,
                     "defaultConditionId": None,
-                    "epochId": self._epoch_for[column.index].id,
+                    "epochId": self._epoch_id(column.index),
                     "activityIds": [],
                 },
             )
@@ -463,7 +515,7 @@ class TimelineBuild:
                 "timelineExitId": None,
                 "encounterId": None,
                 "defaultConditionId": None,
-                "epochId": self._epoch_for[column.index].id,
+                "epochId": self._epoch_id(column.index),
                 "activityIds": [],
             },
         )
@@ -485,7 +537,7 @@ class TimelineBuild:
                 "description": description,
                 "label": "",
                 "defaultConditionId": None,
-                "epochId": self._epoch_for[node.epoch_column].id,
+                "epochId": self._epoch_id(node.epoch_column),
                 "conditionAssignments": [],
             },
         )
@@ -509,7 +561,7 @@ class TimelineBuild:
                 "timelineExitId": None,
                 "encounterId": None,
                 "defaultConditionId": None,
-                "epochId": self._epoch_for[node.epoch_column].id,
+                "epochId": self._epoch_id(node.epoch_column),
                 "activityIds": [],
             },
         )
@@ -540,7 +592,7 @@ class TimelineBuild:
                 "timelineExitId": None,
                 "encounterId": None,
                 "defaultConditionId": None,
-                "epochId": self._epoch_for[node.epoch_column].id,
+                "epochId": self._epoch_id(node.epoch_column),
                 "activityIds": [],
             },
         )

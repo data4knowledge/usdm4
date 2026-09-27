@@ -1698,4 +1698,22 @@ Python 3.10, no `cdisc-rules-engine`. Install `simple_error_log`, `pydantic`, `p
 mount: set `COVERAGE_FILE` to a fresh directory under `/tmp`. The whole `tests/usdm4/assembler`
 directory hangs at `test_amendments_assembler.py`; run the timeline subset (the re-verify command)
 instead. `pkill -f <pattern>` kills the calling shell when its own command line matches.
+**2026-09-27 (#75):** copying `src` and `tests` out of the mount (`tar`, excluding `.git` and
+`__pycache__`) into `/tmp` and running there avoids both the `.coverage` and the permission
+problems; the rest of `tests/usdm4/assembler` then ran in 144 s (813 pass). A bash call is cut at
+about 3 minutes and a background process dies with it, so split a run to fit.
 
+## Absent is not the same as blank until the build says so (2026-09-27)
+
+Issue 75. Dropping the epoch from a copied column in the r6 pin was meant to remove a duplicate
+epoch. It would have replaced it with an empty-label one: the build treated "no epoch sent" as
+"epoch with empty text" and still created and linked a `StudyEpoch`. Two other pins already
+carried that defect unnoticed (`T2-EP1`, `T3-EP1`). Before removing a value from a fixture to make
+an object disappear, check what the build does with the value absent — run it and look.
+
+## A memory note is not repo state (2026-09-27)
+
+A project memory line said Dave had "given up on the expander". It was read as the work being
+abandoned, and a non-existent "release rule" problem was built on it. The repo docs said the
+opposite. When a note and the repo disagree, the repo is the state; ask what the note means rather
+than infer from it.

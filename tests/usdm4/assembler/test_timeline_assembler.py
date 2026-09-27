@@ -251,28 +251,112 @@ class TestConditionalTimelines:
         assert et.entryId == et.instances[0].id
         assert et.exits and et.instances[-1].timelineExitId == et.exits[0].id
 
-    def test_a_copied_column_gets_its_own_encounter_for_now(self, assembler):
-        """U4-5 interim (2026-09-26): column ids are scoped to one timeline,
-        so a visit printed in two timelines is two Encounters until a copy
-        reference exists (`protocol_corpus` register N78). Pinned so the change is seen when it lands."""
-        main = timeline(
+
+class TestCopiedColumns:
+    """Issue 75 (U4-5, U4-30, U4-37): a column printed in two timelines is one
+    visit — one ``Encounter`` shared, an instance per timeline."""
+
+    @staticmethod
+    def _main():
+        return timeline(
             [
                 column("c1", "Treatment", "V1", "Day 1"),
-                column("c2", "Treatment", "ED", "Day 1"),
-            ]
+                column("c2", "Treatment", "ED", "Day 8"),
+            ],
+            [activity("Consent", ["c1"]), activity("Vitals", ["c2"])],
+            id="main",
         )
-        et = timeline(
-            [column("c2", "Treatment", "ED", "Day 1")], type="early_termination"
+
+    @staticmethod
+    def _et(visit="ED", copy_of=("main", "c2"), id="et"):
+        extra = {"copy_of": {"timeline": copy_of[0], "column": copy_of[1]}}
+        return timeline(
+            [column("c1", None, visit, "Day 1", **extra)],
+            [activity("Vitals", ["c1"]), activity("Exit Interview", ["c1"])],
+            type="early_termination",
+            id=id,
         )
-        assembler.execute([main, et])
+
+    @staticmethod
+    def _copy_messages(errors):
+        return [m for m in messages(errors) if "copy" in m]
+
+    def test_one_encounter_shared(self, assembler, errors):
+        assembler.execute([self._main(), self._et()])
         assert [(e.name, e.label) for e in assembler.encounters] == [
             ("T1-E1", "V1"),
             ("T1-E2", "ED"),
-            ("T2-E1", "ED"),
         ]
-        ed_main = assembler.timelines[0].instances[1].encounterId
-        ed_et = assembler.timelines[1].instances[0].encounterId
-        assert ed_main != ed_et
+        ed_main = assembler.timelines[0].instances[1]
+        ed_et = assembler.timelines[1].instances[0]
+        assert ed_main.encounterId == ed_et.encounterId == assembler.encounters[1].id
+        assert self._copy_messages(errors) == []
+
+    def test_each_timeline_keeps_its_own_instance_and_activities(self, assembler):
+        assembler.execute([self._main(), self._et()])
+        ed_main = assembler.timelines[0].instances[1]
+        ed_et = assembler.timelines[1].instances[0]
+        assert ed_main.id != ed_et.id
+        names = {a.id: a.label for a in assembler.activities}
+        assert [names[i] for i in ed_main.activityIds] == ["Vitals"]
+        assert sorted(names[i] for i in ed_et.activityIds) == [
+            "Exit Interview",
+            "Vitals",
+        ]
+
+    def test_a_copy_has_no_epoch_when_none_is_sent(self, assembler):
+        assembler.execute([self._main(), self._et()])
+        assert [e.label for e in assembler.epochs] == ["Treatment"]
+
+    def test_different_visit_text_keeps_the_original_label_and_warns(
+        self, assembler, errors
+    ):
+        assembler.execute([self._main(), self._et(visit="Early Discontinuation")])
+        assert [e.label for e in assembler.encounters] == ["V1", "ED"]
+        assert self._copy_messages(errors) == [
+            (
+                "Timeline 2, column 'c1': copy prints visit 'Early Discontinuation', "
+                "the original 'ED'; the original's label kept"
+            )
+        ]
+
+    def test_no_visit_text_takes_the_original_silently(self, assembler, errors):
+        assembler.execute([self._main(), self._et(visit=None)])
+        assert len(assembler.encounters) == 2
+        assert self._copy_messages(errors) == []
+
+    def test_same_text_with_spaces_is_not_warned(self, assembler, errors):
+        assembler.execute([self._main(), self._et(visit=" ED ")])
+        assert self._copy_messages(errors) == []
+
+    def test_original_not_built_gives_its_own_encounter_and_warns(
+        self, assembler, errors
+    ):
+        """Reached only when the cross-timeline check was not run (the
+        assembler called directly) or the original's timeline failed."""
+        assembler.execute([self._main(), self._et(copy_of=("nope", "c2"))])
+        assert [e.name for e in assembler.encounters] == ["T1-E1", "T1-E2", "T2-E1"]
+        assert self._copy_messages(errors) == [
+            (
+                "Timeline 2, column 'c1': copy of timeline 'nope' column 'c2', which "
+                "was not built; given its own encounter"
+            )
+        ]
+
+    def test_a_timeline_with_no_id_registers_nothing(self, assembler, errors):
+        main = self._main()
+        main["id"] = None
+        assembler.execute([main, self._et()])
+        assert len(assembler.encounters) == 3
+        assert any("which was not built" in m for m in messages(errors))
+
+    def test_uncopied_columns_are_unchanged(self, assembler):
+        """Without copy_of, a column in two timelines is two Encounters —
+        column ids are scoped to one timeline (U4-5)."""
+        et = self._et()
+        et["columns"][0]["copy_of"] = None
+        assembler.execute([self._main(), et])
+        assert [e.name for e in assembler.encounters] == ["T1-E1", "T1-E2", "T2-E1"]
 
 
 class TestProfileAttachment:
@@ -591,10 +675,26 @@ class TestEpochs:
             "Period II - Screening",
         ]
 
-    def test_a_column_with_no_epoch_gets_an_empty_labelled_epoch(self, assembler):
-        """Today's behaviour, kept until decision U4-6 is taken."""
+    def test_a_column_with_no_epoch_links_none(self, assembler):
+        """Issue 75 (U4-6): no epoch sent, no epoch built or linked."""
         assembler.execute([timeline([column("c1"), column("c2")])])
-        assert [(e.name, e.label) for e in assembler.epochs] == [("EP1", "")]
+        assert assembler.epochs == []
+        assert [i.epochId for i in assembler.timelines[0].instances] == [None, None]
+
+    def test_only_the_columns_with_no_epoch_link_none(self, assembler):
+        assembler.execute([timeline([column("c1", "Screening"), column("c2")])])
+        first, second = assembler.timelines[0].instances
+        assert [e.label for e in assembler.epochs] == ["Screening"]
+        assert (first.epochId, second.epochId) == (assembler.epochs[0].id, None)
+
+    def test_a_blank_epoch_ends_a_redacted_run(self, assembler):
+        """A column with no epoch between two redacted ones: the second is a
+        new redacted run (issue 64, U4-13)."""
+        cci = {"text": "CCI", "redacted": True}
+        assembler.execute(
+            [timeline([column("c1", cci), column("c2"), column("c3", cci)])]
+        )
+        assert [e.name for e in assembler.epochs] == ["CCI", "CCI2"]
 
     def test_epochs_are_per_timeline(self, assembler):
         assembler.execute([simple(), simple("profile")])

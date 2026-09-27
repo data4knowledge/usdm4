@@ -25,6 +25,7 @@ from simple_error_log.errors import Errors
 from src.usdm4.api.serialize import serialize_as_json
 from src.usdm4.assembler.schema.schedule_timeline_schema import (
     ScheduleTimelineInput,
+    check_copies,
 )
 from src.usdm4.assembler.timeline_assembler import TimelineAssembler
 from src.usdm4.builder.builder import Builder
@@ -58,9 +59,12 @@ def builder():
 
 def _input(case: str) -> list[dict]:
     """The input as the Assembler hands it on: validated against
-    ``ScheduleTimelineInput`` and dumped, exactly as in production."""
+    ``ScheduleTimelineInput``, checked across timelines (``check_copies``, as
+    ``AssemblerInput`` does) and dumped, exactly as in production."""
     data = json.loads(read_json_file(SUB_DIR, f"input_{case}.json"))
-    return [ScheduleTimelineInput.model_validate(t).model_dump() for t in data["soa"]]
+    timelines = [ScheduleTimelineInput.model_validate(t) for t in data["soa"]]
+    check_copies(timelines)
+    return [t.model_dump() for t in timelines]
 
 
 def _output(assembler: TimelineAssembler) -> str:

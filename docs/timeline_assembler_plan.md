@@ -1,7 +1,7 @@
 # Timeline assembler — plan of work
 
 **Status: 2026-09-27. Rate of change: per issue. Retired when the last issue below is
-closed.** Issues 63–71 and 73 merged; R8 built on #74. Sections for merged issues are the record of
+closed.** Issues 63–71, 73, 74 (R8) and 75 (copied columns) merged. Sections for merged issues are the record of
 what was planned; where they mention patterns or printed-text reading, issue 73
 (U4-35) has since replaced that input — design § 3, § 19. The design is `timeline_assembler_design.md`; this file is the order the
 work is done in, what each issue delivers and how each is gated. One issue, one
@@ -185,8 +185,8 @@ only — the NCT04557384 pin input carries no cycle fields and is left alone unt
 Cycle reading → R5 → R6 → R7, one issue each, each merged when its gate passes. The
 expander is its own issue, off the build path: nothing that builds USDM from a
 protocol calls it (not the assembler, `validate/`, `usdm4_protocol` or the corpus
-tooling — only `usdm4`'s own tests). It gates the **release**, not the build: no
-`usdm4` release is cut once R5 is merged until the expander issue is merged too.
+tooling — only `usdm4`'s own tests). It is the **last** issue (Dave, 2026-09-27): nothing that uses `usdm4` depends on it, so it
+does not gate a release. Until it is merged the expander recurses without end on a looped timeline.
 Every issue below is checked against the input schema; a schema change is its own
 issue, merged first. **Issue 73 changed it** (structured input, U4-35 — design § 3,
 § 19), merged before R8. *(The "frozen, B and C told" rule of the three-machine
@@ -228,8 +228,8 @@ Cycle 2, then `Cycle 3 and beyond` on Day 1 and Day 15; 4-week cycle. NCT0210770
 
 Design § 7: take one pass through the range, then the decision's exit branch; never
 unroll. Built and tested on hand-written USDM with a decision loop — it needs nothing
-from R5 and can be done before, alongside or after it. Decide U4-11 first. Must be
-merged before the next `usdm4` release that contains R5. Before release, check whether
+from R5 and can be done before, alongside or after it. Decide U4-11 first. It is
+worked last (Dave, 2026-09-27); it does not gate a release. Before building it, check whether
 SDW or `usdm4_pj` call this expander; if they do, they are consumers of the change.
 
 ## R6 — conditional timelines and copies
@@ -237,7 +237,9 @@ SDW or `usdm4_pj` call this expander; if they do, they are consumers of the chan
 **#70 merged 2026-09-26** (branch `70-r6-copied-columns`) — as built: design § 17.
 Full suite green (Dave, VSCode). Copied columns deferred: one `Encounter` per timeline until
 a copy reference exists (U4-5 interim; fix logged as `protocol_corpus` `N78`, a schema issue). Test case NCT05565742
-(main + ED).
+(main + ED). **Copies: #75 merged** (2026-09-27, branch
+`75-copied-column-and-shared-encounter`): `copy_of` on `ColumnInput`, timeline `id`; with it
+U4-6 (no epoch sent, none linked) — design § 21.
 
 Sibling timelines with `entryCondition`; a column in two timelines (U4-5). U4-5 target
 2026-09-26: one shared `Encounter`, an instance per timeline (design § 9). Schema check
@@ -247,7 +249,7 @@ accepted where R6 needs it — no schema change.
 
 ## R7 — profile attachment
 
-**#71, branch `71-r7-profile-attachment`, closed 2026-09-26, not yet merged** (full suite green, Dave, VSCode) — as built: design § 18.
+**#71 merged 2026-09-26** (branch `71-r7-profile-attachment`) — as built: design § 18.
 
 `attaches_to` → `Activity.timelineId`; unattached profiles reported. Schema already
 carries it; `ParsedTimeline` drops it today (as R6 found for `entry_condition`).
@@ -270,7 +272,7 @@ activity-level attachment (out of scope) nests the whole schedule in every PK vi
 
 ## R8 — gates
 
-**Built 2026-09-27 on issue #74** (branch `74-r8-washout-variable-delay`; #72 closed unbuilt)
+**#74 merged 2026-09-27** (branch `74-r8-washout-variable-delay`; #72 closed unbuilt)
 — as built: design § 20. U4-10 (c) and U4-36 taken 2026-09-27. Test case NCT03069989,
 input written by hand in the structured form. U4-14 withdrawn.
 

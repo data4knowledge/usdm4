@@ -28,7 +28,9 @@ applies the Day 0 rule using the timeline's ``day_zero`` flag.
 
 This module checks STRUCTURE only — required fields, types, value ranges and
 references inside one timeline (column ids, cell columns, activity parents,
-footnote markers).
+footnote markers). References ACROSS timelines — a column copied from another
+timeline (``copy_of``, issue 75, U4-37) — are checked by ``check_copies``,
+which ``AssemblerInput`` calls on its ``soa``.
 
 Unknown keys are refused (``extra="forbid"``). An input that dropped them
 silently once hid a classification field from the assembler for some time; a
@@ -304,11 +306,23 @@ class HeaderNote(_Model):
     text: str
 
 
+class CopyOf(_Model):
+    """The column a copied column repeats (issue 75, U4-37): the id of the
+    timeline it is printed in first and its column id there. The two share
+    one ``Encounter``."""
+
+    timeline: str
+    column: str
+
+
 class ColumnInput(_Model):
     """One column of the schedule, in document order. Footnote markers sit
-    on the value they are printed on, not on the column (issue 64)."""
+    on the value they are printed on, not on the column (issue 64).
+    ``copy_of`` marks a column printed in two timelines — the same visit —
+    and names the original (issue 75)."""
 
     id: str
+    copy_of: CopyOf | None = None
     epoch: LabelValue | None = None
     visit: LabelValue | None = None
     cycle: CycleValue | None = None
@@ -322,6 +336,10 @@ class ColumnInput(_Model):
     def _check(self) -> "ColumnInput":
         if not self.id.strip():
             raise ValueError("a column id may not be blank")
+        if self.delay is not None and self.copy_of is not None:
+            raise ValueError(
+                f"column {self.id!r}: a gate is not a visit, so it cannot be a copy"
+            )
         if self.delay is not None and (
             self.timing is not None or self.window is not None
         ):
@@ -379,6 +397,9 @@ class ScheduleTimelineInput(_Model):
     ``TimelineInput`` in issue 63; structured in issue 73."""
 
     type: TimelineType
+    # Names the timeline for references across timelines (``copy_of``,
+    # U4-37). Unique across the assembly when given.
+    id: str | None = None
     title: str | None = None
     description: str | None = None
     entry_condition: str | None = None
@@ -452,3 +473,56 @@ class ScheduleTimelineInput(_Model):
                 f"{self.type!r}"
             )
         return self
+
+
+def check_copies(timelines: list[ScheduleTimelineInput]) -> None:
+    """References across timelines (issue 75, U4-37). Raises ``ValueError``.
+
+    - A timeline ``id`` is unique across the assembly and may not be blank.
+    - ``copy_of`` names the id of an EARLIER timeline — the original's
+      ``Encounter`` exists when the copy is built — and a column in it.
+    - The original is not itself a copy, and not a gate (a gate has no
+      ``Encounter``).
+    """
+    position: dict[str, int] = {}
+    for index, timeline in enumerate(timelines):
+        if timeline.id is None:
+            continue
+        if not timeline.id.strip():
+            raise ValueError(f"timeline {index + 1}: an id may not be blank")
+        if timeline.id in position:
+            raise ValueError(f"timeline ids must be unique; repeated: {timeline.id!r}")
+        position[timeline.id] = index
+    for index, timeline in enumerate(timelines):
+        for column in timeline.columns:
+            ref = column.copy_of
+            if ref is None:
+                continue
+            where = f"timeline {index + 1}, column {column.id!r}"
+            if ref.timeline not in position:
+                raise ValueError(
+                    f"{where}: copy_of names timeline {ref.timeline!r}, which is "
+                    f"not a timeline id"
+                )
+            if position[ref.timeline] >= index:
+                raise ValueError(
+                    f"{where}: copy_of names timeline {ref.timeline!r}, which is "
+                    f"not earlier in the input"
+                )
+            source = timelines[position[ref.timeline]]
+            original = next((c for c in source.columns if c.id == ref.column), None)
+            if original is None:
+                raise ValueError(
+                    f"{where}: copy_of names column {ref.column!r}, which is not "
+                    f"a column of timeline {ref.timeline!r}"
+                )
+            if original.copy_of is not None:
+                raise ValueError(
+                    f"{where}: copy_of names {ref.timeline!r} column "
+                    f"{ref.column!r}, which is itself a copy; name its original"
+                )
+            if original.delay is not None:
+                raise ValueError(
+                    f"{where}: copy_of names {ref.timeline!r} column "
+                    f"{ref.column!r}, which is a gate, not a visit"
+                )
