@@ -4,7 +4,8 @@
 inputs in the old ``TimelineInput`` shape. 63.5 rewrote those inputs once,
 mechanically, into ``ScheduleTimelineInput``; the restructured assembler
 reproduces the 63.1 output exactly, apart from the differences listed in
-``docs/timeline_assembler_plan.md`` 63.5, each recorded with its reason.
+the retired ``docs/timeline_assembler_plan.md`` 63.5 (git history), each
+recorded with its reason.
 
 Inputs live in ``tests/usdm4/test_files/timeline_pin/input_*.json`` (a
 ``source`` note, a ``converted`` note, and the ``soa`` list). Expected output

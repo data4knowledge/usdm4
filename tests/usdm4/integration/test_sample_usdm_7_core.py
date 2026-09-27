@@ -75,7 +75,7 @@ SAMPLE_PATH: pathlib.Path = (
 #     and *every* rule crash, so CORE reports nothing.
 #   * Set grows / changes → suspect cache-isolation regression first
 #     (does the result depend on test order?), then investigate against
-#     the assembler-to-core baseline and the divergence index.
+#     the assembler-to-core baseline and docs/cre_issues.md.
 _EXPECTED_FAILING_RULES = frozenset(
     {
         "CORE-000971",

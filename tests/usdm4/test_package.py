@@ -41,7 +41,7 @@ def test_example_1():
         "real data issues (DDF00035/00040/00087/00088/00172/00181/00182/00185/"
         "00188/00189/00201/00236/00187/00247/00259), and at least one rule-"
         "interpretation to revisit (DDF00010 model-wide name uniqueness — likely "
-        "should be per-parent). See docs/next_steps.md §4 (Stage 4)."
+        "should be per-parent). See docs/issues.md N5."
     ),
     strict=True,
 )

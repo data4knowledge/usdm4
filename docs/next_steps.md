@@ -1,19 +1,13 @@
-# USDM4 validation engine — next steps
+# USDM4 — next steps
 
-What's still open. The rule library is feature-complete (210 of 210 V4
-DDF rules covered, 207 implemented + 3 delegated to DDF00082's schema
-validation). CRE-vs-d4k reconciliation is at the no-known-d4k-bugs
-state on CRE 0.16.0; the corpus baseline of record is
-`validate/corpus_cre_0_16/` and the bug catalogue is in
-`docs/cre_issues.md`. Read this file alongside `lessons_learned.md`
-(the *how*) and `rule_generation_retrospective.md` (the as-built
-record of the rule generation process).
+The immediate plan: which open issues are being worked, in what order, and the session log.
 
-> Per-rule status of every CRE-vs-d4k divergence currently lives in
-> `docs/d4k_cre_divergence_index.md`. When something below references "the
-> CT-membership cluster" or "the cross-reference traversal rules" or "the
-> first-chain-head rules", that index has the row-by-row breakdown with
-> file counts and authority pointers. Look there first.
+The docs: `aims.md` (what the package is for), `issues.md` (open problems, `N<n>`),
+`spec/` (designs — `spec/timeline_assembler.md`), `cre_issues.md` (CORE vs d4k reference),
+`lessons_learned.md` (durable lessons).
+
+State of the rule library: all 210 V4 DDF rules covered (207 implemented, 3 delegated to
+DDF00082's schema check).
 
 ## Next steps (2026-09-27)
 
@@ -21,20 +15,93 @@ Normal development: one issue at a time, gate is tests and pins. The three-machi
 (A/B/C) is dropped. Test inputs are written here in `usdm4`'s structured form — nothing waits on
 `protocol_corpus` ground truth.
 
-1. **#76, the expander — built, full suite green, merge next** (branch `76-expander-update`,
-   U4-11 taken, design § 22). Before merging, check whether SDW or `usdm4_pj` call the
-   expander: `Timepoint.to_dict` gains `"pass"` and sub-timeline times change (now correct).
-2. Cut a release (#73–#76 unreleased; `usdm4_protocol` needs them). Version is Dave's.
-3. Candidates after that, in order: the placeholder procedure code `12345` (`build.py`); CORE-000938
-   waived in `tests/usdm4/integration/test_assembler_to_core.py`; small output defects
-   (`Paricipant` typo, `plannedDuration` `None`, `≥ 1 weeks`, `ED-2` / `D1-2` names).
-
-Order and schema checks: `timeline_assembler_plan.md` § *Order from here*.
+1. In order: N1 (placeholder code `12345`); N2, starting with CORE-000938; N3.
 
 ## Session Log
 
 Newest first. This repo's own log: every session that works a `usdm4` issue is entered here in
 full, whichever Claude project drove it (see `CLAUDE.md` § *Session log*).
+
+References in entries up to 2026-09-27 to "design § n" and "plan …" are to
+`timeline_assembler_design.md` and `timeline_assembler_plan.md`, both retired that day (git
+history). The design's as-built sections are now in the entries they belong to; the current
+rules and decisions (U4-n) are in `docs/spec/timeline_assembler.md`.
+
+### 2026-09-27 — DOCS TIDIED (no GitHub issue, `main`): aims, issues register N1–N13, one CORE-vs-d4k reference, timeline spec
+- `usdm4`, branch not captured (no git run). Driven from the USDM4 project. No sibling repo read
+  or written. Docs, docstrings and comments only; no code behaviour changed; nothing run.
+
+**What it was.** `docs/` held ten files. Five recorded finished work (a May debugging pass, the
+retired rule generator, the corpus extractor fix list, the timeline plan whose own status said
+"retired when the last issue is closed"), two split one subject (CRE bugs and the divergence
+index), and open problems were scattered through them and through `next_steps.md` §1–§9 below
+the log. Several asserted things the code no longer does.
+
+**What changed.**
+- `docs/aims.md` (new) — purpose, what the package provides (file handling, builder and
+  assembler, the two validators), principles, scope. Wording ruled by Dave: `usdm4` provides the
+  common basic facilities other packages build on and does not do everything; the validators
+  check a JSON file and report — no conclusions, the user decides; convert is USDM3 → USDM4;
+  callers are not named.
+- `docs/issues.md` (new) — open problems only, `N<n>`, never reused (Dave: same series style as
+  the other repos). N1–N13; see *Found* for N12, N13.
+- `docs/cre_issues.md` — `d4k_cre_divergence_index.md` merged in as the lookup table, pointers
+  fixed (DDF00227 row, DDF00087/88 → N6), the settled d4k departures (DDF00164/165, DDF00187)
+  moved in from `next_steps.md` § 4, CT-family lists reconciled, open follow-ups → N7, N8.
+  Issue 5's workaround corrected to #54's `executionStatus` classification; a note that the
+  corpus baseline predates #54.
+- `docs/spec/timeline_assembler.md` (new; `docs/spec/` is where designs go, Dave) — the spec
+  part of the old design (§ 1, 3, 5, 6, 7) plus the U4 decisions sorted, superseded rows one
+  line each. Drift fixed against the code: R1–R3 "Today" notes, R2 no-epoch rule (U4-6), R4.3
+  chain (U4-27), R4.6 mixed units, R6–R8 as built, input example with `id` and `copy_of`. The
+  pointer to `protocol_corpus/docs/spec/soa_two_stage.md` removed (Dave): R1–R9 are defined here.
+- `docs/next_steps.md` — header lists the docs; *Next steps* corrected (#76 merged). The design's § 2, § 4 and § 10–§ 22 moved into the #63–#76 entries as *As built*; a
+  note atop the log says "design § n" / "plan" references are to retired files. Old §1–§8 →
+  N2, N5–N10; § 9 → the 2026-07-30 entry; § 10 and the "Moved" note removed.
+- `docs/lessons_learned.md` — § 9 rewritten as "Adding or changing a rule" (the retrospective's
+  recipe; the dead `feedback_usdm4_rule_test_pattern` memory pointer replaced by
+  `test_rule_ddf00035.py`); § 5 gains "Retired 2026-05-02"; this session's lesson.
+- Repo-root `memory.md` retired (same layout as the other repos: the log lives here). Its three
+  August entries, found nowhere else, moved into this log in date order; its September entries
+  were short copies of entries here.
+- Deleted: `corpus_extractor_fixes.md` (by Dave), `assembler_validation_findings.md`,
+  `d4k_cre_divergence_index.md`, `rule_generation_retrospective.md`,
+  `timeline_assembler_design.md`, `timeline_assembler_plan.md`.
+- References repointed: `CLAUDE.md` (docs line); `validate/README.md`;
+  `validate/corpus_adapter.py` docstring (+ the missing `_adapt_non_standard_orgs` bullet);
+  `src/usdm4/assembler/timeline_assembler.py`, `timeline/__init__.py`,
+  `schema/schedule_timeline_schema.py`, `schema/assembler_input.py`; tests
+  `test_package.py` (xfail reason → N5), `integration/test_assembler_to_d4k.py` (docstring,
+  xfail reason → N2), `integration/README.md`, `integration/test_sample_usdm_7_core.py`,
+  `assembler/schema/test_schedule_timeline_schema.py`, `assembler/test_timeline_pin.py`; the six
+  `timeline_pin/input_*.json` `converted` notes. Every bare `N78` marked `protocol_corpus` N78.
+
+**The numbers.** `docs/` 10 files → 5 plus `spec/timeline_assembler.md`. Timeline docs 1,219
+lines → spec 410. Edited Python files parse; pin JSON files load. Tests not run (text-only
+changes in docstrings and string values).
+
+**Rejected.** `cre_issues.md` as a section of `issues.md` (most of it is settled reference; it
+would bury the open items). `I<n>` numbering (Dave: `N<n>`). Deleting the design's as-built
+sections outright (the session log pointed at them). Naming callers in `aims.md` (Dave).
+"Anything failing both engines is a `usdm4` defect" (Dave: too strict).
+
+**Found, not this work.**
+- N12: a timing in a unit other than the anchor's is warned and timed by its printed number;
+  the design claimed exact conversion, never built.
+- N13: `Convert` is USDM3 → USDM4 but reads no input version; two fixtures say `2.11.0`.
+- N11: empty population label still fails assembly (Finding 8 of May, confirmed in code).
+- `lessons_learned.md` § 10 still says "123 of 210" implemented — a dated snapshot, not current.
+- The `save-session` skill still names `timeline_assembler_design.md` and
+  `timeline_assembler_plan.md` as `usdm4` targets; both are retired.
+
+**Next.**
+1. N1, then N2 from CORE-000938, then N3. N1 first: a made-up LOINC code goes into every
+   assembled study.
+
+Re-verify (the files touched that carry code or tests):
+```
+python3 -m pytest tests/usdm4/test_package.py tests/usdm4/integration/test_assembler_to_d4k.py tests/usdm4/assembler/test_timeline_pin.py tests/usdm4/assembler/schema -q
+```
 
 ### 2026-09-27 — ISSUE 76 BUILT (GitHub 76, branch `76-expander-update`): a loop is run twice, a gate to its minimum
 - `usdm4 @ 76-expander-update`. Driven from the USDM4 project. No sibling repo read or written.
@@ -51,7 +118,7 @@ run until the minimum has passed, then left. The expander is illustrative, not n
 Claude's, in the issue text, not objected to: minimum read from `≥ N <unit>` / `>= N <unit>`;
 a loop is a branch back to an instance already reached; pass number on each timepoint.
 
-**What changed.** Design § 22 lists it.
+**What changed.** Listed under *As built* below.
 - `src/usdm4/expander/expander.py` — iterative walk with a step limit; `_decide`, `_loop`,
   `_minimum`, `_hop` (chain to the anchor, with anchor id); shift on loop re-entry and on a
   new anchor; `_sub_timelines`, `_next_after_activity` split out.
@@ -84,21 +151,52 @@ from the decision, is re-timed. Keeping the recursion with a visited set (a repe
 shown if a visited instance is never re-entered).
 
 **Found, not this issue.** Sub-timelines were mis-timed before this change (each point added
-to the previous point's time); fixed here, since the new walk replaced that code. Not checked:
-whether SDW or `usdm4_pj` call the expander (repos not mounted).
+to the previous point's time); fixed here, since the new walk replaced that code.
 
 **Next.**
-1. Merge #76. First check whether SDW or `usdm4_pj` call the expander — they see `"pass"` and
-   the corrected profile times.
-2. Cut a release: #73–#76 are unreleased and `usdm4_protocol` needs the structured input and
-   `copy_of`. Version is Dave's.
-3. Then the placeholder procedure code `12345` (`build.py`) — it puts a made-up code into
+1. Merge #76.
+2. Then the placeholder procedure code `12345` (`build.py`) — it puts a made-up code into
    every assembled USDM; then CORE-000938; then the small output defects.
 
 Re-verify:
 ```
 python3 -m pytest tests/usdm4/expander tests/usdm4/assembler/test_timeline_assembler.py -q
 ```
+
+**As built** (moved 2026-09-27 from the retired `timeline_assembler_design.md` § 22).
+
+U4-11. Branch `76-expander-update`. `src/usdm4/expander/` only; the assembler is unchanged.
+
+- **Walk.** `Expander._process_si` walks a timeline in a loop, not by recursion; a step
+  limit (`STEP_LIMIT`, 10,000) ends any loop the rules below do not, as an error.
+- **Loop.** A decision with one condition whose branch leads to an instance already reached
+  on this walk is a loop. No readable minimum: back the first time the decision is
+  reached, out the second. A minimum (`≥ 7 days …`, `>= 3 days`; minutes to years, a month
+  30 days, a year 365, as `Tick`): out once the decision's time less the loop start's first
+  time reaches it. A `days <op> n` condition keeps the original test; a non-loop,
+  non-`days` condition keeps the default plus error; two or more conditions as before.
+- **Time.** An instance's time is its timing chain to its Fixed Reference (`_hop`) plus a
+  shift. The shift moves when a decision leads back into a loop (the loop start falls at
+  the decision's time) and when an instance hangs from a different anchor than the last
+  (period 2 after a gate starts at the decision's time; without a decision, at the
+  previous instance's time). A decision is timed by its own timing, else the previous
+  instance's time.
+- **Sub-timelines.** Timed from the calling instance: base + chain. Before, each instance
+  added its chain to the previous instance's time, so a profile's third point onwards was
+  wrong (R7 pin: `1:30` came out at 2 h 55 m).
+- **Timepoint.** `pass_number` (1 outside a loop; the count of times the walk reached the
+  instance); `to_dict` gains `"pass"`.
+- **Tests.** `tests/usdm4/expander/test_expander_loops.py`: hand-written cycle and gate
+  loops, minimum units, anchors, sub-timeline timing, guards; the R5, R7 and R8 pin
+  outputs expanded. Existing expander tests unchanged and passing. Other pins expand as
+  before.
+
+**Ruled (Dave, 2026-09-27).** The expander shows everything that happens to a subject, day
+by day, so every repeat is shown: a gate with a 7-day minimum and a 1-day loop gives seven
+timepoints for the gate instance, passes 1–7. Never collapse repeats.
+
+**Accepted as is (Dave).** A loop whose start is a predose `Day -1` gets its second pass one day late (the decision
+falls at the next `Day 1`; the loop start is placed there).
 
 ### 2026-09-27 — ISSUE 75 MERGED (GitHub 75, branch `75-copied-column-and-shared-encounter`): a copied column shares one Encounter; no epoch sent, none linked
 - `usdm4 @ 75-copied-column-and-shared-encounter`. Driven from the USDM4 project. No sibling repo
@@ -166,6 +264,29 @@ Re-verify:
 python3 -m pytest tests/usdm4/assembler/timeline tests/usdm4/assembler/test_timeline_assembler.py tests/usdm4/assembler/test_timeline_pin.py tests/usdm4/assembler/schema -q
 ```
 
+**As built** (moved 2026-09-27 from the retired `timeline_assembler_design.md` § 21).
+
+Copied columns (U4-5 target, U4-30, U4-37) and no epoch sent (U4-6). Branch
+`75-copied-column-and-shared-encounter`. Schema change, additive: no caller breaks.
+
+- **Schema.** `ScheduleTimelineInput.id` (optional). `ColumnInput.copy_of`
+  `{timeline, column}` (`CopyOf`). A gate column cannot be a copy. `check_copies`, called
+  by `AssemblerInput`: ids unique and not blank; `copy_of` names an EARLIER timeline and a
+  column in it; the original is not itself a copy and not a gate.
+- **Parse.** `ParsedTimeline.id`; `Column.copy_of` as `(timeline id, column id)`.
+- **Build.** `SharedState.encounter_by_column` — every `Encounter` of a timeline with an
+  id, keyed `(timeline id, column id)`. A copy reuses the original's `Encounter` and does
+  not list it again; its instance, timing and activities are its own. Different visit
+  text: the original's label kept, warned (U4-30). Original not found (the check was not
+  run, or its timeline failed): own `Encounter`, warned.
+- **Epochs (U4-6).** A column with no epoch sent builds no `StudyEpoch`; its instance's
+  `epochId` is `None`. A blank column ends a redacted run (U4-13).
+- **Pins.** `nct05565742_r6` input: timeline ids `main`, `et`; ET `c14` `copy_of` main
+  `c14`, its epoch removed. Re-saved: 15 → 14 encounters, T2's instance on `T1-E14`,
+  `T2-PITAP` gone. `nct02674152_r7` (`T2-EP1`) and `nct04557384` (`T3-EP1`) re-saved:
+  the empty-label epoch gone, its instances' `epochId` `None`. Every other difference in
+  the three is `Code` id renumbering (one fewer epoch type code). Other pins unchanged.
+
 ### 2026-09-27 — ISSUE 74 BUILT (GitHub 74, branch `74-r8-washout-variable-delay`): a washout is a gate; the period after it has its own anchor
 - `usdm4 @ 74-r8-washout-variable-delay`. Driven from the USDM4 project. #72 closed unbuilt (it held
   docs only); R8 raised again as #74. The three-machine arrangement dropped (Dave): next steps live
@@ -190,7 +311,7 @@ from period 1's `Day 1` and warned as a restart.
   Day 8 to Day 15 in period 2's numbering (final dose Day 1). Activities and footnote texts in the
   input are illustrative.
 
-**What changed.** Design § 20 lists it. `plan.py` (`is_gate`, `_periods`, per-period anchors,
+**What changed.** Listed under *As built* below. `plan.py` (`is_gate`, `_periods`, per-period anchors,
 `_gate_nodes`, `TimelinePlan.anchors`, restart warning "with no gate before it"); `build.py` (no
 `Encounter` for a gate column, `_add_gate`, gate decision and end, `gate_condition`); `naming.py`
 (`gate_name`); `columns.py` (R8 warning gone). Tests: `test_plan.py` `TestGates` (15),
@@ -220,12 +341,50 @@ not period-named), as `ED-2` in #70. `gate_condition` pluralises naively (`≥ 1
 **Next.**
 1. ~~Merge #74~~ — done.
 2. U4-11, then the expander issue — before the next release.
-3. N78, copied columns.
+3. `protocol_corpus` N78, copied columns.
 
 Re-verify:
 ```
 python3 -m pytest tests/usdm4/assembler/timeline tests/usdm4/assembler/test_timeline_assembler.py tests/usdm4/assembler/test_timeline_pin.py tests/usdm4/assembler/schema -q
 ```
+
+**As built** (moved 2026-09-27 from the retired `timeline_assembler_design.md` § 20).
+
+R8, gates (§ 6 R8, U4-10 (a)–(c), U4-36). Branch `74-r8-washout-variable-delay`. No input
+schema change (`delay` came with #73).
+
+- `columns.py` — the "not built until R8" warning on a structured delay removed. A delay sent
+  as text only is still warned and not read, so its column is an ordinary one (no gate).
+- `plan.py` — `Planner.is_gate` (a column with a structured delay). `_periods` splits the
+  columns at each gate; each period's anchor is found by U4-2 within the period (U4-36), so a
+  gated timeline has one Fixed Reference per period; `TimelinePlan.anchors` lists them
+  (`anchor` stays the first). `find_anchor` falls back to the period's own first column.
+  `_gate_nodes`: the gate column's node (`kind` `GATE`), `After` the previous node by zero;
+  a `DECISION` node `G{n}DEC`, `After` it by 1 day, `loop_to` it; when the gate is the last
+  column an `END` node `G{n}END`. A gate with nothing before it is a Fixed Reference, warned.
+  `_warn_restarts` resets at a gate and now reads "… with no gate before it" (U4-14). The
+  "no column has a timing of 0 or more" warning names the period when there is more than one.
+- `build.py` — a gate column gets no `Encounter`; its instance `GATE{n}` is labelled with the
+  delay as printed, in the column's epoch, and takes the activities of its cells. The
+  decision `GATE{n}DEC` loops back to it; its one `ConditionAssignment` is
+  `TimelineBuild.gate_condition(delay)` (`≥ 7 days and washed out, or 28 days`; no max → no
+  `, or …`) and leads to the next instance. End instance `GATE{n}END` as R5's. Header-value
+  markers now link before the encounter is made (a gate column has none); order of
+  created objects unchanged.
+- `naming.py` — `gate_name(n, suffix)`.
+- Tests: `test_plan.py` `TestGates`; `test_r8_nct03069989.py` (the built USDM from the new
+  input, a washout timed as a range builds no gate, a gate as the last column, the exit
+  text); `test_naming.py` gate names; `test_columns.py` (no R8 warning). Pin case
+  `nct03069989_r8` added: `input_nct03069989_r8.json` written by hand (Dave's structure;
+  activities and footnote texts illustrative), `expected_nct03069989_r8.json` saved from the
+  built output. Other pin cases unchanged.
+
+**U4-14.** Proven on this input: period 2 is one timeline with period 1, its `Day 1` a
+second anchor after the gate, no restart warning. U4-14's "one timeline per period" is
+withdrawn.
+
+**Seen, not this issue.** Period 2's instances are named `D-1-2`, `D1-2`, `D2-2`: `sai_name`
+de-duplicates rather than naming the period (as `ED-2` in § 17).
 
 ### 2026-09-26 — ISSUE 73 MERGED (GitHub 73, branch `73-update-schema`): structured input, `usdm4` never reads printed text
 - `usdm4 @ 73-update-schema`. Driven from the USDM4 project (machine A). Started as R8 (#72, branch
@@ -246,12 +405,12 @@ python3 -m pytest tests/usdm4/assembler/timeline tests/usdm4/assembler/test_time
   `{value, unit}`. Time range `{start, end, unit}` in printed numbers — a range is not a window; USDM
   storage and Day 0 arithmetic are `usdm4`'s (briefly taken as "stage 1 sends timing + window",
   reversed). `day_zero` flag, default Day 1; a printed Day 0 with the flag false is a warning, flag
-  used. `redacted: true` replaces `CCI`. Delay `{min, max, unit}`. N78 kept out.
+  used. `redacted: true` replaces `CCI`. Delay `{min, max, unit}`. `protocol_corpus` N78 kept out.
 - Not ruled by Dave (Claude's addition, flagged): a value with text and no structure is accepted as
   "could not structure" — carried as its label, not read, warned. The pins need it (e.g. course lists
   `1, 2, 3, 4`, window `d1`, which the old code could not read either).
 
-**What changed.** Design § 19 lists it. Schema rewritten (value objects, `day_zero`, `delay`);
+**What changed.** Listed under *As built* below. Schema rewritten (value objects, `day_zero`, `delay`);
 `timeline/values.py` new; `columns.py` rewritten; `plan.py` (Day 0 from the flag, `≤N` and
 `has_zero_timepoint` gone); `build.py` (cell-window label path gone); `grammar.py`, `printed.py` and
 their tests deleted; `validate/corpus_adapter.py` emits the structured form. Tests: compact fixture
@@ -288,19 +447,67 @@ stands: Claude runs no version-control commands in Dave's repos.
    screen and ground-truth storage; issue 13's "range as start + window" is replaced by the range form;
    `day_zero` per protocol).
 3. R8 (#72): U4-10 exit text, then build on NCT03069989 (patterns/structure needed in its ground truth).
-4. N78; U4-11 and the expander before the next release.
+4. `protocol_corpus` N78; U4-11 and the expander before the next release.
 
 Re-verify:
 ```
 python3 -m pytest tests/usdm4/assembler/timeline tests/usdm4/assembler/test_timeline_assembler.py tests/usdm4/assembler/test_timeline_pin.py tests/usdm4/assembler/schema -q
 ```
 
+**The pattern grammar, retired by this issue** (moved 2026-09-27 from the retired `timeline_assembler_design.md` § 4).
+
+Issues 63–71 took each header value as printed text plus a *pattern form*
+(`Day 1`, `Day -28 to Day -1`, `-3..+3 days`, `Cycle 3+`, `21 days`, `CCI`), parsed
+by `timeline/grammar.py`, with `timeline/printed.py` reading printed text when there
+was no pattern. Both are deleted: that was `usdm4` reading text (U4-35). The
+grammar's notation survives in two places only — as the rendered label of a value sent
+with no text, and as the compact fixture notation of the tests
+(`tests/usdm4/assembler/timeline/structure.py`). Retired with it: `≤N` read by
+`usdm4` (U4-18), a window read from the timing cell (U4-16), units from row labels
+(U4-28), time ranges decoded from text (U4-4's text path).
+
+**As built** (moved 2026-09-27 from the retired `timeline_assembler_design.md` § 19).
+
+Structured input (U4-35). Branch `73-update-schema`.
+
+- `schema/schedule_timeline_schema.py` — `HeaderValue {text, pattern}` replaced by value
+  objects: `LabelValue` (epoch, visit), `TimingValue` (point or range), `WindowValue`,
+  `CycleValue`, `QuantityValue` (cycle length), `DelayValue` (new, R8). Each carries
+  `text`, `markers`, `redacted`; validation per § 3.2. `ColumnInput.delay`;
+  `ScheduleTimelineInput.day_zero`; `VALUE_FIELDS` = header fields + `delay`. The
+  docstring's "a caller never hands over a number it has worked out from printed text"
+  replaced by U4-35.
+- `timeline/values.py` (new) — the parsed value types (moved from `grammar.py`), `Delay`,
+  and `render_*` for labels when a value has no text.
+- `timeline/columns.py` — copies the structure across; no fallback to text. Text only:
+  a warning for window, cycle, cycle length, delay (a timing is warned by the plan,
+  U4-3). `Column.up_to` gone; `window_from` is `"window"` or `"range"`; `Column.delay`;
+  `ParsedTimeline.day_zero`. A delay is carried with a warning ("not built until R8").
+- `timeline/plan.py` — Day 0 from `day_zero`, not inferred (`has_zero_timepoint`
+  deleted); a printed `Day 0` with the flag false is warned, flag used.
+  `_resolve_up_to` deleted. `is_placeholder` is "no readable timing" (it read the
+  label's emptiness before). `interval_from_anchor` takes `has_zero`.
+- `timeline/build.py` — the "window printed in the timing cell" label path gone.
+- Deleted: `timeline/grammar.py`, `timeline/printed.py` and their tests.
+- `validate/corpus_adapter.py` — emits the structured form; `day_zero` true when a
+  non-placeholder column is timed at day 0 (what the plan used to infer); a window in
+  an unknown unit is text only.
+- Tests: fixtures keep their compact notation, turned into structured objects by
+  `tests/usdm4/assembler/timeline/structure.py` (test code only). `test_columns.py`
+  and the schema tests rewritten against the contract itself. Printed-text reading
+  tests deleted or rewritten as caller-structured equivalents.
+- Pins (the timeline pin test's input files, `tests/usdm4/test_files/timeline_pin/`): all 8 inputs converted mechanically by the OLD parse (each structured value is
+  what the old code read; text is the old label; `day_zero` is what the old plan
+  inferred; `≤N` before the anchor as the range it resolved to; a window read from the
+  timing cell moved to the window field with no text). **Every expected output
+  unchanged.**
+
 ### 2026-09-26 — ISSUE 71 MERGED (GitHub 71, branch `71-r7-profile-attachment`): profiles hang off the activity they name
 - `usdm4 @ 71-r7-profile-attachment`. Driven from the USDM4 project (machine A).
 - `protocol_corpus` touched: read `docs/issues.md`, the `ground_truth.yaml` of the seven protocols with a
   profile timeline, and NCT02674152's `build/` drafts; `scripts/draft_patterns.py` run read-only. **One
-  write**, at Dave's request: resolved a stash-pop conflict in `docs/issues.md` (upstream N76/N77 kept,
-  the local N78 row kept; open count 14). Not staged — Dave marks it resolved in GitHub Desktop.
+  write**, at Dave's request: resolved a stash-pop conflict in `protocol_corpus/docs/issues.md` (upstream N76/N77
+  kept, the local N78 row kept; open count 14). Not staged — Dave marks it resolved in GitHub Desktop.
 - #70 (R6) found merged at session start (`main` @ e70966b); docs said "not yet merged" — corrected.
 - **State:** full suite green (Dave, VSCode); GitHub issue closed; **merged to `main`**.
 
@@ -354,7 +561,7 @@ Attaching to `Administration of BI 836880` (Dave chose `Pharmacokinetics`). A wa
 
 **Next.**
 1. Merge #71.
-2. N78 — copy reference on `ColumnInput`: a schema issue, merged first, B and C told.
+2. `protocol_corpus` N78 — copy reference on `ColumnInput`: a schema issue, merged first, B and C told.
 3. U4-11 and the expander issue — before the next release.
 4. R8 waits on U4-10.
 
@@ -363,11 +570,47 @@ Re-verify:
 python3 -m pytest tests/usdm4/assembler/timeline tests/usdm4/assembler/test_timeline_assembler.py tests/usdm4/assembler/test_timeline_pin.py tests/usdm4/assembler/schema -q
 ```
 
-### 2026-09-26 — ISSUE 70 MERGED (GitHub 70, branch `70-r6-copied-columns`): conditional timelines entered on their printed condition; copied columns deferred to N78
+**As built** (moved 2026-09-27 from the retired `timeline_assembler_design.md` § 18).
+
+R7, profile attachment (§ 6 R7, U4-31–U4-34). No input schema change.
+
+- `columns.py` — `ParsedTimeline.attaches_to` carried from the input (the schema
+  accepted it and it was dropped, as R6 found for `entry_condition`).
+- `timeline_assembler.py` — `_attach_profiles`, a pass after every timeline is built
+  and before `double_link`: the named activity usually sits on another timeline,
+  possibly later in the input. The name is matched on identity (U4-12) in
+  `SharedState.activity_by_name`; `Activity.timelineId` is set to the profile.
+  Not attached, profile built unattached: no `attaches_to` or an unknown name
+  (warning); a parent activity (error, DDF00160, U4-32); an activity already taken
+  by an earlier profile (error, U4-34 — only a successful attachment claims it); a
+  loop (error, U4-31). Scheduled on no other timeline: attached, warning (U4-33).
+- The loop check (`_reaches`) walks from the profile through every activity its
+  instances schedule and every timeline those activities already call; the target
+  activity found anywhere on that walk is a loop. A timeline reached twice (a
+  diamond) is walked once and is not a loop.
+- `build.py` unchanged: activities are still created with `timelineId = None`.
+  `ScheduledActivityInstance.timelineId` stays `None` — per-visit attachment needs a
+  column reference the frozen schema lacks (out of scope).
+- Tests: `test_timeline_assembler.py` `TestProfileAttachment` (18: attached,
+  identity match, profile before main, no/blank/unknown `attaches_to`, direct loop,
+  loop through a second profile, a chain, a diamond, parent, unscheduled, two
+  profiles, a refused profile not blocking a later one, other families). Pin
+  `nct02674152_r7` added: main table A as drafted plus the profile's course 1 Day 1
+  columns (8 of 48), `attaches_to: Pharmacokinetics` — `Pharmacokinetics` calls
+  TIMELINE-2, no attachment message. Existing pins unchanged (`features` has a
+  profile with no `attaches_to`: a new warning, no output change).
+
+**Seen, not this issue.** The pin's main timeline is built from unreviewed header
+drafts whose roles are wrong: the `Week` row is drafted as the timing and the
+`Day; visit window` row as the window, so V1's three days all time as `Week 1` and
+every window is unread; course lists (`1, 2, 3, 4`) are not read. Frozen as drafted —
+a fixture, not a reference.
+
+### 2026-09-26 — ISSUE 70 MERGED (GitHub 70, branch `70-r6-copied-columns`): conditional timelines entered on their printed condition; copied columns deferred to `protocol_corpus` N78
 - `usdm4 @ 70-r6-copied-columns`. Driven from the USDM4 project (machine A).
 - `protocol_corpus` touched in passing: read `docs/issues.md`, `docs/next_steps.md` and
   NCT05565742's `ground_truth.yaml` / `build/soa_headers.yaml`; **one write**, at Dave's request —
-  register row `N78` in `docs/issues.md` (open count 13 → 14), the copied-column fix. This departs
+  register row `N78` in `protocol_corpus/docs/issues.md` (open count 13 → 14), the copied-column fix. This departs
   from *Working arrangement* ("nothing is written to `protocol_corpus` from here"); Dave asked.
 - #69 (R5) was merged before this session; its entry, back-filled this session, is below.
 - **State:** full suite green (Dave, VSCode); GitHub issue closed; **merged to `main`**.
@@ -388,7 +631,7 @@ different visits. Sharing by id would merge unrelated visits silently.
   (`Unscheduled visit`, `Early termination`, `Adverse event`) and a warning. The strings are
   Claude's; Dave took the rule.
 - U4-30: when copies print different visit text, the first timeline in input order sets the label,
-  with a warning. Taken, not built — needs N78.
+  with a warning. Taken, not built — needs `protocol_corpus` N78.
 - Test case NCT05565742: `ED` is a real copy — completers reach it after Visit 12, discontinuers
   enter it from the ET timeline (Dave). Claude's objection that ED did not belong in main was wrong
   and withdrawn.
@@ -402,7 +645,7 @@ different visits. Sharing by id would merge unrelated visits silently.
 - `tests/usdm4/assembler/test_timeline_assembler.py` — `TestConditionalTimelines`: printed text per
   type, trimming, blank = none, defaults and warning text, other families unchanged and silent,
   sibling not main, a guard that every conditional type in `FAMILY` has a default, and the copied
-  column's two `Encounter`s pinned (points at N78).
+  column's two `Encounter`s pinned (points at `protocol_corpus` N78).
 - `tests/usdm4/assembler/test_timeline_pin.py` — case `nct05565742_r6`.
 - `tests/usdm4/test_files/timeline_pin/input_nct05565742_r6.json` (new) — the frozen `nct05565742`
   main timeline unchanged, plus an `early_termination` timeline: column `c14` (ED), the 16
@@ -432,16 +675,37 @@ instead. A title for the ED timeline (none printed).
 
 **Next.**
 1. R7 — profile attachment (`attaches_to` → `Activity.timelineId`); schema already carries it.
-2. N78 — copy reference on `ColumnInput`: a schema issue, merged first, `usdm4_protocol` and
+2. `protocol_corpus` N78 — copy reference on `ColumnInput`: a schema issue, merged first, `usdm4_protocol` and
    `protocol_corpus` told; then the shared `Encounter` and U4-30.
 3. U4-11 and the expander issue — before the next release, since R5 is merged.
 4. R8 waits on U4-10.
-R7 first: nothing blocks it, and N78 needs B and C coordinated.
+R7 first: nothing blocks it, and `protocol_corpus` N78 needs B and C coordinated.
 
 Re-verify:
 ```
 python3 -m pytest tests/usdm4/assembler/timeline tests/usdm4/assembler/test_timeline_assembler.py tests/usdm4/assembler/test_timeline_pin.py tests/usdm4/assembler/schema -q
 ```
+
+**As built** (moved 2026-09-27 from the retired `timeline_assembler_design.md` § 17).
+
+R6, conditional timelines (§ 6 R6, U4-29). Copied columns deferred (U4-5 interim). No
+input schema change.
+
+- `columns.py` — `ParsedTimeline.entry_condition` carried from the input.
+- `build.py` — `_entry_condition`: a conditional timeline takes its printed
+  `entry_condition`, trimmed; blank or absent → the type's default
+  (`CONDITIONAL_ENTRY_CONDITIONS`) and a warning. Every other family keeps
+  `PLANNED_ENTRY_CONDITION`, the old fixed text, typo included (§ 8).
+- A copied column (NCT05565742's `ED`, in main and in the early-termination timeline)
+  builds one `Encounter` per timeline — U4-5 interim, fix logged as `protocol_corpus` `N78`. U4-30 not built.
+- Tests: `test_timeline_assembler.py` `TestConditionalTimelines` (defaults per type,
+  printed text, blank, other families unchanged, a guard that every conditional type
+  has a default, the copied column's two encounters pinned); pin `nct05565742_r6`
+  added (the frozen `nct05565742` main timeline plus the ED timeline from the corpus
+  ground truth, timeline 2). Existing pins unchanged.
+
+**Seen, not this issue.** The ED timeline's instance is named `ED-2`, not `T2-ED`:
+`sai_name` de-duplicates across timelines rather than qualifying. Existing behaviour.
 
 ### 2026-09-26 — ISSUE 69 MERGED (GitHub 69, branch `69-r5-cycle-decision-loop`): cycle ranges built as a delay and a decision loop; CT/BC cache load 5x faster
 Back-filled 2026-09-26 (the #70 session) from design § 16, the plan's R5 section and the branch's
@@ -502,6 +766,41 @@ recorded.
 
 **Consequence.** R5 is merged, so no `usdm4` release is cut until the expander issue is merged
 (plan § *Order from here*).
+
+**As built** (moved 2026-09-27 from the retired `timeline_assembler_design.md` § 16).
+
+R5, cycle ranges (§ 6 R5, U4-7, U4-8, end instance). Supersedes U4-25. No input schema
+change.
+
+- `plan.py` — a range column is a cycle slot numbered by its first cycle; its `Day 1`
+  (or U4-22 marker) is chained from the previous cycle's `Day 1`, found by
+  `_CycleStart.covers` so a range covering cycle *n* − 1 counts (`2-3` then `4+`).
+  Ranges take lengths like single cycles; none readable → U4-8, the largest day printed
+  in the range (same unit as the first), warned. `_add_loops` puts a `DECISION` node
+  after each range's last column — `After` it by length − (last day − 1), `loop_to` the
+  range's first node (its start marker, else its first column, so a predose `Day -1`
+  printed before `Day 1` is inside the loop) — and an `END` node after the decision when that column is the
+  last. No length, a length that does not convert exactly, or a last day beyond the
+  length: zero delay, warned.
+- `build.py` — `ScheduledDecisionInstance` in the range's epoch; its default loops back;
+  one `ConditionAssignment`, `cycle exit condition`, to the next instance. The end
+  instance: no encounter, no activities; it is the last instance, so it takes the exit.
+  Range instances, and a range's start marker, are named `C3+D1`, `C2-3D1`.
+- `naming.py` — `decision_name` (`C3+DEC`), `end_name` (`T1-END`).
+- Tests: `test_plan.py` `TestRanges`, `TestNct02107703Headers` (ranges timed and
+  looped); `test_r5_nct05197426.py` (the built USDM, and other shapes on structured
+  input: bounded then open range, no `Day 1`, predose `Day -1`, weeks); pin `nct05197426` added. Existing
+  pins unchanged.
+
+**Calls made while building, not ruled:**
+- The loop returns to the range's first column, not `Day 1`, when a day is printed
+  before `Day 1` in the range (§ 6 R5 said first column; the #69 issue text said Day 1).
+- Printed text is supported but not held to the structured form's standard (Dave):
+  `1 Cycle = 4 Weeks` is not read as a length; the structured `4 weeks` is.
+- A column after a range with no readable timing keeps U4-3's zero timing after the
+  previous *column* (the range's last day), not after the decision the exit leads to.
+- A single cycle and a range with the same first cycle (`Cycle 2`, `Cycle 2-n (if …)`)
+  share one cycle slot.
 
 ### 2026-09-26 — ISSUE 68 MERGED (GitHub 68, branch `68-cycle-and-ranges`): cycle ranges with no cycle word, cycle length unit from the row labels; order after R4 re-planned
 - `usdm4 @ 68-cycle-and-ranges`. Driven from the USDM4 project (machine A). `protocol_corpus` read
@@ -574,6 +873,21 @@ Re-verify:
 python3 -m pytest tests/usdm4/assembler/timeline tests/usdm4/assembler/test_timeline_assembler.py tests/usdm4/assembler/test_timeline_pin.py
 ```
 
+**As built** (moved 2026-09-27 from the retired `timeline_assembler_design.md` § 15).
+
+Cycle reading; the three headers NCT02107703 prints. Decision U4-28 (§ 9). Reading
+only — the input schema is unchanged.
+
+- `printed.py` — `_CYCLE_RANGE_RE`: the cycle word is optional, so `2-3`, `3-n`, `4+`,
+  `4 and Beyond (if Applicable)`, `3 onwards` are ranges. `_CYCLE_LENGTH_RE`: the unit
+  is optional; `read_cycle_length(text, row_label, timing_row_label)` gives a bare
+  number the cycle length row label's unit, else the timing row label's, else `None`.
+- `columns.py` — `_read_cycle_length` passes `rows.cycle_length` and `rows.timing`, and
+  warns a bare number with no unit anywhere as such (not the generic "not read").
+- Tests: `test_printed.py` (`TestCycle`, `TestCycleLength`), `test_columns.py`,
+  `test_plan.py` (`TestNct02107703Headers`: every header read, ranges still U4-25 zero
+  timings until R5).
+
 ### 2026-09-26 — ISSUE 67 BUILT (GitHub 67, branch `67-cycles`): cycle Day 1 chained, start marker when none printed
 Back-filled 2026-09-26 from `protocol_corpus/memory.md` (entry of the same date). Until then this repo's
 sessions were logged only in the corpus.
@@ -626,6 +940,50 @@ Re-verify:
 python3 -m pytest tests/usdm4/assembler/timeline tests/usdm4/assembler/test_timeline_assembler.py tests/usdm4/assembler/test_timeline_pin.py
 ```
 
+**As built** (moved 2026-09-27 from the retired `timeline_assembler_design.md` § 14).
+
+Cycle `Day 1`: the chain and the start marker. Decisions U4-22 (re-taken), U4-23
+(narrowed), U4-27 (§ 9).
+
+- **Plan** (`plan.py`). `_resolve_cycles` finds the timeable single-cycle columns and
+  the lengths; no offsets. `_cycle_starts` gives each cycle with a readable day a
+  `Day 1` node: its first column whose day is `1` in days or weeks, else a marker keyed
+  `C{n}D1`, placed before the cycle's first column (any column carrying that cycle
+  number). A cycle none of whose columns has a readable day gets no marker. A marker
+  is logged at info level.
+- **Node keys.** `InstanceNode.relative_to` and `TimelinePlan.anchor` are node keys: a
+  column index, or a marker's `C{n}D1`. A marker node has `column=None`, `marker`,
+  `cycle` and `epoch_column`; `InstanceNode.key` returns the key either way.
+- **Timing.** A cycle's `Day 1` (`_start_timing`): the anchor is fixed; cycle *n* > 1
+  is `After` cycle *n* − 1's `Day 1` by cycle *n* − 1's length, converted to cycle
+  *n*'s unit only where exact; cycle 1 is Day 1 of the timeline, from the anchor. Any
+  other cycle column is `After` / `Before` its cycle's `Day 1` node by (day − 1), with
+  the crossing-zero rule. A `Day 1` that cannot be chained is a zero timing `After` the
+  previous node, with a warning naming the reason.
+- **Anchor.** Chosen as before (first column with a timing ≥ 0). When that column
+  belongs to a cycle whose `Day 1` is a marker, the marker is the anchor, at Day 1;
+  columns outside the cycle are measured from it with the crossing-zero rule
+  (`_interval`).
+- **Build** (`build.py`). A marker node becomes a `ScheduledActivityInstance` named
+  `C{n}D1`, `encounterId` `None`, no activities, the epoch of its cycle's first column,
+  description `Start of cycle n; no Day 1 column is printed`. Its `Timing` is
+  `TIMC{n}D1` with empty labels. No encounter is created for it; encounters stay one
+  per column.
+- **Equal lengths.** Every `Day 1` lands where #66 placed it; what changes is the
+  reference — cycle *n* > 2's `Day 1` is now relative to cycle *n* − 1's `Day 1`, not
+  the anchor.
+- **Tests.** `test_plan` `TestSingleCycles` (rewritten to the chain) and
+  `TestCycleDayOne`; `test_timeline_assembler` end to end with a marker. Pins
+  unchanged — no pinned input carries a cycle field.
+
+**Calls made while building, not ruled:**
+- `Week 1` counts as a printed cycle start, like `Day 1`, because #66 already measured
+  week-counted cycles from value 1. The marker is still named `C{n}D1`.
+- A `Day 1` that cannot be chained is zero-timed, but the cycle's other columns keep
+  their timing from it. #66 zero-timed every column of such a cycle.
+- A table beginning at cycle *n* > 1 whose anchor is that cycle's `Day 1` is fixed
+  there; no warning about the missing earlier cycle.
+
 ### 2026-09-25 — ISSUE 66 BUILT (GitHub 66, branch `66-r4-part-2-single-cycles`): single cycles timed and named
 Back-filled 2026-09-26 from `protocol_corpus/memory.md`.
 
@@ -667,6 +1025,53 @@ unchanged (timelines 83 / 104, activities 1 / 104).
 the branch.
 
 Re-verify: as #67.
+
+**As built** (moved 2026-09-27 from the retired `timeline_assembler_design.md` § 13).
+
+R4 part 2, single cycles. Decisions U4-22–U4-26 (§ 9).
+
+- **Grammar.** `CycleNumber(n)` (`Cycle 2`), `CycleRange(start, end)` (`Cycle 3-6`;
+  `Cycle 3+` has `end=None`), `CycleLength(n, unit)` (`21 days`); `parse_cycle`,
+  `parse_cycle_length`. `Cycle 0` is accepted; a range ending before its start and a
+  zero length are refused.
+- **Printed-text reader.** `read_cycle`: `Cycle 2`, `Cycle2`, `C2`, `C 2`, a bare `2`;
+  ranges `Cycle 3-6`, `Cycles 3-6`, `C3-C6`, `Cycle 3-n`, `Cycle 3+`, `… and beyond`,
+  `… onwards`, `… and subsequent`. A trailing parenthetical (`Cycle 2-n (if held)`) is
+  ignored. `Subsequent Cycles` (no number) is not read. `read_cycle_length`: `21 days`,
+  `21-day cycle`, `Cycle = 21 days`, `Cycle length: 21 days`, `(21 days)`, `4 weeks`;
+  a length with no unit or two lengths (`21 days (or 28 days …)`) is not read.
+- **Parse** (`columns.py`). `Column.cycle`, `Column.cycle_length`: pattern, else
+  printed text, else nothing, each problem a warning naming timeline, column and
+  field; a redacted value is not read. `Column.cycle_day` holds the day within the
+  cycle when the plan takes a column's timing away.
+- **Plan** (`plan.py`). `_resolve_cycles` runs before the anchor is chosen. A
+  cycle's length is the first readable one among its own columns (a second,
+  different one is warned). Cycle *n*'s offset is (*n* − 1) × its length, converted
+  to the day's unit only where exact (`_convert`; weeks ↔ days ↔ hours ↔ minutes;
+  months and years never). A column in cycle *n* is `After` / `Before` its cycle's
+  first `Day 1` column by the day distance with the crossing-zero rule; a cycle's
+  `Day 1`, and every column of a cycle with no `Day 1` column, is measured from the
+  anchor on the timeline's own line (`_position`). No length (U4-23), no exact
+  conversion, or a range (U4-25) → timing removed, so U4-3's zero timing applies,
+  with a warning of its own.
+- **Naming.** `sai_name(..., cycle=n)`: a single cycle with a day timing is
+  `C{n}D{day}` (`C2D8`, `C3D-1`). The text regex (`Cycle 2 Day 1` → `C2D1`) stays as
+  the fallback for text-only columns.
+- **Tests.** Hand-written fixtures only (`test_grammar`, `test_printed`,
+  `test_columns`, `test_plan` `TestSingleCycles`, `test_naming`,
+  `test_timeline_assembler` end to end). Pins unchanged — no pinned input carries a
+  cycle field. `assembler/timeline/*` and `timeline_assembler.py` 100% coverage.
+
+**Calls made while building, not ruled:**
+- The length is cycle *n*'s own, as § 6 R4.3 and U4-23 said. Wrong where cycles
+  differ in length; replaced by the chain in #67 (§ 14, U4-27).
+- A cycle's length comes from any of its columns, not only an earlier one (the issue
+  said "the previous column"): a length printed on a later column of the cycle would
+  otherwise leave its `Day 1` untimed.
+- A cycle and day printed together in the timing field with no cycle field
+  (`Cycle 2 Day 1`) is still unread (U4-26: stage 1 splits it).
+- A column timed to zero for a cycle reason gets two warnings: the cycle reason and
+  U4-3's "no readable timing".
 
 ### 2026-09-25 — ISSUE 65 BUILT (GitHub 65, branch `65-r4-part-1-timeline`): every instance timed, printed text read, time ranges decoded
 Back-filled 2026-09-26 from `protocol_corpus/memory.md`.
@@ -714,6 +1119,54 @@ error); the restart warning fires on it. Mixed units (R4.6) not built.
 
 Re-verify: as #67.
 
+**As built** (moved 2026-09-27 from the retired `timeline_assembler_design.md` § 12).
+
+R4 without cycles. Decisions U4-2–U4-4 and U4-15–U4-21 (§ 9).
+
+- **Grammar.** `TimeRange(unit, start, end)`, `parse_time_range`, `is_time_range`.
+  Both ends one unit; end not before start.
+- **Printed-text reader** (`assembler/timeline/printed.py`, new). `read_timing(text,
+  row_label)` → `ReadTiming(timing, window, unit_defaulted)` where `timing` is a
+  `TimingPoint`, `TimeRange` or `UpTo` (`≤N`); `read_window(text, row_label,
+  timing_unit)` → `ReadWindow(window, unit_defaulted)`; `unit_of_label`; `is_blank`
+  (empty or dashes only — nothing printed, not warned); `normalise` (Unicode minus,
+  `+/-`, `<=`). Pure; returns `None` for text it cannot read.
+- **Parse** (`columns.py`). Each of timing and window: pattern, else printed text,
+  else nothing. A refused pattern is a warning and the field falls back to its text
+  (U4-17) — `parse_timeline` no longer raises. `parse_column(index, data, rows, errors,
+  t)`. `Column` gains `time_range`, `up_to`, `window_from` (`window` / `timing`). A
+  window field beats a window printed in the timing cell, and beats a time range's
+  decoded window, each with a warning (U4-16). Epoch and visit patterns are no longer
+  checked: blank is already no pattern, so nothing can be refused.
+- **Plan** (`plan.py`). `plan(timeline, t)`. U4-2 warning when no column is ≥ 0; U4-14
+  restart warning (a lower timing point, same unit, no cycle text). `≤N` resolved to
+  `Day -N to Day -1` before the anchor, else warned and unread (U4-18). A column with
+  no readable timing: `PT0M`, `After` the previous column, `Before` the next before
+  the anchor, warned (U4-3); the anchor itself with no timing is still the Fixed
+  Reference, warned. `InstanceNode` gains `window`, `window_from` (`window`, `timing`,
+  `range`) and `timed`. `range_window` applies the crossing-zero rule (U4-20).
+- **Build.** Every instance has a `Timing`. `valueLabel` the printed text or `""`, the
+  decoded start for a time range (U4-21); `label` the printed text or `""`.
+  `windowLabel`: printed window text; pattern form for a window decoded from a time
+  range (U4-21) **or printed in the timing cell** (`-3..+3 days` — not a decision
+  taken; chosen because the cell's printed text is already `valueLabel`); `""` for a
+  zero window; the printed text when the window was redacted or unread.
+- **Orchestrator.** A timeline is skipped only when it has no columns.
+- **Warnings.** A column whose text is unread gets two: one from parse (why), one
+  from the plan (the zero timing).
+- **Pin.** Re-saved for three cases, every difference explained:
+  - `features`: the unread `Cycle 2 Day 1` column is timed from the previous column
+    (`D29`) instead of the anchor (`D1`); still `PT0M`.
+  - `nct06454630`: 6 instances, 0 timings → 6. No readable timing anywhere, so the
+    first column is the Fixed Reference and the rest chain `After` the previous at
+    `PT0M`.
+  - `nct04557384`: main 0 → 15 timings and continued-access 0 → 2, chained the same
+    way (blank timing text). The PK timeline's 14 unread cycle columns (before its
+    `Day 30` anchor) chain `Before` the next column instead of all pointing at the
+    anchor; values unchanged (`PT0M`). Cycle reading is the next R4 issue.
+  - `minimal`, `nct05565742`: unchanged. `nct05565742` raises the restart warning on
+    its trailing `Day 0` after `Day 540` (a drafting error in that pinned input).
+
 ### 2026-09-25 — ISSUE 64 BUILT (GitHub 64, branch `64-timeline-inputs-new-features`): redaction, per-value markers, row labels
 Back-filled 2026-09-26 from `protocol_corpus/memory.md`.
 
@@ -749,6 +1202,27 @@ Re-verify:
 ```
 python3 -m pytest tests/usdm4/assembler/timeline tests/usdm4/assembler/schema/test_schedule_timeline_schema.py tests/usdm4/assembler/test_timeline_assembler.py tests/usdm4/assembler/test_timeline_pin.py -v
 ```
+
+**As built** (moved 2026-09-27 from the retired `timeline_assembler_design.md` § 11).
+
+Three things the protocol prints that the input dropped. Schema and grammar only; no
+timing logic — R4 reads what this adds.
+
+- **Redaction.** `grammar.REDACTED = "CCI"`, `grammar.is_redacted()`; accepted in every
+  field. `parse_column` records a redacted field in `Column.redacted` and never parses
+  it; the printed text stays the label. Build: a redacted timing or window makes no
+  value (as `pattern: null` does); a redacted epoch groups by consecutive run (U4-13);
+  a redacted timing or visit never names an instance.
+- **Markers per value.** `HeaderValue.markers`; `ColumnInput.markers` is gone (refused
+  as an unknown key). `Column.markers` is field → list; `Column.all_markers` is the
+  union in field order, each once, and is what links to the timepoint.
+- **Row labels.** `ScheduleTimelineInput.rows` (header field → printed label, keys
+  checked against `HEADER_FIELDS`); carried to `ParsedTimeline.rows`. Nothing reads it.
+- **Pin inputs** moved their column markers onto the visit value (3 columns:
+  `features` 1, `nct06454630` 2). Expected output is unchanged — the pin is the proof
+  the move is behaviour-neutral. `validate/corpus_adapter.py` does the same move
+  (to timing, then epoch, when the visit is blank).
+- **Breaking** for any caller that put `markers` on the column. Unreleased since #63.
 
 ### 2026-09-25 — ISSUE 63 BUILT (GitHub 63, branch `63-timeline-assembler`): text input, grammar, parse → plan → build, behaviour kept
 - `usdm4 @ 63-timeline-assembler`. No sibling repo changed. Plan parts 63.1–63.7 done
@@ -799,6 +1273,98 @@ Re-verify:
 python3 -m pytest tests/usdm4/assembler/test_timeline_pin.py tests/usdm4/assembler/timeline tests/usdm4/assembler/test_timeline_assembler.py -v
 python3 -m pytest tests -q
 ```
+
+**Before this issue** (moved 2026-09-27 from the retired `timeline_assembler_design.md` § 2).
+
+One `TimelineInput` per timeline (`assembler/schema/timeline_schema.py`): six blocks —
+`epochs`, `visits`, `timepoints`, `windows`, `activities`, `conditions` — plus
+`table_*` classification fields. Epochs, visits, timepoints and windows are parallel
+lists matched by column position. `timepoints` carry `value` and `unit` already parsed
+by the caller; `windows` carry integer `before` / `after`.
+
+`TimelineAssembler._execute_one` (`assembler/timeline_assembler.py`) runs, per
+timeline: epochs → encounters → activities → timepoints → timing → link activities →
+conditions → timeline. What that does and does not do:
+
+- **Chain.** One `ScheduledActivityInstance` per column. `_add_timepoints` points each
+  instance's `defaultConditionId` at the next column; `_add_timeline` points the last
+  at a `ScheduleTimelineExit`. No `ScheduledDecisionInstance` is created anywhere in
+  the assembler, builder or converter.
+- **Timing.** `_find_anchor` picks the first non-blank column with a value ≥ 0. Every
+  column gets one `Timing` relative to that anchor (`Before`, `Fixed Reference`,
+  `After`); `_interval_from_anchor` is the difference in the column's unit, less one
+  day when a day count crosses zero and the table has no Day 0. A column whose own
+  value is non-numeric gets a zero duration with no error; if only the anchor's value
+  is non-numeric, the column's absolute value is used. Mixed units give a warning and
+  the absolute value.
+- **Seen in the 63.1 pin (2026-09-25).** A column with empty timepoint text gets
+  **no `Timing` at all**: `valueLabel` is required by the API and `_timing_value_label`
+  returns `None`, so every timing of such a timeline fails and the timeline has
+  instances but zero timings — two of the three real pinned schedules' main timelines.
+  A caller unit the encoder does not know (`cycle`) gives a zero duration for every
+  column; a `Day 30` after cycle columns falls to the mixed-units path and reads 30
+  days after the anchor. An empty period text becomes an epoch with an empty label.
+- **Epochs.** One per distinct period text (identity = trimmed, case-folded text);
+  named from the C99079 house terms, uniqued by `_claim_epoch_name`.
+- **Encounters.** One per column, never merged, labelled with the visit text.
+- **Instances.** Labelled with the timepoint text only. `_sai_name` derives `D1`,
+  `W12`, `C2D1` from the timepoint (or visit) text by regex, uniqued with a suffix —
+  so `C2D1` appears only when the printed timepoint text says `Cycle 2 Day 1`.
+- **Main timeline.** `_main_index` takes the first table whose `table_type` is
+  `main_soa`, a missing `table_type` counting as `main_soa`; failing that, the first.
+- **Classification.** `table_family`, `table_orientation`, `table_unit` and
+  `table_placement` are caller-supplied and emitted as d4k extension attributes;
+  `table_type` only steers the main flag.
+- **Activities.** Shared across timelines by trimmed, case-folded name
+  (`_activity_by_name`); house-style short names (`_activity_name`); BCs from
+  `actions.bcs`, each also minting a `Procedure`.
+- **Conditions.** Footnote markers on visits, activities and cells are collected in
+  `_condition_links`; a footnote becomes a `Condition` only when its marker is found.
+  Unanchored footnotes are dropped and counted.
+- **Not done.** `ScheduledActivityInstance.timelineId` and `Activity.timelineId` are
+  always `None`, so a profile is never attached. `plannedDuration` is always `None`.
+  There is no field for a cycle, a cycle length, a second timing row or a timing
+  clarification — they are lost before the assembler sees them.
+- **Failure handling.** Every step is wrapped in `try/except` that logs and returns
+  what it has, so a failure mid-timeline yields partial output.
+
+The expander (`expander/`) walks a built timeline. It follows sub-timelines, and a
+`ScheduledDecisionInstance` only when it has one assignment of the form
+`days <op> <n>`; anything else is logged and the default path taken. On the main
+timeline it resets the offset to 0, so a loop back to an earlier instance would
+recompute the same tick each time.
+
+**As built** (moved 2026-09-27 from the retired `timeline_assembler_design.md` § 10).
+
+- **Modules.** `assembler/schema/schedule_timeline_schema.py` (the input);
+  `assembler/timeline/grammar.py`, `columns.py` (parse), `plan.py`, `build.py`,
+  `naming.py`; `assembler/timeline_assembler.py` is the orchestrator with its public
+  surface unchanged. `TimelineInput` and `schema/timeline_schema.py` are gone;
+  `AssemblerInput.soa` is `list[ScheduleTimelineInput] | None` (a single dict is
+  refused).
+- **The schema checks structure only** and refuses unknown keys. Patterns are read in
+  the parse stage, so a time range (`… to …`) and the cycle fields are carried as text
+  until R4.
+- **Behaviour kept exactly**, pinned by `tests/usdm4/assembler/test_timeline_pin.py`:
+  four of five pinned inputs reproduce the pre-issue output byte for byte. The fifth
+  differs in one timeline whose caller unit was `cycle` (not a grammar unit), which
+  moves its anchor — recorded in the plan, 63.5. Both outputs are wrong; R4 fixes it.
+- **Object creation order is part of the output.** The builder numbers ids per class
+  as objects are made, so `build.py` creates them in the old order: epochs,
+  encounters, activities, instances, timings, cell links, conditions, timeline.
+- **The profile marker.** The family extension (TLF) is emitted for `profile`
+  timelines only, value `profile`: downstream readers take its presence to mean
+  "profile". Orientation, unit and placement are emitted when given. The type
+  extension R1 calls for is not yet emitted.
+- **Failure policy.** A timeline whose patterns the grammar refuses, or with no
+  columns, is reported and not built. A built timeline's epochs, encounters and
+  conditions are added only once the whole timeline has built; activities are shared
+  and stay registered.
+- **Kept on purpose until a later rule:** a column with no timing text gets no
+  `Timing` (R4); an epoch-less column gets an epoch with an empty label (U4-6); the
+  `Paricipant identified` entry condition and the placeholder procedure code (§ 8).
+- **Dropped:** the `scheduledInstanceTimelineId` key, which was not an API field.
+- **Family names.** `unclassified` is its own family.
 
 ### 2026-09-25 — ISSUE 63 OPENED (GitHub 63, branch `63-timeline-assembler`): the timeline assembler is rebuilt on a text input
 - `usdm4 @ 63-timeline-assembler`. Design and plan only; no code changed. Driven from
@@ -989,212 +1555,100 @@ extensions.
 explicit timeline *kind*, it is 015; today profile-ness is implied by `TLF` being present, since
 its values name profile families.
 
-### 2026-06-18 — Amendment enrollment geographic scope derivation — NOT WORKING YET, tests needed
+### 2026-08-07 — ISSUE 54 (GitHub 54, branch `54-core-engine`): CoreValidator follows executionStatus; bundled USDM schema
+Moved 2026-09-27 from the retired repo-root `memory.md`.
 
-**Status: incomplete and unverified. No unit tests written for this change yet. Nothing run in Cowork (tests are VSCode-only).**
+- Root causes of the exec-error flood (6,749/file) and dropped findings,
+  found by diffing our wrapper against the CORE CLI (same engine 0.16.0,
+  same rules — byte-identical; same json):
+  1. _classify_errors ignored the engine's per-result executionStatus and
+     string-matched error text. "skipped" results (rule doesn't apply to
+     entity — SkippedReason lists the very strings we matched) flooded
+     execution_errors. Now: skipped→dropped, "issue reported"→findings,
+     "execution error"→exec errors; string set kept only as no-status
+     fallback. Matches the CLI report logic (usdm_report_data.py).
+  2. LibraryMetadataContainer got no standard_schema_definition, so
+     JsonSchemaCheckDatasetBuilder rules (CORE-000938/DDF00126 cardinality)
+     silently found nothing. The CLI ships usdm-<v>-schema.pkl — a pydantic
+     model_json_schema() dump of the API Wrapper (NOT our
+     rules/library/schema/usdm_v4-0-0.json, which is the full OpenAPI doc).
+     DECIDED (Dave): vendor CORE's shipped schemas, converted pkl→JSON, as
+     core/data/usdm-{3-0,4-0}-schema.json (source: cdisc-rules-engine
+     v0.16.0, c78b05c); manual refresh when CORE updates. NOTE: our Wrapper
+     model has drifted (84 $defs vs shipped 82, Base* classes) — vendoring
+     keeps parity with official CORE; disagreements surface as findings.
+- Parity verified: NCT04573309 49 findings + 1 exec error; NCT03637764
+  84 + 1 — both match the CLI number-for-number per rule.
+- Changed: core_validator.py, setup.py (package_data), new core/data/*.json,
+  tests (+8, status classification + schema loading). core/ subset: 177
+  pass, core_validator.py 100% cov. Ruff default-rules + format clean.
+- Dave's full-suite run then surfaced 2 baseline failures = the fix seeing
+  what was invisible: (a) sample_usdm_7.json had 'extensionAtrtibutes' key
+  typo x3 + mangled instanceType values x7 (extensionClass/extensionCLass/
+  ExtensionCLass/extensionAttribute) in its extension subtree — ALL FIXED
+  in the file (Dave's call: clean exemplar, not as-received artifact);
+  cleared CORE-000937, CORE-000949 and d4k DDF00082 with no baseline edit.
+  (b) assembled-minimum: CORE-000938 ADDED to _KNOWN_FAILING_RULES with
+  comment — three real assembler gaps on the minimum fixture
+  (StudyAmendment.changes, InterventionalStudyDesign.arms, .studyCells all
+  emitted []); assembler fix is separate work, candidate for its own issue.
+  Full suite GREEN (Dave's run, 2026-08-07) — issue #54 resolved.
 
-**Branch:** `39-further-ich-m11-updates`. Uncommitted — Dave commits. Cross-repo change; companions: `usdm4_protocol @ m11-rules` (renderer), `udp_prism @ main` (expected baseline). See their `docs/next_steps.md`.
+### 2026-08-03 — `api` `__all__` gaps: CommentAnnotation, BiospecimenRetention, ConditionAssignment
+Moved 2026-09-27 from the retired repo-root `memory.md`.
 
-**Change.** `src/usdm4/assembler/amendments_assembler.py` — `_create_enrollment` no longer hardcodes a global `forGeographicScope`. New helper `_enrollment_geographic_scope(data)` derives it from `data["scope"]` (the amendment's Amendment Scope field): global → Global (C68846, no code); first resolvable country → Country (C25464) + ISO code; else first region → Region (C41129) + code. It tries `scope["countries"]`/`scope["regions"]` **and `scope["unknown"]`** — the M11 step-1 extractor drops a bare country name (e.g. "France") into `unknown`, whereas the FHIR step-3 import populates `countries`. Output stays CT-valid: `GeographicScope.type` ∈ C207412 (DDF00144, ERROR) and a non-global scope carries a code (DDF00261, WARNING).
+- usdm4_excel's annotations_and_abbreviations parity fixture exposed:
+  CommentAnnotation missing from api/__init__.py __all__, which seeds the
+  Builder IdManager → builder.create KeyError, every note creation
+  failed. Audit found two more latent ones also builder-created by
+  usdm4_excel readers: BiospecimenRetention, ConditionAssignment. All
+  three added to imports + __all__.
+- Third recurrence of this bug class (12076cf fixed MedicalDevice/
+  Substance/ProductOrganizationRole). New guard test
+  tests/usdm4/api/test_api_all_complete.py: scans api/*.py class defs,
+  subtracts a NON_CONCRETE list (ApiBase*/Base*/Extension/Identifier/
+  PopulationDefinition/QuantityRange), asserts the rest are in __all__.
+- Why usdm4_excel unit tests never caught it: their SheetFramework mocks
+  IdManager.build_id — only real end-to-end imports hit the id index.
 
-**Why.** Principle (USDM stores, M11 presents): USDM stores only the geographic scope; the Globally/Locally/By Cohort wording (C217275) is M11 presentation, applied in `usdm4_protocol` at render time — never stored here. Previously the enrollment scope was always Global, so a country/regional amendment lost its scope through the round-trip.
+### 2026-08-03 — TagResolver fixed and exposed
+Moved 2026-09-27 from the retired repo-root `memory.md`.
 
-**Known gap.** A purely site- or cohort-scoped amendment has no C207412 area code to anchor a non-global scope, so it falls back to Global and logs a warning. Country/regional (the case this serves) derive correctly.
+- utility/tag_resolver.py already held the recursive usdm:ref/usdm:tag
+  resolver (from usdm_utility/to_m11.py) but was broken: imported DataStore
+  from usdm3 (eliminated in the v3→v4 merge) → fixed to
+  usdm4.data_store.data_store. soup.py MODULE string fixed
+  (was "usdm4_fhir.m11.soup.soup").
+- beautifulsoup4>=4.9 declared in setup.py + requirements.txt — first
+  direct bs4 use in usdm4 (previously only transitive via
+  cdisc-rules-engine).
+- Public access added: Builder.data_store property (None before seed());
+  USDM4.tag_resolver(file_path, errors) → TagResolver over a decomposed
+  DataStore. TagResolver + DataStore exported from usdm4 __init__.
+- New integration test tests/usdm4/utility/test_tag_resolver_integration.py
+  using sample_usdm_7.json (dictionary min_age/max_age tags → nested
+  usdm:ref → Quantity values; exercises the recursion for real).
+- Placement decision (Dave): usdm:ref + usdm:tag are USDM-standard →
+  resolver lives in usdm4. usdm:macro is authoring sugar → expanded at
+  workbook import by usdm4_excel; never appears in USDM JSON, resolver
+  ignores it by design.
+- usdm_utility/to_m11.py stays as-is: throwaway test code (Dave), not to be
+  refactored onto the resolver.
+- Escaping FIXED (Dave, 2026-08-03): resolver output is destined for
+  rendered documents (usdm4_protocol / usdm4), so replace_with now inserts
+  parsed soup, not text — refs to XHTML-valued attributes come through as
+  markup, nested tags inside resolve too. Verified standalone against
+  sample_usdm_7 (scalar, plain, rich cases).
+- Stray usdm:macro in USDM content: TagResolver now WARNS ("Unexpanded
+  usdm:macro...") and leaves the tag in place (was silent pass-through).
+  Macro EXPANSION stays in usdm4_excel only — the engine needs workbook
+  context (import-time name/xref registrations, workbook dir for images);
+  no second consumer exists. Revisit lifting it into usdm4 only if
+  usdm4_protocol or another non-Excel author needs macros.
+- Suite state: ALL TESTS PASS (Dave's run, 2026-08-03), incl. the new
+  test_tag_resolver_integration.py.
 
-**To resume / verify (VSCode).** Write unit tests for `_enrollment_geographic_scope` (global / country-in-`countries` / country-in-`unknown` / region / site-fallback) and a round-trip check; run pytest; then run the udp_prism pipeline and confirm TCBCPT_03 renders "Locally". **End-to-end is not clean yet.**
-
-## 1. `test_example_2` reconciliation
-
-`tests/usdm4/test_package.py::test_example_2` is marked
-`@pytest.mark.xfail(strict=True)` because `example_2.json` triggers
-findings from rules added during the V4 build-out. Three buckets of
-work; when the file produces zero failures the strict xfail flips to
-XPASS and pytest fails the run — that's the signal to remove the
-marker.
-
-**a. Rule-interpretation revisit.** DDF00010 — SubjectEnrollment names
-duplicating across amendments. The current model-wide
-`(instanceType, name)` interpretation matches CORE's JSONata but is
-too strict for real data; the rule text says "same parent class".
-Revisit as per-parent uniqueness. See the
-"Rule-text-vs-CORE-JSONata disagreement — policy" section of
-`cre_issues.md` (the meta-rule that says "mirror CORE"); the question
-here is whether DDF00010 is one of the rare exceptions where the spec
-should change. DDF00010 is also the load-bearing example in the
-`docs/d4k_cre_divergence_index.md` "d4k under-reporting" section.
-
-**b. Fixture drift.** DDF00051 (Timing type CT — fixture uses labels
-rather than decodes), DDF00157 (Environmental settings CT — invalid
-C-codes), DDF00199, DDF00218 (other invalid CT decodes/codes), and
-DDF00075 (Activities with no leaf references). Either fix the fixture
-to use valid CT entries / proper refs, or — for DDF00075 — reconsider
-the rule's strictness.
-
-**c. Low-volume legit findings.** This was a snapshot from a pre-rewrite
-run of the test fixtures (DDF00035, 40, 84, 87, 88, 101, 112, 153, 164,
-165, 172, 181, 182, 185, 187, 188, 189, 201, 236, 247, 259). The
-authoritative live list of every divergence the corpus exercises is now
-in `docs/d4k_cre_divergence_index.md` — refresh that, not this snapshot,
-before working through `test_example_2`. Several rules in the snapshot
-have since been categorised: DDF00084 / 087 / 088 / 181 sit in the
-divergence index; DDF00164 / 165 / 187 are in §4 below. The remainder
-either no longer fire (rule rewrites between baselines) or remain
-fixture-specific to `example_2.json` and need the per-finding triage the
-original section called for.
-
-## 2. CT cache refresh
-
-DDF00237 (`plannedAge.unit` must be Age Unit C66781) is in
-"skip gracefully" mode because C66781 isn't in the USDM cache yet.
-Already registered in `ct_config.yaml`; activates after a refresh
-against the CDISC Library API (requires network).
-
-## 3. Real-file regression — corpus baseline supersedes `udp_prism` plan
-
-The "run against 21 udp_prism protocols" plan was written before the
-234-protocol corpus baseline at `validate/corpus_cre_0_16/` existed. The
-corpus run already provides real-file regression coverage and is the
-recipe `validate/README.md` documents. The work now is:
-
-- **Re-run the corpus on each non-trivial rule library change** and
-  diff the new `engine_diff.md` against the frozen baseline. The
-  divergence index at `docs/d4k_cre_divergence_index.md` is the
-  routing layer — every new divergence row should land in one of its
-  categories.
-- **Decide whether `udp_prism` is a separate validation set.** If yes,
-  give it its own subdirectory under `validate/` with its own frozen
-  baseline; if no, retire the plan. The 21 protocols don't currently
-  exercise anything the 234-protocol corpus doesn't already cover.
-- **Open d4k design calls surfaced by the corpus.** DDF00087 and
-  DDF00088 (first-chain-head selection) are the standing candidates;
-  the divergence index marks them as "Open d4k design call" pending
-  decision. DDF00031 (timing FK consistency) and DDF00045 (V3 rule
-  retained alongside V4 DDF00194) sit in the index as
-  "Open / investigate" — categorise before the next corpus refresh.
-
-## 4. Open d4k design decisions
-
-Two known divergences from CORE that aren't bugs in either engine —
-they're cases where the DDF text is ambiguous and d4k's reading is
-defensibly stricter than CORE's. Both are documented here so the
-question doesn't get re-litigated each time the divergence surfaces.
-Both are also rows in `docs/d4k_cre_divergence_index.md` under "Open d4k
-design calls".
-
-**DDF00164 / DDF00165 — `"0"` as a section number.** d4k treats the rule
-symmetrically: `displayX=true` iff `X` is truthy. Python's `bool("0")` is
-`True`, so d4k sees `sectionNumber="0"` as "a number is specified" and
-flags the mismatch when `displaySectionNumber=false`. CORE treats `"0"`
-as "no section" and passes. The DDF text ("If a section number is to be
-displayed then a number must be specified and vice versa") is ambiguous.
-Decision: leave d4k as-is unless a canonical spec clarifies that `"0"`
-is "unset". The alternative — strip `"0"` to empty string before the
-truthy test — is data-specific hand-tuning.
-
-**DDF00187 — XHTML wrapping context for self-namespacing fragments.**
-A `NarrativeContentItem` whose text starts with its own nested
-`<div xmlns="http://www.w3.org/1999/xhtml">` wrapper passes d4k but is
-flagged by CORE ("body has non-whitespace character content"). The
-mechanism: d4k wraps the fragment as
-`<html>...<body><div>FRAGMENT</div></body></html>` so plain text, inline
-markup, and block markup all validate; CORE wraps directly in `<body>`,
-which produces a character-content error when the fragment itself
-declares a namespace-prefixed wrapper. Decision: aligning this case
-would need per-source heuristics (e.g. detect a top-level
-`<div xmlns=...>` and re-parent) and the cost probably exceeds the
-benefit for one outlier per protocol.
-
-## 5. Upstream CRE asks
-
-From the CRE 0.16.0 reconciliation (see `cre_issues.md` for context):
-
-- Execution-error sentinels currently share the `errors` list with
-  real findings, distinguishable only by string-matching against
-  `_EXECUTION_ERROR_TYPES`. Worth raising upstream that they should
-  be returned with a distinct status code rather than as
-  string-tagged entries. The sentinel set has now grown to six
-  strings; the maintenance burden will only increase.
-- `_run_validation`'s unconditional stdout/stderr suppression
-  compounded the 0.16 wrapper-API debug session. Make it
-  configurable (env var or flag) so diagnostic runs can surface
-  engine output.
-
-## 6. (Optional) Real fixtures for hand-authored rules
-
-Roughly 87 hand-authored rule tests carry `@pytest.mark.skip` on
-their positive/negative fixture cases (metadata-only coverage). A
-minimal JSON blob per rule converts each into a live behavioural
-test, around 15 minutes per pair, so ~22 hours to do them all.
-Worth starting with the structurally interesting rules — DDF00189
-mutex, DDF00196 1:1-dict-of-sets, DDF00124 regex-ref, DDF00010
-model-wide uniqueness, DDF00161 preorder-walk — and letting the
-rest wait.
-
-## 7. (Optional) M11 docx-side plan in `usdm4_protocol`
-
-Per `usdm4_protocol/docs/m11_validation_plan.md`: `RuleM11S###`
-(structural), `RuleM11T###` (technical), `RuleM11C###` (content),
-generated from `m11_specification` at authoring time. Needs its
-own planning pass — separate scope from the usdm4 engine work.
-
-## 8. Assembler CORE conformance — known gaps
-
-`tests/usdm4/integration/test_assembler_to_core.py::test_core_minimum_assembled_study`
-runs CORE against the minimum assembler fixture and pins the failing
-rule-id set as `_KNOWN_FAILING_RULES` (27 rules as of 2026-05-02). The
-test is a regression detector: passes when the set is unchanged, fails
-on additions or removals so the maintainer is forced to triage.
-
-A 2026-05-02 bisection tried three fixture-only additions to clear
-known gaps. Summary of cost vs benefit:
-
-| Variant | Cleared | Introduced | Δ rules | Δ errors |
-| --- | --- | --- | --- | --- |
-| Sponsor identifier (`role: sponsor` non-standard scope) | CORE-000973, CORE-001054 | CORE-000971, CORE-001063; bumped CORE-000879 +2, CORE-000972 +1 | 0 | +3 |
-| `population.demographics` with age range | CORE-000815 | CORE-001060, CORE-001061; bumped CORE-000879 +2 | +1 | +5 |
-| Activity `actions.bcs` with two CDISC BCs | CORE-001076 | CORE-000427, CORE-000808, CORE-001006, CORE-001013 (8 errors) | +3 | +12 |
-
-All three are net-negative, so the fixture was reverted and none of the
-additions are in the codebase. Variant A (sponsor identifier) was the
-closest to break-even and the only one worth revisiting once the
-introduced rules can be cleared at the same time. The BC path (variant
-C) caused 8 CORE-001013 "names of all instances of the same class must
-be unique" errors — strong signal that either the BC's internal
-sub-instances collide by name or the loaded BC structure duplicates
-Codes. Worth investigating before activities reference BCs in any
-fixture.
-
-Of the 27 baseline rules, four have descriptions decoded from the
-corpus baseline and need code (not fixture) work to clear:
-
-- **CORE-000973** — exactly one `StudyRole(code="sponsor")`.
-  `IdentificationAssembler` comment claims sponsor is wired through the
-  identifier scope, but no code path actually creates a `StudyRole`
-  with the sponsor code. Candidate fix: have `_create_organization`
-  emit a sponsor `StudyRole` when the org's role is `"sponsor"`.
-- **CORE-001036** — at least one endpoint with level=primary.
-  `StudyDesignInput` has no `endpoints` / `objectives` field. Needs
-  schema additions plus an objectives-and-endpoints assembler.
-- **CORE-001016** — planned duration on the main timeline.
-  `TimelineInput` has no duration field; nothing emits
-  `ScheduleTimeline.plannedDuration`. Schema + assembler change.
-- **CORE-001058** — study phase from the C66737 SDTM codelist.
-  Fixture sets `trial_phase: "phase-1"`; the resulting `Code` has
-  wrong `codeSystem` / `codeSystemVersion` / `decode` for C66737.
-  Encoder gap in `study_design_assembler` / encoder.
-
-The remaining 23 baseline rules don't fire on any of the 234 corpus
-protocols, which means they're specific to the bare-bones shape of the
-minimum fixture. They'll need individual investigation — likely a mix
-of "real gap" and "fires only on degenerate input".
-
-Order of attack when work resumes: fix CORE-000973 (smallest, has a
-clear code path), then revisit variant A's introduced rules
-(CORE-000971 needs a populated `legalAddress` on the sponsor org;
-CORE-001063 needs decoding) so the sponsor-identifier change can land
-cleanly.
-
-## 9. Assembler conditions — drop policy and diagnostics (branch `51-condition-assembler-diagnostic`)
+### 2026-07-30 — Assembler conditions: drop policy and diagnostics (branch `51-condition-assembler-diagnostic`)
 
 **Done 2026-07-30, full suite green.** `TimelineAssembler._add_conditions` opened
 `if ref := item["reference"]:` with no `else`, so a condition the extractor could not
@@ -1228,10 +1682,16 @@ exception path).
 Full context and the usdm4_protocol half: `usdm4_protocol/docs/next_steps.md` § Session
 Log, session 12 (2026-07-30).
 
-## 10. Timeline assembler upgrade (issues 63–71 merged; 73 (structured input) merged 2026-09-26; R8 (#72), N78 and the expander to come)
+### 2026-06-18 — Amendment enrollment geographic scope derivation — NOT WORKING YET, tests needed
 
-The timeline assembler is rebuilt on a text input with a pattern grammar, restructured
-into parse → plan → build, and extended with cycles, conditional timelines, profile
-attachment and gates, one issue per step. Design: `docs/timeline_assembler_design.md`.
-Work order and gates: `docs/timeline_assembler_plan.md`. Decisions U4-1–U4-34 (open and taken) are in the
-design, § 9.
+**Status: incomplete and unverified. No unit tests written for this change yet. Nothing run in Cowork (tests are VSCode-only).**
+
+**Branch:** `39-further-ich-m11-updates`. Uncommitted — Dave commits. Cross-repo change; companions: `usdm4_protocol @ m11-rules` (renderer), `udp_prism @ main` (expected baseline). See their `docs/next_steps.md`.
+
+**Change.** `src/usdm4/assembler/amendments_assembler.py` — `_create_enrollment` no longer hardcodes a global `forGeographicScope`. New helper `_enrollment_geographic_scope(data)` derives it from `data["scope"]` (the amendment's Amendment Scope field): global → Global (C68846, no code); first resolvable country → Country (C25464) + ISO code; else first region → Region (C41129) + code. It tries `scope["countries"]`/`scope["regions"]` **and `scope["unknown"]`** — the M11 step-1 extractor drops a bare country name (e.g. "France") into `unknown`, whereas the FHIR step-3 import populates `countries`. Output stays CT-valid: `GeographicScope.type` ∈ C207412 (DDF00144, ERROR) and a non-global scope carries a code (DDF00261, WARNING).
+
+**Why.** Principle (USDM stores, M11 presents): USDM stores only the geographic scope; the Globally/Locally/By Cohort wording (C217275) is M11 presentation, applied in `usdm4_protocol` at render time — never stored here. Previously the enrollment scope was always Global, so a country/regional amendment lost its scope through the round-trip.
+
+**Known gap.** A purely site- or cohort-scoped amendment has no C207412 area code to anchor a non-global scope, so it falls back to Global and logs a warning. Country/regional (the case this serves) derive correctly.
+
+**To resume / verify (VSCode).** Write unit tests for `_enrollment_geographic_scope` (global / country-in-`countries` / country-in-`unknown` / region / site-fallback) and a round-trip check; run pytest; then run the udp_prism pipeline and confirm TCBCPT_03 renders "Locally". **End-to-end is not clean yet.**

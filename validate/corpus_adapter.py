@@ -6,17 +6,17 @@ ones. This module is the localised bridge so the eval harness and any
 integration tests can use real corpus data without each caller re-doing the
 same workarounds.
 
-Long-term, USDM4 itself should accept the corpus shape directly (especially
-for SoA) — see ``docs/assembler_validation_findings.md``. Until then, every
-transform here corresponds to a tracked finding.
+Every transform here exists because the corpus output differs from the
+``AssemblerInput`` schema; remove a transform once the corpus emits the
+schema shape.
 
 Transforms applied:
 
   * ``soa`` in the retired ``TimelineInput`` shape (parallel epochs / visits /
     timepoints / windows lists with caller-parsed numbers) -> a list of
     ``ScheduleTimelineInput`` (issue 63), one per table, every table kept.
-    The conversion is mechanical — the rules of
-    ``docs/timeline_assembler_plan.md`` 63.5 — and exists only because the
+    The conversion is mechanical — the rules of issue 63 part 63.5, in the
+    retired ``docs/timeline_assembler_plan.md`` (git history) — and exists only because the
     corpus still drafts the old shape; a table already in the new shape
     (it has ``columns``) passes through untouched.
 
@@ -29,6 +29,11 @@ Transforms applied:
     is dropped with a warning recorded on the returned report. We don't
     silently invent role mappings in the adapter — that belongs in the
     assembler.
+
+  * ``non_standard.type`` holding a role label (``sponsor``) instead of an
+    org kind: when it isn't an ``IdentificationAssembler.ORG_CODES`` key it
+    is moved to ``role`` (unless ``role`` is set) and ``type`` defaults to
+    ``pharma``.
 
 This module deliberately does NOT:
 

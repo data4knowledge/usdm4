@@ -9,11 +9,11 @@ A break here means either:
     or stricter rule), or
   * the AssemblerInput schema tightened in a way that broke the fixture.
 
-Current status (2026-05-01)
----------------------------
+Current status
+--------------
 
-Per ``docs/assembler_validation_findings.md``, even the minimum fixture
-produces output that d4k flags. Until those findings are fixed, the strict
+Even the minimum fixture produces output that d4k flags (``docs/issues.md``
+N2). Until those findings are fixed, the strict
 "all implemented rules pass" test is ``xfail``-ed and we instead enforce
 two regression guards:
 
@@ -126,10 +126,8 @@ def test_d4k_finding_count_at_or_below_baseline(
 
 @pytest.mark.xfail(
     reason=(
-        "Minimum fixture fails 14 d4k rules with 19 findings as of 2026-05-01 "
-        "(post sponsor/org-wiring + DDF00229 CT config + DDF00083 id-uniqueness "
-        "fixes); "
-        "see docs/assembler_validation_findings.md. Flip this to a regular "
+        "Minimum fixture's assembled output fails d4k rules; "
+        "see docs/issues.md N2. Flip this to a regular "
         "test (drop xfail) once the assembler is fixed and the baseline test "
         "is no longer needed."
     ),

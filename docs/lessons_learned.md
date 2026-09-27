@@ -199,6 +199,18 @@ bucket is the honest ceiling — each one is bespoke logic.
   alternation. Generated code is a starting point; the
   `# GENERATED — please review` header is doing real work.
 
+### Retired 2026-05-02
+
+Once all 210 V4 rules were implemented, the generator was removed: the
+intermediate YAMLs (`src/usdm4/rules/intermediate/`, 205 files) and the
+three scripts (`generate_rule_intermediate.py`, `generate_rule_python.py`,
+`translate_jsonata.py`). The engine never read the YAMLs, and 119 of them
+no longer matched their hand-rewritten rule — DDF00249's still described a
+`criterionItem` field that doesn't exist, which cost investigation time. A
+future rule library (USDM 4.1, say) would regenerate from its new sources,
+not reuse the old snapshot. `tools/prepare_core_cache.py` stays; CORE
+validation needs it. New rules are written by hand — §9.
+
 ## 6. Debugging patterns that paid off repeatedly
 
 - **Staged diagnostic programs.** For silent pipeline failures (everything
@@ -360,38 +372,37 @@ parameter groups — more engineering than three hand-authored rules.
 overlap after parameter extraction, a template is worthwhile. Less than
 that, hand-author each.
 
-## 9. Hand-authoring workflow for bespoke rules
+## 9. Adding or changing a rule
 
-The per-rule recipe, refined across ~13 hand-authored rules this
-session. Targets a ~5-minute cycle per rule.
+Rules are written by hand; the generator is gone (§5). Auto-discovery
+means a rule is one file and its test another — no registry.
 
-1. **Read the intermediate YAML.** Note `text`, `class`, `attributes`,
-   `severity`, `_core_jsonata_reference` (if present).
-2. **Interpret the semantics.** Rule text is primary; CORE JSONata is a
-   useful algorithmic guide for the check, especially for identifying
-   which parent class to iterate and which codes to match.
-3. **Verify field names in `dataStructure.yml`.** The xlsx attribute
+1. **Decide where the rule belongs.** A V4 catalogue rule (a
+   `Version 4.0 = Y` row in `DDF-RA/Deliverables/RULES/USDM_CORE_Rules.xlsx`)
+   takes its DDF id. A `usdm4`-only rule needs its own identifier scheme.
+2. **Interpret the semantics.** Rule text is primary; CORE's JSONata
+   (in the CORE cache, `<cache>/rules/usdm/4-0.json`) is a useful guide
+   to which parent class to iterate and which codes to match. Where the
+   two disagree, mirror CORE — `cre_issues.md` § *Policy*.
+3. **Check field names in `dataStructure.yml`.** The xlsx attribute
    column uses semantic names that don't always match USDM JSON field
-   names (see §6 on `members` vs `memberIds`). A quick lookup catches
-   this before coding.
-4. **Write the `validate()` body** using DataStore primitives —
-   `instances_by_klass`, `parent_by_klass`, `instance_by_id`,
-   `path_by_id`. Copy severity from the xlsx row (or a sibling rule
-   of the same severity) to avoid the ERROR-default trap (§6).
-5. **Optionally add the `# MANUAL: do not regenerate` sentinel at
-   the top of the file.** Historically this protected hand-authored
-   rules from the stage-2 generator; the generator has since been
-   retired (see `rule_generation_retrospective.md`), so the sentinel
-   is now informational only — a "this rule was authored
-   deliberately, don't reach for templated edits" signal for future
-   readers.
-6. **Author the test file by hand** at
-   `tests/usdm4/rules/test_rule_ddf#####.py`. Copy the structure
-   from a neighbouring test of the same predicate shape. The
-   `feedback_usdm4_rule_test_pattern` memory describes the
-   `MagicMock`-based DataStore pattern; the assertion patterns
-   memory covers WARNING-level rules (use `count()` not `dump()`
-   substring matching).
+   names (see §6 on `members` vs `memberIds`).
+4. **Write `src/usdm4/rules/library/rule_<id>.py`** — one `RuleTemplate`
+   subclass; rule id, severity and rule text in `__init__`; `validate(self,
+   config)` on the `DataStore` primitives (`instances_by_klass`,
+   `parent_by_klass`, `instance_by_id`, `path_by_id`). Copy the severity
+   from the xlsx row — the default is ERROR (§6). A neighbouring rule of
+   the same predicate shape is the shortest path. The
+   `# MANUAL: do not regenerate` line on many files is informational only:
+   it marks a rule written deliberately by hand.
+5. **Write `tests/usdm4/rules/test_rule_<id>.py`.** `DataStore` is a
+   `MagicMock` with those four methods set; `test_rule_ddf00035.py` is a
+   typical example (metadata test, a `_data()` helper, pass and fail
+   cases). For WARNING-level rules assert with `count()`, not substring
+   matching on `dump()`.
+6. **Run the tests locally.** The engine's `_load_rules` registers the new
+   class on the next instantiation; `validate/d4k.py` or
+   `USDM4.validate(...)` exercises it.
 
 Typical timings:
 - Cardinality / mutex / at-least-one-of / simple scoped check — 3 min each
@@ -499,7 +510,7 @@ the `grep` output against that catalogue to get the V4-specific
 figure. (Earlier in this project the intermediate YAMLs at
 `src/usdm4/rules/intermediate/` provided this filter cheaply, but
 those YAMLs and the generator that produced them were retired on
-2026-05-02 — see `rule_generation_retrospective.md`.)
+2026-05-02 — see §5.)
 
 A day of focused work can add ~40 rules when patterns emerge; hand-authoring
 alone is ~10 rules/hour once the workflow is clean.
@@ -862,8 +873,7 @@ JSONata ignores the parent entirely and does global uniqueness per
 disagreement — policy" section) so a future reader investigating a
 divergence finds it on the catalogue side without having to dig into
 the lessons-learned narrative. The two known exceptions (DDF00164/165,
-DDF00187) are tracked in `next_steps.md` §4 and
-`docs/d4k_cre_divergence_index.md` under "Open d4k design calls".
+DDF00187) are in the same file, § *Policy*.
 
 ### Iterator-returning malformed-tag detector
 
@@ -1733,3 +1743,16 @@ second anchor, the same chain gives the same time, so the walk must carry a shif
 loop's start, entered from the decision, is re-timed — re-timing every instance met again put
 the second pass of `C3+D15` on the first pass's `C3+D1` day. Check a pass-2 time on a pin
 before trusting the rule.
+
+## A doc's claim about the code is checked against the code before it is carried forward (2026-09-27)
+
+Tidying `docs/` meant moving claims from old documents into new ones. Three had gone false
+without anyone noticing: the design said timings in a unit other than the anchor's were
+converted (never built — N12); the CRE notes and the new issue N7 said execution errors were
+classified by string matching (replaced by `executionStatus` in #54, two months earlier); the
+integration README quoted d4k counts two revisions out of date. Each was caught only by opening
+the source file. When a statement moves from one doc to another, read the code it describes
+first; a doc repeating another doc is not evidence.
+
+Separately: before deleting a doc, grep code, tests and fixtures for its name, not just `docs/`.
+The timeline design was cited by four modules, a schema test and six pin input files.

@@ -3,7 +3,7 @@ in issue 73 (U4-35).
 
 Every header value is a structured object carrying its printed ``text``,
 ``markers`` and ``redacted``; the caller structures, ``usdm4`` never reads
-text. Specification: ``docs/timeline_assembler_design.md`` § 3, § 9 U4-35.
+text. Specification: ``docs/spec/timeline_assembler.md`` § 2, § 6 U4-35.
 """
 
 import pytest

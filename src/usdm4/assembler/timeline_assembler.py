@@ -3,8 +3,8 @@
 Input: a list of ``ScheduleTimelineInput`` dicts (validated and dumped by
 ``Assembler``). Every header value is structured by the caller (issue 73,
 U4-35); ``usdm4`` never reads printed text — ``timeline/columns.py`` copies the
-values across, printed text kept only as labels. Design:
-``docs/timeline_assembler_design.md``.
+values across, printed text kept only as labels. Specification:
+``docs/spec/timeline_assembler.md``.
 
 The public surface is unchanged, because three callers read it: ``Assembler``
 calls ``execute`` and ``clear``; ``StudyDesignAssembler`` reads ``epochs``,

@@ -1,40 +1,133 @@
-# CDISC Rules Engine — Known Issues and Workarounds
+# CORE vs d4k — known issues, divergences and workarounds
 
-**Current target version: cdisc-rules-engine 0.16.0.** All issues, workarounds,
-and corpus numbers below describe behaviour observed against 0.16.0 unless
-explicitly marked otherwise. Historical 0.15.x detail is retained where it
-explains how a workaround came to be — see Issue 7 for the most extensive
-example. The catalogue is maintained as feedback notes for the CDISC Rules
-Engine development team and as the authoritative record of usdm4's CRE
-interventions.
+Reference for the two validation engines: the d4k Python rule library and the CDISC Rules
+Engine (CRE, "CORE"). Read it when CORE and d4k disagree on a rule. It is not a to-do list —
+anything here still to be solved is a row in `issues.md` (N6–N8).
 
-> **Looking for "is this divergence already known?"** — start at
-> `docs/d4k_cre_divergence_index.md`. That index has one row per rule that
-> diverges in the corpus baseline, each pointing back here, to
-> `next_steps.md`, or to `corpus_extractor_fixes.md`. This file remains the
-> authoritative explanation of CRE-side bugs; the index is the routing
-> layer. Add new rows there before adding new investigation here.
+**Current target: cdisc-rules-engine 0.16.0.** Counts are from the 234-protocol corpus baseline
+`validate/corpus_cre_0_16/engine_diff.md`, frozen 2026-05-02 (5 d4k under-reporting, 13 d4k
+over-reporting, 195 aligned, 1 CORE-only). Historical 0.15.x detail is kept where it explains
+how a workaround came about.
+
+The baseline predates #54 (2026-08-07), which changed how CORE results are classified
+(`executionStatus`, issue 5) and gave `CoreValidator` the bundled USDM schema. CORE-side counts
+may move when the corpus is re-run.
+
+The numbered issues 1–10 are also the feedback for the CRE team.
+
+Contents: *Policy* · *Divergence index* · *New divergences* · issues 1–10 · *Summary of
+workarounds* · *CRE 0.16.0 upgrade notes* · *Defensibly d4k-stricter*.
 
 
-## Rule-text-vs-CORE-JSONata disagreement — policy
+## Policy — rule text vs CORE's JSONata
 
-When a DDF rule's English text and CORE's JSONata implementation disagree
-about what the rule means, **mirror CORE in the d4k Python rule** and note
-the disagreement in the rule's source comment. CORE is the reference
-implementation; hand-authors are matching its behaviour, not reinterpreting
-the English. If the stricter behaviour turns out to be wrong in practice,
-the fix is a spec or CORE change — not a behavioural divergence in the
-Python.
+When a DDF rule's English text and CORE's JSONata disagree about what the rule means, **mirror
+CORE in the d4k rule** and note the disagreement in the rule's source comment. CORE is the
+reference implementation. If the stricter behaviour is wrong in practice, the fix is a spec or
+CORE change, not a divergence in the Python. (First captured in `lessons_learned.md` §16.4,
+with DDF00010 as the example.)
 
-This policy was learned during the V4 build-out (originally captured in
-`lessons_learned.md` §16.4, where DDF00010 supplied the canonical
-example). It lives here because it's the meta-rule that prevents the same
-divergence being re-investigated each time a future reader notices the
-strict behaviour. Two cases where d4k legitimately departs from CORE — both
-because the DDF text is ambiguous and the spec hasn't picked a side — are
-catalogued in `next_steps.md` §4 (DDF00164/165 `"0"` treatment, DDF00187
-self-namespacing XHTML wrapper); those are exceptions, not precedents.
+Two settled exceptions, where the DDF text is ambiguous and d4k keeps its own reading. They are
+exceptions, not precedents.
 
+- **DDF00164 / DDF00165 — `"0"` as a section number.** d4k: `displayX=true` iff `X` is truthy;
+  `bool("0")` is `True`, so `sectionNumber="0"` counts as specified and a
+  `displaySectionNumber=false` is flagged. CORE treats `"0"` as no section. The DDF text ("If a
+  section number is to be displayed then a number must be specified and vice versa") doesn't
+  decide it. Leave d4k as is unless the spec says `"0"` means unset.
+- **DDF00187 — XHTML wrapping of self-namespacing fragments.** A `NarrativeContentItem` whose
+  text opens with its own `<div xmlns="http://www.w3.org/1999/xhtml">` passes d4k but CORE flags
+  "body has non-whitespace character content". d4k wraps as
+  `<html>…<body><div>FRAGMENT</div></body></html>`; CORE wraps straight in `<body>`. Aligning
+  needs per-source heuristics; not worth it for one outlier per protocol.
+
+
+## Divergence index
+
+One row per rule that diverges on the corpus baseline. If a divergence has a row, read the
+explanation it points to and stop.
+
+- **Direction** — `under`: CORE finds errors d4k misses. `over`: d4k finds errors CORE doesn't.
+- **Files** — corpus protocols (of 234) where it fires.
+
+### d4k under-reporting
+
+| DDF id   | CORE id     | Files | Category    | Explanation |
+|----------|-------------|------:|-------------|-------------|
+| DDF00010 | CORE-001013 |   204 | CRE issue 8 | § 8         |
+| DDF00093 | CORE-000873 |   230 | CRE issue 8 | § 8         |
+| DDF00094 | CORE-000814 |   204 | CRE issue 8 | § 8         |
+| DDF00151 | CORE-000834 |   204 | CRE issue 8 | § 8         |
+| DDF00181 | CORE-001068 |   230 | CRE issue 8 | § 8         |
+
+All five are one upstream bug: CORE visits a `GovernanceDate` shared between
+`StudyVersion.dateValues` and `StudyDefinitionDocumentVersion.dateValues` once per parent
+reference, not once per instance. d4k is correct; no d4k change.
+
+### d4k over-reporting
+
+| DDF id   | CORE id     | Files | Category                    | Explanation |
+|----------|-------------|------:|-----------------------------|-------------|
+| DDF00031 | —           |   213 | Open                        | `issues.md` N6 |
+| DDF00045 | —           |    25 | Open                        | `issues.md` N6 |
+| DDF00075 | —           |   216 | d4k stricter (CT / scope)   | *Defensibly d4k-stricter* |
+| DDF00084 | —           |   234 | CRE issue 7 + d4k stricter  | § 7; *Defensibly d4k-stricter* |
+| DDF00087 | —           |   210 | Open                        | `issues.md` N6 |
+| DDF00088 | CORE-001048 |   177 | Open                        | `issues.md` N6 |
+| DDF00110 | —           |   200 | d4k stricter (CT)           | *Defensibly d4k-stricter* |
+| DDF00140 | —           |   227 | d4k stricter (CT)           | *Defensibly d4k-stricter* |
+| DDF00155 | —           |   234 | d4k stricter (CT)           | *Defensibly d4k-stricter* |
+| DDF00166 | —           |   234 | d4k stricter (CT)           | *Defensibly d4k-stricter* |
+| DDF00200 | —           |   227 | d4k stricter (CT)           | *Defensibly d4k-stricter* |
+| DDF00227 | —           |   234 | Legit data finding          | corpus doesn't populate `studyType`; the rule is right |
+| DDF00259 | —           |   227 | d4k stricter (CT)           | *Defensibly d4k-stricter* |
+
+The CT-membership cluster (DDF00075, 084, 110, 140, 155, 166, 200, 259) shares one fingerprint:
+d4k's `_ct_check` and rule-side helpers complete where CORE's `codelist_extensible` operation
+drops into no-data mode (§ 7). Where d4k flags a real invalid decode or `codeSystemVersion`,
+CORE returns pass-or-NA because its operation emitted an execution-error sentinel the wrapper
+filters out.
+
+### Workarounds in place (corpus shows aligned)
+
+These would diverge without the workaround. Listed so it isn't removed in a refactor.
+
+| DDF id    | CORE id     | Category      | Workaround |
+|-----------|-------------|---------------|------------|
+| DDF00114  | CORE-000878 | CRE issue 5/7 | `core_validator.py::_classify_errors` (`executionStatus`, #54) |
+| DDF00141  | CORE-000857 | CRE issue 5/7 | `core_validator.py::_classify_errors` |
+| DDF00152  | CORE-000840 | CRE issue 5/7 | `core_validator.py::_classify_errors` |
+| DDF00161  | —           | CRE issue 10  | `rule_ddf00161.py` (multi-parent allowed-set union) |
+| DDF00194  | CORE-000971 | CRE issue 9   | `rule_ddf00194.py` iterates real `Address` instances; null `legalAddress` skipped |
+| DDF00237  | CORE-001061 | CRE issue 5/7 | `core_validator.py::_classify_errors` |
+| —         | CORE-000955 | CRE issue 6   | `_EXCLUDED_RULES` in `core_validator.py` (rule skipped) |
+| —         | CORE-000956 | CRE issue 6   | `_EXCLUDED_RULES` in `core_validator.py` (rule skipped) |
+
+### Resolved between baselines
+
+If one of these diverges again, read the reason before re-investigating.
+
+| DDF id   | Was (0.15.x) | Now (0.16.0)     | Reason |
+|----------|--------------|------------------|--------|
+| DDF00025 | under=103    | aligned_fail=103 | CORE behaviour change — *CRE 0.16.0 upgrade notes* |
+| DDF00229 | under=222    | aligned_fail=222 | CORE behaviour change — *CRE 0.16.0 upgrade notes* |
+| DDF00249 | over=200     | aligned (0/0/0)  | d4k rule rewritten — *CRE 0.16.0 upgrade notes* |
+
+
+## New divergences
+
+1. Look it up in the index. If it has a row, read the explanation — done.
+2. Otherwise put it in the first category that fits:
+   - **CRE issue n** — known upstream behaviour, one of issues 1–10 below.
+   - **d4k stricter** — d4k does work CORE can't (upstream limitation, or wider scope such as
+     DDF00082's full schema check). See *Defensibly d4k-stricter*.
+   - **Settled exception** — ambiguous DDF text, d4k's reading kept. See *Policy*.
+   - **Legit data finding** — d4k is right about the data; CORE misses it.
+3. Nothing fits: add the row as **Open** and raise it in `issues.md`.
+
+Refresh the index on a CRE upgrade (re-run the corpus per `validate/README.md`, regenerate
+`engine_diff.md`, walk every row) or after a rule change that could move a row. Update the
+baseline date and CRE version at the top when you do.
 
 ## 1. Singleton caching prevents sequential multi-file validation
 
@@ -239,9 +332,11 @@ In a 234-file corpus run against CRE 0.16.0, the new sentinel strings produced
 masquerade as `d4k_under_reporting` on rules where d4k correctly produces zero
 findings (DDF00114, DDF00141, DDF00152).
 
-**Workaround:** We classify errors by checking the `error` field against the
-six known strings and separate them into an `execution_errors` list. The set
-lives in `_EXECUTION_ERROR_TYPES` in `src/usdm4/core/core_validator.py`.
+**Workaround:** Since #54 (2026-08-07), `_classify_errors` in
+`src/usdm4/core/core_validator.py` follows each result's `executionStatus`, as the CORE CLI
+report does: `skipped` is dropped, `issue reported` is a finding, `execution error` goes to
+`execution_errors`. The six strings in `_EXECUTION_ERROR_TYPES` are the fallback for results
+with no `executionStatus` — how this was handled before #54.
 
 **Suggested fix:** Either skip rules whose preconditions are not met (return an
 empty result), or return execution errors in a separate field / with a distinct
@@ -615,7 +710,7 @@ All workarounds are implemented in `src/usdm4/core/core_validator.py` and
 | Stdout pollution | `_run_validation()` | Redirect sys.stdout/stderr to StringIO |
 | JList in results | `CoreRuleFinding._sanitise_value()` | Recursive type normalisation |
 | Missing resource files | `CoreCacheManager.ensure_resources()` | Download from GitHub, disk-cache |
-| Execution error noise | `_classify_errors()` | Filter by known error type strings (6 sentinels — 4 from 0.15.x, 2 added for 0.16.0) |
+| Execution error noise | `_classify_errors()` | Follow `executionStatus` (#54); the 6 known error strings are the fallback for results without one |
 | `codelist_extensible` pandas crash | `_classify_errors()` | CRE 0.16.0 stopped crashing but reports the same condition via `"Domain not found"` / `"Empty dataset"` sentinels (see issue 7); original `"Error occurred during operation execution"` sentinel retained as defence-in-depth |
 | Cross-reference traversal (DDF00181, DDF00093, DDF00010, DDF00094, DDF00151) | n/a (CRE-side bug) | d4k rules `rule_ddf00181.py`, `rule_ddf00093.py`, `rule_ddf00010.py`, `rule_ddf00094.py`, `rule_ddf00151.py` work from id-keyed structures — see issue 8 |
 | Missing relation reported as blank instance (CORE-000971 / DDF00194) | n/a (CRE-side bug) | d4k iterates real `Address` instances; null `legalAddress` on `Organization` is correctly skipped — see issue 9 |
@@ -665,32 +760,22 @@ DDF00084 stays in `over=234`, and the issue 8 cross-reference traversal rules
 (DDF00010/093/094/151/181) stay in their respective `under`/`over` buckets —
 0.16.0 did not address that bug.
 
-### Open follow-ups
+### DDF00249 — resolved, not a CRE issue
 
-- **DDF00249 over → aligned (0/0/0) — resolved, not a CRE issue.** The d4k
-  rule was rewritten between the 0.15 and 0.16 baseline runs. The original
-  auto-generated stub iterated `EligibilityCriterion` and called
-  `.get("criterionItem")` — a non-existent field on the API model (the real
-  field is `criterionItemId`) — so it fired on every criterion regardless
-  of data, which is what the 0.15 corpus run captured. The current rule at
-  `src/usdm4/rules/library/rule_ddf00249.py` correctly walks
-  `criterionItemId` references and reports unused
-  `EligibilityCriterionItem` instances; on the 234-file corpus there are
-  zero. The 0.15 baseline's `over=200` was therefore the *buggy* number,
-  not a CRE-related signal, and 0.16's `aligned (0/0/0)` is the correct
-  one. The rule rewrite predates the 0.16 baseline run.
-- **`_EXECUTION_ERROR_TYPES` is becoming a maintenance burden.** Issue 5's
-  set now has six entries; CRE keeps adding new strings for the same
-  conceptual category (rule-not-applicable / no-data-to-evaluate). Worth
-  raising upstream that these should be returned with a distinct status code
-  rather than as string-tagged entries in the same `errors` list as real
-  findings.
-- **Stdout/stderr suppression hides upstream errors.** The `_run_validation`
-  wrapper redirects both streams to a `StringIO`, which compounded today's
-  diagnosis: even when the engine logged tracebacks (which 0.16.0 does on
-  some failure paths), our wrapper swallowed them. Worth reconsidering as a
-  configurable option (e.g. an env var to surface engine output during
-  diagnostic runs).
+The d4k rule was rewritten between the 0.15 and 0.16 baseline runs. The original auto-generated
+stub iterated `EligibilityCriterion` and called `.get("criterionItem")` — a
+non-existent field on the API model (the real field is `criterionItemId`) — so it fired on
+every criterion regardless of data, which is what the 0.15 corpus run captured. The
+current rule at `src/usdm4/rules/library/rule_ddf00249.py` correctly walks
+`criterionItemId` references and reports unused `EligibilityCriterionItem` instances; on
+the 234-file corpus there are zero. The 0.15 baseline's `over=200` was therefore the
+*buggy* number, not a CRE-related signal, and 0.16's `aligned (0/0/0)` is the correct one.
+The rule rewrite predates the 0.16 baseline run.
+
+### Still open
+
+Always-suppressed engine output is open (`issues.md` N8). The sentinel-string burden was
+removed by #54 (`executionStatus`); raising it upstream is part of N7.
 
 
 ## Defensibly d4k-stricter — won't change
@@ -705,7 +790,8 @@ divergences on these rules.
   schema findings (missing required fields, wrong types, cardinality
   violations) that CORE doesn't. Scope difference, not a divergence to fix.
 
-- **CT-membership family — DDF00051, 00075, 00084, 00155, 00166, 00249.**
+- **CT-membership family — on the corpus baseline DDF00075, 00084, 00110, 00140, 00155,
+  00166, 00200, 00259; seen earlier on the samples also DDF00051, 00249.**
   d4k's `_ct_check` and the rule-side helpers complete correctly when
   CORE's `codelist_extensible` dtype merge fails (see issue 7). On samples
   where CORE drops into "no data" mode for these rules, d4k continues to

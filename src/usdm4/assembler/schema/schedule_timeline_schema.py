@@ -4,8 +4,8 @@ One ``ScheduleTimelineInput`` per timeline. ``usdm4`` is algorithm only and
 never reads printed text: the caller (``usdm4_protocol``, which may use AI;
 ``protocol_corpus``'s ground truth; or any algorithmic source) turns the
 printed schedule into structure, and hands every header value over as a
-structured object. Specification: ``docs/timeline_assembler_design.md`` § 3
-and § 9 U4-35.
+structured object. Specification: ``docs/spec/timeline_assembler.md`` § 2
+and § 6 U4-35.
 
 Every value object carries:
 

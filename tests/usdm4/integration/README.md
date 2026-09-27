@@ -26,16 +26,15 @@ deterministic.
 
 ## Current state and the baseline tests
 
-Per `docs/assembler_validation_findings.md`, the minimum fixture currently
-produces output that flags 16 d4k rules with 54 findings (and 1 rule
-exception). Until those findings are addressed, the integration tests use
-**baseline assertions** rather than strict pass assertions:
+The minimum fixture's assembled output is not yet conformant — `docs/issues.md`
+N2. Until it is, the integration tests use **baseline assertions** rather
+than strict pass assertions:
 
 - The number of finding-count, failing-rule-count, and exception-rule-count
   values are pinned to current observed values.
 - Tests fail if those counts grow.
 - The "all rules pass" test is `xfail`ed with a `strict=False` flag and a
-  pointer back to the findings doc.
+  pointer to `docs/issues.md` N2.
 
 This is deliberate. A regression test that records "today's broken state"
 is not strong protection, but it does catch any change that makes things

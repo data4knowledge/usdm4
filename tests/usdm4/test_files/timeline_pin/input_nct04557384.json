@@ -1,6 +1,6 @@
 {
   "source": "Copied 2026-09-25 from a machine-drafted SoA (NCT04557384); a fixture only, not a reference. Frozen: never refreshed, so the pin stays comparable.",
-  "converted": "2026-09-25, issue 63 part 63.5: rewritten once from the TimelineInput shape into ScheduleTimelineInput, mechanically (rules in docs/timeline_assembler_plan.md 63.5). The TimelineInput original is in git history.",
+  "converted": "2026-09-25, issue 63 part 63.5: rewritten once from the TimelineInput shape into ScheduleTimelineInput, mechanically (rules in the retired docs/timeline_assembler_plan.md 63.5, git history). The TimelineInput original is in git history.",
   "soa": [
     {
       "type": "main",
