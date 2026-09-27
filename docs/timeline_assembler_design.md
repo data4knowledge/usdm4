@@ -1,9 +1,9 @@
 # Timeline assembler — design
 
 **Status: 2026-09-27. Issues 63–71, 73 (structured input, U4-35) and 74 (R8) and
-75 (copied columns) merged.** Built: the input schema (§ 3, structured since issue
+75 (copied columns) merged; the expander (U4-11) built.** Built: the input schema (§ 3, structured since issue
 73), parse → plan → build → naming (§ 5), R1–R9. § 2
-records the assembler as it was BEFORE issue 63; §§ 10–21 record what each issue built
+records the assembler as it was BEFORE issue 63; §§ 10–22 record what each issue built
 and the calls made on the way. Decisions are in § 9. The work order is in
 `timeline_assembler_plan.md`.
 
@@ -407,18 +407,15 @@ footnote is dropped and counted. Never resolved into logic.
 
 ## 7. The expander
 
-The expander must follow the R5 loop without unrolling it: take one pass through the
-range, then the decision's exit branch. Today a loop recurses without end: a
-condition not of the form `days <op> <n>` logs an error and takes the default — which
-in the R5 loop points back to the range's start — and on the main timeline every pass
-recomputes the same tick, so a `days` condition either exits at once or never does
-(`expander.py`, no visited set). A printed range text as the exit condition (U4-7) is
-exactly the non-`days` case. How the expanded view shows a repeating
-range (a flag on the pass, the condition text) is decision U4-11.
+The expander is illustrative: it shows one way a USDM timeline can be executed, not the
+only one, and nothing normative follows from its output (Dave, 2026-09-27). It was
+recursing without end on the R5 loop and the R8 gate: a condition not of the form
+`days <op> <n>` took the default, which points back, and every pass recomputed the same
+tick. Fixed in the expander issue (U4-11, § 22): a loop is run twice, so its decision goes
+each way once; a gate with a readable minimum is run until the minimum has passed.
 
-Nothing that builds USDM from a protocol calls the expander, so this change is its own
-issue, not part of R5's branch; it is the last issue worked and does not gate a release
-(plan § *Order from here*).
+Nothing that builds USDM from a protocol calls the expander, so it was its own issue,
+worked last; it did not gate a release (plan § *Order from here*).
 
 ## 8. Out of scope for this work, noted
 
@@ -449,7 +446,7 @@ Taken one at a time, each recorded here with its date when taken.
 | U4-10 | The gate loop (R8) | **Reframed 2026-09-26 (Dave):** a gate is a variable delay, built as R5's delay + decision loop; recognising it (duration, no anchored offset, between anchored columns) is not in question. **(a) Taken 2026-09-26 (Dave):** start node → 1-day delay → decision. The decision's condition is "≥ min days and washed out" (e.g. `≥ 2 days and washed out`) and exits to the next column; the default loops back to the start node. The minimum lives in the condition, not the delay; the start node is an instance with no visit (as the cycle start marker, U4-22). **(b) Taken 2026-09-26 (Dave):** the maximum is in the exit condition — `(≥ 2 days and washed out) or 10 days`; no second branch. **(c) Taken 2026-09-27 (Dave):** the exit condition text is filled from the delay — `≥ {min} {unit} and washed out, or {max} {unit}` (`≥ 7 days and washed out, or 28 days`); with no `max`, the `, or …` part is dropped. **Was:** "gate versus window in text alone" — wrong framing |
 | U4-36 | Day numbering after a gate (R8) | **Taken 2026-09-27 (Dave):** the period after a gate gets a new anchor at its `Day 1`; its other columns (`Baseline PET`, `Day -1`, `Day 2`) are timed from it. DDF00009 asks for at least one anchor per timeline, so a second is allowed. An anchor is a Fixed Reference: no duration back to the gate — the gap is the variable delay; the periods are linked by the instance chain (the decision's exit) |
 | U4-37 | How a copied column names its original (N78, U4-5) | **Taken 2026-09-27 (Dave):** `ScheduleTimelineInput` gains an `id`; `ColumnInput.copy_of` is `{timeline, column}` — the original's timeline id and column id. A copy shares only the original's `Encounter` (the visit); it has its own instance, timing and activities, and normally no epoch — a subsidiary timeline rarely links to epochs. **Rejected:** referring to a timeline by its position in the input (breaks silently when a caller reorders timelines) |
-| U4-11 | How the expander presents a loop | one pass, flagged as repeating |
+| U4-11 | How the expander presents a loop | **Taken 2026-09-27 (Dave):** a loop is run twice, so the decision goes each way once — back, then out (`Cycle 3+`: cycle 3, cycle 4, then on). A washout gate whose minimum can be read is run until the minimum has passed, then left. The expander is illustrative, not normative. Claude's, in the issue text: the minimum read from `≥ N <unit>` / `>= N <unit>`; each timepoint carries its pass number. As built § 22 |
 | U4-12 | Activity identity across timelines when names differ only by spacing or hyphenation | exact trimmed, case-folded match, as today |
 | U4-14 | Crossover periods whose day numbering restarts (a second `Day 1`) | **Withdrawn 2026-09-27 (#74):** proven on NCT03069989 — one timeline, the period after the gate has its own anchor (U4-36); the restart warning is now "restart with no gate before it". **2026-09-26 (Dave): in theory not needed.** One timeline: a period is chained like a cycle (R5, U4-27) — Period *n*'s `Day 1` comes after the washout gate (R8, U4-10), which joins the two periods. To prove on R8's test case (NCT03069989 `(7-28 days between doses)`, NCT03421379 `3 to 14 days`); if it holds, U4-14 is withdrawn and the restart warning becomes "restart with no gate before it". **Was — working hypothesis 2026-09-25, to be proven on real cases:** one timeline per period. A `Timing` cannot cross timelines (DDF00046), so the link is an instance: the printed washout column (`Wash out 3 to 14 days`, `Minimum 2 wks after end of session 1`) becomes a linking instance in the earlier period, reached by a `Timing` that is the washout, and calling the next period through `timelineId`; the next period's `entryCondition` carries the printed text. Rejected for now: the last instance calling the next period with the washout as text only. Needs a stage-1 marking (periods as timelines, the washout column as the link) and a stage-2 rule; neither built |
 | U4-15 | Printed timing text that is a bare number (`15`, `-7`) with no unit in the timeline's timing row label, or no row label | **Superseded by U4-35 (#73): the caller structures this; `usdm4` no longer reads the text.** Was: **Taken 2026-09-25 (#65):** days |
@@ -871,3 +868,38 @@ Copied columns (U4-5 target, U4-30, U4-37) and no epoch sent (U4-6). Branch
   the empty-label epoch gone, its instances' `epochId` `None`. Every other difference in
   the three is `Code` id renumbering (one fewer epoch type code). Other pins unchanged.
 
+
+## 22. As built — issue 76, the expander (2026-09-27)
+
+U4-11. Branch `76-expander-update`. `src/usdm4/expander/` only; the assembler is unchanged.
+
+- **Walk.** `Expander._process_si` walks a timeline in a loop, not by recursion; a step
+  limit (`STEP_LIMIT`, 10,000) ends any loop the rules below do not, as an error.
+- **Loop.** A decision with one condition whose branch leads to an instance already reached
+  on this walk is a loop. No readable minimum: back the first time the decision is
+  reached, out the second. A minimum (`≥ 7 days …`, `>= 3 days`; minutes to years, a month
+  30 days, a year 365, as `Tick`): out once the decision's time less the loop start's first
+  time reaches it. A `days <op> n` condition keeps the original test; a non-loop,
+  non-`days` condition keeps the default plus error; two or more conditions as before.
+- **Time.** An instance's time is its timing chain to its Fixed Reference (`_hop`) plus a
+  shift. The shift moves when a decision leads back into a loop (the loop start falls at
+  the decision's time) and when an instance hangs from a different anchor than the last
+  (period 2 after a gate starts at the decision's time; without a decision, at the
+  previous instance's time). A decision is timed by its own timing, else the previous
+  instance's time.
+- **Sub-timelines.** Timed from the calling instance: base + chain. Before, each instance
+  added its chain to the previous instance's time, so a profile's third point onwards was
+  wrong (R7 pin: `1:30` came out at 2 h 55 m).
+- **Timepoint.** `pass_number` (1 outside a loop; the count of times the walk reached the
+  instance); `to_dict` gains `"pass"`.
+- **Tests.** `tests/usdm4/expander/test_expander_loops.py`: hand-written cycle and gate
+  loops, minimum units, anchors, sub-timeline timing, guards; the R5, R7 and R8 pin
+  outputs expanded. Existing expander tests unchanged and passing. Other pins expand as
+  before.
+
+**Ruled (Dave, 2026-09-27).** The expander shows everything that happens to a subject, day
+by day, so every repeat is shown: a gate with a 7-day minimum and a 1-day loop gives seven
+timepoints for the gate instance, passes 1–7. Never collapse repeats.
+
+**Accepted as is (Dave).** A loop whose start is a predose `Day -1` gets its second pass one day late (the decision
+falls at the next `Day 1`; the loop start is placed there).

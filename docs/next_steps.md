@@ -21,9 +21,13 @@ Normal development: one issue at a time, gate is tests and pins. The three-machi
 (A/B/C) is dropped. Test inputs are written here in `usdm4`'s structured form — nothing waits on
 `protocol_corpus` ground truth.
 
-1. **The expander issue — last** (Dave, 2026-09-27). U4-11, how a loop is shown, is its first
-   decision. Nothing that uses `usdm4` depends on it, so it waits. Known defect until then: the
-   expander recurses without end on a looped timeline (R5, R8).
+1. **#76, the expander — built, full suite green, merge next** (branch `76-expander-update`,
+   U4-11 taken, design § 22). Before merging, check whether SDW or `usdm4_pj` call the
+   expander: `Timepoint.to_dict` gains `"pass"` and sub-timeline times change (now correct).
+2. Cut a release (#73–#76 unreleased; `usdm4_protocol` needs them). Version is Dave's.
+3. Candidates after that, in order: the placeholder procedure code `12345` (`build.py`); CORE-000938
+   waived in `tests/usdm4/integration/test_assembler_to_core.py`; small output defects
+   (`Paricipant` typo, `plannedDuration` `None`, `≥ 1 weeks`, `ED-2` / `D1-2` names).
 
 Order and schema checks: `timeline_assembler_plan.md` § *Order from here*.
 
@@ -31,6 +35,70 @@ Order and schema checks: `timeline_assembler_plan.md` § *Order from here*.
 
 Newest first. This repo's own log: every session that works a `usdm4` issue is entered here in
 full, whichever Claude project drove it (see `CLAUDE.md` § *Session log*).
+
+### 2026-09-27 — ISSUE 76 BUILT (GitHub 76, branch `76-expander-update`): a loop is run twice, a gate to its minimum
+- `usdm4 @ 76-expander-update`. Driven from the USDM4 project. No sibling repo read or written.
+- **State:** full suite green (Dave, VSCode, 2026-09-27); not merged.
+
+**What it was.** The expander recursed without end on the R5 cycle loop and the R8 gate: a
+non-`days` condition took the default, which points back, and each pass recomputed the same
+tick (a time was only the timing chain to the anchor). Period 2 after a gate, hung from its
+own Fixed Reference, would restart at 0.
+
+**Decision (Dave), design § 9 U4-11.** A loop is run twice, so the decision goes each way
+once (`Cycle 3` to N: cycle 3, cycle 4, then on). A washout with a minimum that can be read is
+run until the minimum has passed, then left. The expander is illustrative, not normative.
+Claude's, in the issue text, not objected to: minimum read from `≥ N <unit>` / `>= N <unit>`;
+a loop is a branch back to an instance already reached; pass number on each timepoint.
+
+**What changed.** Design § 22 lists it.
+- `src/usdm4/expander/expander.py` — iterative walk with a step limit; `_decide`, `_loop`,
+  `_minimum`, `_hop` (chain to the anchor, with anchor id); shift on loop re-entry and on a
+  new anchor; `_sub_timelines`, `_next_after_activity` split out.
+- `src/usdm4/expander/timepoint.py` — `pass_number` (optional, default 1); `to_dict` `"pass"`.
+- Tests: `tests/usdm4/expander/test_expander_loops.py` (new, 25): cycle loop both ways round,
+  minimum met on the first pass, gate to 7 days and period 2, minimum units, no-minimum gate,
+  new anchor without a decision, sub-timeline timing, both branches back (step limit), `_hop`
+  edges, the R5/R7/R8 pin outputs expanded.
+- Docs: design § 7 rewritten, § 9 U4-11, § 22, status; plan status and expander section;
+  this file; `memory.md`.
+
+**The numbers.** Sandbox (Python 3.10, no `cdisc-rules-engine`, `PYTHONPATH=src:.`):
+`tests/usdm4/expander` 143 pass (118 before + 25); `expander.py` 100%; `timepoint.py` 98% over
+the expander tests alone — `_code_dict`, uncovered by that subset before this change too. The
+assembler's expander test passes. Expanded pins: R5 — `C3+D1` day 56 then 84 (pass 2), `C3+D15`
+70 then 98; R8 — gate days 1–7 (passes 1–7), period 2 `Day -1` day 8, `Day 1` day 9, follow-up
+day 16; R7 — profile points now `-5 min`, `1:30`, `2:00` … after each calling visit (were
+accumulated, `1:30` at 2 h 55 m). The other six pins expand exactly as before. Ruff: no new
+findings in the changed files (the `_days_condition` BLE001 predates); format clean.
+
+**Ruled (Dave).** Every repeat is shown — the expander shows what happens to a subject day by
+day. A 7-day gate on a 1-day loop gives seven gate timepoints.
+
+**Accepted as is (Dave).** A loop starting at a predose `Day -1` gets its second pass a day late.
+
+**Rejected.** One gate entry then a jump to the minimum (Dave: the expander shows every day of
+a subject, so repeats are the point). Re-timing every instance reached again on a loop — the
+first cut did, and put `C3+D15` pass 2 on day 84 instead of 98; only the loop start, entered
+from the decision, is re-timed. Keeping the recursion with a visited set (a repeat cannot be
+shown if a visited instance is never re-entered).
+
+**Found, not this issue.** Sub-timelines were mis-timed before this change (each point added
+to the previous point's time); fixed here, since the new walk replaced that code. Not checked:
+whether SDW or `usdm4_pj` call the expander (repos not mounted).
+
+**Next.**
+1. Merge #76. First check whether SDW or `usdm4_pj` call the expander — they see `"pass"` and
+   the corrected profile times.
+2. Cut a release: #73–#76 are unreleased and `usdm4_protocol` needs the structured input and
+   `copy_of`. Version is Dave's.
+3. Then the placeholder procedure code `12345` (`build.py`) — it puts a made-up code into
+   every assembled USDM; then CORE-000938; then the small output defects.
+
+Re-verify:
+```
+python3 -m pytest tests/usdm4/expander tests/usdm4/assembler/test_timeline_assembler.py -q
+```
 
 ### 2026-09-27 — ISSUE 75 MERGED (GitHub 75, branch `75-copied-column-and-shared-encounter`): a copied column shares one Encounter; no epoch sent, none linked
 - `usdm4 @ 75-copied-column-and-shared-encounter`. Driven from the USDM4 project. No sibling repo

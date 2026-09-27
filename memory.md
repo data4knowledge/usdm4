@@ -115,3 +115,10 @@
 - `copy_of` on `ColumnInput` + timeline `id` (U4-37): a copied column shares one `Encounter`.
   U4-6: no epoch sent, none linked. Full suite green (Dave, VSCode); merged.
 - Expander is the LAST issue (Dave): not a release gate. Details: docs/next_steps.md, design § 21.
+
+## 2026-09-27 — #76 expander built (U4-11), not merged
+
+- A loop is run twice (decision each way once); a gate with a readable minimum (`≥ N unit`)
+  runs until it has passed. Illustrative, not normative (Dave). Timepoint gains `pass_number`.
+- Sub-timeline times fixed (were accumulated). Full suite green (Dave, VSCode). Details: docs/next_steps.md,
+  design § 22.

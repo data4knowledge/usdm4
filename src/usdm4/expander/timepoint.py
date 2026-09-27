@@ -16,6 +16,7 @@ class Timepoint:
         errors: Errors,
         id: int,
         offset: int,
+        pass_number: int = 1,
     ):
         self._sai: ScheduledActivityInstance = sai
         self._errors = errors
@@ -24,6 +25,7 @@ class Timepoint:
         self._tick: int = self._calculate_hop(timeline, sai) + offset
         self._id: str = f"TP_{id}"
         self._edges: list[str] = []
+        self._pass: int = pass_number
 
     @property
     def tick(self) -> int:
@@ -32,6 +34,11 @@ class Timepoint:
     @property
     def id(self) -> str:
         return self._id
+
+    @property
+    def pass_number(self) -> int:
+        """How many times the walk has reached this instance, 1 outside a loop."""
+        return self._pass
 
     @property
     def activities(self) -> bool:
@@ -64,6 +71,7 @@ class Timepoint:
             if self._sai.encounterId
             else None,
             "main_timeline": self._timeline.mainTimeline,
+            "pass": self._pass,
             "activities": {
                 "items": [
                     {

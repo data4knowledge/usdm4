@@ -1,7 +1,7 @@
 # Timeline assembler — plan of work
 
 **Status: 2026-09-27. Rate of change: per issue. Retired when the last issue below is
-closed.** Issues 63–71, 73, 74 (R8) and 75 (copied columns) merged. Sections for merged issues are the record of
+closed.** Issues 63–71, 73, 74 (R8) and 75 (copied columns) merged; the expander built (#76, 2026-09-27, not yet merged). Sections for merged issues are the record of
 what was planned; where they mention patterns or printed-text reading, issue 73
 (U4-35) has since replaced that input — design § 3, § 19. The design is `timeline_assembler_design.md`; this file is the order the
 work is done in, what each issue delivers and how each is gated. One issue, one
@@ -228,7 +228,8 @@ Cycle 2, then `Cycle 3 and beyond` on Day 1 and Day 15; 4-week cycle. NCT0210770
 
 Design § 7: take one pass through the range, then the decision's exit branch; never
 unroll. Built and tested on hand-written USDM with a decision loop — it needs nothing
-from R5 and can be done before, alongside or after it. Decide U4-11 first. It is
+from R5 and can be done before, alongside or after it. **Built 2026-09-27, U4-11 taken
+(design § 22): a loop is run twice; a gate with a readable minimum is run to it.** It is
 worked last (Dave, 2026-09-27); it does not gate a release. Before building it, check whether
 SDW or `usdm4_pj` call this expander; if they do, they are consumers of the change.
 

@@ -1717,3 +1717,19 @@ A project memory line said Dave had "given up on the expander". It was read as t
 abandoned, and a non-existent "release rule" problem was built on it. The repo docs said the
 opposite. When a note and the repo disagree, the repo is the state; ask what the note means rather
 than infer from it.
+
+## The expander shows every day of a subject; never simplify its output (2026-09-27)
+
+The expander exists to show what happens to a subject, day by day. A washout loop of 1 day
+with a 7-day minimum is seven timepoints, not one entry and a jump: collapsing repeats for
+readability removes the thing the expander is for (Dave). It is illustrative, not normative —
+its rules (run a loop twice, run a gate to a minimum read from the condition text) are a
+demonstration of execution, not a statement of what USDM means.
+
+## On a looped walk, time depends on the path, not the timing chain (2026-09-27)
+
+A timing chain gives an instance's time from its anchor, once. On a second pass, or after a
+second anchor, the same chain gives the same time, so the walk must carry a shift. Only the
+loop's start, entered from the decision, is re-timed — re-timing every instance met again put
+the second pass of `C3+D15` on the first pass's `C3+D1` day. Check a pass-2 time on a pin
+before trusting the rule.
