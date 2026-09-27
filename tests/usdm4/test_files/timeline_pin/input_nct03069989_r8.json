@@ -1,0 +1,80 @@
+{
+  "source": "Issue 74 (R8). Header of NCT03069989's Schedule of Activities, written by hand in usdm4's structured form (Dave, 2026-09-27): two dosing periods joined by a washout gate. Activities and footnote texts are illustrative, not the protocol's: one cell in each kind of column, including the washout, and markers on header values.",
+  "converted": "Not converted; written directly in the structured input (U4-35).",
+  "soa": [
+    {
+      "type": "main",
+      "title": "Schedule of Activities (SOA)",
+      "day_zero": false,
+      "columns": [
+        {
+          "id": "scr",
+          "epoch": {"text": "Screening"},
+          "timing": {"text": "Day ≤-30", "value": -30, "unit": "days"},
+          "window": {"before": 0, "after": 29, "unit": "days"}
+        },
+        {
+          "id": "p1dm1",
+          "epoch": {"text": "Dosing period 1"},
+          "timing": {"text": "Day -1", "value": -1, "unit": "days", "markers": ["1"]}
+        },
+        {
+          "id": "p1d1",
+          "epoch": {"text": "Dosing period 1"},
+          "timing": {"text": "Day 1", "value": 1, "unit": "days"}
+        },
+        {
+          "id": "p1d2",
+          "epoch": {"text": "Dosing period 1"},
+          "timing": {"text": "Day 2", "value": 2, "unit": "days"}
+        },
+        {
+          "id": "wash",
+          "epoch": {"text": "Wash-out"},
+          "delay": {"text": "(7-28 days between doses)", "min": 7, "max": 28, "unit": "days"}
+        },
+        {
+          "id": "p2pet",
+          "epoch": {"text": "Dosing period 2"},
+          "visit": {"text": "Baseline PET", "markers": ["2"]}
+        },
+        {
+          "id": "p2dm1",
+          "epoch": {"text": "Dosing period 2"},
+          "timing": {"text": "Day -1", "value": -1, "unit": "days", "markers": ["1"]}
+        },
+        {
+          "id": "p2d1",
+          "epoch": {"text": "Dosing period 2"},
+          "timing": {"text": "Day 1", "value": 1, "unit": "days", "markers": ["2"]}
+        },
+        {
+          "id": "p2d2",
+          "epoch": {"text": "Dosing period 2"},
+          "timing": {"text": "Day 2", "value": 2, "unit": "days", "markers": ["2"]}
+        },
+        {
+          "id": "fu",
+          "epoch": {"text": "Follow-up"},
+          "timing": {"text": "(7-14 days post-final dose)", "start": 8, "end": 15, "unit": "days"}
+        }
+      ],
+      "activities": [
+        {"name": "Informed consent", "cells": [{"column": "scr", "text": "X"}]},
+        {"name": "Admission to unit", "cells": [{"column": "p1dm1", "text": "X"}, {"column": "p2dm1", "text": "X"}]},
+        {"name": "Study treatment", "cells": [{"column": "p1d1", "text": "X"}, {"column": "p2d1", "text": "X"}]},
+        {"name": "PET scan", "cells": [{"column": "p2pet", "text": "X"}, {"column": "p2d1", "text": "X"}]},
+        {"name": "Adverse event review", "cells": [
+          {"column": "p1d1", "text": "X"}, {"column": "p1d2", "text": "X"},
+          {"column": "wash", "text": "X"},
+          {"column": "p2d1", "text": "X"}, {"column": "p2d2", "text": "X"},
+          {"column": "fu", "text": "X"}
+        ]}
+      ],
+      "footnotes": [
+        {"marker": "1", "text": "Participants are admitted to the unit on Day -1."},
+        {"marker": "2", "text": "Timings may change in Cohort 2."}
+      ]
+    }
+  ]
+}

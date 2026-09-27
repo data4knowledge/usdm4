@@ -1672,3 +1672,30 @@ whether a `Day 0` column was printed. The principle "`usdm4` is algorithm only" 
 fallbacks and inferences, not the grammar. When a layer must not interpret text, list every
 place it decides something from what is (or is not) printed, including emptiness checks
 (`is_placeholder` read whether the timing label was blank).
+
+## A period boundary is a new anchor, not a new rule (2026-09-27)
+
+Issue 74 (R8). A crossover's second period restarts its day count after the washout. Rather than a
+period field or a restart rule, the gate splits the columns into periods and the existing anchor
+rule (U4-2, first column ≥ 0) runs inside each period. Every other rule — U4-3's zero timing, time
+ranges, the crossing-zero rule — then applies per period unchanged, and U4-14's "one timeline per
+period" was never needed. When a new structure seems to need a new rule, first ask whether it only
+changes the scope an existing rule runs over.
+
+## Check the committed code before asking or building (2026-09-27)
+
+Twice in one session a question was put that the design already answered (the gate's start node,
+U4-10 (a)), and work nearly restarted on something assumed built. Read the design's § 9 decisions and
+grep the committed code for the field in question (`git grep` at the branch head) before asking Dave
+anything or starting a build. A decision already taken is not re-asked; a feature already in the code
+is not rebuilt.
+
+## Running the timeline tests in the Cowork sandbox (2026-09-27)
+
+Python 3.10, no `cdisc-rules-engine`. Install `simple_error_log`, `pydantic`, `pyyaml`,
+`python-dateutil`, `platformdirs`, `jsonschema`, `lxml`, `requests`, `beautifulsoup4`, `pytest`,
+`pytest-cov` and run with `PYTHONPATH=src:.`. The repo's `.coverage` cannot be removed from the
+mount: set `COVERAGE_FILE` to a fresh directory under `/tmp`. The whole `tests/usdm4/assembler`
+directory hangs at `test_amendments_assembler.py`; run the timeline subset (the re-verify command)
+instead. `pkill -f <pattern>` kills the calling shell when its own command line matches.
+

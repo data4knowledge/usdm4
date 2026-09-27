@@ -100,4 +100,12 @@
 - U4-35: usdm4 never reads printed text; caller sends structured values, `text` = label only.
   Grammar + printed readers deleted; `day_zero` flag; `delay` field (R8, #72 builds it).
 - Pins converted by the old parse; all 8 expected outputs unchanged. Sandbox green (assembler
-  tests 1,356); full suite green in VSCode; merged. Next: tell B and C. Details: docs/next_steps.md.
+  tests 1,356); full suite green in VSCode; merged. Details: docs/next_steps.md.
+
+## 2026-09-27 — three-machine arrangement dropped
+
+- Normal development: next steps live in docs/next_steps.md § *Next steps*. Test inputs are
+  written in usdm4's structured form here; no dependency on protocol_corpus ground truth.
+- R8 built on #74 (branch 74-r8-washout-variable-delay): gate = washout column + 1-day decision loop;
+  period after a gate has its own anchor (U4-36). Full suite green (Dave, VSCode); merge pending.
+  Details: docs/next_steps.md, design § 20.

@@ -41,8 +41,8 @@ from usdm4.api.timing import Timing
 from usdm4.assembler.encoder import Encoder
 from usdm4.assembler.timeline.columns import ParsedTimeline
 from usdm4.assembler.timeline.naming import Naming
-from usdm4.assembler.timeline.plan import DECISION, END, TimelinePlan
-from usdm4.assembler.timeline.values import CycleNumber, CycleRange
+from usdm4.assembler.timeline.plan import DECISION, END, GATE, Planner, TimelinePlan
+from usdm4.assembler.timeline.values import CycleNumber, CycleRange, Delay
 from usdm4.builder.builder import Builder
 
 
@@ -199,6 +199,13 @@ class TimelineBuild:
     def _add_encounters(self) -> list[Encounter]:
         results: list[Encounter] = []
         for column in self._timeline.columns:
+            # Markers on any header value of the column link to its
+            # timepoint, each once (issue 64).
+            for marker in column.all_markers:
+                self._link(marker, timepoint=column.index)
+            # A gate's column is not a visit (R8, U4-10 (a)): no Encounter.
+            if Planner.is_gate(column):
+                continue
             encounter = self._builder.create(
                 Encounter,
                 {
@@ -225,10 +232,6 @@ class TimelineBuild:
             )
             results.append(encounter)
             self._encounter_for[column.index] = encounter
-            # Markers on any header value of the column link to its
-            # timepoint, each once (issue 64).
-            for marker in column.all_markers:
-                self._link(marker, timepoint=column.index)
         self._errors.info(
             f"Encounters: {len(results)}",
             KlassMethodLocation(self.MODULE, "_add_encounters"),
@@ -368,6 +371,11 @@ class TimelineBuild:
                 results.append(sai)
                 continue
             column = node.column
+            if node.kind == GATE:
+                sai = self._add_gate(node)
+                self._sai_for[column.index] = sai
+                results.append(sai)
+                continue
             encounter = self._encounter_for.get(column.index)
             sai = self._builder.create(
                 ScheduledActivityInstance,
@@ -415,20 +423,66 @@ class TimelineBuild:
             decision = results[index]
             onward = results[index + 1]
             decision.defaultConditionId = self._sai_for[node.loop_to].id
+            condition = (
+                self.gate_condition(self._gate_delay(node))
+                if node.gate is not None
+                else self.EXIT_CONDITION
+            )
             assignment = self._builder.create(
                 ConditionAssignment,
-                {"condition": self.EXIT_CONDITION, "conditionTargetId": onward.id},
+                {"condition": condition, "conditionTargetId": onward.id},
             )
             decision.conditionAssignments = [assignment] if assignment else []
 
+    @staticmethod
+    def gate_condition(delay: Delay) -> str:
+        """U4-10 (b), (c): a gate's exit condition, filled from its delay —
+        ``≥ 7 days and washed out, or 28 days``; with no maximum, no
+        ``, or …``."""
+        unit = f"{delay.unit}s"
+        text = f"≥ {delay.min} {unit} and washed out"
+        if delay.max is not None:
+            text += f", or {delay.max} {unit}"
+        return text
+
+    def _gate_delay(self, node) -> Delay:
+        return self._timeline.columns[node.epoch_column].delay
+
+    def _add_gate(self, node) -> ScheduledActivityInstance:
+        """A gate's column (R8, U4-10 (a)): the instance the gate's decision
+        loops back to. Not a visit — no encounter; labelled with the delay as
+        printed. Activities with a cell in the column attach as for any
+        column."""
+        column = node.column
+        return self._builder.create(
+            ScheduledActivityInstance,
+            {
+                "name": self._naming.gate_name(node.gate),
+                "description": f"Gate {node.gate}: {column.delay_label}",
+                "label": column.delay_label or "",
+                "timelineExitId": None,
+                "encounterId": None,
+                "defaultConditionId": None,
+                "epochId": self._epoch_for[column.index].id,
+                "activityIds": [],
+            },
+        )
+
     def _add_decision(self, node) -> ScheduledDecisionInstance:
-        """A cycle range's decision (R5): after the range's last column, in
-        its epoch. Wired once every instance exists."""
+        """A cycle range's decision (R5) or a gate's (R8): after the range's
+        last column or the gate's column, in its epoch. Wired once every
+        instance exists."""
+        if node.gate is not None:
+            name = self._naming.gate_name(node.gate, "DEC")
+            description = f"End of gate {node.gate}"
+        else:
+            name = self._naming.decision_name(self._cycle_label(node), self._t)
+            description = f"End of a pass of cycle {self._cycle_label(node)}"
         return self._builder.create(
             ScheduledDecisionInstance,
             {
-                "name": self._naming.decision_name(self._cycle_label(node), self._t),
-                "description": f"End of a pass of cycle {self._cycle_label(node)}",
+                "name": name,
+                "description": description,
                 "label": "",
                 "defaultConditionId": None,
                 "epochId": self._epoch_for[node.epoch_column].id,
@@ -437,14 +491,20 @@ class TimelineBuild:
         )
 
     def _add_end(self, node) -> ScheduledActivityInstance:
-        """The instance after a range that is the last column (R5): a
-        decision cannot target the timeline exit, so this carries it. Not a
-        visit — no encounter, no activities."""
+        """The instance after a range or a gate that is the last column (R5,
+        R8): a decision cannot target the timeline exit, so this carries it.
+        Not a visit — no encounter, no activities."""
+        if node.gate is not None:
+            name = self._naming.gate_name(node.gate, "END")
+            description = f"End of gate {node.gate}"
+        else:
+            name = self._naming.end_name(self._t)
+            description = f"End of cycle {self._cycle_label(node)}"
         return self._builder.create(
             ScheduledActivityInstance,
             {
-                "name": self._naming.end_name(self._t),
-                "description": f"End of cycle {self._cycle_label(node)}",
+                "name": name,
+                "description": description,
                 "label": "",
                 "timelineExitId": None,
                 "encounterId": None,

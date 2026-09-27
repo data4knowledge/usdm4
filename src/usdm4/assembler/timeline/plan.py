@@ -46,9 +46,18 @@ the largest day printed in it, with a warning (U4-8). After the range's last
 column come a decision node — timed ``After`` that column by the rest of the
 cycle, looping back to the range's ``Day 1`` — and, when the range is the
 last column, an end node (a decision cannot target the timeline exit).
+
+Issue 74 (R8, design § 6 R8, U4-10, U4-36). A column carrying a structured
+``delay`` is a gate. It is the gate's start node — an instance with no visit —
+timed ``After`` the previous node by zero; a decision node follows it ``After``
+by 1 day, loops back to it by default and exits to the next column (U4-10 (a),
+(b)). A gate splits the timeline into periods: each period has its own anchor,
+found by U4-2 within the period (U4-36), so the period after a washout is timed
+from its own ``Day 1``. The periods are linked by the decision's exit, not by a
+timing. A restart is warned only when no gate comes before it (U4-14).
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from simple_error_log.error_location import KlassMethodLocation
 from simple_error_log.errors import Errors
@@ -140,6 +149,7 @@ class _CycleStart:
 
 DECISION = "decision"
 END = "end"
+GATE = "gate"
 
 
 @dataclass
@@ -159,7 +169,11 @@ class InstanceNode:
 
     A range's decision and end nodes (R5) have no column either; ``kind`` is
     ``DECISION`` or ``END``. A decision's ``loop_to`` is the key of the
-    range's ``Day 1`` node, its default; its exit is the next node."""
+    range's ``Day 1`` node, its default; its exit is the next node.
+
+    A gate (R8) is its delay column's node, ``kind`` ``GATE``, followed by a
+    decision (and an end node when the gate is the last column); ``gate`` is
+    the gate's ordinal in the timeline on all of them."""
 
     column: Column | None
     timing_type: str
@@ -174,6 +188,7 @@ class InstanceNode:
     epoch_column: int | None = None
     kind: str | None = None
     loop_to: int | str | None = None
+    gate: int | None = None
 
     @property
     def key(self) -> int | str:
@@ -182,8 +197,12 @@ class InstanceNode:
 
 @dataclass
 class TimelinePlan:
+    """``anchor`` is the first period's anchor; ``anchors`` every period's,
+    in order (one per period, R8 / U4-36)."""
+
     anchor: int | str
     nodes: list[InstanceNode]
+    anchors: list[int | str] = field(default_factory=list)
 
 
 @dataclass
@@ -218,34 +237,130 @@ class Planner:
         slots, lengths = self._resolve_cycles(columns, where)
         self._range_lengths(columns, slots, lengths, where)
         starts = self._cycle_starts(columns, slots, where)
-        anchor_column = self.find_anchor(columns)
-        if not any(self._is_candidate(c) for c in columns):
-            self._warn(
-                f"{where}: no column has a timing of 0 or more; the first column "
-                "is the anchor",
-                "plan",
-            )
         self._warn_restarts(columns, where)
         has_zero = timeline.day_zero
         self._warn_day_zero(columns, has_zero, where)
-        ctx = _Context(
-            columns=columns,
-            slots=slots,
-            starts=starts,
-            lengths=lengths,
-            has_zero=has_zero,
-            where=where,
-            **self._anchor(columns, anchor_column, slots, starts),
-        )
+        # R8 / U4-36: a gate splits the columns into periods, each with its
+        # own anchor. With no gate there is one period: every column.
+        periods = [p for p in self._periods(columns) if p] or [columns]
+        context_of: dict[int, _Context] = {}
+        anchors: list[int | str] = []
+        for number, period in enumerate(periods, start=1):
+            anchor_column = self.find_anchor(period)
+            if not any(self._is_candidate(c) for c in period):
+                label = where if len(periods) == 1 else f"{where}, period {number}"
+                self._warn(
+                    f"{label}: no column has a timing of 0 or more; the first "
+                    "column is the anchor",
+                    "plan",
+                )
+            ctx = _Context(
+                columns=columns,
+                slots=slots,
+                starts=starts,
+                lengths=lengths,
+                has_zero=has_zero,
+                where=where,
+                **self._anchor(columns, anchor_column, slots, starts),
+            )
+            anchors.append(ctx.anchor)
+            for column in period:
+                context_of[column.index] = ctx
+        first = context_of[periods[0][0].index] if periods[0] else None
         markers = {s.first: s for s in starts.values() if s.column is None}
         nodes: list[InstanceNode] = []
+        gates = 0
         for column in columns:
+            previous = nodes[-1].key if nodes else None
+            if self.is_gate(column):
+                gates += 1
+                nodes.extend(
+                    self._gate_nodes(
+                        column, gates, previous, column is columns[-1], where
+                    )
+                )
+                continue
+            ctx = context_of[column.index]
             start = markers.get(column.index)
             if start is not None:
-                previous = nodes[-1].key if nodes else None
                 nodes.append(self._marker_node(ctx, start, previous))
             nodes.append(self._node(ctx, column, nodes[-1].key if nodes else None))
-        return TimelinePlan(anchor=ctx.anchor, nodes=self._add_loops(ctx, nodes))
+        if first is None:
+            return TimelinePlan(anchor=0, nodes=nodes, anchors=[])
+        return TimelinePlan(
+            anchor=first.anchor,
+            nodes=self._add_loops(first, nodes),
+            anchors=anchors,
+        )
+
+    # ------------------------------------------------------------------
+    # Gates — issue 74 (R8)
+
+    @staticmethod
+    def is_gate(column: Column) -> bool:
+        """A column carrying a structured delay (R8). A delay sent as text
+        only is not read (U4-35), so its column is an ordinary one."""
+        return column.delay is not None
+
+    def _periods(self, columns: list[Column]) -> list[list[Column]]:
+        """The columns between gates, in order; gate columns belong to none."""
+        periods: list[list[Column]] = [[]]
+        for column in columns:
+            if self.is_gate(column):
+                periods.append([])
+            else:
+                periods[-1].append(column)
+        return periods
+
+    def _gate_nodes(
+        self,
+        column: Column,
+        n: int,
+        previous: int | str | None,
+        is_last: bool,
+        where: str,
+    ) -> list[InstanceNode]:
+        """A gate (U4-10 (a)): its column's node, zero ``After`` the previous
+        node; a decision 1 day ``After`` it, looping back to it; and, when the
+        gate is the last column, an end node the decision's exit leads to."""
+        if previous is None:
+            self._warn(
+                f"{where}, column '{column.id}': a gate with no column before it; "
+                "it is the anchor",
+                "plan",
+            )
+            start = InstanceNode(column, FIXED, column.index, 0, "day")
+        else:
+            start = InstanceNode(column, AFTER, previous, 0, "day")
+        start.kind, start.gate = GATE, n
+        decision = InstanceNode(
+            column=None,
+            timing_type=AFTER,
+            relative_to=column.index,
+            duration=1,
+            unit="day",
+            marker=f"G{n}DEC",
+            epoch_column=column.index,
+            kind=DECISION,
+            loop_to=column.index,
+            gate=n,
+        )
+        nodes = [start, decision]
+        if is_last:
+            nodes.append(
+                InstanceNode(
+                    column=None,
+                    timing_type=AFTER,
+                    relative_to=decision.key,
+                    duration=0,
+                    unit="day",
+                    marker=f"G{n}END",
+                    epoch_column=column.index,
+                    kind=END,
+                    gate=n,
+                )
+            )
+        return nodes
 
     # ------------------------------------------------------------------
     # Cycle ranges — issue 69 (R5)
@@ -671,17 +786,21 @@ class Planner:
 
     def _warn_restarts(self, columns: list[Column], where: str) -> None:
         """U4-14: a timing lower than an earlier one in the same unit, outside a
-        cycle, is two periods and should be two timelines."""
+        cycle, with no gate before it. After a gate the next period numbers
+        from its own ``Day 1`` (R8, U4-36), so a gate starts the count again."""
         highest: dict[str, int] = {}
         for column in columns:
+            if self.is_gate(column):
+                highest = {}
+                continue
             if column.timing is None or column.cycle_label:
                 continue
             unit, value = column.timing.unit, column.timing.value
             if unit in highest and value < highest[unit]:
                 self._warn(
                     f"{where}, column '{column.id}': timing restarts "
-                    f"({unit} {value} after {unit} {highest[unit]}); this may be "
-                    "two periods that should be two timelines",
+                    f"({unit} {value} after {unit} {highest[unit]}) with no gate "
+                    "before it",
                     "plan",
                 )
             highest[unit] = max(value, highest.get(unit, value))
@@ -718,11 +837,13 @@ class Planner:
     @classmethod
     def find_anchor(cls, columns: list[Column]) -> int:
         """Position of the anchor: the first real (non-blank) column with a
-        value >= 0 — Day 0 or Day 1 in a typical SoA. Else the first column."""
+        value >= 0 — Day 0 or Day 1 in a typical SoA. Else the first column.
+        ``columns`` may be one period of a gated timeline (R8), so the index
+        returned is the column's own."""
         for column in columns:
             if cls._is_candidate(column):
                 return column.index
-        return 0
+        return columns[0].index if columns else 0
 
     def interval_from_anchor(
         self, columns: list[Column], index: int, anchor_index: int, has_zero: bool

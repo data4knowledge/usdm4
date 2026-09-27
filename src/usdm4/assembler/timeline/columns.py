@@ -198,7 +198,6 @@ def _read_delay(column: Column, value: dict, reader: _Reader) -> None:
     if _structured(value, "min", "unit"):
         column.delay = Delay(value["min"], value.get("max"), singular(value["unit"]))
         column.delay_label = _text(value) or render_delay(column.delay)
-        reader.warn("delay", "a delay is not built until R8; carried only")
     else:
         column.delay_label = _text(value)
         reader.text_only("delay", value)

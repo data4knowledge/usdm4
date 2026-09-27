@@ -1,0 +1,1205 @@
+{
+  "timelines": [
+    {
+      "id": "ScheduleTimeline_1",
+      "extensionAttributes": [],
+      "name": "TIMELINE-1",
+      "label": "Schedule of Activities (SOA)",
+      "description": "The main timeline",
+      "mainTimeline": true,
+      "entryCondition": "Paricipant identified",
+      "entryId": "ScheduledActivityInstance_1",
+      "exits": [
+        {
+          "id": "ScheduleTimelineExit_1",
+          "extensionAttributes": [],
+          "instanceType": "ScheduleTimelineExit"
+        }
+      ],
+      "timings": [
+        {
+          "id": "Timing_1",
+          "extensionAttributes": [],
+          "name": "TIM1",
+          "label": "Day \u2264-30",
+          "description": null,
+          "type": {
+            "id": "Code_33",
+            "extensionAttributes": [],
+            "code": "C201357",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Before Timing Type",
+            "instanceType": "Code"
+          },
+          "value": "P30D",
+          "valueLabel": "Day \u2264-30",
+          "relativeToFrom": {
+            "id": "Code_34",
+            "extensionAttributes": [],
+            "code": "C201355",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Start to Start",
+            "instanceType": "Code"
+          },
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_1",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_3",
+          "windowLower": "",
+          "windowUpper": "P29D",
+          "windowLabel": "-0..+29 days",
+          "instanceType": "Timing"
+        },
+        {
+          "id": "Timing_2",
+          "extensionAttributes": [],
+          "name": "TIM2",
+          "label": "Day -1",
+          "description": null,
+          "type": {
+            "id": "Code_35",
+            "extensionAttributes": [],
+            "code": "C201357",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Before Timing Type",
+            "instanceType": "Code"
+          },
+          "value": "P1D",
+          "valueLabel": "Day -1",
+          "relativeToFrom": {
+            "id": "Code_36",
+            "extensionAttributes": [],
+            "code": "C201355",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Start to Start",
+            "instanceType": "Code"
+          },
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_2",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_3",
+          "windowLower": "",
+          "windowUpper": "",
+          "windowLabel": null,
+          "instanceType": "Timing"
+        },
+        {
+          "id": "Timing_3",
+          "extensionAttributes": [],
+          "name": "TIM3",
+          "label": "Day 1",
+          "description": null,
+          "type": {
+            "id": "Code_37",
+            "extensionAttributes": [],
+            "code": "C201358",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Fixed Reference Timing Type",
+            "instanceType": "Code"
+          },
+          "value": "PT0M",
+          "valueLabel": "Day 1",
+          "relativeToFrom": {
+            "id": "Code_38",
+            "extensionAttributes": [],
+            "code": "C201355",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Start to Start",
+            "instanceType": "Code"
+          },
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_3",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_3",
+          "windowLower": "",
+          "windowUpper": "",
+          "windowLabel": null,
+          "instanceType": "Timing"
+        },
+        {
+          "id": "Timing_4",
+          "extensionAttributes": [],
+          "name": "TIM4",
+          "label": "Day 2",
+          "description": null,
+          "type": {
+            "id": "Code_39",
+            "extensionAttributes": [],
+            "code": "C201356",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "After Timing Type",
+            "instanceType": "Code"
+          },
+          "value": "P1D",
+          "valueLabel": "Day 2",
+          "relativeToFrom": {
+            "id": "Code_40",
+            "extensionAttributes": [],
+            "code": "C201355",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Start to Start",
+            "instanceType": "Code"
+          },
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_4",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_3",
+          "windowLower": "",
+          "windowUpper": "",
+          "windowLabel": null,
+          "instanceType": "Timing"
+        },
+        {
+          "id": "Timing_5",
+          "extensionAttributes": [],
+          "name": "TIM5",
+          "label": "",
+          "description": null,
+          "type": {
+            "id": "Code_41",
+            "extensionAttributes": [],
+            "code": "C201356",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "After Timing Type",
+            "instanceType": "Code"
+          },
+          "value": "PT0M",
+          "valueLabel": "",
+          "relativeToFrom": {
+            "id": "Code_42",
+            "extensionAttributes": [],
+            "code": "C201355",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Start to Start",
+            "instanceType": "Code"
+          },
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_5",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_4",
+          "windowLower": "",
+          "windowUpper": "",
+          "windowLabel": null,
+          "instanceType": "Timing"
+        },
+        {
+          "id": "Timing_6",
+          "extensionAttributes": [],
+          "name": "TIMG1DEC",
+          "label": "",
+          "description": null,
+          "type": {
+            "id": "Code_43",
+            "extensionAttributes": [],
+            "code": "C201356",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "After Timing Type",
+            "instanceType": "Code"
+          },
+          "value": "P1D",
+          "valueLabel": "",
+          "relativeToFrom": {
+            "id": "Code_44",
+            "extensionAttributes": [],
+            "code": "C201355",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Start to Start",
+            "instanceType": "Code"
+          },
+          "relativeFromScheduledInstanceId": "ScheduledDecisionInstance_1",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_5",
+          "windowLower": "",
+          "windowUpper": "",
+          "windowLabel": null,
+          "instanceType": "Timing"
+        },
+        {
+          "id": "Timing_7",
+          "extensionAttributes": [],
+          "name": "TIM6",
+          "label": "",
+          "description": null,
+          "type": {
+            "id": "Code_45",
+            "extensionAttributes": [],
+            "code": "C201357",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Before Timing Type",
+            "instanceType": "Code"
+          },
+          "value": "PT0M",
+          "valueLabel": "",
+          "relativeToFrom": {
+            "id": "Code_46",
+            "extensionAttributes": [],
+            "code": "C201355",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Start to Start",
+            "instanceType": "Code"
+          },
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_6",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_7",
+          "windowLower": "",
+          "windowUpper": "",
+          "windowLabel": null,
+          "instanceType": "Timing"
+        },
+        {
+          "id": "Timing_8",
+          "extensionAttributes": [],
+          "name": "TIM7",
+          "label": "Day -1",
+          "description": null,
+          "type": {
+            "id": "Code_47",
+            "extensionAttributes": [],
+            "code": "C201357",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Before Timing Type",
+            "instanceType": "Code"
+          },
+          "value": "P1D",
+          "valueLabel": "Day -1",
+          "relativeToFrom": {
+            "id": "Code_48",
+            "extensionAttributes": [],
+            "code": "C201355",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Start to Start",
+            "instanceType": "Code"
+          },
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_7",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_8",
+          "windowLower": "",
+          "windowUpper": "",
+          "windowLabel": null,
+          "instanceType": "Timing"
+        },
+        {
+          "id": "Timing_9",
+          "extensionAttributes": [],
+          "name": "TIM8",
+          "label": "Day 1",
+          "description": null,
+          "type": {
+            "id": "Code_49",
+            "extensionAttributes": [],
+            "code": "C201358",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Fixed Reference Timing Type",
+            "instanceType": "Code"
+          },
+          "value": "PT0M",
+          "valueLabel": "Day 1",
+          "relativeToFrom": {
+            "id": "Code_50",
+            "extensionAttributes": [],
+            "code": "C201355",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Start to Start",
+            "instanceType": "Code"
+          },
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_8",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_8",
+          "windowLower": "",
+          "windowUpper": "",
+          "windowLabel": null,
+          "instanceType": "Timing"
+        },
+        {
+          "id": "Timing_10",
+          "extensionAttributes": [],
+          "name": "TIM9",
+          "label": "Day 2",
+          "description": null,
+          "type": {
+            "id": "Code_51",
+            "extensionAttributes": [],
+            "code": "C201356",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "After Timing Type",
+            "instanceType": "Code"
+          },
+          "value": "P1D",
+          "valueLabel": "Day 2",
+          "relativeToFrom": {
+            "id": "Code_52",
+            "extensionAttributes": [],
+            "code": "C201355",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Start to Start",
+            "instanceType": "Code"
+          },
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_9",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_8",
+          "windowLower": "",
+          "windowUpper": "",
+          "windowLabel": null,
+          "instanceType": "Timing"
+        },
+        {
+          "id": "Timing_11",
+          "extensionAttributes": [],
+          "name": "TIM10",
+          "label": "(7-14 days post-final dose)",
+          "description": null,
+          "type": {
+            "id": "Code_53",
+            "extensionAttributes": [],
+            "code": "C201356",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "After Timing Type",
+            "instanceType": "Code"
+          },
+          "value": "P7D",
+          "valueLabel": "Day 8",
+          "relativeToFrom": {
+            "id": "Code_54",
+            "extensionAttributes": [],
+            "code": "C201355",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Start to Start",
+            "instanceType": "Code"
+          },
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_10",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_8",
+          "windowLower": "",
+          "windowUpper": "P7D",
+          "windowLabel": "-0..+7 days",
+          "instanceType": "Timing"
+        }
+      ],
+      "instances": [
+        {
+          "id": "ScheduledActivityInstance_1",
+          "extensionAttributes": [],
+          "name": "DAY -30",
+          "label": "Day \u2264-30",
+          "description": null,
+          "defaultConditionId": "ScheduledActivityInstance_2",
+          "epochId": "StudyEpoch_1",
+          "instanceType": "ScheduledActivityInstance",
+          "timelineId": null,
+          "timelineExitId": null,
+          "activityIds": [
+            "Activity_1"
+          ],
+          "encounterId": "Encounter_1"
+        },
+        {
+          "id": "ScheduledActivityInstance_2",
+          "extensionAttributes": [],
+          "name": "D-1",
+          "label": "Day -1",
+          "description": null,
+          "defaultConditionId": "ScheduledActivityInstance_3",
+          "epochId": "StudyEpoch_2",
+          "instanceType": "ScheduledActivityInstance",
+          "timelineId": null,
+          "timelineExitId": null,
+          "activityIds": [
+            "Activity_2"
+          ],
+          "encounterId": "Encounter_2"
+        },
+        {
+          "id": "ScheduledActivityInstance_3",
+          "extensionAttributes": [],
+          "name": "D1",
+          "label": "Day 1",
+          "description": null,
+          "defaultConditionId": "ScheduledActivityInstance_4",
+          "epochId": "StudyEpoch_2",
+          "instanceType": "ScheduledActivityInstance",
+          "timelineId": null,
+          "timelineExitId": null,
+          "activityIds": [
+            "Activity_3",
+            "Activity_5"
+          ],
+          "encounterId": "Encounter_3"
+        },
+        {
+          "id": "ScheduledActivityInstance_4",
+          "extensionAttributes": [],
+          "name": "D2",
+          "label": "Day 2",
+          "description": null,
+          "defaultConditionId": "ScheduledActivityInstance_5",
+          "epochId": "StudyEpoch_2",
+          "instanceType": "ScheduledActivityInstance",
+          "timelineId": null,
+          "timelineExitId": null,
+          "activityIds": [
+            "Activity_5"
+          ],
+          "encounterId": "Encounter_4"
+        },
+        {
+          "id": "ScheduledActivityInstance_5",
+          "extensionAttributes": [],
+          "name": "GATE1",
+          "label": "(7-28 days between doses)",
+          "description": "Gate 1: (7-28 days between doses)",
+          "defaultConditionId": "ScheduledDecisionInstance_1",
+          "epochId": "StudyEpoch_3",
+          "instanceType": "ScheduledActivityInstance",
+          "timelineId": null,
+          "timelineExitId": null,
+          "activityIds": [
+            "Activity_5"
+          ],
+          "encounterId": null
+        },
+        {
+          "id": "ScheduledDecisionInstance_1",
+          "extensionAttributes": [],
+          "name": "GATE1DEC",
+          "label": "",
+          "description": "End of gate 1",
+          "defaultConditionId": "ScheduledActivityInstance_5",
+          "epochId": "StudyEpoch_3",
+          "instanceType": "ScheduledDecisionInstance",
+          "conditionAssignments": [
+            {
+              "id": "ConditionAssignment_1",
+              "extensionAttributes": [],
+              "condition": "\u2265 7 days and washed out, or 28 days",
+              "conditionTargetId": "ScheduledActivityInstance_6",
+              "instanceType": "ConditionAssignment"
+            }
+          ]
+        },
+        {
+          "id": "ScheduledActivityInstance_6",
+          "extensionAttributes": [],
+          "name": "BASELINE PET",
+          "label": "",
+          "description": null,
+          "defaultConditionId": "ScheduledActivityInstance_7",
+          "epochId": "StudyEpoch_4",
+          "instanceType": "ScheduledActivityInstance",
+          "timelineId": null,
+          "timelineExitId": null,
+          "activityIds": [
+            "Activity_4"
+          ],
+          "encounterId": "Encounter_5"
+        },
+        {
+          "id": "ScheduledActivityInstance_7",
+          "extensionAttributes": [],
+          "name": "D-1-2",
+          "label": "Day -1",
+          "description": null,
+          "defaultConditionId": "ScheduledActivityInstance_8",
+          "epochId": "StudyEpoch_4",
+          "instanceType": "ScheduledActivityInstance",
+          "timelineId": null,
+          "timelineExitId": null,
+          "activityIds": [
+            "Activity_2"
+          ],
+          "encounterId": "Encounter_6"
+        },
+        {
+          "id": "ScheduledActivityInstance_8",
+          "extensionAttributes": [],
+          "name": "D1-2",
+          "label": "Day 1",
+          "description": null,
+          "defaultConditionId": "ScheduledActivityInstance_9",
+          "epochId": "StudyEpoch_4",
+          "instanceType": "ScheduledActivityInstance",
+          "timelineId": null,
+          "timelineExitId": null,
+          "activityIds": [
+            "Activity_3",
+            "Activity_4",
+            "Activity_5"
+          ],
+          "encounterId": "Encounter_7"
+        },
+        {
+          "id": "ScheduledActivityInstance_9",
+          "extensionAttributes": [],
+          "name": "D2-2",
+          "label": "Day 2",
+          "description": null,
+          "defaultConditionId": "ScheduledActivityInstance_10",
+          "epochId": "StudyEpoch_4",
+          "instanceType": "ScheduledActivityInstance",
+          "timelineId": null,
+          "timelineExitId": null,
+          "activityIds": [
+            "Activity_5"
+          ],
+          "encounterId": "Encounter_8"
+        },
+        {
+          "id": "ScheduledActivityInstance_10",
+          "extensionAttributes": [],
+          "name": "7-14 DAYS POST-FINAL",
+          "label": "(7-14 days post-final dose)",
+          "description": null,
+          "defaultConditionId": null,
+          "epochId": "StudyEpoch_5",
+          "instanceType": "ScheduledActivityInstance",
+          "timelineId": null,
+          "timelineExitId": "ScheduleTimelineExit_1",
+          "activityIds": [
+            "Activity_5"
+          ],
+          "encounterId": "Encounter_9"
+        }
+      ],
+      "plannedDuration": null,
+      "instanceType": "ScheduleTimeline"
+    }
+  ],
+  "epochs": [
+    {
+      "id": "StudyEpoch_1",
+      "extensionAttributes": [],
+      "name": "SCR",
+      "label": "Screening",
+      "description": null,
+      "type": {
+        "id": "Code_1",
+        "extensionAttributes": [],
+        "code": "C101526",
+        "codeSystem": "http://www.cdisc.org",
+        "codeSystemVersion": "2026-03-27",
+        "decode": "Treatment Epoch",
+        "instanceType": "Code"
+      },
+      "previousId": null,
+      "nextId": null,
+      "notes": [],
+      "instanceType": "StudyEpoch"
+    },
+    {
+      "id": "StudyEpoch_2",
+      "extensionAttributes": [],
+      "name": "DP1",
+      "label": "Dosing period 1",
+      "description": null,
+      "type": {
+        "id": "Code_2",
+        "extensionAttributes": [],
+        "code": "C101526",
+        "codeSystem": "http://www.cdisc.org",
+        "codeSystemVersion": "2026-03-27",
+        "decode": "Treatment Epoch",
+        "instanceType": "Code"
+      },
+      "previousId": null,
+      "nextId": null,
+      "notes": [],
+      "instanceType": "StudyEpoch"
+    },
+    {
+      "id": "StudyEpoch_3",
+      "extensionAttributes": [],
+      "name": "WASH",
+      "label": "Wash-out",
+      "description": null,
+      "type": {
+        "id": "Code_3",
+        "extensionAttributes": [],
+        "code": "C101526",
+        "codeSystem": "http://www.cdisc.org",
+        "codeSystemVersion": "2026-03-27",
+        "decode": "Treatment Epoch",
+        "instanceType": "Code"
+      },
+      "previousId": null,
+      "nextId": null,
+      "notes": [],
+      "instanceType": "StudyEpoch"
+    },
+    {
+      "id": "StudyEpoch_4",
+      "extensionAttributes": [],
+      "name": "DP2",
+      "label": "Dosing period 2",
+      "description": null,
+      "type": {
+        "id": "Code_4",
+        "extensionAttributes": [],
+        "code": "C101526",
+        "codeSystem": "http://www.cdisc.org",
+        "codeSystemVersion": "2026-03-27",
+        "decode": "Treatment Epoch",
+        "instanceType": "Code"
+      },
+      "previousId": null,
+      "nextId": null,
+      "notes": [],
+      "instanceType": "StudyEpoch"
+    },
+    {
+      "id": "StudyEpoch_5",
+      "extensionAttributes": [],
+      "name": "FU",
+      "label": "Follow-up",
+      "description": null,
+      "type": {
+        "id": "Code_5",
+        "extensionAttributes": [],
+        "code": "C101526",
+        "codeSystem": "http://www.cdisc.org",
+        "codeSystemVersion": "2026-03-27",
+        "decode": "Treatment Epoch",
+        "instanceType": "Code"
+      },
+      "previousId": null,
+      "nextId": null,
+      "notes": [],
+      "instanceType": "StudyEpoch"
+    }
+  ],
+  "encounters": [
+    {
+      "id": "Encounter_1",
+      "extensionAttributes": [],
+      "name": "E1",
+      "label": "",
+      "description": null,
+      "type": {
+        "id": "Code_6",
+        "extensionAttributes": [],
+        "code": "C25716",
+        "codeSystem": "http://www.cdisc.org",
+        "codeSystemVersion": "2026-03-27",
+        "decode": "Visit",
+        "instanceType": "Code"
+      },
+      "previousId": null,
+      "nextId": null,
+      "scheduledAtId": null,
+      "environmentalSettings": [
+        {
+          "id": "Code_7",
+          "extensionAttributes": [],
+          "code": "C211570",
+          "codeSystem": "http://www.cdisc.org",
+          "codeSystemVersion": "2026-03-27",
+          "decode": "Clinic",
+          "instanceType": "Code"
+        }
+      ],
+      "contactModes": [
+        {
+          "id": "Code_8",
+          "extensionAttributes": [],
+          "code": "C175574",
+          "codeSystem": "http://www.cdisc.org",
+          "codeSystemVersion": "2026-03-27",
+          "decode": "In Person",
+          "instanceType": "Code"
+        }
+      ],
+      "transitionStartRule": null,
+      "transitionEndRule": null,
+      "notes": [],
+      "instanceType": "Encounter"
+    },
+    {
+      "id": "Encounter_2",
+      "extensionAttributes": [],
+      "name": "E2",
+      "label": "",
+      "description": null,
+      "type": {
+        "id": "Code_9",
+        "extensionAttributes": [],
+        "code": "C25716",
+        "codeSystem": "http://www.cdisc.org",
+        "codeSystemVersion": "2026-03-27",
+        "decode": "Visit",
+        "instanceType": "Code"
+      },
+      "previousId": null,
+      "nextId": null,
+      "scheduledAtId": null,
+      "environmentalSettings": [
+        {
+          "id": "Code_10",
+          "extensionAttributes": [],
+          "code": "C211570",
+          "codeSystem": "http://www.cdisc.org",
+          "codeSystemVersion": "2026-03-27",
+          "decode": "Clinic",
+          "instanceType": "Code"
+        }
+      ],
+      "contactModes": [
+        {
+          "id": "Code_11",
+          "extensionAttributes": [],
+          "code": "C175574",
+          "codeSystem": "http://www.cdisc.org",
+          "codeSystemVersion": "2026-03-27",
+          "decode": "In Person",
+          "instanceType": "Code"
+        }
+      ],
+      "transitionStartRule": null,
+      "transitionEndRule": null,
+      "notes": [],
+      "instanceType": "Encounter"
+    },
+    {
+      "id": "Encounter_3",
+      "extensionAttributes": [],
+      "name": "E3",
+      "label": "",
+      "description": null,
+      "type": {
+        "id": "Code_12",
+        "extensionAttributes": [],
+        "code": "C25716",
+        "codeSystem": "http://www.cdisc.org",
+        "codeSystemVersion": "2026-03-27",
+        "decode": "Visit",
+        "instanceType": "Code"
+      },
+      "previousId": null,
+      "nextId": null,
+      "scheduledAtId": null,
+      "environmentalSettings": [
+        {
+          "id": "Code_13",
+          "extensionAttributes": [],
+          "code": "C211570",
+          "codeSystem": "http://www.cdisc.org",
+          "codeSystemVersion": "2026-03-27",
+          "decode": "Clinic",
+          "instanceType": "Code"
+        }
+      ],
+      "contactModes": [
+        {
+          "id": "Code_14",
+          "extensionAttributes": [],
+          "code": "C175574",
+          "codeSystem": "http://www.cdisc.org",
+          "codeSystemVersion": "2026-03-27",
+          "decode": "In Person",
+          "instanceType": "Code"
+        }
+      ],
+      "transitionStartRule": null,
+      "transitionEndRule": null,
+      "notes": [],
+      "instanceType": "Encounter"
+    },
+    {
+      "id": "Encounter_4",
+      "extensionAttributes": [],
+      "name": "E4",
+      "label": "",
+      "description": null,
+      "type": {
+        "id": "Code_15",
+        "extensionAttributes": [],
+        "code": "C25716",
+        "codeSystem": "http://www.cdisc.org",
+        "codeSystemVersion": "2026-03-27",
+        "decode": "Visit",
+        "instanceType": "Code"
+      },
+      "previousId": null,
+      "nextId": null,
+      "scheduledAtId": null,
+      "environmentalSettings": [
+        {
+          "id": "Code_16",
+          "extensionAttributes": [],
+          "code": "C211570",
+          "codeSystem": "http://www.cdisc.org",
+          "codeSystemVersion": "2026-03-27",
+          "decode": "Clinic",
+          "instanceType": "Code"
+        }
+      ],
+      "contactModes": [
+        {
+          "id": "Code_17",
+          "extensionAttributes": [],
+          "code": "C175574",
+          "codeSystem": "http://www.cdisc.org",
+          "codeSystemVersion": "2026-03-27",
+          "decode": "In Person",
+          "instanceType": "Code"
+        }
+      ],
+      "transitionStartRule": null,
+      "transitionEndRule": null,
+      "notes": [],
+      "instanceType": "Encounter"
+    },
+    {
+      "id": "Encounter_5",
+      "extensionAttributes": [],
+      "name": "E6",
+      "label": "Baseline PET",
+      "description": null,
+      "type": {
+        "id": "Code_18",
+        "extensionAttributes": [],
+        "code": "C25716",
+        "codeSystem": "http://www.cdisc.org",
+        "codeSystemVersion": "2026-03-27",
+        "decode": "Visit",
+        "instanceType": "Code"
+      },
+      "previousId": null,
+      "nextId": null,
+      "scheduledAtId": null,
+      "environmentalSettings": [
+        {
+          "id": "Code_19",
+          "extensionAttributes": [],
+          "code": "C211570",
+          "codeSystem": "http://www.cdisc.org",
+          "codeSystemVersion": "2026-03-27",
+          "decode": "Clinic",
+          "instanceType": "Code"
+        }
+      ],
+      "contactModes": [
+        {
+          "id": "Code_20",
+          "extensionAttributes": [],
+          "code": "C175574",
+          "codeSystem": "http://www.cdisc.org",
+          "codeSystemVersion": "2026-03-27",
+          "decode": "In Person",
+          "instanceType": "Code"
+        }
+      ],
+      "transitionStartRule": null,
+      "transitionEndRule": null,
+      "notes": [],
+      "instanceType": "Encounter"
+    },
+    {
+      "id": "Encounter_6",
+      "extensionAttributes": [],
+      "name": "E7",
+      "label": "",
+      "description": null,
+      "type": {
+        "id": "Code_21",
+        "extensionAttributes": [],
+        "code": "C25716",
+        "codeSystem": "http://www.cdisc.org",
+        "codeSystemVersion": "2026-03-27",
+        "decode": "Visit",
+        "instanceType": "Code"
+      },
+      "previousId": null,
+      "nextId": null,
+      "scheduledAtId": null,
+      "environmentalSettings": [
+        {
+          "id": "Code_22",
+          "extensionAttributes": [],
+          "code": "C211570",
+          "codeSystem": "http://www.cdisc.org",
+          "codeSystemVersion": "2026-03-27",
+          "decode": "Clinic",
+          "instanceType": "Code"
+        }
+      ],
+      "contactModes": [
+        {
+          "id": "Code_23",
+          "extensionAttributes": [],
+          "code": "C175574",
+          "codeSystem": "http://www.cdisc.org",
+          "codeSystemVersion": "2026-03-27",
+          "decode": "In Person",
+          "instanceType": "Code"
+        }
+      ],
+      "transitionStartRule": null,
+      "transitionEndRule": null,
+      "notes": [],
+      "instanceType": "Encounter"
+    },
+    {
+      "id": "Encounter_7",
+      "extensionAttributes": [],
+      "name": "E8",
+      "label": "",
+      "description": null,
+      "type": {
+        "id": "Code_24",
+        "extensionAttributes": [],
+        "code": "C25716",
+        "codeSystem": "http://www.cdisc.org",
+        "codeSystemVersion": "2026-03-27",
+        "decode": "Visit",
+        "instanceType": "Code"
+      },
+      "previousId": null,
+      "nextId": null,
+      "scheduledAtId": null,
+      "environmentalSettings": [
+        {
+          "id": "Code_25",
+          "extensionAttributes": [],
+          "code": "C211570",
+          "codeSystem": "http://www.cdisc.org",
+          "codeSystemVersion": "2026-03-27",
+          "decode": "Clinic",
+          "instanceType": "Code"
+        }
+      ],
+      "contactModes": [
+        {
+          "id": "Code_26",
+          "extensionAttributes": [],
+          "code": "C175574",
+          "codeSystem": "http://www.cdisc.org",
+          "codeSystemVersion": "2026-03-27",
+          "decode": "In Person",
+          "instanceType": "Code"
+        }
+      ],
+      "transitionStartRule": null,
+      "transitionEndRule": null,
+      "notes": [],
+      "instanceType": "Encounter"
+    },
+    {
+      "id": "Encounter_8",
+      "extensionAttributes": [],
+      "name": "E9",
+      "label": "",
+      "description": null,
+      "type": {
+        "id": "Code_27",
+        "extensionAttributes": [],
+        "code": "C25716",
+        "codeSystem": "http://www.cdisc.org",
+        "codeSystemVersion": "2026-03-27",
+        "decode": "Visit",
+        "instanceType": "Code"
+      },
+      "previousId": null,
+      "nextId": null,
+      "scheduledAtId": null,
+      "environmentalSettings": [
+        {
+          "id": "Code_28",
+          "extensionAttributes": [],
+          "code": "C211570",
+          "codeSystem": "http://www.cdisc.org",
+          "codeSystemVersion": "2026-03-27",
+          "decode": "Clinic",
+          "instanceType": "Code"
+        }
+      ],
+      "contactModes": [
+        {
+          "id": "Code_29",
+          "extensionAttributes": [],
+          "code": "C175574",
+          "codeSystem": "http://www.cdisc.org",
+          "codeSystemVersion": "2026-03-27",
+          "decode": "In Person",
+          "instanceType": "Code"
+        }
+      ],
+      "transitionStartRule": null,
+      "transitionEndRule": null,
+      "notes": [],
+      "instanceType": "Encounter"
+    },
+    {
+      "id": "Encounter_9",
+      "extensionAttributes": [],
+      "name": "E10",
+      "label": "",
+      "description": null,
+      "type": {
+        "id": "Code_30",
+        "extensionAttributes": [],
+        "code": "C25716",
+        "codeSystem": "http://www.cdisc.org",
+        "codeSystemVersion": "2026-03-27",
+        "decode": "Visit",
+        "instanceType": "Code"
+      },
+      "previousId": null,
+      "nextId": null,
+      "scheduledAtId": null,
+      "environmentalSettings": [
+        {
+          "id": "Code_31",
+          "extensionAttributes": [],
+          "code": "C211570",
+          "codeSystem": "http://www.cdisc.org",
+          "codeSystemVersion": "2026-03-27",
+          "decode": "Clinic",
+          "instanceType": "Code"
+        }
+      ],
+      "contactModes": [
+        {
+          "id": "Code_32",
+          "extensionAttributes": [],
+          "code": "C175574",
+          "codeSystem": "http://www.cdisc.org",
+          "codeSystemVersion": "2026-03-27",
+          "decode": "In Person",
+          "instanceType": "Code"
+        }
+      ],
+      "transitionStartRule": null,
+      "transitionEndRule": null,
+      "notes": [],
+      "instanceType": "Encounter"
+    }
+  ],
+  "activities": [
+    {
+      "id": "Activity_1",
+      "extensionAttributes": [],
+      "name": "IC",
+      "label": "Informed consent",
+      "description": null,
+      "previousId": null,
+      "nextId": "Activity_2",
+      "childIds": [],
+      "definedProcedures": [],
+      "biomedicalConceptIds": [],
+      "bcCategoryIds": [],
+      "bcSurrogateIds": [],
+      "timelineId": null,
+      "notes": [],
+      "instanceType": "Activity"
+    },
+    {
+      "id": "Activity_2",
+      "extensionAttributes": [],
+      "name": "AU",
+      "label": "Admission to unit",
+      "description": null,
+      "previousId": "Activity_1",
+      "nextId": "Activity_3",
+      "childIds": [],
+      "definedProcedures": [],
+      "biomedicalConceptIds": [],
+      "bcCategoryIds": [],
+      "bcSurrogateIds": [],
+      "timelineId": null,
+      "notes": [],
+      "instanceType": "Activity"
+    },
+    {
+      "id": "Activity_3",
+      "extensionAttributes": [],
+      "name": "ST",
+      "label": "Study treatment",
+      "description": null,
+      "previousId": "Activity_2",
+      "nextId": "Activity_4",
+      "childIds": [],
+      "definedProcedures": [],
+      "biomedicalConceptIds": [],
+      "bcCategoryIds": [],
+      "bcSurrogateIds": [],
+      "timelineId": null,
+      "notes": [],
+      "instanceType": "Activity"
+    },
+    {
+      "id": "Activity_4",
+      "extensionAttributes": [],
+      "name": "PS",
+      "label": "PET scan",
+      "description": null,
+      "previousId": "Activity_3",
+      "nextId": "Activity_5",
+      "childIds": [],
+      "definedProcedures": [],
+      "biomedicalConceptIds": [],
+      "bcCategoryIds": [],
+      "bcSurrogateIds": [],
+      "timelineId": null,
+      "notes": [],
+      "instanceType": "Activity"
+    },
+    {
+      "id": "Activity_5",
+      "extensionAttributes": [],
+      "name": "AE",
+      "label": "Adverse event review",
+      "description": null,
+      "previousId": "Activity_4",
+      "nextId": null,
+      "childIds": [],
+      "definedProcedures": [],
+      "biomedicalConceptIds": [],
+      "bcCategoryIds": [],
+      "bcSurrogateIds": [],
+      "timelineId": null,
+      "notes": [],
+      "instanceType": "Activity"
+    }
+  ],
+  "conditions": [
+    {
+      "id": "Condition_1",
+      "extensionAttributes": [],
+      "name": "COND1",
+      "label": "1",
+      "description": null,
+      "text": "Participants are admitted to the unit on Day -1.",
+      "dictionaryId": null,
+      "notes": [],
+      "instanceType": "Condition",
+      "contextIds": [
+        "ScheduledActivityInstance_2",
+        "ScheduledActivityInstance_7"
+      ],
+      "appliesToIds": []
+    },
+    {
+      "id": "Condition_2",
+      "extensionAttributes": [],
+      "name": "COND2",
+      "label": "2",
+      "description": null,
+      "text": "Timings may change in Cohort 2.",
+      "dictionaryId": null,
+      "notes": [],
+      "instanceType": "Condition",
+      "contextIds": [
+        "ScheduledActivityInstance_6",
+        "ScheduledActivityInstance_8",
+        "ScheduledActivityInstance_9"
+      ],
+      "appliesToIds": []
+    }
+  ],
+  "biomedical_concepts": [],
+  "biomedical_concept_surrogates": []
+}

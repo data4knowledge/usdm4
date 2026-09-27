@@ -1,8 +1,9 @@
 # Timeline assembler — design
 
-**Status: 2026-09-26. Issues 63–71 and 73 (structured input, U4-35) merged.** Built: the input schema (§ 3, structured since issue
-73), parse → plan → build → naming (§ 5), R1–R7 and R9. R8 is issue 72, after 73. § 2
-records the assembler as it was BEFORE issue 63; §§ 10–19 record what each issue built
+**Status: 2026-09-27. Issues 63–71 and 73 (structured input, U4-35) merged; R8 built on
+issue 74.** Built: the input schema (§ 3, structured since issue
+73), parse → plan → build → naming (§ 5), R1–R9. § 2
+records the assembler as it was BEFORE issue 63; §§ 10–20 record what each issue built
 and the calls made on the way. Decisions are in § 9. The work order is in
 `timeline_assembler_plan.md`.
 
@@ -310,8 +311,9 @@ comes only from a regex on that text.
    no rule of its own. No such column → the first column, **with a warning** (today
    it is silent). Durations are differences, so a late anchor (`Day 14` when nothing
    earlier is timed) moves only the Fixed Reference, not the intervals. A timeline
-   whose values restart outside a cycle (a second `Day 1` after later days) is
-   warned: it is two periods and should be two timelines (U4-14).
+   whose values restart outside a cycle (a second `Day 1` after later days) with no
+   gate before it is warned (U4-14). After a gate each period has its own anchor
+   (R8, U4-36).
 2. **Duration** from the structured timing: point minus anchor in the column's unit, with
    the crossing-zero rule for days, Day 0 taken from the `day_zero` flag (U4-35).
 3. **Cycle columns** are measured from their cycle's `Day 1`, and that `Day 1` from
@@ -386,8 +388,8 @@ A gate is built with R5's loop construct (Dave, 2026-09-26; U4-10 (a)):
    out`) exits to the next column and whose default loops back to the start node.
 
 Recognition is not the open question: a column whose timing is a duration with no
-anchored offset, positioned between anchored columns. Open, U4-10: how the loop differs
-from a cycle's (below). Not built until taken.
+anchored offset, positioned between anchored columns. U4-10 (a)–(c) all taken;
+the period after the gate gets a new anchor at its `Day 1` (U4-36).
 
 The known gates are crossover washouts between periods whose day numbering restarts
 (NCT03069989, NCT03421379). The next period's `Day 1` is chained after the gate, as a
@@ -442,10 +444,11 @@ Taken one at a time, each recorded here with its date when taken.
 | U4-7 | The exit condition text on a cycle loop | **Taken 2026-09-26 (Dave):** the fixed text `cycle exit condition`. **Noted, not crucial now:** the real exit rule (e.g. progression, unacceptable toxicity) is usually in the protocol body, not the SoA; finding it needs a search wider than the SoA. **Rejected:** printed range text (a heading, not a condition); caller-supplied text (no field in the frozen schema) |
 | U4-8 | A range with no readable cycle length | **Taken 2026-09-26 (Dave):** the loop is built; the cycle length is the largest day number printed in the range (`D8` → 8 days, `D15` → 15 days), with a warning. It is a lower bound: the real length (21, 28 days) is usually longer. **Noted, not crucial now:** the true length may be stated outside the SoA; finding it needs a wider search. **Open edge:** a range printing only `Day 1` gives a 1-day cycle — settle when R5 hits it. **Rejected:** a text-only delay (DDF00060 needs a duration; the expander crashes, as U4-3). Ranges only; U4-23 (single cycles) is unchanged |
 | U4-9 | Where a cell's printed text goes (`X`, `(X)`, `Predose`) | kept on the input only until a rule needs it |
-| U4-10 | The gate loop (R8) | **Reframed 2026-09-26 (Dave):** a gate is a variable delay, built as R5's delay + decision loop; recognising it (duration, no anchored offset, between anchored columns) is not in question. **(a) Taken 2026-09-26 (Dave):** start node → 1-day delay → decision. The decision's condition is "≥ min days and washed out" (e.g. `≥ 2 days and washed out`) and exits to the next column; the default loops back to the start node. The minimum lives in the condition, not the delay; the start node is an instance with no visit (as the cycle start marker, U4-22). **(b) Taken 2026-09-26 (Dave):** the maximum is in the exit condition — `(≥ 2 days and washed out) or 10 days`; no second branch. **Open:** (c) the exit condition text — by analogy with U4-7, a fixed string. **Was:** "gate versus window in text alone" — wrong framing |
+| U4-10 | The gate loop (R8) | **Reframed 2026-09-26 (Dave):** a gate is a variable delay, built as R5's delay + decision loop; recognising it (duration, no anchored offset, between anchored columns) is not in question. **(a) Taken 2026-09-26 (Dave):** start node → 1-day delay → decision. The decision's condition is "≥ min days and washed out" (e.g. `≥ 2 days and washed out`) and exits to the next column; the default loops back to the start node. The minimum lives in the condition, not the delay; the start node is an instance with no visit (as the cycle start marker, U4-22). **(b) Taken 2026-09-26 (Dave):** the maximum is in the exit condition — `(≥ 2 days and washed out) or 10 days`; no second branch. **(c) Taken 2026-09-27 (Dave):** the exit condition text is filled from the delay — `≥ {min} {unit} and washed out, or {max} {unit}` (`≥ 7 days and washed out, or 28 days`); with no `max`, the `, or …` part is dropped. **Was:** "gate versus window in text alone" — wrong framing |
+| U4-36 | Day numbering after a gate (R8) | **Taken 2026-09-27 (Dave):** the period after a gate gets a new anchor at its `Day 1`; its other columns (`Baseline PET`, `Day -1`, `Day 2`) are timed from it. DDF00009 asks for at least one anchor per timeline, so a second is allowed. An anchor is a Fixed Reference: no duration back to the gate — the gap is the variable delay; the periods are linked by the instance chain (the decision's exit) |
 | U4-11 | How the expander presents a loop | one pass, flagged as repeating |
 | U4-12 | Activity identity across timelines when names differ only by spacing or hyphenation | exact trimmed, case-folded match, as today |
-| U4-14 | Crossover periods whose day numbering restarts (a second `Day 1`) | **2026-09-26 (Dave): in theory not needed.** One timeline: a period is chained like a cycle (R5, U4-27) — Period *n*'s `Day 1` comes after the washout gate (R8, U4-10), which joins the two periods. To prove on R8's test case (NCT03069989 `(7-28 days between doses)`, NCT03421379 `3 to 14 days`); if it holds, U4-14 is withdrawn and the restart warning becomes "restart with no gate before it". **Was — working hypothesis 2026-09-25, to be proven on real cases:** one timeline per period. A `Timing` cannot cross timelines (DDF00046), so the link is an instance: the printed washout column (`Wash out 3 to 14 days`, `Minimum 2 wks after end of session 1`) becomes a linking instance in the earlier period, reached by a `Timing` that is the washout, and calling the next period through `timelineId`; the next period's `entryCondition` carries the printed text. Rejected for now: the last instance calling the next period with the washout as text only. Needs a stage-1 marking (periods as timelines, the washout column as the link) and a stage-2 rule; neither built |
+| U4-14 | Crossover periods whose day numbering restarts (a second `Day 1`) | **Withdrawn 2026-09-27 (#74):** proven on NCT03069989 — one timeline, the period after the gate has its own anchor (U4-36); the restart warning is now "restart with no gate before it". **2026-09-26 (Dave): in theory not needed.** One timeline: a period is chained like a cycle (R5, U4-27) — Period *n*'s `Day 1` comes after the washout gate (R8, U4-10), which joins the two periods. To prove on R8's test case (NCT03069989 `(7-28 days between doses)`, NCT03421379 `3 to 14 days`); if it holds, U4-14 is withdrawn and the restart warning becomes "restart with no gate before it". **Was — working hypothesis 2026-09-25, to be proven on real cases:** one timeline per period. A `Timing` cannot cross timelines (DDF00046), so the link is an instance: the printed washout column (`Wash out 3 to 14 days`, `Minimum 2 wks after end of session 1`) becomes a linking instance in the earlier period, reached by a `Timing` that is the washout, and calling the next period through `timelineId`; the next period's `entryCondition` carries the printed text. Rejected for now: the last instance calling the next period with the washout as text only. Needs a stage-1 marking (periods as timelines, the washout column as the link) and a stage-2 rule; neither built |
 | U4-15 | Printed timing text that is a bare number (`15`, `-7`) with no unit in the timeline's timing row label, or no row label | **Superseded by U4-35 (#73): the caller structures this; `usdm4` no longer reads the text.** Was: **Taken 2026-09-25 (#65):** days |
 | U4-16 | A timing cell that prints its own window (`15 ± 3`) when the column's window field also has a value | **Superseded by U4-35 (#73): the caller structures this; `usdm4` no longer reads the text.** Was: **Taken 2026-09-25 (#65):** the window field wins, with a warning. **Standing rule with it:** every problem found reading printed text — unreadable text, a conflict, a default applied — raises a warning naming the timeline, column and field |
 | U4-17 | A pattern the grammar refuses | **Still standing: always build the timeline if at all possible. The pattern half is superseded by U4-35 (#73):** there is no pattern; a value sent as text only is warned and not read. Was: **Taken 2026-09-25 (#65):** always build the timeline if at all possible. The bad pattern is a warning and is set aside; the field is read from its printed text, else gets no value (U4-3 for a timing). Replaces issue 63's "refused pattern → timeline not built" |
@@ -798,8 +801,46 @@ Structured input (U4-35). Branch `73-update-schema`.
   `tests/usdm4/assembler/timeline/structure.py` (test code only). `test_columns.py`
   and the schema tests rewritten against the contract itself. Printed-text reading
   tests deleted or rewritten as caller-structured equivalents.
-- Pins: all 8 inputs converted mechanically by the OLD parse (each structured value is
+- Pins (the timeline pin test's input files, `tests/usdm4/test_files/timeline_pin/`): all 8 inputs converted mechanically by the OLD parse (each structured value is
   what the old code read; text is the old label; `day_zero` is what the old plan
   inferred; `≤N` before the anchor as the range it resolved to; a window read from the
   timing cell moved to the window field with no text). **Every expected output
   unchanged.**
+
+## 20. As built — issue 74 (2026-09-27)
+
+R8, gates (§ 6 R8, U4-10 (a)–(c), U4-36). Branch `74-r8-washout-variable-delay`. No input
+schema change (`delay` came with #73).
+
+- `columns.py` — the "not built until R8" warning on a structured delay removed. A delay sent
+  as text only is still warned and not read, so its column is an ordinary one (no gate).
+- `plan.py` — `Planner.is_gate` (a column with a structured delay). `_periods` splits the
+  columns at each gate; each period's anchor is found by U4-2 within the period (U4-36), so a
+  gated timeline has one Fixed Reference per period; `TimelinePlan.anchors` lists them
+  (`anchor` stays the first). `find_anchor` falls back to the period's own first column.
+  `_gate_nodes`: the gate column's node (`kind` `GATE`), `After` the previous node by zero;
+  a `DECISION` node `G{n}DEC`, `After` it by 1 day, `loop_to` it; when the gate is the last
+  column an `END` node `G{n}END`. A gate with nothing before it is a Fixed Reference, warned.
+  `_warn_restarts` resets at a gate and now reads "… with no gate before it" (U4-14). The
+  "no column has a timing of 0 or more" warning names the period when there is more than one.
+- `build.py` — a gate column gets no `Encounter`; its instance `GATE{n}` is labelled with the
+  delay as printed, in the column's epoch, and takes the activities of its cells. The
+  decision `GATE{n}DEC` loops back to it; its one `ConditionAssignment` is
+  `TimelineBuild.gate_condition(delay)` (`≥ 7 days and washed out, or 28 days`; no max → no
+  `, or …`) and leads to the next instance. End instance `GATE{n}END` as R5's. Header-value
+  markers now link before the encounter is made (a gate column has none); order of
+  created objects unchanged.
+- `naming.py` — `gate_name(n, suffix)`.
+- Tests: `test_plan.py` `TestGates`; `test_r8_nct03069989.py` (the built USDM from the new
+  input, a washout timed as a range builds no gate, a gate as the last column, the exit
+  text); `test_naming.py` gate names; `test_columns.py` (no R8 warning). Pin case
+  `nct03069989_r8` added: `input_nct03069989_r8.json` written by hand (Dave's structure;
+  activities and footnote texts illustrative), `expected_nct03069989_r8.json` saved from the
+  built output. Other pin cases unchanged.
+
+**U4-14.** Proven on this input: period 2 is one timeline with period 1, its `Day 1` a
+second anchor after the gate, no restart warning. U4-14's "one timeline per period" is
+withdrawn.
+
+**Seen, not this issue.** Period 2's instances are named `D-1-2`, `D1-2`, `D2-2`: `sai_name`
+de-duplicates rather than naming the period (as `ED-2` in § 17).

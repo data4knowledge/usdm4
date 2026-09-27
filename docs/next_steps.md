@@ -15,33 +15,94 @@ record of the rule generation process).
 > first-chain-head rules", that index has the row-by-row breakdown with
 > file counts and authority pointers. Look there first.
 
-## Working arrangement — three machines (2026-09-26)
+## Next steps (2026-09-27)
 
-This repo is **machine A** of three parallel threads (plan: `protocol_corpus/docs/next_steps.md`).
-Work here, one issue each: cycle reading (#68, merged) → R5 cycle loop (#69, merged) → R6
-(#70, merged) → R7 (#71, merged) → **structured input (#73, merged)** →
-R8 (#72, branch `72-r8-variable-delay`). Copied columns (U4-5 shared `Encounter`)
-wait on `protocol_corpus` `N78`, a schema change (kept out of #73). The
-expander is its own issue (decide U4-11 first): it is off the build path but blocks the
-next release once R5 is merged. Order and schema checks: `timeline_assembler_plan.md`
-§ *Order from here*. **The timeline input schema
-(`src/usdm4/assembler/schema/schedule_timeline_schema.py`) is frozen** — `usdm4_protocol` (machine B)
-builds against it; a change needs its own issue, merged first, with B and C told. #73 was
-that change (U4-35), merged 2026-09-26: B and C must be told — not yet done. Gate here: tests
-and pins only. Corpus figures are run and quoted on machine C only. Nothing is written to
-`protocol_corpus` from here.
+Normal development: one issue at a time, gate is tests and pins. The three-machine arrangement
+(A/B/C) is dropped. Test inputs are written here in `usdm4`'s structured form — nothing waits on
+`protocol_corpus` ground truth.
+
+1. **R8 (#74, branch `74-r8-washout-variable-delay`)** — built 2026-09-27; full suite green
+   (Dave, VSCode); merge next. As built: design § 20.
+2. **U4-11, then the expander issue** — blocks the next release (R5 is merged; the expander
+   recurses on a loop).
+3. **N78 — copied columns** (U4-5 shared `Encounter`, U4-30): a copy reference on `ColumnInput`,
+   a schema change in its own issue.
+
+Order and schema checks: `timeline_assembler_plan.md` § *Order from here*.
 
 ## Session Log
 
 Newest first. This repo's own log: every session that works a `usdm4` issue is entered here in
 full, whichever Claude project drove it (see `CLAUDE.md` § *Session log*).
 
+### 2026-09-27 — ISSUE 74 BUILT (GitHub 74, branch `74-r8-washout-variable-delay`): a washout is a gate; the period after it has its own anchor
+- `usdm4 @ 74-r8-washout-variable-delay`. Driven from the USDM4 project. #72 closed unbuilt (it held
+  docs only); R8 raised again as #74. The three-machine arrangement dropped (Dave): next steps live
+  here; test inputs are written in `usdm4`'s structured form, not taken from `protocol_corpus`.
+- **State:** full suite green (Dave, VSCode, 2026-09-27); not yet merged.
+- `protocol_corpus`: read only — NCT03069989's `ground_truth.yaml`, `build/timepoints.yaml` and the
+  source PDF text, early in the session; then set aside (Dave: out of date; not used for `usdm4`
+  work). Nothing written.
+
+**What it was.** A column carrying a structured `delay` (schema since #73) was parsed and carried with
+a "not built until R8" warning; `plan.py` and `build.py` never read it. Every non-cycle column was
+timed from one anchor, so a crossover's period 2 (`Day -1`, `Day 1` after the washout) was timed back
+from period 1's `Day 1` and warned as a restart.
+
+**Decisions (Dave), design § 9.**
+- U4-10 (c): exit text filled from the delay — `≥ 7 days and washed out, or 28 days`; no max → no
+  `, or …`.
+- U4-36 (new): the period after a gate gets a new anchor at its `Day 1`; an anchor is a Fixed
+  Reference, so no timing joins the periods — the decision's exit does.
+- Test input: `Day ≤-30` is a day with a window — `timing -30`, window `[0, 29]` (to Day -1).
+- Not ruled (Claude's, in the issue text): Follow-up `7-14 days post-final dose` as a time range
+  Day 8 to Day 15 in period 2's numbering (final dose Day 1). Activities and footnote texts in the
+  input are illustrative.
+
+**What changed.** Design § 20 lists it. `plan.py` (`is_gate`, `_periods`, per-period anchors,
+`_gate_nodes`, `TimelinePlan.anchors`, restart warning "with no gate before it"); `build.py` (no
+`Encounter` for a gate column, `_add_gate`, gate decision and end, `gate_condition`); `naming.py`
+(`gate_name`); `columns.py` (R8 warning gone). Tests: `test_plan.py` `TestGates` (15),
+`test_r8_nct03069989.py` (22), `test_naming.py`, `test_columns.py`; pin case `nct03069989_r8` (input
+by hand, expected saved from the built output). Docs: design status, R4.1, R8, § 9 U4-10/U4-14/U4-36,
+§ 20; plan R8; this file.
+
+**The numbers.** Sandbox (Python 3.10, no `cdisc-rules-engine`, `PYTHONPATH=src:.`): timeline,
+assembler, pin and schema tests 582 pass; `build.py`, `columns.py`, `naming.py`, `values.py`,
+`timeline_assembler.py` 100%; `plan.py` 99% — lines 573 and 715, the same two uncovered before this
+issue over this subset. Other pin cases unchanged. Ruff: one new finding (import order) fixed; the rest
+predate the branch; format clean.
+
+**Built USDM, NCT03069989.** 11 instances (10 columns + `GATE1DEC`), 11 timings, 9 encounters.
+Screening `Before` period 1 `Day 1` `P30D`, window `P29D`; `GATE1` `After` `Day 2` `PT0M`;
+`GATE1DEC` `After` `GATE1` `P1D`, default → `GATE1`, exit → `Baseline PET`; period 2 `Day 1` a
+second Fixed Reference; Follow-up `After` it `P7D`, window `P7D`. U4-14 withdrawn.
+
+**Rejected.** A separate start node added and the washout column dropped (loses its cells). Timing
+period 2's `Day 1` `After` the decision by zero (a false duration; the gap is the variable delay).
+Taking test data from `protocol_corpus` ground truth (out of date; `usdm4` inputs are written here).
+
+**Found, not this issue.** Period 2's instances are named `D-1-2`, `D1-2`, `D2-2` (de-duplicated,
+not period-named), as `ED-2` in #70. `gate_condition` pluralises naively (`≥ 1 weeks`), as
+`render_delay` does.
+
+**Next.**
+1. Merge #74 (full suite green).
+2. U4-11, then the expander issue — before the next release.
+3. N78, copied columns.
+
+Re-verify:
+```
+python3 -m pytest tests/usdm4/assembler/timeline tests/usdm4/assembler/test_timeline_assembler.py tests/usdm4/assembler/test_timeline_pin.py tests/usdm4/assembler/schema -q
+```
+
 ### 2026-09-26 — ISSUE 73 MERGED (GitHub 73, branch `73-update-schema`): structured input, `usdm4` never reads printed text
 - `usdm4 @ 73-update-schema`. Driven from the USDM4 project (machine A). Started as R8 (#72, branch
   `72-r8-variable-delay`, docs only so far); R8 needed the input to carry a delay, which became #73.
 - `protocol_corpus` touched: read only (`docs/issues.md`, `docs/spec/`, ground truths of NCT03069989,
   NCT03360071, NCT03421379, NCT04050553 — searched for washout columns). Nothing written.
-- **State:** full suite green (Dave, VSCode); **merged to `main`**. **B and C not yet told.**
+- **State:** full suite green (Dave, VSCode); **merged to `main`**. (Telling B and C dropped
+  2026-09-27 with the three-machine arrangement.)
 
 **Decisions (Dave), design § 9.**
 - U4-10 reframed: a gate is a variable delay (`Washout 2-10 days`), built with R5's loop — start node →

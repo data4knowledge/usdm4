@@ -168,10 +168,8 @@ class TestDelay:
         )
         assert parsed.delay_label == "7-28 days"
         assert parsed.timing is None
-        assert _messages(errors) == [
-            "Timeline 1, column 'c1', delay: a delay is not built until R8; "
-            "carried only"
-        ]
+        # Built since issue 74 (R8): no "not built" warning.
+        assert _messages(errors) == []
 
 
 class TestRedaction:

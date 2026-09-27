@@ -18,6 +18,7 @@ from src.usdm4.assembler.timeline.plan import (
     DECISION,
     END,
     FIXED,
+    GATE,
     Planner,
 )
 from tests.usdm4.assembler.timeline.helpers import column, timeline, value
@@ -767,3 +768,148 @@ class TestRanges:
         )
         assert "largest day printed in it is used (8 days)" in _messages(errors)[0]
         assert plan.nodes[1].key == 1
+
+
+# ----------------------------------------------------------------------
+# Gates — issue 74 (R8, U4-10, U4-36)
+
+
+def _gated(timings: list, errors: Errors | None = None, **extra):
+    """Columns in compact notation; a ``("delay", "7 to 28 days")`` entry is a
+    gate column."""
+    columns = []
+    for i, t in enumerate(timings):
+        if isinstance(t, tuple) and t[0] == "delay":
+            columns.append(column(f"c{i + 1}", visit="Washout", delay=value(t[1])))
+        else:
+            columns.append(column(f"c{i + 1}", timing=t))
+    parsed = parse_timeline(timeline(columns, **extra))
+    return Planner(errors or Errors()).plan(parsed, 1)
+
+
+class TestGates:
+    WASHOUT = ("delay", "7 to 28 days")
+
+    def test_start_decision_and_loop(self):
+        plan = _gated(["Day 1", "Day 2", self.WASHOUT, "Day 1", "Day 2"])
+        gate, decision = plan.nodes[2], plan.nodes[3]
+        assert (gate.kind, gate.gate, gate.key) == (GATE, 1, 2)
+        assert (gate.timing_type, gate.relative_to, gate.duration) == (AFTER, 1, 0)
+        assert (decision.kind, decision.gate, decision.key) == (DECISION, 1, "G1DEC")
+        assert (decision.timing_type, decision.relative_to, decision.duration) == (
+            AFTER,
+            2,
+            1,
+        )
+        assert (decision.unit, decision.loop_to, decision.epoch_column) == (
+            "day",
+            2,
+            2,
+        )
+
+    def test_the_period_after_a_gate_has_its_own_anchor(self):
+        plan = _gated(["Day -1", "Day 1", "Day 2", self.WASHOUT, "Day -1", "Day 1"])
+        assert plan.anchor == 1
+        assert plan.anchors == [1, 5]
+        assert _links(plan)[5:] == [(BEFORE, 5, 1), (FIXED, 5, 0)]
+
+    def test_no_timing_links_the_second_period_to_the_first(self):
+        plan = _gated(["Day 1", "Day 8", self.WASHOUT, "Day 1", "Day 8"])
+        second = [n for n in plan.nodes if n.column and n.column.index > 2]
+        assert {n.relative_to for n in second} == {3}
+
+    def test_no_timing_before_the_new_anchor_is_before_the_next_column(self):
+        plan = _gated(["Day 1", self.WASHOUT, _text("Baseline PET"), "Day -1", "Day 1"])
+        assert _links(plan)[3:] == [(BEFORE, 3, 0), (BEFORE, 4, 1), (FIXED, 4, 0)]
+
+    def test_a_restart_after_a_gate_is_not_warned(self):
+        errors = Errors()
+        _gated(["Day 1", "Day 8", self.WASHOUT, "Day 1", "Day 8"], errors)
+        assert not any("restarts" in m for m in _messages(errors))
+
+    def test_a_restart_with_no_gate_is_warned(self):
+        errors = Errors()
+        _gated(["Day 1", "Day 8", "Day 1"], errors)
+        assert (
+            "Timeline 1, column 'c3': timing restarts (day 1 after day 8) with no "
+            "gate before it"
+        ) in _messages(errors)
+
+    def test_a_period_with_no_anchor_is_warned_by_number(self):
+        errors = Errors()
+        plan = _gated(["Day 1", self.WASHOUT, "Day -7", "Day -1"], errors)
+        assert plan.anchors == [0, 2]
+        assert (
+            "Timeline 1, period 2: no column has a timing of 0 or more; the first "
+            "column is the anchor"
+        ) in _messages(errors)
+
+    def test_a_gate_as_the_last_column_has_an_end_node(self):
+        plan = _gated(["Day 1", self.WASHOUT])
+        assert [n.kind for n in plan.nodes] == [None, GATE, DECISION, END]
+        end = plan.nodes[3]
+        assert (end.key, end.relative_to, end.duration, end.gate) == (
+            "G1END",
+            "G1DEC",
+            0,
+            1,
+        )
+
+    def test_a_gate_as_the_first_column_is_the_anchor_warned(self):
+        errors = Errors()
+        plan = _gated([self.WASHOUT, "Day 1"], errors)
+        assert _links(plan)[0] == (FIXED, 0, 0)
+        assert (
+            "Timeline 1, column 'c1': a gate with no column before it; it is the anchor"
+        ) in _messages(errors)
+
+    def test_two_gates_three_periods(self):
+        plan = _gated(["Day 1", self.WASHOUT, "Day 1", ("delay", "3+ days"), "Day 1"])
+        assert plan.anchors == [0, 2, 4]
+        assert [n.key for n in plan.nodes if n.kind == DECISION] == [
+            "G1DEC",
+            "G2DEC",
+        ]
+
+    def test_only_a_gate(self):
+        plan = _gated([self.WASHOUT])
+        assert [n.kind for n in plan.nodes] == [GATE, DECISION, END]
+        assert plan.anchors == [0]
+
+    def test_a_text_only_delay_is_not_a_gate(self):
+        errors = Errors()
+        columns = [
+            column("c1", timing="Day 1"),
+            column("c2", visit="Washout", delay=_text("7-28 days")),
+            column("c3", timing="Day 8"),
+        ]
+        plan = Planner(errors).plan(parse_timeline(timeline(columns)), 1)
+        assert [n.kind for n in plan.nodes] == [None, None, None]
+        assert _links(plan)[1] == (AFTER, 0, 0)
+
+    def test_no_gate_one_anchor(self):
+        plan = _gated(["Day -1", "Day 1"])
+        assert plan.anchors == [1]
+
+    def test_no_columns(self):
+        plan = Planner(Errors()).plan(parse_timeline(timeline([])), 1)
+        assert (plan.anchor, plan.nodes, plan.anchors) == (0, [], [])
+
+    def test_a_gate_column_is_not_a_cycle_loop(self):
+        """A gate and a cycle range in one timeline: each gets its decision."""
+        columns = [
+            column(
+                "c1",
+                timing="Day 1",
+                cycle=value("Cycle 1"),
+                cycle_length=value("21 days"),
+            ),
+            column("c2", timing="Day 1", cycle=value("Cycle 2+")),
+            column("c3", visit="Washout", delay=value("7 to 28 days")),
+            column("c4", timing="Day 1"),
+        ]
+        plan = Planner(Errors()).plan(parse_timeline(timeline(columns)), 1)
+        assert [n.key for n in plan.nodes if n.kind == DECISION] == [
+            "C2DEC",
+            "G1DEC",
+        ]

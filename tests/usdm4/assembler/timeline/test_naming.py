@@ -247,3 +247,10 @@ class TestSaiNames:
     def test_names_are_unique_across_timelines(self, naming):
         assert naming.sai_name("Day 1", 1, "day", None, 1, 0) == "D1"
         assert naming.sai_name("Day 1", 1, "day", None, 2, 0) == "D1-2"
+
+    def test_gate_names(self, naming):
+        """Issue 74 (R8): a gate's instance, decision and end node."""
+        assert naming.gate_name(1) == "GATE1"
+        assert naming.gate_name(1, "DEC") == "GATE1DEC"
+        assert naming.gate_name(1, "END") == "GATE1END"
+        assert naming.gate_name(1) == "GATE1-2"
