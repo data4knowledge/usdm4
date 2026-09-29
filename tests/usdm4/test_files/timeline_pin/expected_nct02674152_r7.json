@@ -2,12 +2,20 @@
   "timelines": [
     {
       "id": "ScheduleTimeline_1",
-      "extensionAttributes": [],
+      "extensionAttributes": [
+        {
+          "id": "ExtensionAttribute_1",
+          "url": "www.d4k.dk/usdm/extensions/016",
+          "valueString": "main",
+          "extensionAttributes": [],
+          "instanceType": "ExtensionAttribute"
+        }
+      ],
       "name": "TIMELINE-1",
       "label": "Flow Chart",
       "description": "The main timeline",
       "mainTimeline": true,
-      "entryCondition": "Paricipant identified",
+      "entryCondition": "Subject identified",
       "entryId": "ScheduledActivityInstance_1",
       "exits": [
         {
@@ -806,8 +814,15 @@
       "id": "ScheduleTimeline_2",
       "extensionAttributes": [
         {
-          "id": "ExtensionAttribute_1",
+          "id": "ExtensionAttribute_2",
           "url": "www.d4k.dk/usdm/extensions/011",
+          "valueString": "profile",
+          "extensionAttributes": [],
+          "instanceType": "ExtensionAttribute"
+        },
+        {
+          "id": "ExtensionAttribute_3",
+          "url": "www.d4k.dk/usdm/extensions/016",
           "valueString": "profile",
           "extensionAttributes": [],
           "instanceType": "ExtensionAttribute"
@@ -817,7 +832,7 @@
       "label": "Blood sampling scheme for PK, in courses 1, 2, 3 and from course 4 onwards",
       "description": "Subsidiary timeline 2",
       "mainTimeline": false,
-      "entryCondition": "Paricipant identified",
+      "entryCondition": "Activity performed",
       "entryId": "ScheduledActivityInstance_15",
       "exits": [
         {

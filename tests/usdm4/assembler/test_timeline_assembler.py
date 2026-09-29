@@ -17,8 +17,10 @@ from src.usdm4.api.extensions_d4k import (
     TLF_EXT_URL,
     TLO_EXT_URL,
     TLP_EXT_URL,
+    TLT_EXT_URL,
     TLU_EXT_URL,
 )
+from src.usdm4.assembler.schema.schedule_timeline_schema import FAMILY
 from src.usdm4.assembler import timeline_assembler as timeline_assembler_module
 from src.usdm4.assembler.timeline_assembler import TimelineAssembler
 from src.usdm4.builder.builder import Builder
@@ -178,27 +180,33 @@ class TestTimelines:
         assembler.execute([simple(), simple("unclassified")])
         assert assembler.timelines[1].label == "Timeline 2"
 
-    def test_entry_condition_is_still_hard_coded(self, assembler):
-        """Design § 8 — out of scope for issue 63, pinned until fixed. R6
-        leaves every non-conditional family on it."""
-        assembler.execute([simple()])
-        assert assembler.timelines[0].entryCondition == "Paricipant identified"
 
+class TestEntryConditions:
+    """#77: a timeline of any type is entered on its printed entry condition,
+    else on the default for its type. The default is warned, except for
+    ``main``."""
 
-class TestConditionalTimelines:
-    """R6 (#70): a conditional timeline is a sibling timeline entered on its
-    printed entry condition, else on a default from its type (U4-29)."""
+    DEFAULTS = [
+        ("main", "Subject identified"),
+        ("extension_study", "Entered extension study"),
+        ("continued_access", "Eligible for continued access"),
+        ("follow_up", "Completed or discontinued treatment"),
+        ("arm", "Assigned to arm"),
+        ("cohort", "Assigned to cohort"),
+        ("unscheduled", "Unscheduled visit"),
+        ("early_termination", "Early termination"),
+        ("adverse_event", "Adverse event"),
+        ("profile", "Activity performed"),
+        ("unclassified", "Entry condition not stated"),
+    ]
 
-    CONDITIONAL = ["unscheduled", "early_termination", "adverse_event"]
-
-    def test_every_conditional_type_has_a_default(self):
-        from src.usdm4.assembler.schema.schedule_timeline_schema import FAMILY
+    def test_every_type_has_a_default(self):
         from src.usdm4.assembler.timeline.build import TimelineBuild
 
-        conditional = {t for t, f in FAMILY.items() if f == "conditional"}
-        assert set(TimelineBuild.CONDITIONAL_ENTRY_CONDITIONS) == conditional
+        assert set(TimelineBuild.ENTRY_CONDITIONS) == set(FAMILY)
+        assert {t for t, _ in self.DEFAULTS} == set(FAMILY)
 
-    @pytest.mark.parametrize("type", CONDITIONAL)
+    @pytest.mark.parametrize("type", [t for t, _ in DEFAULTS])
     def test_printed_entry_condition_is_used(self, assembler, errors, type):
         text = "Participant discontinues study treatment"
         assembler.execute([simple(), simple(type, entry_condition=text)])
@@ -211,14 +219,7 @@ class TestConditionalTimelines:
         )
         assert assembler.timelines[1].entryCondition == "If needed"
 
-    @pytest.mark.parametrize(
-        "type, default",
-        [
-            ("unscheduled", "Unscheduled visit"),
-            ("early_termination", "Early termination"),
-            ("adverse_event", "Adverse event"),
-        ],
-    )
+    @pytest.mark.parametrize("type, default", [d for d in DEFAULTS if d[0] != "main"])
     def test_no_entry_condition_takes_the_type_default_and_warns(
         self, assembler, errors, type, default
     ):
@@ -229,20 +230,37 @@ class TestConditionalTimelines:
             in messages(errors)
         )
 
+    def test_main_takes_its_default_without_a_warning(self, assembler, errors):
+        assembler.execute([simple()])
+        assert assembler.timelines[0].entryCondition == "Subject identified"
+        assert not any("no entry condition" in m for m in messages(errors))
+
     def test_blank_entry_condition_is_no_entry_condition(self, assembler, errors):
         assembler.execute([simple(), simple("early_termination", entry_condition=" ")])
         assert assembler.timelines[1].entryCondition == "Early termination"
         assert any("no entry condition" in m for m in messages(errors))
 
-    @pytest.mark.parametrize(
-        "type", ["main", "arm", "cohort", "profile", "unclassified"]
-    )
-    def test_other_families_keep_the_fixed_text_and_do_not_warn(
-        self, assembler, errors, type
-    ):
-        assembler.execute([simple(type)])
-        assert assembler.timelines[0].entryCondition == "Paricipant identified"
-        assert not any("no entry condition" in m for m in messages(errors))
+
+class TestFollowUp:
+    """#77: a follow-up schedule printed as its own table is a planned,
+    top-level timeline on its own clock."""
+
+    def test_builds_a_top_level_timeline_without_tlf(self, assembler):
+        assembler.execute([simple(), simple("follow_up")])
+        main, follow_up = assembler.timelines
+        assert (main.mainTimeline, follow_up.mainTimeline) == (True, False)
+        assert follow_up.entryCondition == "Completed or discontinued treatment"
+        assert follow_up.get_extension(TLF_EXT_URL) is None
+        assert follow_up.get_extension(TLT_EXT_URL).valueString == "follow_up"
+
+    def test_main_stays_main_when_follow_up_comes_first(self, assembler):
+        assembler.execute([simple("follow_up"), simple()])
+        follow_up, main = assembler.timelines
+        assert (follow_up.mainTimeline, main.mainTimeline) == (False, True)
+
+
+class TestConditionalTimelines:
+    """R6 (#70): a conditional timeline is a sibling timeline, not main."""
 
     def test_conditional_timeline_is_a_sibling_not_main(self, assembler):
         assembler.execute([simple(), simple("early_termination")])
@@ -598,9 +616,20 @@ class TestExtensions:
     def _urls(self, tl):
         return {e.url: e.valueString for e in tl.extensionAttributes}
 
-    def test_nothing_classified_nothing_emitted(self, assembler):
+    def test_nothing_classified_only_the_type_emitted(self, assembler):
         assembler.execute([simple()])
-        assert assembler.timelines[0].extensionAttributes == []
+        assert self._urls(assembler.timelines[0]) == {TLT_EXT_URL: "main"}
+
+    @pytest.mark.parametrize("type", sorted(FAMILY))
+    def test_every_timeline_carries_its_type_once(self, assembler, type):
+        """#77: extension 016 on every built timeline, value the input type."""
+        assembler.execute([simple(type)])
+        found = [
+            e
+            for e in assembler.timelines[0].extensionAttributes
+            if e.url == TLT_EXT_URL
+        ]
+        assert [e.valueString for e in found] == [type]
 
     def test_a_profile_carries_the_family_and_its_classification(self, assembler):
         assembler.execute(
@@ -621,6 +650,7 @@ class TestExtensions:
             TLO_EXT_URL: "transposed",
             TLU_EXT_URL: "hour",
             TLP_EXT_URL: "away",
+            TLT_EXT_URL: "profile",
         }
 
     def test_an_absent_value_is_left_out(self, assembler):
@@ -628,12 +658,16 @@ class TestExtensions:
         assert self._urls(assembler.timelines[0]) == {
             TLF_EXT_URL: "profile",
             TLU_EXT_URL: "minute",
+            TLT_EXT_URL: "profile",
         }
 
     def test_the_family_marks_profiles_only(self, assembler):
         """TLF's presence is what marks a profile to downstream readers."""
         assembler.execute([simple("arm", classification={"orientation": "upright"})])
-        assert self._urls(assembler.timelines[0]) == {TLO_EXT_URL: "upright"}
+        assert self._urls(assembler.timelines[0]) == {
+            TLO_EXT_URL: "upright",
+            TLT_EXT_URL: "arm",
+        }
 
     def test_findable_by_url(self, assembler):
         assembler.execute([simple("profile")])

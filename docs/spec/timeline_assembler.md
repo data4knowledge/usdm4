@@ -41,7 +41,7 @@ soa:
     id: main                   # optional; needed when a later timeline copies a column (U4-37)
     title: "Schedule of Activities"            # optional, becomes the label
     description: null                          # optional prose
-    entry_condition: null      # printed text; conditional timelines (R6)
+    entry_condition: null      # printed text; any type (R1)
     attaches_to: null          # activity name; profile timelines (R7)
     day_zero: false            # does the protocol number a Day 0? default Day 1 (U4-35)
     classification:            # optional; emitted as d4k extensions
@@ -94,7 +94,7 @@ The caller states the type. The family is derived from it, never supplied.
 
 | family | types |
 |---|---|
-| planned | `main`, `extension_study`, `continued_access` |
+| planned | `main`, `extension_study`, `continued_access`, `follow_up` |
 | variant | `arm`, `cohort` |
 | conditional | `unscheduled`, `early_termination`, `adverse_event` |
 | profile | `profile` |
@@ -103,8 +103,13 @@ The caller states the type. The family is derived from it, never supplied.
 Exactly one timeline in a study design carries `mainTimeline`: the first `main`, or
 the first timeline if none is `main`. The family extension (TLF) is emitted for
 `profile` timelines only, value `profile` — downstream readers take its presence to
-mean "profile". Orientation, unit and placement are emitted when given. The type
-itself is not emitted as an extension.
+mean "profile". Orientation, unit and placement are emitted when given. The type is
+emitted on every timeline as extension 016 (TLT), value the input type (#77), for
+debugging and assessing typing; nothing in the build reads it.
+
+`follow_up` (#77) is a post-treatment follow-up schedule printed as its own table: timed
+from the end of treatment or the last dose, entered by every participant who completes
+or stops treatment. It is not `continued_access`, which gives the study drug.
 
 ### 2.2 Values: structured, with the printed text carried (U4-35)
 
@@ -202,8 +207,24 @@ are shared and stay registered.
 Each input timeline becomes a `ScheduleTimeline`: `name` `TIMELINE-<n>` (ordinal in
 the input, gaps kept when a timeline is not built), `label` from `title` or a default,
 `entryId` the first node, one `ScheduleTimelineExit`. `mainTimeline` and extensions per
-§ 2.1. `entryCondition`: R6 for conditional timelines; every other family carries the
-fixed `Paricipant identified` (typo kept — `docs/issues.md` N3).
+§ 2.1. `entryCondition` (#77): the printed `entry_condition`, trimmed, for any type.
+With none printed, the default for the type, with a warning except for `main`:
+
+| type | default |
+|---|---|
+| `main` | `Subject identified` |
+| `extension_study` | `Entered extension study` |
+| `continued_access` | `Eligible for continued access` |
+| `follow_up` | `Completed or discontinued treatment` |
+| `arm` | `Assigned to arm` |
+| `cohort` | `Assigned to cohort` |
+| `unscheduled` | `Unscheduled visit` |
+| `early_termination` | `Early termination` |
+| `adverse_event` | `Adverse event` |
+| `profile` | `Activity performed` |
+| `unclassified` | `Entry condition not stated` |
+
+The family decides how a timeline is built, not whether it has an entry condition.
 
 ### R2 — epochs
 
@@ -287,9 +308,7 @@ Nothing is ever expanded. A cycle has a length, a number or range, and days.
 ### R6 — conditional timelines and copies
 
 A conditional timeline (`unscheduled`, `early_termination`, `adverse_event`) is a
-sibling `ScheduleTimeline`; `entryCondition` is the printed `entry_condition` text,
-trimmed. With none printed, the type's default (`Unscheduled visit`, `Early
-termination`, `Adverse event`) and a warning (U4-29).
+sibling `ScheduleTimeline`; `entryCondition` as R1.
 
 A column that names an original with `copy_of` gets its own instance, timing and
 activities but shares the original's `Encounter` (U4-5, U4-37). If the printed visit
@@ -401,7 +420,7 @@ withdrawn decisions are kept, one line each, so the question isn't asked again.
 | U4-26 | Where a cycle column's day is read from | **Taken 2026-09-25 (R4 part 2):** the `timing` field only. A table printing the day in its visit row (`D1`) is stage 1's to assign to the timing role; `usdm4` never reads `visit` for timing |
 | U4-27 | Cycle *n*'s `Day 1` | **Taken 2026-09-26 (Dave, #67):** a cycle starts at `Day 1`; cycle *n*'s `Day 1` is timed `After` cycle *n* − 1's `Day 1` by cycle *n* − 1's length — a chain. Cycle 1's `Day 1` is Day 1 of the timeline, timed from the anchor. #66 built (*n* − 1) × cycle *n*'s own length, right only when every cycle has the same length. (The example first recorded here, a length printed as `21 days (or 28 days …)`, is a length that differs by cohort, not between cycles; it is not read, U4-23) |
 | U4-28 | Unit of a bare cycle length | **Superseded by U4-35 (#73):** the caller sends the unit |
-| U4-29 | `entryCondition` of a conditional timeline with no printed `entry_condition` | **Taken 2026-09-26 (Dave, #70):** default text from the timeline type, with a warning — `unscheduled` → `Unscheduled visit`, `early_termination` → `Early termination`, `adverse_event` → `Adverse event`. **Rejected:** today's fixed `Paricipant identified` (says nothing about why the timeline is entered) |
+| U4-29 | `entryCondition` of a conditional timeline with no printed `entry_condition` | **Replaced by #77 (R1).** Was, taken 2026-09-26 (Dave, #70): default text from the timeline type, with a warning — `unscheduled` → `Unscheduled visit`, `early_termination` → `Early termination`, `adverse_event` → `Adverse event`. **Rejected:** today's fixed `Paricipant identified` (says nothing about why the timeline is entered) |
 | U4-30 | Label of a shared `Encounter` (U4-5) when the printed visit text differs between the copies | **Taken 2026-09-26 (Dave, #70); built #75.** The first timeline in input order sets the label (and the name, `T{t}-E{n}`); a warning names both texts. **Rejected:** the main timeline's text (an extra rule; main is almost always first) |
 | U4-31 | A profile attachment that would make a loop (the attached activity is reached again through the profile it calls, directly or through another profile) | **Taken 2026-09-26 (Dave, R7):** not attached, reported as an error; the profile is built unattached. Sharing an activity between timelines is fine (U4-12 unchanged); a loop is not — they are different things. Checked over the whole attachment graph, not just the direct case |
 | U4-32 | `attaches_to` names an activity with children | **Taken 2026-09-26 (Dave, R7):** not attached, reported as an error — DDF00160 forbids `timelineId` on a parent activity |

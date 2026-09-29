@@ -528,7 +528,7 @@ fixture JSONs generated against a specific package) break when the
 cache is refreshed to a newer package. This isn't a regression in the
 code under test — it's test-data drift. Either make the assertion
 version-agnostic (check format rather than the date string), regenerate
-the fixture at the new version via a `SAVE=True` pattern, or pin the
+the fixture at the new version with a save flag, or pin the
 test to a specific CT package version if snapshotting matters.
 
 ## 11. DataStore traversal patterns
@@ -1577,7 +1577,7 @@ its own test.
 Issue 63 replaced the timeline assembler's input and split one 1,200-line class into
 parse → plan → build → naming. It kept behaviour because the output was pinned
 BEFORE any code moved: five fixed inputs, everything the other assemblers read,
-saved as JSON by one `SAVE = True` run on the unchanged code
+saved as JSON by one run with the save flag on, on the unchanged code
 (`tests/usdm4/assembler/test_timeline_pin.py`). Four reproduced byte for byte after
 the restructure; the fifth differed in exactly the one place the new grammar
 predicted, and that difference was listed with its reason before the expected file

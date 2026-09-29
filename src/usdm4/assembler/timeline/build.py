@@ -26,6 +26,7 @@ from usdm4.api.extensions_d4k import (
     TLF_EXT_URL,
     TLO_EXT_URL,
     TLP_EXT_URL,
+    TLT_EXT_URL,
     TLU_EXT_URL,
 )
 from usdm4.api.procedure import Procedure
@@ -81,20 +82,27 @@ class TimelineBuild:
     # the protocol body, not the SoA; fixed text until something reads it.
     EXIT_CONDITION = "cycle exit condition"
 
-    # R6. Planned, variant, profile and unclassified timelines: the fixed text
-    # of old, typo included (design § 8). Conditional timelines with no
-    # printed entry condition: a default from the type (U4-29).
-    PLANNED_ENTRY_CONDITION = "Paricipant identified"
-    CONDITIONAL_ENTRY_CONDITIONS = {
+    # #77. Every timeline is entered on its printed entry condition; with
+    # none printed, the default for its type. One entry per ``TimelineType``.
+    ENTRY_CONDITIONS = {
+        "main": "Subject identified",
+        "extension_study": "Entered extension study",
+        "continued_access": "Eligible for continued access",
+        "follow_up": "Completed or discontinued treatment",
+        "arm": "Assigned to arm",
+        "cohort": "Assigned to cohort",
         "unscheduled": "Unscheduled visit",
         "early_termination": "Early termination",
         "adverse_event": "Adverse event",
+        "profile": "Activity performed",
+        "unclassified": "Entry condition not stated",
     }
 
     # The SoA input's classification and the d4k extension each is emitted
     # as. One concept per URL, matching every other d4k extension. TLF names
     # the family and is emitted for profiles only — its presence is what marks
-    # a timeline as a profile to downstream readers.
+    # a timeline as a profile to downstream readers. TLT, the type, is
+    # emitted on every timeline, last.
     _CLASSIFICATION_EXTENSIONS = (
         ("orientation", TLO_EXT_URL),
         ("unit", TLU_EXT_URL),
@@ -816,16 +824,16 @@ class TimelineBuild:
         )
 
     def _entry_condition(self) -> str:
-        """R6. A conditional timeline is entered on its printed
-        ``entry_condition``; with none printed, a default from its type and a
-        warning (U4-29). Every other family keeps the fixed text, typo
-        included — design § 8, out of scope here."""
-        if self._timeline.family != "conditional":
-            return self.PLANNED_ENTRY_CONDITION
+        """#77. A timeline of any type is entered on its printed
+        ``entry_condition``; with none printed, the default for its type. The
+        default is warned, except for ``main``, which almost never prints
+        one."""
         text = (self._timeline.entry_condition or "").strip()
         if text:
             return text
-        default = self.CONDITIONAL_ENTRY_CONDITIONS[self._timeline.type]
+        default = self.ENTRY_CONDITIONS[self._timeline.type]
+        if self._timeline.type == "main":
+            return default
         self._errors.warning(
             f"Timeline {self._t} ({self._timeline.type}) has no entry condition; "
             f"'{default}' used",
@@ -842,6 +850,7 @@ class TimelineBuild:
             value = self._timeline.classification.get(key)
             if value not in (None, ""):
                 values.append((url, str(value)))
+        values.append((TLT_EXT_URL, self._timeline.type))
         for url, value in values:
             extensions.append(
                 self._builder.create(

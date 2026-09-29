@@ -2,12 +2,20 @@
   "timelines": [
     {
       "id": "ScheduleTimeline_1",
-      "extensionAttributes": [],
+      "extensionAttributes": [
+        {
+          "id": "ExtensionAttribute_1",
+          "url": "www.d4k.dk/usdm/extensions/016",
+          "valueString": "main",
+          "extensionAttributes": [],
+          "instanceType": "ExtensionAttribute"
+        }
+      ],
       "name": "TIMELINE-1",
       "label": "Schedule of Events",
       "description": "The main timeline",
       "mainTimeline": true,
-      "entryCondition": "Paricipant identified",
+      "entryCondition": "Subject identified",
       "entryId": "ScheduledActivityInstance_1",
       "exits": [
         {

@@ -11,8 +11,8 @@ Inputs live in ``tests/usdm4/test_files/timeline_pin/input_*.json`` (a
 ``source`` note, a ``converted`` note, and the ``soa`` list). Expected output
 is written next to them as ``expected_*.json``.
 
-To (re)create the pin: set ``SAVE = True``, run this file once, set it back
-to ``False``, run again. Only ever re-save on purpose — a re-save is a
+To re-create the expected files: turn the save flag on, run this file once,
+turn it off, run again. Only ever re-save on purpose — a re-save is a
 statement that the new output is the right output.
 """
 

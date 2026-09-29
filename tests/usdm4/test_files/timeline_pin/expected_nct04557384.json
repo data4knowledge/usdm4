@@ -2,12 +2,20 @@
   "timelines": [
     {
       "id": "ScheduleTimeline_1",
-      "extensionAttributes": [],
+      "extensionAttributes": [
+        {
+          "id": "ExtensionAttribute_1",
+          "url": "www.d4k.dk/usdm/extensions/016",
+          "valueString": "main",
+          "extensionAttributes": [],
+          "instanceType": "ExtensionAttribute"
+        }
+      ],
       "name": "TIMELINE-1",
       "label": "Screening, On-Study, and Post-Treatment Schedule of Activities",
       "description": "The main timeline",
       "mainTimeline": true,
-      "entryCondition": "Paricipant identified",
+      "entryCondition": "Subject identified",
       "entryId": "ScheduledActivityInstance_1",
       "exits": [
         {
@@ -828,12 +836,20 @@
     },
     {
       "id": "ScheduleTimeline_2",
-      "extensionAttributes": [],
+      "extensionAttributes": [
+        {
+          "id": "ExtensionAttribute_2",
+          "url": "www.d4k.dk/usdm/extensions/016",
+          "valueString": "unclassified",
+          "extensionAttributes": [],
+          "instanceType": "ExtensionAttribute"
+        }
+      ],
       "name": "TIMELINE-2",
       "label": "Continued Access Schedule of Activities",
       "description": "Subsidiary timeline 2",
       "mainTimeline": false,
-      "entryCondition": "Paricipant identified",
+      "entryCondition": "Entry condition not stated",
       "entryId": "ScheduledActivityInstance_16",
       "exits": [
         {
@@ -950,12 +966,20 @@
     },
     {
       "id": "ScheduleTimeline_3",
-      "extensionAttributes": [],
+      "extensionAttributes": [
+        {
+          "id": "ExtensionAttribute_3",
+          "url": "www.d4k.dk/usdm/extensions/016",
+          "valueString": "unclassified",
+          "extensionAttributes": [],
+          "instanceType": "ExtensionAttribute"
+        }
+      ],
       "name": "TIMELINE-3",
       "label": "Pharmacokinetic Sampling Schedule",
       "description": "Subsidiary timeline 3",
       "mainTimeline": false,
-      "entryCondition": "Paricipant identified",
+      "entryCondition": "Entry condition not stated",
       "entryId": "ScheduledActivityInstance_18",
       "exits": [
         {

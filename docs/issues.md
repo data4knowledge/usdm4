@@ -89,8 +89,6 @@ errors — look at that before any fixture references BCs.
 
 ## N3 — Small timeline output defects
 
-- `Paricipant identified` — `PLANNED_ENTRY_CONDITION` in `build.py` (~line 87). Typo kept on
-  purpose so far (spec R1); fixing it changes every pin.
 - `≥ 1 weeks` — `gate_condition` and `render_delay` pluralise without checking the value.
 - Instances in a second period or a copied timeline are named by de-duplication (`D1-2`,
   `D-1-2`, `ED-2`), not by period or timeline.

@@ -38,3 +38,9 @@ TLP_EXT_URL = "www.d4k.dk/usdm/extensions/014"  # Timeline source placement
 # the caller asserted. Absent on every design whose model was decoded, which is
 # what every design carried before.
 IMP_EXT_URL = "www.d4k.dk/usdm/extensions/015"  # Intervention model provenance
+
+# Timeline type: the input's ``ScheduleTimelineInput.type`` (``main``,
+# ``follow_up``, ``profile``, ...), written on every built ScheduleTimeline.
+# For debugging and for assessing how well callers type their timelines.
+# Nothing in the build reads it; TLF still marks profiles.
+TLT_EXT_URL = "www.d4k.dk/usdm/extensions/016"  # Timeline type

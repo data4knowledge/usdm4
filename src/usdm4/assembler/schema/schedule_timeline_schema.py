@@ -45,6 +45,7 @@ TimelineType = Literal[
     "main",
     "extension_study",
     "continued_access",
+    "follow_up",
     "arm",
     "cohort",
     "unscheduled",
@@ -60,6 +61,7 @@ FAMILY: dict[str, str] = {
     "main": "planned",
     "extension_study": "planned",
     "continued_access": "planned",
+    "follow_up": "planned",
     "arm": "variant",
     "cohort": "variant",
     "unscheduled": "conditional",
@@ -402,6 +404,7 @@ class ScheduleTimelineInput(_Model):
     id: str | None = None
     title: str | None = None
     description: str | None = None
+    # Any type may carry one (#77); with none, a default from the type.
     entry_condition: str | None = None
     attaches_to: str | None = None
     # Whether the protocol numbers a Day 0 (U4-35). Default: Day 1, no Day 0
@@ -465,12 +468,6 @@ class ScheduleTimelineInput(_Model):
         if self.attaches_to is not None and self.type != "profile":
             raise ValueError(
                 f"attaches_to is for profile timelines; this one is {self.type!r}"
-            )
-
-        if self.entry_condition is not None and self.family != "conditional":
-            raise ValueError(
-                f"entry_condition is for conditional timelines; this one is "
-                f"{self.type!r}"
             )
         return self
 

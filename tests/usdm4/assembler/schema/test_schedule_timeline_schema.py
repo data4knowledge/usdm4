@@ -125,14 +125,18 @@ class TestAccepted:
         )
         assert timeline.attaches_to == "PK dosing"
 
-    @pytest.mark.parametrize(
-        "timeline_type", ["unscheduled", "early_termination", "adverse_event"]
-    )
-    def test_conditional_timeline_takes_an_entry_condition(self, timeline_type):
+    @pytest.mark.parametrize("timeline_type", sorted(FAMILY))
+    def test_any_timeline_takes_an_entry_condition(self, timeline_type):
+        """#77: every type may carry a printed entry condition."""
         timeline = ScheduleTimelineInput.model_validate(
             _timeline(type=timeline_type, entry_condition="If withdrawn early")
         )
         assert timeline.entry_condition == "If withdrawn early"
+
+    def test_follow_up_timeline(self):
+        timeline = ScheduleTimelineInput.model_validate(_timeline(type="follow_up"))
+        assert timeline.type == "follow_up"
+        assert timeline.family == "planned"
 
     def test_classification(self):
         timeline = ScheduleTimelineInput.model_validate(
@@ -392,13 +396,6 @@ class TestRefused:
         with pytest.raises(ValidationError, match="profile"):
             ScheduleTimelineInput.model_validate(_timeline(attaches_to="PK dosing"))
 
-    @pytest.mark.parametrize("timeline_type", ["main", "arm", "profile"])
-    def test_entry_condition_on_a_non_conditional(self, timeline_type):
-        with pytest.raises(ValidationError, match="conditional"):
-            ScheduleTimelineInput.model_validate(
-                _timeline(type=timeline_type, entry_condition="If withdrawn")
-            )
-
 
 class TestFamily:
     @pytest.mark.parametrize(
@@ -407,6 +404,7 @@ class TestFamily:
             ("main", "planned"),
             ("extension_study", "planned"),
             ("continued_access", "planned"),
+            ("follow_up", "planned"),
             ("arm", "variant"),
             ("cohort", "variant"),
             ("unscheduled", "conditional"),
