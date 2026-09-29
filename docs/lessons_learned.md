@@ -1756,3 +1756,13 @@ first; a doc repeating another doc is not evidence.
 
 Separately: before deleting a doc, grep code, tests and fixtures for its name, not just `docs/`.
 The timeline design was cited by four modules, a schema test and six pin input files.
+
+## A review finding is logged only after it is checked in the code (2026-09-27)
+
+The structure review ran as three parallel read-only reviews. Their findings were claims, not
+evidence: one ("the `in data` guards in `identification_assembler.py` are always true") was
+wrong — those guards default harmlessly — and was dropped once the lines were read. Before a
+finding becomes an `N` row, open the cited lines and confirm the mechanism. And sort findings
+by effect, not by where they were found: the silent rule loader and the zero-rules CORE pass
+came up as "structure" but give wrong validation results, so they were logged as bugs (N22,
+N23), not parked in the tidy-up group.

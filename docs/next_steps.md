@@ -15,7 +15,13 @@ Normal development: one issue at a time, gate is tests and pins. The three-machi
 (A/B/C) is dropped. Test inputs are written here in `usdm4`'s structured form — nothing waits on
 `protocol_corpus` ground truth.
 
-1. In order: N1 (placeholder code `12345`); N2, starting with CORE-000938; N3.
+1. N24.1 — one import path for the package in tests. First: every later fix needs tests that
+   test what they appear to.
+2. N22, N23 — the validators must not report a clean result when rules did not run.
+3. The small bugs: N14–N21, then N1.
+4. N24.2–N24.11 in number order, one at a time; N24.4 and N24.5 together, N24.6 and N24.7
+   together.
+5. Then N2 (from CORE-000938), N11, N3.
 
 ## Session Log
 
@@ -26,6 +32,57 @@ References in entries up to 2026-09-27 to "design § n" and "plan …" are to
 `timeline_assembler_design.md` and `timeline_assembler_plan.md`, both retired that day (git
 history). The design's as-built sections are now in the entries they belong to; the current
 rules and decisions (U4-n) are in `docs/spec/timeline_assembler.md`.
+
+### 2026-09-27 — CODE REVIEWED (no GitHub issue, `main`): ten bugs logged N14–N23, structural tidy-up N24.1–N24.11, plan reordered
+- `usdm4 @ main`. Driven from the USDM4 project. No sibling repo read or written. Docs only;
+  no code changed; nothing run.
+
+**What it was.** Dave asked for a senior-developer review of structure and design: the code
+had been changed session by session and needed tidying. Three read-only reviews (assembler;
+rules, CORE and data store; api, builder, convert, ct, bc, packaging, tests), then the
+findings checked against the code before logging. Verdict: the design holds (builder vs
+assembler, `timeline/` split, one file per rule, `RuleTemplate`); the problems are guards,
+copies and workarounds layered on it.
+
+**What changed.**
+- `docs/issues.md` — N14–N21 (bugs: convert on two designs and duplicate ids; CT/BC API-key
+  variable; CT refresh deletes before fetch; `project maanger` and `APPORVAL` typos; empty
+  extensions always emitted; `errors.exception` without the exception; missing `f` prefixes;
+  BC `valid` inverted and class stored for instance). N22 (rule loader drops rules silently,
+  constructor failure blamed on the previous rule). N23 (CORE `is_valid` true with zero rules
+  run). N24 with N24.1–N24.11 (structural). Header: sub-issue numbering `N<n>.<m>` (Dave).
+- `docs/next_steps.md` — plan reordered (below); this entry.
+
+**The numbers.** Measured by reading, not by running: 65 test files import `src.usdm4`;
+47 `except Exception` in 11 assembler files; ~86 of 213 rule files in 13 identical-body
+groups; ~112 hard-coded C-codes in `encoder.py`. Tests not run.
+
+**Rejected.**
+- A separate file for the structural issues (a second register drifts); one issue per
+  structural item with a flat number (Dave chose `N24.<m>` to keep them together).
+- "Guards in `identification_assembler.py` ~378-380 always true" — checked: harmless
+  defaults, dropped.
+- Leaving the rule-loader and zero-rules CORE problems inside N24 — they give wrong
+  validation results, so they are bugs (N22, N23, Dave).
+
+**Found, not this work.** Everything found is logged above as N14–N24. Carried from the
+previous entry, still open: `lessons_learned.md` § 10 says "123 of 210"; the `save-session`
+skill still names the two retired timeline docs.
+
+**Next.**
+1. N24.1 — one import path in tests; no later fix can be trusted without it.
+2. N22, N23 — validators must not report clean when rules did not run.
+3. N14–N21, then N1 — small, independent bugs.
+4. N24.2–N24.11.
+5. N2, N11, N3.
+
+Re-verify (the bugs are still in the code):
+```
+grep -n "maanger" src/usdm4/assembler/identification_assembler.py
+grep -n "CDISC_API_KEY" src/usdm4/ct/cdisc/library_api.py src/usdm4/bc/cdisc/library_api.py
+grep -n 'version.pop("studyPhase")' src/usdm4/convert/convert.py
+grep -rlE "from src\.usdm4|import src\.usdm4" tests
+```
 
 ### 2026-09-27 — DOCS TIDIED (no GitHub issue, `main`): aims, issues register N1–N13, one CORE-vs-d4k reference, timeline spec
 - `usdm4`, branch not captured (no git run). Driven from the USDM4 project. No sibling repo read

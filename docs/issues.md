@@ -4,7 +4,8 @@ Problems that need solving. Open items only: when one is closed, delete its row 
 section (the session log in `next_steps.md` records how it was closed). `next_steps.md` says
 which of these is being worked and in what order.
 
-Numbered `N<n>`; numbers are never reused. A GitHub issue, when one is raised, is noted on the
+Numbered `N<n>`; numbers are never reused. A group of related issues shares one number with
+sub-issues `N<n>.<m>`, `m` from 1; the group closes when its last sub-issue does. A GitHub issue, when one is raised, is noted on the
 row.
 
 | #  | Issue | Area |
@@ -22,6 +23,28 @@ row.
 | N11 | Empty population label fails assembly | assembler |
 | N12 | Timings in a unit other than the anchor's are not converted | assembler |
 | N13 | Convert is USDM3 → USDM4 but nothing says or checks so | convert |
+| N14 | Convert fails on more than one study design and emits duplicate ids | convert |
+| N15 | CT and BC libraries read a different API-key variable | ct / bc |
+| N16 | CT refresh deletes the cache before fetching | tools / ct |
+| N17 | Typos in assembler lookup keys and names | assembler |
+| N18 | Empty extensions always emitted | assembler |
+| N19 | `errors.exception` called without the exception | assembler |
+| N20 | Error messages print a literal `{...}` | package / data_store |
+| N21 | BC library: `valid` inverted, CT class stored not instance | bc |
+| N22 | Rule loader silently drops rules that fail to load | rules |
+| N23 | CORE reports a file valid when no rules ran | CORE |
+| N24 | Structural tidy-up (N24.1–N24.11, below) | package |
+| N24.1 | Tests import the package as both `src.usdm4` and `usdm4` | tests |
+| N24.2 | Assembler validates typed input then works on dicts | assembler |
+| N24.3 | Exception handling layered several deep | assembler |
+| N24.4 | CT code tables scattered; `m11_phase_aliases` in the wrong package | assembler / ct |
+| N24.5 | `encoder.py` is a lookup module and a parsing module in one | assembler |
+| N24.6 | Rule library copy-paste; leftover generator markers; delegated rules report success | rules |
+| N24.7 | Data store loses duplicate ids; rules read its private fields | data_store / rules |
+| N24.8 | CORE wrapper mutates global and installed state, duplicates the cache manager | CORE |
+| N24.9 | `StudyVersion` carries a query layer | api |
+| N24.10 | The two validation result types are not parallel | rules / CORE |
+| N24.11 | Packaging, stray file, coverage-gate artefacts | package |
 
 ---
 
@@ -165,4 +188,212 @@ USDM data structures between formats". The test inputs (`tests/usdm4/test_files/
 say `usdmVersion` `2.11.0` in two files (a pre-release number for what became USDM3) and
 `3.0.0` in two. Needed: say it is USDM3 → USDM4 (README, docstring), check the input version
 (accept 3.x and 2.11, warn otherwise), and label the fixtures `3.0.0`.
+
+## N14 — Convert fails on more than one study design and emits duplicate ids
+
+`src/usdm4/convert/convert.py`:
+
+- The second design loop runs `version.pop("studyPhase")` and `version.pop("studyType")` per
+  design (~line 156). The second design raises `KeyError`.
+- `version["eligibilityCriterionItems"] = ec_items` (~line 146) takes the last design's items,
+  not the accumulated `version_ec_items`.
+- Fixed ids: `documentType` and `type` both get `DocumentTypeCode_1` (lines 28, 36) — a
+  duplicate id in every converted study. Also `LangaugeCode_1` (typo, line 20) and
+  `Population_Empty` (line 126), which repeats if more than one design has an empty population.
+- `convert` mutates the caller's dict.
+
+No test has two designs. Needed: a two-design fixture, the fixes above, ids from `IdManager`.
+Related: N13.
+
+## N15 — CT and BC libraries read a different API-key variable
+
+`ct/cdisc/library_api.py:14` and `bc/cdisc/library_api.py:16` read `CDISC_API_KEY`. `core/`,
+`tools/prepare_core_cache.py` and `CLAUDE.md` use `CDISC_LIBRARY_API_KEY`. One key in
+`.development_env` cannot serve both. Settle on `CDISC_LIBRARY_API_KEY`; accept the old name
+with a warning.
+
+## N16 — CT refresh deletes the cache before fetching
+
+`tools/ct_cache.py` calls `library._cache.delete()` then `library.load()`. If a fetch fails,
+`LibraryAPI.code_list` returns `None` and `_get_usdm_ct` (`ct/cdisc/library.py` ~line 328)
+fails on `response["conceptId"]` — the committed CT cache is gone and the package has no CT.
+`tools/bc_cache.py` has the same shape. Fetch into a temporary file; replace only on success.
+
+## N17 — Typos in assembler lookup keys and names
+
+- `ROLE_CODES` key `"project maanger"` (`identification_assembler.py:48`). A `project manager`
+  role raises `KeyError`, which is swallowed. `test_identification_assembler.py` (~line 118)
+  asserts the typo.
+- `"SPONSOR-APPORVAL-DATE"` (`study_assembler.py:270`) — the `GovernanceDate` name in every
+  assembled study with an approval date.
+
+## N18 — Empty extensions always emitted
+
+`StudyInput` (`assembler/schema/study_schema.py:19-21`) defaults `sponsor_approval_date`,
+`confidentiality` and `original_protocol` to `""`. `Assembler.execute` dumps the model to a dict,
+so the `"key" in data` guards in `StudyAssembler.execute` (`study_assembler.py` ~lines 115-123)
+are always true. Every assembled study gets a confidentiality extension with `valueString: ""`,
+an original-protocol extension, and a sponsor-approval extension with `""` whenever no approval
+date was parsed. Test on value, not presence.
+
+## N19 — `errors.exception` called without the exception
+
+`identification_assembler.py` ~lines 461-469 and ~509-511 call
+`self._errors.exception(message, KlassMethodLocation(...))`. The signature is
+`exception(message, e, location=None)`: the location lands in the exception slot and the
+recorded location is `None`. There is no exception at those points — use `error()`.
+
+## N20 — Error messages print a literal `{...}`
+
+Missing `f` prefix:
+
+- `USDM4.load` (`src/usdm4/__init__.py` ~line 175): `"Failed to load file '{filepath}' …"`.
+  Also `loadd` records its location as `"from_dict"`.
+- `DataStore` (`data_store/data_store.py:90`): `"Duplicate id '{id}' detected"`.
+
+## N21 — BC library: `valid` inverted, CT class stored not instance
+
+- `bc/cdisc/library_api.py:38-39` — `valid()` returns `self._errors.error_count()`: truthy when
+  there are errors.
+- `bc/cdisc/library.py:12` — `self._ct_library = CtLibrary` stores the class, not the
+  `ct_library` argument.
+
+## N22 — Rule loader silently drops rules that fail to load
+
+`RulesValidationEngine._load_rules` (`src/usdm4/rules/engine.py` ~lines 44-76) wraps each rule
+file in `except Exception: continue`. A rule file with an import or syntax error is left out of
+the run and nothing records it — the results look the same as if the rule were never in the
+library. `tests/usdm4/rules/test_engine.py::test_load_rules_skips_files_with_syntax_error`
+asserts this silence.
+
+In `_execute_rules` (~lines 78-93), `rule = rule_class()` sits inside the `try`. If a
+constructor raises, the `except` reports `rule._rule` — the previous iteration's rule, or
+`UnboundLocalError` on the first. The glob is unsorted, so run order is filesystem order.
+
+Needed: a load or construction failure recorded as an `EXCEPTION` outcome keyed by file name;
+construct outside the `try` that reports; sort the glob; a test that the loaded rule count
+equals the number of `rule_ddf*.py` files.
+
+## N23 — CORE reports a file valid when no rules ran
+
+`CoreValidator` (`src/usdm4/core/core_validator.py`): `_load_rules` (~line 545) and the CT
+package load (~line 452) catch every exception and return `[]`. `validate` then returns early
+when there are no rules (~line 373). `CoreValidationResult.is_valid` is `len(findings) == 0`,
+so the caller gets `is_valid=True` with `rules_executed=0` — a failed download or a bad cache
+reads as a clean file.
+
+Needed: record the failure as an execution error; `is_valid` false when no rules ran.
+
+## N24 — Structural tidy-up
+
+From a structure and design review on 2026-09-27. The design holds; the problems are layers of
+guards, copies and workarounds added session by session. Sub-issues are closed one at a time
+(delete the row and section); N24 closes when the last one does. Order is set in
+`next_steps.md`. Leave alone: the `timeline/` split, `Naming`, `IdManager`, `TagResolver`,
+`FileCache`, the `RuleTemplate` contract and `RuleOutcome`.
+
+### N24.1 — Tests import the package as both `src.usdm4` and `usdm4`
+
+65 test files import `src.usdm4`, the rest `usdm4`; some files mix both. `pytest.ini`
+`pythonpath = .` allows it. In one run every class exists twice: `patch("src.usdm4.X")` does
+not reach code that imported `usdm4.X`, and `isinstance`/`issubclass` depend on which copy
+(`test_engine.py` has a comment working round it). Some tests may not test what they appear
+to. Needed: editable install, every import and patch target `usdm4`, `pythonpath = src`,
+`--cov=usdm4`. First, because every other N24 item needs tests that can be trusted.
+
+### N24.2 — Assembler validates typed input then works on dicts
+
+`Assembler.execute` (`assembler.py` ~lines 92-95) validates `AssemblerInput` then
+`model_dump()`s it; the sub-assemblers index raw dicts (~290 `["key"]` / `.get()` uses).
+The schema gives no type safety past the entry point, and guards like N18's look meaningful but
+are not. Needed: pass the typed sub-models into each `execute()`. While there: break up the
+largest methods (`IdentificationAssembler.execute` ~233 lines, `StudyAssembler.execute` ~178,
+`StudyDesignAssembler` ~1,000 lines — products, ingredients and administrations could be their
+own assembler); replace assemblers passing other assemblers into `execute` with a small
+results object each step returns.
+
+### N24.3 — Exception handling layered several deep
+
+47 `except Exception` blocks across 11 assembler files. `Builder.create` already catches, logs
+and returns `None`; callers wrap it again per item, then per assembler, then in
+`Assembler.execute`. Some handlers cannot fire (`StudyAssembler._create_extension`), and a
+`None` from `create` can be appended to a list. Messages are copy-pasted
+(`timeline_assembler.py` ~line 88 says "study design"). Needed: catch once per item, check
+`create()` for `None`.
+
+### N24.4 — CT code tables scattered; `m11_phase_aliases` in the wrong package
+
+Hard-coded C-codes: ~112 in `encoder.py`, ~45 in `identification_assembler.py`, more in
+`m11_phase_aliases.py`, `document_assembler.py`, `study_assembler.py` (Global `C68846` written
+out three times). `Builder.cdisc_code` ignores `decode`, so every decode in these tables is dead
+data. `ROLE_ORGS` and `ROLE_CODES` use different keys (`co_sponsor` / `co-sponsor`).
+`m11_phase_aliases.py` sits in `assembler/` but `rules/library/rule_ddf00229.py` imports it, so
+`rules` depends on `assembler`; `Encoder.PHASE_MAP` repeats its strings. Needed: one
+label → code module under `ct/`, keyed by codelist, no decodes; move `m11_phase_aliases` there.
+
+### N24.5 — `encoder.py` is a lookup module and a parsing module in one
+
+813 lines: ~360 of lookup tables, the rest CT lookup plus `to_date`, `iso8601_duration`,
+`to_boolean`. `MODULE` names a path that does not exist (`usdm4.encoder.encoder.Encoder`).
+Each assembler builds its own `Encoder`. Needed: split into the CT lookup (N24.4) and a small
+parsing module. `_create_date` is duplicated in `document_assembler.py` and
+`study_assembler.py` — one shared helper.
+
+### N24.6 — Rule library copy-paste; leftover generator markers; delegated rules report success
+
+About 86 of 213 rule files fall into 13 groups with identical `validate` bodies (41 one-line CT
+checks, 10 "reference must resolve", 8 "values distinct", 6 "required"). `_is_specified` is
+copied into 6 files and the copies disagree on whitespace. 10 files still say
+`GENERATED — … please review` and 122 say `MANUAL: do not regenerate`; there is no generator.
+DDF00081, 00125 and 00126 `return True` and report SUCCESS. Needed: a few parameterised base
+classes (CT, reference, distinct, required); shared helpers into `primitives.py`, unused
+primitives removed; review and strip the markers; a "delegated" outcome instead of success.
+
+### N24.7 — Data store loses duplicate ids; rules read its private fields
+
+`DataStore` (`data_store.py` ~lines 88-94) overwrites an earlier instance with the same id; the
+`DUP_ID` error it records is never read. DDF00083 re-walks the raw JSON to find duplicates;
+four rules read `_ids` / `_parent` directly (00010, 00260, 00027, 00044). Needed: keep every
+instance; expose `duplicate_ids()`, `parent_of()`, `all_instances()`; the engine reports the
+store's errors.
+
+### N24.8 — CORE wrapper mutates global and installed state, duplicates the cache manager
+
+`core_validator.py` changes the working directory, `sys.stdout`/`sys.stderr`, logging and
+`os.environ`, and copies files into the installed `cdisc_rules_engine` package (skipped if
+present, so `--force` never reaches them; fails on a read-only install). It downloads rules and
+CT itself, duplicating `core_cache_manager.py`. Docstrings advertise async execution that does
+not exist. Cache resources come from GitHub `main`, unpinned. Needed: the validator reads only
+from the cache manager; side effects in one context manager, or the engine in a subprocess.
+Related: N8, N23.
+
+### N24.9 — `StudyVersion` carries a query layer
+
+`api/study_version.py`: ~77 methods on a data class, ~20 hard-coded NCI codes, return types
+wrong on several (`*_identifier_text` annotated `StudyIdentifier`, return `str`;
+`official_title` etc. annotated `StudyIdentifier`, return `StudyTitle`).
+`_identifier_scoped_by_org` raises `KeyError` on a dangling organisation reference. Needed: a
+query module with named constants; thin delegates on `StudyVersion` for downstream callers.
+
+### N24.10 — The two validation result types are not parallel
+
+`results.py` says `RulesValidationResults` and `CoreValidationResult` are parallel. They are
+not: `is_valid` means "every rule succeeded" in one and "no findings" in the other; `to_dict()`
+returns a list in one and a summary dict in the other; `RulesValidationResults.to_errors()`
+leaves out exceptions. `validate/` rebuilds serialisation in three places. Needed: one shared
+interface; move `validate/d4k.py`'s serialisation into `results.py`.
+
+### N24.11 — Packaging, stray file, coverage-gate artefacts
+
+- `setup.py`: no `python_requires` (the engine needs 3.12+); `python-dateutil` pinned exactly;
+  `typing_extensions` imported but not declared; `tests_require` deprecated;
+  `requirements.txt` repeats every runtime dependency.
+- `src/usdm4/minimum/test_write_2` — empty file from an old test run. Delete.
+- `--cov-fail-under=100` with no `pragma: no cover`: 7 `*_branches.py` test files and ~21
+  test docstrings citing source line numbers that go stale on every edit; deprecated methods
+  (`USDM4.from_json`, `StudyVersion.sponsor`) kept alive by their tests. Needed: allow
+  `pragma: no cover` on defensive branches, drop the line-number docstrings, remove deprecated
+  methods with their tests.
+- Tests use paths relative to the working directory; ~20 files each define their own
+  `"src/usdm4"` root helper. One `conftest` fixture based on `__file__`.
 
