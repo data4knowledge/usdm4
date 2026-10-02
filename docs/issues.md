@@ -45,6 +45,7 @@ row.
 | N24.9 | `StudyVersion` carries a query layer | api |
 | N24.10 | The two validation result types are not parallel | rules / CORE |
 | N24.11 | Packaging, stray file, coverage-gate artefacts | package |
+| N25 | Arms name interventions but no epochs exist, so no cells and the arm → intervention link is lost | assembler |
 
 ---
 
@@ -394,4 +395,60 @@ interface; move `validate/d4k.py`'s serialisation into `results.py`.
   methods with their tests.
 - Tests use paths relative to the working directory; ~20 files each define their own
   `"src/usdm4"` root helper. One `conftest` fixture based on `__file__`.
+
+## N25 — Arms name interventions but no epochs exist: the arm → intervention link is lost
+
+Raised 2026-10-02 from udp_prism N8. Agreed approach (Dave, 2026-10-02): synthesise one
+Treatment Epoch. Not pretty, keeps the round trip going. Built 2026-10-02 on `main`
+(`study_design_assembler._synthesised_epochs`, `EPP_EXT_URL` in `extensions_d4k.py`, tests
+in `test_study_design_assembler_arm_interventions.py`); not yet run.
+
+**What happens.** USDM links an arm to its interventions only through
+`StudyCell.armId` → `elementIds` → `StudyElement.studyInterventionIds`, and
+`StudyCell.epochId` is required. `StudyDesignAssembler` gets epochs only from the timeline
+build. With arms that carry `intervention_names` and no SoA input, `_build_cells` builds
+nothing (the grid needs epochs), and `_attach_arm_element` creates `EL-<ARM>` with the right
+interventions but on no cell. Nothing in the output ties the element to the arm except its
+name. Every arm reads as having no intervention on the DDF-RA path.
+
+Who hits it: the PRISM3 FHIR import (the message carries arm → product, no epochs, no SoA),
+so every round-tripped study; and any extraction with arms but no SoA (udp_prism step 1 for
+IGBJ, LZZT, IG_Example_CPT).
+
+**Change (spec, for approval before code).** In `StudyDesignAssembler.execute`, before pass
+2c:
+
+1. Trigger: the timeline build produced no epochs, the input has no `cells` and no
+   `elements`, and at least one arm's `intervention_names` resolves to an intervention.
+2. Build one `StudyEpoch`: name and label `Treatment Epoch`, type C101526 Treatment Epoch
+   (`klass_and_attribute_value(StudyEpoch, "type", "Treatment Epoch")`, as `timeline/build.py`
+   does), no previous / next, and a new d4k extension `017` (epoch provenance,
+   `extensions_d4k.py`) with `valueString` `synthesised: no epochs supplied; holds the arm →
+   intervention link`.
+3. Pass it to `_build_cells` and to the design's `epochs`. The existing grid then gives one
+   cell per arm, and `_attach_arm_element` puts `EL-<ARM>` on it. No other code changes.
+
+Not triggered with explicit elements: that mode only checks reachability, and an
+element-bearing input with no epochs is a different defect.
+
+**The extension is the only marker** (kept by decision, Dave, 2026-10-02). It carries one
+fact, that the epoch was synthesised, and nothing reads it today. Rejected: inferring it
+(an epoch no scheduled activity instance references — holds only while usdm4 is the
+producer) and the `description` field (visible, not testable). The timeline build types every epoch Treatment Epoch
+already, so the type tells a consumer nothing. Anything that counts or exports epochs must
+check `017`, and any future epoch or SoA export (usdm4_fhir) must skip an epoch carrying it,
+or the synthesised epoch gets laundered as stated (compare 015 and udp_prism N9).
+
+**Tests.** No arms → no epoch. Arms without interventions → no epoch. Arms with
+interventions and SoA epochs → unchanged. Arms with interventions, no epochs → one epoch with
+`017`, one cell per arm, `EL-<ARM>` on it, interventions reachable. Explicit elements → no
+epoch. Run d4k and CORE on one udp_prism step-3 file afterwards: a lone epoch with no
+scheduled activity instances fires nothing in the d4k library (DDF00021–24, 27, 69, 72, 80,
+88 checked); CORE not checked.
+
+**The model half.** `StudyArm` has no direct intervention reference, so a source that states
+arm → intervention and no periods (the M11 FHIR IG) cannot be held without an epoch. An arm
+extension carrying intervention ids was considered and rejected as code: d4k-only, so other
+USDM consumers still see no link, and a second place for the same fact. Kept as the shape of
+a DDF proposal (`StudyArm.studyInterventionIds`, meaning every treatment period), not built.
 

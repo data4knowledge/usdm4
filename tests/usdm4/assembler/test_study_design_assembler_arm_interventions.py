@@ -5,7 +5,9 @@ cell → element → studyInterventionIds. Covers:
 
 - Synthesised per-arm element attached to the arm's cells (no explicit
   elements in the input — the extraction path)
-- Element still created when no epochs/cells exist
+- No timeline epochs: one synthesised Treatment Epoch (extension 017) so
+  the element lands on a cell; not synthesised without resolvable arm
+  interventions or with explicit cells / elements
 - Explicit elements are authoritative: reachability check warns, never
   mutates
 - Unknown intervention references warn and are skipped
@@ -19,6 +21,7 @@ from unittest.mock import patch
 import pytest
 from simple_error_log.errors import Errors
 
+from usdm4.api.extensions_d4k import EPP_EXT_URL
 from usdm4.api.study_epoch import StudyEpoch
 from usdm4.assembler.population_assembler import PopulationAssembler
 from usdm4.assembler.study_design_assembler import StudyDesignAssembler
@@ -127,16 +130,20 @@ class TestArmInterventionWiring:
         placebo_cells = [c for c in design.studyCells if c.armId == placebo_arm.id]
         assert all(c.elementIds == [] for c in placebo_cells)
 
-    def test_element_created_without_cells(
+    def test_no_epochs_element_placed_on_synthesised_epoch_cell(
         self, assembler, population_assembler, timeline_empty
     ):
-        # No epochs → no cells; the linkage still materialises as an element.
+        # No timeline epochs → one synthesised Treatment Epoch, one cell per
+        # arm, and the arm's element on its cell.
         assembler.execute(_base_data(), population_assembler, timeline_empty)
         design = assembler.study_design
-        assert design.studyCells == []
+        assert len(design.epochs) == 1
+        assert len(design.studyCells) == len(design.arms) == 2
         elements = [e for e in design.elements if e.name == "EL-ACTIVE-ARM"]
         assert len(elements) == 1
         assert elements[0].studyInterventionIds == [assembler.study_interventions[0].id]
+        active_cell = next(c for c in design.studyCells if c.armId == design.arms[0].id)
+        assert active_cell.elementIds == [elements[0].id]
 
     def test_multiple_interventions_on_one_arm(
         self, assembler, population_assembler, timeline_with_epoch
@@ -232,3 +239,101 @@ class TestArmInterventionWiring:
         assert design.elements == []
         # Cells remain unmutated.
         assert all(c.elementIds == [] for c in design.studyCells)
+
+
+class TestSynthesisedEpoch:
+    """No timeline epochs + arms naming interventions → one Treatment Epoch
+    marked with the epoch-provenance extension (EPP_EXT_URL)."""
+
+    def test_epoch_shape_and_extension(
+        self, assembler, population_assembler, timeline_empty
+    ):
+        assembler.execute(_base_data(), population_assembler, timeline_empty)
+        epoch = assembler.study_design.epochs[0]
+        assert epoch.name == "TREATMENT-EPOCH"
+        assert epoch.label == "Treatment Epoch"
+        assert epoch.type.code == "C101526"
+        assert epoch.previousId is None and epoch.nextId is None
+        ext = epoch.get_extension(EPP_EXT_URL)
+        assert ext is not None
+        assert ext.valueString == StudyDesignAssembler.EPOCH_SYNTHESISED
+
+    def test_every_cell_uses_the_synthesised_epoch(
+        self, assembler, population_assembler, timeline_empty
+    ):
+        assembler.execute(_base_data(), population_assembler, timeline_empty)
+        design = assembler.study_design
+        epoch_id = design.epochs[0].id
+        assert all(c.epochId == epoch_id for c in design.studyCells)
+
+    def test_timeline_epochs_used_unchanged(
+        self, assembler, population_assembler, timeline_with_epoch
+    ):
+        assembler.execute(_base_data(), population_assembler, timeline_with_epoch)
+        design = assembler.study_design
+        assert [e.name for e in design.epochs] == ["EPOCH-TREATMENT"]
+        assert design.epochs[0].get_extension(EPP_EXT_URL) is None
+
+    def test_no_arms_no_epoch(self, assembler, population_assembler, timeline_empty):
+        assembler.execute(
+            _base_data(arms=[]), population_assembler, timeline_empty
+        )
+        assert assembler.study_design.epochs == []
+        assert assembler.study_design.studyCells == []
+
+    def test_arms_without_interventions_no_epoch(
+        self, assembler, population_assembler, timeline_empty
+    ):
+        data = _base_data()
+        data["arms"][0].pop("intervention_names")
+        assembler.execute(data, population_assembler, timeline_empty)
+        assert assembler.study_design.epochs == []
+        assert assembler.study_design.studyCells == []
+
+    def test_unresolved_interventions_no_epoch(
+        self, assembler, population_assembler, timeline_empty
+    ):
+        data = _base_data()
+        data["arms"][0]["intervention_names"] = ["Drug X"]
+        assembler.execute(data, population_assembler, timeline_empty)
+        assert assembler.study_design.epochs == []
+
+    def test_explicit_elements_no_epoch(
+        self, assembler, population_assembler, timeline_empty
+    ):
+        data = _base_data(
+            elements=[{"name": "El1", "intervention_names": ["Drug A"]}]
+        )
+        assembler.execute(data, population_assembler, timeline_empty)
+        assert assembler.study_design.epochs == []
+
+    def test_epoch_synthesis_exception_logged(
+        self, assembler, population_assembler, timeline_empty, builder, errors
+    ):
+        original_create = builder.create
+
+        def maybe_raise(cls, params):
+            if cls.__name__ == "StudyEpoch":
+                raise RuntimeError("forced")
+            return original_create(cls, params)
+
+        with patch.object(builder, "create", side_effect=maybe_raise):
+            assembler.execute(_base_data(), population_assembler, timeline_empty)
+        design = assembler.study_design
+        assert design.epochs == []
+        assert design.studyCells == []
+        assert "synthesis of the treatment epoch" in str(errors.to_dict())
+
+    def test_epoch_synthesis_none_return_handled(
+        self, assembler, population_assembler, timeline_empty, builder
+    ):
+        original_create = builder.create
+
+        def maybe_none(cls, params):
+            if cls.__name__ == "StudyEpoch":
+                return None
+            return original_create(cls, params)
+
+        with patch.object(builder, "create", side_effect=maybe_none):
+            assembler.execute(_base_data(), population_assembler, timeline_empty)
+        assert assembler.study_design.epochs == []

@@ -20,7 +20,7 @@ from usdm4.api.ingredient import Ingredient
 from usdm4.api.substance import Substance
 from usdm4.api.strength import Strength
 from usdm4.api.extension import ExtensionAttribute
-from usdm4.api.extensions_d4k import IMP_EXT_URL
+from usdm4.api.extensions_d4k import IMP_EXT_URL, EPP_EXT_URL
 
 
 class StudyDesignAssembler(BaseAssembler):
@@ -112,6 +112,13 @@ class StudyDesignAssembler(BaseAssembler):
             # later once cohorts know which arms they belong to.
             arms_by_name = self._build_arms(data.get("arms", []))
 
+            # Epochs come from the timeline build. With none, arms that name
+            # interventions get one synthesised Treatment Epoch so a cell can
+            # carry the arm → intervention link (see _synthesised_epochs).
+            epochs = timeline_assembler.epochs or self._synthesised_epochs(
+                data, arms_by_name, interventions_by_name
+            )
+
             # Pass 2c — cells. Synthesise arm×epoch grid if the input has arms
             # but no cells; label lookups are case-insensitive (_add_epochs
             # convention).
@@ -119,7 +126,7 @@ class StudyDesignAssembler(BaseAssembler):
                 data.get("cells", []),
                 arms_by_name,
                 elements_by_name,
-                timeline_assembler.epochs,
+                epochs,
             )
 
             # Arm → intervention wiring. ``ArmInput.intervention_names`` has
@@ -179,7 +186,7 @@ class StudyDesignAssembler(BaseAssembler):
                     "arms": list(arms_by_name.values()),
                     "studyCells": cells_list,
                     "elements": list(elements_by_name.values()),
-                    "epochs": timeline_assembler.epochs,
+                    "epochs": epochs,
                     "encounters": timeline_assembler.encounters,
                     "activities": timeline_assembler.activities,
                     "population": population_assembler.population,
@@ -232,6 +239,82 @@ class StudyDesignAssembler(BaseAssembler):
                 "Failed during creation of intervention model provenance",
                 e,
                 KlassMethodLocation(self.MODULE, "_model_extensions"),
+            )
+            return []
+
+    # Provenance for a synthesised epoch, and its name / label.
+    EPOCH_SYNTHESISED = (
+        "synthesised: no epochs supplied; holds the arm to intervention link"
+    )
+    SYNTHESISED_EPOCH_LABEL = "Treatment Epoch"
+
+    def _synthesised_epochs(
+        self,
+        data: dict,
+        arms_by_name: dict[str, StudyArm],
+        interventions_by_name: dict[str, StudyIntervention],
+    ) -> list[StudyEpoch]:
+        """One Treatment Epoch when arms name interventions and no epoch exists.
+
+        USDM links an arm to its interventions only through
+        ``StudyCell`` → ``StudyElement``, and ``StudyCell.epochId`` is
+        required. A source that states arm → intervention with no schedule
+        (an M11 FHIR import, an extraction without an SoA) would otherwise
+        get no cells and lose the link. The epoch makes the arm×epoch grid,
+        and ``_wire_arm_interventions`` then places each arm's element on it.
+
+        Called only when the timeline build made no epochs. Fires only when
+        the input has no explicit cells and no explicit elements, and at
+        least one built arm names an intervention that resolves. Explicit
+        elements are authoritative and are only checked for reachability, so
+        they are left alone.
+
+        The epoch carries ``EPP_EXT_URL``: its type, Treatment Epoch, is the
+        type every built epoch has, so the extension is the only marker that
+        it was not stated.
+        """
+        if data.get("cells") or data.get("elements"):
+            return []
+        wanted = any(
+            item.get("name") in arms_by_name
+            and any(
+                name in interventions_by_name
+                for name in item.get("intervention_names", [])
+            )
+            for item in data.get("arms", [])
+        )
+        if not wanted:
+            return []
+        try:
+            extension = self._builder.create(
+                ExtensionAttribute,
+                {"url": EPP_EXT_URL, "valueString": self.EPOCH_SYNTHESISED},
+            )
+            epoch = self._builder.create(
+                StudyEpoch,
+                {
+                    "name": self._label_to_name(self.SYNTHESISED_EPOCH_LABEL),
+                    "description": None,
+                    "label": self.SYNTHESISED_EPOCH_LABEL,
+                    "type": self._builder.klass_and_attribute_value(
+                        StudyEpoch, "type", "Treatment Epoch"
+                    ),
+                    "extensionAttributes": [extension] if extension else [],
+                },
+            )
+            if epoch is None:
+                return []
+            self._errors.info(
+                "No epochs supplied; synthesised one Treatment Epoch to hold "
+                "the arm to intervention link",
+                KlassMethodLocation(self.MODULE, "_synthesised_epochs"),
+            )
+            return [epoch]
+        except Exception as e:
+            self._errors.exception(
+                "Failed during synthesis of the treatment epoch",
+                e,
+                KlassMethodLocation(self.MODULE, "_synthesised_epochs"),
             )
             return []
 

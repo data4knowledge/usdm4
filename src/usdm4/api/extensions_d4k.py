@@ -44,3 +44,11 @@ IMP_EXT_URL = "www.d4k.dk/usdm/extensions/015"  # Intervention model provenance
 # For debugging and for assessing how well callers type their timelines.
 # Nothing in the build reads it; TLF still marks profiles.
 TLT_EXT_URL = "www.d4k.dk/usdm/extensions/016"  # Timeline type
+
+# Epoch provenance, set on the one epoch the study design assembler SYNTHESISES
+# when arms name interventions and no epoch exists. USDM links an arm to its
+# interventions only through a study cell, and a cell needs an epoch, so without
+# it the link is lost. The epoch is typed Treatment Epoch like every epoch the
+# timeline build makes, so this attribute is the only thing that separates it
+# from a stated one. Anything that exports epochs must skip an epoch carrying it.
+EPP_EXT_URL = "www.d4k.dk/usdm/extensions/017"  # Epoch provenance
