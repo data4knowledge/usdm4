@@ -1,6 +1,6 @@
-# USDM4 — next steps
+# Next Steps
 
-The immediate plan: which open issues are being worked, in what order, and the session log.
+This repo's current slice: which open issues are being worked, in what order. **Rate of change: weekly — rewritten wholesale, never appended to.** A finished item is deleted; its record is the entry in `memory.md`.
 
 The docs: `aims.md` (what the package is for), `issues.md` (open problems, `N<n>`),
 `spec/` (designs — `spec/timeline_assembler.md`), `cre_issues.md` (CORE vs d4k reference),

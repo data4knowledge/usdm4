@@ -1741,7 +1741,7 @@ grep -rlE "from src\.usdm4|import src\.usdm4" tests
 
 ## 2026-10-02 — N25 BUILT (no GitHub issue yet, `main`): arms with interventions and no epochs get one synthesised Treatment Epoch; bs4 floor 4.13.1
 - `usdm4 @ main`. Driven from the UDP PRISM project (udp_prism N8; pointer in
-  `udp_prism/docs/next_steps.md` 2026-10-02). `usdm4_fhir/docs/issues.md` I-22 added there.
+  `udp_prism/memory.md` 2026-10-02). `usdm4_fhir/docs/issues.md` I-22 added there.
   Tests run by Dave: all pass.
 
 **What it was.** USDM links an arm to its interventions only through `StudyCell` →

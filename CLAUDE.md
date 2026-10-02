@@ -23,7 +23,7 @@ USDM4 is a self-contained Python package for the CDISC TransCelerate Unified Stu
   - `rules/` — d4k rule library + engine (one rule per file in `library/`, auto-discovered)
   - `utility/` — `TagResolver` (`usdm:ref` / `usdm:tag` in narrative text)
 - `tests/` — pytest test suite (mirrors `src/` structure)
-- `docs/` — project documentation: `aims.md` (what the package is for), `issues.md` (open problems, `N<n>`), `next_steps.md` (the plan and the session log), `spec/` (designs), `cre_issues.md` (CORE vs d4k reference), `lessons_learned.md`
+- `docs/` — project documentation: `aims.md` (what the package is for), `issues.md` (open problems, `N<n>`), `next_steps.md` (the plan only), `spec/` (designs), `cre_issues.md` (CORE vs d4k reference), `lessons_learned.md`
 - `validate/` — standalone CLIs to run the two engines, samples, and the corpus baseline (see `validate/README.md`)
 - `tools/` — developer utilities (CORE cache populator, CT/BC cache refresh)
 - `setup.py` — package metadata and dependencies
@@ -106,16 +106,18 @@ The wrapper at `src/usdm4/core/core_validator.py` filters a known set of CRE non
 
 ## Session log
 
-Session state lives in three files, as in the other repos, written by the `save-session` skill:
+Session state lives in four files, as in `protocol_corpus`, written by the `save-session` skill:
 
-- `docs/next_steps.md` — the plan at the top, then § *Session Log*, newest first.
+- `memory.md` (repo root) — the session log. Appended at the END, headed
+  `## YYYY-MM-DD — title` and nothing else. Never retired.
+- `docs/next_steps.md` — the plan only. Rewritten wholesale, never appended to; a finished
+  item is deleted.
 - `docs/issues.md` — open problems, `N<n>`, never reused.
 - `docs/lessons_learned.md` — durable lessons.
 
-Every session that works a `usdm4` issue or branch writes a full entry in
-`docs/next_steps.md` § *Session Log*, whichever Claude project drove it. The other repo's log
-carries only a short pointer. A cold start in this repo must be able to resume from this repo
-alone.
+Every session that works a `usdm4` issue or branch writes a full entry in `memory.md`,
+whichever Claude project drove it. The other repo's log carries only a short pointer. A cold
+start in this repo must be able to resume from this repo alone.
 
 ## Notes
 
