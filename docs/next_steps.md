@@ -33,6 +33,50 @@ References in entries up to 2026-09-27 to "design § n" and "plan …" are to
 history). The design's as-built sections are now in the entries they belong to; the current
 rules and decisions (U4-n) are in `docs/spec/timeline_assembler.md`.
 
+### 2026-10-02 — N25 BUILT (no GitHub issue yet, `main`): arms with interventions and no epochs get one synthesised Treatment Epoch; bs4 floor 4.13.1
+- `usdm4 @ main`. Driven from the UDP PRISM project (udp_prism N8; pointer in
+  `udp_prism/docs/next_steps.md` 2026-10-02). `usdm4_fhir/docs/issues.md` I-22 added there.
+  Tests run by Dave: all pass.
+
+**What it was.** USDM links an arm to its interventions only through `StudyCell` →
+`StudyElement`, and `StudyCell.epochId` is required. `StudyDesignAssembler` got epochs only
+from the timeline build, so input with arms naming interventions and no SoA (the PRISM3 FHIR
+import; an extraction without an SoA) built no cells. `_attach_arm_element` made `EL-<ARM>`
+with the right interventions on no cell, and the arm read as having none.
+
+Separately: bs4 4.12.x `_markup_resembles_filename()` warns on any text containing `/`, so
+`get_soup` logged a "looks more like a filename" entry for most criteria text. 4.13 warns only
+on real file extensions. 4.13.0 was yanked.
+
+**What changed**
+- `src/usdm4/api/extensions_d4k.py` — `EPP_EXT_URL` (`…/extensions/017`, epoch provenance),
+  with the rule that any epoch export must skip an epoch carrying it.
+- `src/usdm4/assembler/study_design_assembler.py` — `epochs = timeline epochs or
+  _synthesised_epochs(...)`, used for cells and for the design's `epochs`. The new method fires
+  only with no timeline epochs, no explicit cells or elements, and a built arm naming an
+  intervention that resolves; it builds `TREATMENT-EPOCH` / "Treatment Epoch", C101526, with
+  017. The existing grid and `_attach_arm_element` do the rest.
+- `tests/usdm4/assembler/test_study_design_assembler_arm_interventions.py` — the no-epochs
+  test now expects the epoch and one cell per arm; `TestSynthesisedEpoch` (shape and
+  extension, cells on the epoch, timeline epochs untouched, no epoch without arms /
+  interventions / resolvable names / with explicit elements, exception and `None` paths).
+- `setup.py`, `requirements.txt` — `beautifulsoup4>=4.13.1`. `CLAUDE.md` dependency line.
+- `docs/issues.md` — N25 added (spec, decisions, model gap).
+
+**Figures.** udp_prism `./run.sh` 2026-10-02 with this installed: section 6 round-trip diff
+1,331 → 1,171 cells, 14 → 6 protocols; every protocol whose arms have one intervention now
+round-trips them. Not run: `validate/run.sh` (d4k + CORE) on a step-3 file with the lone
+epoch.
+
+**Rejected.** An arm extension holding intervention ids (d4k-only; a second home for the same
+fact; kept as a DDF proposal, `StudyArm.studyInterventionIds`). Marking the epoch by inference
+(no activity instance references it) or by `description` (not testable): the timeline build
+types every epoch Treatment Epoch, so 017 is the only marker. Triggering with explicit elements
+(that mode only checks reachability).
+
+**Found, not this work.** None new here. `_dose_form` defaults to C17998 Unknown with no
+provenance marker — recorded as udp_prism N15, owner usdm4; no row here yet.
+
 ### 2026-09-27 — CODE REVIEWED (no GitHub issue, `main`): ten bugs logged N14–N23, structural tidy-up N24.1–N24.11, plan reordered
 - `usdm4 @ main`. Driven from the USDM4 project. No sibling repo read or written. Docs only;
   no code changed; nothing run.

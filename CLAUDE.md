@@ -38,7 +38,7 @@ USDM4 is a self-contained Python package for the CDISC TransCelerate Unified Stu
 - `python-dateutil==2.9.0.post0` — date parsing
 - `jsonschema>=4.0` — schema-shape validation (DDF00082)
 - `lxml>=4.9` — XHTML well-formedness checks (DDF00187, DDF00247)
-- `beautifulsoup4>=4.9` — XHTML handling in `TagResolver`
+- `beautifulsoup4>=4.13.1` — XHTML handling in `TagResolver` (4.12.x warns "looks like a filename" on any text containing `/`; 4.13.0 was yanked)
 - `pyyaml>=6.0` — alignment YAML I/O
 - `requests>=2.31` — CDISC Library API access
 

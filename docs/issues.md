@@ -401,7 +401,8 @@ interface; move `validate/d4k.py`'s serialisation into `results.py`.
 Raised 2026-10-02 from udp_prism N8. Agreed approach (Dave, 2026-10-02): synthesise one
 Treatment Epoch. Not pretty, keeps the round trip going. Built 2026-10-02 on `main`
 (`study_design_assembler._synthesised_epochs`, `EPP_EXT_URL` in `extensions_d4k.py`, tests
-in `test_study_design_assembler_arm_interventions.py`); not yet run.
+in `test_study_design_assembler_arm_interventions.py`); tests pass (Dave); udp_prism run
+confirms. Open until merged. Not yet run: `validate/run.sh` on a step-3 file.
 
 **What happens.** USDM links an arm to its interventions only through
 `StudyCell.armId` → `elementIds` → `StudyElement.studyInterventionIds`, and
