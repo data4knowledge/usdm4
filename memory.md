@@ -1782,3 +1782,17 @@ types every epoch Treatment Epoch, so 017 is the only marker. Triggering with ex
 
 **Found, not this work.** None new here. `_dose_form` defaults to C17998 Unknown with no
 provenance marker — recorded as udp_prism N15, owner usdm4; no row here yet.
+
+## 2026-10-02 — Session log moved to `memory.md`; `next_steps.md` is the plan only
+
+`usdm4 @ main`, docs only. Part of one layout across protocol_corpus, udp_prism and the usdm4
+repos (udp_prism `memory.md`, same date).
+
+**What changed**
+
+- `memory.md` — new; the 24 Session Log entries from `docs/next_steps.md` moved verbatim,
+  oldest first; the note on retired design and plan references moved into its header.
+- `docs/next_steps.md` — Session Log removed; header states plan only.
+- `CLAUDE.md` — § *Session log* and the `docs/` description name the layout.
+
+**Figures.** None.
