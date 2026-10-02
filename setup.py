@@ -22,7 +22,7 @@ setuptools.setup(
         "platformdirs>=3.0",
         "jsonschema>=4.0",
         "lxml>=4.9",
-        "beautifulsoup4>=4.9",
+        "beautifulsoup4>=4.13.1",
         "pyyaml>=6.0",
         "requests>=2.31",
         "pydantic>=2.0",
