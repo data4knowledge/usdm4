@@ -147,7 +147,7 @@
         "instanceType": "Code"
       },
       "previousId": null,
-      "nextId": null,
+      "nextId": "StudyEpoch_2",
       "notes": [],
       "instanceType": "StudyEpoch"
     },
@@ -166,7 +166,7 @@
         "decode": "Treatment Epoch",
         "instanceType": "Code"
       },
-      "previousId": null,
+      "previousId": "StudyEpoch_1",
       "nextId": null,
       "notes": [],
       "instanceType": "StudyEpoch"
@@ -189,7 +189,7 @@
         "instanceType": "Code"
       },
       "previousId": null,
-      "nextId": null,
+      "nextId": "Encounter_2",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -233,7 +233,7 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
+      "previousId": "Encounter_1",
       "nextId": null,
       "scheduledAtId": null,
       "environmentalSettings": [

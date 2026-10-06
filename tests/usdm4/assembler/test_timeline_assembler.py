@@ -55,6 +55,20 @@ def messages(errors: Errors) -> list[str]:
     return [item["message"] for item in errors.to_dict(0)]
 
 
+def links(items) -> list[tuple]:
+    """(previousId, nextId) per item, as ids."""
+    return [(i.previousId, i.nextId) for i in items]
+
+
+def chained(items) -> list[tuple]:
+    """The links a single chain over ``items`` in list order has (issue 82)."""
+    ids = [i.id for i in items]
+    return [
+        (ids[n - 1] if n else None, ids[n + 1] if n + 1 < len(ids) else None)
+        for n in range(len(ids))
+    ]
+
+
 def timing_types(tl) -> list[str]:
     return [t.type.decode.replace(" Timing Type", "") for t in tl.timings]
 
@@ -367,6 +381,16 @@ class TestCopiedColumns:
         assembler.execute([main, self._et()])
         assert len(assembler.encounters) == 3
         assert any("which was not built" in m for m in messages(errors))
+
+    def test_a_shared_encounter_is_chained_once(self, assembler):
+        """Issue 82: the copy is not listed again, so it is not a second link
+        in the chain."""
+        assembler.execute([self._main(), self._et()])
+        assert links(assembler.encounters) == chained(assembler.encounters)
+        assert links(assembler.encounters) == [
+            (None, assembler.encounters[1].id),
+            (assembler.encounters[0].id, None),
+        ]
 
     def test_uncopied_columns_are_unchanged(self, assembler):
         """Without copy_of, a column in two timelines is two Encounters —
@@ -739,6 +763,29 @@ class TestEpochs:
             "T2-TREAT",
         ]
 
+    def test_epochs_are_chained_in_column_order(self, assembler):
+        """Issue 82: previousId / nextId set, one chain, first to last."""
+        tl = timeline(
+            [
+                column("c1", "Screening"),
+                column("c2", "Treatment"),
+                column("c3", "Follow-up"),
+            ]
+        )
+        assembler.execute([tl])
+        assert len(assembler.epochs) == 3
+        assert links(assembler.epochs) == chained(assembler.epochs)
+
+    def test_epochs_are_one_chain_across_timelines(self, assembler):
+        """Issue 82: one head for the whole design (DDF00088), input order."""
+        assembler.execute([simple(), simple("profile")])
+        assert links(assembler.epochs) == chained(assembler.epochs)
+        assert [e.previousId for e in assembler.epochs].count(None) == 1
+
+    def test_a_single_epoch_has_no_links(self, assembler):
+        assembler.execute([timeline([column("c1", "Treatment")])])
+        assert links(assembler.epochs) == [(None, None)]
+
 
 class TestEncounters:
     def test_one_per_column_never_merged(self, assembler):
@@ -765,6 +812,38 @@ class TestEncounters:
             "T2-E1",
             "T2-E2",
         ]
+
+    def test_encounters_are_chained_in_column_order(self, assembler):
+        """Issue 82: previousId / nextId set, one chain, first to last."""
+        tl = timeline(
+            [
+                column("c1", visit="V1"),
+                column("c2", visit="V2"),
+                column("c3", visit="V3"),
+            ]
+        )
+        assembler.execute([tl])
+        assert [e.label for e in assembler.encounters] == ["V1", "V2", "V3"]
+        assert links(assembler.encounters) == chained(assembler.encounters)
+
+    def test_encounters_are_one_chain_across_timelines(self, assembler):
+        assembler.execute([simple(), simple("profile")])
+        assert [e.name for e in assembler.encounters] == [
+            "T1-E1",
+            "T1-E2",
+            "T2-E1",
+            "T2-E2",
+        ]
+        assert links(assembler.encounters) == chained(assembler.encounters)
+
+    def test_a_single_encounter_has_no_links(self, assembler):
+        assembler.execute([timeline([column("c1", visit="V1")])])
+        assert links(assembler.encounters) == [(None, None)]
+
+    def test_nothing_built_links_nothing(self, assembler):
+        assembler.execute([])
+        assert assembler.encounters == []
+        assert assembler.epochs == []
 
 
 class TestInstances:

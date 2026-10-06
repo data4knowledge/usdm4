@@ -83,6 +83,13 @@ class TimelineAssembler(BaseAssembler):
             # previousId/nextId are consistent and shared activities are linked
             # once.
             self._builder.double_link(self._state.activities, "previousId", "nextId")
+            # Issue 82: epochs and encounters are chained the same way — one
+            # chain each, across every timeline in input order. Both lists are
+            # already in column order with no duplicates (a copied column
+            # reuses the original's encounter, issue 75), and one epoch chain
+            # per design is what DDF00088 expects.
+            self._builder.double_link(self._epochs, "previousId", "nextId")
+            self._builder.double_link(self._encounters, "previousId", "nextId")
         except Exception as e:
             self._errors.exception(
                 "Failed during creation of study design",

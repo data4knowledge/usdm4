@@ -1259,7 +1259,7 @@
         "instanceType": "Code"
       },
       "previousId": null,
-      "nextId": null,
+      "nextId": "StudyEpoch_2",
       "notes": [],
       "instanceType": "StudyEpoch"
     },
@@ -1278,8 +1278,8 @@
         "decode": "Treatment Epoch",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "StudyEpoch_1",
+      "nextId": "StudyEpoch_3",
       "notes": [],
       "instanceType": "StudyEpoch"
     },
@@ -1298,8 +1298,8 @@
         "decode": "Treatment Epoch",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "StudyEpoch_2",
+      "nextId": "StudyEpoch_4",
       "notes": [],
       "instanceType": "StudyEpoch"
     },
@@ -1318,8 +1318,8 @@
         "decode": "Treatment Epoch",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "StudyEpoch_3",
+      "nextId": "StudyEpoch_5",
       "notes": [],
       "instanceType": "StudyEpoch"
     },
@@ -1338,7 +1338,7 @@
         "decode": "Treatment Epoch",
         "instanceType": "Code"
       },
-      "previousId": null,
+      "previousId": "StudyEpoch_4",
       "nextId": null,
       "notes": [],
       "instanceType": "StudyEpoch"
@@ -1361,7 +1361,7 @@
         "instanceType": "Code"
       },
       "previousId": null,
-      "nextId": null,
+      "nextId": "Encounter_2",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -1405,8 +1405,8 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "Encounter_1",
+      "nextId": "Encounter_3",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -1450,8 +1450,8 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "Encounter_2",
+      "nextId": "Encounter_4",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -1495,8 +1495,8 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "Encounter_3",
+      "nextId": "Encounter_5",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -1540,8 +1540,8 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "Encounter_4",
+      "nextId": "Encounter_6",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -1585,8 +1585,8 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "Encounter_5",
+      "nextId": "Encounter_7",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -1630,8 +1630,8 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "Encounter_6",
+      "nextId": "Encounter_8",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -1675,8 +1675,8 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "Encounter_7",
+      "nextId": "Encounter_9",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -1720,8 +1720,8 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "Encounter_8",
+      "nextId": "Encounter_10",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -1765,8 +1765,8 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "Encounter_9",
+      "nextId": "Encounter_11",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -1810,8 +1810,8 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "Encounter_10",
+      "nextId": "Encounter_12",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -1855,8 +1855,8 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "Encounter_11",
+      "nextId": "Encounter_13",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -1900,8 +1900,8 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "Encounter_12",
+      "nextId": "Encounter_14",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -1945,8 +1945,8 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "Encounter_13",
+      "nextId": "Encounter_15",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -1990,8 +1990,8 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "Encounter_14",
+      "nextId": "Encounter_16",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -2035,8 +2035,8 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "Encounter_15",
+      "nextId": "Encounter_17",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -2080,8 +2080,8 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "Encounter_16",
+      "nextId": "Encounter_18",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -2125,8 +2125,8 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "Encounter_17",
+      "nextId": "Encounter_19",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -2170,8 +2170,8 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "Encounter_18",
+      "nextId": "Encounter_20",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -2215,8 +2215,8 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "Encounter_19",
+      "nextId": "Encounter_21",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -2260,8 +2260,8 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
-      "nextId": null,
+      "previousId": "Encounter_20",
+      "nextId": "Encounter_22",
       "scheduledAtId": null,
       "environmentalSettings": [
         {
@@ -2305,7 +2305,7 @@
         "decode": "Visit",
         "instanceType": "Code"
       },
-      "previousId": null,
+      "previousId": "Encounter_21",
       "nextId": null,
       "scheduledAtId": null,
       "environmentalSettings": [

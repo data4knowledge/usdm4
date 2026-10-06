@@ -131,3 +131,33 @@ usdm4 offered no way to read one codelist.
 **Rejected.** Hand-editing the CT files (generated). Members from the TS text (stale).
 Emitting the per-section data-element codelists (field names, not permitted values). `xlrd`
 as a package dependency (only the tool reads `.xls`).
+
+## 2026-10-06 — GitHub 82: encounter and epoch links
+
+**Repos and branches.** `usdm4` branch `82-encounter-and-epoch-links-missing`. Raised from
+SDW GitHub 74 (an M11 import's exported USDM had every Encounter `previousId` / `nextId`
+null).
+
+**Cause.** `TimelineAssembler.execute` ran its one linking pass over activities only.
+Epochs and encounters were never linked, ever — git history shows only activities (and
+later criteria, document contents) were double-linked. Every StudyEpoch and Encounter left
+the assembler with null links, so any design with 2+ epochs had 2+ chain heads (DDF00088).
+
+**Decision (Dave).** One chain each across all timelines, input order — same as activities.
+
+**Change.**
+- `src/usdm4/assembler/timeline_assembler.py` — `double_link(self._epochs, ...)` and
+  `double_link(self._encounters, ...)` after the activities pass. Lists are already in
+  column order with no duplicates (a copied column reuses the original's encounter,
+  issue 75). The design assembler's synthesised single epoch needs no links.
+- `tests/usdm4/assembler/test_timeline_assembler.py` — `links` / `chained` helpers; epochs
+  and encounters chained in column order, one chain across timelines (one epoch head), a
+  single item unlinked, nothing built links nothing, a shared (copied) encounter chained
+  once.
+- `tests/usdm4/test_files/timeline_pin/expected_*.json` (all 9) — edited, not re-saved:
+  epochs and encounters linked in list order. Diff is `previousId` / `nextId` lines only
+  (272 changed).
+
+**State.** py_compile only. Dave to run `pytest`. Downstream: `usdm4_protocol` USDM
+goldens with a SoA (e.g. `Example1_usdm.json`, `NCT04320615_usdm.json`) will change
+when regenerated; SDW's M11 goldens carry no SoA and are unaffected.
