@@ -1178,3 +1178,15 @@ def test_create_method_with_object_without_id(builder):
     finally:
         # Restore original method
         builder.api_instance.create = original_create
+
+
+def test_codelist_m11_section_codelist(builder):
+    """Builder.codelist reads the CT library, including the ICH M11
+    codelists (GitHub 81)."""
+    result = builder.codelist("C217272")
+    assert result is not None
+    assert any(t["preferredTerm"] == "1.1 Protocol Synopsis" for t in result["terms"])
+
+
+def test_codelist_unknown(builder):
+    assert builder.codelist("C000000") is None

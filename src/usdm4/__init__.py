@@ -15,6 +15,7 @@ from usdm4.core.core_validation_result import CoreValidationResult
 from usdm4.core.core_cache_manager import CoreCacheManager, CacheStatus
 from usdm4.data_store.data_store import DataStore
 from usdm4.utility.tag_resolver import TagResolver
+from usdm4.ct.cdisc.library import Library as CTLibrary
 
 
 class USDM4:
@@ -35,6 +36,7 @@ class USDM4:
         self.validator = RulesValidation4(self.root)
         self._cache_dir = cache_dir
         self._core_validator: Optional[CoreValidator] = None
+        self._ct_library: Optional[CTLibrary] = None
 
     def validate(self, file_path: str) -> RulesValidationResults:
         return self.validator.validate(file_path)
@@ -136,6 +138,18 @@ class USDM4:
         store = DataStore(file_path)
         store.decompose()
         return TagResolver(store, errors)
+
+    def ct_library(self) -> CTLibrary:
+        """The CDISC controlled terminology library, loaded from the cache
+        shipped with the package, including the ICH M11 codelists the CDISC
+        Library does not serve. Loaded once per USDM4 instance. Other
+        packages use it to read codelists (``codelist``, ``find_in_codelist``)
+        instead of keeping their own copies (GitHub 81)."""
+        if self._ct_library is None:
+            library = CTLibrary(self.root)
+            library.load()
+            self._ct_library = library
+        return self._ct_library
 
     def builder(self, errors: Errors) -> Builder:
         return Builder(self.root, errors)

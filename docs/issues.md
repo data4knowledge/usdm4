@@ -46,6 +46,7 @@ row.
 | N24.10 | The two validation result types are not parallel | rules / CORE |
 | N24.11 | Packaging, stray file, coverage-gate artefacts | package |
 | N25 | Arms name interventions but no epochs exist, so no cells and the arm → intervention link is lost | assembler |
+| N26 | A required string attribute accepts `""` (no minimum length): `StudyVersion.versionIdentifier` empty passes | schema / rules |
 
 ---
 
@@ -453,3 +454,32 @@ extension carrying intervention ids was considered and rejected as code: d4k-onl
 USDM consumers still see no link, and a second place for the same fact. Kept as the shape of
 a DDF proposal (`StudyArm.studyInterventionIds`, meaning every treatment period), not built.
 
+
+## N26 — A required string attribute accepts `""`: `versionIdentifier` empty passes
+
+Found 2026-10-06 in udp_prism (its N43). ICH M11 makes Version Number optional; a protocol
+that prints none (ICH_M11 1776 / 2060, both amendments) has no version to give.
+usdm4_protocol stores `StudyVersion.versionIdentifier = ""` (and the protocol document
+version `""`) rather than invent one. usdm4_fhir's export wrote `"1"` in its place, so the
+round trip changed the value; udp_prism chose to keep the empty value end to end (Dave,
+2026-10-06), which needs this USDM behaviour to stay as it is today.
+
+**The point.** In the USDM 4 schema (`rules/library/schema/usdm_v4-0-0.json`)
+`versionIdentifier` is required, typed `string`, with no `minLength`, so `""` is valid.
+The same holds for `StudyDefinitionDocumentVersion.version`. A required identifier that may
+be empty is against the spirit of USDM (Dave): it should be `minLength: 1`, and a source
+that does not state a version should say so in a recognisable way rather than with an
+empty string.
+
+**No rule catches it.** d4k: nothing on `versionIdentifier`; DDF00125 / DDF00126
+(required properties present / "required properties have at least one value") are
+delegated to DDF00082's schema validation (`rule_ddf00126.py`, a no-op on purpose), and the
+schema has no `minLength`, so `""` passes. CORE: DDF00126 is CORE-000938, the same
+schema-driven cardinality check, reported only for empty arrays so far; no CORE rule seen in
+the corpus results checks string emptiness. The full CORE catalogue was not read (the CORE
+cache is local), so a rule elsewhere is not ruled out.
+
+**Not a usdm4 code change on its own.** The schema is the DDF's; `usdm4` follows it. Options:
+raise with DDF (`minLength: 1` on required identifier strings, or a rule that required
+strings are non-empty), and decide what a producer writes when the source has no version.
+Until then usdm4 accepts `""` and udp_prism keeps it.

@@ -225,3 +225,20 @@ def test_loadd_with_complete_study():
     assert result is not None
     assert result.study is not None
     assert len(errors2._items) == 0
+
+
+def test_ct_library_loaded_once():
+    usdm = USDM4()
+    library = usdm.ct_library()
+    assert usdm.ct_library() is library
+
+
+def test_ct_library_has_m11_section_codelist():
+    """The ICH M11 section codelist is served from the package (GitHub 81)."""
+    section = USDM4().ct_library().codelist("C217272")
+    assert section is not None
+    assert len(section["terms"]) == 160
+    terms = {t["conceptId"]: t["preferredTerm"] for t in section["terms"]}
+    assert terms["C218515"] == "1.1 Protocol Synopsis"
+    assert terms["C222769"] == "Title Page"
+

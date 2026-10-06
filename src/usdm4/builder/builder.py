@@ -261,6 +261,12 @@ class Builder:
             else None
         )
 
+    def codelist(self, codelist_id: str) -> dict | None:
+        """A copy of the codelist ``codelist_id`` with its terms from the CT
+        library (CDISC and the ICH M11 codelists), or None when not loaded."""
+        self._ensure_ct_loaded()
+        return self.cdisc_ct_library.codelist(codelist_id)
+
     def cdisc_code(self, code: str, decode: str = "") -> Code:
         """Build a CDISC ``Code`` from a concept id.
 

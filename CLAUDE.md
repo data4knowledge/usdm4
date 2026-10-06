@@ -76,6 +76,12 @@ Three standalone scripts manage the CDISC caches the package consumes. All requi
 
 The CT and BC caches are committed `library_cache_*.yaml` files under `src/usdm4/`, shipped in the pip wheel via `package_data` in `setup.py`. The CORE cache is platform-local (see "CORE validation cache" above) and is not committed.
 
+- `tools/m11_ct.py` — generate the ICH M11 controlled terminology the CDISC Library does not serve: `src/usdm4/ct/cdisc/missing/m11_codelists.yaml` (whole M11 response codelists) and `missing_ct.yaml` (M11-only codes added to extensible CDISC codelists, `M11_TO_SDTM`). Source: the ICH M11 Terminology `.xls` published by NCI EVS (https://evs.nci.nih.gov/ftp1/ICH/M11), by default the newest `ICH M11 Terminology_*.xls` in the sibling `m11_specification/m11_versions/2025-11-16/specification/`. Members, terms, definitions and the extensible flag come from that file, never from the M11 Technical Specification text (GitHub 81). Per-section data-element codelists are not emitted. No API key. Needs `xlrd`. Other packages read these codelists through `USDM4().ct_library()` (loaded once per instance) and `Library.codelist(codelist_id)` (a copy, with its terms), never a copy of their own.
+
+  ```bash
+  python3 tools/m11_ct.py [--terminology PATH] [--dry-run]
+  ```
+
 ## Development
 
 - Format: `ruff format`

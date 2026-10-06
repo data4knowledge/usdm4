@@ -50,6 +50,7 @@ class AmendmentsAssembler(BaseAssembler):
     def clear(self):
         """Reset the assembler state by clearing the current amendment."""
         self._amendment = None
+        self._section_titles = None
 
     def execute(self, data: dict, document_assembler: DocumentAssembler) -> None:
         """
@@ -170,6 +171,7 @@ class AmendmentsAssembler(BaseAssembler):
         results = []
         for line in text.strip().split("\n"):
             for number, title in self._parse_section_line(line):
+                title = self._section_title(number, title)
                 params = {
                     "sectionNumber": number,
                     "sectionTitle": title,
@@ -185,6 +187,47 @@ class AmendmentsAssembler(BaseAssembler):
                         ),
                     )
         return results
+
+    # ICH M11 section codelist: Section # and Name of Change takes its value
+    # from it, so a section's title is the codelist's title for its number.
+    SECTION_CODELIST = "C217272"
+
+    def _section_title(self, number: str, title: str) -> str:
+        """The C217272 title for a section number, correcting the title the
+        document wrote ("Synopsis" -> "Protocol Synopsis"). A number not in
+        the codelist keeps the document's title and is logged: it has no
+        conformant value. Named sections (no number) are already the
+        codelist's names."""
+        if not number:
+            return title
+        titles = self._codelist_section_titles()
+        if number in titles:
+            return titles[number]
+        self._errors.warning(
+            f"Section {number} is not in the ICH M11 section codelist {self.SECTION_CODELIST}; "
+            f"title kept as written ('{title}')",
+            KlassMethodLocation(self.MODULE, "_section_title"),
+        )
+        return title
+
+    def _codelist_section_titles(self) -> dict[str, str]:
+        """``{section number: title}`` from the C217272 preferred terms
+        ("1.1 Protocol Synopsis"), read once per assembler. Empty, with an
+        error logged, when the codelist is not loaded."""
+        if self._section_titles is None:
+            self._section_titles = {}
+            codelist = self._builder.codelist(self.SECTION_CODELIST)
+            if not codelist:
+                self._errors.error(
+                    f"ICH M11 section codelist {self.SECTION_CODELIST} not loaded; "
+                    "changed-section titles kept as written",
+                    KlassMethodLocation(self.MODULE, "_codelist_section_titles"),
+                )
+            for term in (codelist or {}).get("terms") or []:
+                match = re.match(r"^(\d+(?:\.\d+)*)\s+(.+)$", term.get("preferredTerm") or "")
+                if match:
+                    self._section_titles[match.group(1)] = match.group(2).strip()
+        return self._section_titles
 
     def _parse_section_line(self, line) -> list[tuple[str, str]]:
         """Parse one section-reference line into (number, title) pairs.

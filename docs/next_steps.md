@@ -15,6 +15,10 @@ Normal development: one issue at a time, gate is tests and pins. The three-machi
 (A/B/C) is dropped. Test inputs are written here in `usdm4`'s structured form — nothing waits on
 `protocol_corpus` ground truth.
 
+0. **M11 CT tool (udp_prism N45; GitHub 81, branch `81-m11-ct-from-terminology-file`):**
+   built 2026-10-06, `pytest` green, closing comment written. Merge, close and release;
+   usdm4_protocol 75 and usdm4_fhir 46 raise their `usdm4>=` pin to that release. N26 (`""`
+   passes a required string) is for DDF, not code.
 1. N24.1 — one import path for the package in tests. First: every later fix needs tests that
    test what they appear to.
 2. N22, N23 — the validators must not report a clean result when rules did not run.

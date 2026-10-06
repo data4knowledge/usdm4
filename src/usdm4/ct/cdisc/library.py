@@ -1,3 +1,4 @@
+import copy
 import os
 from usdm4.ct.cdisc.library_api import LibraryAPI
 from usdm4.ct.cdisc.config.config import Config
@@ -166,6 +167,19 @@ class Library:
             if ed:
                 dates.add(ed)
         return dates
+
+    def codelist(self, codelist_id: str) -> dict | None:
+        """The codelist ``codelist_id`` with its terms, or None when it is
+        not loaded.
+
+        Covers CDISC codelists and the ones added from
+        ``missing/m11_codelists.yaml`` (e.g. the ICH M11 section codelist
+        C217272), so other packages read M11 terminology from usdm4 rather
+        than keeping their own copy (GitHub 81). The result is a copy:
+        changing it does not change the library.
+        """
+        entry = self._by_code_list.get(codelist_id)
+        return copy.deepcopy(entry) if entry is not None else None
 
     def cl_by_term(self, term_code: str) -> dict:
         try:

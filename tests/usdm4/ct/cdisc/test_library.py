@@ -737,3 +737,29 @@ def test_check_in_and_add_appends_to_existing(loaded_library):
     coll = {"ID": ["A"]}
     loaded_library._check_in_and_add(coll, "ID", "B")
     assert coll == {"ID": ["A", "B"]}
+
+
+# --- codelist (GitHub 81) ---------------------------------------------------
+
+
+def test_codelist_returns_codelist_with_terms(loaded_library):
+    result = loaded_library.codelist("C1")
+    assert result["conceptId"] == "C1"
+    assert result["terms"] == loaded_library._by_code_list["C1"]["terms"]
+
+
+def test_codelist_returns_a_copy(loaded_library):
+    result = loaded_library.codelist("C1")
+    result["terms"].clear()
+    assert loaded_library._by_code_list["C1"]["terms"]
+
+
+def test_codelist_unknown_is_none(loaded_library):
+    assert loaded_library.codelist("C999999") is None
+
+
+def test_codelist_includes_whole_m11_codelist(loaded_library):
+    loaded_library._add_whole_codelist(_whole_codelist_entry("C217272"))
+    result = loaded_library.codelist("C217272")
+    assert result["source"]["package"] == "NCIt-M11"
+    assert all(t["source"] == "NCIt-M11" for t in result["terms"])
