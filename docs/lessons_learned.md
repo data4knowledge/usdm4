@@ -302,6 +302,15 @@ bad config.
 **Workflow:** use USDM_CT.xlsx as the primary codelist source; use UML
 as a validator that the (class, attribute) actually exists in the model.
 
+### M11 codelists come from the published terminology, never the specification text
+
+The ICH M11 Technical Specification prints codelists, and they are not the published
+terminology. Its C217272 (section number and name) listed the per-section data-element
+codelists C217342–C217357, 16 entries; the NCI EVS ICH M11 Terminology file has 160 section
+codes. Three other codelists differed too. Generate M11 CT from the NCI EVS `.xls` only
+(`tools/m11_ct.py`), and give other packages a read interface (`USDM4().ct_library()`,
+`Library.codelist()`) so no package keeps a copy that can drift.
+
 ## 8. "Complete the blanks" predicates — biconditional and implication
 
 Some rule patterns are detectable from rule text but can't be fully
