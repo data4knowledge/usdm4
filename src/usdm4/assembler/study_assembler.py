@@ -184,7 +184,9 @@ class StudyAssembler(BaseAssembler):
                 "conditions": timeline_assembler.conditions,
                 "biomedicalConcepts": timeline_assembler.biomedical_concepts,
                 "bcSurrogates": timeline_assembler.biomedical_concept_surrogates,
-                "roles": identification_assembler.roles,
+                "roles": self._merge_roles(
+                    identification_assembler.roles, study_design_assembler.roles
+                ),
                 "extensionAttributes": extensions,
                 # Interventions live on StudyVersion, not StudyDesign —
                 # StudyDesign only holds the id references in
@@ -289,6 +291,42 @@ class StudyAssembler(BaseAssembler):
                 KlassMethodLocation(self.MODULE, "_create_date"),
             )
             return False
+
+    SPONSOR_ROLE = "C70793"
+
+    def _merge_roles(self, identification_roles: list, design_roles: list) -> list:
+        """Identification roles plus the M11 1.1.2 design roles.
+
+        A blinded design role whose code matches an identification role
+        with no masking (e.g. the sponsor) puts its masking on that role
+        instead of adding a second role with the same code. A blinded
+        sponsor with no sponsor role to mask is dropped with a warning: the
+        sponsor role belongs to the sponsor organisation (DDF00201 /
+        DDF00202), which only the identification input creates.
+        """
+        roles = list(identification_roles or [])
+        for role in design_roles or []:
+            if role.masking is not None:
+                existing = next(
+                    (
+                        r
+                        for r in roles
+                        if r.masking is None and r.code and r.code.code == role.code.code
+                    ),
+                    None,
+                )
+                if existing is not None:
+                    existing.masking = role.masking
+                    continue
+                if role.code.code == self.SPONSOR_ROLE:
+                    self._errors.warning(
+                        "Blinded role 'Sponsor' supplied but there is no sponsor "
+                        "role to mask; not recorded",
+                        KlassMethodLocation(self.MODULE, "_merge_roles"),
+                    )
+                    continue
+            roles.append(role)
+        return roles
 
     def _get_study_name_label(self, options: dict) -> tuple[str, str]:
         items = ["identifier", "acronym", "compound"]

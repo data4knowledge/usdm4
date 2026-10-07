@@ -19,6 +19,9 @@ Normal development: one issue at a time, gate is tests and pins. The three-machi
    built 2026-10-06, `pytest` green, closing comment written. Merge, close and release;
    usdm4_protocol 75 and usdm4_fhir 46 raise their `usdm4>=` pin to that release. N26 (`""`
    passes a required string) is for DDF, not code.
+0a. **M11 1.1.2 inputs (udp_prism N6; GitHub 83, branch `83-assembler-m11-112-fields`):**
+   built 2026-10-07, full suite green (Dave). Merge, close and release; usdm4_protocol then
+   feeds the new keys (its issue), and usdm4_fhir exports / imports them (its issue).
 1. N24.1 — one import path for the package in tests. First: every later fix needs tests that
    test what they appear to.
 2. N22, N23 — the validators must not report a clean result when rules did not run.

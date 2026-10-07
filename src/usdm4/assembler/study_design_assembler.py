@@ -20,6 +20,9 @@ from usdm4.api.ingredient import Ingredient
 from usdm4.api.substance import Substance
 from usdm4.api.strength import Strength
 from usdm4.api.extension import ExtensionAttribute
+from usdm4.api.indication import Indication
+from usdm4.api.study_role import StudyRole
+from usdm4.api.masking import Masking
 from usdm4.api.extensions_d4k import IMP_EXT_URL, EPP_EXT_URL
 
 
@@ -57,6 +60,7 @@ class StudyDesignAssembler(BaseAssembler):
         self._study_design = None
         self._study_interventions: list[StudyIntervention] = []
         self._administrable_products: list[AdministrableProduct] = []
+        self._roles: list[StudyRole] = []
 
     def execute(
         self,
@@ -200,13 +204,152 @@ class StudyDesignAssembler(BaseAssembler):
                     "extensionAttributes": self._model_extensions(
                         raw_intervention_model
                     ),
+                    "indications": self._build_indications(
+                        data.get("indications") or []
+                    ),
+                    "characteristics": self._build_characteristics(data),
+                    "blindingSchema": self._encoder.blinding_schema(
+                        data.get("blinding_schema")
+                    ),
                 },
+            )
+            self._roles = self._build_roles(data)
+            self._set_participation_duration(
+                data.get("participation_duration"), timeline_assembler.timelines
             )
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
             self._errors.exception(
                 "Failed during creation of study design", e, location
             )
+
+    # ------------------------------------------------------------------
+    # M11 1.1.2 (Overall Design)
+
+    # Other Committees: the usdm4_protocol 1.1.2 view reads role code
+    # C142489 with the committee name as label (DDF-RA lists C142489 among
+    # the committee codes). C215480 has no generic "committee" term.
+    OTHER_COMMITTEE = {"code": "C142489", "decode": "Data Monitoring Committee"}
+
+    def _build_indications(self, items: list[str]) -> list[Indication]:
+        """One Indication per stated condition, label = the text.
+
+        ``isRareDisease`` is required on the API model and M11 does not state
+        it, so it is False.
+        """
+        result = []
+        for index, text in enumerate(items):
+            text = (text or "").strip()
+            if not text:
+                continue
+            try:
+                indication = self._builder.create(
+                    Indication,
+                    {
+                        "name": f"INDICATION_{index + 1}",
+                        "label": text,
+                        "description": "",
+                        "codes": [],
+                        "isRareDisease": False,
+                    },
+                )
+                if indication:
+                    result.append(indication)
+            except Exception as e:
+                self._errors.exception(
+                    f"Failed during creation of indication '{text}'",
+                    e,
+                    KlassMethodLocation(self.MODULE, "_build_indications"),
+                )
+        return result
+
+    def _build_characteristics(self, data: dict) -> list:
+        """Site distribution, geographic scope and assignment method, each
+        one StudyDesign characteristic when stated and decoded."""
+        codes = [
+            self._encoder.site_distribution(data.get("site_distribution")),
+            self._encoder.site_geographic_scope(data.get("site_geographic_scope")),
+            self._encoder.intervention_assignment_method(
+                data.get("intervention_assignment_method")
+            ),
+        ]
+        return [c for c in codes if c is not None]
+
+    def _build_roles(self, data: dict) -> list[StudyRole]:
+        """Blinded roles (masked) and committees, as StudyRoles.
+
+        ``appliesToIds`` is set by ``StudyAssembler`` once the StudyVersion
+        exists, as for the identification roles.
+        """
+        roles = []
+        for text in data.get("blinded_roles") or []:
+            code = self._encoder.blinded_role(text)
+            if code is None:
+                continue
+            masking = self._create(Masking, {"text": f"{code.decode} blinded", "isMasked": True})
+            role = self._create_role(code, text, masking, len(roles))
+            if role:
+                roles.append(role)
+        for text in data.get("independent_committees") or []:
+            code = self._encoder.independent_committee(text)
+            if code is None:
+                continue
+            role = self._create_role(code, text, None, len(roles))
+            if role:
+                roles.append(role)
+        for text in data.get("other_committees") or []:
+            text = (text or "").strip()
+            if not text or self._encoder._normalise_label(text) in self._encoder.NOT_APPLICABLE:
+                continue
+            code = self._builder.cdisc_code(
+                self.OTHER_COMMITTEE["code"], self.OTHER_COMMITTEE["decode"]
+            )
+            role = self._create_role(code, text, None, len(roles))
+            if role:
+                roles.append(role)
+        return roles
+
+    def _create_role(self, code, label: str, masking, index: int) -> StudyRole | None:
+        return self._create(
+            StudyRole,
+            {
+                "name": f"DESIGN_ROLE_{index + 1}",
+                "label": (label or "").strip(),
+                "code": code,
+                "masking": masking,
+            },
+        )
+
+    def _create(self, klass, params: dict):
+        try:
+            return self._builder.create(klass, params)
+        except Exception as e:
+            self._errors.exception(
+                f"Failed during creation of {klass.__name__}",
+                e,
+                KlassMethodLocation(self.MODULE, "_create"),
+            )
+            return None
+
+    def _set_participation_duration(self, duration: dict | None, timelines: list) -> None:
+        """Planned duration of trial participation -> main timeline."""
+        if not duration:
+            return
+        if not (duration.get("quantity") or duration.get("will_vary")):
+            return
+        main = next((t for t in timelines or [] if t.mainTimeline), None)
+        if main is None:
+            self._errors.warning(
+                "Planned duration of trial participation supplied but there is no "
+                "main timeline to hold it; not recorded",
+                KlassMethodLocation(self.MODULE, "_set_participation_duration"),
+            )
+            return
+        main.plannedDuration = self._build_duration(duration)
+
+    @property
+    def roles(self) -> list[StudyRole]:
+        return self._roles
 
     # Provenance for a defaulted ``model``. Emitted only when the assembler
     # had to default it; a design whose model was decoded from the caller's

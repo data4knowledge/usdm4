@@ -189,6 +189,35 @@ class StudyDesignInput(BaseModel):
     elements: list[ElementInput] = []
     products: list[ProductInput] = []
 
+    # M11 1.1.2 (Overall Design). Human-readable M11 terms in, CDISC codes
+    # out (``Encoder``). A value the encoder does not know is warned and
+    # dropped, never defaulted. "Not applicable" / empty means not stated.
+    #
+    # Population Diagnosis or Condition -> StudyDesign.indications, one
+    # Indication per entry (label = the text).
+    indications: list[str] = []
+    # Site Distribution / Site Geographic Scope / Intervention Assignment
+    # Method -> StudyDesign.characteristics (C207416).
+    site_distribution: Optional[str] = None
+    site_geographic_scope: Optional[str] = None
+    intervention_assignment_method: Optional[str] = None
+    # Trial Blind Schema -> InterventionalStudyDesign.blindingSchema (C66735).
+    blinding_schema: Optional[str] = None
+    # Blinded Roles -> StudyRole (C215480) with masking.isMasked = True. A
+    # role the identification input already created (e.g. Sponsor) gets the
+    # masking rather than a second role.
+    blinded_roles: list[str] = []
+    # Independent Committees -> StudyRole, code from the M11 Independent
+    # Committee Name terms, label = the text.
+    independent_committees: list[str] = []
+    # Other Committees -> StudyRole, code C142489 (what the usdm4_protocol
+    # 1.1.2 view reads), label = the committee name.
+    other_committees: list[str] = []
+    # Planned duration of trial participation -> plannedDuration on the main
+    # ScheduleTimeline. ``will_vary`` + ``will_vary_reason`` carry M11's
+    # alternate description. Warned and dropped when there is no timeline.
+    participation_duration: Optional[AdministrationDurationInput] = None
+
     @model_validator(mode="after")
     def _check_administration_product_references(self) -> "StudyDesignInput":
         """Every ``AdministrationInput.product_name`` must resolve to a

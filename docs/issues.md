@@ -221,9 +221,8 @@ fails on `response["conceptId"]` — the committed CT cache is gone and the pack
 
 ## N17 — Typos in assembler lookup keys and names
 
-- `ROLE_CODES` key `"project maanger"` (`identification_assembler.py:48`). A `project manager`
-  role raises `KeyError`, which is swallowed. `test_identification_assembler.py` (~line 118)
-  asserts the typo.
+- ~~`ROLE_CODES` key `"project maanger"`~~ — fixed in GitHub 83 (2026-10-07), with the
+  `"adjudication Committee"` key case and the trailing spaces in two decodes.
 - `"SPONSOR-APPORVAL-DATE"` (`study_assembler.py:270`) — the `GovernanceDate` name in every
   assembled study with an approval date.
 

@@ -161,3 +161,47 @@ the assembler with null links, so any design with 2+ epochs had 2+ chain heads (
 **State.** py_compile only. Dave to run `pytest`. Downstream: `usdm4_protocol` USDM
 goldens with a SoA (e.g. `Example1_usdm.json`, `NCT04320615_usdm.json`) will change
 when regenerated; SDW's M11 goldens carry no SoA and are unaffected.
+
+
+## 2026-10-07 — GitHub 83: assembler inputs for nine M11 1.1.2 fields
+
+**Repos and branches.** `usdm4` branch `83-assembler-m11-112-fields`. Raised from udp_prism
+N6 (step 1 drops most 1.1.2 data: the assembler had nowhere to put it).
+
+**Checked first.** Two of the eleven missing 1.1.2 fields already had a route and are out of
+scope: Nonproprietary Name (control) via products / substances, and the alternate intervention
+duration via `AdministrationDurationInput.will_vary_reason`. The usdm4_protocol 1.1.2 view
+already reads every USDM path below; only the input side was missing.
+
+**Change.**
+- `assembler/schema/study_design_schema.py` — `StudyDesignInput` gains `indications`,
+  `site_distribution`, `site_geographic_scope`, `intervention_assignment_method`,
+  `blinding_schema`, `blinded_roles`, `independent_committees`, `other_committees`,
+  `participation_duration`.
+- `assembler/encoder.py` — six lookups with no default (`_lookup_optional`): empty or "not
+  applicable" -> `None` silently; unknown -> `None` with a warning. Labels normalised (case,
+  hyphens, whitespace, trailing full stop). Codes: characteristics C207416 (C217004/5,
+  C217006/7, C46079, C147145), blinding C66735, roles C215480. M11 "Participant" -> USDM Study
+  Subject C41189. Assignment "No Intervention Assignment Method" / "Other" have no USDM home:
+  no code, info message.
+- `assembler/study_design_assembler.py` — indications (label = text, `isRareDisease` False),
+  characteristics, `blindingSchema`, design roles (blinded with Masking; independent committees
+  by code; other committees as C142489 + label, which is what the view reads), participation
+  duration on the main timeline's `plannedDuration` (warned and dropped with no timeline).
+- `assembler/study_assembler.py` — `_merge_roles`: a blinded role matching an unmasked
+  identification role (sponsor) gets the masking on that role; a blinded sponsor with no
+  sponsor role is dropped with a warning (otherwise DDF00202 fails).
+- `assembler/identification_assembler.py` — `ROLE_CODES` tidy (N17 first bullet).
+- Tests: `tests/usdm4/assembler/test_study_design_assembler_m11_112.py` (38);
+  `test_identification_assembler.py` key list updated.
+
+**Checked.** Assembler, integration, rules, api/builder/etc. tests pass in the Linux VM
+(Python 3.10). Failures seen only where the VM lacks `jsonschema`, `lxml` or
+`cdisc_rules_engine` (rules schema / xhtml tests, core, convert). d4k rules on an assembled
+study with every new field set: no new failures; DDF00153 (main timeline has no
+plannedDuration) clears.
+
+**State.** Dave ran the full suite on his Mac: all pass. Ready to merge and release.
+
+**Flagged, not done.** Other Committees use C142489 "Data Monitoring Committee" with the name
+as label: C215480 has no generic committee term, and that is the code the view reads.

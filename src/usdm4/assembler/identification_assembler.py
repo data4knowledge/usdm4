@@ -45,7 +45,7 @@ class IdentificationAssembler(BaseAssembler):
         "manufacturer": {"code": "C25392", "decode": "Manufacturer"},
         "investigator": {"code": "C25936", "decode": "Investigator"},
         "pharmacovigilance": {"code": "C215673", "decode": "Pharmacovigilance"},
-        "project maanger": {"code": "C51851", "decode": "Project Manager"},
+        "project manager": {"code": "C51851", "decode": "Project Manager"},
         "local sponsor": {"code": "C215670", "decode": "Local Sponsor"},
         "laboratory": {"code": "C37984", "decode": "Laboratory"},
         "study subject": {"code": "C41189", "decode": "Study Subject"},
@@ -55,16 +55,16 @@ class IdentificationAssembler(BaseAssembler):
         "care provider": {"code": "C17445", "decode": "Care Provider"},
         "principal investigator": {
             "code": "C19924",
-            "decode": "Principal investigator ",
+            "decode": "Principal Investigator",
         },
-        "outcomes assessor": {"code": "C207599", "decode": "Outcomes Assessor      "},
+        "outcomes assessor": {"code": "C207599", "decode": "Outcomes Assessor"},
         "dec": {"code": "C215671", "decode": "Dose Escalation Committee"},
         "clinical trial physician": {
             "code": "C215672",
             "decode": "Clinical Trial Physician",
         },
         "sponsor": {"code": "C70793", "decode": "Sponsor"},
-        "adjudication Committee": {
+        "adjudication committee": {
             "code": "C78726",
             "decode": "Adjudication Committee",
         },

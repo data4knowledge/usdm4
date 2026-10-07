@@ -474,6 +474,93 @@ class Encoder:
     ]
     ENDPOINT_LEVEL_DEFAULT = {"code": "C94496", "decode": "Primary Endpoint"}
 
+    # M11 1.1.2 (Overall Design) lookups. Unlike the MAP tables above these
+    # have no default: a value the caller did not state, or stated in a form
+    # the table does not know, is not invented. Keys are matched after
+    # ``_normalise_label`` (upper case, hyphens / underscores as spaces,
+    # whitespace collapsed, trailing full stop dropped).
+
+    # StudyDesign.characteristics (C207416) <- M11 Site Distribution (C217049)
+    SITE_DISTRIBUTION_MAP = [
+        (
+            ["SINGLE CENTRE", "SINGLE CENTER", "SINGLE SITE", "SINGLE CENTER STUDY"],
+            {"code": "C217004", "decode": "Single-Center Study"},
+        ),
+        (
+            ["MULTICENTRE", "MULTICENTER", "MULTI CENTRE", "MULTI CENTER",
+             "MULTI SITE", "MULTISITE", "MULTICENTER STUDY"],
+            {"code": "C217005", "decode": "Multicenter Study"},
+        ),
+    ]
+
+    # StudyDesign.characteristics (C207416) <- M11 Site Geographic Scope (C217050)
+    SITE_GEOGRAPHIC_SCOPE_MAP = [
+        (["SINGLE COUNTRY"], {"code": "C217006", "decode": "Single Country"}),
+        (["MULTIPLE COUNTRIES", "MULTI COUNTRY", "MULTINATIONAL"],
+         {"code": "C217007", "decode": "Multiple Countries"}),
+    ]
+
+    # StudyDesign.characteristics (C207416) <- M11 Intervention Assignment
+    # Method (C217280). Only randomisation has a characteristic; M11's
+    # "No Intervention Assignment Method" and "Other" have no USDM home and
+    # yield no code (DDF-RA m11_mapping.xlsx).
+    INTERVENTION_ASSIGNMENT_METHOD_MAP = [
+        (
+            ["RANDOMISATION", "RANDOMIZATION", "RANDOMISED", "RANDOMIZED"],
+            {"code": "C46079", "decode": "Randomized Controlled Clinical Trial"},
+        ),
+        (
+            ["STRATIFIED RANDOMISATION", "STRATIFIED RANDOMIZATION"],
+            {"code": "C147145", "decode": "Stratified Randomization"},
+        ),
+    ]
+    INTERVENTION_ASSIGNMENT_NO_CODE = [
+        "NO INTERVENTION ASSIGNMENT METHOD",
+        "OTHER",
+        "NOT APPLICABLE",
+    ]
+
+    # InterventionalStudyDesign.blindingSchema (C66735) <- M11 Trial Blind
+    # Schema (C217051)
+    BLINDING_SCHEMA_MAP = [
+        (["DOUBLE BLIND", "DOUBLE BLIND STUDY", "DOUBLE MASKED"],
+         {"code": "C15228", "decode": "Double Blind Study"}),
+        (["SINGLE BLIND", "SINGLE BLIND STUDY", "SINGLE MASKED"],
+         {"code": "C28233", "decode": "Single Blind Study"}),
+        (["OPEN LABEL", "OPEN LABEL STUDY", "OPEN"],
+         {"code": "C49659", "decode": "Open Label Study"}),
+        (["OBSERVER BLIND", "OBSERVER BLIND STUDY"],
+         {"code": "C187674", "decode": "Observer Blind Study"}),
+    ]
+
+    # StudyRole.code (C215480) <- M11 Blinded Role (C217281). M11
+    # "Participant" (C142710) is not a USDM role term; USDM's is Study
+    # Subject (C41189). M11 "Not Applicable" means no blinded role.
+    BLINDED_ROLE_MAP = [
+        (["PARTICIPANT", "PARTICIPANTS", "SUBJECT", "STUDY SUBJECT"],
+         {"code": "C41189", "decode": "Study Subject"}),
+        (["INVESTIGATOR", "INVESTIGATORS"],
+         {"code": "C25936", "decode": "Investigator"}),
+        (["CARE PROVIDER", "CARE PROVIDERS", "CAREGIVER"],
+         {"code": "C17445", "decode": "Caregiver"}),
+        (["OUTCOMES ASSESSOR", "OUTCOME ASSESSOR", "OUTCOMES ASSESSORS"],
+         {"code": "C207599", "decode": "Outcomes Assessor"}),
+        (["SPONSOR"], {"code": "C70793", "decode": "Clinical Study Sponsor"}),
+    ]
+
+    # StudyRole.code (C215480) <- M11 Independent Committee Name (C217282)
+    INDEPENDENT_COMMITTEE_MAP = [
+        (["INDEPENDENT DATA MONITORING COMMITTEE", "IDMC"],
+         {"code": "C142578", "decode": "Independent Data Monitoring Committee"}),
+        (["DOSE ESCALATION COMMITTEE", "DEC"],
+         {"code": "C215671", "decode": "Dose Escalation Committee"}),
+        (["ENDPOINT ADJUDICATION COMMITTEE", "ADJUDICATION COMMITTEE", "EAC"],
+         {"code": "C78726", "decode": "Adjudication Committee"}),
+    ]
+
+    # Values that mean "nothing stated" for every 1.1.2 lookup.
+    NOT_APPLICABLE = ["NOT APPLICABLE", "N/A", "NA", "NONE"]
+
     def __init__(self, builder: Builder, errors: Errors):
         self._builder: Builder = builder
         self._errors: Errors = errors
@@ -781,6 +868,95 @@ class Encoder:
             "Frequency",
         )
         return self._builder.alias_code(code)
+
+    def site_distribution(self, text: str | None) -> Code | None:
+        """M11 Site Distribution -> StudyDesign characteristic (C207416)."""
+        return self._lookup_optional(
+            text, self.SITE_DISTRIBUTION_MAP, "site_distribution", "Site distribution"
+        )
+
+    def site_geographic_scope(self, text: str | None) -> Code | None:
+        """M11 Site Geographic Scope -> StudyDesign characteristic (C207416)."""
+        return self._lookup_optional(
+            text,
+            self.SITE_GEOGRAPHIC_SCOPE_MAP,
+            "site_geographic_scope",
+            "Site geographic scope",
+        )
+
+    def intervention_assignment_method(self, text: str | None) -> Code | None:
+        """M11 Intervention Assignment Method -> StudyDesign characteristic.
+
+        Randomisation has a characteristic (C46079, or C147145 when
+        stratified). M11's other terms have none and return ``None`` with an
+        info message, not a warning: the caller stated them correctly.
+        """
+        if self._normalise_label(text) in self.INTERVENTION_ASSIGNMENT_NO_CODE:
+            self._errors.info(
+                f"Intervention assignment method '{text}' has no USDM characteristic",
+                location=KlassMethodLocation(
+                    self.MODULE, "intervention_assignment_method"
+                ),
+            )
+            return None
+        return self._lookup_optional(
+            text,
+            self.INTERVENTION_ASSIGNMENT_METHOD_MAP,
+            "intervention_assignment_method",
+            "Intervention assignment method",
+        )
+
+    def blinding_schema(self, text: str | None) -> AliasCode | None:
+        """M11 Trial Blind Schema -> InterventionalStudyDesign.blindingSchema."""
+        code = self._lookup_optional(
+            text, self.BLINDING_SCHEMA_MAP, "blinding_schema", "Blinding schema"
+        )
+        return self._builder.alias_code(code) if code else None
+
+    def blinded_role(self, text: str | None) -> Code | None:
+        """M11 Blinded Role -> StudyRole.code (C215480)."""
+        return self._lookup_optional(
+            text, self.BLINDED_ROLE_MAP, "blinded_role", "Blinded role"
+        )
+
+    def independent_committee(self, text: str | None) -> Code | None:
+        """M11 Independent Committee Name -> StudyRole.code (C215480)."""
+        return self._lookup_optional(
+            text,
+            self.INDEPENDENT_COMMITTEE_MAP,
+            "independent_committee",
+            "Independent committee",
+        )
+
+    @staticmethod
+    def _normalise_label(text: str | None) -> str:
+        if not text:
+            return ""
+        value = str(text).upper().replace("-", " ").replace("_", " ")
+        value = " ".join(value.split())
+        return value.rstrip(".").strip()
+
+    def _lookup_optional(
+        self, text: str | None, table: list, method_name: str, label: str
+    ) -> Code | None:
+        """Lookup with no default: empty or "not applicable" input returns
+        ``None`` silently; input the table does not know returns ``None``
+        with a warning."""
+        value = self._normalise_label(text)
+        if not value or value in self.NOT_APPLICABLE:
+            return None
+        for keys, entry in table:
+            if value in keys:
+                self._errors.info(
+                    f"{label} '{text}' decoded as '{entry['code']}', '{entry['decode']}'",
+                    location=KlassMethodLocation(self.MODULE, method_name),
+                )
+                return self._builder.cdisc_code(entry["code"], entry["decode"])
+        self._errors.warning(
+            f"{label} '{text}' not decoded; no code recorded",
+            location=KlassMethodLocation(self.MODULE, method_name),
+        )
+        return None
 
     def _lookup_code(
         self,
