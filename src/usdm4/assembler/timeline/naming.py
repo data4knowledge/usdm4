@@ -276,6 +276,11 @@ class Naming:
         ``GATE1DEC`` (its decision), ``GATE1END`` (its end node)."""
         return self._register_sai(f"GATE{n}{suffix}")
 
+    def repeat_name(self, n: int, suffix: str = "") -> str:
+        """An open repeat's loop (issue 84): ``REPEAT1DEC`` (its decision),
+        ``REPEAT1END`` (its end node)."""
+        return self._register_sai(f"REPEAT{n}{suffix}")
+
     def _register_sai(self, base: str) -> str:
         count = self._sai_name_registry.get(base, 0) + 1
         self._sai_name_registry[base] = count

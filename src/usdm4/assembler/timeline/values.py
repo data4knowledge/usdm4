@@ -84,6 +84,22 @@ class Delay:
     unit: str
 
 
+@dataclass(frozen=True)
+class Repeat:
+    """A visit that repeats (issue 84). ``first`` and ``last`` are the visit
+    numbers printed (``last`` None: open); ``period`` how often, when printed;
+    ``end`` a printed bound, as text, for the loop's exit."""
+
+    first: int | None
+    last: int | None
+    period: CycleLength | None
+    end: str | None
+
+    @property
+    def explicit(self) -> bool:
+        return self.first is not None and self.last is not None
+
+
 def render_timing(point: TimingPoint) -> str:
     return f"{point.unit.capitalize()} {point.value}"
 

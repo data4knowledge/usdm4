@@ -300,6 +300,43 @@ class DelayValue(_Value):
         return self
 
 
+class VisitRange(_Model):
+    """The visit numbers a repeat prints (issue 84): ``2-17`` →
+    ``{first: 2, last: 17}``; a series run on, ``V2, V3 … VX`` →
+    ``{first: 2, last: null}``."""
+
+    first: int
+    last: int | None = None
+
+    @model_validator(mode="after")
+    def _check(self) -> "VisitRange":
+        if self.last is not None and self.last < self.first:
+            raise ValueError(
+                f"a visit range's last ({self.last}) is before its first ({self.first})"
+            )
+        return self
+
+
+class RepeatValue(_Value):
+    """A visit that repeats (issue 84). ``visits`` with both ends is a set of
+    explicit visits (``2-17`` over ``Week 3-11``), expanded into one visit
+    each; with no ``last`` — or no ``visits`` — an open repeat (``Q12 Wks``,
+    ``Every 6 months``), never expanded: one visit and a loop. ``period`` is
+    how often, when printed; ``end`` a printed bound (``until Day 60``),
+    carried as the loop's exit text."""
+
+    visits: VisitRange | None = None
+    period: QuantityValue | None = None
+    end: TimingValue | None = None
+
+    _STRUCTURE: ClassVar[tuple[str, ...]] = ("visits", "period", "end")
+
+    @model_validator(mode="after")
+    def _check(self) -> "RepeatValue":
+        self._check_value()
+        return self
+
+
 class HeaderNote(_Model):
     """A further header row kept as text only — a second timing row, a timing
     clarification, an unassigned row. Never read."""
@@ -332,12 +369,21 @@ class ColumnInput(_Model):
     timing: TimingValue | None = None
     window: WindowValue | None = None
     delay: DelayValue | None = None
+    repeat: RepeatValue | None = None
     notes: list[HeaderNote] = []
 
     @model_validator(mode="after")
     def _check(self) -> "ColumnInput":
         if not self.id.strip():
             raise ValueError("a column id may not be blank")
+        if self.repeat is not None and self.cycle is not None:
+            raise ValueError(
+                f"column {self.id!r}: a repeat is not a cycle; send one or the other"
+            )
+        if self.repeat is not None and self.delay is not None:
+            raise ValueError(
+                f"column {self.id!r}: a gate is not a visit, so it cannot repeat"
+            )
         if self.delay is not None and self.copy_of is not None:
             raise ValueError(
                 f"column {self.id!r}: a gate is not a visit, so it cannot be a copy"

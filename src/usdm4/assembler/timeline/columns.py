@@ -13,9 +13,17 @@ a warning naming the timeline, column and field. A redacted value
 the label (issue 64). Footnote markers are carried per value
 (``Column.markers``); the timeline's header row labels are carried as
 ``ParsedTimeline.rows`` and never read.
+
+Issue 84. A column's ``repeat`` is read into ``Column.repeat``. A repeat of
+explicit visits (both ends printed, ``2-17``) is expanded here, before the
+plan: one column per visit number, named by it, each with the column's
+activities. With a period each is timed at the column's start plus that many
+periods; without one each keeps the column's timing, and its range as the
+window, with a warning — nothing is invented between printed bounds. An open
+repeat stays one column; the plan adds its loop.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from simple_error_log.error_location import KlassMethodLocation
 from simple_error_log.errors import Errors
@@ -29,6 +37,7 @@ from usdm4.assembler.timeline.values import (
     CycleNumber,
     CycleRange,
     Delay,
+    Repeat,
     TimeRange,
     TimingPoint,
     Window,
@@ -72,6 +81,9 @@ class Column:
     cycle_day: TimingPoint | None = None
     delay_label: str | None = None
     delay: Delay | None = None
+    # A visit that repeats (issue 84); an explicit one is expanded by parse.
+    repeat: Repeat | None = None
+    repeat_label: str | None = None
     notes: list[dict] = field(default_factory=list)
     # Value field name -> footnote markers printed on that value.
     markers: dict[str, list[str]] = field(default_factory=dict)
@@ -243,6 +255,9 @@ def parse_column(
             continue
         _READERS[name](column, value, reader)
 
+    repeat = data.get("repeat")
+    if repeat is not None:
+        _read_repeat(column, repeat, reader)
     column.notes = list(data.get("notes") or [])
     copy_of = data.get("copy_of")
     if copy_of:
@@ -250,11 +265,115 @@ def parse_column(
     return column
 
 
+def _read_repeat(column: Column, value: dict, reader: _Reader) -> None:
+    """Issue 84: a repeat's visit numbers, period and printed bound. A repeat
+    sent as text only, or redacted, is carried as its label and not read."""
+    column.repeat_label = _text(value) or None
+    visits, period, end = value.get("visits"), value.get("period"), value.get("end")
+    if value.get("redacted") or (visits is None and period is None):
+        reader.text_only("repeat", value)
+        return
+    length = None
+    if period is not None and _structured(period, "value", "unit"):
+        length = CycleLength(period["value"], singular(period["unit"]))
+    column.repeat = Repeat(
+        first=visits["first"] if visits else None,
+        last=visits.get("last") if visits else None,
+        period=length,
+        end=(_text(end) or None) if end else None,
+    )
+
+
+def _expand_repeats(
+    columns: list[Column],
+    activities: list[dict],
+    errors: Errors | None,
+    t: int | None,
+) -> tuple[list[Column], list[dict]]:
+    """Issue 84: each repeat of explicit visits becomes one column per visit
+    number, its cells copied to each. Columns are renumbered in order."""
+    if not any(c.repeat is not None and c.repeat.explicit for c in columns):
+        return columns, activities
+    where = f"Timeline {t}" if t else "Timeline"
+    out: list[Column] = []
+    copies: dict[str, list[str]] = {}
+    for column in columns:
+        repeat = column.repeat
+        if repeat is None or not repeat.explicit:
+            out.append(column)
+            continue
+        expanded = _expand(column, repeat, errors, where)
+        copies[column.id] = [c.id for c in expanded]
+        out.extend(expanded)
+    for index, column in enumerate(out):
+        column.index = index
+    rows = []
+    for row in activities:
+        cells = []
+        for cell in row.get("cells") or []:
+            for new_id in copies.get(cell["column"], [cell["column"]]):
+                cells.append({**cell, "column": new_id})
+        rows.append({**row, "cells": cells})
+    return out, rows
+
+
+def _expand(
+    column: Column, repeat: Repeat, errors: Errors | None, where: str
+) -> list[Column]:
+    """One column per visit number in ``repeat``."""
+    from usdm4.assembler.timeline.plan import _convert
+
+    numbers = range(repeat.first, repeat.last + 1)
+    step = None
+    if repeat.period is not None and column.timing is not None:
+        step = _convert(repeat.period.n, repeat.period.unit, column.timing.unit)
+    if step is None and errors is not None:
+        reason = (
+            "no period is given"
+            if repeat.period is None or column.timing is None
+            else f"its period ({repeat.period.n} {repeat.period.unit}s) does not "
+            f"convert exactly to {column.timing.unit}s"
+        )
+        errors.warning(
+            f"{where}, column '{column.id}': repeat of visits {repeat.first}-"
+            f"{repeat.last}: {reason}; every visit takes the column's timing",
+            KlassMethodLocation(MODULE, "parse_timeline"),
+        )
+    result = []
+    for k, number in enumerate(numbers):
+        visit = replace(
+            column,
+            id=f"{column.id}.{number}",
+            visit_label=str(number),
+            repeat=None,
+            markers={name: list(m) for name, m in column.markers.items()},
+            redacted=set(column.redacted),
+            notes=list(column.notes),
+        )
+        if step is not None:
+            visit.timing = TimingPoint(
+                column.timing.unit, column.timing.value + k * step
+            )
+            visit.time_range = None
+            visit.timing_label = render_timing(visit.timing)
+        result.append(visit)
+    return result
+
+
 def parse_timeline(
     data: dict, errors: Errors | None = None, t: int | None = None
 ) -> ParsedTimeline:
     """Read one timeline. Never raises for a bad value: problems are
-    warnings on ``errors`` (U4-17)."""
+    warnings on ``errors`` (U4-17). Explicit repeats are expanded (issue 84)."""
+    columns, activities = _expand_repeats(
+        [
+            parse_column(i, c, errors, t)
+            for i, c in enumerate(data.get("columns") or [])
+        ],
+        list(data.get("activities") or []),
+        errors,
+        t,
+    )
     return ParsedTimeline(
         type=data["type"],
         family=family_of(data["type"]),
@@ -262,11 +381,8 @@ def parse_timeline(
         title=data.get("title"),
         description=data.get("description"),
         classification=dict(data.get("classification") or {}),
-        columns=[
-            parse_column(i, c, errors, t)
-            for i, c in enumerate(data.get("columns") or [])
-        ],
-        activities=list(data.get("activities") or []),
+        columns=columns,
+        activities=activities,
         footnotes=list(data.get("footnotes") or []),
         rows=dict(data.get("rows") or {}),
         entry_condition=data.get("entry_condition"),

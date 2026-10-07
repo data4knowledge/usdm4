@@ -55,6 +55,12 @@ by 1 day, loops back to it by default and exits to the next column (U4-10 (a),
 found by U4-2 within the period (U4-36), so the period after a washout is timed
 from its own ``Day 1``. The periods are linked by the decision's exit, not by a
 timing. A restart is warned only when no gate comes before it (U4-14).
+
+Issue 84. An open repeat (``Q12 Wks``, ``Every 6 months``) is one column's
+node followed by a decision ``After`` it by the period, looping back to it by
+default and exiting to the next column — the pattern of a cycle range and a
+gate — and, when it is the last column, an end node. With no period no loop
+is built, with a warning. Explicit repeats were expanded by parse.
 """
 
 from dataclasses import dataclass, field
@@ -189,6 +195,7 @@ class InstanceNode:
     kind: str | None = None
     loop_to: int | str | None = None
     gate: int | None = None
+    repeat: int | None = None
 
     @property
     def key(self) -> int | str:
@@ -269,7 +276,7 @@ class Planner:
         first = context_of[periods[0][0].index] if periods[0] else None
         markers = {s.first: s for s in starts.values() if s.column is None}
         nodes: list[InstanceNode] = []
-        gates = 0
+        gates = repeats = 0
         for column in columns:
             previous = nodes[-1].key if nodes else None
             if self.is_gate(column):
@@ -285,6 +292,11 @@ class Planner:
             if start is not None:
                 nodes.append(self._marker_node(ctx, start, previous))
             nodes.append(self._node(ctx, column, nodes[-1].key if nodes else None))
+            if column.repeat is not None and not column.repeat.explicit:
+                repeats += 1
+                nodes.extend(
+                    self._repeat_nodes(column, repeats, column is columns[-1], where)
+                )
         if first is None:
             return TimelinePlan(anchor=0, nodes=nodes, anchors=[])
         return TimelinePlan(
@@ -358,6 +370,52 @@ class Planner:
                     epoch_column=column.index,
                     kind=END,
                     gate=n,
+                )
+            )
+        return nodes
+
+    # ------------------------------------------------------------------
+    # Open repeats — issue 84
+
+    def _repeat_nodes(
+        self, column: Column, n: int, is_last: bool, where: str
+    ) -> list[InstanceNode]:
+        """An open repeat's loop: a decision ``After`` the column by its
+        period, looping back to it; and, when the column is the last, an end
+        node the decision's exit leads to. No period, no loop."""
+        period = column.repeat.period
+        if period is None:
+            self._warn(
+                f"{where}, column '{column.id}': a repeat with no period; no loop "
+                "is built",
+                "plan",
+            )
+            return []
+        decision = InstanceNode(
+            column=None,
+            timing_type=AFTER,
+            relative_to=column.index,
+            duration=period.n,
+            unit=period.unit,
+            marker=f"R{n}DEC",
+            epoch_column=column.index,
+            kind=DECISION,
+            loop_to=column.index,
+            repeat=n,
+        )
+        nodes = [decision]
+        if is_last:
+            nodes.append(
+                InstanceNode(
+                    column=None,
+                    timing_type=AFTER,
+                    relative_to=decision.key,
+                    duration=0,
+                    unit=period.unit,
+                    marker=f"R{n}END",
+                    epoch_column=column.index,
+                    kind=END,
+                    repeat=n,
                 )
             )
         return nodes

@@ -81,6 +81,8 @@ class TimelineBuild:
     # U4-7: the exit condition of a cycle loop. The real rule is usually in
     # the protocol body, not the SoA; fixed text until something reads it.
     EXIT_CONDITION = "cycle exit condition"
+    # Issue 84: an open repeat's exit when no bound is printed.
+    REPEAT_EXIT_CONDITION = "repeat exit condition"
 
     # #77. Every timeline is entered on its printed entry condition; with
     # none printed, the default for its type. One entry per ``TimelineType``.
@@ -483,11 +485,12 @@ class TimelineBuild:
             decision = results[index]
             onward = results[index + 1]
             decision.defaultConditionId = self._sai_for[node.loop_to].id
-            condition = (
-                self.gate_condition(self._gate_delay(node))
-                if node.gate is not None
-                else self.EXIT_CONDITION
-            )
+            if node.gate is not None:
+                condition = self.gate_condition(self._gate_delay(node))
+            elif node.repeat is not None:
+                condition = self._repeat_condition(node)
+            else:
+                condition = self.EXIT_CONDITION
             assignment = self._builder.create(
                 ConditionAssignment,
                 {"condition": condition, "conditionTargetId": onward.id},
@@ -504,6 +507,12 @@ class TimelineBuild:
         if delay.max is not None:
             text += f", or {delay.max} {unit}"
         return text
+
+    def _repeat_condition(self, node) -> str:
+        """Issue 84: an open repeat exits on its printed bound, else the fixed
+        text."""
+        repeat = self._timeline.columns[node.epoch_column].repeat
+        return repeat.end or self.REPEAT_EXIT_CONDITION
 
     def _gate_delay(self, node) -> Delay:
         return self._timeline.columns[node.epoch_column].delay
@@ -535,6 +544,9 @@ class TimelineBuild:
         if node.gate is not None:
             name = self._naming.gate_name(node.gate, "DEC")
             description = f"End of gate {node.gate}"
+        elif node.repeat is not None:
+            name = self._naming.repeat_name(node.repeat, "DEC")
+            description = f"End of a pass of repeat {node.repeat}"
         else:
             name = self._naming.decision_name(self._cycle_label(node), self._t)
             description = f"End of a pass of cycle {self._cycle_label(node)}"
@@ -557,6 +569,9 @@ class TimelineBuild:
         if node.gate is not None:
             name = self._naming.gate_name(node.gate, "END")
             description = f"End of gate {node.gate}"
+        elif node.repeat is not None:
+            name = self._naming.repeat_name(node.repeat, "END")
+            description = f"End of repeat {node.repeat}"
         else:
             name = self._naming.end_name(self._t)
             description = f"End of cycle {self._cycle_label(node)}"
