@@ -205,3 +205,20 @@ plannedDuration) clears.
 
 **Flagged, not done.** Other Committees use C142489 "Data Monitoring Committee" with the name
 as label: C215480 has no generic committee term, and that is the code the view reads.
+
+## 2026-10-07 — ISSUE 84 (GitHub 84, branch `84-repeat-visit-columns`): repeating visit columns — U4-38
+
+**Repo**: `usdm4`, merged to `main` by Dave (`add0537 Repeat visit handling`). Callers: `usdm4_protocol` 85 sends it; `protocol_corpus` 31 states it in the ground truth.
+
+**What it was.** A column could print a visit that repeats — explicit visits over a span (`Treatment (Week 3-11)` over visits `2-17`) or an open repeat (`Q12 Wks`, `Every 6 months`) — and `ColumnInput` had no way to say so: a timing is a point or a range, the only repeat a cycle. Dave ruled (2026-10-07): explicit visits create explicit encounters; an open repeat, like `Cycle 3+`, cannot.
+
+**The fix**
+
+- `assembler/schema/schedule_timeline_schema.py` — `VisitRange`, `RepeatValue` (`visits`, `period`, `end`), `ColumnInput.repeat`; refused beside a cycle or a delay.
+- `assembler/timeline/columns.py` — parse reads the repeat; explicit visits are expanded before the plan: one column per visit number, named by it, cells copied, timed by the period or, with none, sharing the column's range with a warning.
+- `assembler/timeline/plan.py` — an open repeat gets a decision `After` it by the period, looping back to it, and an end node when last; no period, no loop, warned.
+- `assembler/timeline/build.py`, `naming.py` — `REPEAT{n}DEC` / `REPEAT{n}END`; exit condition the printed bound, else `repeat exit condition`.
+- `docs/spec/timeline_assembler.md` — decision U4-38.
+- `tests/usdm4/assembler/timeline/test_repeat.py` — 17 tests. Full suite: 3903 passed, 3 skipped; every changed file 100% covered except two `plan.py` lines uncovered before.
+
+**Rejected.** Expanding an open repeat (invents visits); inferring a period not printed.

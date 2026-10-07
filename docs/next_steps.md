@@ -9,6 +9,8 @@ The docs: `aims.md` (what the package is for), `issues.md` (open problems, `N<n>
 State of the rule library: all 210 V4 DDF rules covered (207 implemented, 3 delegated to
 DDF00082's schema check).
 
+**2026-10-07:** GitHub 84 (repeating visit columns, U4-38) merged; its callers are `usdm4_protocol` 85 (merged) and `protocol_corpus` 31 (built). Nothing further here for the repeat until the repeating set's figures say so.
+
 ## Next steps (2026-09-27)
 
 Normal development: one issue at a time, gate is tests and pins. The three-machine arrangement
