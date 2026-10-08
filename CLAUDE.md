@@ -130,3 +130,9 @@ start in this repo must be able to resume from this repo alone.
 - Version is defined in `src/usdm4/__info__.py`
 - The `cdisc-rules-engine` requires Python 3.12+ (version 0.15.0 onwards).
 - The CDISC Rules Engine is not thread-safe (mutates `os.getcwd()` and `sys.stdout`). Callers needing async/background execution should manage threading themselves.
+
+## GitHub Issues
+
+**GitHub issue titles are four or five words** (Dave, 2026-10-04) — a short name for the issue, not a statement of it. The issue text carries the detail.
+
+**GitHub issue and PR text has no line breaks inside a paragraph** (Dave, 2026-10-08) — issue bodies, closing statements, PR descriptions and anything else written to be pasted into GitHub: one line per paragraph, a blank line between paragraphs. Never hard-wrap at a fixed width, whatever width the repo's own files use.
