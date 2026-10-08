@@ -52,3 +52,9 @@ TLT_EXT_URL = "www.d4k.dk/usdm/extensions/016"  # Timeline type
 # timeline build makes, so this attribute is the only thing that separates it
 # from a stated one. Anything that exports epochs must skip an epoch carrying it.
 EPP_EXT_URL = "www.d4k.dk/usdm/extensions/017"  # Epoch provenance
+
+# M11 1.1.2 Control Type (codelist C217279), at most one attribute (M11
+# cardinality One to one), valueCode. USDM has no home for it: StudyDesign.characteristics is
+# bound to C207416, which holds none of these terms, and arm types cannot
+# express Dose Response, Different Dose or Regimen or External (GitHub 86).
+CT_EXT_URL = "www.d4k.dk/usdm/extensions/018"  # Control type

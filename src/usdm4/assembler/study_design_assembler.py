@@ -19,11 +19,11 @@ from usdm4.api.administrable_product import AdministrableProduct
 from usdm4.api.ingredient import Ingredient
 from usdm4.api.substance import Substance
 from usdm4.api.strength import Strength
-from usdm4.api.extension import ExtensionAttribute
+from usdm4.api.extension import ExtensionAttribute, BaseCode
 from usdm4.api.indication import Indication
 from usdm4.api.study_role import StudyRole
 from usdm4.api.masking import Masking
-from usdm4.api.extensions_d4k import IMP_EXT_URL, EPP_EXT_URL
+from usdm4.api.extensions_d4k import IMP_EXT_URL, EPP_EXT_URL, CT_EXT_URL
 
 
 class StudyDesignAssembler(BaseAssembler):
@@ -203,7 +203,8 @@ class StudyDesignAssembler(BaseAssembler):
                     "eligibilityCriteria": population_assembler.criteria,
                     "extensionAttributes": self._model_extensions(
                         raw_intervention_model
-                    ),
+                    )
+                    + self._control_type_extensions(data.get("control_type")),
                     "indications": self._build_indications(
                         data.get("indications") or []
                     ),
@@ -262,6 +263,39 @@ class StudyDesignAssembler(BaseAssembler):
                     KlassMethodLocation(self.MODULE, "_build_indications"),
                 )
         return result
+
+    def _control_type_extensions(self, text: str | None) -> list[ExtensionAttribute]:
+        """The M11 control type (C217279) as one CT_EXT_URL extension, or
+        none when not stated. A value that does not decode is warned and
+        dropped by the encoder (GitHub 86)."""
+        code = self._encoder.control_type(text)
+        if code is None:
+            return []
+        try:
+            # valueCode is a BaseCode, not the API Code class (as for SIT_EXT_URL).
+            base_code = BaseCode(
+                **code.model_dump(
+                    include={
+                        "id",
+                        "code",
+                        "codeSystem",
+                        "codeSystemVersion",
+                        "decode",
+                        "instanceType",
+                    }
+                )
+            )
+            extension = self._builder.create(
+                ExtensionAttribute, {"url": CT_EXT_URL, "valueCode": base_code}
+            )
+            return [extension] if extension else []
+        except Exception as e:
+            self._errors.exception(
+                f"Failed during creation of control type '{text}'",
+                e,
+                KlassMethodLocation(self.MODULE, "_control_type_extensions"),
+            )
+            return []
 
     def _build_characteristics(self, data: dict) -> list:
         """Site distribution, geographic scope and assignment method, each

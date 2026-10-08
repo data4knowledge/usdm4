@@ -167,6 +167,44 @@ class TestCharacteristics:
         assert "not decoded" in str(errors.dump(0))
 
 
+class TestControlType:  # GitHub 86
+    @staticmethod
+    def control_codes(design) -> list[str]:
+        from src.usdm4.api.extensions_d4k import CT_EXT_URL
+
+        return [
+            e.valueCode.code for e in design.extensionAttributes if e.url == CT_EXT_URL
+        ]
+
+    def test_each_term_decoded(self):
+        terms = {
+            "Placebo": "C49648",
+            "Active Comparator": "C49649",
+            "Dose Response": "C120841",
+            "Different Dose or Regimen": "C218505",
+            "External": "C218506",
+            "Sham Procedure": "C184727",
+            "No Control": "C28280",
+        }
+        for text, code in terms.items():
+            _, design, _ = assemble({"control_type": text})
+            assert self.control_codes(design) == [code], text
+
+    def test_case_and_hyphens_ignored(self):
+        _, design, _ = assemble({"control_type": "active-comparator"})
+        assert self.control_codes(design) == ["C49649"]
+
+    def test_unknown_warned_and_dropped(self):
+        _, design, errors = assemble({"control_type": "SOC plus placebo"})
+        assert self.control_codes(design) == []
+        assert "not decoded" in str(errors.dump(0))
+
+    def test_not_stated(self):
+        for value in (None, "", "N/A"):
+            _, design, _ = assemble({"control_type": value} if value is not None else {})
+            assert self.control_codes(design) == [], value
+
+
 class TestBlindingSchema:
     @pytest.mark.parametrize(
         "text, code",

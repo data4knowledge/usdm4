@@ -522,6 +522,18 @@ class Encoder:
 
     # InterventionalStudyDesign.blindingSchema (C66735) <- M11 Trial Blind
     # Schema (C217051)
+    # StudyDesign extension CT_EXT_URL <- M11 Control Type (C217279), GitHub 86
+    CONTROL_TYPE_MAP = [
+        (["PLACEBO"], {"code": "C49648", "decode": "Placebo"}),
+        (["ACTIVE COMPARATOR"], {"code": "C49649", "decode": "Active Comparator"}),
+        (["DOSE RESPONSE"], {"code": "C120841", "decode": "Dose Response"}),
+        (["DIFFERENT DOSE OR REGIMEN"],
+         {"code": "C218505", "decode": "Different Dose or Regimen"}),
+        (["EXTERNAL"], {"code": "C218506", "decode": "External"}),
+        (["SHAM PROCEDURE"], {"code": "C184727", "decode": "Sham Procedure"}),
+        (["NO CONTROL"], {"code": "C28280", "decode": "No Control"}),
+    ]
+
     BLINDING_SCHEMA_MAP = [
         (["DOUBLE BLIND", "DOUBLE BLIND STUDY", "DOUBLE MASKED"],
          {"code": "C15228", "decode": "Double Blind Study"}),
@@ -904,6 +916,12 @@ class Encoder:
             self.INTERVENTION_ASSIGNMENT_METHOD_MAP,
             "intervention_assignment_method",
             "Intervention assignment method",
+        )
+
+    def control_type(self, text: str | None) -> Code | None:
+        """M11 Control Type (C217279) -> StudyDesign extension CT_EXT_URL."""
+        return self._lookup_optional(
+            text, self.CONTROL_TYPE_MAP, "control_type", "Control type"
         )
 
     def blinding_schema(self, text: str | None) -> AliasCode | None:

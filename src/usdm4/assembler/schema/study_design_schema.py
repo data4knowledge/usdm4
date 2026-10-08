@@ -201,6 +201,9 @@ class StudyDesignInput(BaseModel):
     site_distribution: Optional[str] = None
     site_geographic_scope: Optional[str] = None
     intervention_assignment_method: Optional[str] = None
+    # Control Type (C217279) -> one StudyDesign extension attribute, url
+    # CT_EXT_URL, valueCode (GitHub 86). M11 cardinality is One to one.
+    control_type: Optional[str] = None
     # Trial Blind Schema -> InterventionalStudyDesign.blindingSchema (C66735).
     blinding_schema: Optional[str] = None
     # Blinded Roles -> StudyRole (C215480) with masking.isMasked = True. A
