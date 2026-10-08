@@ -222,3 +222,19 @@ as label: C215480 has no generic committee term, and that is the code the view r
 - `tests/usdm4/assembler/timeline/test_repeat.py` — 17 tests. Full suite: 3903 passed, 3 skipped; every changed file 100% covered except two `plan.py` lines uncovered before.
 
 **Rejected.** Expanding an open repeat (invents visits); inferring a period not printed.
+
+## 2026-10-08 — Partial planned age range: open-ended placeholders instead of a copied bound
+
+**Repo**: `usdm4`. GitHub issue number and branch not captured in the session; Dave raised the issue and posted the closing statement. Found from udp_prism (TCBCPT_01 Maximum Age 18 for a document stating only a minimum at the time). Caller side: `usdm4_protocol` GitHub 87.
+
+**What it was.** `assembler/population_assembler.py` `_build_planned_age` filled a missing bound with the supplied one, because a USDM `Range` requires both `minValue` and `maxValue`: "18 or over" was stored as 18–18. The docstring said a missing lower bound became 0; the code copied the upper bound.
+
+**The fix**
+
+- `src/usdm4/assembler/population_assembler.py` — `AGE_MIN_DEFAULT = 0`, `AGE_MAX_DEFAULT = 200` (years); a missing minimum becomes 0 years, a missing maximum 200 years, with the existing warning naming the value. The stated bound keeps its own unit; the filled one is always years. Docstring rewritten to match.
+- `tests/usdm4/assembler/test_population_assembler_branches.py` — min-only gives 18–200 (max in years), max-only gives 0–65. Tests pass (Dave).
+- `CLAUDE.md` — GitHub section added (title four or five words; issue and PR text with no line breaks inside a paragraph).
+
+**Interim only.** The model gap is usdm4_fhir `docs/issues.md` M-39 (M11 allows an open age bound, USDM `Range` does not). Remove the defaults when `Range` allows a single bound.
+
+**Rejected.** Omitting `plannedAge` when a bound is missing (loses the stated bound); keeping the zero-width range (states something the protocol does not).
