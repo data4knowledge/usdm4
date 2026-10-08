@@ -89,21 +89,25 @@ def test_partial_age_range_min_only_logs_warning(assembler):
     assembler.execute(data)
     assert assembler.population is not None
     assert assembler._errors.count() >= 1
-    # Range is present; missing max filled with min
+    # Range is present; missing max is open-ended (200 years)
     age_range = assembler.population.plannedAge
     assert age_range is not None
     assert age_range.minValue.value == 18.0
-    assert age_range.maxValue.value == 18.0
+    assert age_range.maxValue.value == 200.0
+    assert age_range.maxValue.unit.standardCode.decode == "Year"
 
 
 def test_partial_age_range_max_only_logs_warning(assembler):
     data = _base_data(demographics={"age_max": 65, "age_unit": "Years"})
     assembler.execute(data)
     assert assembler.population is not None
+    assert assembler._errors.count() >= 1
+    # Range is present; missing min is open-ended (0 years)
     age_range = assembler.population.plannedAge
     assert age_range is not None
-    assert age_range.minValue.value == 65.0
+    assert age_range.minValue.value == 0.0
     assert age_range.maxValue.value == 65.0
+    assert age_range.minValue.unit.standardCode.decode == "Year"
 
 
 def test_no_age_range_returns_none(assembler):

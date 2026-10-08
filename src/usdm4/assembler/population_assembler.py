@@ -23,6 +23,10 @@ class PopulationAssembler(BaseAssembler):
     """
 
     MODULE = "usdm4.assembler.population_assembler.PopulationAssembler"
+    # Open-ended age bounds, in years, for a Range missing one side (the
+    # model requires both). Interim until the model allows an open Range.
+    AGE_MIN_DEFAULT = 0
+    AGE_MAX_DEFAULT = 200
 
     def __init__(self, builder: Builder, errors: Errors):
         """
@@ -158,25 +162,29 @@ class PopulationAssembler(BaseAssembler):
     def _build_planned_age(self, demographics: dict) -> Union[Range, None]:
         """Build ``plannedAge`` (``Range``) from ``age_min`` / ``age_max``.
 
-        Returns ``None`` when neither bound is supplied. When only one bound
-        is given the missing side is logged as a warning and treated as 0
-        (lower) or the supplied value (upper) so that a ``Range`` remains
-        well-formed — the underlying model requires both ``minValue`` and
-        ``maxValue``.
+        Returns ``None`` when neither bound is supplied. The model requires
+        both ``minValue`` and ``maxValue`` on a ``Range``, so a missing bound
+        is filled with an open-ended default and a warning is logged: no
+        lower bound -> 0 years, no upper bound -> 200 years. Copying the
+        supplied bound across (the old behaviour) turned "18 or over" into
+        "exactly 18". Interim until the model allows an open-ended Range.
         """
         age_min = demographics.get("age_min")
         age_max = demographics.get("age_max")
         if age_min is None and age_max is None:
             return None
 
-        # Range requires both minValue and maxValue; fill any missing bound
-        # with the other (a zero-width range) and log the compromise.
-        effective_min = age_min if age_min is not None else age_max
-        effective_max = age_max if age_max is not None else age_min
+        # Range requires both minValue and maxValue; fill a missing bound
+        # with an open-ended default (in years) and log the compromise.
+        unit = demographics.get("age_unit", "Years")
+        min_unit = unit if age_min is not None else "Years"
+        max_unit = unit if age_max is not None else "Years"
+        effective_min = age_min if age_min is not None else self.AGE_MIN_DEFAULT
+        effective_max = age_max if age_max is not None else self.AGE_MAX_DEFAULT
         if age_min is None or age_max is None:
             self._errors.warning(
                 f"Planned age range partially supplied (min={age_min}, max={age_max}); "
-                f"filling missing bound with supplied value.",
+                f"missing bound set to {self.AGE_MIN_DEFAULT if age_min is None else self.AGE_MAX_DEFAULT} years.",
                 KlassMethodLocation(self.MODULE, "_build_planned_age"),
             )
 
@@ -184,12 +192,8 @@ class PopulationAssembler(BaseAssembler):
         # one AliasCode (and its standardCode) between min and max
         # Quantities produces the same ``id`` at both paths, which
         # DDF00083 / CORE-001015 flag as a uniqueness violation.
-        min_unit_alias = self._builder.alias_code(
-            self._encoder.age_unit(demographics.get("age_unit", "Years"))
-        )
-        max_unit_alias = self._builder.alias_code(
-            self._encoder.age_unit(demographics.get("age_unit", "Years"))
-        )
+        min_unit_alias = self._builder.alias_code(self._encoder.age_unit(min_unit))
+        max_unit_alias = self._builder.alias_code(self._encoder.age_unit(max_unit))
 
         min_qty = self._builder.create(
             Quantity, {"value": float(effective_min), "unit": min_unit_alias}
