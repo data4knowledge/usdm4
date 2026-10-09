@@ -238,3 +238,18 @@ as label: C215480 has no generic committee term, and that is the code the view r
 **Interim only.** The model gap is usdm4_fhir `docs/issues.md` M-39 (M11 allows an open age bound, USDM `Range` does not). Remove the defaults when `Range` allows a single bound.
 
 **Rejected.** Omitting `plannedAge` when a bound is missing (loses the stated bound); keeping the zero-width range (states something the protocol does not).
+
+## 2026-10-09 — GitHub 86 (branch `86-control-type-study-design-extension`): M11 Control Type as a study design extension
+
+**Repo**: `usdm4`. Driven from udp_prism's 1.1.2 walk-through (its N63); usdm4_protocol (GitHub 92) and usdm4_fhir (GitHub 53) each have their own entry.
+
+**What it was.** M11 1.1.2 Control Type (C217279: Placebo, Active Comparator, Dose Response, Different Dose or Regimen, External, Sham Procedure, No Control) had no home in USDM. `StudyDesign.characteristics` is bound to C207416, which holds none of these terms, and arm types cannot express Dose Response, Different Dose or Regimen or External.
+
+**What changed.**
+- `src/usdm4/api/extensions_d4k.py` — `CT_EXT_URL = "www.d4k.dk/usdm/extensions/018"`, at most one per design, `valueCode`.
+- `src/usdm4/assembler/schema/study_design_schema.py` — `StudyDesignInput.control_type: Optional[str]` (M11 cardinality One to one).
+- `src/usdm4/assembler/encoder.py` — `CONTROL_TYPE_MAP` (the seven C217279 terms, exact after `_normalise_label`) and `control_type()` on `_lookup_optional`: unknown warned and dropped, empty / N/A silent.
+- `src/usdm4/assembler/study_design_assembler.py` — `_control_type_extensions()`: the decoded `Code` converted to `BaseCode` (as for `SIT_EXT_URL`), one `ExtensionAttribute`, appended after the intervention model provenance.
+- `tests/usdm4/assembler/test_study_design_assembler_m11_112.py` — `TestControlType`, four tests. Pass (Dave).
+
+**Rejected.** A list (`control_types`): M11 gives Control Type One to one (Blinded Roles and committees are One to many). Putting the codes in `characteristics`: breaks the C207416 binding; that would need a CDISC CT change.

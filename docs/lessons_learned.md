@@ -1775,3 +1775,7 @@ finding becomes an `N` row, open the cited lines and confirm the mechanism. And 
 by effect, not by where they were found: the silent rule loader and the zero-rules CORE pass
 came up as "structure" but give wrong validation results, so they were logged as bugs (N22,
 N23), not parked in the tidy-up group.
+
+## `valueCode` takes a `BaseCode`, and a failed create is silent (2026-10-09)
+
+`ExtensionAttribute.valueCode` is typed `BaseCode`, not the API `Code` that `builder.cdisc_code()` returns. Passing the `Code` fails validation inside `builder.create`, which logs the exception and returns `None`, so the extension is simply missing. Convert with `BaseCode(**code.model_dump(include={...}))` as `identification_assembler._identifier_type` does, and test the stored value, not the absence of an error. Found by GitHub 86's first test run.
