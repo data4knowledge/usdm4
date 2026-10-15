@@ -55,7 +55,7 @@
           "relativeToScheduledInstanceId": "ScheduledActivityInstance_2",
           "windowLower": "",
           "windowUpper": "",
-          "windowLabel": "-21 to -1",
+          "windowLabel": null,
           "instanceType": "Timing"
         },
         {
@@ -88,7 +88,7 @@
           "relativeToScheduledInstanceId": "ScheduledActivityInstance_2",
           "windowLower": "",
           "windowUpper": "",
-          "windowLabel": "d1",
+          "windowLabel": null,
           "instanceType": "Timing"
         },
         {
@@ -121,7 +121,7 @@
           "relativeToScheduledInstanceId": "ScheduledActivityInstance_2",
           "windowLower": "",
           "windowUpper": "",
-          "windowLabel": "d2",
+          "windowLabel": null,
           "instanceType": "Timing"
         },
         {
@@ -154,7 +154,7 @@
           "relativeToScheduledInstanceId": "ScheduledActivityInstance_2",
           "windowLower": "",
           "windowUpper": "",
-          "windowLabel": "d3; +1d (1,2)*",
+          "windowLabel": null,
           "instanceType": "Timing"
         },
         {
@@ -187,7 +187,7 @@
           "relativeToScheduledInstanceId": "ScheduledActivityInstance_2",
           "windowLower": "",
           "windowUpper": "",
-          "windowLabel": "d8; -1/+2d",
+          "windowLabel": null,
           "instanceType": "Timing"
         },
         {
@@ -220,7 +220,7 @@
           "relativeToScheduledInstanceId": "ScheduledActivityInstance_2",
           "windowLower": "",
           "windowUpper": "",
-          "windowLabel": "d15; -1/+2d",
+          "windowLabel": null,
           "instanceType": "Timing"
         },
         {
@@ -253,7 +253,7 @@
           "relativeToScheduledInstanceId": "ScheduledActivityInstance_6",
           "windowLower": "",
           "windowUpper": "",
-          "windowLabel": "d18; +/-3d (2,4)*",
+          "windowLabel": null,
           "instanceType": "Timing"
         },
         {
@@ -286,7 +286,7 @@
           "relativeToScheduledInstanceId": "ScheduledActivityInstance_2",
           "windowLower": "",
           "windowUpper": "",
-          "windowLabel": "d1",
+          "windowLabel": null,
           "instanceType": "Timing"
         },
         {
@@ -319,7 +319,7 @@
           "relativeToScheduledInstanceId": "ScheduledActivityInstance_2",
           "windowLower": "",
           "windowUpper": "",
-          "windowLabel": "d8; -1d/ +2d",
+          "windowLabel": null,
           "instanceType": "Timing"
         },
         {
@@ -352,7 +352,7 @@
           "relativeToScheduledInstanceId": "ScheduledActivityInstance_9",
           "windowLower": "",
           "windowUpper": "",
-          "windowLabel": "d18; +/-3d (6)*",
+          "windowLabel": null,
           "instanceType": "Timing"
         },
         {
@@ -385,7 +385,7 @@
           "relativeToScheduledInstanceId": "ScheduledActivityInstance_2",
           "windowLower": "",
           "windowUpper": "",
-          "windowLabel": "d1",
+          "windowLabel": null,
           "instanceType": "Timing"
         },
         {
@@ -418,7 +418,7 @@
           "relativeToScheduledInstanceId": "ScheduledActivityInstance_11",
           "windowLower": "",
           "windowUpper": "",
-          "windowLabel": "EoT (when defined)",
+          "windowLabel": null,
           "instanceType": "Timing"
         },
         {
@@ -451,7 +451,7 @@
           "relativeToScheduledInstanceId": "ScheduledActivityInstance_12",
           "windowLower": "",
           "windowUpper": "",
-          "windowLabel": "Last admin +42d; -2/+3d",
+          "windowLabel": null,
           "instanceType": "Timing"
         },
         {
@@ -484,7 +484,7 @@
           "relativeToScheduledInstanceId": "ScheduledActivityInstance_13",
           "windowLower": "",
           "windowUpper": "",
-          "windowLabel": "every 6 weeks (+/-3d) until PD",
+          "windowLabel": null,
           "instanceType": "Timing"
         }
       ],

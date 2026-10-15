@@ -42,7 +42,14 @@ from usdm4.api.timing import Timing
 from usdm4.assembler.encoder import Encoder
 from usdm4.assembler.timeline.columns import ParsedTimeline
 from usdm4.assembler.timeline.naming import Naming
-from usdm4.assembler.timeline.plan import DECISION, END, GATE, Planner, TimelinePlan
+from usdm4.assembler.timeline.plan import (
+    DECISION,
+    END,
+    FIXED,
+    GATE,
+    Planner,
+    TimelinePlan,
+)
 from usdm4.assembler.timeline.values import CycleNumber, CycleRange, Delay
 from usdm4.builder.builder import Builder
 
@@ -645,7 +652,7 @@ class TimelineBuild:
             column = node.column
             this_sai = self._sai_for[node.key]
             to_sai = self._sai_for[node.relative_to]
-            window = node.window
+            window_label, window_lower, window_upper = self._window(node)
             label = (column.timing_label or "") if column else ""
             name = f"TIM{column.index + 1}" if column else f"TIM{node.marker}"
             timing = self._builder.create(
@@ -662,17 +669,9 @@ class TimelineBuild:
                     "relativeToFrom": self._builder.klass_and_attribute_value(
                         Timing, "relativeToFrom", "start to start"
                     ),
-                    "windowLabel": self._window_label(node),
-                    "windowLower": self._encoder.iso8601_duration(
-                        window.lower, window.unit
-                    )
-                    if window and window.lower
-                    else "",
-                    "windowUpper": self._encoder.iso8601_duration(
-                        window.upper, window.unit
-                    )
-                    if window and window.upper
-                    else "",
+                    "windowLabel": window_label,
+                    "windowLower": window_lower,
+                    "windowUpper": window_upper,
                     "relativeFromScheduledInstanceId": this_sai.id,
                     "relativeToScheduledInstanceId": to_sai.id,
                 },
@@ -695,6 +694,47 @@ class TimelineBuild:
         if column.time_range is not None:
             return f"{column.time_range.unit.capitalize()} {column.time_range.start}"
         return column.timing_label or ""
+
+    def _window(self, node) -> tuple[str | None, str, str]:
+        """The timing's window as (label, lower, upper) — all set or none
+        (DDF00006). A zero bound is the zero duration, never "". An anchor
+        (Fixed Reference) timing has no window (DDF00025): its column's
+        printed window is logged at info level and not used. A printed
+        window with no bounds (unread or redacted) gives no window and is
+        logged as a warning."""
+        column, window = node.column, node.window
+        location = KlassMethodLocation(self.MODULE, "_window")
+        printed = column.window_label if column else None
+        zero = window is not None and window.lower == 0 and window.upper == 0
+        if node.timing_type == FIXED:
+            if zero:
+                return "", "", ""
+            if window is not None or printed:
+                self._errors.info(
+                    f"Anchor timing for column '{self._column_text(column)}': "
+                    f"its printed window '{printed or ''}' is not used",
+                    location,
+                )
+            return None, "", ""
+        if window is None:
+            if printed:
+                self._errors.warning(
+                    f"Column '{self._column_text(column)}': window '{printed}' "
+                    "has no bounds; no window written",
+                    location,
+                )
+            return None, "", ""
+        if zero:
+            return "", "", ""
+        return (
+            self._window_label(node),
+            self._encoder.iso8601_duration(window.lower, window.unit),
+            self._encoder.iso8601_duration(window.upper, window.unit),
+        )
+
+    @staticmethod
+    def _column_text(column) -> str:
+        return (column.timing_label or column.visit_label or "") if column else ""
 
     @staticmethod
     def _window_label(node) -> str | None:

@@ -166,7 +166,7 @@ class TestPeriods:
 
     def test_screening_window_to_day_minus_1(self, tl):
         timing = _timing_of(tl, _activity_instances(tl)["scr"])
-        assert (timing.windowLower, timing.windowUpper) == ("", "P29D")
+        assert (timing.windowLower, timing.windowUpper) == ("PT0M", "P29D")
 
     def test_period_2_from_its_own_day_1(self, tl):
         v = _activity_instances(tl)
@@ -180,7 +180,7 @@ class TestPeriods:
         v = _activity_instances(tl)
         timing = _timing_of(tl, v["fu"])
         assert _link(tl, v["fu"]) == ("After", v["p2d1"].id, "P7D")
-        assert (timing.windowLower, timing.windowUpper) == ("", "P7D")
+        assert (timing.windowLower, timing.windowUpper) == ("PT0M", "P7D")
 
     def test_two_anchors(self, tl):
         fixed = [t for t in tl.timings if t.type.decode.startswith("Fixed")]

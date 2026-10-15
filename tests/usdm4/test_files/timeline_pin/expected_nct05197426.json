@@ -53,7 +53,7 @@
           },
           "relativeFromScheduledInstanceId": "ScheduledActivityInstance_1",
           "relativeToScheduledInstanceId": "ScheduledActivityInstance_3",
-          "windowLower": "",
+          "windowLower": "PT0M",
           "windowUpper": "P27D",
           "windowLabel": "-0..+27 days",
           "instanceType": "Timing"
@@ -86,7 +86,7 @@
           },
           "relativeFromScheduledInstanceId": "ScheduledActivityInstance_2",
           "relativeToScheduledInstanceId": "ScheduledActivityInstance_3",
-          "windowLower": "",
+          "windowLower": "PT0M",
           "windowUpper": "P3D",
           "windowLabel": "-0..+3 days",
           "instanceType": "Timing"

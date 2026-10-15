@@ -1048,7 +1048,7 @@ class TestTimings:
         )
         assert (timing.windowLabel, timing.windowLower, timing.windowUpper) == (
             "-0..+27 days",
-            "",
+            "PT0M",
             "P27D",
         )
 
@@ -1117,6 +1117,20 @@ class TestTimings:
 
 class TestWindows:
     def _timing(self, assembler, window):
+        """The window on a column that is not the anchor (Day 1 is)."""
+        assembler.execute(
+            [
+                timeline(
+                    [
+                        column("c1", timing="Day 1"),
+                        column("c2", timing="Day 8", window=window),
+                    ]
+                )
+            ]
+        )
+        return assembler.timelines[0].timings[1]
+
+    def _anchor(self, assembler, window):
         assembler.execute([timeline([column("c1", timing="Day 1", window=window)])])
         return assembler.timelines[0].timings[0]
 
@@ -1126,8 +1140,19 @@ class TestWindows:
         assert (timing.windowLower, timing.windowUpper) == ("P3D", "P3D")
 
     def test_an_asymmetric_window(self, assembler):
+        # A zero bound is the zero duration, never "" (DDF00006).
         timing = self._timing(assembler, value("-0..+2 hours"))
-        assert (timing.windowLower, timing.windowUpper) == ("", "PT2H")
+        assert (timing.windowLower, timing.windowUpper) == ("PT0M", "PT2H")
+
+    def test_a_window_with_no_after_bound(self, assembler):
+        timing = self._timing(
+            assembler, {"text": "-2", "before": 2, "after": 0, "unit": "days"}
+        )
+        assert (timing.windowLabel, timing.windowLower, timing.windowUpper) == (
+            "-2",
+            "P2D",
+            "PT0M",
+        )
 
     def test_a_zero_window_has_an_empty_label(self, assembler):
         timing = self._timing(assembler, value("", "-0..+0 days"))
@@ -1155,10 +1180,36 @@ class TestWindows:
             "P2D",
         )
 
-    def test_an_unread_window_keeps_its_printed_label(self, assembler):
+    def test_an_unread_window_is_no_window_and_a_warning(self, assembler, errors):
+        # A label with no bounds is a partly defined window (DDF00006).
         timing = self._timing(assembler, {"text": "See Section 1.3", "pattern": None})
         assert (timing.windowLabel, timing.windowLower, timing.windowUpper) == (
-            "See Section 1.3",
+            None,
+            "",
+            "",
+        )
+        assert any(
+            "window 'See Section 1.3' has no bounds" in e["message"]
+            for e in errors.to_dict(0)
+        )
+
+    def test_an_anchor_has_no_window(self, assembler, errors):
+        # A window must not be defined for an anchor timing (DDF00025).
+        timing = self._anchor(assembler, value("(±3 days)", "-3..+3 days"))
+        assert (timing.windowLabel, timing.windowLower, timing.windowUpper) == (
+            None,
+            "",
+            "",
+        )
+        assert any(
+            "printed window '(±3 days)' is not used" in e["message"]
+            for e in errors.to_dict(0)
+        )
+
+    def test_an_anchor_printing_na_has_no_window_label(self, assembler):
+        timing = self._anchor(assembler, {"text": "NA", "pattern": None})
+        assert (timing.windowLabel, timing.windowLower, timing.windowUpper) == (
+            None,
             "",
             "",
         )
@@ -1468,7 +1519,9 @@ class TestRedaction:
         assembler.execute([tl])
         (timing,) = assembler.timelines[0].timings
         assert (timing.windowLower, timing.windowUpper) == ("", "")
-        assert timing.windowLabel == "CCI"
+        # Bounds unknown, so no label either: a label alone is a partly
+        # defined window (DDF00006).
+        assert timing.windowLabel is None
 
     def test_a_consecutive_redacted_run_is_one_epoch(self, assembler):
         tl = timeline(
