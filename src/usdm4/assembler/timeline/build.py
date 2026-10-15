@@ -314,19 +314,25 @@ class TimelineBuild:
         created: list[Activity] = []
         rows = self._timeline.activities
         for index, row in enumerate(rows):
-            activity = self._get_or_create_activity(row, created)
+            activity = self._get_or_create_activity(row, created, self._own_group(row))
             for marker in row.get("markers") or []:
                 self._link(marker, activity=activity.id)
             self._activity_for[index] = activity
         # Parents are named, so link children once every row has its Activity.
-        by_name = {row["name"]: self._activity_for[i] for i, row in enumerate(rows)}
+        # A child named as its own group is not the group (issue 88), so it
+        # never answers for the group's name.
+        by_name = {
+            row["name"]: self._activity_for[i]
+            for i, row in enumerate(rows)
+            if not self._own_group(row)
+        }
         for index, row in enumerate(rows):
             parent_name = row.get("parent")
             if parent_name is None:
                 continue
             parent = by_name[parent_name]
             child = self._activity_for[index]
-            if child.id not in parent.childIds:
+            if child.id != parent.id and child.id not in parent.childIds:
                 parent.childIds.append(child.id)
         self._errors.info(
             f"Activities (timeline {self._t}): +{len(created)} new, "
@@ -334,20 +340,42 @@ class TimelineBuild:
             KlassMethodLocation(self.MODULE, "_add_activities"),
         )
 
-    def _get_or_create_activity(self, row: dict, created: list[Activity]) -> Activity:
+    def _own_group(self, row: dict) -> bool:
+        """The row is a child named as its own group — "Medical History"
+        under "Medical History", or a redacted row under a redacted group."""
+        parent = row.get("parent")
+        return parent is not None and self._naming.identity(
+            parent
+        ) == self._naming.identity(row["name"])
+
+    def _get_or_create_activity(
+        self, row: dict, created: list[Activity], own_group: bool = False
+    ) -> Activity:
         """The shared Activity for ``row['name']``, created on first sighting.
         The registry is keyed by identity (trimmed, case-folded), so the same
-        label on two timelines gives one Activity referenced by both."""
+        label on two timelines gives one Activity referenced by both. A child
+        named as its own group is a separate Activity (issue 88): keyed apart
+        from the group, named apart, the same label, and warned."""
         key = self._naming.identity(row["name"])
+        if own_group:
+            key = f"{key}\x00in\x00{key}"
         existing = self._state.activity_by_name.get(key)
         if existing is not None:
             return existing
+        if own_group:
+            self._errors.warning(
+                f"Timeline {self._t}: activity '{row['name']}' is a child of a "
+                "group with the same name; kept as a separate activity",
+                KlassMethodLocation(self.MODULE, "_add_activities"),
+            )
         bc_ids, sbc_ids, procedures = self._biomedical_concepts(row)
         seq = len(self._state.activity_by_name) + 1
         activity: Activity = self._builder.create(
             Activity,
             {
-                "name": self._naming.activity_name(row["name"], seq),
+                "name": self._naming.activity_name(
+                    row["name"], seq, identity=key if own_group else None
+                ),
                 "description": None,
                 "label": (row["name"] or "").strip() or None,
                 "definedProcedures": procedures,

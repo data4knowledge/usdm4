@@ -445,6 +445,18 @@ class TestProfileAttachment:
         assert self._activity(assembler, "Blood Draw").timelineId == profile.id
         assert self._attach_messages(errors) == []
 
+    def test_a_group_named_as_its_child_attaches_the_child(self, assembler, errors):
+        # Issue 88: the profile belongs to the scheduled row, not the group.
+        main = timeline(
+            [column("c1")],
+            [activity("PK"), activity("PK", ["c1"], parent="PK")],
+        )
+        assembler.execute([main, self._profile("PK")])
+        group, child = assembler.activities[0], assembler.activities[1]
+        assert child.timelineId == assembler.timelines[1].id
+        assert group.timelineId is None
+        assert self._attach_messages(errors) == []
+
     def test_no_attaches_to_is_built_unattached_and_warned(self, assembler, errors):
         assembler.execute([simple(), self._profile()])
         assert len(assembler.timelines) == 2
@@ -1277,6 +1289,62 @@ class TestActivities:
         )
         assembler.execute([tl])
         assert len(assembler.activities) == 1
+
+    def _own_group(
+        self, assembler, name="Medical History", child2="Historical illnesses"
+    ):
+        tl = timeline(
+            [column("c1"), column("c2")],
+            [
+                activity(name),
+                activity(name, ["c1"], parent=name),
+                activity(child2, ["c2"], parent=name),
+            ],
+        )
+        assembler.execute([tl])
+        return assembler.activities
+
+    def test_a_child_named_as_its_group_is_its_own_activity(self, assembler):
+        # Issue 88: never merged with its parent, never its own child.
+        group, child, other = self._own_group(assembler)
+        assert group.childIds == [child.id, other.id]
+        assert group.id not in group.childIds
+        assert child.label == group.label == "Medical History"
+        assert child.name != group.name
+        assert child.childIds == []
+
+    def test_its_marks_land_on_the_child(self, assembler):
+        group, child, other = self._own_group(assembler)
+        first, second = assembler.timelines[0].instances
+        assert first.activityIds == [child.id]
+        assert second.activityIds == [other.id]
+
+    def test_its_order_follows_the_group(self, assembler):
+        group, child, other = self._own_group(assembler)
+        assert (child.previousId, child.nextId) == (group.id, other.id)
+
+    def test_it_is_warned(self, assembler, errors):
+        self._own_group(assembler)
+        assert any(
+            "is a child of a group with the same name" in m for m in messages(errors)
+        )
+
+    def test_a_redacted_child_under_a_redacted_group(self, assembler):
+        group, child, other = self._own_group(assembler, name="CCI")
+        assert group.childIds == [child.id, other.id]
+        assert group.id != child.id
+
+    def test_same_name_rows_that_are_not_parent_and_child_still_share(self, assembler):
+        tl = timeline(
+            [column("c1"), column("c2")],
+            [
+                activity("Laboratory"),
+                activity("Vital signs", ["c1"], parent="Laboratory"),
+                activity("Vital signs", ["c2"]),
+            ],
+        )
+        assembler.execute([tl])
+        assert len(assembler.activities) == 2
 
     def test_activities_are_ordered_across_timelines(self, assembler):
         assembler.execute([simple()])

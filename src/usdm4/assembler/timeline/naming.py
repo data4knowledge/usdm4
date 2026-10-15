@@ -184,7 +184,7 @@ class Naming:
     # ------------------------------------------------------------------
     # Activities
 
-    def activity_name(self, text: str, seq: int) -> str:
+    def activity_name(self, text: str, seq: int, identity: str | None = None) -> str:
         """House style short name for an activity: `VS`, `IC`, `ECG`.
 
         `name` is a shorthand identifier — short, unique, and meaningful enough
@@ -197,6 +197,10 @@ class Naming:
         A curated name can collide too, by design (`house_names.yaml` maps
         synonyms onto one name). The first label to ask keeps it; a later one
         with different text is named as though it were not curated.
+
+        ``identity`` overrides what counts as the same activity, for a row
+        that shares its text with another activity yet is not it (a child
+        named as its own group, issue 88): it is then named apart.
         """
         raw = (text or "").strip()
         if not raw:
@@ -209,7 +213,7 @@ class Naming:
             # curated entry; the text itself is never rewritten.
             curated = table.get(key[:-1].strip())
         taken = self._activity_name_registry
-        me = self.identity(raw)
+        me = identity or self.identity(raw)
         if curated and taken.get(curated, me) == me:
             taken[curated] = me
             return curated

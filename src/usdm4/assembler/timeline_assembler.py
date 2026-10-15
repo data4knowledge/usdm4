@@ -192,9 +192,12 @@ class TimelineAssembler(BaseAssembler):
                     location,
                 )
                 continue
+            key = self._state.naming.identity(name)
+            # A group with a child of the same name (issue 88): the profile
+            # belongs to the scheduled child, not the group.
             activity = self._state.activity_by_name.get(
-                self._state.naming.identity(name)
-            )
+                f"{key}\x00in\x00{key}"
+            ) or self._state.activity_by_name.get(key)
             if activity is None:
                 self._errors.warning(
                     f"Profile timeline {t} attaches to '{name}', which is not an "
