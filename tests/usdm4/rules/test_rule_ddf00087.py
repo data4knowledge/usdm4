@@ -4,9 +4,7 @@ from unittest.mock import MagicMock
 
 from usdm4.rules.library.rule_ddf00087 import (
     RuleDDF00087,
-    _dedupe_consecutive,
     _walk_encounter_chain,
-    _walk_sai_chain,
 )
 from usdm4.rules.rule_template import RuleTemplate
 
@@ -42,30 +40,6 @@ def test_walk_encounter_chain_stops_at_non_dict():
     order, cycle = _walk_encounter_chain(by_id, "E1")
     assert order == ["E1", "MISSING"]  # appended before lookup finds nothing
     assert cycle is False
-
-
-def test_walk_sai_chain_linear():
-    by_id = {
-        "S1": {"id": "S1", "defaultConditionId": "S2"},
-        "S2": {"id": "S2"},
-    }
-    order, cycle = _walk_sai_chain(by_id, "S1")
-    assert order == ["S1", "S2"]
-    assert cycle is False
-
-
-def test_walk_sai_chain_cycle():
-    by_id = {
-        "S1": {"id": "S1", "defaultConditionId": "S2"},
-        "S2": {"id": "S2", "defaultConditionId": "S1"},
-    }
-    _, cycle = _walk_sai_chain(by_id, "S1")
-    assert cycle is True
-
-
-def test_dedupe_consecutive_preserves_order_removes_repeats():
-    assert _dedupe_consecutive(["A", "A", "B", "B", "A"]) == ["A", "B", "A"]
-    assert _dedupe_consecutive([]) == []
 
 
 # ---------------------------------------------------------------------------
@@ -231,3 +205,106 @@ class TestRuleDDF00087:
         }
         data = self._data({"InterventionalStudyDesign": [design]})
         assert rule.validate({"data": data}) is True
+
+
+# ---------------------------------------------------------------------------
+# Issue 89: a walk through decisions, and items used only by other timelines
+# ---------------------------------------------------------------------------
+
+
+def _sai(id_, item, following=None):
+    return {
+        "id": id_,
+        "instanceType": "ScheduledActivityInstance",
+        "encounterId": item,
+        "defaultConditionId": following,
+    }
+
+
+def _chain(*ids):
+    return [
+        {
+            "id": i,
+            "previousId": ids[n - 1] if n else None,
+            "nextId": ids[n + 1] if n + 1 < len(ids) else None,
+        }
+        for n, i in enumerate(ids)
+    ]
+
+
+def _validate(design):
+    data = MagicMock()
+    data.instances_by_klass.side_effect = lambda k: (
+        [design] if k == "InterventionalStudyDesign" else []
+    )
+    data.path_by_id.return_value = "$.path"
+    rule = RuleDDF00087()
+    return rule.validate({"data": data}), rule
+
+
+def _looping(chain):
+    """S1 (E1) -> S2 (E2) -> decision: default loops back to S2, the
+    condition leaves to S3 (E3)."""
+    return {
+        "id": "D1",
+        "encounters": chain,
+        "scheduleTimelines": [
+            {
+                "id": "T1",
+                "mainTimeline": True,
+                "entryId": "S1",
+                "instances": [
+                    _sai("S1", "E1", "S2"),
+                    _sai("S2", "E2", "X1"),
+                    {
+                        "id": "X1",
+                        "instanceType": "ScheduledDecisionInstance",
+                        "defaultConditionId": "S2",
+                        "conditionAssignments": [{"conditionTargetId": "S3"}],
+                    },
+                    _sai("S3", "E3"),
+                ],
+            }
+        ],
+    }
+
+
+def test_issue_89_a_walk_continues_past_a_repeat():
+    passed, rule = _validate(_looping(_chain("E1", "E2", "E3")))
+    assert passed is True
+    assert rule.errors().count() == 0
+
+
+def test_issue_89_a_swapped_chain_still_fails():
+    passed, _ = _validate(_looping(_chain("E1", "E3", "E2")))
+    assert passed is False
+
+
+def test_issue_89_an_item_only_on_another_timeline_is_not_counted():
+    design = _looping(_chain("E1", "E2", "E3", "E9"))
+    design["scheduleTimelines"].append(
+        {
+            "id": "T2",
+            "mainTimeline": False,
+            "entryId": "S9",
+            "instances": [_sai("S9", "E9")],
+        }
+    )
+    passed, rule = _validate(design)
+    assert passed is True
+    assert rule.errors().count() == 0
+
+
+def test_issue_89_a_decision_with_no_way_forward_ends_the_walk():
+    design = _looping(_chain("E1", "E2"))
+    design["scheduleTimelines"][0]["instances"][2]["conditionAssignments"] = []
+    passed, _ = _validate(design)
+    assert passed is True
+
+
+def test_issue_89_a_cycle_between_activity_instances_is_still_reported():
+    design = _looping(_chain("E1", "E2"))
+    design["scheduleTimelines"][0]["instances"][1]["defaultConditionId"] = "S1"
+    passed, rule = _validate(design)
+    assert passed is False
+    assert rule.errors().count() >= 1

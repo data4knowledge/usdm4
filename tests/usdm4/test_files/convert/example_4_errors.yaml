@@ -693,21 +693,6 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00084
-- attribute: previousId, nextId
-  exception: null
-  klass: Encounter
-  level: Warning
-  message: Encounter prev/next order ['Encounter_1', 'enc-002'] does not match order
-    derived from SAI flow []
-  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0]
-  rule: DDF00087
-  rule_id: DDF00087
-  rule_text: Encounter ordering using previous and next attributes is expected to
-    be consistent with the order of corresponding scheduled activity instances according
-    to their specified default conditions.
-  status: Failure
-  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
-  type: DDF00087
 - attribute: plannedAge
   exception: null
   klass: StudyDesignPopulation

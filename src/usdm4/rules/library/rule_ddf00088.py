@@ -1,15 +1,17 @@
 # MANUAL: do not regenerate
 #
-# Structural twin of DDF00087 with `epochs` replacing `encounters`
-# and `epochId` replacing `encounterId`. Per main ScheduleTimeline,
-# compare:
-#   A. StudyDesign.epochs linked-list (prev/next starting from
-#      previousId=null head).
-#   B. SAI flow: walk defaultConditionId from timeline.entryId,
-#      collect each SAI's epochId that belongs to this design,
-#      dedupe consecutive repeats.
-# Flag A != B. Also flag multiple chain heads and cycles.
+# Compare two epoch orderings per main ScheduleTimeline:
+#   A. The StudyDesign's epoch linked list, from the head (previousId=null)
+#      along nextId.
+#   B. The main timeline walked from entryId along defaultConditionId through
+#      activity and decision instances, a loop left by its first condition
+#      not yet walked (rules/timeline_walk.py, issue 89); each activity
+#      instance's epochId, first occurrence only.
+# Flag when A, restricted to the epochs met in B, differs from B: a epoch
+# used only by another timeline is never on the main walk. Also flag several
+# chain heads and a cycle in either walk.
 from usdm4.rules.rule_template import RuleTemplate
+from usdm4.rules.timeline_walk import first_occurrences, walk_main_timeline
 
 
 STUDY_DESIGN_KLASSES = [
@@ -34,14 +36,6 @@ def _walk_chain(by_id, head_id, next_attr):
             break
         cur = node.get(next_attr)
     return order, False
-
-
-def _dedupe_consecutive(seq):
-    out = []
-    for item in seq:
-        if not out or out[-1] != item:
-            out.append(item)
-    return out
 
 
 class RuleDDF00088(RuleTemplate):
@@ -94,19 +88,12 @@ class RuleDDF00088(RuleTemplate):
                     if isinstance(t, dict) and t.get("mainTimeline")
                 ]
                 for timeline in timelines:
-                    entry_id = timeline.get("entryId")
-                    if not entry_id:
+                    if not timeline.get("entryId"):
                         continue
-                    sais = [
-                        s
-                        for s in timeline.get("instances") or []
-                        if isinstance(s, dict)
-                        and s.get("instanceType") == "ScheduledActivityInstance"
-                    ]
-                    sais_by_id = {s.get("id"): s for s in sais if s.get("id")}
-                    sai_order, cycle_b = _walk_chain(
-                        sais_by_id, entry_id, "defaultConditionId"
-                    )
+                    # Issue 89: walk through decisions as well as activity
+                    # instances, and compare only the epochs the walk meets —
+                    # one used only by another timeline cannot be on it.
+                    walked, cycle_b = walk_main_timeline(timeline)
                     if cycle_b:
                         self._add_failure(
                             "Cycle detected while walking ScheduledActivityInstance defaultConditionId chain",
@@ -114,17 +101,18 @@ class RuleDDF00088(RuleTemplate):
                             "defaultConditionId",
                             data.path_by_id(timeline["id"]),
                         )
-                    order_b_raw = [
-                        sais_by_id[sid].get("epochId")
-                        for sid in sai_order
-                        if sid in sais_by_id
-                        and sais_by_id[sid].get("epochId") in design_epoch_ids
-                    ]
-                    order_b = _dedupe_consecutive(order_b_raw)
-
-                    if order_a != order_b:
+                    order_b = first_occurrences(
+                        [
+                            s.get("epochId")
+                            for s in walked
+                            if s.get("epochId") in design_epoch_ids
+                        ]
+                    )
+                    met = set(order_b)
+                    chain = [x for x in order_a if x in met]
+                    if chain != order_b:
                         self._add_failure(
-                            f"StudyEpoch prev/next order {order_a} does not match order derived from SAI flow {order_b}",
+                            f"StudyEpoch prev/next order {chain} does not match order derived from SAI flow {order_b}",
                             "StudyEpoch",
                             "previousId, nextId",
                             data.path_by_id(timeline["id"]),

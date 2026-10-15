@@ -3820,39 +3820,6 @@
   status: Failure
   timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
   type: DDF00083
-- attribute: previousId, nextId
-  exception: null
-  klass: Encounter
-  level: Warning
-  message: Encounter prev/next order ['Encounter_1', 'Encounter_2', 'Encounter_3',
-    'Encounter_4', 'Encounter_5', 'Encounter_6', 'Encounter_7'] does not match order
-    derived from SAI flow ['Encounter_1', 'Encounter_2', 'Encounter_3', 'Encounter_4',
-    'Encounter_5', 'Encounter_6', 'Encounter_3', 'Encounter_7']
-  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0]
-  rule: DDF00087
-  rule_id: DDF00087
-  rule_text: Encounter ordering using previous and next attributes is expected to
-    be consistent with the order of corresponding scheduled activity instances according
-    to their specified default conditions.
-  status: Failure
-  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
-  type: DDF00087
-- attribute: previousId, nextId
-  exception: null
-  klass: StudyEpoch
-  level: Warning
-  message: StudyEpoch prev/next order ['StudyEpoch_1', 'StudyEpoch_2', 'StudyEpoch_3',
-    'StudyEpoch_4', 'StudyEpoch_5'] does not match order derived from SAI flow ['StudyEpoch_1',
-    'StudyEpoch_2', 'StudyEpoch_3', 'StudyEpoch_4', 'StudyEpoch_2', 'StudyEpoch_5']
-  path: $.Study.StudyVersion[0].InterventionalStudyDesign[0].ScheduleTimeline[0]
-  rule: DDF00088
-  rule_id: DDF00088
-  rule_text: Epoch ordering using previous and next attributes is expected to be consistent
-    with the order of corresponding scheduled activity instances according to their
-    specified default conditions.
-  status: Failure
-  timestamp: YYYY-MM-DD HH:MM:SS.nnnnnn
-  type: DDF00088
 - attribute: studyInterventionId
   exception: null
   klass: Procedure
