@@ -253,3 +253,18 @@ as label: C215480 has no generic committee term, and that is the code the view r
 - `tests/usdm4/assembler/test_study_design_assembler_m11_112.py` — `TestControlType`, four tests. Pass (Dave).
 
 **Rejected.** A list (`control_types`): M11 gives Control Type One to one (Blinded Roles and committees are One to many). Putting the codes in `characteristics`: breaks the C207416 binding; that would need a CDISC CT change.
+
+## 2026-10-16 — GitHub 90: Adaptive design assembler input
+
+**Repo**: `usdm4`, branch `90-adaptive-design-assembler-input`, with usdm4_protocol GitHub 114 and usdm4_fhir GitHub 54 (their entries of the same date) and udp_prism (the 1.1.2 walk-through that found it). Dave ran the tests and merged.
+
+**What it was.** The study design input had no field for the M11 1.1.2 Adaptive Trial Design Indicator (C218706, Required, Yes / No from C217046), so StudyDesign.characteristics never held C98704 Adaptive Design (C207416, the DDF-RA home) and every protocol presented No.
+
+**What changed.**
+- `src/usdm4/assembler/schema/study_design_schema.py` — `adaptive_design: Optional[bool] = None`, beside the site and assignment fields.
+- `src/usdm4/assembler/study_design_assembler.py` — `ADAPTIVE_DESIGN` (C98704); `_build_characteristics` appends it when True; False and None add nothing (no characteristic is No).
+- `tests/usdm4/assembler/test_study_design_assembler_m11_112.py` — True, False / None, and order after the site and assignment characteristics.
+
+**Figures.** No corpus figure; measured through udp_prism: TCBCPT_01 (cell set to Yes) carries C98704 at step 1 and step 3.
+
+**Rejected.** Registering the gap instead of fixing it (Dave: a register row is a last resort).
