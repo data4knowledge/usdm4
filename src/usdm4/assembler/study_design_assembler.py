@@ -231,6 +231,9 @@ class StudyDesignAssembler(BaseAssembler):
     # C142489 with the committee name as label (DDF-RA lists C142489 among
     # the committee codes). C215480 has no generic "committee" term.
     OTHER_COMMITTEE = {"code": "C142489", "decode": "Data Monitoring Committee"}
+    # Adaptive Trial Design Indicator Yes: StudyDesign characteristic C98704
+    # (C207416 Study Design Characteristics), the DDF-RA home (GitHub 90).
+    ADAPTIVE_DESIGN = {"code": "C98704", "decode": "Adaptive Design"}
 
     def _build_indications(self, items: list[str]) -> list[Indication]:
         """One Indication per stated condition, label = the text.
@@ -299,7 +302,9 @@ class StudyDesignAssembler(BaseAssembler):
 
     def _build_characteristics(self, data: dict) -> list:
         """Site distribution, geographic scope and assignment method, each
-        one StudyDesign characteristic when stated and decoded."""
+        one StudyDesign characteristic when stated and decoded; Adaptive
+        Design when ``adaptive_design`` is True (False and None add nothing:
+        no characteristic is No)."""
         codes = [
             self._encoder.site_distribution(data.get("site_distribution")),
             self._encoder.site_geographic_scope(data.get("site_geographic_scope")),
@@ -307,6 +312,12 @@ class StudyDesignAssembler(BaseAssembler):
                 data.get("intervention_assignment_method")
             ),
         ]
+        if data.get("adaptive_design") is True:
+            codes.append(
+                self._builder.cdisc_code(
+                    self.ADAPTIVE_DESIGN["code"], self.ADAPTIVE_DESIGN["decode"]
+                )
+            )
         return [c for c in codes if c is not None]
 
     def _build_roles(self, data: dict) -> list[StudyRole]:

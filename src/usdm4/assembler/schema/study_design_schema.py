@@ -201,6 +201,10 @@ class StudyDesignInput(BaseModel):
     site_distribution: Optional[str] = None
     site_geographic_scope: Optional[str] = None
     intervention_assignment_method: Optional[str] = None
+    # Adaptive Trial Design Indicator (C218706): True -> StudyDesign
+    # characteristic C98704 Adaptive Design (GitHub 90). False / None add
+    # nothing; no characteristic is No.
+    adaptive_design: Optional[bool] = None
     # Control Type (C217279) -> one StudyDesign extension attribute, url
     # CT_EXT_URL, valueCode (GitHub 86). M11 cardinality is One to one.
     control_type: Optional[str] = None

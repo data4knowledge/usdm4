@@ -166,6 +166,32 @@ class TestCharacteristics:
         assert design.characteristics == []
         assert "not decoded" in str(errors.dump(0))
 
+    def test_adaptive_design(self):  # GitHub 90
+        _, design, _ = assemble({"adaptive_design": True})
+        assert codes(design.characteristics) == ["C98704"]
+        assert design.characteristics[0].decode == "Adaptive Design"
+
+    @pytest.mark.parametrize("value", [False, None])
+    def test_adaptive_design_not_set(self, value):
+        _, design, _ = assemble({"adaptive_design": value})
+        assert design.characteristics == []
+
+    def test_adaptive_design_beside_others(self):
+        _, design, _ = assemble(
+            {
+                "site_distribution": "Multicentre",
+                "site_geographic_scope": "Multiple Countries",
+                "intervention_assignment_method": "Randomisation",
+                "adaptive_design": True,
+            }
+        )
+        assert codes(design.characteristics) == [
+            "C217005",
+            "C217007",
+            "C46079",
+            "C98704",
+        ]
+
 
 class TestControlType:  # GitHub 86
     @staticmethod
