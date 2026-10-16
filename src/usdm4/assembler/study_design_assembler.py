@@ -331,7 +331,9 @@ class StudyDesignAssembler(BaseAssembler):
             code = self._encoder.blinded_role(text)
             if code is None:
                 continue
-            masking = self._create(Masking, {"text": f"{code.decode} blinded", "isMasked": True})
+            masking = self._create(
+                Masking, {"text": f"{code.decode} blinded", "isMasked": True}
+            )
             role = self._create_role(code, text, masking, len(roles))
             if role:
                 roles.append(role)
@@ -344,7 +346,10 @@ class StudyDesignAssembler(BaseAssembler):
                 roles.append(role)
         for text in data.get("other_committees") or []:
             text = (text or "").strip()
-            if not text or self._encoder._normalise_label(text) in self._encoder.NOT_APPLICABLE:
+            if (
+                not text
+                or self._encoder._normalise_label(text) in self._encoder.NOT_APPLICABLE
+            ):
                 continue
             code = self._builder.cdisc_code(
                 self.OTHER_COMMITTEE["code"], self.OTHER_COMMITTEE["decode"]
@@ -376,7 +381,9 @@ class StudyDesignAssembler(BaseAssembler):
             )
             return None
 
-    def _set_participation_duration(self, duration: dict | None, timelines: list) -> None:
+    def _set_participation_duration(
+        self, duration: dict | None, timelines: list
+    ) -> None:
         """Planned duration of trial participation -> main timeline."""
         if not duration:
             return

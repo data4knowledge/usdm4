@@ -1741,7 +1741,10 @@ class TestAmendmentsAssemblerChanges:
         section_ref = change.changedSections[0]
         assert section_ref.sectionNumber == "3.2"
         # The title is the C217272 title for 3.2, not the document's wording
-        assert section_ref.sectionTitle == "Secondary Objective(s) and Associated Estimand(s)"
+        assert (
+            section_ref.sectionTitle
+            == "Secondary Objective(s) and Associated Estimand(s)"
+        )
 
     def test_create_changes_with_multiline_sections(
         self, amendments_assembler, document_assembler
@@ -1822,7 +1825,9 @@ class TestAmendmentsAssemblerChanges:
         )
         assert len(result) == 1
         assert result[0].sectionNumber == "4.5"
-        assert result[0].sectionTitle == "Access to Trial Intervention After End of Trial"
+        assert (
+            result[0].sectionTitle == "Access to Trial Intervention After End of Trial"
+        )
 
         # Section number with comma separator
         result = amendments_assembler._extract_section_number_and_title(
@@ -2226,27 +2231,42 @@ class TestAmendmentsAssemblerSectionTitles:
     def test_document_title_corrected(self, amendments_assembler, document_assembler):
         amendments_assembler._document_assembler = document_assembler
         result = amendments_assembler._extract_section_number_and_title("1.1 Synopsis")
-        assert (result[0].sectionNumber, result[0].sectionTitle) == ("1.1", "Protocol Synopsis")
+        assert (result[0].sectionNumber, result[0].sectionTitle) == (
+            "1.1",
+            "Protocol Synopsis",
+        )
 
     def test_number_not_in_codelist_keeps_title_and_warns(
         self, amendments_assembler, document_assembler, errors
     ):
         amendments_assembler._document_assembler = document_assembler
         before = errors.count()
-        result = amendments_assembler._extract_section_number_and_title("4.2.1.1.1 Sponsor Sub-section")
-        assert (result[0].sectionNumber, result[0].sectionTitle) == ("4.2.1.1.1", "Sponsor Sub-section")
+        result = amendments_assembler._extract_section_number_and_title(
+            "4.2.1.1.1 Sponsor Sub-section"
+        )
+        assert (result[0].sectionNumber, result[0].sectionTitle) == (
+            "4.2.1.1.1",
+            "Sponsor Sub-section",
+        )
         assert errors.count() > before
 
     def test_named_section_unchanged(self, amendments_assembler, document_assembler):
         amendments_assembler._document_assembler = document_assembler
-        result = amendments_assembler._extract_section_number_and_title("Amendment Details")
-        assert (result[0].sectionNumber, result[0].sectionTitle) == ("", "Amendment Details")
+        result = amendments_assembler._extract_section_number_and_title(
+            "Amendment Details"
+        )
+        assert (result[0].sectionNumber, result[0].sectionTitle) == (
+            "",
+            "Amendment Details",
+        )
 
     def test_codelist_not_loaded_keeps_titles_and_logs(
         self, amendments_assembler, document_assembler, errors, monkeypatch
     ):
         amendments_assembler._document_assembler = document_assembler
-        monkeypatch.setattr(amendments_assembler._builder, "codelist", lambda codelist_id: None)
+        monkeypatch.setattr(
+            amendments_assembler._builder, "codelist", lambda codelist_id: None
+        )
         amendments_assembler._section_titles = None
         before = errors.error_count()
         result = amendments_assembler._extract_section_number_and_title("1.1 Synopsis")
@@ -2268,4 +2288,3 @@ class TestAmendmentsAssemblerSectionTitles:
         amendments_assembler._section_title("5.2", "y")
         assert calls == ["C217272"]
         amendments_assembler._section_titles = None
-

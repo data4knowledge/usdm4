@@ -275,9 +275,7 @@ class TestSynthesisedEpoch:
         assert design.epochs[0].get_extension(EPP_EXT_URL) is None
 
     def test_no_arms_no_epoch(self, assembler, population_assembler, timeline_empty):
-        assembler.execute(
-            _base_data(arms=[]), population_assembler, timeline_empty
-        )
+        assembler.execute(_base_data(arms=[]), population_assembler, timeline_empty)
         assert assembler.study_design.epochs == []
         assert assembler.study_design.studyCells == []
 
@@ -301,9 +299,7 @@ class TestSynthesisedEpoch:
     def test_explicit_elements_no_epoch(
         self, assembler, population_assembler, timeline_empty
     ):
-        data = _base_data(
-            elements=[{"name": "El1", "intervention_names": ["Drug A"]}]
-        )
+        data = _base_data(elements=[{"name": "El1", "intervention_names": ["Drug A"]}])
         assembler.execute(data, population_assembler, timeline_empty)
         assert assembler.study_design.epochs == []
 

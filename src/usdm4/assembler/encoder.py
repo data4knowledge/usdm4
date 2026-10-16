@@ -487,8 +487,15 @@ class Encoder:
             {"code": "C217004", "decode": "Single-Center Study"},
         ),
         (
-            ["MULTICENTRE", "MULTICENTER", "MULTI CENTRE", "MULTI CENTER",
-             "MULTI SITE", "MULTISITE", "MULTICENTER STUDY"],
+            [
+                "MULTICENTRE",
+                "MULTICENTER",
+                "MULTI CENTRE",
+                "MULTI CENTER",
+                "MULTI SITE",
+                "MULTISITE",
+                "MULTICENTER STUDY",
+            ],
             {"code": "C217005", "decode": "Multicenter Study"},
         ),
     ]
@@ -496,8 +503,10 @@ class Encoder:
     # StudyDesign.characteristics (C207416) <- M11 Site Geographic Scope (C217050)
     SITE_GEOGRAPHIC_SCOPE_MAP = [
         (["SINGLE COUNTRY"], {"code": "C217006", "decode": "Single Country"}),
-        (["MULTIPLE COUNTRIES", "MULTI COUNTRY", "MULTINATIONAL"],
-         {"code": "C217007", "decode": "Multiple Countries"}),
+        (
+            ["MULTIPLE COUNTRIES", "MULTI COUNTRY", "MULTINATIONAL"],
+            {"code": "C217007", "decode": "Multiple Countries"},
+        ),
     ]
 
     # StudyDesign.characteristics (C207416) <- M11 Intervention Assignment
@@ -527,47 +536,71 @@ class Encoder:
         (["PLACEBO"], {"code": "C49648", "decode": "Placebo"}),
         (["ACTIVE COMPARATOR"], {"code": "C49649", "decode": "Active Comparator"}),
         (["DOSE RESPONSE"], {"code": "C120841", "decode": "Dose Response"}),
-        (["DIFFERENT DOSE OR REGIMEN"],
-         {"code": "C218505", "decode": "Different Dose or Regimen"}),
+        (
+            ["DIFFERENT DOSE OR REGIMEN"],
+            {"code": "C218505", "decode": "Different Dose or Regimen"},
+        ),
         (["EXTERNAL"], {"code": "C218506", "decode": "External"}),
         (["SHAM PROCEDURE"], {"code": "C184727", "decode": "Sham Procedure"}),
         (["NO CONTROL"], {"code": "C28280", "decode": "No Control"}),
     ]
 
     BLINDING_SCHEMA_MAP = [
-        (["DOUBLE BLIND", "DOUBLE BLIND STUDY", "DOUBLE MASKED"],
-         {"code": "C15228", "decode": "Double Blind Study"}),
-        (["SINGLE BLIND", "SINGLE BLIND STUDY", "SINGLE MASKED"],
-         {"code": "C28233", "decode": "Single Blind Study"}),
-        (["OPEN LABEL", "OPEN LABEL STUDY", "OPEN"],
-         {"code": "C49659", "decode": "Open Label Study"}),
-        (["OBSERVER BLIND", "OBSERVER BLIND STUDY"],
-         {"code": "C187674", "decode": "Observer Blind Study"}),
+        (
+            ["DOUBLE BLIND", "DOUBLE BLIND STUDY", "DOUBLE MASKED"],
+            {"code": "C15228", "decode": "Double Blind Study"},
+        ),
+        (
+            ["SINGLE BLIND", "SINGLE BLIND STUDY", "SINGLE MASKED"],
+            {"code": "C28233", "decode": "Single Blind Study"},
+        ),
+        (
+            ["OPEN LABEL", "OPEN LABEL STUDY", "OPEN"],
+            {"code": "C49659", "decode": "Open Label Study"},
+        ),
+        (
+            ["OBSERVER BLIND", "OBSERVER BLIND STUDY"],
+            {"code": "C187674", "decode": "Observer Blind Study"},
+        ),
     ]
 
     # StudyRole.code (C215480) <- M11 Blinded Role (C217281). M11
     # "Participant" (C142710) is not a USDM role term; USDM's is Study
     # Subject (C41189). M11 "Not Applicable" means no blinded role.
     BLINDED_ROLE_MAP = [
-        (["PARTICIPANT", "PARTICIPANTS", "SUBJECT", "STUDY SUBJECT"],
-         {"code": "C41189", "decode": "Study Subject"}),
-        (["INVESTIGATOR", "INVESTIGATORS"],
-         {"code": "C25936", "decode": "Investigator"}),
-        (["CARE PROVIDER", "CARE PROVIDERS", "CAREGIVER"],
-         {"code": "C17445", "decode": "Caregiver"}),
-        (["OUTCOMES ASSESSOR", "OUTCOME ASSESSOR", "OUTCOMES ASSESSORS"],
-         {"code": "C207599", "decode": "Outcomes Assessor"}),
+        (
+            ["PARTICIPANT", "PARTICIPANTS", "SUBJECT", "STUDY SUBJECT"],
+            {"code": "C41189", "decode": "Study Subject"},
+        ),
+        (
+            ["INVESTIGATOR", "INVESTIGATORS"],
+            {"code": "C25936", "decode": "Investigator"},
+        ),
+        (
+            ["CARE PROVIDER", "CARE PROVIDERS", "CAREGIVER"],
+            {"code": "C17445", "decode": "Caregiver"},
+        ),
+        (
+            ["OUTCOMES ASSESSOR", "OUTCOME ASSESSOR", "OUTCOMES ASSESSORS"],
+            {"code": "C207599", "decode": "Outcomes Assessor"},
+        ),
         (["SPONSOR"], {"code": "C70793", "decode": "Clinical Study Sponsor"}),
     ]
 
     # StudyRole.code (C215480) <- M11 Independent Committee Name (C217282)
     INDEPENDENT_COMMITTEE_MAP = [
-        (["INDEPENDENT DATA MONITORING COMMITTEE", "IDMC"],
-         {"code": "C142578", "decode": "Independent Data Monitoring Committee"}),
-        (["DOSE ESCALATION COMMITTEE", "DEC"],
-         {"code": "C215671", "decode": "Dose Escalation Committee"}),
-        (["ENDPOINT ADJUDICATION COMMITTEE", "ADJUDICATION COMMITTEE", "EAC"],
-         {"code": "C78726", "decode": "Adjudication Committee"}),
+        (
+            ["INDEPENDENT DATA MONITORING COMMITTEE", "IDMC"],
+            {"code": "C142578", "decode": "Independent Data Monitoring Committee"},
+        ),
+        (
+            ["DOSE ESCALATION COMMITTEE", "DEC"],
+            {"code": "C215671", "decode": "Dose Escalation Committee"},
+        ),
+        (
+            ["ENDPOINT ADJUDICATION COMMITTEE", "ADJUDICATION COMMITTEE", "EAC"],
+            {"code": "C78726", "decode": "Adjudication Committee"},
+        ),
     ]
 
     # Values that mean "nothing stated" for every 1.1.2 lookup.

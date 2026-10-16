@@ -241,4 +241,3 @@ def test_ct_library_has_m11_section_codelist():
     terms = {t["conceptId"]: t["preferredTerm"] for t in section["terms"]}
     assert terms["C218515"] == "1.1 Protocol Synopsis"
     assert terms["C222769"] == "Title Page"
-

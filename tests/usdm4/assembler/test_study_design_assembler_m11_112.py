@@ -227,7 +227,9 @@ class TestControlType:  # GitHub 86
 
     def test_not_stated(self):
         for value in (None, "", "N/A"):
-            _, design, _ = assemble({"control_type": value} if value is not None else {})
+            _, design, _ = assemble(
+                {"control_type": value} if value is not None else {}
+            )
             assert self.control_codes(design) == [], value
 
 
@@ -290,7 +292,9 @@ class TestRoles:
         assert found["C78726"] == "Endpoint Adjudication Committee"
 
     def test_unknown_independent_committee_dropped(self):
-        version, _, errors = assemble({"independent_committees": ["Steering Committee"]})
+        version, _, errors = assemble(
+            {"independent_committees": ["Steering Committee"]}
+        )
         assert not [r for r in version.roles if r.label == "Steering Committee"]
         assert "not decoded" in str(errors.dump(0))
 
@@ -334,7 +338,9 @@ class TestParticipationDuration:
         assert duration.reasonDurationWillVary == reason
 
     def test_no_timeline_warns(self):
-        _, design, errors = assemble({"participation_duration": {"quantity": "26 weeks"}})
+        _, design, errors = assemble(
+            {"participation_duration": {"quantity": "26 weeks"}}
+        )
         assert design.scheduleTimelines == []
         assert "no main timeline" in str(errors.dump(0))
 

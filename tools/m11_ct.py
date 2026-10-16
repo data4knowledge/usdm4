@@ -53,7 +53,16 @@ SECTION_CODELIST_PREFIX = "ICH M11 Section "
 SHEET_PREFIX = "ICH M11 Terminology"
 
 # Column order of the published file.
-CODE, CODELIST, EXTENSIBLE, CODELIST_NAME, ICH_PT, ICH_SYNONYMS, ICH_DEFINITION, NCI_PT = range(8)
+(
+    CODE,
+    CODELIST,
+    EXTENSIBLE,
+    CODELIST_NAME,
+    ICH_PT,
+    ICH_SYNONYMS,
+    ICH_DEFINITION,
+    NCI_PT,
+) = range(8)
 
 
 # --------------------------------------------------------------------------
@@ -70,13 +79,27 @@ def _missing_dir() -> pathlib.Path:
 
 
 def _sdtm_cache_path() -> pathlib.Path:
-    return _repo_root() / "src" / "usdm4" / "ct" / "cdisc" / "library_cache" / "library_cache_usdm.yaml"
+    return (
+        _repo_root()
+        / "src"
+        / "usdm4"
+        / "ct"
+        / "cdisc"
+        / "library_cache"
+        / "library_cache_usdm.yaml"
+    )
 
 
 def default_terminology_path(version: str = M11_SPEC_VERSION) -> pathlib.Path | None:
     """Newest ``ICH M11 Terminology_*.xls`` in the sibling m11_specification
     repo, by the date in its file name; None when there is none."""
-    folder = _repo_root().parent / "m11_specification" / "m11_versions" / version / "specification"
+    folder = (
+        _repo_root().parent
+        / "m11_specification"
+        / "m11_versions"
+        / version
+        / "specification"
+    )
     files = sorted(folder.glob("ICH M11 Terminology_*.xls"))
     return files[-1] if files else None
 
@@ -99,7 +122,10 @@ def read_rows(path: pathlib.Path) -> tuple[str, list[list[str]]]:
     if sheet is None:
         raise ValueError(f"No '{SHEET_PREFIX} ...' sheet in {path}")
     release = sheet.name[len(SHEET_PREFIX) :].strip()
-    rows = [[str(cell.value).strip() for cell in sheet.row(r)] for r in range(1, sheet.nrows)]
+    rows = [
+        [str(cell.value).strip() for cell in sheet.row(r)]
+        for r in range(1, sheet.nrows)
+    ]
     return release, rows
 
 
@@ -137,7 +163,9 @@ def collect_codelists(rows: list[list[str]], release: str = "") -> dict[str, dic
         if row[CODE] and row[CODELIST]:
             codelist = codelists.get(row[CODELIST])
             if codelist is None:
-                raise ValueError(f"Term {row[CODE]} names codelist {row[CODELIST]} with no codelist row")
+                raise ValueError(
+                    f"Term {row[CODE]} names codelist {row[CODELIST]} with no codelist row"
+                )
             codelist["terms"].append(
                 {
                     "conceptId": row[CODE],
@@ -156,7 +184,9 @@ def collect_codelists(rows: list[list[str]], release: str = "") -> dict[str, dic
     return result
 
 
-def compute_extensions(codelists: dict[str, dict], sdtm_cache: dict[str, dict]) -> list[dict]:
+def compute_extensions(
+    codelists: dict[str, dict], sdtm_cache: dict[str, dict]
+) -> list[dict]:
     """M11 codes missing from each SDTM counterpart in ``M11_TO_SDTM``, as
     ``extends:`` entries. The preferred term is the NCI preferred term (the
     form SDTM publishes, e.g. "Phase II/III/IV Trial"), else the ICH one."""
@@ -167,7 +197,9 @@ def compute_extensions(codelists: dict[str, dict], sdtm_cache: dict[str, dict]) 
         sdtm = sdtm_cache.get(sdtm_id)
         if not m11 or not sdtm:
             continue
-        sdtm_ids = {t.get("conceptId") for t in sdtm.get("terms") or [] if isinstance(t, dict)}
+        sdtm_ids = {
+            t.get("conceptId") for t in sdtm.get("terms") or [] if isinstance(t, dict)
+        }
         terms = [
             {
                 "conceptId": t["conceptId"],
@@ -180,7 +212,9 @@ def compute_extensions(codelists: dict[str, dict], sdtm_cache: dict[str, dict]) 
             if t["conceptId"] not in sdtm_ids
         ]
         if terms:
-            extensions.append({"extends": sdtm_id, "source": NCIT_M11_SOURCE_TAG, "terms": terms})
+            extensions.append(
+                {"extends": sdtm_id, "source": NCIT_M11_SOURCE_TAG, "terms": terms}
+            )
     return extensions
 
 
@@ -200,14 +234,19 @@ def _header(kind: str, source: str, release: str) -> str:
 
 
 def _dump(payload: Any) -> str:
-    return yaml.safe_dump(payload, sort_keys=False, allow_unicode=True, default_flow_style=False)
+    return yaml.safe_dump(
+        payload, sort_keys=False, allow_unicode=True, default_flow_style=False
+    )
 
 
 def render_codelists(codelists: dict[str, dict], source: str, release: str) -> str:
     payload = []
     for cid in sorted(codelists):
         entry = dict(codelists[cid])
-        entry["terms"] = [{k: v for k, v in t.items() if k != "nciPreferredTerm"} for t in entry["terms"]]
+        entry["terms"] = [
+            {k: v for k, v in t.items() if k != "nciPreferredTerm"}
+            for t in entry["terms"]
+        ]
         payload.append(entry)
     header = _header(
         "Whole ICH M11 response codelists, not served by the CDISC Library API;\n"
@@ -246,8 +285,16 @@ def run(
     with open(sdtm_cache_path) as f:
         sdtm_cache = yaml.safe_load(f) or {}
     extensions = compute_extensions(codelists, sdtm_cache)
-    _write(out_dir / "m11_codelists.yaml", render_codelists(codelists, terminology.name, release), dry_run)
-    _write(out_dir / "missing_ct.yaml", render_extensions(extensions, terminology.name, release), dry_run)
+    _write(
+        out_dir / "m11_codelists.yaml",
+        render_codelists(codelists, terminology.name, release),
+        dry_run,
+    )
+    _write(
+        out_dir / "missing_ct.yaml",
+        render_extensions(extensions, terminology.name, release),
+        dry_run,
+    )
     return {
         "release": release,
         "codelists": len(codelists),
@@ -257,8 +304,15 @@ def run(
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Generate usdm4's M11 CT from the ICH M11 Terminology file.")
-    parser.add_argument("--terminology", type=pathlib.Path, default=None, help="Path to the ICH M11 Terminology .xls.")
+    parser = argparse.ArgumentParser(
+        description="Generate usdm4's M11 CT from the ICH M11 Terminology file."
+    )
+    parser.add_argument(
+        "--terminology",
+        type=pathlib.Path,
+        default=None,
+        help="Path to the ICH M11 Terminology .xls.",
+    )
     parser.add_argument("--sdtm-cache", type=pathlib.Path, default=_sdtm_cache_path())
     parser.add_argument("--out-dir", type=pathlib.Path, default=_missing_dir())
     parser.add_argument("--dry-run", action="store_true")

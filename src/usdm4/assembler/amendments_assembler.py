@@ -224,7 +224,9 @@ class AmendmentsAssembler(BaseAssembler):
                     KlassMethodLocation(self.MODULE, "_codelist_section_titles"),
                 )
             for term in (codelist or {}).get("terms") or []:
-                match = re.match(r"^(\d+(?:\.\d+)*)\s+(.+)$", term.get("preferredTerm") or "")
+                match = re.match(
+                    r"^(\d+(?:\.\d+)*)\s+(.+)$", term.get("preferredTerm") or ""
+                )
                 if match:
                     self._section_titles[match.group(1)] = match.group(2).strip()
         return self._section_titles

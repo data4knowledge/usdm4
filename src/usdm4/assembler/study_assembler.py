@@ -311,7 +311,9 @@ class StudyAssembler(BaseAssembler):
                     (
                         r
                         for r in roles
-                        if r.masking is None and r.code and r.code.code == role.code.code
+                        if r.masking is None
+                        and r.code
+                        and r.code.code == role.code.code
                     ),
                     None,
                 )
