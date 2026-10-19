@@ -1150,6 +1150,19 @@
       "appliesToIds": [
         "Activity_2"
       ]
+    },
+    {
+      "id": "Condition_4",
+      "extensionAttributes": [],
+      "name": "T1-COND4",
+      "label": "z",
+      "description": null,
+      "text": "Unanchored footnote.",
+      "dictionaryId": null,
+      "notes": [],
+      "instanceType": "Condition",
+      "contextIds": [],
+      "appliesToIds": []
     }
   ],
   "biomedical_concepts": [

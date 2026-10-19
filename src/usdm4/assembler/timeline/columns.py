@@ -96,12 +96,11 @@ class Column:
 
     @property
     def all_markers(self) -> list[str]:
-        """Every marker on this column's header, each once, in field order."""
-        return list(
-            dict.fromkeys(
-                m for name in VALUE_FIELDS for m in self.markers.get(name, [])
-            )
-        )
+        """Every marker on this column's header, each once, in field order,
+        then the markers on its notes (issue 94)."""
+        values = [m for name in VALUE_FIELDS for m in self.markers.get(name, [])]
+        notes = [m for note in self.notes for m in note.get("markers") or []]
+        return list(dict.fromkeys(values + notes))
 
     def is_redacted(self, name: str) -> bool:
         return name in self.redacted

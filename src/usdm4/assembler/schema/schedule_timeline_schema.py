@@ -368,10 +368,12 @@ class RepeatValue(_Value):
 
 class HeaderNote(_Model):
     """A further header row kept as text only — a second timing row, a timing
-    clarification, an unassigned row. Never read."""
+    clarification, an unassigned row. Its text is never read; its footnote
+    markers link to the column like a header value's (issue 94)."""
 
     role: str
     text: str
+    markers: list[str] = []
 
 
 class CopyOf(_Model):

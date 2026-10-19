@@ -3926,6 +3926,19 @@
     {
       "id": "Condition_13",
       "extensionAttributes": [],
+      "name": "T1-COND13",
+      "label": "a",
+      "description": null,
+      "text": "Short-term follow-up begins when the participant and investigator agree that the participant will no longer continue study treatment and lasts a minimum of 30 days following the last dose of study drug.",
+      "dictionaryId": null,
+      "notes": [],
+      "instanceType": "Condition",
+      "contextIds": [],
+      "appliesToIds": []
+    },
+    {
+      "id": "Condition_14",
+      "extensionAttributes": [],
       "name": "T2-COND1",
       "label": "cell-1",
       "description": null,
@@ -3936,6 +3949,19 @@
       "contextIds": [
         "Activity_25"
       ],
+      "appliesToIds": []
+    },
+    {
+      "id": "Condition_15",
+      "extensionAttributes": [],
+      "name": "T2-COND2",
+      "label": "a",
+      "description": null,
+      "text": "Continued-access follow-up begins when the participant and the investigator agree that the participant will no longer continue treatment in the continued-access period and lasts a minimum of 30 days following the last dose of study drug. In all cases, no follow-up procedures will be performed for a participant who withdraws informed consent unless he or she has explicitly provided permission and consent.",
+      "dictionaryId": null,
+      "notes": [],
+      "instanceType": "Condition",
+      "contextIds": [],
       "appliesToIds": []
     }
   ],

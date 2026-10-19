@@ -306,3 +306,18 @@ as label: C215480 has no generic committee term, and that is the code the view r
 **Found, not this work.** N27.
 
 **Downstream.** Nothing in usdm4_protocol, usdm4_fhir, protocol_corpus scripts or udp_prism reads `StudyEpoch.type`; goldens that store whole USDM with SoA epochs (usdm4_protocol and usdm4_fhir integration tests) will differ on epoch type only.
+
+## 2026-10-19 — Every footnote with a marker is kept as a condition
+
+**Repo**: `usdm4`, GitHub 94, branch `94-keep-every-footnote-condition`. Caller: the `protocol_corpus` footnotes rung (its issue 33; full entry in its `memory.md`, 2026-10-19).
+
+**What it was.** `TimelineBuild._add_conditions` dropped a footnote whose marker no column, activity or cell used (the docstring's Excel round-trip reason no longer holds: `usdm4_excel` imports a condition with no references with a warning), ignored a marker used with no legend entry without a word, never read markers on a `HeaderNote`, and listed an instance twice when a footnote sat on a column and on a cell in it. One condition per footnote, pointing at its instances and activities, stays (Dave).
+
+**What changed.**
+- `src/usdm4/assembler/timeline/build.py` — an unused footnote becomes a `Condition` with empty `contextIds` / `appliesToIds`, warned; a marker with no footnote is warned with the columns and activities it is on (`_where`); `_link` adds each instance and activity once; the summary reads `in / referenced / aligned / unused / dropped_no_ref`.
+- `src/usdm4/assembler/schema/schedule_timeline_schema.py` — `HeaderNote.markers` (input schema change).
+- `src/usdm4/assembler/timeline/columns.py` — `Column.all_markers` adds the notes' markers after the values'.
+- `docs/spec/timeline_assembler.md` — R9 restated.
+- Tests: `tests/usdm4/assembler/test_timeline_assembler.py` (4 new, 1 changed), `tests/usdm4/assembler/timeline/test_columns.py` (1 new, 1 changed). Pins re-saved: `features` and `nct04557384` gain three unused footnotes, `nct05565742`, `nct05565742_r6` and `nct06454630` lose a duplicated instance id; nothing else moved. 1,581 assembler tests pass (Dave ran the touched ones).
+
+**Rejected.** One condition per footnote per place printed (exact cells in USDM): a condition points at several instances and activities by design (Dave); the 5 of 71 cell footnotes whose cells are not a full rows-by-columns block keep their exact cells in the corpus ground truth. Moving a row-only footnote's activity from `contextIds` to `appliesToIds`: tidying, dropped.

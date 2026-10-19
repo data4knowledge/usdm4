@@ -355,10 +355,12 @@ withdrawn). A gate with nothing before it is a Fixed Reference, warned.
 Markers on header values (any field; a marker on two values of one column links once),
 activity names and cells link footnotes to instances and activities. A footnote whose
 marker is found becomes a `Condition` with its text verbatim and `contextIds` /
-`appliesToIds` from where the marker was found. An unanchored footnote is dropped and
-counted, never created without an anchor; a per-timeline summary line reports
-`in / referenced / aligned / dropped_no_ref / dropped_no_match`. Never resolved into
-logic.
+`appliesToIds` from where the marker was found, each instance and activity once. A
+marker on a header note (`HeaderNote.markers`) links like one on a header value. A
+footnote whose marker nothing uses is kept as a `Condition` with both lists empty
+(issue 94), so the legend survives whole; a footnote with no marker is dropped and
+counted; a marker used with no footnote is warned. A per-timeline summary line reports
+`in / referenced / aligned / unused / dropped_no_ref`. Never resolved into logic.
 
 ## 5. The expander
 

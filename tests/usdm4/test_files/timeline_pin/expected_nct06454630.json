@@ -1469,13 +1469,6 @@
       "notes": [],
       "instanceType": "Condition",
       "contextIds": [
-        "ScheduledActivityInstance_2",
-        "ScheduledActivityInstance_2",
-        "ScheduledActivityInstance_2",
-        "ScheduledActivityInstance_2",
-        "ScheduledActivityInstance_2",
-        "ScheduledActivityInstance_2",
-        "ScheduledActivityInstance_2",
         "ScheduledActivityInstance_2"
       ],
       "appliesToIds": [
