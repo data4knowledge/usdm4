@@ -56,7 +56,9 @@ class TestColumn:
         assert parsed.cycle.n == 1
         assert parsed.cycle_length_label == "Cycle = 21 days"
         assert (parsed.cycle_length.n, parsed.cycle_length.unit) == (21, "day")
-        assert parsed.notes == [{"role": "timing_clarification", "text": "pre-dose"}]
+        assert parsed.notes == [
+            {"role": "timing_clarification", "text": "pre-dose", "markers": []}
+        ]
         assert _messages(errors) == []
 
     def test_empty_column(self):
@@ -251,6 +253,17 @@ class TestMarkers:
             ),
         )
         assert parsed.all_markers == ["x", "y"]
+
+    def test_markers_on_a_note_follow_the_values(self):
+        # Issue 94.
+        parsed = parse_column(
+            0,
+            _column(
+                visit={"text": "V1", "markers": ["a"]},
+                notes=[{"role": "unassigned", "text": "Fasting", "markers": ["n", "a"]}],
+            ),
+        )
+        assert parsed.all_markers == ["a", "n"]
 
 
 class TestTimeline:

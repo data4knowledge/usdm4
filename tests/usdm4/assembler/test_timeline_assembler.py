@@ -1460,9 +1460,8 @@ class TestConditions:
         assert c.contextIds == [instances[0].id, instances[1].id]
         assert c.appliesToIds == [assembler.activities[0].id]
 
-    def test_unanchored_and_unmarked_footnotes_are_dropped_and_counted(
-        self, assembler, errors
-    ):
+    def test_an_unused_footnote_is_kept_with_no_context(self, assembler, errors):
+        # Issue 94: the legend survives whole; only an unmarked one is dropped.
         conditions = self._run(
             assembler,
             [
@@ -1472,15 +1471,63 @@ class TestConditions:
             ],
             visit=["a"],
         )
-        assert [c.name for c in conditions] == ["COND1"]
+        assert [c.name for c in conditions] == ["COND1", "COND2"]
+        unused = conditions[1]
+        assert (unused.label, unused.text) == ("z", "Nowhere.")
+        assert unused.contextIds == [] and unused.appliesToIds == []
         found = messages(errors)
-        assert any("Failed to align condition" in m for m in found)
+        assert any("Footnote 'z' is used on no column" in m for m in found)
         assert any("Condition has no reference" in m for m in found)
         assert any(
-            "Conditions T1: in=3, referenced=2, aligned=1, dropped_no_ref=1, "
-            "dropped_no_match=1" in m
+            "Conditions T1: in=3, referenced=2, aligned=2, unused=1, "
+            "dropped_no_ref=1" in m
             for m in found
         )
+
+    def test_a_marker_with_no_footnote_is_warned(self, assembler, errors):
+        conditions = self._run(
+            assembler, [{"marker": "a", "text": "A."}], visit=["a"], cell=["q"]
+        )
+        assert [c.label for c in conditions] == ["a"]
+        assert any(
+            "Marker 'q' is used on column 'c2', activity 'Consent' but has no "
+            "footnote in the legend" in m
+            for m in messages(errors)
+        )
+
+    def test_a_column_and_a_cell_in_it_list_the_instance_once(self, assembler):
+        tl = timeline(
+            [column("c1", visit="V1", markers=["a"])],
+            [
+                activity(
+                    "Consent",
+                    [{"column": "c1", "text": "X", "markers": ["a"]}],
+                    markers=["a"],
+                )
+            ],
+            [{"marker": "a", "text": "A."}],
+        )
+        assembler.execute([tl])
+        (c,) = assembler.conditions
+        assert c.contextIds == [assembler.timelines[0].instances[0].id]
+        assert c.appliesToIds == [assembler.activities[0].id]
+
+    def test_a_marker_on_a_header_note_is_context(self, assembler):
+        tl = timeline(
+            [
+                column(
+                    "c1",
+                    visit="V1",
+                    notes=[{"role": "unassigned", "text": "Fasting", "markers": ["n"]}],
+                ),
+                column("c2", visit="V2"),
+            ],
+            [activity("Consent", ["c2"])],
+            [{"marker": "n", "text": "N."}],
+        )
+        assembler.execute([tl])
+        (c,) = assembler.conditions
+        assert c.contextIds == [assembler.timelines[0].instances[0].id]
 
     def test_a_summary_even_with_no_footnotes(self, assembler, errors):
         self._run(assembler, [])
@@ -1496,7 +1543,10 @@ class TestConditions:
             [{"marker": "a", "text": "Mine."}],
         )
         assembler.execute([first, second])
-        assert [c.text for c in assembler.conditions] == ["Mine."]
+        # The second timeline's "a" is not the first's: it is kept unused.
+        (mine, other) = assembler.conditions
+        assert mine.text == "Mine." and mine.contextIds
+        assert other.text == "Other." and other.contextIds == []
 
     # Issue 64: markers are carried per header value.
 

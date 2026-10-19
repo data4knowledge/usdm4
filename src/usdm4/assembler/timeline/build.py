@@ -827,46 +827,57 @@ class TimelineBuild:
         links = self._condition_links.setdefault(
             marker, {"reference": marker, "timepoint_index": [], "activity_id": []}
         )
-        if activity is not None:
+        # Each instance and each activity once, however many places print the
+        # marker (issue 94).
+        if activity is not None and activity not in links["activity_id"]:
             links["activity_id"].append(activity)
-        if timepoint is not None:
+        if timepoint is not None and timepoint not in links["timepoint_index"]:
             links["timepoint_index"].append(timepoint)
 
     def _add_conditions(self) -> list[Condition]:
-        """A footnote becomes a ``Condition`` only when its marker is found on
-        a column, an activity or a cell of this timeline. An unanchored
-        footnote is skipped, not created, and counted: a condition with no
-        ``appliesTo`` breaks the Excel round trip downstream."""
+        """Every footnote with a marker becomes a ``Condition``, with
+        ``contextIds`` / ``appliesToIds`` from where its marker is found on
+        a column, an activity or a cell of this timeline. A footnote whose
+        marker nothing uses is kept with both lists empty (issue 94), so the
+        legend survives whole. A footnote with no marker is skipped and
+        counted; a marker used with no footnote is warned."""
         results: list[Condition] = []
         counts = {
             "in": 0,
             "referenced": 0,
             "aligned": 0,
+            "unused": 0,
             "dropped_no_ref": 0,
-            "dropped_no_match": 0,
         }
+        location = KlassMethodLocation(self.MODULE, "_add_conditions")
         footnotes = self._timeline.footnotes
         counts["in"] = len(footnotes)
+        legend: set[str] = set()
         for index, item in enumerate(footnotes):
             ref = item.get("marker")
             if not ref:
                 counts["dropped_no_ref"] += 1
                 self._errors.warning(
                     f"Condition has no reference, not created: {item}",
-                    KlassMethodLocation(self.MODULE, "_add_conditions"),
+                    location,
                 )
                 continue
             counts["referenced"] += 1
-            if ref not in self._condition_links:
-                counts["dropped_no_match"] += 1
+            legend.add(ref)
+            links = self._condition_links.get(ref)
+            if links is None:
+                counts["unused"] += 1
                 self._errors.warning(
-                    f"Failed to align condition {item}, not created.",
-                    KlassMethodLocation(self.MODULE, "_add_conditions"),
+                    f"Footnote '{ref}' is used on no column, activity or cell; "
+                    f"created with no context: {item}",
+                    location,
                 )
-                continue
-            links = self._condition_links[ref]
-            timepoint_ids = [self._sai_for[x].id for x in links["timepoint_index"]]
-            activity_ids = list(links["activity_id"])
+                timepoint_ids, activity_ids = [], []
+            else:
+                timepoint_ids = [
+                    self._sai_for[x].id for x in links["timepoint_index"]
+                ]
+                activity_ids = list(links["activity_id"])
             condition = self._builder.create(
                 Condition,
                 {
@@ -884,15 +895,31 @@ class TimelineBuild:
             if condition:
                 counts["aligned"] += 1
                 results.append(condition)
+        for ref, links in self._condition_links.items():
+            if ref not in legend:
+                self._errors.warning(
+                    f"Marker '{ref}' is used on {self._where(links)} but has no "
+                    f"footnote in the legend",
+                    location,
+                )
         self._errors.info(
             f"Conditions T{self._t}: in={counts['in']}, "
             f"referenced={counts['referenced']}, "
             f"aligned={counts['aligned']}, "
-            f"dropped_no_ref={counts['dropped_no_ref']}, "
-            f"dropped_no_match={counts['dropped_no_match']}",
-            KlassMethodLocation(self.MODULE, "_add_conditions"),
+            f"unused={counts['unused']}, "
+            f"dropped_no_ref={counts['dropped_no_ref']}",
+            location,
         )
         return results
+
+    def _where(self, links: dict) -> str:
+        """Where a marker is printed, for a warning: the columns by id and
+        the activities as printed."""
+        ids = {c.index: c.id for c in self._timeline.columns}
+        names = {a.id: a.label or a.name for a in self._activity_for.values()}
+        parts = [f"column '{ids.get(x, x)}'" for x in links["timepoint_index"]]
+        parts += [f"activity '{names.get(a, a)}'" for a in links["activity_id"]]
+        return ", ".join(parts) or "nothing"
 
     # ------------------------------------------------------------------
     # The timeline

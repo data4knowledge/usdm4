@@ -9,6 +9,8 @@ The docs: `aims.md` (what the package is for), `issues.md` (open problems, `N<n>
 State of the rule library: all 210 V4 DDF rules covered (207 implemented, 3 delegated to
 DDF00082's schema check).
 
+**2026-10-19:** GitHub 94 (every footnote with a marker kept as a condition, `HeaderNote.markers`, ids once) built on `94-keep-every-footnote-condition`, assembler tests green; merge and close. It changes the timeline input schema, so it lands before `usdm4_protocol` 119; the corpus footnotes rung (its issue 33) builds its reference with it.
+
 **2026-10-19:** GitHub 91 (a timing from a named column) and 92 (a first column's delay from the timeline's start) merged; their callers are `usdm4_protocol` 118 (merged) and the corpus `from` row (N94). Left for a follow-up: a column that begins its own timeline on an event (an asynchronous follow-up) is still planned inside its table; nothing here until the corpus or the reader splits it out.
 
 **2026-10-07:** GitHub 84 (repeating visit columns, U4-38) merged; its callers are `usdm4_protocol` 85 (merged) and `protocol_corpus` 31 (built). Nothing further here for the repeat until the repeating set's figures say so.
