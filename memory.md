@@ -268,3 +268,21 @@ as label: C215480 has no generic committee term, and that is the code the view r
 **Figures.** No corpus figure; measured through udp_prism: TCBCPT_01 (cell set to Yes) carries C98704 at step 1 and step 3.
 
 **Rejected.** Registering the gap instead of fixing it (Dave: a register row is a last resort).
+
+
+## 2026-10-19 — GitHub 91 and 92: a timing measured from a named column or the timeline's start
+
+**Repo**: `usdm4`, branches `91-timing-from-a-named-visit` and `92-first-column-delay-lost`, merged by Dave. Callers: `usdm4_protocol` 118 and the corpus `from` row (`protocol_corpus` N94; full entry in its `memory.md`, 2026-10-19).
+
+**What it was.** `TimingValue` held only a point or range on the study clock, and the plan measured every timed column from the anchor. A column printed as a delay after another visit (`30 days after EOT`) arrived untimed and took U4-3's zero timing from its neighbour; a timeline whose first column is a delay from an event made that column the anchor and lost the delay.
+
+**What changed.**
+- `src/usdm4/assembler/schema/schedule_timeline_schema.py` — `TimingValue.from_` (alias `from`): a column id, or `start` (`TIMELINE_START`) on the first column only; a value of 0 or more, never a range. The timeline refuses an unknown column, the column itself, `start` on a later column, and `start` when a column is called `start`.
+- `src/usdm4/assembler/timeline/columns.py` — a timing with `from` is `timing_delay` + `timing_from`, not `timing`: never the anchor, never read by another column's arithmetic; its printed text is the label.
+- `src/usdm4/assembler/timeline/plan.py` — `_node`: a delay from a column is `After` that column's instance (`_from_index`, warning and U4-3 when the id is missing); `from: start` builds a `START` node (`_start_node`) with no visit, the anchor when no column is one, else zero before the anchor; no "first column is the anchor" warning for it.
+- `src/usdm4/assembler/timeline/build.py`, `naming.py` — the start node becomes `T<n>-START`, no encounter, no activities, the timeline's entry.
+- Tests: `tests/usdm4/assembler/timeline/test_plan.py` (16), `tests/usdm4/assembler/schema/test_schedule_timeline_schema.py` (13), `tests/usdm4/assembler/test_timeline_assembler.py` (3). Timeline, schema, assembler and pin tests pass (Dave ran the full suite).
+
+**Figures.** None here; through the corpus, NCT02971956, NCT04250350 and NCT02551653 match on every rung with `usdm4_protocol` 118 (`protocol_corpus/docs/next_steps.md`).
+
+**Rejected.** Measuring an untimed column from the anchor instead of U4-3 (it puts early termination at Day 1, as when U4-3 was taken). A larger timing grammar carrying the source in the value text (`30 days from column 6`): the source is its own field.
