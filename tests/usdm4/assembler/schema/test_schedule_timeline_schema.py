@@ -516,3 +516,84 @@ class TestCopies:
         gate = {"id": "g1", "delay": {"min": 7, "unit": "days"}}
         with pytest.raises(ValueError, match="which is a gate, not a visit"):
             check_copies(self._pair(copy_of=("main", "g1"), main_columns=[gate]))
+
+
+class TestTimingFrom:
+    """Issue 91: a timing may name the column its value is measured from."""
+
+    def _columns(self, timing):
+        return [
+            {"id": "c1", "timing": {"text": "Day 1", "value": 1, "unit": "days"}},
+            {"id": "c2", "timing": timing},
+        ]
+
+    def test_from_a_known_column(self):
+        data = _timeline(
+            activities=[],
+            columns=self._columns(
+                {"text": "30 days after c1", "value": 30, "unit": "days", "from": "c1"}
+            ),
+        )
+        model = ScheduleTimelineInput.model_validate(data)
+        assert model.columns[1].timing.from_ == "c1"
+
+    def test_dumped_by_alias_as_from(self):
+        data = _timeline(
+            activities=[],
+            columns=self._columns(
+                {"text": "30 days", "value": 30, "unit": "days", "from": "c1"}
+            ),
+        )
+        dumped = ScheduleTimelineInput.model_validate(data).model_dump(by_alias=True)
+        assert dumped["columns"][1]["timing"]["from"] == "c1"
+
+    def test_round_trip_by_alias(self):
+        data = _timeline(
+            activities=[],
+            columns=self._columns(
+                {"text": "30 days", "value": 30, "unit": "days", "from": "c1"}
+            ),
+        )
+        once = ScheduleTimelineInput.model_validate(data).model_dump(by_alias=True)
+        assert (
+            ScheduleTimelineInput.model_validate(once).model_dump(by_alias=True) == once
+        )
+
+    @pytest.mark.parametrize(
+        "timing, match",
+        [
+            (
+                {"text": "x", "value": 30, "unit": "days", "from": "nope"},
+                "not a column here",
+            ),
+            (
+                {"text": "x", "value": 30, "unit": "days", "from": "c2"},
+                "its own column",
+            ),
+            (
+                {"text": "x", "start": 1, "end": 5, "unit": "days", "from": "c1"},
+                "not a range",
+            ),
+            (
+                {"text": "x", "value": -3, "unit": "days", "from": "c1"},
+                "never negative",
+            ),
+            ({"text": "x", "from": "c1"}, "needs its value and unit"),
+            ({"text": "x", "value": 3, "unit": "days", "from": " "}, "not blank"),
+        ],
+    )
+    def test_refused(self, timing, match):
+        with pytest.raises(ValidationError, match=match):
+            ScheduleTimelineInput.model_validate(
+                _timeline(activities=[], columns=self._columns(timing))
+            )
+
+    # must not fire
+
+    def test_a_timing_without_from_has_none(self):
+        assert (
+            TimingValue.model_validate(
+                {"text": "Day 1", "value": 1, "unit": "days"}
+            ).from_
+            is None
+        )

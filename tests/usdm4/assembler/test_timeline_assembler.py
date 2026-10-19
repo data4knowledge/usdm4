@@ -1634,3 +1634,51 @@ class TestRedaction:
         )
         assembler.execute([tl])
         assert [e.label for e in assembler.epochs] == ["CCI", "Treatment"]
+
+
+class TestTimingFromAColumn:
+    """Issue 91: a timing from a named column is written as an ``After``
+    timing of its value, relative to that column's instance."""
+
+    @staticmethod
+    def _input():
+        delay = {
+            "text": "30 days after last dose",
+            "value": 30,
+            "unit": "days",
+            "from": "eot",
+        }
+        return timeline(
+            [
+                column("c1", "Treatment", "V1", "Day 1"),
+                column("eot", "Treatment", "EOT", "Day 85"),
+                column("fu", "Follow-up", "FU", delay, "-7..+7 days"),
+            ],
+            [activity("Vitals", ["c1", "eot", "fu"])],
+        )
+
+    def test_after_the_named_instance(self, assembler, errors):
+        assembler.execute([self._input()])
+        t = assembler.timelines[0]
+        timing = next(
+            x
+            for x in t.timings
+            if x.relativeFromScheduledInstanceId == t.instances[2].id
+        )
+        assert timing.type.decode.startswith("After")
+        assert timing.value == "P30D"
+        assert timing.relativeToScheduledInstanceId == t.instances[1].id
+        assert timing.valueLabel == "30 days after last dose"
+        assert (timing.windowLower, timing.windowUpper) == ("P7D", "P7D")
+
+    def test_the_anchor_is_unchanged(self, assembler, errors):
+        assembler.execute([self._input()])
+        t = assembler.timelines[0]
+        anchor = next(x for x in t.timings if x.type.decode.startswith("Fixed"))
+        assert anchor.relativeFromScheduledInstanceId == t.instances[0].id
+        eot = next(
+            x
+            for x in t.timings
+            if x.relativeFromScheduledInstanceId == t.instances[1].id
+        )
+        assert eot.value == "P84D"

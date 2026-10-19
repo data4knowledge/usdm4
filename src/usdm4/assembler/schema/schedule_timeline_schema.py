@@ -39,7 +39,7 @@ contract other programs generate should say when it is misused.
 
 from typing import ClassVar, Literal
 
-from pydantic import BaseModel, ConfigDict, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 TimelineType = Literal[
     "main",
@@ -166,13 +166,20 @@ class TimingValue(_Value):
     - a point: ``{value: 1, unit: "days"}`` (``Day 1``);
     - a range: ``{start: -28, end: -1, unit: "days"}`` (``Day -28 to Day -1``)
       — the visit falls anywhere in the span; how that is stored in USDM is
-      ``usdm4``'s business (U4-35).
+      ``usdm4``'s business (U4-35);
+    - a delay from another column of the same timeline: ``{value: 30, unit:
+      "days", from: "C7"}`` (``30 days after last dose``, the last dose given
+      at column ``C7``) — not on the study clock (issue 91).
     """
+
+    model_config = ConfigDict(strict=False, extra="forbid", populate_by_name=True)
 
     value: int | None = None
     start: int | None = None
     end: int | None = None
     unit: Unit | None = None
+    # Issue 91: the id of the column the value is measured from.
+    from_: str | None = Field(default=None, alias="from")
 
     _STRUCTURE: ClassVar[tuple[str, ...]] = ("value", "start", "end", "unit")
 
@@ -189,6 +196,10 @@ class TimingValue(_Value):
     @model_validator(mode="after")
     def _check(self) -> "TimingValue":
         if self.redacted or not self._set():
+            if self.from_ is not None:
+                raise ValueError(
+                    "a timing from another column needs its value and unit"
+                )
             self._check_value()
             return self
         if self.unit is None:
@@ -199,6 +210,16 @@ class TimingValue(_Value):
             raise ValueError(
                 "a timing is a point (value) or a range (start, end), not both"
             )
+        if self.from_ is not None:
+            if not self.from_.strip():
+                raise ValueError("a timing's from names a column id, not blank")
+            if not point:
+                raise ValueError("a timing from another column is a value, not a range")
+            if self.value < 0:
+                raise ValueError(
+                    f"a timing from another column is a delay after it, never "
+                    f"negative ({self.value})"
+                )
         if not point and not range_:
             raise ValueError("a timing needs a value, or a start and an end")
         if range_:
@@ -482,6 +503,18 @@ class ScheduleTimelineInput(_Model):
         if duplicates:
             raise ValueError(f"column ids must be unique; repeated: {duplicates}")
         known_columns = set(column_ids)
+        for column in self.columns:
+            source = column.timing.from_ if column.timing is not None else None
+            if source is None:
+                continue
+            if source == column.id:
+                raise ValueError(
+                    f"column {column.id!r}: a timing cannot be from its own column"
+                )
+            if source not in known_columns:
+                raise ValueError(
+                    f"column {column.id!r}: timing from {source!r}, which is not a column here"
+                )
 
         names = [a.name for a in self.activities]
         for activity in self.activities:

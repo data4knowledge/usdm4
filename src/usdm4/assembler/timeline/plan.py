@@ -571,6 +571,9 @@ class Planner:
                 "range",
             )
         columns, anchor, where = ctx.columns, ctx.anchor, ctx.where
+        source = (
+            self._from_index(ctx, column) if column.timing_delay is not None else None
+        )
         if column.index == anchor:
             timing_type, relative_to = FIXED, anchor
             if column.timing is None:
@@ -579,6 +582,18 @@ class Planner:
                     "anchor is a zero timing",
                     "plan",
                 )
+        elif source is not None:
+            # Issue 91: a delay after the named column, whatever the anchor.
+            return InstanceNode(
+                column,
+                AFTER,
+                source,
+                column.timing_delay.value,
+                column.timing_delay.unit,
+                window,
+                window_from,
+                True,
+            )
         elif column.timing is None:
             # U4-3: no readable timing — zero from the neighbour toward the anchor.
             self._warn(
@@ -616,6 +631,20 @@ class Planner:
             window_from=window_from,
             timed=column.timing is not None,
         )
+
+    def _from_index(self, ctx: "_Context", column: Column) -> int | None:
+        """The index of the column a delay is measured from (issue 91); None,
+        with a warning, when no column of the timeline has that id."""
+        for other in ctx.columns:
+            if other.id == column.timing_from and other is not column:
+                return other.index
+        self._warn(
+            f"{ctx.where}, column '{column.id}': timing from "
+            f"'{column.timing_from}', which is not a column here; a zero timing "
+            "is used",
+            "plan",
+        )
+        return None
 
     def _interval(
         self,

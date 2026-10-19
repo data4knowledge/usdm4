@@ -913,3 +913,111 @@ class TestGates:
             "C2DEC",
             "G1DEC",
         ]
+
+
+class TestTimingFromAColumn:
+    """Issue 91: a timing measured from a named column is an ``After`` delay
+    from that column's instance, whatever the anchor."""
+
+    @staticmethod
+    def _from(value, source, unit="days", text=None):
+        return {
+            "text": text or f"{value} {unit} after {source}",
+            "value": value,
+            "unit": unit,
+            "from": source,
+        }
+
+    def _plan(self, columns, errors=None):
+        return Planner(errors or Errors()).plan(parse_timeline(timeline(columns)), 1)
+
+    def test_delay_after_the_named_column(self):
+        plan = self._plan(
+            [
+                column("c1", timing="Day 1"),
+                column("c2", timing="Day 8"),
+                column("c3", timing=self._from(30, "c2")),
+            ]
+        )
+        assert _links(plan)[2] == (AFTER, 1, 30)
+        assert plan.nodes[2].unit == "day"
+        assert plan.nodes[2].timed is True
+
+    def test_from_a_column_before_the_anchor(self):
+        plan = self._plan(
+            [
+                column("c1", timing="Day -7"),
+                column("c2", timing="Day 1"),
+                column("c3", timing=self._from(2, "c1", unit="weeks")),
+            ]
+        )
+        assert plan.anchor == 1
+        assert _links(plan)[2] == (AFTER, 0, 2)
+        assert plan.nodes[2].unit == "week"
+
+    def test_either_of_two_visits_is_two_columns(self):
+        plan = self._plan(
+            [
+                column("c1", timing="Day 1"),
+                column("eot", timing="Day 85"),
+                column("ed", visit="ED"),
+                column("fu1", timing=self._from(30, "eot")),
+                column("fu2", timing=self._from(30, "ed")),
+            ]
+        )
+        assert _links(plan)[3] == (AFTER, 1, 30)
+        assert _links(plan)[4] == (AFTER, 2, 30)
+
+    def test_window_is_kept(self):
+        columns = [
+            column("c1", timing="Day 1"),
+            column("c2", timing=self._from(30, "c1"), window="-7..+7 days"),
+        ]
+        plan = self._plan(columns)
+        assert plan.nodes[1].window is not None
+        assert (plan.nodes[1].window.lower, plan.nodes[1].window.upper) == (7, 7)
+
+    def test_label_keeps_the_printed_text(self):
+        parsed = parse_timeline(
+            timeline(
+                [
+                    column("c1", timing="Day 1"),
+                    column(
+                        "c2",
+                        timing=self._from(30, "c1", text="30 days after last dose"),
+                    ),
+                ]
+            )
+        )
+        assert parsed.columns[1].timing_label == "30 days after last dose"
+        assert parsed.columns[1].timing is None
+
+    # must not fire
+
+    def test_a_delay_column_is_never_the_anchor(self):
+        plan = self._plan(
+            [column("c1", timing=self._from(5, "c2")), column("c2", timing="Day 1")]
+        )
+        assert plan.anchor == 1
+
+    def test_a_timing_without_from_is_unchanged(self):
+        plan = self._plan([column("c1", timing="Day 1"), column("c2", timing="Day 31")])
+        assert _links(plan)[1] == (AFTER, 0, 30)
+
+    def test_untimed_column_is_still_zero_from_its_neighbour(self):
+        plan = self._plan(
+            [
+                column("c1", timing="Day 1"),
+                column("c2", timing=self._from(30, "c1")),
+                column("c3", visit="ET"),
+            ]
+        )
+        assert _links(plan)[2] == (AFTER, 1, 0)
+
+    def test_no_warning_for_a_resolved_delay(self):
+        errors = Errors()
+        self._plan(
+            [column("c1", timing="Day 1"), column("c2", timing=self._from(30, "c1"))],
+            errors,
+        )
+        assert _messages(errors) == []

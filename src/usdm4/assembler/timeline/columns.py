@@ -65,6 +65,10 @@ class Column:
     visit_label: str | None = None
     timing_label: str | None = None
     timing: TimingPoint | None = None
+    # Issue 91: a delay from another column (``timing_from``, its id), not a
+    # point on the study clock; ``timing`` stays None.
+    timing_delay: TimingPoint | None = None
+    timing_from: str | None = None
     # A scheduled time that is a range; ``timing`` is then its start.
     time_range: TimeRange | None = None
     window_label: str | None = None
@@ -163,12 +167,23 @@ class _Reader:
         self.warn(name, f"sent as text only ({_text(value)!r}); not read")
 
 
+def _from(value: dict) -> str | None:
+    """The column a timing is measured from (issue 91): ``from`` as the
+    assembler dumps it (by alias), ``from_`` as a plain dump does."""
+    return value.get("from") or value.get("from_")
+
+
 def _read_timing(column: Column, value: dict, reader: _Reader) -> None:
     unit = value.get("unit")
     if _structured(value, "start", "unit"):
         column.time_range = TimeRange(singular(unit), value["start"], value["end"])
         column.timing = TimingPoint(column.time_range.unit, column.time_range.start)
         rendered = render_time_range(column.time_range)
+    elif _structured(value, "value", "unit") and _from(value):
+        # Issue 91: measured from another column, not from the anchor.
+        column.timing_delay = TimingPoint(singular(unit), value["value"])
+        column.timing_from = _from(value)
+        rendered = f"{render_timing(column.timing_delay)} after {column.timing_from}"
     elif _structured(value, "value", "unit"):
         column.timing = TimingPoint(singular(unit), value["value"])
         rendered = render_timing(column.timing)
