@@ -1682,3 +1682,40 @@ class TestTimingFromAColumn:
             if x.relativeFromScheduledInstanceId == t.instances[1].id
         )
         assert eot.value == "P84D"
+
+
+class TestTimingFromTheStart:
+    """Issue 92: a follow-up timeline entered on an event, its first visit a
+    delay from that event."""
+
+    @staticmethod
+    def _follow_up():
+        delay = {
+            "text": "30 days after last dose",
+            "value": 30,
+            "unit": "days",
+            "from": "start",
+        }
+        return timeline(
+            [column("fu", "Follow-up", "FU", delay, "-7..+7 days")],
+            [activity("Vitals", ["fu"])],
+            type="follow_up",
+        )
+
+    def test_start_instance_then_the_visit(self, assembler, errors):
+        assembler.execute([simple(), self._follow_up()])
+        t = assembler.timelines[1]
+        start, visit = t.instances[0], t.instances[1]
+        assert start.encounterId is None and start.activityIds == []
+        assert t.entryId == start.id
+        timing = next(
+            x for x in t.timings if x.relativeFromScheduledInstanceId == visit.id
+        )
+        assert timing.type.decode.startswith("After")
+        assert timing.value == "P30D"
+        assert timing.relativeToScheduledInstanceId == start.id
+        assert (timing.windowLower, timing.windowUpper) == ("P7D", "P7D")
+        anchor = next(
+            x for x in t.timings if x.relativeFromScheduledInstanceId == start.id
+        )
+        assert anchor.type.decode.startswith("Fixed")

@@ -270,6 +270,11 @@ class Naming:
         the study with the SAI names."""
         return self._register_sai(f"C{cycle}DEC" if cycle is not None else f"T{t}-DEC")
 
+    def start_name(self, t: int) -> str:
+        """The start instance of a timeline whose first column is a delay
+        from it (issue 92): ``T1-START``."""
+        return self._register_sai(f"T{t}-START")
+
     def end_name(self, t: int) -> str:
         """The end instance after a range that is the last column (issue
         69): ``T1-END``."""

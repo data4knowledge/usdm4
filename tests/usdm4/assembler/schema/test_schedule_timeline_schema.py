@@ -597,3 +597,43 @@ class TestTimingFrom:
             ).from_
             is None
         )
+
+
+class TestTimingFromTheStart:
+    """Issue 92: ``from: start`` names the timeline's start, first column only."""
+
+    @staticmethod
+    def _delay(value=30):
+        return {
+            "text": "30 days after last dose",
+            "value": value,
+            "unit": "days",
+            "from": "start",
+        }
+
+    def test_first_column_from_the_start(self):
+        data = _timeline(activities=[], columns=[{"id": "fu", "timing": self._delay()}])
+        assert (
+            ScheduleTimelineInput.model_validate(data).columns[0].timing.from_
+            == "start"
+        )
+
+    def test_only_the_first_column(self):
+        columns = [
+            {"id": "c1", "timing": {"text": "Day 1", "value": 1, "unit": "days"}},
+            {"id": "fu", "timing": self._delay()},
+        ]
+        with pytest.raises(ValidationError, match="only the first column"):
+            ScheduleTimelineInput.model_validate(
+                _timeline(activities=[], columns=columns)
+            )
+
+    def test_ambiguous_with_a_column_called_start(self):
+        columns = [
+            {"id": "fu", "timing": self._delay()},
+            {"id": "start", "timing": {"text": "Day 1", "value": 1, "unit": "days"}},
+        ]
+        with pytest.raises(ValidationError, match="ambiguous"):
+            ScheduleTimelineInput.model_validate(
+                _timeline(activities=[], columns=columns)
+            )

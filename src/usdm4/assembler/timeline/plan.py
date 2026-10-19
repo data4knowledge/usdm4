@@ -156,6 +156,10 @@ class _CycleStart:
 DECISION = "decision"
 END = "end"
 GATE = "gate"
+# Issue 92: the node for a timeline's start, when its first column is a delay
+# from it. Its key, and what that column's ``from`` names.
+START = "start"
+START_KEY = "START"
 
 
 @dataclass
@@ -254,7 +258,10 @@ class Planner:
         anchors: list[int | str] = []
         for number, period in enumerate(periods, start=1):
             anchor_column = self.find_anchor(period)
-            if not any(self._is_candidate(c) for c in period):
+            starts_on_delay = (
+                number == 1 and bool(period) and period[0].timing_from == START
+            )
+            if not any(self._is_candidate(c) for c in period) and not starts_on_delay:
                 label = where if len(periods) == 1 else f"{where}, period {number}"
                 self._warn(
                     f"{label}: no column has a timing of 0 or more; the first "
@@ -276,6 +283,13 @@ class Planner:
         first = context_of[periods[0][0].index] if periods[0] else None
         markers = {s.first: s for s in starts.values() if s.column is None}
         nodes: list[InstanceNode] = []
+        if columns and columns[0].timing_from == START:
+            # Issue 92: the first column is a delay from the timeline's start,
+            # so the start is a node of its own and that column is timed from it.
+            nodes.append(self._start_node(periods[0], first))
+            if first is not None and first.anchor == columns[0].index:
+                first.anchor = START_KEY
+                first.anchor_point = None
         gates = repeats = 0
         for column in columns:
             previous = nodes[-1].key if nodes else None
@@ -571,6 +585,17 @@ class Planner:
                 "range",
             )
         columns, anchor, where = ctx.columns, ctx.anchor, ctx.where
+        if column.timing_from == START and column.timing_delay is not None:
+            return InstanceNode(
+                column,
+                AFTER,
+                START_KEY,
+                column.timing_delay.value,
+                column.timing_delay.unit,
+                window,
+                window_from,
+                True,
+            )
         source = (
             self._from_index(ctx, column) if column.timing_delay is not None else None
         )
@@ -630,6 +655,25 @@ class Planner:
             window=window,
             window_from=window_from,
             timed=column.timing is not None,
+        )
+
+    def _start_node(self, period: list[Column], ctx: "_Context | None") -> InstanceNode:
+        """The timeline's start (issue 92): not a visit, in the first column's
+        epoch. The anchor when no column is one; else zero before the anchor."""
+        if ctx is None or not any(self._is_candidate(c) for c in period):
+            timing_type, relative_to, timed = FIXED, START_KEY, True
+        else:
+            timing_type, relative_to, timed = BEFORE, ctx.anchor, False
+        return InstanceNode(
+            column=None,
+            timing_type=timing_type,
+            relative_to=relative_to,
+            duration=0,
+            unit="day",
+            timed=timed,
+            marker=START_KEY,
+            epoch_column=period[0].index if period else 0,
+            kind=START,
         )
 
     def _from_index(self, ctx: "_Context", column: Column) -> int | None:

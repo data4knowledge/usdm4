@@ -19,6 +19,8 @@ from src.usdm4.assembler.timeline.plan import (
     END,
     FIXED,
     GATE,
+    START,
+    START_KEY,
     Planner,
 )
 from tests.usdm4.assembler.timeline.helpers import column, timeline, value
@@ -1021,3 +1023,91 @@ class TestTimingFromAColumn:
             errors,
         )
         assert _messages(errors) == []
+
+
+class TestTimingFromTheStart:
+    """Issue 92: a first column timed from the timeline's start is a delay
+    from a start node of its own, not the anchor."""
+
+    @staticmethod
+    def _start(value, unit="days", text=None):
+        return {
+            "text": text or f"{value} {unit} after last dose",
+            "value": value,
+            "unit": unit,
+            "from": "start",
+        }
+
+    def _plan(self, columns, errors=None):
+        return Planner(errors or Errors()).plan(
+            parse_timeline(timeline(columns, type="follow_up")), 1
+        )
+
+    def test_start_node_then_the_delay(self):
+        plan = self._plan([column("fu", timing=self._start(30))])
+        start, visit = plan.nodes
+        assert start.column is None and start.kind == START
+        assert (start.timing_type, start.relative_to, start.duration) == (
+            FIXED,
+            START_KEY,
+            0,
+        )
+        assert (visit.timing_type, visit.relative_to, visit.duration) == (
+            AFTER,
+            START_KEY,
+            30,
+        )
+        assert plan.anchor == START_KEY
+
+    def test_later_columns_follow_as_now(self):
+        plan = self._plan(
+            [column("fu1", timing=self._start(30)), column("fu2", visit="FU2")]
+        )
+        assert _links(plan)[2] == (AFTER, 0, 0)
+
+    def test_a_later_delay_from_the_first_visit(self):
+        plan = self._plan(
+            [
+                column("fu1", timing=self._start(30)),
+                column(
+                    "fu2",
+                    timing={
+                        "text": "90 days",
+                        "value": 60,
+                        "unit": "days",
+                        "from": "fu1",
+                    },
+                ),
+            ]
+        )
+        assert _links(plan)[2] == (AFTER, 0, 60)
+
+    def test_with_a_timed_column_the_start_is_zero_before_the_anchor(self):
+        plan = self._plan(
+            [column("fu", timing=self._start(30)), column("d1", timing="Day 1")]
+        )
+        assert plan.anchor == 1
+        assert (plan.nodes[0].timing_type, plan.nodes[0].relative_to) == (BEFORE, 1)
+        assert _links(plan)[1] == (AFTER, START_KEY, 30)
+
+    def test_no_anchor_warning(self):
+        errors = Errors()
+        self._plan([column("fu", timing=self._start(30))], errors)
+        assert _messages(errors) == []
+
+    # must not fire
+
+    def test_a_first_column_without_from_start_has_no_start_node(self):
+        plan = self._plan([column("c1", timing="Day 1"), column("c2", timing="Day 8")])
+        assert all(n.kind != START for n in plan.nodes)
+
+    def test_a_delay_from_a_column_has_no_start_node(self):
+        plan = self._plan(
+            [
+                column("c1", timing="Day 1"),
+                column(
+                    "c2", timing={"text": "x", "value": 5, "unit": "days", "from": "c1"}
+                ),
+            ]
+        )
+        assert all(n.kind != START for n in plan.nodes)

@@ -47,6 +47,7 @@ from usdm4.assembler.timeline.plan import (
     END,
     FIXED,
     GATE,
+    START,
     Planner,
     TimelinePlan,
 )
@@ -462,6 +463,8 @@ class TimelineBuild:
                     sai = self._add_decision(node)
                 elif node.kind == END:
                     sai = self._add_end(node)
+                elif node.kind == START:
+                    sai = self._add_start(node)
                 else:
                     sai = self._add_start_marker(node)
                 self._sai_for[node.key] = sai
@@ -594,6 +597,24 @@ class TimelineBuild:
                 "defaultConditionId": None,
                 "epochId": self._epoch_id(node.epoch_column),
                 "conditionAssignments": [],
+            },
+        )
+
+    def _add_start(self, node) -> ScheduledActivityInstance:
+        """The timeline's start (issue 92), when its first column is a delay
+        from it. Not a visit — no encounter, no activities."""
+        return self._builder.create(
+            ScheduledActivityInstance,
+            {
+                "name": self._naming.start_name(self._t),
+                "description": "Start of the timeline; its first visit is a "
+                "delay from it",
+                "label": "",
+                "timelineExitId": None,
+                "encounterId": None,
+                "defaultConditionId": None,
+                "epochId": self._epoch_id(node.epoch_column),
+                "activityIds": [],
             },
         )
 

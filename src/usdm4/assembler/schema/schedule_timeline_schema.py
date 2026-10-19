@@ -160,6 +160,10 @@ class LabelValue(_Value):
         return self
 
 
+# Issue 92: a timing's ``from`` naming the timeline's start, not a column.
+TIMELINE_START = "start"
+
+
 class TimingValue(_Value):
     """A scheduled time, in printed day (week, hour …) numbers.
 
@@ -169,7 +173,10 @@ class TimingValue(_Value):
       ``usdm4``'s business (U4-35);
     - a delay from another column of the same timeline: ``{value: 30, unit:
       "days", from: "C7"}`` (``30 days after last dose``, the last dose given
-      at column ``C7``) — not on the study clock (issue 91).
+      at column ``C7``) — not on the study clock (issue 91);
+    - a delay from the timeline's start, on its first column only: ``{value:
+      30, unit: "days", from: "start"}`` (a follow-up entered when the last
+      dose is taken at home; issue 92).
     """
 
     model_config = ConfigDict(strict=False, extra="forbid", populate_by_name=True)
@@ -178,7 +185,8 @@ class TimingValue(_Value):
     start: int | None = None
     end: int | None = None
     unit: Unit | None = None
-    # Issue 91: the id of the column the value is measured from.
+    # Issue 91: the id of the column the value is measured from; issue 92:
+    # ``TIMELINE_START`` for the timeline's start.
     from_: str | None = Field(default=None, alias="from")
 
     _STRUCTURE: ClassVar[tuple[str, ...]] = ("value", "start", "end", "unit")
@@ -503,9 +511,21 @@ class ScheduleTimelineInput(_Model):
         if duplicates:
             raise ValueError(f"column ids must be unique; repeated: {duplicates}")
         known_columns = set(column_ids)
-        for column in self.columns:
+        for position, column in enumerate(self.columns):
             source = column.timing.from_ if column.timing is not None else None
             if source is None:
+                continue
+            if source == TIMELINE_START:
+                if TIMELINE_START in known_columns:
+                    raise ValueError(
+                        f"column {column.id!r}: timing from {TIMELINE_START!r} is "
+                        f"ambiguous, a column has the id {TIMELINE_START!r}"
+                    )
+                if position != 0:
+                    raise ValueError(
+                        f"column {column.id!r}: only the first column may be timed "
+                        f"from the timeline's start"
+                    )
                 continue
             if source == column.id:
                 raise ValueError(
