@@ -1252,10 +1252,10 @@
       "type": {
         "id": "Code_1",
         "extensionAttributes": [],
-        "code": "C101526",
+        "code": "C202487",
         "codeSystem": "http://www.cdisc.org",
         "codeSystemVersion": "2026-03-27",
-        "decode": "Treatment Epoch",
+        "decode": "Screening Epoch",
         "instanceType": "Code"
       },
       "previousId": null,

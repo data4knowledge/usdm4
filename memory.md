@@ -286,3 +286,23 @@ as label: C215480 has no generic committee term, and that is the code the view r
 **Figures.** None here; through the corpus, NCT02971956, NCT04250350 and NCT02551653 match on every rung with `usdm4_protocol` 118 (`protocol_corpus/docs/next_steps.md`).
 
 **Rejected.** Measuring an untimed column from the anchor instead of U4-3 (it puts early termination at Day 1, as when U4-3 was taken). A larger timing grammar carrying the source in the value text (`30 days from column 6`): the source is its own field.
+
+## 2026-10-19 — GitHub 93 (branch `93-type-soa-epochs-from-ct`): SoA epochs typed from C99079
+
+**Repo**: `usdm4`. Driven from usdm4_protocol GitHub 117 (the SDTM trial design model, its decision D23) and udp_prism's trial design work (their entries of the same date). Nothing committed.
+
+**What it was.** `timeline/build.py` `_add_epochs` matched each schedule epoch heading against the C99079 terms in `data/house_names.yaml` to choose its name (`Screening` -> `SCR`), then typed every epoch Treatment Epoch, so screening, washout and follow-up epochs were all typed as treatment.
+
+**What changed.**
+- `src/usdm4/assembler/timeline/naming.py` — `Naming.epoch_term(label)`: the C99079 submission value a heading matches (longest candidate first, as before), or None. `epoch_name` now uses it; names are unchanged.
+- `src/usdm4/assembler/timeline/build.py` — `_epoch_type`: the type from that term through the CT library (all 15 house terms resolve, e.g. SCREENING -> C202487 Screening Epoch, WASHOUT -> C42872 Washout Period, FOLLOW-UP -> C202578 Follow-Up Epoch). Unmatched -> Treatment Epoch with a warning naming the heading; redacted -> Treatment Epoch, no warning.
+- `tests/usdm4/assembler/timeline/test_epoch_type.py` — 18 tests: the match, names unchanged, types, unmatched warned, redacted.
+- `tests/usdm4/test_files/timeline_pin/expected_*.json` — all 9 pins re-saved; checked first that the only differences were `epochs[].type` code and decode.
+
+**Figures.** Full suite 3981 passed, 2 skipped, 2 xfailed (run in this session; Dave's gate passed). Typed over the existing step 1 USDM labels: udp_prism 47 of 78 epochs, protocol_corpus 1,353 of 2,591; the rest keep Treatment Epoch.
+
+**Rejected.** Fixing the `match` lists in the same change: it changes epoch names too (Dave: separate, measured on its own).
+
+**Found, not this work.** N27.
+
+**Downstream.** Nothing in usdm4_protocol, usdm4_fhir, protocol_corpus scripts or udp_prism reads `StudyEpoch.type`; goldens that store whole USDM with SoA epochs (usdm4_protocol and usdm4_fhir integration tests) will differ on epoch type only.

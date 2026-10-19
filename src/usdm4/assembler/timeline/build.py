@@ -205,9 +205,7 @@ class TimelineBuild:
                         ),
                         "description": None,
                         "label": label,
-                        "type": self._builder.klass_and_attribute_value(
-                            StudyEpoch, "type", "Treatment Epoch"
-                        ),
+                        "type": self._epoch_type(label, redacted),
                     },
                 )
                 results.append(epoch)
@@ -218,6 +216,32 @@ class TimelineBuild:
             KlassMethodLocation(self.MODULE, "_add_epochs"),
         )
         return results
+
+    # The type of an epoch whose heading matches no C99079 term, or is
+    # redacted: what every epoch was typed before GitHub 93.
+    DEFAULT_EPOCH_TYPE = "Treatment Epoch"
+
+    def _epoch_type(self, label: str, redacted: bool):
+        """The epoch's type from the C99079 term its heading matches, the
+        same match that names it (GitHub 93). Unmatched or redacted ->
+        Treatment Epoch; unmatched is warned."""
+        term = None if redacted else self._naming.epoch_term(label)
+        if term:
+            code = self._builder.klass_and_attribute_value(StudyEpoch, "type", term)
+            if code is not None:
+                return code
+            self._errors.warning(
+                f"Epoch '{label}' matches C99079 term '{term}', which is not in the epoch type code list; typed {self.DEFAULT_EPOCH_TYPE}",
+                KlassMethodLocation(self.MODULE, "_epoch_type"),
+            )
+        elif not redacted:
+            self._errors.warning(
+                f"Epoch '{label}' matches no C99079 term; typed {self.DEFAULT_EPOCH_TYPE}",
+                KlassMethodLocation(self.MODULE, "_epoch_type"),
+            )
+        return self._builder.klass_and_attribute_value(
+            StudyEpoch, "type", self.DEFAULT_EPOCH_TYPE
+        )
 
     def _epoch_id(self, index: int) -> str | None:
         """The id of the epoch of the column at ``index``; ``None`` when no

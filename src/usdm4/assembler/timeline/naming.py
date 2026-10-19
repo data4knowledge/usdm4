@@ -124,38 +124,52 @@ class Naming:
     # ------------------------------------------------------------------
     # Epochs
 
+    def epoch_term(self, label: str) -> str | None:
+        """The CDISC C99079 (SDTM Epoch) submission value the label matches in
+        `data/house_names.yaml` (`Screening` -> `SCREENING`), or None.
+
+        The one match both the epoch's name (`epoch_name`) and its type
+        (GitHub 93) come from."""
+        key = self.name_key(label)
+        if not key:
+            return None
+        pairs = [
+            (c, term)
+            for term, entry in (self.house().get("epochs") or {}).items()
+            for c in (entry.get("match") or [])
+        ]
+        # Longest candidate first: `long-term follow-up` must not be taken
+        # by `follow-up`, which it ends with.
+        for candidate, term in sorted(pairs, key=lambda x: -len(x[0])):
+            if (
+                key == candidate
+                or key.startswith(candidate + " ")
+                or key.endswith(" " + candidate)
+            ):
+                return term
+        return None
+
     def epoch_name(self, label: str, index: int) -> str:
         """House-style epoch name.
 
         Matched against the CDISC C99079 (SDTM Epoch) terms in
-        `data/house_names.yaml` — SCREENING -> `SCR`, FOLLOW-UP -> `FU` — so
-        the same phase carries the same name across protocols however the
-        document words it. Unmatched epochs generate from the label.
+        `data/house_names.yaml` (`epoch_term`) — SCREENING -> `SCR`,
+        FOLLOW-UP -> `FU` — so the same phase carries the same name across
+        protocols however the document words it. Unmatched epochs generate
+        from the label.
 
         The result is the house name for this label alone and may already be
         held by another epoch in the same study — the matching is many-to-one
         by design. `claim_epoch_name` is what makes it unique; call it on the
         qualified form, never use this on its own."""
-        key = self.name_key(label)
-        if key:
-            pairs = [
-                (c, term["name"])
-                for term in (self.house().get("epochs") or {}).values()
-                for c in (term.get("match") or [])
-            ]
-            # Longest candidate first: `long-term follow-up` must not be taken
-            # by `follow-up`, which it ends with.
-            for candidate, name in sorted(pairs, key=lambda x: -len(x[0])):
-                if (
-                    key == candidate
-                    or key.startswith(candidate + " ")
-                    or key.endswith(" " + candidate)
-                ):
-                    return name
-            # No CT term fits — generate the same way an activity does, rather
-            # than truncating a slug mid-word (`BONEMARROWSU`).
-            return self.initials(label) or f"EP{index}"
-        return f"EP{index}"
+        if not self.name_key(label):
+            return f"EP{index}"
+        term = self.epoch_term(label)
+        if term:
+            return self.house()["epochs"][term]["name"]
+        # No CT term fits — generate the same way an activity does, rather
+        # than truncating a slug mid-word (`BONEMARROWSU`).
+        return self.initials(label) or f"EP{index}"
 
     def claim_epoch_name(self, name: str, label: str) -> str:
         """Claim ``name`` for ``label``, or the next free ordinal of it.

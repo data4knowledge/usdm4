@@ -47,6 +47,7 @@ row.
 | N24.11 | Packaging, stray file, coverage-gate artefacts | package |
 | N25 | Arms name interventions but no epochs exist, so no cells and the arm → intervention link is lost | assembler |
 | N26 | A required string attribute accepts `""` (no minimum length): `StudyVersion.versionIdentifier` empty passes | schema / rules |
+| N27 | Epoch match table mistypes and misses: `randomisation` -> BASELINE, `end of treatment` / `end of study` -> FOLLOW-UP, `extension` -> LONG-TERM FOLLOW-UP; abbreviations SCR, FU, SFU, EOT, EOS, ED, ET unmatched | assembler / data |
 
 ---
 
@@ -482,3 +483,8 @@ cache is local), so a rule elsewhere is not ruled out.
 raise with DDF (`minLength: 1` on required identifier strings, or a rule that required
 strings are non-empty), and decide what a producer writes when the source has no version.
 Until then usdm4 accepts `""` and udp_prism keeps it.
+
+## N27 — Epoch match table mistypes and misses
+
+Found 2026-10-19 with GitHub 93, which types each schedule epoch from its match in `data/house_names.yaml` `epochs`. Some `match` entries name the wrong period: `randomisation` / `randomization` -> BASELINE (a randomisation visit sits in screening or at the start of treatment), `end of treatment` and `end of study` -> FOLLOW-UP (visits, not periods), `extension` -> LONG-TERM FOLLOW-UP (an extension is treatment). Common abbreviations are not listed: SCR, FU, SFU, EOT, EOS, ED, ET. Measured over the step 1 USDM epoch labels: udp_prism 31 of 78 unmatched, protocol_corpus 1,238 of 2,591 unmatched. Changing a match changes epoch names as well as types, so it ripples into names and references across the corpus; measure on its own. Many unmatched labels are visit columns, not periods (`E/D`, `Study Comp./ ET`, `EOT/ET Visit`), which is the SoA reader's question, not this table's.
+
