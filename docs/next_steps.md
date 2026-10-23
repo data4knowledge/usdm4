@@ -9,6 +9,8 @@ The docs: `aims.md` (what the package is for), `issues.md` (open problems, `N<n>
 State of the rule library: all 210 V4 DDF rules covered (207 implemented, 3 delegated to
 DDF00082's schema check).
 
+**2026-10-23:** GitHub 95 (every loop is Entry → loop start → Pad → untimed Decision, single cycles get a Pad; U4-39, from `protocol_soa_patterns` `docs/working/node_patterns.md`) built on `95-soa-patterns`, tests pass and the udp_prism run is done; merge and close. The open-repeat pad is the period less one day (ruled 2026-10-23: the quoted period is the cycle time). Not checked: callers' stored USDM with cycles, repeats or gates (`usdm4_protocol` and `usdm4_fhir` goldens, the `protocol_corpus` ground truth) will show the new entries, pads and untimed decisions once they take the release.
+
 **2026-10-19:** GitHub 94 (every footnote with a marker kept as a condition, `HeaderNote.markers`, ids once) built on `94-keep-every-footnote-condition`, assembler tests green; merge and close. It changes the timeline input schema, so it lands before `usdm4_protocol` 119; the corpus footnotes rung (its issue 33) builds its reference with it.
 
 **2026-10-19:** GitHub 91 (a timing from a named column) and 92 (a first column's delay from the timeline's start) merged; their callers are `usdm4_protocol` 118 (merged) and the corpus `from` row (N94). Left for a follow-up: a column that begins its own timeline on an event (an asynchronous follow-up) is still planned inside its table; nothing here until the corpus or the reader splits it out.

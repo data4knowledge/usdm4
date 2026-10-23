@@ -95,6 +95,10 @@ errors — look at that before any fixture references BCs.
 - `≥ 1 weeks` — `gate_condition` and `render_delay` pluralise without checking the value.
 - Instances in a second period or a copied timeline are named by de-duplication (`D1-2`,
   `D-1-2`, `ED-2`), not by period or timeline.
+- A node after a loop that is timed from the previous node (a gate's entry, a column with no
+  readable timing, U4-3) is measured from the loop's last column, not its pad: a gate right
+  after a cycle range is `After` the range's last day by zero (found with GitHub 95; the
+  range's pad and decision are added after the column nodes are planned).
 
 ## N4 — Amendment enrollment geographic scope untested
 

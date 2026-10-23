@@ -61,8 +61,8 @@ timing. A restart is warned only when no gate comes before it (U4-14).
 
 Issue 84. An open repeat (``Q12 Wks``, ``Every 6 months``) is a loop
 (U4-39): an entry taking the column's timing, the column's node zero after
-it, a pad ``After`` the column by the period less one day (not yet ruled:
-drawn by analogy with the cycle's pad), and a decision looping back to the
+it, a pad ``After`` the column by the period less one day (as a cycle's pad
+is its length less one; Dave, 2026-10-23), and a decision looping back to the
 column and exiting to the next one; and, when it is the last column, an end
 node. With no period no loop is built, with a warning. Explicit repeats were
 expanded by parse.
