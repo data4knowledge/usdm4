@@ -8,7 +8,9 @@ cycle data (design § 6 R5, U4-7, U4-27, and the end instance for a range that
 is the last column).
 
 Issue 69. The single-cycle tests held before R5; the range tests were
-``xfail(strict=True)`` until R5 was built.
+``xfail(strict=True)`` until R5 was built. Issue 95 (U4-39): the range is a
+loop — an entry, its days, a pad and an untimed decision — and each single
+cycle has a pad.
 """
 
 import json
@@ -112,31 +114,62 @@ class TestSingleCycles:
         v = _by_label(timeline)
         assert _link(timeline, v["c2d1"]) == ("After", v["c1d1"].id, "P28D")
 
+    def test_each_cycle_has_a_pad_at_its_full_length(self, timeline):
+        """Issue 95: the pad is the length less one after Day 1, between the
+        cycle's last day and the next cycle."""
+        v = _by_label(timeline)
+        n = _named(timeline)
+        for c in (1, 2):
+            pad = n[f"C{c}PAD"]
+            assert pad.encounterId is None and pad.activityIds == []
+            assert _link(timeline, pad) == ("After", v[f"c{c}d1"].id, "P27D")
+            assert v[f"c{c}d22"].defaultConditionId == pad.id
+
 
 # ----------------------------------------------------------------------
 # The range — R5 (issue 69)
 
 
 class TestRange:
-    def test_range_day_1_is_4_weeks_after_cycle_2_day_1(self, timeline):
+    def test_the_entry_is_4_weeks_after_cycle_2_day_1(self, timeline):
+        """Issue 95: the entry takes the range's timing in from outside."""
         v = _by_label(timeline)
-        assert _link(timeline, v["c3pd1"]) == ("After", v["c2d1"].id, "P28D")
+        entry = _named(timeline)["C3+ENTRY"]
+        assert entry.encounterId is None and entry.activityIds == []
+        assert _link(timeline, entry) == ("After", v["c2d1"].id, "P28D")
+        assert entry.defaultConditionId == v["c3pd1"].id
+
+    def test_range_day_1_is_zero_after_the_entry(self, timeline):
+        v = _by_label(timeline)
+        entry = _named(timeline)["C3+ENTRY"]
+        assert _link(timeline, v["c3pd1"]) == ("After", entry.id, "PT0M")
 
     def test_range_day_15_from_the_range_day_1(self, timeline):
         v = _by_label(timeline)
         assert _link(timeline, v["c3pd15"]) == ("After", v["c3pd1"].id, "P14D")
 
-    def test_one_decision_follows_the_last_day_of_the_range(self, timeline):
+    def test_the_pad_then_one_decision_follow_the_last_day(self, timeline):
         v = _by_label(timeline)
+        pad = _named(timeline)["C3+PAD"]
         decisions = _decisions(timeline)
         assert len(decisions) == 1
-        assert v["c3pd15"].defaultConditionId == decisions[0].id
+        assert v["c3pd15"].defaultConditionId == pad.id
+        assert pad.defaultConditionId == decisions[0].id
 
-    def test_the_delay_is_the_rest_of_the_cycle(self, timeline):
-        """28-day cycle, last printed day Day 15: 28 − 14 = 14 days."""
+    def test_the_pad_is_the_length_less_one(self, timeline):
+        """28-day cycle: the pad is 27 days after the range's Day 1."""
         v = _by_label(timeline)
+        pad = _named(timeline)["C3+PAD"]
+        assert pad.encounterId is None and pad.activityIds == []
+        assert _link(timeline, pad) == ("After", v["c3pd1"].id, "P27D")
+
+    def test_the_decision_has_no_timing(self, timeline):
         decision = _decisions(timeline)[0]
-        assert _link(timeline, decision) == ("After", v["c3pd15"].id, "P14D")
+        assert [
+            t
+            for t in timeline.timings
+            if t.relativeFromScheduledInstanceId == decision.id
+        ] == []
 
     def test_the_default_loops_back_to_the_range_day_1(self, timeline):
         v = _by_label(timeline)
@@ -231,17 +264,23 @@ class TestOtherShapes:
         n = _named(tl)
         assert [i.name for i in tl.instances] == [
             "C1D1",
+            "C1PAD",
+            "C2-3ENTRY",
             "C2-3D1",
             "C2-3D8",
+            "C2-3PAD",
             "C2-3DEC",
+            "C4+ENTRY",
             "C4+D1",
+            "C4+PAD",
             "C4+DEC",
             "T1-END",
         ]
-        assert [_day(tl, n[k]) for k in ("C2-3D1", "C2-3D8", "C2-3DEC")] == [21, 28, 42]
+        assert [_day(tl, n[k]) for k in ("C2-3D1", "C2-3D8", "C2-3PAD")] == [21, 28, 41]
+        assert [_day(tl, n[k]) for k in ("C4+ENTRY", "C4+D1", "C4+PAD")] == [42, 42, 62]
         first = n["C2-3DEC"]
         assert first.defaultConditionId == n["C2-3D1"].id
-        assert first.conditionAssignments[0].conditionTargetId == n["C4+D1"].id
+        assert first.conditionAssignments[0].conditionTargetId == n["C4+ENTRY"].id
         assert n["C4+DEC"].defaultConditionId == n["C4+D1"].id
 
     def test_a_range_with_no_day_1_loops_to_its_marker(self, builder):
@@ -256,15 +295,18 @@ class TestOtherShapes:
         n = _named(tl)
         assert [i.name for i in tl.instances] == [
             "C1D1",
+            "C1PAD",
+            "C2+ENTRY",
             "C2+D1",
             "C2+D8",
             "C2+D15",
+            "C2+PAD",
             "C2+DEC",
             "T1-END",
         ]
         assert n["C2+D1"].encounterId is None
         assert n["C2+DEC"].defaultConditionId == n["C2+D1"].id
-        assert [_day(tl, n[k]) for k in ("C2+D1", "C2+D15", "C2+DEC")] == [28, 42, 56]
+        assert [_day(tl, n[k]) for k in ("C2+D1", "C2+D15", "C2+PAD")] == [28, 42, 55]
 
     def test_a_predose_day_is_inside_the_loop(self, builder):
         """The pass starts at the range's first column, before ``Day 1``."""
@@ -279,7 +321,7 @@ class TestOtherShapes:
         )
         n = _named(tl)
         assert n["C2+DEC"].defaultConditionId == n["C2+D-1"].id
-        assert [_day(tl, n[k]) for k in ("C2+D-1", "C2+D1", "C2+DEC")] == [20, 21, 42]
+        assert [_day(tl, n[k]) for k in ("C2+D-1", "C2+D1", "C2+PAD")] == [20, 21, 41]
 
     def test_weeks(self, builder):
         tl = _build(
@@ -290,5 +332,5 @@ class TestOtherShapes:
                 ("Week 3", "Cycle 2+", "4 weeks"),
             ],
         )
-        decision = [i for i in tl.instances if i.name == "C2+DEC"][0]
-        assert _timing_of(tl, decision).value == "P2W"
+        pad = [i for i in tl.instances if i.name == "C2+PAD"][0]
+        assert _timing_of(tl, pad).value == "P3W"

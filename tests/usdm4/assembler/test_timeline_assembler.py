@@ -958,11 +958,25 @@ class TestTimings:
         )
         assembler.execute([tl])
         (t,) = assembler.timelines
-        assert [i.name for i in t.instances] == ["C1D1", "C1D8", "C2D1", "C2D8"]
-        assert [x.value for x in t.timings] == ["PT0M", "P7D", "P21D", "P7D"]
-        assert timing_types(t) == ["Fixed Reference", "After", "After", "After"]
-        assert t.timings[3].relativeToScheduledInstanceId == t.instances[2].id
-        assert t.timings[3].valueLabel == "D8"
+        assert [i.name for i in t.instances] == [
+            "C1D1",
+            "C1D8",
+            "C1PAD",
+            "C2D1",
+            "C2D8",
+            "C2PAD",
+        ]
+        assert [x.value for x in t.timings] == [
+            "PT0M",
+            "P7D",
+            "P20D",
+            "P21D",
+            "P7D",
+            "P20D",
+        ]
+        assert timing_types(t) == ["Fixed Reference"] + ["After"] * 5
+        assert t.timings[4].relativeToScheduledInstanceId == t.instances[3].id
+        assert t.timings[4].valueLabel == "D8"
         assert not any("cycle" in m for m in messages(errors))
 
     def test_a_cycle_with_no_day_one_gets_a_start_marker(self, assembler, errors):
@@ -986,15 +1000,25 @@ class TestTimings:
         assembler.execute([tl])
         (t,) = assembler.timelines
         names = [i.name for i in t.instances]
-        assert names == ["C1D1", "C1D8", "C2D1", "C2D8", "C2D15", "C3D1"]
-        marker = t.instances[2]
+        assert names == [
+            "C1D1",
+            "C1D8",
+            "C1PAD",
+            "C2D1",
+            "C2D8",
+            "C2D15",
+            "C2PAD",
+            "C3D1",
+            "C3PAD",
+        ]
+        marker = t.instances[3]
         assert marker.encounterId is None
         assert marker.activityIds == []
-        assert marker.epochId == t.instances[3].epochId != t.instances[0].epochId
-        assert t.instances[1].defaultConditionId == marker.id
-        assert marker.defaultConditionId == t.instances[3].id
+        assert marker.epochId == t.instances[4].epochId != t.instances[0].epochId
+        assert t.instances[2].defaultConditionId == marker.id
+        assert marker.defaultConditionId == t.instances[4].id
         assert len(assembler.encounters) == 5
-        assert len(t.timings) == len(t.instances) == 6
+        assert len(t.timings) == len(t.instances) == 9
         by_id = {i.id: i.name for i in t.instances}
         links = [
             (
@@ -1007,12 +1031,15 @@ class TestTimings:
         assert links == [
             ("C1D1", "PT0M", "C1D1"),
             ("C1D8", "P7D", "C1D1"),
+            ("C1PAD", "P20D", "C1D1"),
             ("C2D1", "P21D", "C1D1"),
             ("C2D8", "P7D", "C2D1"),
             ("C2D15", "P14D", "C2D1"),
+            ("C2PAD", "P27D", "C2D1"),
             ("C3D1", "P28D", "C2D1"),
+            ("C3PAD", "P27D", "C3D1"),
         ]
-        assert (t.timings[2].valueLabel, t.timings[2].label) == ("", "")
+        assert (t.timings[3].valueLabel, t.timings[3].label) == ("", "")
 
     def test_every_instance_is_timed(self, assembler, errors):
         """A blank timing used to get no Timing at all (design § 2)."""

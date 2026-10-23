@@ -3,10 +3,12 @@
 The input is ``tests/usdm4/test_files/timeline_pin/input_nct03069989_r8.json``:
 the protocol's header written by hand in the structured form — two dosing
 periods joined by a washout of 7 to 28 days. These tests state what R8 builds
-(design § 6 R8, U4-10, U4-36): the washout column is the gate's instance, with
-no encounter; a decision one day after it loops back to it and exits to
-period 2 on ``≥ 7 days and washed out, or 28 days``; period 2 is timed from its
-own ``Day 1``, a second Fixed Reference, and no timing joins it to period 1.
+(design § 6 R8, U4-10, U4-36, U4-39): an entry zero after period 1; the washout
+column is the gate's instance, with no encounter, zero after the entry; a pad
+one day after the gate; an untimed decision that loops back to the gate and
+exits to period 2 on ``≥ 7 days and washed out, or 28 days``; period 2 is timed
+from its own ``Day 1``, a second Fixed Reference, and no timing joins it to
+period 1.
 """
 
 import json
@@ -60,10 +62,20 @@ def tl(built):
 
 
 def _activity_instances(tl) -> dict:
-    """Activity instances in column order, keyed as the input's column ids."""
-    found = [i for i in tl.instances if i.instanceType == "ScheduledActivityInstance"]
+    """Activity instances in column order, keyed as the input's column ids;
+    the gate's entry and pad (issue 95) are not columns."""
+    found = [
+        i
+        for i in tl.instances
+        if i.instanceType == "ScheduledActivityInstance"
+        and i.name not in ("GATE1ENTRY", "GATE1PAD")
+    ]
     assert len(found) == len(KEYS)
     return dict(zip(KEYS, found))
+
+
+def _named(tl) -> dict:
+    return {i.name: i for i in tl.instances}
 
 
 def _decisions(tl) -> list:
@@ -101,16 +113,33 @@ class TestGate:
         names = {a.id: a.label for a in built[0].activities}
         assert [names[a] for a in gate.activityIds] == ["Adverse event review"]
 
-    def test_it_is_zero_after_the_last_day_of_period_1(self, tl):
+    def test_the_entry_is_zero_after_the_last_day_of_period_1(self, tl):
         v = _activity_instances(tl)
-        assert _link(tl, v["wash"]) == ("After", v["p1d2"].id, "PT0M")
+        entry = _named(tl)["GATE1ENTRY"]
+        assert entry.encounterId is None and entry.activityIds == []
+        assert _link(tl, entry) == ("After", v["p1d2"].id, "PT0M")
+        assert v["p1d2"].defaultConditionId == entry.id
 
-    def test_one_decision_one_day_after_the_gate(self, tl):
+    def test_the_gate_is_zero_after_the_entry(self, tl):
         v = _activity_instances(tl)
+        entry = _named(tl)["GATE1ENTRY"]
+        assert _link(tl, v["wash"]) == ("After", entry.id, "PT0M")
+        assert entry.defaultConditionId == v["wash"].id
+
+    def test_a_pad_one_day_after_the_gate(self, tl):
+        v = _activity_instances(tl)
+        pad = _named(tl)["GATE1PAD"]
+        assert pad.encounterId is None and pad.activityIds == []
+        assert _link(tl, pad) == ("After", v["wash"].id, "P1D")
+        assert v["wash"].defaultConditionId == pad.id
+
+    def test_one_untimed_decision_after_the_pad(self, tl):
         (decision,) = _decisions(tl)
         assert decision.name == "GATE1DEC"
-        assert _link(tl, decision) == ("After", v["wash"].id, "P1D")
-        assert v["wash"].defaultConditionId == decision.id
+        assert _named(tl)["GATE1PAD"].defaultConditionId == decision.id
+        assert [
+            t for t in tl.timings if t.relativeFromScheduledInstanceId == decision.id
+        ] == []
 
     def test_the_decision_loops_back_to_the_gate(self, tl):
         v = _activity_instances(tl)
@@ -130,6 +159,9 @@ class TestGate:
         epochs = {e.id: e.label for e in built[0].epochs}
         assert epochs[v["wash"].epochId] == "Wash-out"
         assert epochs[decision.epochId] == "Wash-out"
+        n = _named(tl)
+        assert epochs[n["GATE1ENTRY"].epochId] == "Wash-out"
+        assert epochs[n["GATE1PAD"].epochId] == "Wash-out"
 
     def test_nine_encounters_none_for_the_gate(self, built):
         assert [e.label for e in built[0].encounters] == [

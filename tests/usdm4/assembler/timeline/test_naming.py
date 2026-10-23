@@ -249,8 +249,20 @@ class TestSaiNames:
         assert naming.sai_name("Day 1", 1, "day", None, 2, 0) == "D1-2"
 
     def test_gate_names(self, naming):
-        """Issue 74 (R8): a gate's instance, decision and end node."""
+        """Issue 74 (R8): a gate's instance, decision and end node; issue 95:
+        its entry and pad."""
         assert naming.gate_name(1) == "GATE1"
+        assert naming.gate_name(1, "ENTRY") == "GATE1ENTRY"
+        assert naming.gate_name(1, "PAD") == "GATE1PAD"
         assert naming.gate_name(1, "DEC") == "GATE1DEC"
         assert naming.gate_name(1, "END") == "GATE1END"
         assert naming.gate_name(1) == "GATE1-2"
+
+    def test_cycle_loop_names(self, naming):
+        """Issue 95: a cycle's entry, pad and decision; a timeline-level name
+        when the cycle is not known."""
+        assert naming.cycle_name("3+", "ENTRY", 1) == "C3+ENTRY"
+        assert naming.cycle_name("3+", "PAD", 1) == "C3+PAD"
+        assert naming.decision_name("3+", 1) == "C3+DEC"
+        assert naming.cycle_name(None, "PAD", 2) == "T2-PAD"
+        assert naming.cycle_name("3+", "PAD", 1) == "C3+PAD-2"

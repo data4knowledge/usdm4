@@ -42,25 +42,37 @@ Issue 69 (R5, design § 6 R5, U4-7, U4-8). A cycle range (``Cycle n-m``,
 ``Cycle n+``) is timed like a single cycle numbered ``n``: its ``Day 1`` from
 the previous cycle's ``Day 1`` — a range covering cycle *n* − 1 counts — and
 its other days from its own ``Day 1``. A range with no readable length takes
-the largest day printed in it, with a warning (U4-8). After the range's last
-column come a decision node — timed ``After`` that column by the rest of the
-cycle, looping back to the range's ``Day 1`` — and, when the range is the
-last column, an end node (a decision cannot target the timeline exit).
+the largest day printed in it, with a warning (U4-8). The range is a loop
+(U4-39, below): its entry takes the ``Day 1`` timing, its pad is ``After``
+``Day 1`` by the length less one, and the decision loops back to the
+range's first node. When the range is the last column, an end node follows
+the decision (a decision cannot target the timeline exit). A single cycle with
+a readable length gets a pad too, so it has its full length; it does not loop,
+so it has no entry and no decision.
 
 Issue 74 (R8, design § 6 R8, U4-10, U4-36). A column carrying a structured
-``delay`` is a gate. It is the gate's start node — an instance with no visit —
-timed ``After`` the previous node by zero; a decision node follows it ``After``
-by 1 day, loops back to it by default and exits to the next column (U4-10 (a),
-(b)). A gate splits the timeline into periods: each period has its own anchor,
+``delay`` is a gate. It is a loop (U4-39): an entry ``After`` the previous node
+by zero, the gate's node — an instance with no visit — zero after the entry, a
+pad 1 day after the gate, and a decision that loops back to the gate and exits
+to the next column (U4-10 (a), (b)). A gate splits the timeline into periods: each period has its own anchor,
 found by U4-2 within the period (U4-36), so the period after a washout is timed
 from its own ``Day 1``. The periods are linked by the decision's exit, not by a
 timing. A restart is warned only when no gate comes before it (U4-14).
 
-Issue 84. An open repeat (``Q12 Wks``, ``Every 6 months``) is one column's
-node followed by a decision ``After`` it by the period, looping back to it by
-default and exiting to the next column — the pattern of a cycle range and a
-gate — and, when it is the last column, an end node. With no period no loop
-is built, with a warning. Explicit repeats were expanded by parse.
+Issue 84. An open repeat (``Q12 Wks``, ``Every 6 months``) is a loop
+(U4-39): an entry taking the column's timing, the column's node zero after
+it, a pad ``After`` the column by the period less one day (not yet ruled:
+drawn by analogy with the cycle's pad), and a decision looping back to the
+column and exiting to the next one; and, when it is the last column, an end
+node. With no period no loop is built, with a warning. Explicit repeats were
+expanded by parse.
+
+Issue 95 (U4-39, Dave 2026-10-22). Every loop — a cycle range, an open
+repeat, a gate — is one node pattern: Entry → loop start (zero after the
+entry) → … → Pad → Decision. The entry takes the timing in from outside the
+loop, so a pass that loops back is not timed again from outside. The pad is
+an instance with no visit and no activities; it carries the pass's timing. A
+decision has no timing: it follows the pad. An end node is timed from the pad.
 """
 
 from dataclasses import dataclass, field
@@ -156,6 +168,10 @@ class _CycleStart:
 DECISION = "decision"
 END = "end"
 GATE = "gate"
+# Issue 95 (U4-39): a loop's entry (the timing in from outside) and its pad
+# (the pass's timing, before the untimed decision).
+ENTRY = "entry"
+PAD = "pad"
 # Issue 92: the node for a timeline's start, when its first column is a delay
 # from it. Its key, and what that column's ``from`` names.
 START = "start"
@@ -177,17 +193,19 @@ class InstanceNode:
     ``cycle`` its cycle number and ``epoch_column`` the column whose epoch it
     takes.
 
-    A range's decision and end nodes (R5) have no column either; ``kind`` is
-    ``DECISION`` or ``END``. A decision's ``loop_to`` is the key of the
-    range's ``Day 1`` node, its default; its exit is the next node.
+    A loop's entry, pad, decision and end nodes (U4-39) have no column
+    either; ``kind`` is ``ENTRY``, ``PAD``, ``DECISION`` or ``END``. A
+    decision has no timing (``timing_type`` and ``relative_to`` are
+    ``None``); its ``loop_to`` is the key of the loop's first node, its
+    default; its exit is the next node.
 
-    A gate (R8) is its delay column's node, ``kind`` ``GATE``, followed by a
-    decision (and an end node when the gate is the last column); ``gate`` is
-    the gate's ordinal in the timeline on all of them."""
+    A gate (R8) is its delay column's node, ``kind`` ``GATE``, between its
+    entry and its pad; ``gate`` is the gate's ordinal in the timeline on all
+    of its nodes."""
 
     column: Column | None
-    timing_type: str
-    relative_to: int | str
+    timing_type: str | None
+    relative_to: int | str | None
     duration: int
     unit: str
     window: Window | None = None
@@ -292,7 +310,7 @@ class Planner:
                 first.anchor_point = None
         gates = repeats = 0
         for column in columns:
-            previous = nodes[-1].key if nodes else None
+            previous = self._previous(nodes)
             if self.is_gate(column):
                 gates += 1
                 nodes.extend(
@@ -305,19 +323,35 @@ class Planner:
             start = markers.get(column.index)
             if start is not None:
                 nodes.append(self._marker_node(ctx, start, previous))
-            nodes.append(self._node(ctx, column, nodes[-1].key if nodes else None))
+            node = self._node(ctx, column, self._previous(nodes))
             if column.repeat is not None and not column.repeat.explicit:
                 repeats += 1
-                nodes.extend(
-                    self._repeat_nodes(column, repeats, column is columns[-1], where)
-                )
+                loop = self._repeat_nodes(column, repeats, column is columns[-1], where)
+                if loop:
+                    # U4-39: the entry takes the column's timing.
+                    entry = self._entry_for(node, f"R{repeats}ENTRY", column.index)
+                    entry.repeat = repeats
+                    nodes.append(entry)
+                nodes.append(node)
+                nodes.extend(loop)
+            else:
+                nodes.append(node)
         if first is None:
             return TimelinePlan(anchor=0, nodes=nodes, anchors=[])
-        return TimelinePlan(
-            anchor=first.anchor,
-            nodes=self._add_loops(first, nodes),
-            anchors=anchors,
-        )
+        anchor = first.anchor
+        nodes = self._add_loops(first, nodes)
+        # A range's entry takes the anchor from its Day 1 (U4-39).
+        anchors = [first.anchor if a == anchor else a for a in anchors]
+        return TimelinePlan(anchor=first.anchor, nodes=nodes, anchors=anchors)
+
+    @staticmethod
+    def _previous(nodes: list[InstanceNode]) -> int | str | None:
+        """The key of the last node a timing can be measured from: a decision
+        has no timing (U4-39), so the node before it — its pad."""
+        for node in reversed(nodes):
+            if node.kind != DECISION:
+                return node.key
+        return None
 
     # ------------------------------------------------------------------
     # Gates — issue 74 (R8)
@@ -346,47 +380,104 @@ class Planner:
         is_last: bool,
         where: str,
     ) -> list[InstanceNode]:
-        """A gate (U4-10 (a)): its column's node, zero ``After`` the previous
-        node; a decision 1 day ``After`` it, looping back to it; and, when the
+        """A gate (U4-10 (a), U4-39): an entry zero ``After`` the previous
+        node; the gate's column node zero after the entry; a pad 1 day after
+        the gate; an untimed decision looping back to the gate; and, when the
         gate is the last column, an end node the decision's exit leads to."""
+        entry = InstanceNode(
+            column=None,
+            timing_type=AFTER,
+            relative_to=previous,
+            duration=0,
+            unit="day",
+            marker=f"G{n}ENTRY",
+            epoch_column=column.index,
+            kind=ENTRY,
+            gate=n,
+        )
         if previous is None:
             self._warn(
                 f"{where}, column '{column.id}': a gate with no column before it; "
                 "it is the anchor",
                 "plan",
             )
-            start = InstanceNode(column, FIXED, column.index, 0, "day")
-        else:
-            start = InstanceNode(column, AFTER, previous, 0, "day")
+            entry.timing_type, entry.relative_to = FIXED, entry.key
+        start = InstanceNode(column, AFTER, entry.key, 0, "day")
         start.kind, start.gate = GATE, n
-        decision = InstanceNode(
+        pad = InstanceNode(
             column=None,
             timing_type=AFTER,
             relative_to=column.index,
             duration=1,
             unit="day",
-            marker=f"G{n}DEC",
+            marker=f"G{n}PAD",
             epoch_column=column.index,
-            kind=DECISION,
-            loop_to=column.index,
+            kind=PAD,
             gate=n,
         )
-        nodes = [start, decision]
+        decision = self._loop_decision(f"G{n}DEC", column.index, column.index)
+        decision.gate = n
+        nodes = [entry, start, pad, decision]
         if is_last:
-            nodes.append(
-                InstanceNode(
-                    column=None,
-                    timing_type=AFTER,
-                    relative_to=decision.key,
-                    duration=0,
-                    unit="day",
-                    marker=f"G{n}END",
-                    epoch_column=column.index,
-                    kind=END,
-                    gate=n,
-                )
-            )
+            end = self._end_node(f"G{n}END", pad, column.index)
+            end.gate = n
+            nodes.append(end)
         return nodes
+
+    # ------------------------------------------------------------------
+    # Loops — issue 95 (U4-39)
+
+    @staticmethod
+    def _loop_decision(
+        marker: str, loop_to: int | str, epoch_column: int
+    ) -> InstanceNode:
+        """A loop's decision: no timing — the pad before it carries the pass."""
+        return InstanceNode(
+            column=None,
+            timing_type=None,
+            relative_to=None,
+            duration=0,
+            unit="day",
+            marker=marker,
+            epoch_column=epoch_column,
+            kind=DECISION,
+            loop_to=loop_to,
+        )
+
+    @staticmethod
+    def _end_node(marker: str, pad: InstanceNode, epoch_column: int) -> InstanceNode:
+        """The node after a loop that is the timeline's last: zero ``After``
+        its pad (a decision has no timing to measure from)."""
+        return InstanceNode(
+            column=None,
+            timing_type=AFTER,
+            relative_to=pad.key,
+            duration=0,
+            unit=pad.unit,
+            marker=marker,
+            epoch_column=epoch_column,
+            kind=END,
+        )
+
+    @staticmethod
+    def _entry_for(node: InstanceNode, marker: str, epoch_column: int) -> InstanceNode:
+        """A loop's entry (U4-39): it takes ``node``'s timing in from outside
+        the loop, and ``node`` becomes zero ``After`` it. A fixed reference
+        moves to the entry, which is then its own reference."""
+        entry = InstanceNode(
+            column=None,
+            timing_type=node.timing_type,
+            relative_to=marker if node.timing_type == FIXED else node.relative_to,
+            duration=node.duration,
+            unit=node.unit,
+            timed=node.timed,
+            marker=marker,
+            epoch_column=epoch_column,
+            kind=ENTRY,
+        )
+        node.timing_type, node.relative_to = AFTER, marker
+        node.duration, node.timed = 0, True
+        return entry
 
     # ------------------------------------------------------------------
     # Open repeats — issue 84
@@ -394,9 +485,11 @@ class Planner:
     def _repeat_nodes(
         self, column: Column, n: int, is_last: bool, where: str
     ) -> list[InstanceNode]:
-        """An open repeat's loop: a decision ``After`` the column by its
-        period, looping back to it; and, when the column is the last, an end
-        node the decision's exit leads to. No period, no loop."""
+        """An open repeat's loop after its column's node (U4-39): a pad
+        ``After`` the column by the period less one day, an untimed decision
+        looping back to the column; and, when the column is the last, an end
+        node the decision's exit leads to. No period, no loop. ``plan`` puts
+        the entry before the column's node."""
         period = column.repeat.period
         if period is None:
             self._warn(
@@ -405,34 +498,46 @@ class Planner:
                 "plan",
             )
             return []
-        decision = InstanceNode(
+        duration, unit = self._less_one_day(period.n, period.unit)
+        if duration is None:
+            self._warn(
+                f"{where}, column '{column.id}': the repeat's period "
+                f"{period.n} {period.unit}s does not convert exactly to days; "
+                "the pad is the whole period",
+                "plan",
+            )
+            duration, unit = period.n, period.unit
+        pad = InstanceNode(
             column=None,
             timing_type=AFTER,
             relative_to=column.index,
-            duration=period.n,
-            unit=period.unit,
-            marker=f"R{n}DEC",
+            duration=duration,
+            unit=unit,
+            marker=f"R{n}PAD",
             epoch_column=column.index,
-            kind=DECISION,
-            loop_to=column.index,
+            kind=PAD,
             repeat=n,
         )
-        nodes = [decision]
+        decision = self._loop_decision(f"R{n}DEC", column.index, column.index)
+        decision.repeat = n
+        nodes = [pad, decision]
         if is_last:
-            nodes.append(
-                InstanceNode(
-                    column=None,
-                    timing_type=AFTER,
-                    relative_to=decision.key,
-                    duration=0,
-                    unit=period.unit,
-                    marker=f"R{n}END",
-                    epoch_column=column.index,
-                    kind=END,
-                    repeat=n,
-                )
-            )
+            end = self._end_node(f"R{n}END", pad, column.index)
+            end.repeat = n
+            nodes.append(end)
         return nodes
+
+    @staticmethod
+    def _less_one_day(n: int, unit: str) -> tuple[int | None, str]:
+        """A period less one day: in days for a period in days or weeks, less
+        one of its own unit for hours and minutes; ``None`` for months and
+        years, which do not convert exactly to days."""
+        if unit in ("hour", "minute"):
+            return max(n - 1, 0), unit
+        days = _convert(n, unit, "day")
+        if days is None:
+            return None, unit
+        return max(days - 1, 0), "day"
 
     # ------------------------------------------------------------------
     # Cycle ranges — issue 69 (R5)
@@ -440,51 +545,84 @@ class Planner:
     def _add_loops(
         self, ctx: "_Context", nodes: list[InstanceNode]
     ) -> list[InstanceNode]:
-        """After each range's last column, its decision node; and when that
-        column is the timeline's last, an end node after the decision."""
+        """Cycles (U4-39). A range is a loop: an entry before its first node,
+        taking its ``Day 1``'s timing; after its last column a pad, an
+        untimed decision looping back to its first node and, when that column
+        is the timeline's last, an end node. A single cycle gets a pad after
+        its last column, so it has its full length; it does not loop."""
         last_of: dict[int, int] = {}
+        ranges: set[int] = set()
         for column in ctx.columns:
             slot = ctx.slots.get(column.index)
-            if slot is not None and slot.range is not None:
-                last_of[slot.n] = column.index
+            if slot is None:
+                continue
+            last_of[slot.n] = column.index
+            if slot.range is not None:
+                ranges.add(slot.n)
         if not last_of:
             return nodes
+        by_key = {node.key: node for node in nodes}
+        # The pass starts at the range's first node: its start marker, else
+        # its first column — a predose ``Day -1`` before ``Day 1``.
+        loop_start = {
+            n: s.key if s.column is None else s.first
+            for n, s in ctx.starts.items()
+            if n in ranges
+        }
+        entry_at = {key: n for n, key in loop_start.items()}
         result: list[InstanceNode] = []
         for node in nodes:
+            n = entry_at.get(node.key)
+            if n is not None:
+                result.append(self._cycle_entry(ctx, ctx.starts[n], by_key))
             result.append(node)
             if node.column is None:
                 continue
             slot = ctx.slots.get(node.column.index)
             if slot is None or last_of.get(slot.n) != node.column.index:
                 continue
-            decision = self._decision_node(ctx, ctx.starts[slot.n], node.column)
+            looped = slot.n in ranges
+            pad = self._pad_node(ctx, ctx.starts[slot.n], node.column, looped)
+            if pad is None:
+                continue
+            result.append(pad)
+            if not looped:
+                continue
+            decision = self._loop_decision(
+                f"C{slot.n}DEC", loop_start[slot.n], node.column.index
+            )
+            decision.cycle = slot.n
             result.append(decision)
             if node is nodes[-1]:
-                result.append(
-                    InstanceNode(
-                        column=None,
-                        timing_type=AFTER,
-                        relative_to=decision.key,
-                        duration=0,
-                        unit=decision.unit,
-                        marker=f"C{slot.n}END",
-                        cycle=slot.n,
-                        epoch_column=node.column.index,
-                        kind=END,
-                    )
-                )
+                end = self._end_node(f"C{slot.n}END", pad, node.column.index)
+                end.cycle = slot.n
+                result.append(end)
         return result
 
-    def _decision_node(
-        self, ctx: "_Context", start: _CycleStart, last: Column
+    def _cycle_entry(
+        self, ctx: "_Context", start: _CycleStart, by_key: dict
     ) -> InstanceNode:
-        """The range's decision, ``After`` its last column by the rest of the
-        cycle: the length less the last day's offset in the cycle (28 days,
-        last day ``Day 15``: 14 days)."""
-        what = f"cycle {start.n} decision"
+        """A range's entry: it takes the range's ``Day 1`` timing — the chain
+        from the previous cycle (U4-27), or the anchor — and ``Day 1`` is zero
+        after it. When ``Day 1`` was the anchor, the entry is."""
+        entry = self._entry_for(by_key[start.key], f"C{start.n}ENTRY", start.first)
+        entry.cycle = start.n
+        if ctx.anchor == start.key:
+            ctx.anchor = entry.key
+        return entry
+
+    def _pad_node(
+        self, ctx: "_Context", start: _CycleStart, last: Column, looped: bool
+    ) -> InstanceNode | None:
+        """A cycle's pad, ``After`` its ``Day 1`` by the length less one (21
+        days: 20), so the cycle has its full length. When the length cannot
+        be read or converted exactly, or the last day is beyond it: a range's
+        pad is zero after its last column, warned; a single cycle gets no
+        pad (U4-23: a cycle need not print its length)."""
+        what = f"cycle {start.n} pad"
         length = ctx.lengths.get(start.n)
         day = ctx.slots[last.index].day
-        delay, timed = 0, False
+        reason = None
         if length is None:
             reason = "the range has no readable length"
         else:
@@ -495,29 +633,30 @@ class Planner:
                     f"the range's length {length.n} {length.unit}s does not "
                     f"convert exactly to {start.unit}s"
                 )
-            elif converted < offset:
+            elif converted - 1 < offset:
                 reason = (
                     f"the last day ({day.value}) is beyond the length "
                     f"({converted} {start.unit}s)"
                 )
-            else:
-                delay, timed, reason = converted - offset, True, None
+        if reason and not looped:
+            return None
         if reason:
             self._warn(f"{ctx.where}, {what}: {reason}; a zero delay is used", "plan")
+            timing_type, relative_to, duration, timed = AFTER, last.index, 0, False
+        else:
+            timing_type, relative_to = AFTER, start.key
+            duration, timed = converted - 1, True
         return InstanceNode(
             column=None,
-            timing_type=AFTER,
-            relative_to=last.index,
-            duration=delay,
+            timing_type=timing_type,
+            relative_to=relative_to,
+            duration=duration,
             unit=start.unit,
             timed=timed,
-            marker=f"C{start.n}DEC",
+            marker=f"C{start.n}PAD",
             cycle=start.n,
             epoch_column=last.index,
-            kind=DECISION,
-            # The pass starts at the range's first node: its start marker,
-            # else its first column — a predose ``Day -1`` before ``Day 1``.
-            loop_to=start.key if start.column is None else start.first,
+            kind=PAD,
         )
 
     def _range_lengths(

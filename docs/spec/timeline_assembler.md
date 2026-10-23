@@ -174,7 +174,8 @@ Four stages, each a module under `src/usdm4/assembler/timeline/`:
    objects. A value sent as text only is a warning with the timeline, column and
    field and is not read; the timeline is still built.
 2. **Plan** (`plan.py`). From the column records, the ordered sequence of nodes for
-   one timeline — activity instance, start marker, gate, decision, end — each with its
+   one timeline — activity instance, start marker, gate, loop entry, pad, decision,
+   end — each with its
    timing reference (which node it is measured from, `Before` / `After` / `Fixed
    Reference`, and the duration). Cycles and gates live entirely here. Pure,
    unit-tested without the builder.
@@ -184,7 +185,8 @@ Four stages, each a module under `src/usdm4/assembler/timeline/`:
    cell links, conditions, timeline) because the builder numbers ids per class as they
    are made — the order is part of the output.
 4. **Naming** (`naming.py`). House names for epochs, activities, instances
-   (`C2D8`, `C3+D1`), decisions (`C3+DEC`), gates (`GATE1`) and ends (`T1-END`).
+   (`C2D8`, `C3+D1`), loop entries and pads (`C3+ENTRY`, `C3+PAD`), decisions
+   (`C3+DEC`), gates (`GATE1`) and ends (`T1-END`).
 
 `TimelineAssembler` (`src/usdm4/assembler/timeline_assembler.py`) is the orchestrator.
 Its public surface is fixed by three callers: `Assembler` calls `execute` and `clear`;
@@ -283,27 +285,35 @@ de-duplication (`D1-2`, `ED-2`) — `docs/issues.md` N3.
 Nothing is ever expanded. A cycle has a length, a number or range, and days.
 
 - **Single cycle** (`Cycle n`). Its columns are ordinary instances in the chain,
-  timed per R4.3.
+  timed per R4.3. After its last column, a **pad** `C{n}PAD` — no encounter, no
+  activities — `After` its `Day 1` by the cycle length less one (21 days: 20), so the
+  cycle has its full length (U4-39). A single cycle does not loop: no entry, no
+  decision. With no readable or exactly convertible length, or a last day beyond it,
+  there is no pad.
 - **Range** (`Cycle n-m`, `Cycle n+`). The run of adjacent columns with the same range
-  is one pass of the cycle. After its last day:
-  1. **a delay** — a `Timing` placing the decision after the last day: cycle length
-     minus the last day's offset within the cycle (21-day cycle, last day `Day 15`:
-     21 − 14 = 7 days);
-  2. **a decision** — a `ScheduledDecisionInstance` (`C3+DEC`), in the range's epoch,
-     whose one `ConditionAssignment` is the exit condition `cycle exit condition`
-     (U4-7) and leads to the next instance, and whose `defaultConditionId` loops back
-     to the range's first node — its start marker, else its first column, so a predose
-     `Day -1` printed before `Day 1` is inside the loop.
+  is one pass of the cycle, built as a loop (U4-39):
+  1. **an entry** `C3+ENTRY` — no encounter, no activities — before the range's first
+     node, taking the timing the range's `Day 1` would have (the chain from the
+     previous cycle's `Day 1`, R4.3, or the anchor); the range's `Day 1` is `After` the
+     entry by zero. When the range's `Day 1` is the anchor, the entry is;
+  2. **a pad** `C3+PAD` after the last day — no encounter, no activities — `After` the
+     range's `Day 1` by the cycle length less one (21 days: 20);
+  3. **a decision** — a `ScheduledDecisionInstance` (`C3+DEC`), in the range's epoch,
+     with no `Timing`, whose one `ConditionAssignment` is the exit condition `cycle
+     exit condition` (U4-7) and leads to the next instance, and whose
+     `defaultConditionId` loops back to the range's first node — its start marker,
+     else its first column, so a predose `Day -1` printed before `Day 1` is inside the
+     loop.
 - **Mixed** — single cycles then a range (`Cycle 1`, `Cycle 2`, `Cycle 3+`) — is the
   common case; the range's `Day 1` chains from the previous cycle's (R4.3). A single
   cycle and a range with the same first cycle share one cycle slot.
 - **Range as the last column.** A decision cannot target the timeline exit, so an end
   instance (`T1-END`) is added after the decision — no encounter, no activities —
-  carrying the exit. The decision's exit branch leads to it.
+  carrying the exit, `After` the pad by zero. The decision's exit branch leads to it.
 - **No readable cycle length.** The loop is still built; the length is the largest day
   printed in the range (`D1`, `D8`, `D15` → 15 days), warned — a lower bound (U4-8).
-  A length that does not convert exactly, or a last day beyond the length: zero delay,
-  warned.
+  A length that does not convert exactly, or a last day beyond the length: the pad is
+  `After` the last day by zero, warned.
 
 ### R6 — conditional timelines and copies
 
@@ -335,15 +345,18 @@ around an anchored offset) and not a timing anchored to Day 0 (`Screening ≤28 
 `delay` on the column (no timing, no window); a delay sent as text only is warned and
 the column is ordinary.
 
-Built with R5's loop construct (U4-10):
+Built with R5's loop (U4-10, U4-39):
 
-1. **the gate instance** `GATE{n}` — the gate column itself, no `Encounter`, labelled
+1. **an entry** `GATE{n}ENTRY` — no encounter, no activities — `After` the previous
+   node by zero;
+2. **the gate instance** `GATE{n}` — the gate column itself, no `Encounter`, labelled
    with the delay as printed, in the column's epoch, carrying its cells' activities;
-   `After` the previous node by zero;
-2. **a decision** `GATE{n}DEC`, `After` the gate by 1 day, whose default loops back to
-   the gate and whose one condition, `≥ 7 days and washed out, or 28 days` (no `max` →
-   no `, or …`), leads to the next column;
-3. **an end instance** `GATE{n}END` when the gate is the last column, as R5.
+   `After` the entry by zero;
+3. **a pad** `GATE{n}PAD` — no encounter, no activities — `After` the gate by 1 day;
+4. **a decision** `GATE{n}DEC`, with no `Timing`, whose default loops back to the gate
+   and whose one condition, `≥ 7 days and washed out, or 28 days` (no `max` → no
+   `, or …`), leads to the next column;
+5. **an end instance** `GATE{n}END` when the gate is the last column, as R5.
 
 The period after a gate gets a new anchor at its `Day 1` — a second `Fixed Reference`,
 with no timing back to the gate; the gap is the variable delay and the periods are
@@ -403,7 +416,7 @@ withdrawn decisions are kept, one line each, so the question isn't asked again.
 | U4-7 | The exit condition text on a cycle loop | **Taken 2026-09-26 (Dave):** the fixed text `cycle exit condition`. **Noted, not crucial now:** the real exit rule (e.g. progression, unacceptable toxicity) is usually in the protocol body, not the SoA; finding it needs a search wider than the SoA. **Rejected:** printed range text (a heading, not a condition); caller-supplied text (no field in the frozen schema) |
 | U4-8 | A range with no readable cycle length | **Taken 2026-09-26 (Dave):** the loop is built; the cycle length is the largest day number printed in the range (`D8` → 8 days, `D15` → 15 days), with a warning. It is a lower bound: the real length (21, 28 days) is usually longer. **Noted, not crucial now:** the true length may be stated outside the SoA; finding it needs a wider search. **Open edge:** a range printing only `Day 1` gives a 1-day cycle — settle when R5 hits it. **Rejected:** a text-only delay (DDF00060 needs a duration; the expander crashes, as U4-3). Ranges only; U4-23 (single cycles) is unchanged |
 | U4-9 | Where a cell's printed text goes (`X`, `(X)`, `Predose`) | kept on the input only until a rule needs it |
-| U4-10 | The gate loop (R8) | **Reframed 2026-09-26 (Dave):** a gate is a variable delay, built as R5's delay + decision loop; recognising it (duration, no anchored offset, between anchored columns) is not in question. **(a) Taken 2026-09-26 (Dave):** start node → 1-day delay → decision. The decision's condition is "≥ min days and washed out" (e.g. `≥ 2 days and washed out`) and exits to the next column; the default loops back to the start node. The minimum lives in the condition, not the delay; the start node is an instance with no visit (as the cycle start marker, U4-22). **(b) Taken 2026-09-26 (Dave):** the maximum is in the exit condition — `(≥ 2 days and washed out) or 10 days`; no second branch. **(c) Taken 2026-09-27 (Dave):** the exit condition text is filled from the delay — `≥ {min} {unit} and washed out, or {max} {unit}` (`≥ 7 days and washed out, or 28 days`); with no `max`, the `, or …` part is dropped. **Was:** "gate versus window in text alone" — wrong framing |
+| U4-10 | The gate loop (R8) | **Reframed 2026-09-26 (Dave):** a gate is a variable delay, built as R5's delay + decision loop; recognising it (duration, no anchored offset, between anchored columns) is not in question. **(a) Taken 2026-09-26 (Dave):** start node → 1-day delay → decision. The decision's condition is "≥ min days and washed out" (e.g. `≥ 2 days and washed out`) and exits to the next column; the default loops back to the start node. The minimum lives in the condition, not the delay; the start node is an instance with no visit (as the cycle start marker, U4-22). **(b) Taken 2026-09-26 (Dave):** the maximum is in the exit condition — `(≥ 2 days and washed out) or 10 days`; no second branch. **Amended 2026-10-22 (Dave, issue 95):** built as U4-39's loop — entry, gate, a pad 1 day after the gate, an untimed decision; the 1-day delay is on the pad, not the decision. **(c) Taken 2026-09-27 (Dave):** the exit condition text is filled from the delay — `≥ {min} {unit} and washed out, or {max} {unit}` (`≥ 7 days and washed out, or 28 days`); with no `max`, the `, or …` part is dropped. **Was:** "gate versus window in text alone" — wrong framing |
 | U4-11 | How the expander presents a loop | **Taken 2026-09-27 (Dave):** a loop is run twice, so the decision goes each way once — back, then out (`Cycle 3+`: cycle 3, cycle 4, then on). A washout gate whose minimum can be read is run until the minimum has passed, then left. The expander is illustrative, not normative. Claude's, in the issue text: the minimum read from `≥ N <unit>` / `>= N <unit>`; each timepoint carries its pass number. As built: session log, #76 |
 | U4-12 | Activity identity across timelines when names differ only by spacing or hyphenation | exact trimmed, case-folded match, as today |
 | U4-13 | How redacted (`CCI`) epochs group | **Taken 2026-09-25 (issue 64):** a consecutive run of redacted columns is one epoch; a run after a non-redacted epoch is a new one, named with an ordinal (`CCI`, `CCI2`) |
@@ -431,4 +444,5 @@ withdrawn decisions are kept, one line each, so the question isn't asked again.
 | U4-35 | Structured input — who turns printed text into structure | **Taken 2026-09-26 (Dave, from R8):** `usdm4` is algorithm only and never reads printed text; the caller (stage 1, may use AI; or an algorithmic source) supplies every header value as a structured object, e.g. `timing: {value: 1, unit: "days"}` (the printed day number — `usdm4` applies the crossing-zero rule), `window: {before: 3, after: 3, unit: "days"}`, `delay: {min: 2, max: 10, unit: "days"}`. Each value carries its source `text` for debug and after-the-event analysis — **never read or interpreted**; empty when the caller structured it from an algorithmic source. The one use: copied verbatim into USDM labels (`Timing.label`, instance and `Encounter` labels, `windowLabel`), as today (Dave, 2026-09-26). Empty `text` → the label is rendered from the structure (`Day 1`), as today's fallback to the pattern. Replaces the pattern grammar and the printed-text readers of #63–#71; supersedes the schema docstring's "a caller never hands over a number it has worked out from printed text". **Units (Dave, 2026-09-26):** `"minutes" | "hours" | "days" | "weeks" | "months" | "years"`, nothing else accepted; stage 1 normalises. **Cycle (Dave, 2026-09-26):** `{first: 3, last: null}` — `last: null` open-ended (`Cycle 3+`), `{first: 1, last: 6}` a range, `{first: 2, last: 2}` a single cycle (`first`/`last`, not `from`/`to` — `from` is a Python keyword). **Cycle length (Dave, 2026-09-26):** `{value: 21, unit: "days"}` — one `{value, unit}` type shared with the timing point; `value > 0` for a cycle length, a timing may be negative. **Time range (Dave, 2026-09-26):** a range is not a window — the visit falls anywhere in the span. The input says what the protocol says: `timing: {start: -28, end: -1, unit: "days"}` (printed day numbers). How it is stored in USDM (today: timing at the start, window forward to the end — `Timing` has no range) is `usdm4`'s business, as is the Day 0 arithmetic. The protocol_corpus issue 13 convention (range sent as start + window) is replaced. *(Briefly taken the same day as "no range form, stage 1 sends timing + window" — reversed: it pushed a USDM workaround into the input and the Day 0 arithmetic onto the callers.)* **Day 0 (Dave, 2026-09-26):** a timeline-level flag says whether the protocol numbers a Day 0; default Day 1 (no Day 0). Replaces inferring it from a printed `Day 0` column (`has_zero_timepoint`). A `Day 0` timing when the flag says Day 1 is a warning (Dave, 2026-09-26); the flag is used. **Redaction (Dave, 2026-09-26):** `redacted: bool = False` on every value object, replacing `pattern: "CCI"`; when true the structured fields are empty (refused otherwise) and `text` carries what was printed for the label; `usdm4` treats it as today (no timing, a warning). Nothing left open |
 | U4-36 | Day numbering after a gate (R8) | **Taken 2026-09-27 (Dave):** the period after a gate gets a new anchor at its `Day 1`; its other columns (`Baseline PET`, `Day -1`, `Day 2`) are timed from it. DDF00009 asks for at least one anchor per timeline, so a second is allowed. An anchor is a Fixed Reference: no duration back to the gate — the gap is the variable delay; the periods are linked by the instance chain (the decision's exit) |
 | U4-37 | How a copied column names its original (`protocol_corpus` N78, U4-5) | **Taken 2026-09-27 (Dave):** `ScheduleTimelineInput` gains an `id`; `ColumnInput.copy_of` is `{timeline, column}` — the original's timeline id and column id. A copy shares only the original's `Encounter` (the visit); it has its own instance, timing and activities, and normally no epoch — a subsidiary timeline rarely links to epochs. **Rejected:** referring to a timeline by its position in the input (breaks silently when a caller reorders timelines) |
-| U4-38 | A visit that repeats (issue 84, `protocol_corpus` N89) | **Taken 2026-10-07 (Dave):** `ColumnInput.repeat` — `visits {first, last?}`, `period {value, unit}?`, `end` (a printed bound, its text). Explicit visits (both ends printed: `2-17`, `V4 to V8`) create explicit encounters: one per visit number, each with the column's activities, timed at the start plus k periods, or — no period printed — each taking the column's range as its window, with a warning; nothing is invented between printed bounds. An open repeat (`Q12 Wks`, `Every 6 months`, `V2, V3 … VX`) is like `Cycle 3+`: never expanded — one encounter, then a decision `After` it by the period looping back to it and exiting to the next column (an end node when it is the last), its exit condition the printed bound else `repeat exit condition`; no period, no loop, a warning. A repeat and a cycle, or a repeat and a delay, on one column are refused. Concurrent repeats are sibling timelines, one loop each (`protocol_corpus` N89, Dave 2026-10-01) — stage 1 splits them |
+| U4-38 | A visit that repeats (issue 84, `protocol_corpus` N89) | **Taken 2026-10-07 (Dave):** `ColumnInput.repeat` — `visits {first, last?}`, `period {value, unit}?`, `end` (a printed bound, its text). Explicit visits (both ends printed: `2-17`, `V4 to V8`) create explicit encounters: one per visit number, each with the column's activities, timed at the start plus k periods, or — no period printed — each taking the column's range as its window, with a warning; nothing is invented between printed bounds. An open repeat (`Q12 Wks`, `Every 6 months`, `V2, V3 … VX`) is like `Cycle 3+`: never expanded — one encounter, then (amended 2026-10-22, issue 95: U4-39's loop — an entry taking the visit's timing, a pad, an untimed decision) a decision looping back to it and exiting to the next column (an end node when it is the last), its exit condition the printed bound else `repeat exit condition`; no period, no loop, a warning. A repeat and a cycle, or a repeat and a delay, on one column are refused. Concurrent repeats are sibling timelines, one loop each (`protocol_corpus` N89, Dave 2026-10-01) — stage 1 splits them |
+| U4-39 | The node pattern of a loop (issue 95) | **Taken 2026-10-22 (Dave; `protocol_soa_patterns` `docs/working/node_patterns.md`):** a decision never has a `Timing`; a normal node before it carries the timing. Every loop — a cycle range, an open repeat (U4-38), a gate (U4-10) — is Entry → loop start (`After` the entry by zero) → … → Pad → Decision. The entry (no encounter, no activities) takes the timing in from outside the loop, so a pass that loops back is not timed again from outside. The pad (no encounter, no activities) carries the pass: a cycle's `After` its `Day 1` by the length less one, an open repeat's `After` the visit by the period less one day (drawn by analogy with the cycle; **not yet ruled**), a gate's `After` the gate by 1 day. The decision follows the pad untimed; its default loops back to the loop start. An end node after a loop is `After` the pad by zero. A single cycle gets a pad too, so each cycle has its full length; it does not loop, so no entry and no decision. **Was:** the decision timed `After` the loop's last node (a cycle range by the rest of the cycle, an open repeat by the period, a gate by 1 day) and the loop start carrying the outside timing |

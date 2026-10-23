@@ -260,7 +260,9 @@ class TestMarkers:
             0,
             _column(
                 visit={"text": "V1", "markers": ["a"]},
-                notes=[{"role": "unassigned", "text": "Fasting", "markers": ["n", "a"]}],
+                notes=[
+                    {"role": "unassigned", "text": "Fasting", "markers": ["n", "a"]}
+                ],
             ),
         )
         assert parsed.all_markers == ["a", "n"]

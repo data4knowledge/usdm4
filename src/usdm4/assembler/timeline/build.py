@@ -45,8 +45,10 @@ from usdm4.assembler.timeline.naming import Naming
 from usdm4.assembler.timeline.plan import (
     DECISION,
     END,
+    ENTRY,
     FIXED,
     GATE,
+    PAD,
     START,
     Planner,
     TimelinePlan,
@@ -489,6 +491,8 @@ class TimelineBuild:
                     sai = self._add_end(node)
                 elif node.kind == START:
                     sai = self._add_start(node)
+                elif node.kind in (ENTRY, PAD):
+                    sai = self._add_loop_node(node)
                 else:
                     sai = self._add_start_marker(node)
                 self._sai_for[node.key] = sai
@@ -599,10 +603,40 @@ class TimelineBuild:
             },
         )
 
+    def _add_loop_node(self, node) -> ScheduledActivityInstance:
+        """A loop's entry or pad (issue 95, U4-39). Not a visit — no
+        encounter, no activities. The entry takes the timing in from outside
+        the loop; the pad carries the pass's timing before the decision."""
+        what = "Entry to" if node.kind == ENTRY else "Pad for a pass of"
+        suffix = "ENTRY" if node.kind == ENTRY else "PAD"
+        if node.gate is not None:
+            name = self._naming.gate_name(node.gate, suffix)
+            description = f"{what} gate {node.gate}"
+        elif node.repeat is not None:
+            name = self._naming.repeat_name(node.repeat, suffix)
+            description = f"{what} repeat {node.repeat}"
+        else:
+            label = self._cycle_label(node) or node.cycle
+            name = self._naming.cycle_name(label, suffix, self._t)
+            description = f"{what} cycle {label}"
+        return self._builder.create(
+            ScheduledActivityInstance,
+            {
+                "name": name,
+                "description": description,
+                "label": "",
+                "timelineExitId": None,
+                "encounterId": None,
+                "defaultConditionId": None,
+                "epochId": self._epoch_id(node.epoch_column),
+                "activityIds": [],
+            },
+        )
+
     def _add_decision(self, node) -> ScheduledDecisionInstance:
-        """A cycle range's decision (R5) or a gate's (R8): after the range's
-        last column or the gate's column, in its epoch. Wired once every
-        instance exists."""
+        """A loop's decision — a cycle range's (R5), a gate's (R8) or an open
+        repeat's: after the loop's pad, in its epoch, with no timing (U4-39).
+        Wired once every instance exists."""
         if node.gate is not None:
             name = self._naming.gate_name(node.gate, "DEC")
             description = f"End of gate {node.gate}"
@@ -722,6 +756,9 @@ class TimelineBuild:
     def _add_timings(self) -> list[Timing]:
         results: list[Timing] = []
         for node in self._plan.nodes:
+            # A decision has no timing: its pad carries it (U4-39).
+            if node.kind == DECISION:
+                continue
             column = node.column
             this_sai = self._sai_for[node.key]
             to_sai = self._sai_for[node.relative_to]
@@ -898,9 +935,7 @@ class TimelineBuild:
                 )
                 timepoint_ids, activity_ids = [], []
             else:
-                timepoint_ids = [
-                    self._sai_for[x].id for x in links["timepoint_index"]
-                ]
+                timepoint_ids = [self._sai_for[x].id for x in links["timepoint_index"]]
                 activity_ids = list(links["activity_id"])
             condition = self._builder.create(
                 Condition,

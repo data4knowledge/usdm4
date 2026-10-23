@@ -282,7 +282,14 @@ class Naming:
     def decision_name(self, cycle: str | int | None, t: int) -> str:
         """A cycle range's decision (issue 69): ``C3+DEC``. Uniqued across
         the study with the SAI names."""
-        return self._register_sai(f"C{cycle}DEC" if cycle is not None else f"T{t}-DEC")
+        return self.cycle_name(cycle, "DEC", t)
+
+    def cycle_name(self, cycle: str | int | None, suffix: str, t: int) -> str:
+        """A cycle's loop instance (issues 69, 95): ``C3+ENTRY``, ``C3+PAD``,
+        ``C3+DEC``; ``T1-PAD`` with no cycle."""
+        return self._register_sai(
+            f"C{cycle}{suffix}" if cycle is not None else f"T{t}-{suffix}"
+        )
 
     def start_name(self, t: int) -> str:
         """The start instance of a timeline whose first column is a delay
@@ -296,11 +303,13 @@ class Naming:
 
     def gate_name(self, n: int, suffix: str = "") -> str:
         """A gate's instances (issue 74, R8): ``GATE1`` (its column),
-        ``GATE1DEC`` (its decision), ``GATE1END`` (its end node)."""
+        ``GATE1ENTRY`` and ``GATE1PAD`` (issue 95), ``GATE1DEC`` (its
+        decision), ``GATE1END`` (its end node)."""
         return self._register_sai(f"GATE{n}{suffix}")
 
     def repeat_name(self, n: int, suffix: str = "") -> str:
-        """An open repeat's loop (issue 84): ``REPEAT1DEC`` (its decision),
+        """An open repeat's loop (issue 84): ``REPEAT1ENTRY`` and
+        ``REPEAT1PAD`` (issue 95), ``REPEAT1DEC`` (its decision),
         ``REPEAT1END`` (its end node)."""
         return self._register_sai(f"REPEAT{n}{suffix}")
 

@@ -2,8 +2,9 @@
 
 A column can print a visit that repeats. Explicit visits (``Treatment (Week
 3-11)`` over visits ``2-17``) are expanded into one visit each; an open repeat
-(``Q12 Wks``, ``Every 6 months``) is one visit and a loop — a decision after it
-by the period, looping back to it, like a gate or a cycle range.
+(``Q12 Wks``, ``Every 6 months``) is one visit and a loop — an entry, the
+visit, a pad and an untimed decision looping back to the visit, like a gate or
+a cycle range (issue 95, U4-39).
 """
 
 import pytest
@@ -131,26 +132,57 @@ def _open(period, end=None, last=False) -> list[dict]:
 
 
 class TestOpenRepeat:
-    def test_one_encounter_and_a_decision_after_it_by_the_period(self, builder):
+    def test_one_encounter_an_entry_a_pad_and_a_decision(self, builder):
         assembler, _ = _assemble(builder, _open({"value": 12, "unit": "weeks"}))
         tl = assembler.timelines[0]
         assert [e.label for e in assembler.encounters] == ["Day 1", "Q12 Wks", "EOS"]
         (decision,) = _decisions(tl)
-        repeat = _activity_instances(tl)[1]
-        assert decision.name == "REPEAT1DEC"
-        timing = _timing_of(tl, decision)
-        assert timing.value == "P12W"
+        first, entry, repeat, pad = _activity_instances(tl)[:4]
+        assert (entry.name, pad.name, decision.name) == (
+            "REPEAT1ENTRY",
+            "REPEAT1PAD",
+            "REPEAT1DEC",
+        )
+        assert entry.encounterId is None and pad.encounterId is None
+        assert entry.defaultConditionId == repeat.id
+        assert repeat.defaultConditionId == pad.id
+        assert pad.defaultConditionId == decision.id
+
+    def test_the_entry_takes_the_visits_timing(self, builder):
+        """U4-39: the visit is zero after the entry, so a pass that loops
+        back is not timed again from outside."""
+        assembler, _ = _assemble(builder, _open({"value": 12, "unit": "weeks"}))
+        tl = assembler.timelines[0]
+        first, entry, repeat = _activity_instances(tl)[:3]
+        assert _timing_of(tl, entry).relativeToScheduledInstanceId == first.id
+        timing = _timing_of(tl, repeat)
+        assert timing.value == "PT0M"
+        assert timing.relativeToScheduledInstanceId == entry.id
+
+    def test_the_pad_is_the_period_less_one_day(self, builder):
+        assembler, _ = _assemble(builder, _open({"value": 12, "unit": "weeks"}))
+        tl = assembler.timelines[0]
+        repeat, pad = _activity_instances(tl)[2:4]
+        timing = _timing_of(tl, pad)
+        assert timing.value == "P83D"
         assert timing.relativeToScheduledInstanceId == repeat.id
-        assert repeat.defaultConditionId == decision.id
+
+    def test_the_decision_has_no_timing(self, builder):
+        assembler, _ = _assemble(builder, _open({"value": 12, "unit": "weeks"}))
+        tl = assembler.timelines[0]
+        (decision,) = _decisions(tl)
+        assert [
+            t for t in tl.timings if t.relativeFromScheduledInstanceId == decision.id
+        ] == []
 
     def test_the_decision_loops_back_and_exits_to_the_next_column(self, builder):
         assembler, _ = _assemble(builder, _open({"value": 12, "unit": "weeks"}))
         tl = assembler.timelines[0]
         (decision,) = _decisions(tl)
         sais = _activity_instances(tl)
-        assert decision.defaultConditionId == sais[1].id
+        assert decision.defaultConditionId == sais[2].id
         (assignment,) = decision.conditionAssignments
-        assert assignment.conditionTargetId == sais[2].id
+        assert assignment.conditionTargetId == sais[4].id
         assert assignment.condition == "repeat exit condition"
 
     def test_a_printed_bound_is_the_exit_condition(self, builder):
@@ -172,6 +204,9 @@ class TestOpenRepeat:
         (decision,) = _decisions(tl)
         end = tl.instances[-1]
         assert end.name == "REPEAT1END"
+        assert _timing_of(tl, end).relativeToScheduledInstanceId == (
+            _activity_instances(tl)[3].id
+        )
         assert end.encounterId is None
         assert end.timelineExitId is not None
         (assignment,) = decision.conditionAssignments

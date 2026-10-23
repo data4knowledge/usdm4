@@ -226,8 +226,8 @@
         {
           "id": "Timing_7",
           "extensionAttributes": [],
-          "name": "TIM7",
-          "label": "Day 1",
+          "name": "TIMC1PAD",
+          "label": "",
           "description": null,
           "type": {
             "id": "Code_54",
@@ -238,8 +238,8 @@
             "decode": "After Timing Type",
             "instanceType": "Code"
           },
-          "value": "P28D",
-          "valueLabel": "Day 1",
+          "value": "P27D",
+          "valueLabel": "",
           "relativeToFrom": {
             "id": "Code_55",
             "extensionAttributes": [],
@@ -251,16 +251,16 @@
           },
           "relativeFromScheduledInstanceId": "ScheduledActivityInstance_7",
           "relativeToScheduledInstanceId": "ScheduledActivityInstance_3",
-          "windowLower": "P3D",
-          "windowUpper": "P3D",
-          "windowLabel": "\u00b1 3 days",
+          "windowLower": "",
+          "windowUpper": "",
+          "windowLabel": null,
           "instanceType": "Timing"
         },
         {
           "id": "Timing_8",
           "extensionAttributes": [],
-          "name": "TIM8",
-          "label": "Days 8, 15, and 22",
+          "name": "TIM7",
+          "label": "Day 1",
           "description": null,
           "type": {
             "id": "Code_56",
@@ -271,8 +271,8 @@
             "decode": "After Timing Type",
             "instanceType": "Code"
           },
-          "value": "P7D",
-          "valueLabel": "Days 8, 15, and 22",
+          "value": "P28D",
+          "valueLabel": "Day 1",
           "relativeToFrom": {
             "id": "Code_57",
             "extensionAttributes": [],
@@ -283,7 +283,7 @@
             "instanceType": "Code"
           },
           "relativeFromScheduledInstanceId": "ScheduledActivityInstance_8",
-          "relativeToScheduledInstanceId": "ScheduledActivityInstance_7",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_3",
           "windowLower": "P3D",
           "windowUpper": "P3D",
           "windowLabel": "\u00b1 3 days",
@@ -292,7 +292,7 @@
         {
           "id": "Timing_9",
           "extensionAttributes": [],
-          "name": "TIM9",
+          "name": "TIM8",
           "label": "Days 8, 15, and 22",
           "description": null,
           "type": {
@@ -304,7 +304,7 @@
             "decode": "After Timing Type",
             "instanceType": "Code"
           },
-          "value": "P14D",
+          "value": "P7D",
           "valueLabel": "Days 8, 15, and 22",
           "relativeToFrom": {
             "id": "Code_59",
@@ -316,7 +316,7 @@
             "instanceType": "Code"
           },
           "relativeFromScheduledInstanceId": "ScheduledActivityInstance_9",
-          "relativeToScheduledInstanceId": "ScheduledActivityInstance_7",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_8",
           "windowLower": "P3D",
           "windowUpper": "P3D",
           "windowLabel": "\u00b1 3 days",
@@ -325,7 +325,7 @@
         {
           "id": "Timing_10",
           "extensionAttributes": [],
-          "name": "TIM10",
+          "name": "TIM9",
           "label": "Days 8, 15, and 22",
           "description": null,
           "type": {
@@ -337,7 +337,7 @@
             "decode": "After Timing Type",
             "instanceType": "Code"
           },
-          "value": "P21D",
+          "value": "P14D",
           "valueLabel": "Days 8, 15, and 22",
           "relativeToFrom": {
             "id": "Code_61",
@@ -349,7 +349,7 @@
             "instanceType": "Code"
           },
           "relativeFromScheduledInstanceId": "ScheduledActivityInstance_10",
-          "relativeToScheduledInstanceId": "ScheduledActivityInstance_7",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_8",
           "windowLower": "P3D",
           "windowUpper": "P3D",
           "windowLabel": "\u00b1 3 days",
@@ -358,8 +358,8 @@
         {
           "id": "Timing_11",
           "extensionAttributes": [],
-          "name": "TIM11",
-          "label": "Day 1",
+          "name": "TIM10",
+          "label": "Days 8, 15, and 22",
           "description": null,
           "type": {
             "id": "Code_62",
@@ -370,8 +370,8 @@
             "decode": "After Timing Type",
             "instanceType": "Code"
           },
-          "value": "P28D",
-          "valueLabel": "Day 1",
+          "value": "P21D",
+          "valueLabel": "Days 8, 15, and 22",
           "relativeToFrom": {
             "id": "Code_63",
             "extensionAttributes": [],
@@ -382,7 +382,7 @@
             "instanceType": "Code"
           },
           "relativeFromScheduledInstanceId": "ScheduledActivityInstance_11",
-          "relativeToScheduledInstanceId": "ScheduledActivityInstance_7",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_8",
           "windowLower": "P3D",
           "windowUpper": "P3D",
           "windowLabel": "\u00b1 3 days",
@@ -391,8 +391,8 @@
         {
           "id": "Timing_12",
           "extensionAttributes": [],
-          "name": "TIM12",
-          "label": "Day 15",
+          "name": "TIMC2PAD",
+          "label": "",
           "description": null,
           "type": {
             "id": "Code_64",
@@ -403,8 +403,8 @@
             "decode": "After Timing Type",
             "instanceType": "Code"
           },
-          "value": "P14D",
-          "valueLabel": "Day 15",
+          "value": "P27D",
+          "valueLabel": "",
           "relativeToFrom": {
             "id": "Code_65",
             "extensionAttributes": [],
@@ -415,16 +415,16 @@
             "instanceType": "Code"
           },
           "relativeFromScheduledInstanceId": "ScheduledActivityInstance_12",
-          "relativeToScheduledInstanceId": "ScheduledActivityInstance_11",
-          "windowLower": "P3D",
-          "windowUpper": "P3D",
-          "windowLabel": "\u00b1 3 days",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_8",
+          "windowLower": "",
+          "windowUpper": "",
+          "windowLabel": null,
           "instanceType": "Timing"
         },
         {
           "id": "Timing_13",
           "extensionAttributes": [],
-          "name": "TIMC3DEC",
+          "name": "TIMC3ENTRY",
           "label": "",
           "description": null,
           "type": {
@@ -436,7 +436,7 @@
             "decode": "After Timing Type",
             "instanceType": "Code"
           },
-          "value": "P14D",
+          "value": "P28D",
           "valueLabel": "",
           "relativeToFrom": {
             "id": "Code_67",
@@ -447,8 +447,8 @@
             "decode": "Start to Start",
             "instanceType": "Code"
           },
-          "relativeFromScheduledInstanceId": "ScheduledDecisionInstance_1",
-          "relativeToScheduledInstanceId": "ScheduledActivityInstance_12",
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_13",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_8",
           "windowLower": "",
           "windowUpper": "",
           "windowLabel": null,
@@ -457,8 +457,8 @@
         {
           "id": "Timing_14",
           "extensionAttributes": [],
-          "name": "TIMC3END",
-          "label": "",
+          "name": "TIM11",
+          "label": "Day 1",
           "description": null,
           "type": {
             "id": "Code_68",
@@ -470,7 +470,7 @@
             "instanceType": "Code"
           },
           "value": "PT0M",
-          "valueLabel": "",
+          "valueLabel": "Day 1",
           "relativeToFrom": {
             "id": "Code_69",
             "extensionAttributes": [],
@@ -480,8 +480,107 @@
             "decode": "Start to Start",
             "instanceType": "Code"
           },
-          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_13",
-          "relativeToScheduledInstanceId": "ScheduledDecisionInstance_1",
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_14",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_13",
+          "windowLower": "P3D",
+          "windowUpper": "P3D",
+          "windowLabel": "\u00b1 3 days",
+          "instanceType": "Timing"
+        },
+        {
+          "id": "Timing_15",
+          "extensionAttributes": [],
+          "name": "TIM12",
+          "label": "Day 15",
+          "description": null,
+          "type": {
+            "id": "Code_70",
+            "extensionAttributes": [],
+            "code": "C201356",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "After Timing Type",
+            "instanceType": "Code"
+          },
+          "value": "P14D",
+          "valueLabel": "Day 15",
+          "relativeToFrom": {
+            "id": "Code_71",
+            "extensionAttributes": [],
+            "code": "C201355",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Start to Start",
+            "instanceType": "Code"
+          },
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_15",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_14",
+          "windowLower": "P3D",
+          "windowUpper": "P3D",
+          "windowLabel": "\u00b1 3 days",
+          "instanceType": "Timing"
+        },
+        {
+          "id": "Timing_16",
+          "extensionAttributes": [],
+          "name": "TIMC3PAD",
+          "label": "",
+          "description": null,
+          "type": {
+            "id": "Code_72",
+            "extensionAttributes": [],
+            "code": "C201356",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "After Timing Type",
+            "instanceType": "Code"
+          },
+          "value": "P27D",
+          "valueLabel": "",
+          "relativeToFrom": {
+            "id": "Code_73",
+            "extensionAttributes": [],
+            "code": "C201355",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Start to Start",
+            "instanceType": "Code"
+          },
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_16",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_14",
+          "windowLower": "",
+          "windowUpper": "",
+          "windowLabel": null,
+          "instanceType": "Timing"
+        },
+        {
+          "id": "Timing_17",
+          "extensionAttributes": [],
+          "name": "TIMC3END",
+          "label": "",
+          "description": null,
+          "type": {
+            "id": "Code_74",
+            "extensionAttributes": [],
+            "code": "C201356",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "After Timing Type",
+            "instanceType": "Code"
+          },
+          "value": "PT0M",
+          "valueLabel": "",
+          "relativeToFrom": {
+            "id": "Code_75",
+            "extensionAttributes": [],
+            "code": "C201355",
+            "codeSystem": "http://www.cdisc.org",
+            "codeSystemVersion": "2026-03-27",
+            "decode": "Start to Start",
+            "instanceType": "Code"
+          },
+          "relativeFromScheduledInstanceId": "ScheduledActivityInstance_17",
+          "relativeToScheduledInstanceId": "ScheduledActivityInstance_16",
           "windowLower": "",
           "windowUpper": "",
           "windowLabel": null,
@@ -600,10 +699,24 @@
         {
           "id": "ScheduledActivityInstance_7",
           "extensionAttributes": [],
+          "name": "C1PAD",
+          "label": "",
+          "description": "Pad for a pass of cycle 1",
+          "defaultConditionId": "ScheduledActivityInstance_8",
+          "epochId": "StudyEpoch_3",
+          "instanceType": "ScheduledActivityInstance",
+          "timelineId": null,
+          "timelineExitId": null,
+          "activityIds": [],
+          "encounterId": null
+        },
+        {
+          "id": "ScheduledActivityInstance_8",
+          "extensionAttributes": [],
           "name": "C2D1",
           "label": "Day 1",
           "description": null,
-          "defaultConditionId": "ScheduledActivityInstance_8",
+          "defaultConditionId": "ScheduledActivityInstance_9",
           "epochId": "StudyEpoch_4",
           "instanceType": "ScheduledActivityInstance",
           "timelineId": null,
@@ -618,12 +731,12 @@
           "encounterId": "Encounter_7"
         },
         {
-          "id": "ScheduledActivityInstance_8",
+          "id": "ScheduledActivityInstance_9",
           "extensionAttributes": [],
           "name": "C2D8",
           "label": "Days 8, 15, and 22",
           "description": null,
-          "defaultConditionId": "ScheduledActivityInstance_9",
+          "defaultConditionId": "ScheduledActivityInstance_10",
           "epochId": "StudyEpoch_4",
           "instanceType": "ScheduledActivityInstance",
           "timelineId": null,
@@ -635,12 +748,12 @@
           "encounterId": "Encounter_8"
         },
         {
-          "id": "ScheduledActivityInstance_9",
+          "id": "ScheduledActivityInstance_10",
           "extensionAttributes": [],
           "name": "C2D15",
           "label": "Days 8, 15, and 22",
           "description": null,
-          "defaultConditionId": "ScheduledActivityInstance_10",
+          "defaultConditionId": "ScheduledActivityInstance_11",
           "epochId": "StudyEpoch_4",
           "instanceType": "ScheduledActivityInstance",
           "timelineId": null,
@@ -653,12 +766,12 @@
           "encounterId": "Encounter_9"
         },
         {
-          "id": "ScheduledActivityInstance_10",
+          "id": "ScheduledActivityInstance_11",
           "extensionAttributes": [],
           "name": "C2D22",
           "label": "Days 8, 15, and 22",
           "description": null,
-          "defaultConditionId": "ScheduledActivityInstance_11",
+          "defaultConditionId": "ScheduledActivityInstance_12",
           "epochId": "StudyEpoch_4",
           "instanceType": "ScheduledActivityInstance",
           "timelineId": null,
@@ -670,12 +783,40 @@
           "encounterId": "Encounter_10"
         },
         {
-          "id": "ScheduledActivityInstance_11",
+          "id": "ScheduledActivityInstance_12",
+          "extensionAttributes": [],
+          "name": "C2PAD",
+          "label": "",
+          "description": "Pad for a pass of cycle 2",
+          "defaultConditionId": "ScheduledActivityInstance_13",
+          "epochId": "StudyEpoch_4",
+          "instanceType": "ScheduledActivityInstance",
+          "timelineId": null,
+          "timelineExitId": null,
+          "activityIds": [],
+          "encounterId": null
+        },
+        {
+          "id": "ScheduledActivityInstance_13",
+          "extensionAttributes": [],
+          "name": "C3+ENTRY",
+          "label": "",
+          "description": "Entry to cycle 3+",
+          "defaultConditionId": "ScheduledActivityInstance_14",
+          "epochId": "StudyEpoch_5",
+          "instanceType": "ScheduledActivityInstance",
+          "timelineId": null,
+          "timelineExitId": null,
+          "activityIds": [],
+          "encounterId": null
+        },
+        {
+          "id": "ScheduledActivityInstance_14",
           "extensionAttributes": [],
           "name": "C3+D1",
           "label": "Day 1",
           "description": null,
-          "defaultConditionId": "ScheduledActivityInstance_12",
+          "defaultConditionId": "ScheduledActivityInstance_15",
           "epochId": "StudyEpoch_5",
           "instanceType": "ScheduledActivityInstance",
           "timelineId": null,
@@ -690,12 +831,12 @@
           "encounterId": "Encounter_11"
         },
         {
-          "id": "ScheduledActivityInstance_12",
+          "id": "ScheduledActivityInstance_15",
           "extensionAttributes": [],
           "name": "C3+D15",
           "label": "Day 15",
           "description": null,
-          "defaultConditionId": "ScheduledDecisionInstance_1",
+          "defaultConditionId": "ScheduledActivityInstance_16",
           "epochId": "StudyEpoch_5",
           "instanceType": "ScheduledActivityInstance",
           "timelineId": null,
@@ -708,12 +849,26 @@
           "encounterId": "Encounter_12"
         },
         {
+          "id": "ScheduledActivityInstance_16",
+          "extensionAttributes": [],
+          "name": "C3+PAD",
+          "label": "",
+          "description": "Pad for a pass of cycle 3+",
+          "defaultConditionId": "ScheduledDecisionInstance_1",
+          "epochId": "StudyEpoch_5",
+          "instanceType": "ScheduledActivityInstance",
+          "timelineId": null,
+          "timelineExitId": null,
+          "activityIds": [],
+          "encounterId": null
+        },
+        {
           "id": "ScheduledDecisionInstance_1",
           "extensionAttributes": [],
           "name": "C3+DEC",
           "label": "",
           "description": "End of a pass of cycle 3+",
-          "defaultConditionId": "ScheduledActivityInstance_11",
+          "defaultConditionId": "ScheduledActivityInstance_14",
           "epochId": "StudyEpoch_5",
           "instanceType": "ScheduledDecisionInstance",
           "conditionAssignments": [
@@ -721,13 +876,13 @@
               "id": "ConditionAssignment_1",
               "extensionAttributes": [],
               "condition": "cycle exit condition",
-              "conditionTargetId": "ScheduledActivityInstance_13",
+              "conditionTargetId": "ScheduledActivityInstance_17",
               "instanceType": "ConditionAssignment"
             }
           ]
         },
         {
-          "id": "ScheduledActivityInstance_13",
+          "id": "ScheduledActivityInstance_17",
           "extensionAttributes": [],
           "name": "T1-END",
           "label": "",
