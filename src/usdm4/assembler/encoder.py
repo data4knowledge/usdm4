@@ -386,9 +386,20 @@ class Encoder:
         ),
         (["BUCCAL"], {"code": "C38193", "decode": "Buccal Route of Administration"}),
     ]
-    ROUTE_DEFAULT = {"code": "C38288", "decode": "Oral Route of Administration"}
 
     # CDISC CT C71113 — Frequency (AliasCode return)
+    # CDISC CT C215483 — Administrable product sourcing; printed short forms.
+    SOURCING_MAP = [
+        (
+            ["CENTRAL", "CENTRALLY"],
+            {"code": "C215659", "decode": "Centrally Sourced Indicator"},
+        ),
+        (
+            ["LOCAL", "LOCALLY"],
+            {"code": "C215660", "decode": "Locally Sourced Indicator"},
+        ),
+    ]
+
     FREQUENCY_MAP = [
         (
             [
@@ -429,7 +440,6 @@ class Encoder:
         (["AS NEEDED", "PRN"], {"code": "C64499", "decode": "As Needed"}),
         (["ONCE", "ONE TIME", "SINGLE DOSE"], {"code": "C64576", "decode": "Once"}),
     ]
-    FREQUENCY_DEFAULT = {"code": "C25473", "decode": "Daily"}
 
     OBJECTIVE_LEVEL_MAP = [
         (
@@ -888,31 +898,104 @@ class Encoder:
             "Sex",
         )
 
-    def route(self, text: str) -> AliasCode:
+    def sourcing(self, text: str) -> Code | None:
+        """Decode a product sourcing label to a Code (codelist C215483).
+
+        ``SOURCING_MAP`` (printed short forms such as Central, Local) first,
+        then the full code list. Text that matches neither stores no
+        sourcing, with a warning (GitHub 96).
+        """
+        if not text:
+            return None
+        return self._lookup_ct(
+            text, self.SOURCING_MAP, "C215483", "Indicator", "sourcing", "Sourcing"
+        )
+
+    def route(self, text: str) -> AliasCode | None:
         """Decode a route-of-administration label to an AliasCode (codelist C66729).
 
-        Returns an ``AliasCode`` so Administration.route can hold the decoded
-        value directly, mirroring how ``phase()`` returns an AliasCode.
+        ``ROUTE_MAP`` (abbreviations such as PO, IV) first, then the full code
+        list. Text that matches neither stores no route, with a warning: a
+        route the protocol does not state is never recorded (GitHub 96).
         """
-        code = self._lookup_code(
+        code = self._lookup_ct(
             text,
             self.ROUTE_MAP,
-            self.ROUTE_DEFAULT,
+            "C66729",
+            "Route of Administration",
             "route",
             "Route of administration",
         )
-        return self._builder.alias_code(code)
+        return self._builder.alias_code(code) if code is not None else None
 
-    def frequency(self, text: str) -> AliasCode:
-        """Decode a frequency label to an AliasCode (codelist C71113)."""
-        code = self._lookup_code(
-            text,
-            self.FREQUENCY_MAP,
-            self.FREQUENCY_DEFAULT,
-            "frequency",
-            "Frequency",
+    def frequency(self, text: str) -> AliasCode | None:
+        """Decode a frequency label to an AliasCode (codelist C71113), as
+        ``route`` (GitHub 96): no default."""
+        code = self._lookup_ct(
+            text, self.FREQUENCY_MAP, "C71113", "", "frequency", "Frequency"
         )
-        return self._builder.alias_code(code)
+        return self._builder.alias_code(code) if code is not None else None
+
+    def ct_term(self, codelist_id: str, text: str, suffix: str = "") -> Code | None:
+        """The ``codelist_id`` term ``text`` names, ignoring case and spacing:
+        its concept id, preferred term, submission value, a synonym, or the
+        preferred term without its class ``suffix`` ("Transdermal" for
+        "Transdermal Route of Administration"). None when no term matches."""
+        value = self._normalise_ct(text)
+        if not value:
+            return None
+        codelist = self._builder.codelist(codelist_id) or {}
+        suffix_key = self._normalise_ct(suffix)
+        for term in codelist.get("terms", []):
+            names = [
+                term.get("conceptId"),
+                term.get("preferredTerm"),
+                term.get("submissionValue"),
+            ]
+            names += list(term.get("synonyms") or [])
+            preferred = self._normalise_ct(term.get("preferredTerm"))
+            if suffix_key and preferred.endswith(" " + suffix_key):
+                names.append(preferred[: -len(suffix_key) - 1])
+            if value in {self._normalise_ct(n) for n in names if n}:
+                return self._builder.cdisc_code(
+                    term["conceptId"], term.get("preferredTerm", "")
+                )
+        return None
+
+    @staticmethod
+    def _normalise_ct(text) -> str:
+        return " ".join(str(text).upper().split()) if text else ""
+
+    def _lookup_ct(
+        self,
+        text: str,
+        table: list,
+        codelist_id: str,
+        suffix: str,
+        method_name: str,
+        label: str,
+    ) -> Code | None:
+        """``table`` first, then the full code list; no default."""
+        value = text.upper().strip() if text else ""
+        for keys, entry in table:
+            if value in keys:
+                self._errors.info(
+                    f"{label} '{value}' decoded as '{entry['code']}', '{entry['decode']}'",
+                    location=KlassMethodLocation(self.MODULE, method_name),
+                )
+                return self._builder.cdisc_code(entry["code"], entry["decode"])
+        code = self.ct_term(codelist_id, text, suffix)
+        if code is not None:
+            self._errors.info(
+                f"{label} '{text}' decoded from {codelist_id} as '{code.code}', '{code.decode}'",
+                location=KlassMethodLocation(self.MODULE, method_name),
+            )
+            return code
+        self._errors.warning(
+            f"{label} '{text}' not decoded; none recorded",
+            location=KlassMethodLocation(self.MODULE, method_name),
+        )
+        return None
 
     def site_distribution(self, text: str | None) -> Code | None:
         """M11 Site Distribution -> StudyDesign characteristic (C207416)."""

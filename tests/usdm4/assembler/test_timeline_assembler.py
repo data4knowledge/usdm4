@@ -969,10 +969,10 @@ class TestTimings:
         assert [x.value for x in t.timings] == [
             "PT0M",
             "P7D",
-            "P20D",
+            "P21D",
             "P21D",
             "P7D",
-            "P20D",
+            "P21D",
         ]
         assert timing_types(t) == ["Fixed Reference"] + ["After"] * 5
         assert t.timings[4].relativeToScheduledInstanceId == t.instances[3].id
@@ -1031,13 +1031,13 @@ class TestTimings:
         assert links == [
             ("C1D1", "PT0M", "C1D1"),
             ("C1D8", "P7D", "C1D1"),
-            ("C1PAD", "P20D", "C1D1"),
+            ("C1PAD", "P21D", "C1D1"),
             ("C2D1", "P21D", "C1D1"),
             ("C2D8", "P7D", "C2D1"),
             ("C2D15", "P14D", "C2D1"),
-            ("C2PAD", "P27D", "C2D1"),
+            ("C2PAD", "P28D", "C2D1"),
             ("C3D1", "P28D", "C2D1"),
-            ("C3PAD", "P27D", "C3D1"),
+            ("C3PAD", "P28D", "C3D1"),
         ]
         assert (t.timings[3].valueLabel, t.timings[3].label) == ("", "")
 

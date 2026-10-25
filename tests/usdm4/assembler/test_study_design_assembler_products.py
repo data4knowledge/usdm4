@@ -98,6 +98,72 @@ class TestProducts:
         assert product.administrableDoseForm.standardCode.code == "C42998"
         assert product.productDesignation.code == "C202579"
 
+    def test_dose_form_preferred_term_without_suffix(
+        self, assembler, population_assembler, timeline_assembler
+    ):  # GitHub 96
+        a = _execute(
+            assembler,
+            population_assembler,
+            timeline_assembler,
+            products=[{"name": "Lyo", "dose_form": "Lyophilized Powder"}],
+        )
+        product = a.administrable_products[0]
+        assert (
+            product.administrableDoseForm.standardCode.decode
+            == "Lyophilized Powder Dosage Form"
+        )
+
+    def test_sourcing_decoded(
+        self, assembler, population_assembler, timeline_assembler
+    ):  # GitHub 96
+        a = _execute(
+            assembler,
+            population_assembler,
+            timeline_assembler,
+            products=[{"name": "Drug", "sourcing": "Centrally Sourced"}],
+        )
+        assert a.administrable_products[0].sourcing.code == "C215659"
+
+    def test_sourcing_printed_short_form_decoded(
+        self, assembler, population_assembler, timeline_assembler
+    ):  # GitHub 96
+        a = _execute(
+            assembler,
+            population_assembler,
+            timeline_assembler,
+            products=[
+                {"name": "A", "sourcing": "Central"},
+                {"name": "B", "sourcing": "Local"},
+            ],
+        )
+        assert [p.sourcing.code for p in a.administrable_products] == [
+            "C215659",
+            "C215660",
+        ]
+
+    def test_sourcing_not_decoded_left_unset_with_warning(
+        self, assembler, population_assembler, timeline_assembler, errors
+    ):  # GitHub 96
+        a = _execute(
+            assembler,
+            population_assembler,
+            timeline_assembler,
+            products=[{"name": "Drug", "sourcing": "Pharmacy"}],
+        )
+        assert a.administrable_products[0].sourcing is None
+        assert "Sourcing 'Pharmacy'" in str(errors.to_dict(Errors.WARNING))
+
+    def test_no_sourcing_left_unset(
+        self, assembler, population_assembler, timeline_assembler
+    ):  # GitHub 96
+        a = _execute(
+            assembler,
+            population_assembler,
+            timeline_assembler,
+            products=[{"name": "Drug"}],
+        )
+        assert a.administrable_products[0].sourcing is None
+
     def test_unresolvable_ct_falls_back_with_warning(
         self, assembler, population_assembler, timeline_assembler, errors
     ):

@@ -44,7 +44,7 @@ the previous cycle's ``Day 1`` — a range covering cycle *n* − 1 counts — a
 its other days from its own ``Day 1``. A range with no readable length takes
 the largest day printed in it, with a warning (U4-8). The range is a loop
 (U4-39, below): its entry takes the ``Day 1`` timing, its pad is ``After``
-``Day 1`` by the length less one, and the decision loops back to the
+``Day 1`` by the length (Dave, 2026-10-25; was the length less one), and the decision loops back to the
 range's first node. When the range is the last column, an end node follows
 the decision (a decision cannot target the timeline exit). A single cycle with
 a readable length gets a pad too, so it has its full length; it does not loop,
@@ -61,8 +61,8 @@ timing. A restart is warned only when no gate comes before it (U4-14).
 
 Issue 84. An open repeat (``Q12 Wks``, ``Every 6 months``) is a loop
 (U4-39): an entry taking the column's timing, the column's node zero after
-it, a pad ``After`` the column by the period less one day (as a cycle's pad
-is its length less one; Dave, 2026-10-23), and a decision looping back to the
+it, a pad ``After`` the column by the period (as a cycle's pad is its length;
+Dave, 2026-10-25, replacing the period less one day of 2026-10-23), and a decision looping back to the
 column and exiting to the next one; and, when it is the last column, an end
 node. With no period no loop is built, with a warning. Explicit repeats were
 expanded by parse.
@@ -486,7 +486,7 @@ class Planner:
         self, column: Column, n: int, is_last: bool, where: str
     ) -> list[InstanceNode]:
         """An open repeat's loop after its column's node (U4-39): a pad
-        ``After`` the column by the period less one day, an untimed decision
+        ``After`` the column by the period, an untimed decision
         looping back to the column; and, when the column is the last, an end
         node the decision's exit leads to. No period, no loop. ``plan`` puts
         the entry before the column's node."""
@@ -498,15 +498,8 @@ class Planner:
                 "plan",
             )
             return []
-        duration, unit = self._less_one_day(period.n, period.unit)
-        if duration is None:
-            self._warn(
-                f"{where}, column '{column.id}': the repeat's period "
-                f"{period.n} {period.unit}s does not convert exactly to days; "
-                "the pad is the whole period",
-                "plan",
-            )
-            duration, unit = period.n, period.unit
+        # The pad is the whole period: the next pass starts on the pad's day.
+        duration, unit = period.n, period.unit
         pad = InstanceNode(
             column=None,
             timing_type=AFTER,
@@ -526,18 +519,6 @@ class Planner:
             end.repeat = n
             nodes.append(end)
         return nodes
-
-    @staticmethod
-    def _less_one_day(n: int, unit: str) -> tuple[int | None, str]:
-        """A period less one day: in days for a period in days or weeks, less
-        one of its own unit for hours and minutes; ``None`` for months and
-        years, which do not convert exactly to days."""
-        if unit in ("hour", "minute"):
-            return max(n - 1, 0), unit
-        days = _convert(n, unit, "day")
-        if days is None:
-            return None, unit
-        return max(days - 1, 0), "day"
 
     # ------------------------------------------------------------------
     # Cycle ranges — issue 69 (R5)
@@ -614,8 +595,8 @@ class Planner:
     def _pad_node(
         self, ctx: "_Context", start: _CycleStart, last: Column, looped: bool
     ) -> InstanceNode | None:
-        """A cycle's pad, ``After`` its ``Day 1`` by the length less one (21
-        days: 20), so the cycle has its full length. When the length cannot
+        """A cycle's pad, ``After`` its ``Day 1`` by the length (21 days: 21),
+        so the next pass starts on the pad's day (Dave, 2026-10-25). When the length cannot
         be read or converted exactly, or the last day is beyond it: a range's
         pad is zero after its last column, warned; a single cycle gets no
         pad (U4-23: a cycle need not print its length)."""
@@ -645,7 +626,7 @@ class Planner:
             timing_type, relative_to, duration, timed = AFTER, last.index, 0, False
         else:
             timing_type, relative_to = AFTER, start.key
-            duration, timed = converted - 1, True
+            duration, timed = converted, True
         return InstanceNode(
             column=None,
             timing_type=timing_type,

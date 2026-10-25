@@ -108,6 +108,26 @@ class TestAdministrationsList:
         assert admins[1].name == "ADM-DRUG-A-2"
         assert admins[1].frequency is None
 
+    def test_route_and_frequency_from_the_code_lists_no_default(
+        self, assembler, population_assembler, timeline_assembler
+    ):  # GitHub 96
+        interventions = _execute(
+            assembler,
+            population_assembler,
+            timeline_assembler,
+            [
+                {
+                    "name": "Drug A",
+                    "administrations": [
+                        {"route": "Transdermal", "frequency": "V2 to Vn"}
+                    ],
+                }
+            ],
+        )
+        admin = interventions[0].administrations[0]
+        assert admin.route.standardCode.decode == "Transdermal Route of Administration"
+        assert admin.frequency is None
+
     def test_single_unnamed_administration_unnumbered(
         self, assembler, population_assembler, timeline_assembler
     ):

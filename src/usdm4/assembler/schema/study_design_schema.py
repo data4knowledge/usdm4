@@ -25,7 +25,10 @@ class ProductInput(BaseModel):
     ``dose_form`` (e.g. "Tablet", "Injection") and
     ``product_designation`` ("IMP" / "NIMP") resolve against CDISC CT;
     both are required on the API model, so unresolvable or empty input
-    degrades to warned defaults (Unknown dose form, IMP). Each substance
+    degrades to warned defaults (Unknown dose form, IMP). ``sourcing``
+    ("Centrally Sourced", "Locally Sourced") resolves against C215483 and
+    has no default: one that does not decode is left unset, with a warning
+    (GitHub 96). Each substance
     becomes an Ingredient with the Active Ingredient role — richer
     ingredient roles and pharmacologic class codes are out of scope for
     assembler input.
@@ -38,6 +41,7 @@ class ProductInput(BaseModel):
     description: str = ""
     dose_form: str = ""
     product_designation: str = ""
+    sourcing: str = ""
     substances: list[SubstanceInput] = []
 
 

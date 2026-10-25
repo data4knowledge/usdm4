@@ -562,6 +562,9 @@ class StudyDesignAssembler(BaseAssembler):
                     ),
                     "ingredients": ingredients,
                 }
+                sourcing = self._sourcing(item.get("sourcing", ""), item["name"])
+                if sourcing is not None:
+                    params["sourcing"] = sourcing
                 obj = self._builder.create(AdministrableProduct, params)
                 if obj is not None:
                     result[item["name"]] = obj
@@ -668,6 +671,9 @@ class StudyDesignAssembler(BaseAssembler):
             code = self._builder.klass_and_attribute_value(
                 AdministrableProduct, "administrableDoseForm", text
             )
+        if code is None and text:
+            # The preferred term without its suffix: "Lyophilized Powder" (GitHub 96).
+            code = self._encoder.ct_term("C66726", text, "Dosage Form")
         if code is None:
             self._errors.warning(
                 f"Dose form '{text}' for product '{product_name}' not "
@@ -676,6 +682,12 @@ class StudyDesignAssembler(BaseAssembler):
             )
             code = self._builder.cdisc_code("C17998", "Unknown")
         return self._builder.alias_code(code)
+
+    def _sourcing(self, text: str, product_name: str):
+        """Sourcing label -> Code (codelist C215483) through the encoder
+        (printed short forms such as Central, then the code list); None when
+        empty or not decoded, the encoder warning. No default (GitHub 96)."""
+        return self._encoder.sourcing(text)
 
     def _product_designation(self, text: str, product_name: str):
         """Product designation label → Code with warned IMP default."""

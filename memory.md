@@ -338,3 +338,22 @@ as label: C215480 has no generic committee term, and that is the code the view r
 **Figures.** Tests pass (Dave ran them). udp_prism run complete (Dave, 2026-10-23); none of its checks reads the schedule timeline.
 
 **Rejected.** Writing code before the analysis, the issue and the branch existed (Dave: analysis first). Moving the pad to the full cycle length so the expander's passes come out the cycle length apart: the diagrams settle the pad at CL − 1; the expander was not changed.
+
+## 2026-10-25 — GitHub 96 (branch `96-unmapped-codes-get-defaults`): CT lookups with no defaults, sourcing coded, the loop pad is the full period
+
+Driven from udp_prism (section 6 interventions); udp_prism `memory.md` 2026-10-25 holds the figures.
+
+**What it was.** Route, frequency and dose form text that did not match a CT term was given a default code, so a wrong code stood where the printed text should be. Product sourcing text ("Central", "Local") was not read. The loop pad was CL − 1, so the expander's passes did not come out one period apart.
+
+**What changed.**
+- `src/usdm4/encoder.py`: route and frequency go through `_lookup_ct` with no default; `ct_term` added; dose form falls back to the printed text. `SOURCING_MAP` (CENTRAL/CENTRALLY → C215659 "Centrally Sourced Indicator", LOCAL/LOCALLY → C215660) and `sourcing(text)` via `_lookup_ct(text, SOURCING_MAP, "C215483", ...)`.
+- `src/usdm4/assembler/schema/study_design_schema.py`: `ProductInput.sourcing: str = ""`.
+- `src/usdm4/assembler/study_design_assembler.py`: `_sourcing` returns `self._encoder.sourcing(text)`; `params["sourcing"]` set when not None.
+- `src/usdm4/assembler/timeline/plan.py`: the loop pad is the full period. Tests and the R5 pin updated. This reverses the 2026-10-23 "Rejected" note on the full cycle length (Dave, this session).
+- Tests: `test_study_design_assembler_products.py` (sourcing) and the encoder and timeline tests.
+
+**Figures.** Section 6 interventions end to end 0 unexplained, 27 / 27 (udp_prism set, with the usdm4_fhir 56 and usdm4_protocol 129 branches). Tests run by Dave: pass.
+
+**Rejected.** A default code for unmatched text (it hides the printed value behind a wrong code).
+
+**Found, not this work.** None (N71, a regimen with no USDM home, is in udp_prism `docs/issues.md`).

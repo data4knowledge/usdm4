@@ -1702,32 +1702,41 @@ class TestEncoderRoute:
         )
         assert result == mock_alias
 
-    def test_route_empty_defaults_to_oral(self, encoder):
-        mock_code = Mock(spec=Code)
+    def test_route_empty_records_none(self, encoder):  # GitHub 96
+        encoder._builder.codelist.return_value = {"terms": []}
+        assert encoder.route("") is None
+        encoder._errors.warning.assert_called()
+        encoder._builder.cdisc_code.assert_not_called()
+
+    def test_route_unknown_records_none(self, encoder):  # GitHub 96
+        encoder._builder.codelist.return_value = {"terms": []}
+        assert encoder.route("Telepathic") is None
+        encoder._errors.warning.assert_called()
+        encoder._builder.cdisc_code.assert_not_called()
+
+    def test_route_from_the_code_list(self, encoder):  # GitHub 96
+        mock_code = Mock(
+            spec=Code, code="C38305", decode="Transdermal Route of Administration"
+        )
         mock_alias = Mock(spec=AliasCode)
         encoder._builder.cdisc_code.return_value = mock_code
         encoder._builder.alias_code.return_value = mock_alias
+        encoder._builder.codelist.return_value = {
+            "terms": [
+                {
+                    "conceptId": "C38305",
+                    "preferredTerm": "Transdermal Route of Administration",
+                    "submissionValue": "TRANSDERMAL",
+                }
+            ]
+        }
 
-        result = encoder.route("")
+        result = encoder.route("Transdermal")
 
+        encoder._builder.codelist.assert_called_with("C66729")
         encoder._builder.cdisc_code.assert_called_with(
-            "C38288", "Oral Route of Administration"
+            "C38305", "Transdermal Route of Administration"
         )
-        encoder._errors.warning.assert_called()
-        assert result == mock_alias
-
-    def test_route_unknown_defaults_to_oral(self, encoder):
-        mock_code = Mock(spec=Code)
-        mock_alias = Mock(spec=AliasCode)
-        encoder._builder.cdisc_code.return_value = mock_code
-        encoder._builder.alias_code.return_value = mock_alias
-
-        result = encoder.route("Telepathic")
-
-        encoder._builder.cdisc_code.assert_called_with(
-            "C38288", "Oral Route of Administration"
-        )
-        encoder._errors.warning.assert_called()
         assert result == mock_alias
 
 
@@ -1763,26 +1772,60 @@ class TestEncoderFrequency:
         encoder._builder.cdisc_code.assert_called_with("C64496", "Twice Daily")
         assert result == mock_alias
 
-    def test_frequency_empty_defaults_to_daily(self, encoder):
-        mock_code = Mock(spec=Code)
-        mock_alias = Mock(spec=AliasCode)
-        encoder._builder.cdisc_code.return_value = mock_code
-        encoder._builder.alias_code.return_value = mock_alias
-
-        result = encoder.frequency("")
-
-        encoder._builder.cdisc_code.assert_called_with("C25473", "Daily")
+    def test_frequency_empty_records_none(self, encoder):  # GitHub 96
+        encoder._builder.codelist.return_value = {"terms": []}
+        assert encoder.frequency("") is None
         encoder._errors.warning.assert_called()
-        assert result == mock_alias
 
-    def test_frequency_unknown_defaults_to_daily(self, encoder):
-        mock_code = Mock(spec=Code)
-        mock_alias = Mock(spec=AliasCode)
-        encoder._builder.cdisc_code.return_value = mock_code
-        encoder._builder.alias_code.return_value = mock_alias
-
-        result = encoder.frequency("Sporadically")
-
-        encoder._builder.cdisc_code.assert_called_with("C25473", "Daily")
+    def test_frequency_unknown_records_none(self, encoder):  # GitHub 96
+        encoder._builder.codelist.return_value = {"terms": []}
+        assert encoder.frequency("V2 to Vn") is None
         encoder._errors.warning.assert_called()
-        assert result == mock_alias
+        encoder._builder.cdisc_code.assert_not_called()
+
+
+class TestEncoderCtTerm:  # GitHub 96
+    TERMS = {
+        "terms": [
+            {
+                "conceptId": "C87541",
+                "preferredTerm": "Lyophilized Powder Dosage Form",
+                "submissionValue": "POWDER, LYOPHILIZED",
+                "synonyms": ["Freeze-dried powder"],
+            }
+        ]
+    }
+
+    @pytest.fixture
+    def encoder(self):
+        builder = Mock(spec=Builder)
+        builder.codelist.return_value = self.TERMS
+        builder.cdisc_code.side_effect = lambda code, decode="": Mock(
+            spec=Code, code=code, decode=decode
+        )
+        return Encoder(builder, Mock(spec=Errors))
+
+    @pytest.mark.parametrize(
+        "text",
+        [
+            "Lyophilized Powder",
+            "lyophilized  powder",
+            "POWDER, LYOPHILIZED",
+            "Lyophilized Powder Dosage Form",
+            "C87541",
+            "freeze-dried powder",
+        ],
+    )
+    def test_matches(self, encoder, text):
+        assert encoder.ct_term("C66726", text, "Dosage Form").code == "C87541"
+
+    def test_suffix_only_when_given(self, encoder):
+        assert encoder.ct_term("C66726", "Lyophilized Powder") is None
+
+    def test_no_match_or_no_text(self, encoder):
+        assert encoder.ct_term("C66726", "Sterile Solution", "Dosage Form") is None
+        assert encoder.ct_term("C66726", "", "Dosage Form") is None
+
+    def test_codelist_not_loaded(self, encoder):
+        encoder._builder.codelist.return_value = None
+        assert encoder.ct_term("C66726", "Lyophilized Powder", "Dosage Form") is None

@@ -309,14 +309,14 @@ class TestSingleCycles:
             (FIXED, 1, 0),
             (AFTER, 1, 7),
             (AFTER, 1, 14),
-            (AFTER, 1, 20),  # C1PAD: cycle 1's full length (U4-39)
+            (AFTER, 1, 21),  # C1PAD: cycle 1's full length (U4-39)
             (AFTER, 1, 21),  # C2D1 from C1D1 by cycle 1's length
             (AFTER, 4, 7),  # C2D8 from C2D1
             (AFTER, 4, 14),
-            (AFTER, 4, 20),  # C2PAD
+            (AFTER, 4, 21),  # C2PAD
             (AFTER, 4, 21),  # C3D1 from C2D1 by cycle 2's length
             (AFTER, 7, 7),
-            (AFTER, 7, 20),  # C3PAD
+            (AFTER, 7, 21),  # C3PAD
             (AFTER, 1, 89),
         ]
         assert _messages(errors) == []
@@ -333,7 +333,7 @@ class TestSingleCycles:
         plan = _cycle_plan(
             [("Day 1", "Cycle 1", "3 weeks"), ("Day 1", "Cycle 2", "3 weeks")]
         )
-        assert _links(plan)[1:3] == [(AFTER, 0, 20), (AFTER, 0, 21)]
+        assert _links(plan)[1:3] == [(AFTER, 0, 21), (AFTER, 0, 21)]
 
     def test_a_length_that_does_not_convert_is_a_zero_timing(self):
         errors = Errors()
@@ -381,7 +381,7 @@ class TestSingleCycles:
         assert _links(plan) == [
             (FIXED, 0, 0),
             (AFTER, 0, 7),
-            (AFTER, 0, 20),
+            (AFTER, 0, 21),
             (AFTER, 0, 21),
         ]
 
@@ -411,10 +411,10 @@ class TestSingleCycles:
         )
         assert _links(plan) == [
             (FIXED, 0, 0),
-            (AFTER, 0, 20),
+            (AFTER, 0, 21),
             (BEFORE, 2, 1),
             (AFTER, 0, 21),
-            (AFTER, 2, 20),
+            (AFTER, 2, 21),
         ]
         assert _marker_keys(plan) == []
 
@@ -425,10 +425,10 @@ class TestSingleCycles:
         )
         assert _links(plan) == [
             (FIXED, 0, 0),
-            (AFTER, 0, 20),
+            (AFTER, 0, 21),
             (AFTER, 0, 21),
             (BEFORE, "C2D1", 1),
-            (AFTER, "C2D1", 20),
+            (AFTER, "C2D1", 21),
         ]
 
     def test_the_day_is_read_from_timing_only(self):
@@ -452,7 +452,7 @@ class TestSingleCycles:
             ],
             errors,
         )
-        assert _links(plan)[:3] == [(FIXED, 0, 0), (AFTER, 0, 1), (AFTER, 0, 2)]
+        assert _links(plan)[:3] == [(FIXED, 0, 0), (AFTER, 0, 2), (AFTER, 0, 2)]
         assert plan.nodes[2].unit == "week"
         assert not plan.nodes[3].timed
         assert any("does not convert exactly to weeks" in m for m in _messages(errors))
@@ -478,7 +478,7 @@ class TestSingleCycles:
         assert _links(plan)[1:] == [
             (AFTER, 0, 1),
             (BEFORE, "C1D1", 1),
-            (AFTER, "C1D1", 20),
+            (AFTER, "C1D1", 21),
         ]
 
     def test_a_unit_other_than_the_anchor_is_warned(self):
@@ -489,7 +489,7 @@ class TestSingleCycles:
         assert _links(plan)[1:] == [
             (AFTER, 0, 1),
             (AFTER, "C1D1", 7),
-            (AFTER, "C1D1", 20),
+            (AFTER, "C1D1", 21),
         ]
         assert any(
             "cycle 1 Day 1: timing unit 'day' differs from anchor unit 'week'; "
@@ -513,11 +513,11 @@ class TestCycleDayOne:
         )
         assert _links(plan) == [
             (FIXED, 0, 0),
-            (AFTER, 0, 20),
             (AFTER, 0, 21),
-            (AFTER, 1, 27),
+            (AFTER, 0, 21),
             (AFTER, 1, 28),
-            (AFTER, 2, 27),
+            (AFTER, 1, 28),
+            (AFTER, 2, 28),
         ]
         assert _day_one_at(plan, 2) == 49
 
@@ -570,7 +570,7 @@ class TestCycleDayOne:
             (AFTER, 0, 21),
             (AFTER, "C2D1", 7),
             (AFTER, "C2D1", 14),
-            (AFTER, "C2D1", 20),
+            (AFTER, "C2D1", 21),
         ]
         assert (
             "Timeline 1, cycle 2: no Day 1 column is printed; a start marker C2D1 "
@@ -593,7 +593,7 @@ class TestCycleDayOne:
             (FIXED, "C1D1", 0),
             (AFTER, "C1D1", 7),
             (AFTER, "C1D1", 14),
-            (AFTER, "C1D1", 20),
+            (AFTER, "C1D1", 21),
             (AFTER, "C1D1", 89),
         ]
 
@@ -604,10 +604,10 @@ class TestCycleDayOne:
         )
         assert _links(plan) == [
             (FIXED, 0, 0),
-            (AFTER, 0, 20),
+            (AFTER, 0, 21),
             (AFTER, 0, 0),
             (AFTER, "C3D1", 7),
-            (AFTER, "C3D1", 20),
+            (AFTER, "C3D1", 21),
         ]
         assert not plan.nodes[2].timed
         assert (
@@ -625,12 +625,12 @@ class TestCycleDayOne:
         )
         assert _links(plan) == [
             (FIXED, 0, 0),
-            (AFTER, 0, 20),
+            (AFTER, 0, 21),
             (AFTER, 0, 21),
             (AFTER, "C2D1", 7),
-            (AFTER, "C2D1", 27),
             (AFTER, "C2D1", 28),
-            (AFTER, 2, 20),
+            (AFTER, "C2D1", 28),
+            (AFTER, 2, 21),
         ]
         assert _day_one_at(plan, 2) == 49
 
@@ -703,7 +703,7 @@ class TestNct02107703Headers:
         )
         assert (nodes["C4ENTRY"].relative_to, nodes["C4ENTRY"].duration) == (3, 28)
         assert nodes["C2DEC"].loop_to == 3 and nodes["C4DEC"].loop_to == 4
-        assert (nodes["C2PAD"].relative_to, nodes["C2PAD"].duration) == (3, 27)
+        assert (nodes["C2PAD"].relative_to, nodes["C2PAD"].duration) == (3, 28)
         assert (nodes["C4END"].relative_to, nodes["C4END"].duration) == ("C4PAD", 0)
         assert [m for m in _messages(errors) if "cycle" in m] == []
 
@@ -738,7 +738,7 @@ class TestRanges:
             0,
         )
 
-    def test_pad_after_day_one_by_the_length_less_one(self):
+    def test_pad_after_day_one_by_the_length(self):
         plan = _cycle_plan(
             [
                 ("Day 1", "Cycle 1", "28 days"),
@@ -758,7 +758,7 @@ class TestRanges:
         ]
         pad = plan.nodes[5]
         assert (pad.kind, pad.cycle, pad.epoch_column) == (PAD, 2, 2)
-        assert (pad.timing_type, pad.relative_to, pad.duration) == (AFTER, 1, 27)
+        assert (pad.timing_type, pad.relative_to, pad.duration) == (AFTER, 1, 28)
         assert pad.timed
 
     def test_the_decision_has_no_timing_and_loops_back(self):
@@ -822,7 +822,7 @@ class TestRanges:
         nodes = {n.key: n for n in plan.nodes}
         assert nodes["C2DEC"].loop_to == "C2D1"
         assert (nodes["C2D1"].relative_to, nodes["C2D1"].duration) == ("C2ENTRY", 0)
-        assert (nodes["C2PAD"].relative_to, nodes["C2PAD"].duration) == ("C2D1", 20)
+        assert (nodes["C2PAD"].relative_to, nodes["C2PAD"].duration) == ("C2D1", 21)
 
     def test_a_range_that_is_the_anchor_moves_it_to_the_entry(self):
         plan = _cycle_plan(
@@ -848,7 +848,7 @@ class TestRanges:
             errors,
         )
         nodes = {n.key: n for n in plan.nodes}
-        assert (nodes["C2PAD"].relative_to, nodes["C2PAD"].duration) == (1, 14)
+        assert (nodes["C2PAD"].relative_to, nodes["C2PAD"].duration) == (1, 15)
         assert (
             "Timeline 1, cycle 2: the range has no readable length; the largest "
             "day printed in it is used (15 days)"
@@ -925,7 +925,7 @@ class TestSingleCyclePad:
         assert [n.key for n in plan.nodes] == [0, 1, "C1PAD", 2, "C2PAD"]
         pad = plan.nodes[2]
         assert (pad.kind, pad.cycle, pad.epoch_column) == (PAD, 1, 1)
-        assert (pad.timing_type, pad.relative_to, pad.duration) == (AFTER, 0, 20)
+        assert (pad.timing_type, pad.relative_to, pad.duration) == (AFTER, 0, 21)
         assert not any(n.kind in (ENTRY, DECISION) for n in plan.nodes)
 
     def test_no_length_no_pad(self):

@@ -159,12 +159,12 @@ class TestOpenRepeat:
         assert timing.value == "PT0M"
         assert timing.relativeToScheduledInstanceId == entry.id
 
-    def test_the_pad_is_the_period_less_one_day(self, builder):
+    def test_the_pad_is_the_period(self, builder):
         assembler, _ = _assemble(builder, _open({"value": 12, "unit": "weeks"}))
         tl = assembler.timelines[0]
         repeat, pad = _activity_instances(tl)[2:4]
         timing = _timing_of(tl, pad)
-        assert timing.value == "P83D"
+        assert timing.value == "P12W"
         assert timing.relativeToScheduledInstanceId == repeat.id
 
     def test_the_decision_has_no_timing(self, builder):
