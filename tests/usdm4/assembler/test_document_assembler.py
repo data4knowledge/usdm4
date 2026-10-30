@@ -908,6 +908,74 @@ class TestDocumentAssemblerPrivateMethods:
         assert intro_section is not None
         assert len(intro_section.childIds) == 1  # Should have 1.1 as child
 
+    def test_section_to_narrative_skipped_heading_level(self, builder):
+        """A section that skips a heading level is kept under the nearest section above it (issue 97)."""
+        builder.clear()
+        errors = Errors()
+        assembler = DocumentAssembler(builder, errors)
+        data = {
+            "document": {
+                "label": "Protocol",
+                "version": "1.0",
+                "status": "Draft",
+                "template": "Template",
+                "version_date": "2024-01-01",
+            },
+            "sections": [
+                {"section_number": "9", "section_title": "Safety", "text": "a"},
+                {"section_number": "9.2", "section_title": "Timing", "text": "b"},
+                {
+                    "section_number": "9.2.1.1",
+                    "section_title": "Monitoring",
+                    "text": "c",
+                },
+                {"section_number": "9.5", "section_title": "Pregnancy", "text": "d"},
+            ],
+        }
+
+        assembler.execute(data)
+
+        contents = assembler.document_version.contents
+        by_number = {nc.sectionNumber: nc for nc in contents}
+        assert list(by_number) == ["9", "9.2", "9.2.1.1", "9.5"]
+        assert by_number["9.2"].childIds == [by_number["9.2.1.1"].id]
+        assert by_number["9"].childIds == [by_number["9.2"].id, by_number["9.5"].id]
+        warnings = str(errors.to_dict(Errors.WARNING))
+        assert (
+            "Section 9.2.1.1 skips a heading level (no 9.2.1); placed under 9.2"
+            in warnings
+        )
+        assert "No previous section set" not in str(errors.to_dict())
+
+    def test_section_to_narrative_skipped_level_at_top(self, builder):
+        """A first section below level 1 is kept at the top level (issue 97)."""
+        builder.clear()
+        errors = Errors()
+        assembler = DocumentAssembler(builder, errors)
+        data = {
+            "document": {
+                "label": "Protocol",
+                "version": "1.0",
+                "status": "Draft",
+                "template": "Template",
+                "version_date": "2024-01-01",
+            },
+            "sections": [
+                {"section_number": "1.1", "section_title": "Background", "text": "a"},
+                {"section_number": "2", "section_title": "Methods", "text": "b"},
+            ],
+        }
+
+        assembler.execute(data)
+
+        numbers = [nc.sectionNumber for nc in assembler.document_version.contents]
+        assert numbers == ["1.1", "2"]
+        warnings = str(errors.to_dict(Errors.WARNING))
+        assert (
+            "Section 1.1 skips a heading level (no 1); placed under the top level"
+            in warnings
+        )
+
 
 class TestDocumentAssemblerStateManagement:
     """Test DocumentAssembler state management."""

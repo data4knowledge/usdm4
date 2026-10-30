@@ -357,3 +357,19 @@ Driven from udp_prism (section 6 interventions); udp_prism `memory.md` 2026-10-2
 **Rejected.** A default code for unmatched text (it hides the printed value behind a wrong code).
 
 **Found, not this work.** None (N71, a regimen with no USDM home, is in udp_prism `docs/issues.md`).
+
+## 2026-10-30 — GitHub 97 (branch `97-section-that-skips-a-heading-level-is-dropped`): a section that skips a heading level is kept
+
+**Repos.** usdm4 (this entry). Driven from the UDP PRISM project (udp_prism N22; pointer in `udp_prism/memory.md` 2026-10-30). raw_docx issue 16 now numbers such sections as Word shows them.
+
+**What it was.** `DocumentAssembler._section_to_narrative` builds the narrative tree by section level. A section more than one level below the one before it (9.2 then 9.2.1.1, no 9.2.1) reached a recursion level with no previous section: it logged the error "No previous section set while processing sections" and skipped the section and its text. IGBJ 9.2.1.1 and Takeda_Vedolizumab 9.5.1.1 / 9.5.1.2 were lost at step 1. The documents do skip the level; Dave ruled to accommodate it and report it.
+
+**What changed.**
+- `src/usdm4/assembler/document_assembler.py` — `_section_to_narrative`: with no previous section at the level, the section is processed one level down under the same parent, so it becomes a child of the nearest section above it. The error is replaced by a warning: "Section 9.2.1.1 skips a heading level (no 9.2.1); placed under 9.2" ("the top level" when there is no parent).
+- `tests/usdm4/assembler/test_document_assembler.py` — `test_section_to_narrative_skipped_heading_level` (9, 9.2, 9.2.1.1, 9.5: tree and warning) and `test_section_to_narrative_skipped_level_at_top` (a document starting at 1.1), both through `execute()`.
+
+**Figures.** pytest all pass, coverage 100% (Dave). udp_prism narrative end to end 30 → 27 unexplained, no section missing; round trip exact.
+
+**Rejected.** Registering the three sections as a known data issue instead (Dave: accommodate the document error and report it). Calling `_section_to_narrative` directly in the test after creating the document version by hand: the create returns None in this fixture (the two older tests skip on that), so the first version failed.
+
+**Found, not this work.** None.

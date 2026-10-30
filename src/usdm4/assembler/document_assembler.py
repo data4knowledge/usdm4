@@ -227,10 +227,18 @@ class DocumentAssembler(BaseAssembler):
                         previous, sections, local_index, level + 1
                     )
                 else:
-                    self._errors.error(
-                        "No previous section set while processing sections", location
+                    # A heading level is skipped (9.2 then 9.2.1.1): keep the
+                    # section under the nearest section above it (issue 97).
+                    sn = section["section_number"]
+                    missing = ".".join(sn.rstrip(".").split(".")[:level])
+                    above = parent.sectionNumber if parent else "the top level"
+                    self._errors.warning(
+                        f"Section {sn} skips a heading level (no {missing}); placed under {above}",
+                        location,
                     )
-                    local_index += 1
+                    local_index = self._section_to_narrative(
+                        parent, sections, local_index, level + 1
+                    )
             elif section_level < level:
                 return local_index
             if local_index >= len(sections):
