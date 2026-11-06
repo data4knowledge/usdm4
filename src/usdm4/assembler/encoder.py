@@ -538,6 +538,26 @@ class Encoder:
         "OTHER",
         "NOT APPLICABLE",
     ]
+    # StudyDesign extension IAM_EXT_URL <- M11 Intervention Assignment Method
+    # (C217280), GitHub 98
+    STRATIFIED_ASSIGNMENT = ["STRATIFIED RANDOMISATION", "STRATIFIED RANDOMIZATION"]
+    INTERVENTION_ASSIGNMENT_TERM_MAP = [
+        (
+            [
+                "RANDOMISATION",
+                "RANDOMIZATION",
+                "RANDOMISED",
+                "RANDOMIZED",
+                *STRATIFIED_ASSIGNMENT,
+            ],
+            {"code": "C25196", "decode": "Randomisation"},
+        ),
+        (
+            ["NO INTERVENTION ASSIGNMENT METHOD"],
+            {"code": "C222801", "decode": "No Intervention Assignment Method"},
+        ),
+        (["OTHER"], {"code": "C17649", "decode": "Other"}),
+    ]
 
     # InterventionalStudyDesign.blindingSchema (C66735) <- M11 Trial Blind
     # Schema (C217051)
@@ -1012,12 +1032,31 @@ class Encoder:
             "Site geographic scope",
         )
 
-    def intervention_assignment_method(self, text: str | None) -> Code | None:
+    def intervention_assignment_term(self, text: str | None) -> Code | None:
+        """M11 Intervention Assignment Method -> its C217280 term (GitHub 98).
+
+        ``None`` for anything else, silently:
+        ``intervention_assignment_method`` warns on the same text.
+        """
+        value = self._normalise_label(text)
+        for keys, entry in self.INTERVENTION_ASSIGNMENT_TERM_MAP:
+            if value in keys:
+                return self._builder.cdisc_code(entry["code"], entry["decode"])
+        return None
+
+    def assignment_is_stratified(self, text: str | None) -> bool:
+        """True when the method text itself says stratified."""
+        return self._normalise_label(text) in self.STRATIFIED_ASSIGNMENT
+
+    def intervention_assignment_method(
+        self, text: str | None, stratified: bool = False
+    ) -> Code | None:
         """M11 Intervention Assignment Method -> StudyDesign characteristic.
 
         Randomisation has a characteristic (C46079, or C147145 when
-        stratified). M11's other terms have none and return ``None`` with an
-        info message, not a warning: the caller stated them correctly.
+        stratified, by the text or by ``stratified``). M11's other terms have
+        none and return ``None`` with an info message, not a warning: the
+        caller stated them correctly.
         """
         if self._normalise_label(text) in self.INTERVENTION_ASSIGNMENT_NO_CODE:
             self._errors.info(
@@ -1027,12 +1066,15 @@ class Encoder:
                 ),
             )
             return None
-        return self._lookup_optional(
+        code = self._lookup_optional(
             text,
             self.INTERVENTION_ASSIGNMENT_METHOD_MAP,
             "intervention_assignment_method",
             "Intervention assignment method",
         )
+        if stratified and code is not None and code.code == "C46079":
+            return self._builder.cdisc_code("C147145", "Stratified Randomization")
+        return code
 
     def control_type(self, text: str | None) -> Code | None:
         """M11 Control Type (C217279) -> StudyDesign extension CT_EXT_URL."""

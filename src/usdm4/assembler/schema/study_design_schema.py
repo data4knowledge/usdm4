@@ -205,6 +205,15 @@ class StudyDesignInput(BaseModel):
     site_distribution: Optional[str] = None
     site_geographic_scope: Optional[str] = None
     intervention_assignment_method: Optional[str] = None
+    # Intervention Assignment Method (C217280), Randomisation Type, Other
+    # Intervention Assignment Method and Stratification Indicator -> one
+    # StudyDesign extension attribute, url IA_EXT_URL, holding a child for each
+    # stated value (GitHub 98). Randomisation type is kept only when the method
+    # is Randomisation, other method only when it is Other. "Stratified
+    # Randomisation" as the method means stratified when ``stratified`` is None.
+    randomisation_type: Optional[str] = None
+    other_assignment_method: Optional[str] = None
+    stratified: Optional[bool] = None
     # Adaptive Trial Design Indicator (C218706): True -> StudyDesign
     # characteristic C98704 Adaptive Design (GitHub 90). False / None add
     # nothing; no characteristic is No.

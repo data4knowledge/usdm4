@@ -58,3 +58,17 @@ EPP_EXT_URL = "www.d4k.dk/usdm/extensions/017"  # Epoch provenance
 # bound to C207416, which holds none of these terms, and arm types cannot
 # express Dose Response, Different Dose or Regimen or External (GitHub 86).
 CT_EXT_URL = "www.d4k.dk/usdm/extensions/018"  # Control type
+
+# M11 1.1.2 Intervention Assignment Method (C217280), Randomisation Type, Other
+# Intervention Assignment Method and Stratification Indicator (GitHub 98). USDM
+# 4.0 has no home for them; USDM 4.1 adds InterventionalStudyDesign.
+# interventionAssignment for this. Until 4.1 is published the values are held
+# in the same shape: one IA_EXT_URL attribute on the study design, written when
+# any value is stated, holding one child attribute per stated value. Nothing is
+# defaulted. The children become assignmentMethod, isStratified, otherMethod
+# and randomizationType.
+IA_EXT_URL = "www.d4k.dk/usdm/extensions/019"  # Intervention assignment
+IAM_EXT_URL = "www.d4k.dk/usdm/extensions/020"  # Assignment method, valueCode
+IAS_EXT_URL = "www.d4k.dk/usdm/extensions/021"  # Is stratified, valueBoolean
+IAO_EXT_URL = "www.d4k.dk/usdm/extensions/022"  # Other method, valueString
+IAR_EXT_URL = "www.d4k.dk/usdm/extensions/023"  # Randomisation type, valueString

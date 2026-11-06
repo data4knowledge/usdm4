@@ -233,6 +233,154 @@ class TestControlType:  # GitHub 86
             assert self.control_codes(design) == [], value
 
 
+class TestInterventionAssignment:  # GitHub 98
+    @staticmethod
+    def values(design) -> dict:
+        from src.usdm4.api import extensions_d4k as d4k
+
+        parents = [e for e in design.extensionAttributes if e.url == d4k.IA_EXT_URL]
+        if not parents:
+            return {}
+        assert len(parents) == 1
+        children = {e.url: e for e in parents[0].extensionAttributes}
+        result = {}
+        if d4k.IAM_EXT_URL in children:
+            result["method"] = children[d4k.IAM_EXT_URL].valueCode.code
+        if d4k.IAS_EXT_URL in children:
+            result["stratified"] = children[d4k.IAS_EXT_URL].valueBoolean
+        if d4k.IAO_EXT_URL in children:
+            result["other"] = children[d4k.IAO_EXT_URL].valueString
+        if d4k.IAR_EXT_URL in children:
+            result["randomisation"] = children[d4k.IAR_EXT_URL].valueString
+        return result
+
+    def test_each_term(self):
+        terms = {
+            "Randomisation": "C25196",
+            "randomized": "C25196",
+            "No Intervention Assignment Method": "C222801",
+            "Other": "C17649",
+        }
+        for text, code in terms.items():
+            _, design, _ = assemble({"intervention_assignment_method": text})
+            assert self.values(design) == {"method": code}, text
+
+    def test_nothing_stated(self):
+        for value in (None, "", "N/A"):
+            input = {"intervention_assignment_method": value} if value else {}
+            _, design, _ = assemble(input)
+            assert self.values(design) == {}, value
+
+    def test_unknown_method_warned_once(self):
+        _, design, errors = assemble({"intervention_assignment_method": "Lottery"})
+        assert self.values(design) == {}
+        message = "Intervention assignment method 'Lottery' not decoded"
+        assert str(errors.dump(0)).count(message) == 1
+
+    def test_all_values(self):
+        _, design, _ = assemble(
+            {
+                "intervention_assignment_method": "Randomisation",
+                "randomisation_type": " block randomisation ",
+                "stratified": True,
+            }
+        )
+        assert self.values(design) == {
+            "method": "C25196",
+            "stratified": True,
+            "randomisation": "block randomisation",
+        }
+
+    def test_stated_not_stratified(self):
+        _, design, _ = assemble(
+            {"intervention_assignment_method": "Randomisation", "stratified": False}
+        )
+        assert self.values(design) == {"method": "C25196", "stratified": False}
+        assert codes(design.characteristics) == ["C46079"]
+
+    def test_stratified_not_defaulted(self):
+        _, design, _ = assemble({"intervention_assignment_method": "Randomisation"})
+        assert "stratified" not in self.values(design)
+
+    def test_stratified_stated_alone(self):
+        _, design, _ = assemble({"stratified": False})
+        assert self.values(design) == {"stratified": False}
+
+    def test_other_method(self):
+        _, design, _ = assemble(
+            {
+                "intervention_assignment_method": "Other",
+                "other_assignment_method": "Minimisation",
+            }
+        )
+        assert self.values(design) == {"method": "C17649", "other": "Minimisation"}
+
+    def test_randomisation_type_needs_randomisation(self):
+        _, design, errors = assemble(
+            {
+                "intervention_assignment_method": "Other",
+                "randomisation_type": "block randomisation",
+            }
+        )
+        assert self.values(design) == {"method": "C17649"}
+        assert "Randomisation type 'block randomisation' stated" in str(errors.dump(0))
+
+    def test_other_method_needs_other(self):
+        _, design, errors = assemble(
+            {
+                "intervention_assignment_method": "Randomisation",
+                "other_assignment_method": "Minimisation",
+            }
+        )
+        assert self.values(design) == {"method": "C25196"}
+        assert "Other method 'Minimisation' stated" in str(errors.dump(0))
+
+    def test_text_with_no_method_dropped(self):
+        _, design, errors = assemble({"randomisation_type": "block randomisation"})
+        assert self.values(design) == {}
+        assert "not recorded" in str(errors.dump(0))
+
+    def test_characteristic_stratified_by_flag(self):
+        _, design, _ = assemble(
+            {"intervention_assignment_method": "Randomisation", "stratified": True}
+        )
+        assert codes(design.characteristics) == ["C147145"]
+
+    def test_stratified_label_still_accepted(self):
+        _, design, _ = assemble(
+            {"intervention_assignment_method": "Stratified Randomisation"}
+        )
+        assert self.values(design) == {"method": "C25196", "stratified": True}
+        assert codes(design.characteristics) == ["C147145"]
+
+    def test_failure_logged(self, monkeypatch):
+        def fail(self, text):
+            raise ValueError("boom")
+
+        monkeypatch.setattr(
+            "usdm4.assembler.encoder.Encoder.intervention_assignment_term", fail
+        )
+        _, design, errors = assemble(
+            {"intervention_assignment_method": "Randomisation"}
+        )
+        assert self.values(design) == {}
+        message = "Failed during creation of intervention assignment"
+        assert message in str(errors.dump(0))
+
+    def test_control_type_kept_beside(self):
+        from src.usdm4.api.extensions_d4k import CT_EXT_URL
+
+        _, design, _ = assemble(
+            {
+                "control_type": "Placebo",
+                "intervention_assignment_method": "Randomisation",
+            }
+        )
+        urls = [e.url for e in design.extensionAttributes]
+        assert CT_EXT_URL in urls
+        assert self.values(design) == {"method": "C25196"}
+
+
 class TestBlindingSchema:
     @pytest.mark.parametrize(
         "text, code",

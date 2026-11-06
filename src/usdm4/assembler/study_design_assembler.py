@@ -23,7 +23,16 @@ from usdm4.api.extension import ExtensionAttribute, BaseCode
 from usdm4.api.indication import Indication
 from usdm4.api.study_role import StudyRole
 from usdm4.api.masking import Masking
-from usdm4.api.extensions_d4k import IMP_EXT_URL, EPP_EXT_URL, CT_EXT_URL
+from usdm4.api.extensions_d4k import (
+    IMP_EXT_URL,
+    EPP_EXT_URL,
+    CT_EXT_URL,
+    IA_EXT_URL,
+    IAM_EXT_URL,
+    IAS_EXT_URL,
+    IAO_EXT_URL,
+    IAR_EXT_URL,
+)
 
 
 class StudyDesignAssembler(BaseAssembler):
@@ -204,7 +213,8 @@ class StudyDesignAssembler(BaseAssembler):
                     "extensionAttributes": self._model_extensions(
                         raw_intervention_model
                     )
-                    + self._control_type_extensions(data.get("control_type")),
+                    + self._control_type_extensions(data.get("control_type"))
+                    + self._intervention_assignment_extensions(data),
                     "indications": self._build_indications(
                         data.get("indications") or []
                     ),
@@ -275,21 +285,9 @@ class StudyDesignAssembler(BaseAssembler):
         if code is None:
             return []
         try:
-            # valueCode is a BaseCode, not the API Code class (as for SIT_EXT_URL).
-            base_code = BaseCode(
-                **code.model_dump(
-                    include={
-                        "id",
-                        "code",
-                        "codeSystem",
-                        "codeSystemVersion",
-                        "decode",
-                        "instanceType",
-                    }
-                )
-            )
             extension = self._builder.create(
-                ExtensionAttribute, {"url": CT_EXT_URL, "valueCode": base_code}
+                ExtensionAttribute,
+                {"url": CT_EXT_URL, "valueCode": self._base_code(code)},
             )
             return [extension] if extension else []
         except Exception as e:
@@ -297,6 +295,92 @@ class StudyDesignAssembler(BaseAssembler):
                 f"Failed during creation of control type '{text}'",
                 e,
                 KlassMethodLocation(self.MODULE, "_control_type_extensions"),
+            )
+            return []
+
+    @staticmethod
+    def _base_code(code) -> BaseCode:
+        """valueCode is a BaseCode, not the API Code class (as for SIT_EXT_URL)."""
+        return BaseCode(
+            **code.model_dump(
+                include={
+                    "id",
+                    "code",
+                    "codeSystem",
+                    "codeSystemVersion",
+                    "decode",
+                    "instanceType",
+                }
+            )
+        )
+
+    def _stratified(self, data: dict) -> bool | None:
+        """As stated; when not stated, True if the method text says stratified,
+        otherwise ``None``. Never defaulted to False."""
+        stated = data.get("stratified")
+        if stated is not None:
+            return stated
+        text = data.get("intervention_assignment_method")
+        return True if self._encoder.assignment_is_stratified(text) else None
+
+    def _assignment_text(
+        self, data: dict, key: str, method, code: str, label: str
+    ) -> str | None:
+        """Stripped text for ``key``, kept only when the method's term is
+        ``code``. Stated with any other method it is warned and dropped."""
+        text = (data.get(key) or "").strip()
+        if not text:
+            return None
+        if method is not None and method.code == code:
+            return text
+        self._errors.warning(
+            f"{label} '{text}' stated but the intervention assignment method "
+            "does not call for it; not recorded",
+            location=KlassMethodLocation(self.MODULE, "_assignment_text"),
+        )
+        return None
+
+    def _intervention_assignment_extensions(
+        self, data: dict
+    ) -> list[ExtensionAttribute]:
+        """The M11 intervention assignment values as one IA_EXT_URL extension
+        holding a child for each stated value, or none when nothing is stated
+        (GitHub 98)."""
+        try:
+            method = self._encoder.intervention_assignment_term(
+                data.get("intervention_assignment_method")
+            )
+            stratified = self._stratified(data)
+            other = self._assignment_text(
+                data, "other_assignment_method", method, "C17649", "Other method"
+            )
+            randomisation = self._assignment_text(
+                data, "randomisation_type", method, "C25196", "Randomisation type"
+            )
+            values = [
+                (IAM_EXT_URL, "valueCode", self._base_code(method) if method else None),
+                (IAS_EXT_URL, "valueBoolean", stratified),
+                (IAO_EXT_URL, "valueString", other),
+                (IAR_EXT_URL, "valueString", randomisation),
+            ]
+            children = [
+                self._builder.create(ExtensionAttribute, {"url": url, name: value})
+                for url, name, value in values
+                if value is not None
+            ]
+            children = [child for child in children if child]
+            if not children:
+                return []
+            extension = self._builder.create(
+                ExtensionAttribute,
+                {"url": IA_EXT_URL, "extensionAttributes": children},
+            )
+            return [extension] if extension else []
+        except Exception as e:
+            self._errors.exception(
+                "Failed during creation of intervention assignment",
+                e,
+                KlassMethodLocation(self.MODULE, "_intervention_assignment_extensions"),
             )
             return []
 
@@ -309,7 +393,8 @@ class StudyDesignAssembler(BaseAssembler):
             self._encoder.site_distribution(data.get("site_distribution")),
             self._encoder.site_geographic_scope(data.get("site_geographic_scope")),
             self._encoder.intervention_assignment_method(
-                data.get("intervention_assignment_method")
+                data.get("intervention_assignment_method"),
+                self._stratified(data) is True,
             ),
         ]
         if data.get("adaptive_design") is True:

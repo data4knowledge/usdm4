@@ -48,6 +48,7 @@ row.
 | N25 | Arms name interventions but no epochs exist, so no cells and the arm → intervention link is lost | assembler |
 | N26 | A required string attribute accepts `""` (no minimum length): `StudyVersion.versionIdentifier` empty passes | schema / rules |
 | N27 | Epoch match table mistypes and misses: `randomisation` -> BASELINE, `end of treatment` / `end of study` -> FOLLOW-UP, `extension` -> LONG-TERM FOLLOW-UP; abbreviations SCR, FU, SFU, EOT, EOS, ED, ET unmatched | assembler / data |
+| N28 | `StudyAmendment.primaryReason` holds one reason; M11 lets Primary Reason for Amendment repeat | model |
 
 ---
 
@@ -492,3 +493,6 @@ Until then usdm4 accepts `""` and udp_prism keeps it.
 
 Found 2026-10-19 with GitHub 93, which types each schedule epoch from its match in `data/house_names.yaml` `epochs`. Some `match` entries name the wrong period: `randomisation` / `randomization` -> BASELINE (a randomisation visit sits in screening or at the start of treatment), `end of treatment` and `end of study` -> FOLLOW-UP (visits, not periods), `extension` -> LONG-TERM FOLLOW-UP (an extension is treatment). Common abbreviations are not listed: SCR, FU, SFU, EOT, EOS, ED, ET. Measured over the step 1 USDM epoch labels: udp_prism 31 of 78 unmatched, protocol_corpus 1,238 of 2,591 unmatched. Changing a match changes epoch names as well as types, so it ripples into names and references across the corpus; measure on its own. Many unmatched labels are visit columns, not periods (`E/D`, `Study Comp./ ET`, `EOT/ET Visit`), which is the SoA reader's question, not this table's.
 
+## N28 — Primary Reason holds one, M11 lets it repeat
+
+Found 2026-11-04 with the M11 to FHIR mapping sheet 03.13 (usdm4_fhir M-42). M11 gives Primary Reason for Amendment "Multiple values can be selected" and one element to Amendment Details (Dave: the element repeats, so an amendment can have several). 03.13 says multiple. `StudyAmendment.primaryReason` holds one, so nothing above usdm4 can carry more. A model question for the USDM team.
