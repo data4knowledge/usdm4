@@ -52,6 +52,12 @@ class StudyAmendment(ApiBaseModelWithIdNameLabelAndDesc):
             else ""
         )
 
+    def secondary_reasons_as_text(self) -> list[str]:
+        return [reason.reason_as_text() for reason in self.secondaryReasons]
+
+    def secondary_other_reasons_as_text(self) -> list[str]:
+        return [reason.other_reason_as_text() for reason in self.secondaryReasons]
+
     def is_global(self) -> bool:
         for scope in self.geographicScopes:
             if scope.type.code == "C68846":

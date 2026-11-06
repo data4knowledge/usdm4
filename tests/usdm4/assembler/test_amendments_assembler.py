@@ -2288,3 +2288,55 @@ class TestAmendmentsAssemblerSectionTitles:
         amendments_assembler._section_title("5.2", "y")
         assert calls == ["C217272"]
         amendments_assembler._section_titles = None
+
+
+class TestAmendmentsAssemblerSecondaryReasons:  # GitHub 99
+    @staticmethod
+    def secondary(amendments_assembler, document_assembler, value) -> list[str]:
+        data = {
+            "identifier": "1",
+            "summary": "Amendment",
+            "reasons": {
+                "primary": "C207609:New Safety Information Available",
+                "secondary": value,
+            },
+            "impact": make_impact(safety=True),
+            "enrollment": {"value": 150, "unit": "%"},
+            "changes": make_changes(),
+        }
+        amendments_assembler.execute(data, document_assembler)
+        return amendments_assembler.amendment.secondary_reasons_as_text()
+
+    def test_one_string(self, amendments_assembler, document_assembler):
+        result = self.secondary(
+            amendments_assembler, document_assembler, "C207605:IRB/IEC Feedback"
+        )
+        assert result == ["IRB/IEC Feedback"]
+
+    def test_list_in_order(self, amendments_assembler, document_assembler):
+        result = self.secondary(
+            amendments_assembler,
+            document_assembler,
+            ["C207605:IRB/IEC Feedback", "C207601:Change In Strategy"],
+        )
+        assert result == ["IRB/IEC Feedback", "Change In Strategy"]
+
+    def test_empty_entries_dropped(self, amendments_assembler, document_assembler):
+        result = self.secondary(
+            amendments_assembler, document_assembler, ["", "C207605:IRB/IEC Feedback"]
+        )
+        assert result == ["IRB/IEC Feedback"]
+
+    @pytest.mark.parametrize("value", ["", [], None])
+    def test_none_stated(self, amendments_assembler, document_assembler, value):
+        result = self.secondary(amendments_assembler, document_assembler, value)
+        assert result == []
+
+    def test_failed_reason_left_out(
+        self, amendments_assembler, document_assembler, monkeypatch
+    ):
+        monkeypatch.setattr(amendments_assembler, "_create_reason", lambda text: None)
+        reasons = amendments_assembler._create_primary_secondary_reasons(
+            {"reasons": {"secondary": ["C207605:IRB/IEC Feedback"]}}
+        )
+        assert reasons == {"secondary": []}

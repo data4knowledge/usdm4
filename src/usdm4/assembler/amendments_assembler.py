@@ -109,9 +109,7 @@ class AmendmentsAssembler(BaseAssembler):
                 # supply a secondary reason — synthesising an "Other" code
                 # whenever the input is empty produces a primary == secondary
                 # pair that DDF00256 (correctly) flags.
-                "secondaryReasons": (
-                    [reasons["secondary"]] if reasons.get("secondary") else []
-                ),
+                "secondaryReasons": reasons.get("secondary", []),
                 "enrollments": [self._create_enrollment(data)],
                 "geographicScopes": geo_scopes,
                 "changes": self._create_changes(data),
@@ -123,23 +121,26 @@ class AmendmentsAssembler(BaseAssembler):
             self._errors.exception("Failed during creation of amendments", e, location)
             return None
 
-    def _create_primary_secondary_reasons(
-        self, data: dict
-    ) -> dict[str, StudyAmendmentReason]:
+    def _create_reason(self, text: str) -> StudyAmendmentReason | None:
+        a_reason = self._encoder.amendment_reason(text)
+        a_reason["otherReason"] = a_reason.pop("other_reason")
+        return self._builder.create(StudyAmendmentReason, a_reason)
+
+    def _create_primary_secondary_reasons(self, data: dict) -> dict:
         # Build the primary reason unconditionally — primaryReason is
         # required on StudyAmendment and the encoder falls back to "Other"
         # when no real reason was supplied. The secondary, however, is
-        # optional: only synthesise one when the corpus actually supplied
-        # a value, otherwise return an empty mapping for ``secondary`` and
-        # let the caller leave secondaryReasons as ``[]``.
-        reasons: dict[str, StudyAmendmentReason] = {}
+        # optional and may repeat (GitHub 99): one reason for each value the
+        # corpus actually supplied, in order, under ``secondary`` as a list.
+        reasons: dict = {}
         raw = data.get("reasons") or {}
         for k, item in raw.items():
-            if k == "secondary" and not item:
-                continue
-            a_reason = self._encoder.amendment_reason(item)
-            a_reason["otherReason"] = a_reason.pop("other_reason")
-            reasons[k] = self._builder.create(StudyAmendmentReason, a_reason)
+            if k == "secondary":
+                values = [item] if isinstance(item, str) else item or []
+                created = [self._create_reason(value) for value in values if value]
+                reasons[k] = [reason for reason in created if reason]
+            else:
+                reasons[k] = self._create_reason(item)
         return reasons
 
     def _create_changes(self, data: dict) -> list[StudyChange]:

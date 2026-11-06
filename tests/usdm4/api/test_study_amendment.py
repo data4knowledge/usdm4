@@ -144,6 +144,28 @@ class TestStudyAmendment:
 
         assert result == ""
 
+    def test_secondary_reasons_as_text(self):
+        """Test the list accessors give one entry per reason, in order."""
+        amendment = self._create_study_amendment(
+            secondary_reasons=[
+                self._create_reason("Protocol Clarification", "secondary1"),
+                self._create_reason("Other", "secondary2", other_reason="Custom"),
+            ]
+        )
+
+        assert amendment.secondary_reasons_as_text() == [
+            "Protocol Clarification",
+            "Other",
+        ]
+        assert amendment.secondary_other_reasons_as_text() == ["", "Custom"]
+
+    def test_secondary_reasons_as_text_empty_list(self):
+        """Test the list accessors are empty when there are no secondary reasons."""
+        amendment = self._create_study_amendment(secondary_reasons=[])
+
+        assert amendment.secondary_reasons_as_text() == []
+        assert amendment.secondary_other_reasons_as_text() == []
+
     def test_secondary_other_reason_as_text_with_value(self):
         """Test secondary_other_reason_as_text when otherReason is set."""
         secondary_reason = self._create_reason(

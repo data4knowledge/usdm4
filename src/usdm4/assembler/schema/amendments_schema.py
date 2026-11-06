@@ -5,7 +5,8 @@ class AmendmentReasons(BaseModel):
     model_config = ConfigDict(strict=False)
 
     primary: str = ""
-    secondary: str = ""
+    # One reason as a string, or a list when there are several (GitHub 99).
+    secondary: str | list[str] = ""
 
 
 class SubstantialChange(BaseModel):
