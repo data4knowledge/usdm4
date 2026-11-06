@@ -2028,6 +2028,65 @@ class TestStudyVersion:
         assert org is None
 
     # =====================================================
+    # Tests for the organization list accessors (GitHub 100)
+    # =====================================================
+
+    def _version_with_role(self, role_code: str, type_code: str) -> StudyVersion:
+        """A version whose one role holds a matching org and, for
+        manufacturers, one of another type."""
+
+        def code(id: str, value: str) -> Code:
+            return Code(
+                id=id,
+                code=value,
+                codeSystem="CDISC",
+                codeSystemVersion="1.0",
+                decode=value,
+                instanceType="Code",
+            )
+
+        second = self.sponsor_org.model_copy(
+            update={"id": "org_2", "type": code("second_type", type_code)}
+        )
+        third = self.sponsor_org.model_copy(update={"id": "org_3"})
+        role = StudyRole(
+            id="role_many",
+            name="Role",
+            label="Role",
+            description="Role description",
+            code=code("role_code", role_code),
+            organizationIds=["org_2", "org_3"],
+            instanceType="StudyRole",
+        )
+        return StudyVersion(
+            id="sv_many",
+            versionIdentifier="v1.0",
+            rationale="Test",
+            studyIdentifiers=[self.sponsor_identifier],
+            titles=[self.official_title],
+            organizations=[self.sponsor_org, second, third],
+            roles=[role],
+            instanceType="StudyVersion",
+        )
+
+    def test_co_sponsor_organizations(self):
+        version = self._version_with_role("C215669", "C54149")
+        assert [x.id for x in version.co_sponsor_organizations()] == ["org_2", "org_3"]
+        assert version.local_sponsor_organizations() == []
+
+    def test_local_sponsor_organizations(self):
+        version = self._version_with_role("C215670", "C54149")
+        assert [x.id for x in version.local_sponsor_organizations()] == [
+            "org_2",
+            "org_3",
+        ]
+
+    def test_device_manufacturer_organizations_by_type(self):
+        version = self._version_with_role("C25392", "C215661")
+        assert [x.id for x in version.device_manufacturer_organizations()] == ["org_2"]
+        assert version.device_manufacturer_organization().id == "org_2"
+
+    # =====================================================
     # Tests for device_manufacturer_organization method (lines 148-149)
     # =====================================================
 

@@ -358,6 +358,8 @@ class IdentificationAssembler(BaseAssembler):
                         # "legalAddress"). The execute() loop reads
                         # info.get("address") and converts it into the
                         # Organization's legalAddress on the model side.
+                        # Each value is one organization, as here, or a list
+                        # of them; a list shares one StudyRole.
                         "co_sponsor": {"name": str, "address": "<address structure>"},
                         "local_sponsor": {"name": str, "address": "<address structure>"},
                         "device_manufacturer": {"name": str, "address": "<address structure>"},
@@ -494,21 +496,31 @@ class IdentificationAssembler(BaseAssembler):
                         KlassMethodLocation(self.MODULE, "execute"),
                     )
                     continue
-                organization = copy.deepcopy(self.ROLE_ORGS[role_key])
-                organization["label"] = info["name"]
-                organization["legalAddress"] = self._create_address(info.get("address"))
-                org = self._create_organization(organization)
-                if org:
-                    self._errors.debug(
-                        f"Organization {org} in {role} created",
-                        KlassMethodLocation(self.MODULE, "execute"),
+                study_role = None
+                for entry in info if isinstance(info, list) else [info]:
+                    organization = copy.deepcopy(self.ROLE_ORGS[role_key])
+                    organization["label"] = entry["name"]
+                    organization["legalAddress"] = self._create_address(
+                        entry.get("address")
                     )
-                    self._organizations.append(org)
-                else:
-                    self._errors.exception(
-                        f"Failed to create organization in {role}, {organization}",
-                        KlassMethodLocation(self.MODULE, "execute"),
-                    )
+                    if study_role:
+                        organization["role"] = None
+                    org = self._create_organization(organization)
+                    if org:
+                        self._errors.debug(
+                            f"Organization {org} in {role} created",
+                            KlassMethodLocation(self.MODULE, "execute"),
+                        )
+                        self._organizations.append(org)
+                        if study_role:
+                            study_role.organizationIds.append(org.id)
+                        else:
+                            study_role = self._role_of(org)
+                    else:
+                        self._errors.exception(
+                            f"Failed to create organization in {role}, {organization}",
+                            KlassMethodLocation(self.MODULE, "execute"),
+                        )
             except Exception as e:
                 self._errors.exception(
                     f"Failed during creation of organization in {role}, {info}",
@@ -707,6 +719,11 @@ class IdentificationAssembler(BaseAssembler):
                 KlassMethodLocation(self.MODULE, "_create_title"),
             )
             return None
+
+    def _role_of(self, organization: Organization) -> StudyRole | None:
+        return next(
+            (x for x in self._roles if organization.id in x.organizationIds), None
+        )
 
     def _create_role(self, type: str) -> StudyRole | None:
         try:

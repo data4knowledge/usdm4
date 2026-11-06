@@ -2759,3 +2759,61 @@ class TestIdentificationAssemblerScopeOrgCache:
         texts = [i.text for i in identification_assembler.identifiers]
         assert "IND 12345" in texts
         assert "IDE 98765" in texts
+
+
+class TestRolesWithSeveralOrganizations:  # GitHub 100
+    def test_list_shares_one_role(self, identification_assembler):
+        data = {
+            "roles": {
+                "co_sponsor": [{"name": "First Corp"}, {"name": "Second Corp"}],
+            }
+        }
+        identification_assembler.execute(data)
+        organizations = identification_assembler.organizations
+        assert [x.label for x in organizations] == ["First Corp", "Second Corp"]
+        assert len(identification_assembler.roles) == 1
+        assert identification_assembler.roles[0].organizationIds == [
+            x.id for x in organizations
+        ]
+
+    def test_list_of_one(self, identification_assembler):
+        identification_assembler.execute(
+            {"roles": {"local_sponsor": [{"name": "Only Corp"}]}}
+        )
+        assert [x.label for x in identification_assembler.organizations] == [
+            "Only Corp"
+        ]
+        assert len(identification_assembler.roles) == 1
+
+    def test_empty_list(self, identification_assembler):
+        identification_assembler.execute({"roles": {"device_manufacturer": []}})
+        assert identification_assembler.organizations == []
+        assert identification_assembler.roles == []
+
+    def test_each_role_type_has_its_own_role(self, identification_assembler):
+        data = {
+            "roles": {
+                "co_sponsor": [{"name": "First Corp"}, {"name": "Second Corp"}],
+                "local_sponsor": {"name": "Local Corp"},
+            }
+        }
+        identification_assembler.execute(data)
+        assert [len(x.organizationIds) for x in identification_assembler.roles] == [
+            2,
+            1,
+        ]
+
+    def test_failed_organization_left_out(self, identification_assembler, monkeypatch):
+        real = identification_assembler._create_organization
+
+        def fail_first(organization):
+            return None if organization["label"] == "Bad Corp" else real(organization)
+
+        monkeypatch.setattr(
+            identification_assembler, "_create_organization", fail_first
+        )
+        data = {"roles": {"co_sponsor": [{"name": "Bad Corp"}, {"name": "Good Corp"}]}}
+        identification_assembler.execute(data)
+        assert [x.label for x in identification_assembler.organizations] == [
+            "Good Corp"
+        ]

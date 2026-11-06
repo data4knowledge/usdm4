@@ -144,6 +144,9 @@ class StudyVersion(ApiBaseModelWithId):
     def co_sponsor_organization(self) -> Organization | None:
         return self._find_first_organization("C215669")
 
+    def co_sponsor_organizations(self) -> list[Organization]:
+        return self._find_organizations("C215669")
+
     def co_sponsor_name(self) -> str:
         org: Organization = self.co_sponsor_organization()
         return org.name if org else ""
@@ -164,6 +167,9 @@ class StudyVersion(ApiBaseModelWithId):
 
     def local_sponsor_organization(self) -> Organization | None:
         return self._find_first_organization("C215670")
+
+    def local_sponsor_organizations(self) -> list[Organization]:
+        return self._find_organizations("C215670")
 
     def local_sponsor_name(self) -> str:
         org: Organization = self.local_sponsor_organization()
@@ -187,8 +193,11 @@ class StudyVersion(ApiBaseModelWithId):
         return self._find_first_organization("C25392")
 
     def device_manufacturer_organization(self) -> Organization | None:
+        return next(iter(self.device_manufacturer_organizations()), None)
+
+    def device_manufacturer_organizations(self) -> list[Organization]:
         manufacturers: list[Organization] = self._find_organizations("C25392")
-        return next((x for x in manufacturers if x.type.code == "C215661"), None)
+        return [x for x in manufacturers if x.type.code == "C215661"]
 
     def device_manufacturer_name(self) -> str:
         org: Organization = self.device_manufacturer_organization()

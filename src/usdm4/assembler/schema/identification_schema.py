@@ -77,5 +77,6 @@ class IdentificationInput(BaseModel):
 
     titles: Titles = Titles()
     identifiers: list[StudyIdentifier] = []
-    roles: dict[str, RoleOrganization | None] = {}
+    # One organization, or a list when the role repeats (GitHub 100).
+    roles: dict[str, RoleOrganization | list[RoleOrganization] | None] = {}
     other: OtherIdentification = OtherIdentification()
