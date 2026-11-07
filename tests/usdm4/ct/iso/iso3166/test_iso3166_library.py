@@ -127,6 +127,15 @@ def test_decode_nonexistent(library):
     assert name is None
 
 
+def test_region_code_given_a_code(library):
+    """A region is found by its code as well as its name (GitHub 101)."""
+    assert library.region_code("150") == ("150", "Europe")
+
+
+def test_region_code_unknown_code(library):
+    assert library.region_code("999") == (None, None)
+
+
 def test_region_code_region(library):
     """Test that the region_code method returns the correct tuple for a region."""
     code, name = library.region_code("Europe")

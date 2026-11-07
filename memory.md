@@ -36,3 +36,19 @@ rules and decisions (U4-n) are in `docs/spec/timeline_assembler.md`.
 **Rejected.** Attributes on the design under 4.0: the schema refuses them.
 
 **Found, not this work.** None.
+
+## 2026-11-07 — GitHub 101: region lookup accepts a name or a code
+
+**Repos.** usdm4 (this entry). Found by udp_prism: pointer in its `memory.md`.
+
+**What it was.** `Library.region_code` searched only the three region name columns. The amendment assembler finds a region by name, then passes its code (150) through `Builder.iso3166_region_code`, and the FHIR import passes a code too, so a region scope got no code and the region was lost on the round trip.
+
+**What changed.**
+- `src/usdm4/ct/iso/iso3166/library.py` — `_get_region` matches a name, ignoring case, or a code, across region, sub-region and intermediate region, and returns code and name.
+- `tests/usdm4/ct/iso/iso3166/test_iso3166_library.py`, `tests/usdm4/assembler/test_amendments_assembler.py`, `tests/usdm4/builder/test_builder.py` — updated.
+
+**Figures.** Dave's udp_prism run on the Air 2026-11-07: TCBCPT_02 "Not Global Europe" gives Amendment Scope Not Global and Region Identifier Europe (150) to step 3. `pytest` passed (Dave). Version not changed.
+
+**Rejected.** A narrower fix in `Builder.iso3166_region_code` alone: it left the FHIR import failing.
+
+**Found, not this work.** udp_prism N86: `Encoder.amendment_reason` loses the Other text.

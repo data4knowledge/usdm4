@@ -1373,6 +1373,8 @@ class TestAmendmentsAssemblerCreateScopeMethod:
         assert len(results) == 1
         scope = results[0]
         assert scope.instanceType == "GeographicScope"
+        assert scope.code.standardCode.code == "150"
+        assert scope.code.standardCode.decode == "Europe"
 
     def test_create_scope_without_code_and_decode(self, amendments_assembler):
         """Test _create_scope without code/decode (covers line 166-167 branch)."""
@@ -1874,7 +1876,22 @@ class TestAmendmentsAssemblerRegionScope:
         assert len(results) == 1
         scope = results[0]
         assert scope.instanceType == "GeographicScope"
-        # code may be None if iso3166_region_code lookup fails, but scope should still be created
+        assert scope.code.standardCode.code == "150"
+
+    def test_region_given_as_a_code(self, amendments_assembler):
+        """A region read back from FHIR arrives as its code (GitHub 101)."""
+        scopes, _ = amendments_assembler._create_scopes(
+            {
+                "scope": {
+                    "global": False,
+                    "countries": [],
+                    "regions": ["150"],
+                    "sites": [],
+                    "unknown": [],
+                }
+            }
+        )
+        assert [s.code.standardCode.decode for s in scopes] == ["Europe"]
 
     def test_execute_with_region_scope_in_amendment(
         self, amendments_assembler, document_assembler

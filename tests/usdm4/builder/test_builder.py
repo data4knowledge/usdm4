@@ -1039,6 +1039,13 @@ def test_iso639_code_or_decode_method(builder):
         builder.iso639_library.code_or_decode = original_code_or_decode
 
 
+def test_iso3166_region_code_given_a_code(builder):
+    """The real library, not a mock: a region found by its code (GitHub 101)."""
+    result = builder.iso3166_region_code("150")
+    assert result.code == "150"
+    assert result.decode == "Europe"
+
+
 def test_iso3166_region_code_method(builder):
     """Test iso3166_region_code method to cover lines 329-330."""
     # Mock the iso3166_library.region_code method

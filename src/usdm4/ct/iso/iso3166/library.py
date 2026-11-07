@@ -27,9 +27,9 @@ class Library:
     def decode(self, code: str) -> tuple[str | None, str | None]:
         return self._get_decode(code)
 
-    def region_code(self, decode: str) -> tuple[str | None, str | None]:
-        code, decode = self._get_region_decode(decode)
-        return code, decode
+    def region_code(self, text: str) -> tuple[str | None, str | None]:
+        """The code and name of a region, given its name or its code."""
+        return self._get_region(text)
 
     def _get_decode(self, code: str) -> tuple[str | None, str | None]:
         field = "alpha-2" if len(code) == 2 else "alpha-3"
@@ -42,10 +42,15 @@ class Library:
         )
         return (None, None) if entry is None else (entry["alpha-3"], entry["name"])
 
-    def _get_region_decode(self, decode: str) -> tuple[str | None, str | None]:
+    def _get_region(self, text: str) -> tuple[str | None, str | None]:
+        value = text.upper()
         for scope in ["region", "sub-region", "intermediate-region"]:
             entry = next(
-                (item for item in self.db if item[scope].upper() == decode.upper()),
+                (
+                    item
+                    for item in self.db
+                    if value in (item[scope].upper(), item[f"{scope}-code"])
+                ),
                 None,
             )
             if entry:
