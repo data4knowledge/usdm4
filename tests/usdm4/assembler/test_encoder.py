@@ -501,7 +501,7 @@ class TestEncoderAmendmentReason:
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
-        result = encoder.amendment_reason("Reason:Regulatory Agency Request To Amend")
+        result = encoder.amendment_reason("Regulatory Agency Request To Amend")
 
         encoder._builder.cdisc_code.assert_called_with(
             "C207612", "Regulatory Agency Request To Amend"
@@ -514,7 +514,7 @@ class TestEncoderAmendmentReason:
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
-        result = encoder.amendment_reason("Reason:New Regulatory Guidance")
+        result = encoder.amendment_reason("New Regulatory Guidance")
 
         encoder._builder.cdisc_code.assert_called_with(
             "C207608", "New Regulatory Guidance"
@@ -527,7 +527,7 @@ class TestEncoderAmendmentReason:
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
-        result = encoder.amendment_reason("Reason:IRB/IEC Feedback")
+        result = encoder.amendment_reason("IRB/IEC Feedback")
 
         encoder._builder.cdisc_code.assert_called_with("C207605", "IRB/IEC Feedback")
         assert result["code"] == mock_code
@@ -538,7 +538,7 @@ class TestEncoderAmendmentReason:
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
-        result = encoder.amendment_reason("Reason:New Safety Information Available")
+        result = encoder.amendment_reason("New Safety Information Available")
 
         encoder._builder.cdisc_code.assert_called_with(
             "C207609", "New Safety Information Available"
@@ -551,7 +551,7 @@ class TestEncoderAmendmentReason:
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
-        result = encoder.amendment_reason("Reason:Manufacturing Change")
+        result = encoder.amendment_reason("Manufacturing Change")
 
         encoder._builder.cdisc_code.assert_called_with(
             "C207606", "Manufacturing Change"
@@ -564,7 +564,7 @@ class TestEncoderAmendmentReason:
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
-        result = encoder.amendment_reason("Reason:IMP Addition")
+        result = encoder.amendment_reason("IMP Addition")
 
         encoder._builder.cdisc_code.assert_called_with("C207602", "IMP Addition")
         assert result["code"] == mock_code
@@ -575,7 +575,7 @@ class TestEncoderAmendmentReason:
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
-        result = encoder.amendment_reason("Reason:Change In Strategy")
+        result = encoder.amendment_reason("Change In Strategy")
 
         encoder._builder.cdisc_code.assert_called_with("C207601", "Change In Strategy")
         assert result["code"] == mock_code
@@ -586,7 +586,7 @@ class TestEncoderAmendmentReason:
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
-        result = encoder.amendment_reason("Reason:Change In Standard Of Care")
+        result = encoder.amendment_reason("Change In Standard Of Care")
 
         encoder._builder.cdisc_code.assert_called_with(
             "C207600", "Change In Standard Of Care"
@@ -599,9 +599,7 @@ class TestEncoderAmendmentReason:
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
-        result = encoder.amendment_reason(
-            "Reason:New Data Available (Other Than Safety Data)"
-        )
+        result = encoder.amendment_reason("New Data Available (Other Than Safety Data)")
 
         encoder._builder.cdisc_code.assert_called_with(
             "C207607", "New Data Available (Other Than Safety Data)"
@@ -614,7 +612,7 @@ class TestEncoderAmendmentReason:
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
-        result = encoder.amendment_reason("Reason:Investigator/Site Feedback")
+        result = encoder.amendment_reason("Investigator/Site Feedback")
 
         encoder._builder.cdisc_code.assert_called_with(
             "C207604", "Investigator/Site Feedback"
@@ -627,7 +625,7 @@ class TestEncoderAmendmentReason:
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
-        result = encoder.amendment_reason("Reason:Recruitment Difficulty")
+        result = encoder.amendment_reason("Recruitment Difficulty")
 
         encoder._builder.cdisc_code.assert_called_with(
             "C207611", "Recruitment Difficulty"
@@ -640,9 +638,7 @@ class TestEncoderAmendmentReason:
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
-        result = encoder.amendment_reason(
-            "Reason:Inconsistency And/Or Error In The Protocol"
-        )
+        result = encoder.amendment_reason("Inconsistency And/Or Error In The Protocol")
 
         encoder._builder.cdisc_code.assert_called_with(
             "C207603", "Inconsistency And/Or Error In The Protocol"
@@ -655,7 +651,7 @@ class TestEncoderAmendmentReason:
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
-        result = encoder.amendment_reason("Reason:Protocol Design Error")
+        result = encoder.amendment_reason("Protocol Design Error")
 
         encoder._builder.cdisc_code.assert_called_with(
             "C207610", "Protocol Design Error"
@@ -668,7 +664,7 @@ class TestEncoderAmendmentReason:
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
-        result = encoder.amendment_reason("Reason:Other")
+        result = encoder.amendment_reason("Other")
 
         # With exact matching, "Other" matches the "Other" entry in REASON_MAP
         encoder._builder.cdisc_code.assert_called_with("C17649", "Other")
@@ -680,7 +676,7 @@ class TestEncoderAmendmentReason:
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
-        result = encoder.amendment_reason("Reason:Not Applicable")
+        result = encoder.amendment_reason("Not Applicable")
 
         encoder._builder.cdisc_code.assert_called_with("C48660", "Not Applicable")
         assert result["code"] == mock_code
@@ -691,24 +687,44 @@ class TestEncoderAmendmentReason:
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
-        result = encoder.amendment_reason("Reason:Custom reason text")
+        result = encoder.amendment_reason("Custom reason text")
 
         encoder._builder.cdisc_code.assert_called_with("C17649", "Other")
         encoder._errors.warning.assert_called()
         assert result["code"] == mock_code
         assert result["other_reason"] == "Custom reason text"
 
-    def test_amendment_reason_malformed_string(self, encoder):
-        """Test malformed reason string without colon"""
+    def test_amendment_reason_other_with_text(self, encoder):
+        """Other with its text keeps the text (GitHub 102)"""
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
-        result = encoder.amendment_reason("Some text without colon")
+        result = encoder.amendment_reason("Other: Regulatory agency request")
 
         encoder._builder.cdisc_code.assert_called_with("C17649", "Other")
-        encoder._errors.warning.assert_called()
+        encoder._errors.warning.assert_not_called()
         assert result["code"] == mock_code
-        assert result["other_reason"] == "Some text without colon"
+        assert result["other_reason"] == "Regulatory agency request"
+
+    def test_amendment_reason_other_text_with_colon(self, encoder):
+        """Other text containing a colon is kept whole"""
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.amendment_reason("other: Site change: Paris")
+
+        encoder._builder.cdisc_code.assert_called_with("C17649", "Other")
+        assert result["other_reason"] == "Site change: Paris"
+
+    def test_amendment_reason_other_no_text(self, encoder):
+        """Other: with no text gives Other and empty text"""
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.amendment_reason("Other:")
+
+        encoder._builder.cdisc_code.assert_called_with("C17649", "Other")
+        assert result["other_reason"] == ""
 
     def test_amendment_reason_empty_string(self, encoder):
         """Test empty reason string"""
@@ -1001,28 +1017,27 @@ class TestEncoderEdgeCases:
         assert result == mock_code
 
     def test_amendment_reason_with_multiple_colons(self, encoder):
-        """Test amendment reason with multiple colons"""
+        """Unmatched text with colons is kept whole as the Other text"""
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
-        result = encoder.amendment_reason("Reason:Text:With:Multiple:Colons")
+        result = encoder.amendment_reason("Text:With:Multiple:Colons")
 
-        # When not matched, uses parts[-1] which is the last element after split
         encoder._builder.cdisc_code.assert_called_with("C17649", "Other")
-        assert result["other_reason"] == "Colons"
+        encoder._errors.warning.assert_called()
+        assert result["other_reason"] == "Text:With:Multiple:Colons"
 
     def test_amendment_reason_only_colon(self, encoder):
-        """Test amendment reason with only colon"""
+        """A lone colon is unmatched text, kept as the Other text"""
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code
 
         result = encoder.amendment_reason(":")
 
-        # With exact matching, empty string doesn't match any reason, so defaults to Other
         encoder._builder.cdisc_code.assert_called_with("C17649", "Other")
         encoder._errors.warning.assert_called()
         assert result["code"] == mock_code
-        assert result["other_reason"] == ""
+        assert result["other_reason"] == ":"
 
     def test_iso8601_duration_zero_value_returns_zero_duration(self, encoder):
         """Zero value should return ZERO_DURATION regardless of unit."""

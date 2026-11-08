@@ -128,8 +128,8 @@ class TestAmendmentsAssemblerValidData:
             "identifier": "1",
             "summary": "Amendment to add new safety monitoring procedures",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
             "enrollment": {"value": 150, "unit": "%"},
@@ -168,8 +168,8 @@ class TestAmendmentsAssemblerValidData:
             "identifier": "1",
             "summary": "Minor protocol clarification",
             "reasons": {
-                "primary": "C207603:Inconsistency And/Or Error In The Protocol",
-                "secondary": "C17649:Other",
+                "primary": "Inconsistency And/Or Error In The Protocol",
+                "secondary": "Other",
             },
             "impact": make_impact(reliability=True),
             "changes": make_changes(),
@@ -200,8 +200,8 @@ class TestAmendmentsAssemblerValidData:
             "identifier": "1",
             "summary": "Safety-related amendment",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207612:Regulatory Agency Request To Amend",
+                "primary": "New Safety Information Available",
+                "secondary": "Regulatory Agency Request To Amend",
             },
             "impact": make_impact(safety=True),
             "enrollment": {"value": 200, "unit": "%"},
@@ -222,8 +222,8 @@ class TestAmendmentsAssemblerValidData:
             "identifier": "1",
             "summary": "Reliability-related amendment",
             "reasons": {
-                "primary": "C207610:Protocol Design Error",
-                "secondary": "C207601:Change In Strategy",
+                "primary": "Protocol Design Error",
+                "secondary": "Change In Strategy",
             },
             "impact": make_impact(reliability=True),
             "enrollment": {"value": 100, "unit": "%"},
@@ -244,8 +244,8 @@ class TestAmendmentsAssemblerValidData:
             "identifier": "1",
             "summary": "Minor administrative change",
             "reasons": {
-                "primary": "C17649:Other",
-                "secondary": "C48660:Not Applicable",
+                "primary": "Other",
+                "secondary": "Not Applicable",
             },
             "impact": make_impact(),
             "enrollment": {"value": 75, "unit": "%"},
@@ -266,8 +266,8 @@ class TestAmendmentsAssemblerValidData:
             "identifier": "1",
             "summary": "Major protocol amendment",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207610:Protocol Design Error",
+                "primary": "New Safety Information Available",
+                "secondary": "Protocol Design Error",
             },
             "impact": make_impact(safety=True, reliability=True),
             "enrollment": {"value": 300, "unit": "%"},
@@ -289,8 +289,8 @@ class TestAmendmentsAssemblerValidData:
             "identifier": "1",
             "summary": "Test amendment with percentage enrollment",
             "reasons": {
-                "primary": "C207601:Change In Strategy",
-                "secondary": "C17649:Other",
+                "primary": "Change In Strategy",
+                "secondary": "Other",
             },
             "impact": make_impact(reliability=True),
             "enrollment": {"value": 125, "unit": "%"},
@@ -313,8 +313,8 @@ class TestAmendmentsAssemblerValidData:
             "identifier": "1",
             "summary": "Test amendment with non-percentage enrollment",
             "reasons": {
-                "primary": "C207602:IMP Addition",
-                "secondary": "C207604:Investigator/Site Feedback",
+                "primary": "IMP Addition",
+                "secondary": "Investigator/Site Feedback",
             },
             "impact": make_impact(safety=True),
             "enrollment": {"value": 50, "unit": "subjects"},
@@ -339,8 +339,8 @@ class TestAmendmentsAssemblerValidData:
             "identifier": "1",
             "summary": "Test amendment with AI-style percent enrollment",
             "reasons": {
-                "primary": "C207601:Change In Strategy",
-                "secondary": "C17649:Other",
+                "primary": "Change In Strategy",
+                "secondary": "Other",
             },
             "impact": make_impact(),
             "enrollment": {"value": 66, "unit": "percent"},
@@ -360,21 +360,21 @@ class TestAmendmentsAssemblerValidData:
     ):
         """Test execute with various valid amendment reason codes."""
         valid_reasons = [
-            "C207612:Regulatory Agency Request To Amend",
-            "C207608:New Regulatory Guidance",
-            "C207605:IRB/IEC Feedback",
-            "C207609:New Safety Information Available",
-            "C207606:Manufacturing Change",
-            "C207602:IMP Addition",
-            "C207601:Change In Strategy",
-            "C207600:Change In Standard Of Care",
-            "C207607:New Data Available (Other Than Safety Data)",
-            "C207604:Investigator/Site Feedback",
-            "C207611:Recruitment Difficulty",
-            "C207603:Inconsistency And/Or Error In The Protocol",
-            "C207610:Protocol Design Error",
-            "C17649:Other",
-            "C48660:Not Applicable",
+            "Regulatory Agency Request To Amend",
+            "New Regulatory Guidance",
+            "IRB/IEC Feedback",
+            "New Safety Information Available",
+            "Manufacturing Change",
+            "IMP Addition",
+            "Change In Strategy",
+            "Change In Standard Of Care",
+            "New Data Available (Other Than Safety Data)",
+            "Investigator/Site Feedback",
+            "Recruitment Difficulty",
+            "Inconsistency And/Or Error In The Protocol",
+            "Protocol Design Error",
+            "Other",
+            "Not Applicable",
         ]
 
         for i, reason in enumerate(
@@ -387,7 +387,7 @@ class TestAmendmentsAssemblerValidData:
             data = {
                 "identifier": "1",
                 "summary": f"Test amendment {i + 1}",
-                "reasons": {"primary": reason, "secondary": "C17649:Other"},
+                "reasons": {"primary": reason, "secondary": "Other"},
                 "impact": make_impact(safety=i % 2 == 0, reliability=i % 2 == 1),
                 "enrollment": {"value": 100 + i * 10, "unit": "%"},
                 "changes": make_changes(),
@@ -425,8 +425,8 @@ class TestAmendmentsAssemblerInvalidData:
         """Test execute with missing summary field."""
         data = {
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
         }
@@ -457,8 +457,8 @@ class TestAmendmentsAssemblerInvalidData:
         data = {
             "summary": "Test amendment without impact",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
         }
 
@@ -490,7 +490,7 @@ class TestAmendmentsAssemblerInvalidData:
         """Test execute with missing primary reason."""
         data = {
             "summary": "Test amendment without primary reason",
-            "reasons": {"secondary": "C207605:IRB/IEC Feedback"},
+            "reasons": {"secondary": "IRB/IEC Feedback"},
             "impact": {"safety": True, "reliability": False},
         }
 
@@ -504,7 +504,7 @@ class TestAmendmentsAssemblerInvalidData:
         """Test execute with missing secondary reason."""
         data = {
             "summary": "Test amendment without secondary reason",
-            "reasons": {"primary": "C207609:New Safety Information Available"},
+            "reasons": {"primary": "New Safety Information Available"},
             "impact": {"safety": True, "reliability": False},
         }
 
@@ -519,8 +519,8 @@ class TestAmendmentsAssemblerInvalidData:
         data = {
             "summary": "Test amendment with invalid enrollment",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
             "enrollment": {"value": "invalid_number", "unit": "%"},
@@ -537,8 +537,8 @@ class TestAmendmentsAssemblerInvalidData:
         data = {
             "summary": "Test amendment with missing enrollment value",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
             "enrollment": {"unit": "%"},
@@ -555,8 +555,8 @@ class TestAmendmentsAssemblerInvalidData:
         data = {
             "summary": "Test amendment with missing enrollment unit",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
             "enrollment": {"value": 100},
@@ -573,8 +573,8 @@ class TestAmendmentsAssemblerInvalidData:
         data = {
             "summary": "Test amendment with invalid impact",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": "not_boolean", "reliability": "also_not_boolean"},
         }
@@ -628,8 +628,8 @@ class TestAmendmentsAssemblerEdgeCases:
         data = {
             "summary": "",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
         }
@@ -648,8 +648,8 @@ class TestAmendmentsAssemblerEdgeCases:
         data = {
             "summary": long_summary,
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
         }
@@ -670,8 +670,8 @@ class TestAmendmentsAssemblerEdgeCases:
         data = {
             "summary": unicode_summary,
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
         }
@@ -689,8 +689,8 @@ class TestAmendmentsAssemblerEdgeCases:
         data = {
             "summary": "Amendment with zero enrollment",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
             "enrollment": {"value": 0, "unit": "%"},
@@ -710,8 +710,8 @@ class TestAmendmentsAssemblerEdgeCases:
         data = {
             "summary": "Amendment with negative enrollment",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
             "enrollment": {"value": -50, "unit": "%"},
@@ -731,8 +731,8 @@ class TestAmendmentsAssemblerEdgeCases:
         data = {
             "summary": "Amendment with large enrollment",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
             "enrollment": {"value": 999999, "unit": "%"},
@@ -752,8 +752,8 @@ class TestAmendmentsAssemblerEdgeCases:
         data = {
             "summary": "Amendment with float enrollment",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
             "enrollment": {"value": 123.45, "unit": "%"},
@@ -773,8 +773,8 @@ class TestAmendmentsAssemblerEdgeCases:
         data = {
             "summary": "Amendment with special reason characters",
             "reasons": {
-                "primary": "C207609:New Safety Information Available (with special chars: @#$%)",
-                "secondary": "C207605:IRB/IEC Feedback & Additional Notes",
+                "primary": "New Safety Information Available (with special chars: @#$%)",
+                "secondary": "IRB/IEC Feedback & Additional Notes",
             },
             "impact": {"safety": True, "reliability": False},
         }
@@ -792,8 +792,8 @@ class TestAmendmentsAssemblerEdgeCases:
         data1 = {
             "summary": "First amendment",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
         }
@@ -804,8 +804,8 @@ class TestAmendmentsAssemblerEdgeCases:
         data2 = {
             "summary": "Second amendment",
             "reasons": {
-                "primary": "C207610:Protocol Design Error",
-                "secondary": "C207601:Change In Strategy",
+                "primary": "Protocol Design Error",
+                "secondary": "Change In Strategy",
             },
             "impact": {"safety": False, "reliability": True},
         }
@@ -826,8 +826,8 @@ class TestAmendmentsAssemblerPrivateMethods:
         data = {
             "summary": "Test amendment creation",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
             "enrollment": {"value": 100, "unit": "%"},
@@ -931,8 +931,8 @@ class TestAmendmentsAssemblerErrorHandling:
         data = {
             "summary": "Test amendment",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
             "enrollment": {
@@ -954,8 +954,8 @@ class TestAmendmentsAssemblerErrorHandling:
         data = {
             "summary": "Test amendment with potential builder failures",
             "reasons": {
-                "primary": "INVALID_CODE:Invalid Reason",
-                "secondary": "ANOTHER_INVALID:Another Invalid Reason",
+                "primary": "Invalid Reason",
+                "secondary": "Another Invalid Reason",
             },
             "impact": {"safety": True, "reliability": False},
         }
@@ -976,8 +976,8 @@ class TestAmendmentsAssemblerBuilderIntegration:
         data = {
             "summary": "Test builder integration",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
         }
@@ -997,8 +997,8 @@ class TestAmendmentsAssemblerBuilderIntegration:
         data = {
             "summary": "Test create method integration",
             "reasons": {
-                "primary": "C207610:Protocol Design Error",
-                "secondary": "C207601:Change In Strategy",
+                "primary": "Protocol Design Error",
+                "secondary": "Change In Strategy",
             },
             "impact": {"safety": False, "reliability": True},
             "enrollment": {"value": 200, "unit": "%"},
@@ -1024,8 +1024,8 @@ class TestAmendmentsAssemblerBuilderIntegration:
         data = {
             "summary": "Test encoder integration",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "INVALID_FORMAT:This should fall back to Other",
+                "primary": "New Safety Information Available",
+                "secondary": "This should fall back to Other",
             },
             "impact": {"safety": True, "reliability": False},
         }
@@ -1053,8 +1053,8 @@ class TestAmendmentsAssemblerStateManagement:
         data = {
             "summary": "Test state management",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
         }
@@ -1091,8 +1091,8 @@ class TestAmendmentsAssemblerScopeCreation:
             "identifier": "1",
             "summary": "Test with global scope",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
             "scope": {
@@ -1120,8 +1120,8 @@ class TestAmendmentsAssemblerScopeCreation:
             "identifier": "1",
             "summary": "Test with not applicable scope",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
             "scope": {
@@ -1149,8 +1149,8 @@ class TestAmendmentsAssemblerScopeCreation:
             "identifier": "1",
             "summary": "Test with not global country scope",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
             "scope": {
@@ -1177,8 +1177,8 @@ class TestAmendmentsAssemblerScopeCreation:
             "identifier": "1",
             "summary": "Test with local country scope",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
             "scope": {
@@ -1205,8 +1205,8 @@ class TestAmendmentsAssemblerScopeCreation:
             "identifier": "1",
             "summary": "Test with multiple country scopes",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
             "scope": {
@@ -1233,8 +1233,8 @@ class TestAmendmentsAssemblerScopeCreation:
             "identifier": "1",
             "summary": "Test with region scope",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
             "scope": {
@@ -1260,8 +1260,8 @@ class TestAmendmentsAssemblerScopeCreation:
             "identifier": "1",
             "summary": "Test with invalid identifier",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
             "scope": "Not Global INVALIDCODE",
@@ -1281,8 +1281,8 @@ class TestAmendmentsAssemblerScopeCreation:
             "identifier": "1",
             "summary": "Test with unrecognized scope format",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
             "scope": {
@@ -1314,8 +1314,8 @@ class TestAmendmentsAssemblerScopeCreation:
             "identifier": "1",
             "summary": "Test with empty scope",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
             "scope": "",
@@ -1335,8 +1335,8 @@ class TestAmendmentsAssemblerScopeCreation:
             "identifier": "1",
             "summary": "Test with whitespace scope",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
             "scope": "   ",
@@ -1437,8 +1437,8 @@ class TestAmendmentsAssemblerExceptionHandling:
                 "identifier": "1",
                 "summary": "Test exception handling",
                 "reasons": {
-                    "primary": "C207609:New Safety Information Available",
-                    "secondary": "C207605:IRB/IEC Feedback",
+                    "primary": "New Safety Information Available",
+                    "secondary": "IRB/IEC Feedback",
                 },
                 "impact": {"safety": True, "reliability": False},
             }
@@ -1463,8 +1463,8 @@ class TestAmendmentsAssemblerAdditionalCoverage:
         data = {
             "summary": "Complex mixed data test",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "INVALID:This will be handled by encoder",
+                "primary": "New Safety Information Available",
+                "secondary": "This will be handled by encoder",
             },
             "impact": {"safety": True, "reliability": False},
             "enrollment": {
@@ -1492,8 +1492,8 @@ class TestAmendmentsAssemblerAdditionalCoverage:
         data = {
             "summary": "  Amendment with leading and trailing spaces  ",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
         }
@@ -1515,8 +1515,8 @@ class TestAmendmentsAssemblerAdditionalCoverage:
         data = {
             "summary": multiline_summary,
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
         }
@@ -1534,8 +1534,8 @@ class TestAmendmentsAssemblerAdditionalCoverage:
         data = {
             "summary": "Test with string boolean values",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {
                 "safety": "true",  # String instead of boolean
@@ -1561,8 +1561,8 @@ class TestAmendmentsAssemblerAdditionalCoverage:
         data = {
             "summary": "Test with numeric impact values",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {
                 "safety": 1,  # Numeric instead of boolean
@@ -1606,8 +1606,8 @@ class TestAmendmentsAssemblerAdditionalCoverage:
         data = {
             "summary": "Test geographic scope creation",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
         }
@@ -1628,8 +1628,8 @@ class TestAmendmentsAssemblerAdditionalCoverage:
         data = {
             "summary": "Test fixed values",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": {"safety": True, "reliability": False},
         }
@@ -1654,8 +1654,8 @@ class TestAmendmentsAssemblerChanges:
             "identifier": "1",
             "summary": "Test with changes",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
             "changes": [
@@ -1685,8 +1685,8 @@ class TestAmendmentsAssemblerChanges:
             "identifier": "1",
             "summary": "Test with multiple changes",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
             "changes": [
@@ -1718,8 +1718,8 @@ class TestAmendmentsAssemblerChanges:
             "identifier": "1",
             "summary": "Test with Section prefix",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
             "changes": [
@@ -1756,8 +1756,8 @@ class TestAmendmentsAssemblerChanges:
             "identifier": "1",
             "summary": "Test with multiline sections",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
             "changes": [
@@ -1788,8 +1788,8 @@ class TestAmendmentsAssemblerChanges:
             "identifier": "1",
             "summary": "Test with invalid section format",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
             "changes": [
@@ -1901,8 +1901,8 @@ class TestAmendmentsAssemblerRegionScope:
             "identifier": "1",
             "summary": "Test with Europe region",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
             "scope": {
@@ -2007,8 +2007,8 @@ class TestAmendmentsAssemblerUnknownScopeResolution:
             "identifier": "1",
             "summary": "Test with empty unknown",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
             "scope": {
@@ -2033,8 +2033,8 @@ class TestAmendmentsAssemblerUnknownScopeResolution:
             "identifier": "1",
             "summary": "Test unknown as country",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
             "scope": {
@@ -2062,8 +2062,8 @@ class TestAmendmentsAssemblerUnknownScopeResolution:
             "identifier": "1",
             "summary": "Test unknown as region",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
             "scope": {
@@ -2090,8 +2090,8 @@ class TestAmendmentsAssemblerUnknownScopeResolution:
             "identifier": "1",
             "summary": "Test with sites",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
-                "secondary": "C207605:IRB/IEC Feedback",
+                "primary": "New Safety Information Available",
+                "secondary": "IRB/IEC Feedback",
             },
             "impact": make_impact(safety=True),
             "scope": {
@@ -2314,7 +2314,7 @@ class TestAmendmentsAssemblerSecondaryReasons:  # GitHub 99
             "identifier": "1",
             "summary": "Amendment",
             "reasons": {
-                "primary": "C207609:New Safety Information Available",
+                "primary": "New Safety Information Available",
                 "secondary": value,
             },
             "impact": make_impact(safety=True),
@@ -2326,7 +2326,7 @@ class TestAmendmentsAssemblerSecondaryReasons:  # GitHub 99
 
     def test_one_string(self, amendments_assembler, document_assembler):
         result = self.secondary(
-            amendments_assembler, document_assembler, "C207605:IRB/IEC Feedback"
+            amendments_assembler, document_assembler, "IRB/IEC Feedback"
         )
         assert result == ["IRB/IEC Feedback"]
 
@@ -2334,13 +2334,13 @@ class TestAmendmentsAssemblerSecondaryReasons:  # GitHub 99
         result = self.secondary(
             amendments_assembler,
             document_assembler,
-            ["C207605:IRB/IEC Feedback", "C207601:Change In Strategy"],
+            ["IRB/IEC Feedback", "Change In Strategy"],
         )
         assert result == ["IRB/IEC Feedback", "Change In Strategy"]
 
     def test_empty_entries_dropped(self, amendments_assembler, document_assembler):
         result = self.secondary(
-            amendments_assembler, document_assembler, ["", "C207605:IRB/IEC Feedback"]
+            amendments_assembler, document_assembler, ["", "IRB/IEC Feedback"]
         )
         assert result == ["IRB/IEC Feedback"]
 
@@ -2354,6 +2354,6 @@ class TestAmendmentsAssemblerSecondaryReasons:  # GitHub 99
     ):
         monkeypatch.setattr(amendments_assembler, "_create_reason", lambda text: None)
         reasons = amendments_assembler._create_primary_secondary_reasons(
-            {"reasons": {"secondary": ["C207605:IRB/IEC Feedback"]}}
+            {"reasons": {"secondary": ["IRB/IEC Feedback"]}}
         )
         assert reasons == {"secondary": []}

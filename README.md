@@ -433,8 +433,8 @@ Study amendment information. Can be `null` or empty to skip amendment processing
 
 **Notes:**
 
-- `reasons` values use `CODE:DECODE` format (e.g. `"C207609:New Safety Information Available"`).
-- Valid reason codes: `C207612` (Regulatory Agency Request), `C207608` (New Regulatory Guidance), `C207605` (IRB/IEC Feedback), `C207609` (New Safety Information), `C207606` (Manufacturing Change), `C207602` (IMP Addition), `C207601` (Change In Strategy), `C207600` (Change In Standard Of Care), `C207607` (New Data Available), `C207604` (Investigator/Site Feedback), `C207611` (Recruitment Difficulty), `C207603` (Inconsistency/Error In Protocol), `C207610` (Protocol Design Error), `C17649` (Other), `C48660` (Not Applicable).
+- `reasons` values are the reason as written, with no code and no label: a term from the amendment reason codelist (e.g. `"New Safety Information Available"`), matched ignoring case, or `"Other: <text>"`. Any other text becomes Other with the text kept. `secondary` may be a list when there are several. The assembler builds the codes.
+- Reason terms: Regulatory Agency Request To Amend, New Regulatory Guidance, IRB/IEC Feedback, New Safety Information Available, Manufacturing Change, IMP Addition, Change In Strategy, Change In Standard Of Care, New Data Available (Other Than Safety Data), Investigator/Site Feedback, Recruitment Difficulty, Inconsistency And/Or Error In The Protocol, Protocol Design Error, Other, Not Applicable.
 - `enrollment` is optional. The `value` is converted to integer internally.
 - `scope` is optional. Items in `unknown` are resolved to country or region codes via ISO 3166 lookup. Empty strings in `unknown` are skipped.
 - `changes` section references use `"NUMBER, TITLE"` format (e.g. `"1.5, Safety Considerations"`), which are matched against document sections.

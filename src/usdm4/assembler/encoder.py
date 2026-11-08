@@ -713,25 +713,30 @@ class Encoder:
         return cdisc_code
 
     def amendment_reason(self, reason_str: str):
-        if reason_str:
-            parts = reason_str.split(":")
-            if len(parts) >= 2:
-                reason_text = parts[1].strip()
-                for reason in self.REASON_MAP:
-                    if reason_text.upper() == reason["decode"].upper():
-                        self._errors.info(
-                            f"Amendment reason '{reason_text}' decoded as '{reason['code']}', '{reason['decode']}'"
-                        )
-                        code = self._builder.cdisc_code(
-                            reason["code"], reason["decode"]
-                        )
-                        return {"code": code, "other_reason": ""}
+        """Encode an amendment reason given as the bare value: a C217276
+        term ("Change In Strategy"), "Other: <text>", or free text, which
+        becomes Other with the text kept (GitHub 102)."""
+        text = reason_str.strip() if reason_str else ""
+        if text:
+            for reason in self.REASON_MAP:
+                if text.upper() == reason["decode"].upper():
+                    self._errors.info(
+                        f"Amendment reason '{text}' decoded as '{reason['code']}', '{reason['decode']}'"
+                    )
+                    code = self._builder.cdisc_code(reason["code"], reason["decode"])
+                    return {"code": code, "other_reason": ""}
+            code = self._builder.cdisc_code("C17649", "Other")
+            label, _, other_text = text.partition(":")
+            if label.strip().upper() == "OTHER":
+                self._errors.info(
+                    f"Amendment reason '{text}' decoded as 'C17649', 'Other'"
+                )
+                return {"code": code, "other_reason": other_text.strip()}
             self._errors.warning(
-                f"Unable to decode amendment reason '{reason_str}'",
+                f"Unable to decode amendment reason '{text}'",
                 location=KlassMethodLocation(self.MODULE, "amendment_reason"),
             )
-            code = self._builder.cdisc_code("C17649", "Other")
-            return {"code": code, "other_reason": parts[-1].strip()}
+            return {"code": code, "other_reason": text}
         self._errors.warning(
             "Amendment reason not decoded, missing text",
             location=KlassMethodLocation(self.MODULE, "amendment_reason"),
