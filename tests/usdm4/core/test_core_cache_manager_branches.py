@@ -274,3 +274,24 @@ def test_cache_rules_produces_valid_json_on_disk(manager):
     # Parses independently.
     parsed = json.loads(rules_file.read_text())
     assert parsed == [{"core_id": "R1"}]
+
+
+def test_prepare_api_resources_sets_missing_api_key_env(manager):
+    """With no CDISC_LIBRARY_API_KEY in the environment, the given key is
+    set for the library service."""
+    import os
+
+    fake_library = MagicMock()
+    fake_library.get_rules_by_catalog.return_value = []
+    fake_library.get_all_ct_packages.return_value = []
+    with (
+        patch.dict(os.environ, {}, clear=False),
+        patch("cdisc_rules_engine.services.cache.CacheServiceFactory"),
+        patch(
+            "cdisc_rules_engine.services.cdisc_library_service.CDISCLibraryService",
+            return_value=fake_library,
+        ),
+    ):
+        os.environ.pop("CDISC_LIBRARY_API_KEY", None)
+        manager._prepare_api_resources("4-0", "api-key-abc")
+        assert os.environ["CDISC_LIBRARY_API_KEY"] == "api-key-abc"

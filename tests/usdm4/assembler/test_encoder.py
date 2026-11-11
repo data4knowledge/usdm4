@@ -1483,6 +1483,27 @@ class TestEncoderInterventionType:
         encoder._builder.cdisc_code.assert_called_with("C307", "Biological Agent")
         assert result == mock_code
 
+    @pytest.mark.parametrize(
+        "text, code, decode",
+        [
+            ("Combination Product", "C54696", "Combination Product"),
+            ("Diagnostic", "C18020", "Diagnostic Procedure"),
+            ("Dietary Supplement", "C1505", "Dietary Supplement"),
+            ("Non-Surgical Procedure", "C218507", "Non-Surgical Procedure"),
+            ("Surgery", "C15329", "Surgical Procedure"),
+        ],
+    )
+    def test_intervention_type_m11_types(self, encoder, text, code, decode):
+        # GitHub 103: M11 intervention types C99078 holds.
+        mock_code = Mock(spec=Code)
+        encoder._builder.cdisc_code.return_value = mock_code
+
+        result = encoder.intervention_type(text)
+
+        encoder._builder.cdisc_code.assert_called_with(code, decode)
+        encoder._errors.warning.assert_not_called()
+        assert result == mock_code
+
     def test_intervention_type_empty_defaults_to_drug(self, encoder):
         mock_code = Mock(spec=Code)
         encoder._builder.cdisc_code.return_value = mock_code

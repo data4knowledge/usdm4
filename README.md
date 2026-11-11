@@ -458,6 +458,21 @@ Study design structure and trial phase.
 - All fields are required.
 - Valid `trial_phase` values: `0`, `PRE-CLINICAL`, `1`, `I`, `1-2`, `1/2`, `1/2/3`, `1/3`, `1A`, `IA`, `1B`, `IB`, `2`, `II`, `2-3`, `II-III`, `2A`, `IIA`, `2B`, `IIB`, `3`, `III`, `3A`, `IIIA`, `3B`, `IIIB`, `4`, `IV`, `5`, `V`, `2/3/4`. Prefixes `PHASE` or `TRIAL` are automatically stripped.
 - Default intervention model is Parallel Study (CDISC code C82639).
+- `products` and `devices` (optional) declare administrable products and medical devices by name. A device's `embedded_product` names a product the device holds (a drug/device combination product, e.g. a pre-filled inhaler). An administration names its product with `product_name` and its device with `device_name`. When the device embeds the administration's product, the product is reached through the device only (DDF00205). Devices are placed on `StudyVersion.medicalDevices`.
+
+```json
+{
+  "products": [{ "name": "Ace Powder", "dose_form": "Inhalation Powder" }],
+  "devices": [{ "name": "Ace Inhaler", "embedded_product": "Ace Powder", "sourcing": "Locally Sourced" }],
+  "interventions": [
+    {
+      "name": "Ace",
+      "type": "Combination Product",
+      "administrations": [{ "dose": "200 ug", "product_name": "Ace Powder", "device_name": "Ace Inhaler" }]
+    }
+  ]
+}
+```
 
 ---
 

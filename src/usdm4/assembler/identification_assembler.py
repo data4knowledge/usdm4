@@ -517,7 +517,7 @@ class IdentificationAssembler(BaseAssembler):
                         else:
                             study_role = self._role_of(org)
                     else:
-                        self._errors.exception(
+                        self._errors.error(
                             f"Failed to create organization in {role}, {organization}",
                             KlassMethodLocation(self.MODULE, "execute"),
                         )

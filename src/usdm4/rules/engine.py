@@ -67,10 +67,7 @@ class RulesValidationEngine:
                             and obj != RuleTemplate
                             and obj.__module__.startswith(self.package_name)
                         ):
-                            try:
-                                self.rules.append(obj)
-                            except Exception:
-                                continue
+                            self.rules.append(obj)
 
                 except Exception:
                     continue

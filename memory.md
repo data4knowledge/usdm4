@@ -52,3 +52,21 @@ rules and decisions (U4-n) are in `docs/spec/timeline_assembler.md`.
 **Rejected.** A narrower fix in `Builder.iso3166_region_code` alone: it left the FHIR import failing.
 
 **Found, not this work.** udp_prism N86: `Encoder.amendment_reason` loses the Other text.
+
+## 2026-11-08 — GitHub 102: amendment reason takes the free text
+
+**Repos.** usdm4 (this entry), branch `102-amendment-reason-takes-bare-value`. Released with usdm4_protocol GitHub 150 and usdm4_fhir GitHub 62. Found by udp_prism N86: pointer in its `memory.md`.
+
+**What it was.** `Encoder.amendment_reason` split the reason on ":" and decoded only the second part. The README documented the input as CODE:DECODE; usdm4_protocol and usdm4_fhir sent "Primary: <text>", the heading in the code place. "Primary: Other: Regulatory agency request" matched Other on "Other" and returned no text. Dave: the assembler input never carries a code; the assembler builds codes.
+
+**What changed.**
+- `src/usdm4/assembler/encoder.py` — `amendment_reason` takes the free text: a C217276 term, matched ignoring case, gives its code; "Other: text" gives C17649 and keeps the text, further colons included; any other text gives Other with the whole text.
+- `README.md` — the reasons note: free text, no code, no heading.
+- `tests/usdm4/assembler/test_encoder.py` — "Reason:" prefixes removed; tests for "Other: text", Other text with a colon, "Other:" with no text.
+- `tests/usdm4/assembler/test_amendments_assembler.py` — code prefixes removed from every reason input.
+
+**Figures.** `pytest` passed (Dave). udp_prism run on the Air 2026-11-08 with all three branches: TCBCPT_03, 04 Other reason text kept, title page round trip 0 unexplained. Version not changed.
+
+**Rejected.** Keeping CODE:DECODE with a third part for Other text: puts code lookup in every caller.
+
+**Found, not this work.** None.

@@ -373,3 +373,66 @@ class TestAdministrationProductReferences:
             interventions=[{"name": "Drug A", "administrations": [{"route": "Oral"}]}],
         )
         assert design.interventions[0].administrations[0].product_name == ""
+
+
+# ----------------------------------------------------------------------
+# Medical devices (GitHub 103)
+# ----------------------------------------------------------------------
+
+from src.usdm4.assembler.schema.study_design_schema import DeviceInput  # noqa: E402
+
+
+class TestDeviceInput:
+    def test_defaults(self):
+        device = DeviceInput(name="Ace Inhaler")
+        assert device.label == ""
+        assert device.description == ""
+        assert device.embedded_product == ""
+        assert device.sourcing == ""
+
+    def test_name_required(self):
+        with pytest.raises(ValidationError):
+            DeviceInput(embedded_product="Ace Powder")
+
+
+class TestDeviceReferences:
+    def test_valid_references_accepted(self):
+        design = StudyDesignInput(
+            label="D",
+            products=[{"name": "Ace Powder"}],
+            devices=[{"name": "Ace Inhaler", "embedded_product": "Ace Powder"}],
+            interventions=[
+                {
+                    "name": "Ace",
+                    "administrations": [
+                        {"product_name": "Ace Powder", "device_name": "Ace Inhaler"}
+                    ],
+                }
+            ],
+        )
+        assert design.devices[0].embedded_product == "Ace Powder"
+        assert design.interventions[0].administrations[0].device_name == "Ace Inhaler"
+
+    def test_undeclared_embedded_product_rejected(self):
+        with pytest.raises(ValidationError, match="embeds undeclared product"):
+            StudyDesignInput(
+                label="D",
+                devices=[{"name": "Ace Inhaler", "embedded_product": "Ghost"}],
+            )
+
+    def test_undeclared_device_rejected(self):
+        with pytest.raises(ValidationError, match="undeclared device"):
+            StudyDesignInput(
+                label="D",
+                interventions=[
+                    {"name": "Ace", "administrations": [{"device_name": "Ghost"}]}
+                ],
+            )
+
+    def test_no_devices_and_empty_references_pass(self):
+        design = StudyDesignInput(
+            label="D",
+            devices=[{"name": "Ace Inhaler"}],
+            interventions=[{"name": "Ace", "administrations": [{"route": "Oral"}]}],
+        )
+        assert design.interventions[0].administrations[0].device_name == ""

@@ -708,6 +708,48 @@ class TestAssemblerIntegration:
         assert population.plannedEnrollmentNumber is not None
         assert population.plannedEnrollmentNumber.value == 80.0
 
+    def test_full_assembly_places_medical_devices(self, minimal_study_data):
+        """A device embedding a product (GitHub 103) lands on StudyVersion,
+        and the administration reaches the product through the device."""
+        data = minimal_study_data.copy()
+        data["study_design"] = {
+            "label": "Device Design",
+            "rationale": "Combination product",
+            "trial_phase": "phase-2",
+            "products": [{"name": "Ace Powder", "dose_form": "Inhalation Powder"}],
+            "devices": [
+                {
+                    "name": "Ace Inhaler",
+                    "description": "Breath-actuated dry powder inhaler",
+                    "embedded_product": "Ace Powder",
+                }
+            ],
+            "interventions": [
+                {
+                    "name": "Ace",
+                    "type": "Combination Product",
+                    "administrations": [
+                        {
+                            "dose": "200 ug",
+                            "product_name": "Ace Powder",
+                            "device_name": "Ace Inhaler",
+                        }
+                    ],
+                }
+            ],
+        }
+        assembler = get_global_assembler()
+        assembler.execute(data)
+
+        version = assembler.study.versions[0]
+        assert len(version.medicalDevices) == 1
+        device = version.medicalDevices[0]
+        assert device.label == "Ace Inhaler"
+        assert device.embeddedProductId == version.administrableProducts[0].id
+        administration = version.studyInterventions[0].administrations[0]
+        assert administration.medicalDeviceId == device.id
+        assert administration.administrableProductId is None
+
 
 class TestAssemblerEdgeCases:
     """Test Assembler edge cases."""

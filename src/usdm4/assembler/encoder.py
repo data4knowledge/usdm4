@@ -294,6 +294,25 @@ class Encoder:
             {"code": "C15313", "decode": "Radiation Therapy"},
         ),
         (["GENETIC", "GENE THERAPY"], {"code": "C15238", "decode": "Gene Therapy"}),
+        # M11 intervention types C99078 holds (GitHub 103): a combination
+        # product typed Drug loses its device on the FHIR round trip.
+        (
+            ["COMBINATION PRODUCT", "COMBINATION"],
+            {"code": "C54696", "decode": "Combination Product"},
+        ),
+        (
+            ["DIAGNOSTIC", "DIAGNOSTIC TEST", "DIAGNOSTIC PROCEDURE"],
+            {"code": "C18020", "decode": "Diagnostic Procedure"},
+        ),
+        (["DIETARY SUPPLEMENT"], {"code": "C1505", "decode": "Dietary Supplement"}),
+        (
+            ["NON-SURGICAL PROCEDURE", "NON SURGICAL PROCEDURE"],
+            {"code": "C218507", "decode": "Non-Surgical Procedure"},
+        ),
+        (
+            ["SURGERY", "SURGICAL PROCEDURE"],
+            {"code": "C15329", "decode": "Surgical Procedure"},
+        ),
     ]
     INTERVENTION_TYPE_DEFAULT = {"code": "C1909", "decode": "Pharmacologic Substance"}
 

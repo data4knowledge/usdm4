@@ -45,6 +45,25 @@ class ProductInput(BaseModel):
     substances: list[SubstanceInput] = []
 
 
+class DeviceInput(BaseModel):
+    """Maps to usdm4.api.medical_device.MedicalDevice.
+
+    ``embedded_product`` names a ``ProductInput`` on the same design: the
+    device holds that product, as in a drug/device combination product
+    (e.g. a pre-filled inhaler). ``sourcing`` resolves against C215483 as
+    product sourcing does: one that does not decode is left unset, with a
+    warning.
+    """
+
+    model_config = ConfigDict(strict=False)
+
+    name: str
+    label: str = ""
+    description: str = ""
+    embedded_product: str = ""
+    sourcing: str = ""
+
+
 class AdministrationDurationInput(BaseModel):
     """Maps to usdm4.api.duration.Duration on an Administration.
 
@@ -85,6 +104,11 @@ class AdministrationInput(BaseModel):
     # Label-based reference into ``StudyDesignInput.products``; resolved to
     # ``administrableProductId`` at assembly time.
     product_name: str = ""
+    # Label-based reference into ``StudyDesignInput.devices``; resolved to
+    # ``medicalDeviceId`` at assembly time. When the device embeds the
+    # product named in ``product_name``, the product is reached through the
+    # device and ``administrableProductId`` is not set (DDF00205).
+    device_name: str = ""
 
 
 class InterventionInput(BaseModel):
@@ -192,6 +216,7 @@ class StudyDesignInput(BaseModel):
     cells: list[CellInput] = []
     elements: list[ElementInput] = []
     products: list[ProductInput] = []
+    devices: list[DeviceInput] = []
 
     # M11 1.1.2 (Overall Design). Human-readable M11 terms in, CDISC codes
     # out (``Encoder``). A value the encoder does not know is warned and
@@ -251,6 +276,31 @@ class StudyDesignInput(BaseModel):
                         f"intervention {intervention.name!r} administration "
                         f"references undeclared product {admin.product_name!r}; "
                         f"declared products: {declared}"
+                    )
+        return self
+
+    @model_validator(mode="after")
+    def _check_device_references(self) -> "StudyDesignInput":
+        """Every ``DeviceInput.embedded_product`` must resolve to a declared
+        ``ProductInput.name``, and every ``AdministrationInput.device_name``
+        to a declared ``DeviceInput.name``, on this model."""
+        product_names = {p.name for p in self.products}
+        for device in self.devices:
+            if device.embedded_product and device.embedded_product not in product_names:
+                declared = sorted(product_names) if product_names else "(none)"
+                raise ValueError(
+                    f"device {device.name!r} embeds undeclared product "
+                    f"{device.embedded_product!r}; declared products: {declared}"
+                )
+        device_names = {d.name for d in self.devices}
+        for intervention in self.interventions:
+            for admin in intervention.administrations:
+                if admin.device_name and admin.device_name not in device_names:
+                    declared = sorted(device_names) if device_names else "(none)"
+                    raise ValueError(
+                        f"intervention {intervention.name!r} administration "
+                        f"references undeclared device {admin.device_name!r}; "
+                        f"declared devices: {declared}"
                     )
         return self
 

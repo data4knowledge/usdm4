@@ -195,6 +195,9 @@ class StudyAssembler(BaseAssembler):
                 # Products likewise live on StudyVersion; administrations
                 # reference them via administrableProductId.
                 "administrableProducts": study_design_assembler.administrable_products,
+                # Devices likewise; administrations reference them via
+                # medicalDeviceId.
+                "medicalDevices": study_design_assembler.medical_devices,
             }
             study_version = self._builder.create(StudyVersion, params)
 

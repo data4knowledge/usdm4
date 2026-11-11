@@ -657,3 +657,33 @@ def test_refresh_returns_bcs_raw(api):
     ):
         result = api.refresh()
     assert result["FOO"] == {"id": "FOO"}
+
+
+def test_get_sdtm_bcs_pops_the_parent_generic(api):
+    """An SDTM BC's parent generic BC is removed from the generic map, so it
+    is not loaded again as a generic BC."""
+    api._package_items["sdtm"] = {"HEIGHT": {"href": "/sdtm/height"}}
+    api._map["/generic/heightgen"] = "HEIGHTGEN"
+    generic = {"_links": {"self": {"href": "/generic/heightgen"}}}
+    with (
+        patch.object(api, "_get_from_url_all", return_value=({"x": 1}, generic)),
+        patch.object(api, "_sdtm_bc_as_usdm", return_value={"properties": []}),
+    ):
+        api._get_sdtm_bcs()
+    assert "/generic/heightgen" not in api._map
+    assert "HEIGHT" in api._bcs_raw
+
+
+def test_get_generic_bcs_adds_data_element_properties(api):
+    api._package_items["generic"] = {"SUBJECT AGE": {"href": "/generic/age"}}
+    response = {"dataElementConcepts": [{"a": 1}, {"b": 2}]}
+    with (
+        patch.object(api, "_process_genric_bc", return_value=True),
+        patch.object(api, "_get_from_url", return_value=response),
+        patch.object(api, "_generic_bc_as_usdm", return_value={"properties": []}),
+        patch.object(
+            api, "_generic_bc_property_as_usdm", side_effect=[{"name": "P"}, None]
+        ),
+    ):
+        api._get_generic_bcs()
+    assert api._bcs_raw["SUBJECT AGE"]["properties"] == [{"name": "P"}]

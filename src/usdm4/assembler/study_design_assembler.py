@@ -16,6 +16,7 @@ from usdm4.api.administration import Administration
 from usdm4.api.duration import Duration
 from usdm4.api.quantity_range import Quantity
 from usdm4.api.administrable_product import AdministrableProduct
+from usdm4.api.medical_device import MedicalDevice
 from usdm4.api.ingredient import Ingredient
 from usdm4.api.substance import Substance
 from usdm4.api.strength import Strength
@@ -69,6 +70,7 @@ class StudyDesignAssembler(BaseAssembler):
         self._study_design = None
         self._study_interventions: list[StudyIntervention] = []
         self._administrable_products: list[AdministrableProduct] = []
+        self._medical_devices: list[MedicalDevice] = []
         self._roles: list[StudyRole] = []
 
     def execute(
@@ -111,9 +113,16 @@ class StudyDesignAssembler(BaseAssembler):
             products_by_name = self._build_products(data.get("products", []))
             self._administrable_products = list(products_by_name.values())
 
+            # Pass 0b — medical devices. A device may embed a product, so
+            # built after products; administrations reference them by name.
+            devices_by_name = self._build_devices(
+                data.get("devices", []), products_by_name
+            )
+            self._medical_devices = list(devices_by_name.values())
+
             # Pass 1 — interventions. Build once, index by name for pass 2a.
             interventions_by_name = self._build_interventions(
-                data.get("interventions", []), products_by_name
+                data.get("interventions", []), products_by_name, devices_by_name
             )
 
             # Pass 2a — elements. Resolve intervention_names → studyInterventionIds.
@@ -618,6 +627,13 @@ class StudyDesignAssembler(BaseAssembler):
         """
         return self._administrable_products
 
+    @property
+    def medical_devices(self) -> list[MedicalDevice]:
+        """Devices assembled here — consumed by ``StudyAssembler`` for
+        placement on ``StudyVersion.medicalDevices``, as products are.
+        """
+        return self._medical_devices
+
     # ------------------------------------------------------------------
     # Pass 0 — AdministrableProduct
     # ------------------------------------------------------------------
@@ -658,6 +674,50 @@ class StudyDesignAssembler(BaseAssembler):
                     f"Failed during creation of product '{item.get('name', '?')}'",
                     e,
                     KlassMethodLocation(self.MODULE, "_build_products"),
+                )
+        return result
+
+    def _build_devices(
+        self,
+        items: list[dict],
+        products_by_name: dict[str, AdministrableProduct],
+    ) -> dict[str, MedicalDevice]:
+        """Build one ``MedicalDevice`` per input item; return ``{name: obj}``.
+
+        ``embedded_product`` names a product built in pass 0 and sets
+        ``embeddedProductId`` (a drug/device combination product). A name
+        that does not resolve is warned and the device built without it.
+        """
+        result: dict[str, MedicalDevice] = {}
+        for item in items:
+            try:
+                params = {
+                    "name": self._label_to_name(item["name"]),
+                    "label": item.get("label") or item["name"],
+                    "description": item.get("description") or "",
+                }
+                product_ref = (item.get("embedded_product") or "").strip()
+                if product_ref:
+                    product = products_by_name.get(product_ref)
+                    if product is None:
+                        self._errors.warning(
+                            f"Device '{item['name']}' embeds undeclared product "
+                            f"'{product_ref}'; skipping reference.",
+                            KlassMethodLocation(self.MODULE, "_build_devices"),
+                        )
+                    else:
+                        params["embeddedProductId"] = product.id
+                sourcing = self._encoder.sourcing(item.get("sourcing", ""))
+                if sourcing is not None:
+                    params["sourcing"] = sourcing
+                obj = self._builder.create(MedicalDevice, params)
+                if obj is not None:
+                    result[item["name"]] = obj
+            except Exception as e:
+                self._errors.exception(
+                    f"Failed during creation of device '{item.get('name', '?')}'",
+                    e,
+                    KlassMethodLocation(self.MODULE, "_build_devices"),
                 )
         return result
 
@@ -800,6 +860,7 @@ class StudyDesignAssembler(BaseAssembler):
         self,
         items: list[dict],
         products_by_name: dict[str, AdministrableProduct] | None = None,
+        devices_by_name: dict[str, MedicalDevice] | None = None,
     ) -> dict[str, StudyIntervention]:
         """Build one ``StudyIntervention`` per input item; return ``{name: obj}``.
 
@@ -811,7 +872,7 @@ class StudyDesignAssembler(BaseAssembler):
         for item in items:
             try:
                 administrations = self._build_administrations(
-                    item, products_by_name or {}
+                    item, products_by_name or {}, devices_by_name or {}
                 )
                 params = {
                     "name": self._label_to_name(item["name"]),
@@ -836,6 +897,7 @@ class StudyDesignAssembler(BaseAssembler):
         self,
         item: dict,
         products_by_name: dict[str, AdministrableProduct] | None = None,
+        devices_by_name: dict[str, MedicalDevice] | None = None,
     ) -> list[Administration]:
         """Assemble the ``Administration`` list for one intervention.
 
@@ -864,7 +926,12 @@ class StudyDesignAssembler(BaseAssembler):
         multiple = len(admin_items) > 1
         for index, admin in enumerate(admin_items, start=1):
             administration = self._build_one_administration(
-                item, admin, index, multiple, products_by_name or {}
+                item,
+                admin,
+                index,
+                multiple,
+                products_by_name or {},
+                devices_by_name or {},
             )
             if administration is not None:
                 result.append(administration)
@@ -877,8 +944,14 @@ class StudyDesignAssembler(BaseAssembler):
         index: int,
         multiple: bool,
         products_by_name: dict[str, AdministrableProduct],
+        devices_by_name: dict[str, MedicalDevice] | None = None,
     ) -> Administration | None:
-        """Build a single ``Administration`` from one admin input dict."""
+        """Build a single ``Administration`` from one admin input dict.
+
+        A named device sets ``medicalDeviceId``. When that device embeds the
+        administration's product, the product is reached through the device
+        and ``administrableProductId`` is left unset (DDF00205).
+        """
         try:
             route = admin.get("route")
             frequency = admin.get("frequency")
@@ -911,6 +984,20 @@ class StudyDesignAssembler(BaseAssembler):
                     )
                 else:
                     product_id = product.id
+            device_id = None
+            device_ref = (admin.get("device_name") or "").strip()
+            if device_ref:
+                device = (devices_by_name or {}).get(device_ref)
+                if device is None:
+                    self._errors.warning(
+                        f"Administration for '{item['name']}' references "
+                        f"undeclared device '{device_ref}'; skipping reference.",
+                        KlassMethodLocation(self.MODULE, "_build_one_administration"),
+                    )
+                else:
+                    device_id = device.id
+                    if product_id and device.embeddedProductId == product_id:
+                        product_id = None
             params = {
                 "name": name,
                 "label": admin.get("label")
@@ -923,6 +1010,7 @@ class StudyDesignAssembler(BaseAssembler):
                 "route": self._encoder.route(route) if route else None,
                 "frequency": self._encoder.frequency(frequency) if frequency else None,
                 "administrableProductId": product_id,
+                "medicalDeviceId": device_id,
             }
             return self._builder.create(Administration, params)
         except Exception as e:
