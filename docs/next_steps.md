@@ -11,7 +11,7 @@ DDF00082's schema check).
 
 ## Next steps
 
-Release first: GitHub 102 (with usdm4_protocol 150, usdm4_fhir 62) and GitHub 103 (with usdm4_protocol 154, usdm4_fhir 63; both sides of the device contract changed). GitHub 103 also carries the coverage work: Dave's full pytest after the last test fixes is not yet reported; the target is 100%.
+Release first: GitHub 102 (with usdm4_protocol 150, usdm4_fhir 62) and GitHub 103 (with usdm4_protocol 154, usdm4_fhir 63; both sides of the device contract changed). GitHub 104 (ISO 11239 dose forms) is on its branch, Dave's pytest not yet reported; it changes step 1 only until usdm4_fhir I-13. GitHub 103 also carries the coverage work: Dave's full pytest after the last test fixes is not yet reported; the target is 100%.
 
 Normal development: one issue at a time, gate is tests and pins. Test inputs are written here in `usdm4`'s structured form — nothing waits on
 `protocol_corpus` ground truth.

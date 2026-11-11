@@ -113,6 +113,65 @@ class TestProducts:
             == "Lyophilized Powder Dosage Form"
         )
 
+    def test_edqm_term_with_cdisc_concept(
+        self, assembler, population_assembler, timeline_assembler
+    ):  # GitHub 104
+        a = _execute(
+            assembler,
+            population_assembler,
+            timeline_assembler,
+            products=[{"name": "Acemab", "dose_form": "Solution for injection"}],
+        )
+        form = a.administrable_products[0].administrableDoseForm
+        assert form.standardCode.code == "C42945"
+        alias = form.standardCodeAliases[0]
+        assert alias.code == "11201000"
+        assert alias.codeSystem == "http://standardterms.edqm.eu"
+        assert alias.decode == "Solution for injection"
+
+    def test_edqm_term_without_cdisc_concept_is_unknown_with_alias(
+        self, assembler, population_assembler, timeline_assembler, errors
+    ):  # GitHub 104
+        a = _execute(
+            assembler,
+            population_assembler,
+            timeline_assembler,
+            products=[{"name": "Ace Inhaler", "dose_form": "Inhalation powder"}],
+        )
+        form = a.administrable_products[0].administrableDoseForm
+        assert form.standardCode.code == "C17998"
+        assert [c.code for c in form.standardCodeAliases] == ["11109000"]
+        assert "which has no C66726 term" in str(errors.to_dict(Errors.WARNING))
+
+    def test_cdisc_term_has_no_alias(
+        self, assembler, population_assembler, timeline_assembler
+    ):  # GitHub 104
+        a = _execute(
+            assembler,
+            population_assembler,
+            timeline_assembler,
+            products=[{"name": "Drug", "dose_form": "Tablet"}],
+        )
+        assert (
+            a.administrable_products[0].administrableDoseForm.standardCodeAliases == []
+        )
+
+    def test_neither_cdisc_nor_edqm_is_unknown(
+        self, assembler, population_assembler, timeline_assembler, errors
+    ):  # GitHub 104
+        a = _execute(
+            assembler,
+            population_assembler,
+            timeline_assembler,
+            products=[{"name": "Placebo", "dose_form": "Sterile Solution"}],
+        )
+        form = a.administrable_products[0].administrableDoseForm
+        assert form.standardCode.code == "C17998"
+        assert form.standardCodeAliases == []
+        assert "not decoded; defaulting to 'Unknown'" in str(
+            errors.to_dict(Errors.WARNING)
+        )
+
     def test_sourcing_decoded(
         self, assembler, population_assembler, timeline_assembler
     ):  # GitHub 96

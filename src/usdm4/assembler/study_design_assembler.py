@@ -17,6 +17,7 @@ from usdm4.api.duration import Duration
 from usdm4.api.quantity_range import Quantity
 from usdm4.api.administrable_product import AdministrableProduct
 from usdm4.api.medical_device import MedicalDevice
+from usdm4.ct.edqm import library as edqm_dose_forms
 from usdm4.api.ingredient import Ingredient
 from usdm4.api.substance import Substance
 from usdm4.api.strength import Strength
@@ -810,8 +811,15 @@ class StudyDesignAssembler(BaseAssembler):
         )
 
     def _dose_form(self, text: str, product_name: str):
-        """Dose form label → AliasCode (codelist C66726) with warned default."""
+        """Dose form label → AliasCode (codelist C66726) with warned default.
+
+        M11 allows "IDMP (ISO 11239) or CDISC SDTM Terminology" (GitHub 104).
+        A CDISC term is coded as before. An EDQM (ISO 11239) term is coded
+        with the C66726 term of the same NCIt concept, or Unknown when C66726
+        has none, and the EDQM term is kept as an alias code.
+        """
         code = None
+        alias = None
         if text:
             code = self._builder.klass_and_attribute_value(
                 AdministrableProduct, "administrableDoseForm", text
@@ -819,6 +827,24 @@ class StudyDesignAssembler(BaseAssembler):
         if code is None and text:
             # The preferred term without its suffix: "Lyophilized Powder" (GitHub 96).
             code = self._encoder.ct_term("C66726", text, "Dosage Form")
+        if code is None and text:
+            edqm = edqm_dose_forms.dose_form(text)
+            if edqm is not None:
+                alias = self._builder.other_code(
+                    edqm["code"],
+                    edqm_dose_forms.code_system(),
+                    edqm_dose_forms.version(),
+                    edqm["term"],
+                )
+                code = self._encoder.ct_term("C66726", edqm["ncit"])
+                if code is None:
+                    self._errors.warning(
+                        f"Dose form '{text}' for product '{product_name}' is EDQM "
+                        f"{edqm['code']} (NCIt {edqm['ncit']}), which has no C66726 "
+                        f"term; coded 'Unknown' with the EDQM term as an alias.",
+                        KlassMethodLocation(self.MODULE, "_dose_form"),
+                    )
+                    code = self._builder.cdisc_code("C17998", "Unknown")
         if code is None:
             self._errors.warning(
                 f"Dose form '{text}' for product '{product_name}' not "
@@ -826,7 +852,10 @@ class StudyDesignAssembler(BaseAssembler):
                 KlassMethodLocation(self.MODULE, "_dose_form"),
             )
             code = self._builder.cdisc_code("C17998", "Unknown")
-        return self._builder.alias_code(code)
+        alias_code = self._builder.alias_code(code)
+        if alias is not None and alias_code is not None:
+            alias_code.standardCodeAliases.append(alias)
+        return alias_code
 
     def _sourcing(self, text: str, product_name: str):
         """Sourcing label -> Code (codelist C215483) through the encoder

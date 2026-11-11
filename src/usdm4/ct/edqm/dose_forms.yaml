@@ -1,0 +1,1584 @@
+# EDQM (ISO 11239) pharmaceutical dose forms
+#
+# Data from the EDQM Standard Terms database (http://standardterms.edqm.eu), reproduced with the permission of the European Directorate for the Quality of Medicines & HealthCare, Council of Europe (EDQM). The EDQM Standard Terms database is not a static list and content can change over time.
+#
+# Generated from the NCI EVS EDQM-HealthCare Terminology Subsets (NCIt_EDQM-HealthCare_Terminology_Subsets.xlsx,
+# NCI release 2026-05-27, retrieved 2026-11-11, https://evs.nci.nih.gov/ftp1/EDQM-HealthCare/)
+# by usdm4/tools/edqm_ct.py. DO NOT EDIT — regenerate with the tool.
+codeSystem: http://standardterms.edqm.eu
+attribution: Data from the EDQM Standard Terms database (http://standardterms.edqm.eu),
+  reproduced with the permission of the European Directorate for the Quality of Medicines
+  & HealthCare, Council of Europe (EDQM). The EDQM Standard Terms database is not
+  a static list and content can change over time.
+release: '2026-05-27'
+retrieved: '2026-11-11'
+terms:
+- code: '12102000'
+  term: Anticoagulant and preservative solution for blood
+  ncit: C149347
+- code: '10501000'
+  term: Bath additive
+  ncit: C149351
+- code: '12002000'
+  term: Bee smoke paper
+  ncit: C149354
+- code: '12003000'
+  term: Bee smoke stick
+  ncit: C149355
+- code: '13082000'
+  term: Bee-hive dispersion
+  ncit: C148550
+- code: '12001500'
+  term: Bee-hive gel
+  ncit: C149357
+- code: '13174000'
+  term: Bee-hive powder
+  ncit: C200526
+- code: '13078000'
+  term: Bee-hive solution
+  ncit: C149358
+- code: '12001000'
+  term: Bee-hive strip
+  ncit: C149359
+- code: '11502000'
+  term: Bladder irrigation
+  ncit: C149360
+- code: '10314011'
+  term: Buccal film
+  ncit: C91138
+- code: '10320000'
+  term: Buccal tablet
+  ncit: C42755
+- code: '10209000'
+  term: Cachet
+  ncit: C149365
+- code: '10210000'
+  term: Capsule, hard
+  ncit: C64904
+- code: '10211000'
+  term: Capsule, soft
+  ncit: C64909
+- code: '10214000'
+  term: Chewable capsule, soft
+  ncit: C149368
+- code: '10228000'
+  term: Chewable tablet
+  ncit: C42893
+- code: '50001000'
+  term: Chewable/dispersible tablet
+  ncit: C149369
+- code: '13046000'
+  term: Coated granules
+  ncit: C148551
+- code: '10220000'
+  term: Coated tablet
+  ncit: C42897
+- code: '10520000'
+  term: Collodion
+  ncit: C149373
+- code: '10322000'
+  term: Compressed lozenge
+  ncit: C149374
+- code: '13085000'
+  term: Concentrate for concentrate for oral spray, suspension
+  ncit: C149382
+- code: '13001000'
+  term: Concentrate for concentrate for solution for infusion
+  ncit: C149383
+- code: '13162000'
+  term: Concentrate for cutaneous emulsion
+  ncit: C189987
+- code: '10514000'
+  term: Concentrate for cutaneous solution
+  ncit: C149384
+- code: '50009000'
+  term: Concentrate for cutaneous spray, emulsion
+  ncit: C149385
+- code: '10534000'
+  term: Concentrate for dip emulsion
+  ncit: C149386
+- code: '10532000'
+  term: Concentrate for dip solution
+  ncit: C149387
+- code: '10533000'
+  term: Concentrate for dip suspension
+  ncit: C149388
+- code: '50009300'
+  term: Concentrate for dispersion for infusion
+  ncit: C149389
+- code: '13139000'
+  term: Concentrate for dispersion for injection
+  ncit: C177005
+- code: '50009500'
+  term: Concentrate for emulsion for infusion
+  ncit: C149390
+- code: '13152000'
+  term: Concentrate for emulsion for injection
+  ncit: C185343
+- code: '10302000'
+  term: Concentrate for gargle
+  ncit: C149391
+- code: '50009750'
+  term: Concentrate for intravesical solution
+  ncit: C149392
+- code: '13002000'
+  term: Concentrate for nebuliser solution
+  ncit: C149393
+- code: '50010000'
+  term: Concentrate for oral solution
+  ncit: C149394
+- code: '10100500'
+  term: Concentrate for oral suspension
+  ncit: C149395
+- code: '50011000'
+  term: Concentrate for oral/rectal solution
+  ncit: C149396
+- code: '13003000'
+  term: Concentrate for oromucosal solution
+  ncit: C149397
+- code: '11008000'
+  term: Concentrate for rectal solution
+  ncit: C149398
+- code: '10535000'
+  term: Concentrate for solution for fish treatment
+  ncit: C149399
+- code: '11405000'
+  term: Concentrate for solution for haemodialysis
+  ncit: C149400
+- code: '11213000'
+  term: Concentrate for solution for infusion
+  ncit: C149401
+- code: '11209000'
+  term: Concentrate for solution for injection
+  ncit: C149402
+- code: '50079000'
+  term: Concentrate for solution for injection/infusion
+  ncit: C149403
+- code: '10600500'
+  term: Concentrate for solution for intraocular irrigation
+  ncit: C149404
+- code: '50013250'
+  term: Concentrate for solution for peritoneal dialysis
+  ncit: C149405
+- code: '50013500'
+  term: Concentrate for spray emulsion
+  ncit: C149406
+- code: '13004000'
+  term: Concentrate for suspension for injection
+  ncit: C149407
+- code: '10232000'
+  term: Continuous-release intraruminal device
+  ncit: C149408
+- code: '10502000'
+  term: Cream
+  ncit: C28944
+- code: '10516000'
+  term: Cutaneous emulsion
+  ncit: C149413
+- code: '10507000'
+  term: Cutaneous foam
+  ncit: C91188
+- code: '10512000'
+  term: Cutaneous liquid
+  ncit: C69060
+- code: '10505000'
+  term: Cutaneous paste
+  ncit: C149414
+- code: '10517500'
+  term: Cutaneous patch
+  ncit: C28276
+- code: '10517000'
+  term: Cutaneous powder
+  ncit: C91193
+- code: '10513000'
+  term: Cutaneous solution
+  ncit: C64905
+- code: '50015450'
+  term: Cutaneous solution/concentrate for oromucosal solution
+  ncit: C149417
+- code: '50015500'
+  term: Cutaneous spray, emulsion
+  ncit: C149418
+- code: '50016000'
+  term: Cutaneous spray, ointment
+  ncit: C149419
+- code: '10511000'
+  term: Cutaneous spray, powder
+  ncit: C91178
+- code: '10509000'
+  term: Cutaneous spray, solution
+  ncit: C91194
+- code: '10510000'
+  term: Cutaneous spray, suspension
+  ncit: C149420
+- code: '10523000'
+  term: Cutaneous stick
+  ncit: C149421
+- code: '10515000'
+  term: Cutaneous suspension
+  ncit: C68998
+- code: '50015200'
+  term: Cutaneous/nasal ointment
+  ncit: C149422
+- code: '13140000'
+  term: Cutaneous/oromucosal solution
+  ncit: C178301
+- code: '10401500'
+  term: Dental cement
+  ncit: C42635
+- code: '10408000'
+  term: Dental emulsion
+  ncit: C149428
+- code: '10402000'
+  term: Dental gel
+  ncit: C42906
+- code: '50017000'
+  term: Dental paste
+  ncit: C42907
+- code: '10405000'
+  term: Dental powder
+  ncit: C42908
+- code: '10406000'
+  term: Dental solution
+  ncit: C149429
+- code: '10403000'
+  term: Dental stick
+  ncit: C149430
+- code: '10407000'
+  term: Dental suspension
+  ncit: C149431
+- code: '12101000'
+  term: Denture lacquer
+  ncit: C149432
+- code: '10531000'
+  term: Dip emulsion
+  ncit: C149434
+- code: '10529000'
+  term: Dip solution
+  ncit: C149435
+- code: '10530000'
+  term: Dip suspension
+  ncit: C149436
+- code: '10121000'
+  term: Dispersible tablet
+  ncit: C69071
+- code: '10121500'
+  term: Dispersible tablets for dose dispenser
+  ncit: C149438
+- code: '13005000'
+  term: Dispersion for concentrate for dispersion for infusion
+  ncit: C149439
+- code: '13187000'
+  term: Dispersion for implantation gel
+  ncit: C202488
+- code: '50017500'
+  term: Dispersion for infusion
+  ncit: C149440
+- code: '50077000'
+  term: Dispersion for injection
+  ncit: C149441
+- code: '13049000'
+  term: Dispersion for injection/infusion
+  ncit: C149442
+- code: '10701000'
+  term: Ear cream
+  ncit: C91174
+- code: '10706000'
+  term: Ear drops, emulsion
+  ncit: C149450
+- code: '13006000'
+  term: Ear drops, powder for suspension
+  ncit: C149452
+- code: '10704000'
+  term: Ear drops, solution
+  ncit: C149453
+- code: '10705000'
+  term: Ear drops, suspension
+  ncit: C149455
+- code: '10702000'
+  term: Ear gel
+  ncit: C149454
+- code: '10703000'
+  term: Ear ointment
+  ncit: C149457
+- code: '10708000'
+  term: Ear powder
+  ncit: C149458
+- code: '10711000'
+  term: Ear spray, emulsion
+  ncit: C149459
+- code: '10709000'
+  term: Ear spray, solution
+  ncit: C149460
+- code: '10710000'
+  term: Ear spray, suspension
+  ncit: C149461
+- code: '10715000'
+  term: Ear stick
+  ncit: C149462
+- code: '10528000'
+  term: Ear tag
+  ncit: C87539
+- code: '10714000'
+  term: Ear tampon
+  ncit: C149464
+- code: '10713000'
+  term: Ear wash, emulsion
+  ncit: C149465
+- code: '10712000'
+  term: Ear wash, solution
+  ncit: C149466
+- code: '50018000'
+  term: Ear/eye drops, solution
+  ncit: C149467
+- code: '50018500'
+  term: Ear/eye drops, suspension
+  ncit: C149468
+- code: '50019000'
+  term: Ear/eye ointment
+  ncit: C149469
+- code: '50019500'
+  term: Ear/eye/nasal drops, solution
+  ncit: C149470
+- code: '50020200'
+  term: Ear/nasal drops, suspension
+  ncit: C149471
+- code: '10205000'
+  term: Effervescent granules
+  ncit: C42909
+- code: '13007000'
+  term: Effervescent granules for oral suspension
+  ncit: C149473
+- code: '10203000'
+  term: Effervescent powder
+  ncit: C64884
+- code: '10222000'
+  term: Effervescent tablet
+  ncit: C42910
+- code: '13158000'
+  term: Effervescent tablet for oculonasal suspension
+  ncit: C189284
+- code: '10913000'
+  term: Effervescent vaginal tablet
+  ncit: C149475
+- code: '13008000'
+  term: Emulsion for emulsion for injection
+  ncit: C149478
+- code: '11211000'
+  term: Emulsion for infusion
+  ncit: C149479
+- code: '11203000'
+  term: Emulsion for injection
+  ncit: C42914
+- code: '50021000'
+  term: Emulsion for injection/infusion
+  ncit: C149481
+- code: '13091000'
+  term: Emulsion for suspension for injection
+  ncit: C149483
+- code: '11701000'
+  term: Endocervical gel
+  ncit: C149485
+- code: '13041000'
+  term: Endosinusial solution
+  ncit: C149486
+- code: '50022000'
+  term: Endosinusial wash, suspension
+  ncit: C149487
+- code: '11602000'
+  term: Endotracheopulmonary instillation, powder for solution
+  ncit: C149490
+- code: '13009000'
+  term: Endotracheopulmonary instillation, powder for suspension
+  ncit: C149491
+- code: '11601000'
+  term: Endotracheopulmonary instillation, solution
+  ncit: C149492
+- code: '11603000'
+  term: Endotracheopulmonary instillation, suspension
+  ncit: C149493
+- code: '13042000'
+  term: Epilesional solution
+  ncit: C149495
+- code: '10601000'
+  term: Eye cream
+  ncit: C91159
+- code: '10604500'
+  term: Eye drops, emulsion
+  ncit: C149498
+- code: '13010000'
+  term: Eye drops, powder for solution
+  ncit: C149502
+- code: '13011000'
+  term: Eye drops, powder for suspension
+  ncit: C149503
+- code: '13159000'
+  term: Eye drops, prolonged-release solution
+  ncit: C189287
+- code: '10604000'
+  term: Eye drops, solution
+  ncit: C91163
+- code: '10608000'
+  term: Eye drops, solvent for reconstitution
+  ncit: C149507
+- code: '10605000'
+  term: Eye drops, suspension
+  ncit: C149508
+- code: '10602000'
+  term: Eye gel
+  ncit: C91160
+- code: '10610000'
+  term: Eye lotion
+  ncit: C149511
+- code: '10611000'
+  term: Eye lotion, solvent for reconstitution
+  ncit: C149512
+- code: '10603000'
+  term: Eye ointment
+  ncit: C91162
+- code: '13154000'
+  term: Film-coated granules
+  ncit: C186480
+- code: '10221000'
+  term: Film-coated tablet
+  ncit: C42931
+- code: '10301000'
+  term: Gargle
+  ncit: C78748
+- code: '10303000'
+  term: Gargle, powder for solution
+  ncit: C149519
+- code: '10304000'
+  term: Gargle, tablet for solution
+  ncit: C149520
+- code: '50024000'
+  term: Gargle/mouthwash
+  ncit: C149521
+- code: '50024500'
+  term: Gargle/nasal wash
+  ncit: C149522
+- code: '13012000'
+  term: Gas for dispersion for infusion
+  ncit: C149525
+- code: '13013000'
+  term: Gas for dispersion for injection
+  ncit: C149526
+- code: '13050000'
+  term: Gas for dispersion for injection/infusion
+  ncit: C149527
+- code: '10212000'
+  term: Gastro-resistant capsule, hard
+  ncit: C149531
+- code: '10213000'
+  term: Gastro-resistant capsule, soft
+  ncit: C149532
+- code: '10206000'
+  term: Gastro-resistant granules
+  ncit: C42903
+- code: '13133000'
+  term: Gastro-resistant oral suspension
+  ncit: C172925
+- code: '10225000'
+  term: Gastro-resistant tablet
+  ncit: C42905
+- code: '12111000'
+  term: Gastroenteral emulsion
+  ncit: C149528
+- code: '12108000'
+  term: Gastroenteral solution
+  ncit: C149529
+- code: '12110000'
+  term: Gastroenteral suspension
+  ncit: C149530
+- code: '10503000'
+  term: Gel
+  ncit: C42934
+- code: '13014000'
+  term: Gel for gel
+  ncit: C149536
+- code: '11204000'
+  term: Gel for injection
+  ncit: C149537
+- code: '10315000'
+  term: Gingival gel
+  ncit: C149540
+- code: '10316000'
+  term: Gingival paste
+  ncit: C149541
+- code: '10312000'
+  term: Gingival solution
+  ncit: C149542
+- code: '10204000'
+  term: Granules
+  ncit: C42938
+- code: '13177000'
+  term: Granules for gastro-resistant oral suspension
+  ncit: C200521
+- code: '13179000'
+  term: Granules for modified-release oral suspension
+  ncit: C200518
+- code: '10112000'
+  term: Granules for oral solution
+  ncit: C149546
+- code: '10113000'
+  term: Granules for oral suspension
+  ncit: C149548
+- code: '50029150'
+  term: Granules for oral/rectal suspension
+  ncit: C149550
+- code: '13180000'
+  term: Granules for prolonged-release oral suspension
+  ncit: C200517
+- code: '13015000'
+  term: Granules for rectal suspension
+  ncit: C149551
+- code: '13048000'
+  term: Granules for suspension for injection
+  ncit: C149552
+- code: '10119000'
+  term: Granules for syrup
+  ncit: C149553
+- code: '50029250'
+  term: Granules for use in drinking water
+  ncit: C149554
+- code: '13163000'
+  term: Granules for use in drinking water/milk
+  ncit: C190655
+- code: '50029500'
+  term: Granules for vaginal solution
+  ncit: C149555
+- code: '10122000'
+  term: Herbal tea
+  ncit: C149559
+- code: '11301000'
+  term: Implant
+  ncit: C42942
+- code: '11303000'
+  term: Implantation chain
+  ncit: C149563
+- code: '13186000'
+  term: Implantation gel
+  ncit: C202485
+- code: '11303300'
+  term: Implantation matrix
+  ncit: C149564
+- code: '13043000'
+  term: Implantation paste
+  ncit: C149565
+- code: '11303500'
+  term: Implantation suspension
+  ncit: C149566
+- code: '11302000'
+  term: Implantation tablet
+  ncit: C149567
+- code: '13145000'
+  term: Impregnated cutaneous swab
+  ncit: C180597
+- code: '10525000'
+  term: Impregnated dressing
+  ncit: C149569
+- code: '12117000'
+  term: Impregnated pad
+  ncit: C149571
+- code: '12117500'
+  term: Impregnated plug
+  ncit: C149572
+- code: '11109000'
+  term: Inhalation powder
+  ncit: C91142
+- code: '11110000'
+  term: Inhalation powder, hard capsule
+  ncit: C149579
+- code: '11111000'
+  term: Inhalation powder, pre-dispensed
+  ncit: C149580
+- code: '50030000'
+  term: Inhalation powder, tablet
+  ncit: C149581
+- code: '50081000'
+  term: Inhalation solution
+  ncit: C91143
+- code: '11113000'
+  term: Inhalation vapour, capsule
+  ncit: C149582
+- code: '50031000'
+  term: Inhalation vapour, effervescent tablet
+  ncit: C149583
+- code: '50032000'
+  term: Inhalation vapour, emulsion
+  ncit: C149584
+- code: '50033000'
+  term: Inhalation vapour, impregnated pad
+  ncit: C149585
+- code: '50033100'
+  term: Inhalation vapour, impregnated plug
+  ncit: C149586
+- code: '11117000'
+  term: Inhalation vapour, liquid
+  ncit: C149587
+- code: '11116000'
+  term: Inhalation vapour, ointment
+  ncit: C149588
+- code: '11112000'
+  term: Inhalation vapour, powder
+  ncit: C149589
+- code: '11114000'
+  term: Inhalation vapour, solution
+  ncit: C149590
+- code: '11115000'
+  term: Inhalation vapour, tablet
+  ncit: C149591
+- code: '10202000'
+  term: Instant herbal tea
+  ncit: C149595
+- code: '12120000'
+  term: Intestinal gel
+  ncit: C149598
+- code: '13190000'
+  term: Intracameral implant
+  ncit: C203953
+- code: '11803000'
+  term: Intramammary emulsion
+  ncit: C149604
+- code: '13065000'
+  term: Intramammary gel
+  ncit: C149605
+- code: '11804000'
+  term: Intramammary ointment
+  ncit: C149606
+- code: '11801000'
+  term: Intramammary solution
+  ncit: C149607
+- code: '11802000'
+  term: Intramammary suspension
+  ncit: C149608
+- code: '13044000'
+  term: Intraocular instillation solution
+  ncit: C149610
+- code: '12111500'
+  term: Intraperitoneal solution
+  ncit: C68971
+- code: '11906000'
+  term: Intrauterine capsule
+  ncit: C149613
+- code: '11901000'
+  term: Intrauterine delivery system
+  ncit: C149614
+- code: '11904000'
+  term: Intrauterine emulsion
+  ncit: C149615
+- code: '50033300'
+  term: Intrauterine foam
+  ncit: C149616
+- code: '13113000'
+  term: Intrauterine gel
+  ncit: C156477
+- code: '11902000'
+  term: Intrauterine solution
+  ncit: C149617
+- code: '11903000'
+  term: Intrauterine suspension
+  ncit: C149618
+- code: '11905000'
+  term: Intrauterine tablet
+  ncit: C149619
+- code: '11502500'
+  term: Intravesical solution
+  ncit: C149620
+- code: '50033400'
+  term: Intravesical solution/solution for injection
+  ncit: C149621
+- code: '13045000'
+  term: Intravesical suspension
+  ncit: C149622
+- code: '13191000'
+  term: Intravitreal implant
+  ncit: C203952
+- code: '12113000'
+  term: Irrigation solution
+  ncit: C42947
+- code: '12107000'
+  term: Kit for radiopharmaceutical preparation
+  ncit: C149625
+- code: '13016000'
+  term: Laryngopharyngeal solution
+  ncit: C149627
+- code: '13017000'
+  term: Laryngopharyngeal spray, solution
+  ncit: C149628
+- code: '10234000'
+  term: Lick block
+  ncit: C149629
+- code: '12118000'
+  term: Living tissue equivalent
+  ncit: C149630
+- code: '10321000'
+  term: Lozenge
+  ncit: C42955
+- code: '13116000'
+  term: Lyophilisate for emulsion for injection
+  ncit: C158596
+- code: '12118500'
+  term: Lyophilisate for oculonasal suspension
+  ncit: C149637
+- code: '13098000'
+  term: Lyophilisate for oculonasal suspension/use in drinking water
+  ncit: C149638
+- code: '13089000'
+  term: Lyophilisate for oral spray, suspension
+  ncit: C149639
+- code: '13067000'
+  term: Lyophilisate for oral suspension
+  ncit: C149640
+- code: '11215000'
+  term: Lyophilisate for solution for infusion
+  ncit: C149641
+- code: '11217000'
+  term: Lyophilisate for solution for injection
+  ncit: C149642
+- code: '11218000'
+  term: Lyophilisate for suspension for injection
+  ncit: C149643
+- code: '50034700'
+  term: Lyophilisate for use in drinking water
+  ncit: C149644
+- code: '13018000'
+  term: Matrix for implantation matrix
+  ncit: C149646
+- code: '10229000'
+  term: Medicated chewing-gum
+  ncit: C42894
+- code: '10526500'
+  term: Medicated collar
+  ncit: C149649
+- code: '10521000'
+  term: Medicated nail lacquer
+  ncit: C149650
+- code: '10236000'
+  term: Medicated pellets
+  ncit: C149651
+- code: '10527000'
+  term: Medicated pendant
+  ncit: C149652
+- code: '10506000'
+  term: Medicated plaster
+  ncit: C149653
+- code: '12119000'
+  term: Medicated sponge
+  ncit: C64901
+- code: '12130000'
+  term: Medicated thread
+  ncit: C149654
+- code: '10914000'
+  term: Medicated vaginal tampon
+  ncit: C149655
+- code: '12301000'
+  term: Medicinal gas, compressed
+  ncit: C149656
+- code: '12302000'
+  term: Medicinal gas, cryogenic
+  ncit: C149657
+- code: '12303000'
+  term: Medicinal gas, liquefied
+  ncit: C149658
+- code: '13124000'
+  term: Medicinal larvae
+  ncit: C178305
+- code: '13115000'
+  term: Medicinal leech
+  ncit: C161767
+- code: '10217000'
+  term: Modified-release capsule, hard
+  ncit: C149663
+- code: '10218000'
+  term: Modified-release capsule, soft
+  ncit: C149664
+- code: '10208000'
+  term: Modified-release granules
+  ncit: C149665
+- code: '13135000'
+  term: Modified-release oral suspension
+  ncit: C173708
+- code: '10227000'
+  term: Modified-release tablet
+  ncit: C69025
+- code: '10310000'
+  term: Mouthwash
+  ncit: C29269
+- code: '50036050'
+  term: Mouthwash, powder for solution
+  ncit: C149668
+- code: '10311000'
+  term: Mouthwash, tablet for solution
+  ncit: C149669
+- code: '10319000'
+  term: Muco-adhesive buccal tablet
+  ncit: C149670
+- code: '10801000'
+  term: Nasal cream
+  ncit: C91151
+- code: '10806000'
+  term: Nasal drops, emulsion
+  ncit: C149676
+- code: '13019000'
+  term: Nasal drops, lyophilisate for suspension
+  ncit: C149678
+- code: '13020000'
+  term: Nasal drops, powder for solution
+  ncit: C149680
+- code: '10804000'
+  term: Nasal drops, solution
+  ncit: C150068
+- code: '10805000'
+  term: Nasal drops, suspension
+  ncit: C91158
+- code: '10802000'
+  term: Nasal gel
+  ncit: C91152
+- code: '10803000'
+  term: Nasal ointment
+  ncit: C91155
+- code: '10807000'
+  term: Nasal powder
+  ncit: C148454
+- code: '10810000'
+  term: Nasal spray, emulsion
+  ncit: C149682
+- code: '13096000'
+  term: Nasal spray, lyophilisate for suspension
+  ncit: C149684
+- code: '50037100'
+  term: Nasal spray, powder for solution
+  ncit: C149685
+- code: '10808000'
+  term: Nasal spray, solution
+  ncit: C149686
+- code: '50037400'
+  term: Nasal spray, solution/oromucosal solution
+  ncit: C149688
+- code: '10809000'
+  term: Nasal spray, suspension
+  ncit: C149689
+- code: '10812000'
+  term: Nasal stick
+  ncit: C149690
+- code: '10811000'
+  term: Nasal wash
+  ncit: C149691
+- code: '50036500'
+  term: Nasal/oromucosal solution
+  ncit: C149692
+- code: '50036700'
+  term: Nasal/oromucosal spray, solution
+  ncit: C149693
+- code: '12004000'
+  term: Nebulisation solution
+  ncit: C149694
+- code: '13129000'
+  term: Nebuliser dispersion
+  ncit: C172916
+- code: '11105000'
+  term: Nebuliser emulsion
+  ncit: C149696
+- code: '11101000'
+  term: Nebuliser solution
+  ncit: C149697
+- code: '11102000'
+  term: Nebuliser suspension
+  ncit: C149698
+- code: '13087000'
+  term: Oculonasal suspension
+  ncit: C149703
+- code: '10504000'
+  term: Ointment
+  ncit: C42966
+- code: '10612000'
+  term: Ophthalmic insert
+  ncit: C149704
+- code: '10613000'
+  term: Ophthalmic strip
+  ncit: C149705
+- code: '10103000'
+  term: Oral drops, emulsion
+  ncit: C149707
+- code: '50037500'
+  term: Oral drops, granules for solution
+  ncit: C149708
+- code: '50037750'
+  term: Oral drops, liquid
+  ncit: C149709
+- code: '50082000'
+  term: Oral drops, powder for suspension
+  ncit: C149710
+- code: '10101000'
+  term: Oral drops, solution
+  ncit: C149711
+- code: '10102000'
+  term: Oral drops, suspension
+  ncit: C149712
+- code: '10107000'
+  term: Oral emulsion
+  ncit: C149713
+- code: '10108000'
+  term: Oral gel
+  ncit: C91168
+- code: '10230000'
+  term: Oral gum
+  ncit: C149648
+- code: '13106000'
+  term: Oral herbal material
+  ncit: C149715
+- code: '10104000'
+  term: Oral liquid
+  ncit: C149716
+- code: '10224000'
+  term: Oral lyophilisate
+  ncit: C149717
+- code: '10109000'
+  term: Oral paste
+  ncit: C91170
+- code: '10201000'
+  term: Oral powder
+  ncit: C91171
+- code: '10105000'
+  term: Oral solution
+  ncit: C68996
+- code: '50038500'
+  term: Oral solution/concentrate for nebuliser solution
+  ncit: C149722
+- code: '13084000'
+  term: Oral spray, suspension
+  ncit: C149723
+- code: '10106000'
+  term: Oral suspension
+  ncit: C68992
+- code: '13193000'
+  term: Oral suspension, bait
+  ncit: C205480
+- code: '50037900'
+  term: Oral/rectal solution
+  ncit: C149727
+- code: '50038000'
+  term: Oral/rectal suspension
+  ncit: C149728
+- code: '10236100'
+  term: Orodispersible film
+  ncit: C149729
+- code: '10223000'
+  term: Orodispersible tablet
+  ncit: C42999
+- code: '10317000'
+  term: Oromucosal capsule
+  ncit: C149732
+- code: '10314010'
+  term: Oromucosal cream
+  ncit: C149733
+- code: '13167000'
+  term: Oromucosal drops, emulsion
+  ncit: C200221
+- code: '13168000'
+  term: Oromucosal drops, solution
+  ncit: C200220
+- code: '13169000'
+  term: Oromucosal drops, suspension
+  ncit: C200218
+- code: '13149000'
+  term: Oromucosal film
+  ncit: C183046
+- code: '10313000'
+  term: Oromucosal gel
+  ncit: C149735
+- code: '10314005'
+  term: Oromucosal ointment
+  ncit: C149736
+- code: '10314000'
+  term: Oromucosal paste
+  ncit: C149737
+- code: '50039000'
+  term: Oromucosal patch
+  ncit: C149738
+- code: '13141000'
+  term: Oromucosal pouch
+  ncit: C178302
+- code: '10305000'
+  term: Oromucosal solution
+  ncit: C149740
+- code: '10308100'
+  term: Oromucosal spray, emulsion
+  ncit: C149741
+- code: '10308200'
+  term: Oromucosal spray, solution
+  ncit: C149742
+- code: '10308300'
+  term: Oromucosal spray, suspension
+  ncit: C149743
+- code: '10306000'
+  term: Oromucosal suspension
+  ncit: C149744
+- code: '50039500'
+  term: Oromucosal/laryngopharyngeal solution
+  ncit: C149745
+- code: '50040500'
+  term: Oromucosal/laryngopharyngeal solution/spray, solution
+  ncit: C150039
+- code: '10323000'
+  term: Pastille
+  ncit: C60985
+- code: '10410000'
+  term: Periodontal gel
+  ncit: C149750
+- code: '10411000'
+  term: Periodontal insert
+  ncit: C149751
+- code: '10401000'
+  term: Periodontal powder
+  ncit: C149752
+- code: '10909000'
+  term: Pessary
+  ncit: C149755
+- code: '10231000'
+  term: Pillules
+  ncit: C149758
+- code: '10550000'
+  term: Plaster for provocation test
+  ncit: C149762
+- code: '10522000'
+  term: Poultice
+  ncit: C47913
+- code: '10539000'
+  term: Pour-on emulsion
+  ncit: C149767
+- code: '10537000'
+  term: Pour-on solution
+  ncit: C149768
+- code: '10538000'
+  term: Pour-on suspension
+  ncit: C149769
+- code: '13099000'
+  term: Powder for bee-hive dispersion
+  ncit: C149806
+- code: '13079000'
+  term: Powder for bee-hive solution
+  ncit: C149807
+- code: '11503000'
+  term: Powder for bladder irrigation
+  ncit: C149808
+- code: '50048750'
+  term: Powder for concentrate for dispersion for infusion
+  ncit: C149810
+- code: '50049100'
+  term: Powder for concentrate for intravesical suspension
+  ncit: C149811
+- code: '50049200'
+  term: Powder for concentrate for solution for haemodialysis
+  ncit: C149812
+- code: '50043000'
+  term: Powder for concentrate for solution for infusion
+  ncit: C149813
+- code: '50049250'
+  term: Powder for concentrate for solution for injection/infusion
+  ncit: C149814
+- code: '10514500'
+  term: Powder for cutaneous solution
+  ncit: C149815
+- code: '10413000'
+  term: Powder for dental cement
+  ncit: C149816
+- code: '13022000'
+  term: Powder for dental gel
+  ncit: C149817
+- code: '50049270'
+  term: Powder for dental solution
+  ncit: C149818
+- code: '10534500'
+  term: Powder for dip solution
+  ncit: C149819
+- code: '11211500'
+  term: Powder for dispersion for infusion
+  ncit: C149820
+- code: '13023000'
+  term: Powder for dispersion for injection
+  ncit: C149821
+- code: '13040000'
+  term: Powder for emulsion for injection
+  ncit: C149822
+- code: '13024000'
+  term: Powder for endocervical gel
+  ncit: C149823
+- code: '13025000'
+  term: Powder for endosinusial solution
+  ncit: C149824
+- code: '50049300'
+  term: Powder for epilesional solution
+  ncit: C149825
+- code: '13178000'
+  term: Powder for gastro-resistant oral suspension
+  ncit: C200519
+- code: '13021000'
+  term: Powder for gel
+  ncit: C149826
+- code: '13026000'
+  term: Powder for gingival gel
+  ncit: C149827
+- code: '13027000'
+  term: Powder for implantation matrix
+  ncit: C149828
+- code: '13028000'
+  term: Powder for implantation paste
+  ncit: C149829
+- code: '50049500'
+  term: Powder for implantation suspension
+  ncit: C149830
+- code: '13029000'
+  term: Powder for intraocular instillation solution
+  ncit: C149831
+- code: '50050000'
+  term: Powder for intravesical solution
+  ncit: C149832
+- code: '50050500'
+  term: Powder for intravesical solution/solution for injection
+  ncit: C149833
+- code: '50051000'
+  term: Powder for intravesical suspension
+  ncit: C149834
+- code: '11104000'
+  term: Powder for nebuliser solution
+  ncit: C149835
+- code: '11103000'
+  term: Powder for nebuliser suspension
+  ncit: C149836
+- code: '10110000'
+  term: Powder for oral solution
+  ncit: C64907
+- code: '10111000'
+  term: Powder for oral suspension
+  ncit: C64908
+- code: '50052000'
+  term: Powder for oral/rectal suspension
+  ncit: C149840
+- code: '13176000'
+  term: Powder for prolonged-release oral suspension
+  ncit: C200522
+- code: '11208400'
+  term: Powder for prolonged-release suspension for injection
+  ncit: C149842
+- code: '11009000'
+  term: Powder for rectal solution
+  ncit: C149843
+- code: '11010000'
+  term: Powder for rectal suspension
+  ncit: C149844
+- code: '13031000'
+  term: Powder for sealant
+  ncit: C149845
+- code: '13056000'
+  term: Powder for solution for fish treatment
+  ncit: C149846
+- code: '11212000'
+  term: Powder for solution for infusion
+  ncit: C149847
+- code: '11205000'
+  term: Powder for solution for injection
+  ncit: C42974
+- code: '50053500'
+  term: Powder for solution for injection/infusion
+  ncit: C149848
+- code: '13052000'
+  term: Powder for solution for injection/skin-prick test
+  ncit: C149849
+- code: '50073000'
+  term: Powder for solution for intraocular irrigation
+  ncit: C149850
+- code: '10518500'
+  term: Powder for solution for iontophoresis
+  ncit: C149851
+- code: '13184000'
+  term: Powder for solution for provocation test
+  ncit: C201291
+- code: '13032000'
+  term: Powder for solution for skin-prick test
+  ncit: C149852
+- code: '10536000'
+  term: Powder for suspension for fish treatment
+  ncit: C149853
+- code: '11206000'
+  term: Powder for suspension for injection
+  ncit: C42976
+- code: '10118000'
+  term: Powder for syrup
+  ncit: C149854
+- code: '50072000'
+  term: Powder for use in drinking water
+  ncit: C149855
+- code: '50055250'
+  term: Powder for use in drinking water/milk
+  ncit: C149856
+- code: '13111000'
+  term: Powder for vaginal solution
+  ncit: C154663
+- code: '10235000'
+  term: Premix for medicated feeding stuff
+  ncit: C149864
+- code: '11108000'
+  term: Pressurised inhalation, emulsion
+  ncit: C149866
+- code: '11106000'
+  term: Pressurised inhalation, solution
+  ncit: C149867
+- code: '11107000'
+  term: Pressurised inhalation, suspension
+  ncit: C149868
+- code: '10215000'
+  term: Prolonged-release capsule, hard
+  ncit: C149871
+- code: '10216000'
+  term: Prolonged-release capsule, soft
+  ncit: C149872
+- code: '13175000'
+  term: Prolonged-release chewable tablet
+  ncit: C124794
+- code: '13126000'
+  term: Prolonged-release dispersion for injection
+  ncit: C170823
+- code: '10207000'
+  term: Prolonged-release granules
+  ncit: C69067
+- code: '13134000'
+  term: Prolonged-release oral suspension
+  ncit: C172926
+- code: '13148000'
+  term: Prolonged-release pessary
+  ncit: C183047
+- code: '13076000'
+  term: Prolonged-release solution for injection
+  ncit: C149876
+- code: '11208500'
+  term: Prolonged-release suspension for injection
+  ncit: C149877
+- code: '10226000'
+  term: Prolonged-release tablet
+  ncit: C42927
+- code: '13128000'
+  term: Prolonged-release wound solution
+  ncit: C172915
+- code: '10233000'
+  term: Pulsatile-release intraruminal device
+  ncit: C149879
+- code: '12106000'
+  term: Radionuclide generator
+  ncit: C48193
+- code: '12105000'
+  term: Radiopharmaceutical precursor
+  ncit: C149880
+- code: '50056500'
+  term: Radiopharmaceutical precursor, solution
+  ncit: C149881
+- code: '11014000'
+  term: Rectal capsule
+  ncit: C149882
+- code: '11001000'
+  term: Rectal cream
+  ncit: C69045
+- code: '11007000'
+  term: Rectal emulsion
+  ncit: C149883
+- code: '11004000'
+  term: Rectal foam
+  ncit: C91181
+- code: '11002000'
+  term: Rectal gel
+  ncit: C91182
+- code: '11003000'
+  term: Rectal ointment
+  ncit: C69047
+- code: '11005000'
+  term: Rectal solution
+  ncit: C149884
+- code: '11006000'
+  term: Rectal suspension
+  ncit: C149885
+- code: '11015000'
+  term: Rectal tampon
+  ncit: C149886
+- code: '12115000'
+  term: Sealant
+  ncit: C149892
+- code: '12115100'
+  term: Sealant matrix
+  ncit: C149893
+- code: '12115200'
+  term: Sealant powder
+  ncit: C149894
+- code: '10508000'
+  term: Shampoo
+  ncit: C42981
+- code: '10120000'
+  term: Soluble tablet
+  ncit: C42985
+- code: '13100000'
+  term: Solution for bee-hive dispersion
+  ncit: C149899
+- code: '13080000'
+  term: Solution for bee-hive solution
+  ncit: C149900
+- code: '13054000'
+  term: Solution for bee-hive strip
+  ncit: C149901
+- code: '12103000'
+  term: Solution for blood fraction modification
+  ncit: C149902
+- code: '11209500'
+  term: Solution for cardioplegia
+  ncit: C149903
+- code: '13107000'
+  term: Solution for cardioplegia/organ preservation
+  ncit: C149904
+- code: '10414000'
+  term: Solution for dental cement
+  ncit: C149905
+- code: '11403000'
+  term: Solution for haemodiafiltration
+  ncit: C149906
+- code: '11404000'
+  term: Solution for haemodialysis
+  ncit: C149907
+- code: '50057000'
+  term: Solution for haemodialysis/haemofiltration
+  ncit: C149908
+- code: '11402000'
+  term: Solution for haemofiltration
+  ncit: C149909
+- code: '13188000'
+  term: Solution for implantation gel
+  ncit: C202490
+- code: '11210000'
+  term: Solution for infusion
+  ncit: C149910
+- code: '11201000'
+  term: Solution for injection
+  ncit: C42945
+- code: '50060000'
+  term: Solution for injection/infusion
+  ncit: C149920
+- code: '13051000'
+  term: Solution for injection/skin-prick test
+  ncit: C149922
+- code: '50073500'
+  term: Solution for intraocular irrigation
+  ncit: C149923
+- code: '10518000'
+  term: Solution for iontophoresis
+  ncit: C149924
+- code: '12112000'
+  term: Solution for organ preservation
+  ncit: C149925
+- code: '11401000'
+  term: Solution for peritoneal dialysis
+  ncit: C149926
+- code: '12131000'
+  term: Solution for provocation test
+  ncit: C149927
+- code: '50061500'
+  term: Solution for sealant
+  ncit: C149928
+- code: '10548000'
+  term: Solution for skin-prick test
+  ncit: C149929
+- code: '10549000'
+  term: Solution for skin-scratch test
+  ncit: C149930
+- code: '13061000'
+  term: Solution for solution for infusion
+  ncit: C149931
+- code: '13033000'
+  term: Solution for solution for injection
+  ncit: C149932
+- code: '13034000'
+  term: Solution for Spray
+  ncit: C149933
+- code: '13047000'
+  term: Solution for suspension for injection
+  ncit: C149934
+- code: '50061300'
+  term: Solution for use in drinking water
+  ncit: C149935
+- code: '13055000'
+  term: Solution for use in drinking water/milk
+  ncit: C149936
+- code: '11216000'
+  term: Solvent for parenteral use
+  ncit: C149937
+- code: '50076000'
+  term: Solvent for solution for infusion
+  ncit: C149938
+- code: '50074000'
+  term: Solvent for solution for intraocular irrigation
+  ncit: C149939
+- code: '13035000'
+  term: Solvent for...
+  ncit: C149940
+- code: '10542000'
+  term: Spot-on emulsion
+  ncit: C149944
+- code: '10540000'
+  term: Spot-on solution
+  ncit: C149945
+- code: '10541000'
+  term: Spot-on suspension
+  ncit: C149946
+- code: '12114000'
+  term: Stomach irrigation
+  ncit: C149952
+- code: '10317500'
+  term: Sublingual film
+  ncit: C149955
+- code: '13127000'
+  term: Sublingual lyophilisate
+  ncit: C170813
+- code: '13105000'
+  term: Sublingual powder
+  ncit: C149956
+- code: '10309100'
+  term: Sublingual spray, emulsion
+  ncit: C149957
+- code: '10309200'
+  term: Sublingual spray, solution
+  ncit: C149958
+- code: '10309300'
+  term: Sublingual spray, suspension
+  ncit: C149959
+- code: '10318000'
+  term: Sublingual tablet
+  ncit: C42751
+- code: '11013000'
+  term: Suppository
+  ncit: C42993
+- code: '13036000'
+  term: Suspension for emulsion for injection
+  ncit: C149964
+- code: '13165000'
+  term: Suspension for gel
+  ncit: C198467
+- code: '11202000'
+  term: Suspension for injection
+  ncit: C42995
+- code: '13037000'
+  term: Suspension for oral suspension
+  ncit: C149970
+- code: '13038000'
+  term: Suspension for Spray
+  ncit: C162027
+- code: '13039000'
+  term: Suspension for suspension for injection
+  ncit: C149971
+- code: '50063500'
+  term: Suspension for use in drinking water
+  ncit: C149972
+- code: '10117000'
+  term: Syrup
+  ncit: C42996
+- code: '10219000'
+  term: Tablet
+  ncit: C42998
+- code: '13066000'
+  term: Tablet for cutaneous solution
+  ncit: C149980
+- code: '11011000'
+  term: Tablet for rectal solution
+  ncit: C149981
+- code: '11012000'
+  term: Tablet for rectal suspension
+  ncit: C149982
+- code: '10908000'
+  term: Tablet for vaginal solution
+  ncit: C149983
+- code: '13118000'
+  term: Tablet with sensor
+  ncit: C147579
+- code: '10545000'
+  term: Teat dip emulsion
+  ncit: C149985
+- code: '10543000'
+  term: Teat dip solution
+  ncit: C149986
+- code: '10544000'
+  term: Teat dip suspension
+  ncit: C149987
+- code: '50068000'
+  term: Teat dip/spray solution
+  ncit: C149988
+- code: '10546000'
+  term: Teat spray solution
+  ncit: C149989
+- code: '11805000'
+  term: Teat stick
+  ncit: C149990
+- code: '10409000'
+  term: Toothpaste
+  ncit: C91186
+- code: '10546250'
+  term: Transdermal gel
+  ncit: C149994
+- code: '13102000'
+  term: Transdermal ointment
+  ncit: C149995
+- code: '10519000'
+  term: Transdermal patch
+  ncit: C149996
+- code: '10546400'
+  term: Transdermal solution
+  ncit: C149997
+- code: '10546500'
+  term: Transdermal spray, solution
+  ncit: C149998
+- code: '10547000'
+  term: Transdermal system
+  ncit: C149999
+- code: '13077000'
+  term: Urethral emulsion
+  ncit: C150005
+- code: '11504000'
+  term: Urethral gel
+  ncit: C91195
+- code: '13123000'
+  term: Urethral ointment
+  ncit: C162312
+- code: '11505000'
+  term: Urethral stick
+  ncit: C150006
+- code: '10910000'
+  term: Vaginal capsule, hard
+  ncit: C150007
+- code: '10911000'
+  term: Vaginal capsule, soft
+  ncit: C150008
+- code: '10901000'
+  term: Vaginal cream
+  ncit: C69050
+- code: '10915000'
+  term: Vaginal delivery system
+  ncit: C150011
+- code: '10907000'
+  term: Vaginal emulsion
+  ncit: C150012
+- code: '10904000'
+  term: Vaginal foam
+  ncit: C69051
+- code: '10902000'
+  term: Vaginal gel
+  ncit: C91197
+- code: '10903000'
+  term: Vaginal ointment
+  ncit: C69054
+- code: '10905000'
+  term: Vaginal solution
+  ncit: C150014
+- code: '10906000'
+  term: Vaginal suspension
+  ncit: C150016
+- code: '10912000'
+  term: Vaginal tablet
+  ncit: C69049
+- code: '12104000'
+  term: Wound stick
+  ncit: C64910

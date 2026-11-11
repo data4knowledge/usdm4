@@ -92,3 +92,23 @@ rules and decisions (U4-n) are in `docs/spec/timeline_assembler.md`.
 **Rejected.** Comparing classes with `is` in tests (the suite imports both `src.usdm4` and `usdm4`; compare by name). Patching `get_validator` by module path in the DDF00247 test (the rule engine reloads library modules under the same name; patch `validate.__globals__`).
 
 **Found, not this work.** None.
+
+## 2026-11-11 — GitHub 104: ISO 11239 dose forms coded, with the EDQM term as an alias
+
+**Repos.** usdm4 (this entry), branch `104-dose-form-ignores-iso-11239-terms` (cut from main, which holds GitHub 103). Found by udp_prism N78: pointer in its `memory.md`.
+
+**What it was.** M11 Pharmaceutical Dose Form is "IDMP (ISO 11239) or CDISC SDTM Terminology". `StudyDesignAssembler._dose_form` matched CDISC C66726 only, so EDQM Standard Terms names ("Solution for injection", "Inhalation powder", "Powder for concentrate for solution for infusion") became Unknown and the term was lost. usdm4 held no EDQM terms. NCI EVS publishes them with an NCIt concept code per term (EDQM-HealthCare Terminology Subsets); 36 of the 523 dose forms share their NCIt concept with a C66726 term.
+
+**What changed.**
+- `tools/edqm_ct.py` (new) — reads the workbook's "Pharmaceutical Dosage Form" sheet into `src/usdm4/ct/edqm/dose_forms.yaml`: EDQM code, term, NCIt code, with EDQM's attribution, the NCI release (workbook modified date) and the retrieval date. Terms not modified (EDQM's conditions).
+- `src/usdm4/ct/edqm/dose_forms.yaml` (new, generated) — 523 terms, NCI release 2026-05-27, retrieved 2026-11-11.
+- `src/usdm4/ct/edqm/library.py` (new) — lookup by term ignoring case and spacing; code system and version (the retrieval date).
+- `src/usdm4/assembler/study_design_assembler.py` — `_dose_form`: CDISC as before; else EDQM → C66726 term of the same NCIt concept, or Unknown with a warning; the EDQM term in `standardCodeAliases` (`http://standardterms.edqm.eu`). Neither: Unknown as before.
+- `setup.py` — packages the YAML. `requirements.txt` — `openpyxl` for the tool. `README.md` — dose form note with the EDQM attribution. `CLAUDE.md` — the tool and its command.
+- Tests: `tests/tools/test_edqm_ct.py`, `tests/usdm4/ct/edqm/test_edqm_library.py`, four cases in `test_study_design_assembler_products.py`.
+
+**Figures.** New and changed tests run here with `pytest.ini`: 35 passed, `ct/edqm` 100%. Dave's full pytest not yet reported. Checked on the real file: Solution for injection → C42945 + EDQM 11201000; Inhalation powder → Unknown + 11109000; Powder for concentrate for solution for infusion → Unknown + 50043000; Sterile Solution → Unknown. No change end to end in udp_prism: the dose form is not carried in PRISM3 (usdm4_fhir I-13). Version not changed.
+
+**Rejected.** A hand-chosen nearest C66726 term for EDQM terms with no shared NCIt concept (Dave: Unknown with the alias). Fetching EDQM terms from EDQM's own API (account and API privileges needed; the NCI file is free and attributable).
+
+**Found, not this work.** None.

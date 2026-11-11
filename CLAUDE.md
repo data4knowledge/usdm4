@@ -82,6 +82,12 @@ The CT and BC caches are committed `library_cache_*.yaml` files under `src/usdm4
   python3 tools/m11_ct.py [--terminology PATH] [--dry-run]
   ```
 
+- `tools/edqm_ct.py` — generate the ISO 11239 (EDQM Standard Terms) pharmaceutical dose forms, `src/usdm4/ct/edqm/dose_forms.yaml`, from the NCI EVS EDQM-HealthCare Terminology Subsets workbook (https://evs.nci.nih.gov/ftp1/EDQM-HealthCare/, `NCIt_EDQM-HealthCare_Terminology_Subsets.xlsx`, downloaded by hand). Keeps EDQM's attribution and the release and retrieval dates in the file; the terms are never edited (EDQM's conditions). No API key. Needs `openpyxl`. Read by `usdm4.ct.edqm.library` for `AdministrableProduct.administrableDoseForm` (GitHub 104).
+
+  ```bash
+  python3 tools/edqm_ct.py --source /path/NCIt_EDQM-HealthCare_Terminology_Subsets.xlsx --retrieved YYYY-MM-DD
+  ```
+
 ## Development
 
 - Format: `ruff format`
