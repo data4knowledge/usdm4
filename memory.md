@@ -70,3 +70,25 @@ rules and decisions (U4-n) are in `docs/spec/timeline_assembler.md`.
 **Rejected.** Keeping CODE:DECODE with a third part for Other text: puts code lookup in every caller.
 
 **Found, not this work.** None.
+
+## 2026-11-11 — GitHub 103: combination product as a MedicalDevice; coverage to 100%
+
+**Repos.** usdm4 (this entry), branch `103-assembler-builds-no-medicaldevice`. Released with usdm4_protocol GitHub 154 and usdm4_fhir GitHub 63. Found by udp_prism N82, N79: pointer in its `memory.md`.
+
+**What it was.** The study design input had products, interventions and administrations but no devices, so no MedicalDevice was ever built and a drug/device combination product (a device with an embedded product) could not be expressed; the M11 Drug-Device Combination Product Indicator was always No. `Encoder.INTERVENTION_TYPE_MAP` had no Combination Product (C54696), Diagnostic, Dietary Supplement, Non-Surgical Procedure or Surgery, so each fell to the Drug default with a warning. Dave then asked for the coverage gaps (99.46%, 65 lines) to be closed on the branch.
+
+**What changed.**
+- `src/usdm4/assembler/schema/study_design_schema.py` — `DeviceInput` (name, label, description, `embedded_product`, sourcing); `StudyDesignInput.devices`; `AdministrationInput.device_name`; validator for undeclared embedded products and devices.
+- `src/usdm4/assembler/study_design_assembler.py` — pass 0b `_build_devices` (embeddedProductId from the named product, sourcing through the encoder, warned when unresolved); administrations set `medicalDeviceId`, and leave `administrableProductId` unset when the device embeds that product (DDF00205); `medical_devices` property.
+- `src/usdm4/assembler/study_assembler.py` — devices placed on `StudyVersion.medicalDevices`.
+- `src/usdm4/assembler/encoder.py` — the five M11 intervention types C99078 holds.
+- `src/usdm4/assembler/identification_assembler.py` — a role organisation that failed to create was logged with `errors.exception(message, location)` (the location in the exception's place); now `errors.error` with the location.
+- `src/usdm4/rules/engine.py` — a try/except around `self.rules.append(obj)`, which cannot raise, removed.
+- `README.md` — products and devices note with an example.
+- Tests: `test_study_design_assembler_devices.py` (15), `test_study_design_schema.py` (6 added), `test_assembler.py` (device on StudyVersion), `test_encoder.py` (new types), `test_encoder_intervention_type_ct.py` (every mapped type resolves in the packaged CT); coverage: `timeline/test_plan_build_edges.py`, `test_assembler_edges.py`, `builder/test_builder_duplicate.py` (kept: usdm4_excel calls `duplicate`), `convert/test_convert_dates.py`, `rules/test_rule_edges.py`, `utility/test_soup_warnings.py`, `expander/test_timepoint_code_dict.py`, additions to `core/test_core_cache_manager_branches.py` and `bc/cdisc/test_library_api.py`.
+
+**Figures.** Dave's pytest before the coverage work: 4077 passed, 99.46%. After it: only the new and changed files run here (262 and 25 passed); Dave's full run not yet reported. udp_prism run on the Air 2026-11-11: TCBCPT_04 device and indicator Yes at step 1 and step 3, round trip 0 unexplained. Version not changed.
+
+**Rejected.** Comparing classes with `is` in tests (the suite imports both `src.usdm4` and `usdm4`; compare by name). Patching `get_validator` by module path in the DDF00247 test (the rule engine reloads library modules under the same name; patch `validate.__globals__`).
+
+**Found, not this work.** None.

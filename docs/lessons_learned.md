@@ -1779,3 +1779,7 @@ N23), not parked in the tidy-up group.
 ## `valueCode` takes a `BaseCode`, and a failed create is silent (2026-10-09)
 
 `ExtensionAttribute.valueCode` is typed `BaseCode`, not the API `Code` that `builder.cdisc_code()` returns. Passing the `Code` fails validation inside `builder.create`, which logs the exception and returns `None`, so the extension is simply missing. Convert with `BaseCode(**code.model_dump(include={...}))` as `identification_assembler._identifier_type` does, and test the stored value, not the absence of an error. Found by GitHub 86's first test run.
+
+## Tests import both `src.usdm4` and `usdm4`, and the rule engine reloads library modules (2026-11-11)
+
+The suite imports the package under two names, so a class from `src.usdm4.api` is not the class the assembler (`usdm4.api`) creates: `cls is klass` is false and pydantic refuses an instance of the other copy. The rule engine loads each `rule_ddf*.py` with `spec_from_file_location` under the module name already in `sys.modules`, replacing it, so `patch("usdm4.rules.library.rule_x.name")` can patch a module the test's imported class no longer uses. **How to apply:** in a new test import from one name and compare classes by `__name__`; patch a rule's dependency through `RuleX.validate.__globals__`.
