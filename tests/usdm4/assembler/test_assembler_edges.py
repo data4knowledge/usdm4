@@ -62,7 +62,10 @@ class TestAmendments:
         with patch.object(
             assembler, "_enrollment_geographic_scope", side_effect=RuntimeError("x")
         ):
-            assert assembler._create_enrollment({"enrollment": None}) is None
+            assert (
+                assembler._create_enrollment({"enrollment": {"value": 5, "unit": "%"}})
+                is None
+            )
         assert any(
             m.startswith("Failed during creation of enrollments")
             for m in _messages(errors)

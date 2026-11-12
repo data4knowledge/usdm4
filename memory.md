@@ -112,3 +112,19 @@ rules and decisions (U4-n) are in `docs/spec/timeline_assembler.md`.
 **Rejected.** A hand-chosen nearest C66726 term for EDQM terms with no shared NCIt concept (Dave: Unknown with the alias). Fetching EDQM terms from EDQM's own API (account and API privileges needed; the NCI file is free and attributable).
 
 **Found, not this work.** None.
+
+## 2026-11-12 — GitHub 105: no enrollment built when none is given
+
+**Repos.** usdm4 (this entry), branch `105-enrollment-built-without-input`. Found by udp_prism N53: pointer in its `memory.md`; with usdm4_protocol GitHub 158 and usdm4_fhir GitHub 64.
+
+**What it was.** `AmendmentsAssembler._create_enrollment` built a SubjectEnrollment with a quantity of 0 when the input had no enrollment, so every amendment that states none carried "0 enrolled".
+
+**What changed.**
+- `src/usdm4/assembler/amendments_assembler.py` — `_create_enrollment` returns None when `data["enrollment"]` is missing or empty; `_create_amendment` keeps only a built enrollment, so `enrollments` is empty. The 0-quantity default branch removed.
+- `tests/usdm4/assembler/test_amendments_assembler.py` — no enrollment gives `enrollments == []`; `_create_enrollment({})` and the edge cases give None. `tests/usdm4/assembler/test_assembler_edges.py` — the failure test passes an enrollment.
+
+**Figures.** ruff clean. pytest not reported (Dave). udp_prism run on the Air 2026-11-12: 8 protocols have no enrollment at step 1 and step 3. Version not changed.
+
+**Rejected.** None.
+
+**Found, not this work.** None.

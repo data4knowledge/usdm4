@@ -110,7 +110,10 @@ class AmendmentsAssembler(BaseAssembler):
                 # whenever the input is empty produces a primary == secondary
                 # pair that DDF00256 (correctly) flags.
                 "secondaryReasons": reasons.get("secondary", []),
-                "enrollments": [self._create_enrollment(data)],
+                # No enrollment stated: no SubjectEnrollment (GitHub 105).
+                "enrollments": [
+                    e for e in [self._create_enrollment(data)] if e is not None
+                ],
                 "geographicScopes": geo_scopes,
                 "changes": self._create_changes(data),
                 "extensionAttributes": [site_scopes] if site_scopes else [],
@@ -333,20 +336,24 @@ class AmendmentsAssembler(BaseAssembler):
         if item:
             results.append(item)
 
-    def _create_enrollment(self, data: dict) -> SubjectEnrollment:
+    def _create_enrollment(self, data: dict) -> SubjectEnrollment | None:
         """
         Create a SubjectEnrollment object from the provided data.
 
         If enrollment data is present, creates a quantity with the specified value
-        and unit (percentage if '%'). Otherwise, creates a default enrollment with
-        value 0.
+        and unit (percentage if '%'). With no enrollment data there is no
+        enrollment: None, never a quantity of 0 the protocol did not state
+        (GitHub 105).
 
         Args:
             data: Dictionary that may contain an 'enrollment' key with 'value' and 'unit'.
 
         Returns:
-            A SubjectEnrollment object, or None if creation fails.
+            A SubjectEnrollment object, or None when no enrollment is given or
+            creation fails.
         """
+        if not data.get("enrollment"):
+            return None
         try:
             # Derive the enrollment geographic scope from the amendment scope
             # (the Amendment Scope title-page field, carried in data["scope"])
@@ -355,37 +362,22 @@ class AmendmentsAssembler(BaseAssembler):
             # scope, not authored independently: a global amendment enrolls
             # "Globally"; a country/regional amendment enrolls "Locally".
             geo_scope = self._enrollment_geographic_scope(data)
-            # Truthy check, not key presence: ``enrollment`` is always a key
-            # on ``data`` (Pydantic-injected default) but its value is ``None``
-            # when no enrollment was supplied, which would TypeError on the
-            # subscript below. Falsy ``enrollment`` (None, missing, empty)
-            # falls through to the default-quantity branch.
-            if data.get("enrollment"):
-                unit_alias = None
-                if data["enrollment"]["unit"] in ("%", "percent", "percentage"):
-                    unit_code = self._builder.cdisc_code("C25613", "Percentage")
-                    unit_alias = (
-                        self._builder.alias_code(unit_code) if unit_code else None
-                    )
-                quantity = self._builder.create(
-                    Quantity,
-                    {
-                        "value": self._to_int(data["enrollment"]["value"]),
-                        "unit": unit_alias,
-                    },
-                )
-                params = {
-                    "name": "ENROLLMENT",
-                    "forGeographicScope": geo_scope,
-                    "quantity": quantity,
-                }
-            else:
-                quantity = self._builder.create(Quantity, {"value": 0, "unit": None})
-                params = {
-                    "name": "ENROLLMENT",
-                    "forGeographicScope": geo_scope,
-                    "quantity": quantity,
-                }
+            unit_alias = None
+            if data["enrollment"]["unit"] in ("%", "percent", "percentage"):
+                unit_code = self._builder.cdisc_code("C25613", "Percentage")
+                unit_alias = self._builder.alias_code(unit_code) if unit_code else None
+            quantity = self._builder.create(
+                Quantity,
+                {
+                    "value": self._to_int(data["enrollment"]["value"]),
+                    "unit": unit_alias,
+                },
+            )
+            params = {
+                "name": "ENROLLMENT",
+                "forGeographicScope": geo_scope,
+                "quantity": quantity,
+            }
             return self._builder.create(SubjectEnrollment, params)
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "_create_enrollment")

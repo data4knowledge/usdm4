@@ -186,11 +186,8 @@ class TestAmendmentsAssemblerValidData:
         assert amendment.number == "1"
         assert amendment.summary == "Minor protocol clarification"
 
-        # Should have enrollment with default value 0
-        assert amendment.enrollments is not None
-        assert len(amendment.enrollments) == 1
-        enrollment = amendment.enrollments[0]
-        assert enrollment.quantity.value == 0
+        # No enrollment given: no enrollment, never a 0 (GitHub 105)
+        assert amendment.enrollments == []
 
     def test_execute_with_safety_impact_true(
         self, amendments_assembler, document_assembler
@@ -882,13 +879,8 @@ class TestAmendmentsAssemblerPrivateMethods:
         """Test _create_enrollment without enrollment data."""
         data = {}
 
-        enrollment = amendments_assembler._create_enrollment(data)
-
-        if enrollment is not None:
-            assert enrollment.instanceType == "SubjectEnrollment"
-            assert enrollment.name == "ENROLLMENT"
-            assert enrollment.quantity.value == 0
-            assert enrollment.quantity.unit is None
+        # No enrollment data: no enrollment (GitHub 105)
+        assert amendments_assembler._create_enrollment(data) is None
 
     def test_create_enrollment_with_non_percentage_unit(self, amendments_assembler):
         """Test _create_enrollment with non-percentage unit."""
@@ -1594,12 +1586,9 @@ class TestAmendmentsAssemblerAdditionalCoverage:
         data_missing = {}
         enrollment_missing = amendments_assembler._create_enrollment(data_missing)
 
-        # All should create enrollment with default values
+        # None of them states an enrollment: none is created (GitHub 105)
         for enrollment in [enrollment_empty, enrollment_none, enrollment_missing]:
-            if enrollment is not None:
-                assert enrollment.name == "ENROLLMENT"
-                assert enrollment.quantity.value == 0
-                assert enrollment.quantity.unit is None
+            assert enrollment is None
 
     def test_geographic_scope_creation(self, amendments_assembler, document_assembler):
         """Test that geographic scope is properly created."""
