@@ -2346,3 +2346,60 @@ class TestAmendmentsAssemblerSecondaryReasons:  # GitHub 99
             {"reasons": {"secondary": ["IRB/IEC Feedback"]}}
         )
         assert reasons == {"secondary": []}
+
+
+class TestAmendmentsAssemblerEnrollmentScope:
+    """Enrollment scope derived from a non-global amendment scope. Since
+    GitHub 105 an enrollment, and so its scope, is only built when the input
+    gives one, so these tests pass an enrollment. The ISO 3166 library is
+    read without the builder loading it first, so the fixture loads it: in
+    a full Assembler run an earlier step has always loaded it."""
+
+    @pytest.fixture
+    def amendments_assembler(self, amendments_assembler):
+        amendments_assembler._builder._ensure_ct_loaded()
+        return amendments_assembler
+
+    @staticmethod
+    def enrollment(scope: dict):
+        return {
+            "enrollment": {"value": 40, "unit": "%"},
+            "scope": {
+                "global": False,
+                "countries": [],
+                "regions": [],
+                "sites": [],
+                "unknown": [],
+                **scope,
+            },
+        }
+
+    def test_country(self, amendments_assembler):
+        e = amendments_assembler._create_enrollment(
+            self.enrollment({"countries": ["Nowhere", "France"]})
+        )
+        scope = e.forGeographicScope
+        assert scope.type.decode == "Country"
+        assert scope.code.standardCode.code == "FRA"
+
+    def test_country_from_unknown(self, amendments_assembler):
+        e = amendments_assembler._create_enrollment(
+            self.enrollment({"unknown": ["Denmark"]})
+        )
+        assert e.forGeographicScope.code.standardCode.code == "DNK"
+
+    def test_region(self, amendments_assembler):
+        e = amendments_assembler._create_enrollment(
+            self.enrollment({"regions": ["Nowhere", "Europe"]})
+        )
+        scope = e.forGeographicScope
+        assert scope.type.decode == "Region"
+        assert scope.code.standardCode.code == "150"
+
+    def test_unresolvable_falls_back_to_global(self, amendments_assembler):
+        e = amendments_assembler._create_enrollment(
+            self.enrollment({"sites": ["Site 1"], "unknown": ["Nowhere"]})
+        )
+        assert e.forGeographicScope.type.decode == "Global"
+        assert e.forGeographicScope.code is None
+        assert "defaulting to global" in amendments_assembler._errors.dump(0)

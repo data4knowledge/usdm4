@@ -23,6 +23,7 @@ deterministic.
 | `conftest.py` | — | builds the minimum AssemblerInput + assembled JSON fixture |
 | `test_assembler_to_d4k.py` | d4k (Python rules) | yes |
 | `test_assembler_to_core.py` | CDISC CORE | no — gated on `@pytest.mark.slow` |
+| `test_fixer_d4k.py` | d4k (Python rules) | yes — `USDM4().fix()` on sample 7 with injected duplicate ids and CT faults; the fixed file must fail only what the sample fails (GitHub 106) |
 
 ## Current state and the baseline tests
 

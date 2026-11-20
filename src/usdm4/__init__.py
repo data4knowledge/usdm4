@@ -16,6 +16,8 @@ from usdm4.core.core_cache_manager import CoreCacheManager, CacheStatus
 from usdm4.data_store.data_store import DataStore
 from usdm4.utility.tag_resolver import TagResolver
 from usdm4.ct.cdisc.library import Library as CTLibrary
+from usdm4.fixer.fixer import Fixer
+from usdm4.fixer.fix_result import FixResult
 
 
 class USDM4:
@@ -150,6 +152,30 @@ class USDM4:
             library.load()
             self._ct_library = library
         return self._ct_library
+
+    def fix(self, file_path: str, ids: bool = True, ct: bool = True) -> FixResult:
+        """
+        Load a USDM JSON file and fix errors that need no judgement about
+        the study (GitHub 106). The file is not changed: save the result with
+        ``result.save(path)`` and the audit log with ``result.save_log(path)``.
+
+        Args:
+            file_path: Path to the USDM JSON file.
+            ids: Make every id unique, rewriting references to renumbered
+                objects. A same-class duplicate that is referenced is reported
+                in ``result.issues`` and left alone.
+            ct: Set codeSystemVersion and decode of CDISC codes on attributes
+                mapped to a codelist. Codes are never swapped.
+
+        Returns:
+            A :class:`~usdm4.fixer.fix_result.FixResult` with the fixed JSON
+            (``data``), every change (``changes``) and what was left for a
+            person to fix (``issues``).
+        """
+        with open(file_path, "r") as file:
+            data = json.load(file)
+        library = self.ct_library() if ct else None
+        return Fixer(library).fix(data, ids=ids, ct=ct)
 
     def builder(self, errors: Errors) -> Builder:
         return Builder(self.root, errors)
