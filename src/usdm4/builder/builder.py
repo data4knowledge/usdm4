@@ -35,10 +35,10 @@ class Builder:
         self._id_manager: IdManager = IdManager(v4_classes)
         self.errors = errors
         self.api_instance: APIInstance = APIInstance(self._id_manager)
-        self.cdisc_ct_library = CdiscCTLibrary(root_path)
-        self.cdisc_bc_library = CdiscBCLibrary(root_path, self.cdisc_ct_library)
-        self.iso3166_library = Iso3166Library(root_path)
-        self.iso639_library = Iso639Library(root_path)
+        self._cdisc_ct_library = CdiscCTLibrary(root_path)
+        self._cdisc_bc_library = CdiscBCLibrary(root_path, self._cdisc_ct_library)
+        self._iso3166_library = Iso3166Library(root_path)
+        self._iso639_library = Iso639Library(root_path)
         self.cross_reference = CrossReference()
         self.other_ct_version_manager = OtherCTVersionManager()
         self._data_store = None
@@ -51,13 +51,37 @@ class Builder:
     def _ensure_ct_loaded(self):
         """Lazy load CT libraries only when first needed."""
         if not self._ct_loaded:
-            self.cdisc_ct_library.load()
-            self.cdisc_bc_library.load()
-            self.iso3166_library.load()
-            self.iso639_library.load()
-            self._cdisc_code_system = self.cdisc_ct_library.system
-            self._cdisc_code_system_version = self.cdisc_ct_library.version
+            self._cdisc_ct_library.load()
+            self._cdisc_bc_library.load()
+            self._iso3166_library.load()
+            self._iso639_library.load()
+            self._cdisc_code_system = self._cdisc_ct_library.system
+            self._cdisc_code_system_version = self._cdisc_ct_library.version
             self._ct_loaded = True
+
+    # The CT libraries load on first access, so a caller reading one directly
+    # (e.g. the amendments assembler's ISO 3166 lookups) never gets an
+    # unloaded library (GitHub 107).
+
+    @property
+    def cdisc_ct_library(self) -> CdiscCTLibrary:
+        self._ensure_ct_loaded()
+        return self._cdisc_ct_library
+
+    @property
+    def cdisc_bc_library(self) -> CdiscBCLibrary:
+        self._ensure_ct_loaded()
+        return self._cdisc_bc_library
+
+    @property
+    def iso3166_library(self) -> Iso3166Library:
+        self._ensure_ct_loaded()
+        return self._iso3166_library
+
+    @property
+    def iso639_library(self) -> Iso639Library:
+        self._ensure_ct_loaded()
+        return self._iso639_library
 
     def clear(self):
         self._id_manager.clear()

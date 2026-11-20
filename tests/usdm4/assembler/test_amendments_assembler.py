@@ -2351,14 +2351,7 @@ class TestAmendmentsAssemblerSecondaryReasons:  # GitHub 99
 class TestAmendmentsAssemblerEnrollmentScope:
     """Enrollment scope derived from a non-global amendment scope. Since
     GitHub 105 an enrollment, and so its scope, is only built when the input
-    gives one, so these tests pass an enrollment. The ISO 3166 library is
-    read without the builder loading it first, so the fixture loads it: in
-    a full Assembler run an earlier step has always loaded it."""
-
-    @pytest.fixture
-    def amendments_assembler(self, amendments_assembler):
-        amendments_assembler._builder._ensure_ct_loaded()
-        return amendments_assembler
+    gives one, so these tests pass an enrollment."""
 
     @staticmethod
     def enrollment(scope: dict):
@@ -2403,3 +2396,14 @@ class TestAmendmentsAssemblerEnrollmentScope:
         assert e.forGeographicScope.type.decode == "Global"
         assert e.forGeographicScope.code is None
         assert "defaulting to global" in amendments_assembler._errors.dump(0)
+
+
+def test_country_scope_on_a_fresh_builder():
+    """The ISO 3166 library loads on first access, so the assembler resolves
+    a country before anything else has used the builder (GitHub 107)."""
+    errors = Errors()
+    assembler = AmendmentsAssembler(Builder(root_path(), errors), errors)
+    enrollment = assembler._create_enrollment(
+        TestAmendmentsAssemblerEnrollmentScope.enrollment({"countries": ["France"]})
+    )
+    assert enrollment.forGeographicScope.code.standardCode.code == "FRA"

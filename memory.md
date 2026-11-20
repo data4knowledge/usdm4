@@ -150,3 +150,20 @@ rules and decisions (U4-n) are in `docs/spec/timeline_assembler.md`.
 **Rejected.** Setting mapped codes to the CT cache date (left 1,183 codes on 2024-09-27 beside 593 on 2026-03-27: DDF00073 fired). Guessing which object a referenced same-class duplicate meant. Decoding the 667 CORE-000427 findings: nearly all are BC AliasCode.standardCode misuse (C17998 "Unknown" with ~150 decodes) and unit strings as ResponseCode codes, which only a code swap fixes.
 
 **Found, not this work.** N29, N30.
+
+## 2026-11-20 — GitHub 107: builder CT libraries load on first access
+
+**Repos.** usdm4 (this entry), branch `107-iso-3166-loading`. Closes N29.
+
+**What it was.** `Builder` loaded its CT, BC, ISO 3166 and ISO 639 libraries only in `_ensure_ct_loaded`, which its own CT methods call. `AmendmentsAssembler._create_scopes` and `_enrollment_geographic_scope` read `iso3166_library` directly, and `assembler/timeline/build.py` reads `cdisc_bc_library.exists`. On a fresh builder the ISO 3166 lookup raised `TypeError`, was caught, and the scope was lost. A full `Assembler.execute` always loaded the libraries first, so no output was wrong; the GitHub 106 enrollment scope tests failed when run on their own.
+
+**What changed.**
+- `src/usdm4/builder/builder.py` — the four libraries are held as `_cdisc_ct_library`, `_cdisc_bc_library`, `_iso3166_library`, `_iso639_library`; public names are properties that call `_ensure_ct_loaded` first.
+- `tests/usdm4/assembler/test_amendments_assembler.py` — the GitHub 106 fixture that forced loading removed; new test resolves a country scope on a fresh builder.
+
+**Figures.** Dave's full pytest passed. Version not changed.
+
+**Rejected.** Calling `_ensure_ct_loaded` in the amendments assembler: fixes one caller, leaves `timeline/build.py` and any later direct reader exposed.
+
+**Found, not this work.** None.
+

@@ -49,7 +49,6 @@ row.
 | N26 | A required string attribute accepts `""` (no minimum length): `StudyVersion.versionIdentifier` empty passes | schema / rules |
 | N27 | Epoch match table mistypes and misses: `randomisation` -> BASELINE, `end of treatment` / `end of study` -> FOLLOW-UP, `extension` -> LONG-TERM FOLLOW-UP; abbreviations SCR, FU, SFU, EOT, EOS, ED, ET unmatched | assembler / data |
 | N28 | `StudyAmendment.primaryReason` holds one reason; M11 lets Primary Reason for Amendment repeat | model |
-| N29 | Builder CT libraries readable before they are loaded | builder |
 | N30 | d4k rules miss findings when ids are duplicated | rules / data_store |
 
 ---
@@ -493,10 +492,6 @@ Found 2026-10-19 with GitHub 93, which types each schedule epoch from its match 
 ## N28 — Primary Reason holds one, M11 lets it repeat
 
 Found 2026-11-04 with the M11 to FHIR mapping sheet 03.13 (usdm4_fhir M-42). M11 gives Primary Reason for Amendment "Multiple values can be selected" and one element to Amendment Details (Dave: the element repeats, so an amendment can have several). 03.13 says multiple. `StudyAmendment.primaryReason` holds one, so nothing above usdm4 can carry more. A model question for the USDM team.
-
-## N29 — Builder CT libraries readable before they are loaded
-
-Found 2026-11-20 with GitHub 106. `Builder` loads `cdisc_ct_library`, `cdisc_bc_library`, `iso3166_library` and `iso639_library` only in `_ensure_ct_loaded`, called by its own CT methods. `AmendmentsAssembler._create_scopes` and `_enrollment_geographic_scope` read `iso3166_library` directly, and `assembler/timeline/build.py` reads `cdisc_bc_library.exists`. On a fresh builder the ISO 3166 lookup raises `TypeError`, is caught, and the scope is lost. A full `Assembler.execute` has always loaded the libraries first, so no output is wrong today. Fix ready (the four become properties that load on first access; GitHub issue being raised).
 
 ## N30 — d4k rules miss findings when ids are duplicated
 
