@@ -13,7 +13,7 @@ row.
 | N1 | Placeholder procedure code `12345` in every assembled USDM | assembler |
 | N2 | Minimum assembled study fails CORE and d4k rules | assembler |
 | N3 | Small timeline output defects | assembler |
-| N4 | Amendment enrollment geographic scope untested | assembler |
+| N4 | Amendment enrollment scope not checked end to end | assembler |
 | N5 | `test_example_2` xfail — 339 findings on `example_2.json` | rules / fixtures |
 | N6 | d4k–CORE divergences with no verdict (DDF00031, 00045, 00087, 00088) | rules |
 | N7 | Upstream CRE bugs not yet raised with the CRE team | CORE |
@@ -49,6 +49,8 @@ row.
 | N26 | A required string attribute accepts `""` (no minimum length): `StudyVersion.versionIdentifier` empty passes | schema / rules |
 | N27 | Epoch match table mistypes and misses: `randomisation` -> BASELINE, `end of treatment` / `end of study` -> FOLLOW-UP, `extension` -> LONG-TERM FOLLOW-UP; abbreviations SCR, FU, SFU, EOT, EOS, ED, ET unmatched | assembler / data |
 | N28 | `StudyAmendment.primaryReason` holds one reason; M11 lets Primary Reason for Amendment repeat | model |
+| N29 | Builder CT libraries readable before they are loaded | builder |
+| N30 | d4k rules miss findings when ids are duplicated | rules / data_store |
 
 ---
 
@@ -101,14 +103,9 @@ errors — look at that before any fixture references BCs.
   after a cycle range is `After` the range's last day by zero (found with GitHub 95; the
   range's pad and decision are added after the column nodes are planned).
 
-## N4 — Amendment enrollment geographic scope untested
+## N4 — Amendment enrollment scope not checked end to end
 
-`AmendmentsAssembler._enrollment_geographic_scope` (2026-06-18, branch
-`39-further-ich-m11-updates`) derives the enrollment scope from the amendment scope. No unit
-tests exist and the `udp_prism` end-to-end check (TCBCPT_03 renders "Locally") was never
-confirmed. Tests needed: global, country in `countries`, country in `unknown`, region, site
-fallback. Known gap: a site- or cohort-scoped amendment has no C207412 code, so it falls back
-to Global with a warning.
+`AmendmentsAssembler._enrollment_geographic_scope` derives the enrollment scope from the amendment scope. Unit tests added 2026-11-20 (GitHub 106): country, country in `unknown`, region, site fallback to Global with a warning. Still open: the `udp_prism` end-to-end check (TCBCPT_03 renders "Locally") was never confirmed. Known gap: a site- or cohort-scoped amendment has no C207412 code, so it falls back to Global.
 
 ## N5 — `test_example_2` xfail
 
@@ -496,3 +493,11 @@ Found 2026-10-19 with GitHub 93, which types each schedule epoch from its match 
 ## N28 — Primary Reason holds one, M11 lets it repeat
 
 Found 2026-11-04 with the M11 to FHIR mapping sheet 03.13 (usdm4_fhir M-42). M11 gives Primary Reason for Amendment "Multiple values can be selected" and one element to Amendment Details (Dave: the element repeats, so an amendment can have several). 03.13 says multiple. `StudyAmendment.primaryReason` holds one, so nothing above usdm4 can carry more. A model question for the USDM team.
+
+## N29 — Builder CT libraries readable before they are loaded
+
+Found 2026-11-20 with GitHub 106. `Builder` loads `cdisc_ct_library`, `cdisc_bc_library`, `iso3166_library` and `iso639_library` only in `_ensure_ct_loaded`, called by its own CT methods. `AmendmentsAssembler._create_scopes` and `_enrollment_geographic_scope` read `iso3166_library` directly, and `assembler/timeline/build.py` reads `cdisc_bc_library.exists`. On a fresh builder the ISO 3166 lookup raises `TypeError`, is caught, and the scope is lost. A full `Assembler.execute` has always loaded the libraries first, so no output is wrong today. Fix ready (the four become properties that load on first access; GitHub issue being raised).
+
+## N30 — d4k rules miss findings when ids are duplicated
+
+Found 2026-11-20 with GitHub 106. `DataStore._ids` keeps one object per id, so rules that walk `instances_by_klass` see one of each duplicated object. On NCT05676931, fixing the ids moved DDF00035 from 25 to 667 (CORE-000427: 667) and DDF00260 from 11 to 35. d4k counts on a file with duplicate ids are a floor. DDF00083 walks the raw JSON and is not affected.

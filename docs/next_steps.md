@@ -11,17 +11,21 @@ DDF00082's schema check).
 
 ## Next steps
 
-Release first: GitHub 102 (with usdm4_protocol 150, usdm4_fhir 62) and GitHub 103 (with usdm4_protocol 154, usdm4_fhir 63; both sides of the device contract changed). GitHub 105 (no enrollment built when none is given) goes with usdm4_protocol 158 and usdm4_fhir 64. GitHub 104 (ISO 11239 dose forms) is on its branch, Dave's pytest not yet reported; it changes step 1 only until usdm4_fhir I-13. GitHub 103 also carries the coverage work: Dave's full pytest after the last test fixes is not yet reported; the target is 100%.
+Release first: GitHub 102 (with usdm4_protocol 150, usdm4_fhir 62) and GitHub 103 (with usdm4_protocol 154, usdm4_fhir 63; both sides of the device contract changed). GitHub 105 (no enrollment built when none is given) goes with usdm4_protocol 158 and usdm4_fhir 64. GitHub 104 (ISO 11239 dose forms) is on its branch, Dave's pytest not yet reported; it changes step 1 only until usdm4_fhir I-13. GitHub 103 also carries the coverage work: Dave's full pytest after the last test fixes is not yet reported; the target is 100%. GitHub 106 (`USDM4().fix()`, `tools/fix_usdm.py`) is being merged; Dave's full pytest after the URI-safe id pass is not yet reported.
+
+Latest figures (NCT05676931, d4k, GitHub 106 fixer before the URI-safe pass): 3,259 → 1,538 findings; DDF00083 2,338 → 3; DDF00035 25 → 667, unmasked by unique ids (N30), now equal to CORE-000427's 667.
 
 Normal development: one issue at a time, gate is tests and pins. Test inputs are written here in `usdm4`'s structured form — nothing waits on
 `protocol_corpus` ground truth.
 
-1. N24.1 — one import path for the package in tests. First: every later fix needs tests that
+1. N29 — builder CT libraries load on first access. The fix and its tests are written
+   (3,991 pass here, `builder.py` 100%); they go on the new branch once GitHub 106 is merged.
+2. N24.1 — one import path for the package in tests. First: every later fix needs tests that
    test what they appear to.
-2. N22, N23 — the validators must not report a clean result when rules did not run.
-3. The small bugs: N14–N21, then N1.
-4. N24.2–N24.11 in number order, one at a time; N24.4 and N24.5 together, N24.6 and N24.7
+3. N22, N23 — the validators must not report a clean result when rules did not run.
+4. The small bugs: N14–N21, then N1.
+5. N24.2–N24.11 in number order, one at a time; N24.4 and N24.5 together, N24.6 and N24.7
    together.
-5. Then N2 (from CORE-000938), N11, N3.
-6. The `RefResolver` deprecation warning.
-7. Products, for usdm4_fhir P-17. Devices with an embedded product are done (GitHub 103).
+6. Then N2 (from CORE-000938), N11, N3.
+7. The `RefResolver` deprecation warning.
+8. Products, for usdm4_fhir P-17. Devices with an embedded product are done (GitHub 103).

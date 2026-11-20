@@ -242,6 +242,11 @@ validation needs it. New rules are written by hand — §9.
   xlsx, but the `validate()` body must use the real JSON field names. Always
   verify via `dataStructure.yml` before coding.
 
+- **Fix duplicate ids before trusting d4k counts.** `DataStore` keeps one object per id, so
+  on a file with duplicate ids most rules see only one of each duplicate. On NCT05676931,
+  making ids unique moved DDF00035 from 25 to 667 (N30). A rise in findings after an id fix
+  is findings that were already there, not a regression; compare rule by rule, not totals.
+
 ## 7. Authoritative sources for CT codelist bindings
 
 When generating rules that call `_ct_check(config, class, attribute)`, the
@@ -310,6 +315,14 @@ codelists C217342–C217357, 16 entries; the NCI EVS ICH M11 Terminology file ha
 codes. Three other codelists differed too. Generate M11 CT from the NCI EVS `.xls` only
 (`tools/m11_ct.py`), and give other packages a read interface (`USDM4().ct_library()`,
 `Library.codelist()`) so no package keeps a copy that can drift.
+
+### A fixer leaves valid CT versions alone
+
+Setting `codeSystemVersion` to the cache date only on codes whose attribute is mapped in
+`ct_config.yaml` split a file between 2024-09-27 (1,183 BC codes) and 2026-03-27 (593):
+DDF00073 (one version per code system) fired where it had not. A valid release date is not an
+error. The fixer (GitHub 106) changes only versions that are not release dates, to the date
+most used in the file.
 
 ## 8. "Complete the blanks" predicates — biconditional and implication
 
