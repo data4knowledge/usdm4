@@ -13,6 +13,8 @@ DDF00082's schema check).
 
 Release first: GitHub 102 (with usdm4_protocol 150, usdm4_fhir 62) and GitHub 103 (with usdm4_protocol 154, usdm4_fhir 63; both sides of the device contract changed). GitHub 105 (no enrollment built when none is given) goes with usdm4_protocol 158 and usdm4_fhir 64. GitHub 104 (ISO 11239 dose forms) is on its branch, Dave's pytest not yet reported; it changes step 1 only until usdm4_fhir I-13. GitHub 103 also carries the coverage work: Dave's full pytest after the last test fixes is not yet reported; the target is 100%. GitHub 106 (`USDM4().fix()`, `tools/fix_usdm.py`) and GitHub 107 (builder CT libraries load on first access) are being merged; Dave's full pytest passed on both.
 
+GitHub 108 (several study designs in one assembly: `study_designs`, criteria shared, objectives per design) is built on `108-assembler-builds-multiple-studydesigns`, Dave's pytest passed at 100% coverage; it goes with usdm4_protocol 163.
+
 Latest figures (NCT05676931, d4k, GitHub 106 fixer before the URI-safe pass): 3,259 → 1,538 findings; DDF00083 2,338 → 3; DDF00035 25 → 667, unmasked by unique ids (N30), now equal to CORE-000427's 667.
 
 Normal development: one issue at a time, gate is tests and pins. Test inputs are written here in `usdm4`'s structured form — nothing waits on

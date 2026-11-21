@@ -167,3 +167,25 @@ rules and decisions (U4-n) are in `docs/spec/timeline_assembler.md`.
 
 **Found, not this work.** None.
 
+
+## 2026-11-21 — GitHub 108: the assembler builds several study designs
+
+**Repos.** usdm4 (GitHub 108, branch `108-assembler-builds-multiple-studydesigns`); used by usdm4_protocol GitHub 163.
+
+**What it was.** `AssemblerInput` took one `study_design`, so a protocol with substudies could not carry one StudyDesign per substudy.
+
+**What changed.**
+- `assembler/schema/design_schema.py` — `DesignInput`: one design's design fields, population, objectives and SoA.
+- `assembler/assembler_input.py` — `study_designs`; `study_design` required unless `study_designs` is given.
+- `assembler/assembler.py` — `_execute_designs`: one pass of the design assemblers per design.
+- `assembler/design_assemblers.py` — the per-design assemblers.
+- `assembler/population_assembler.py` — inclusion and exclusion criteria shared across designs, built once and reused.
+- `assembler/study_assembler.py` — gathers the designs; design roles apply to their own design.
+- `builder/cross_reference.py` — a name scope, so the same names in two designs do not collide.
+- Tests: `tests/usdm4/assembler/test_assembler_study_designs.py`. Dave's pytest passed, coverage 100%.
+
+**Figures.** None measured on protocols here.
+
+**Rejected.** Sharing objectives and endpoints across designs (Dave: they tend to be specific; criteria are shared).
+
+**Found, not this work.** None.
