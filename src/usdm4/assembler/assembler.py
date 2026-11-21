@@ -11,6 +11,7 @@ from usdm4.assembler.amendments_assembler import AmendmentsAssembler
 from usdm4.assembler.study_assembler import StudyAssembler
 from usdm4.assembler.timeline_assembler import TimelineAssembler
 from usdm4.assembler.objectives_assembler import ObjectivesAssembler
+from usdm4.assembler.design_assemblers import DesignAssemblers
 from usdm4.api.study import Study
 from usdm4.api.wrapper import Wrapper
 from usdm4.__info__ import __model_version__ as usdm_version
@@ -48,6 +49,10 @@ class Assembler:
         self._study_assembler = StudyAssembler(self._builder, self._errors)
         self._timeline_assembler = TimelineAssembler(self._builder, self._errors)
         self._objectives_assembler = ObjectivesAssembler(self._builder, self._errors)
+        # One set of assemblers per design when ``study_designs`` is given
+        # (GitHub 108); empty for a single design, built by the assemblers
+        # above.
+        self._designs: list[DesignAssemblers] = []
 
     def clear(self):
         self._errors.clear()
@@ -60,6 +65,7 @@ class Assembler:
         self._study_assembler.clear()
         self._timeline_assembler.clear()
         self._objectives_assembler.clear()
+        self._designs = []
 
     def execute(self, data: AssemblerInput | dict) -> None:
         """
@@ -80,6 +86,8 @@ class Assembler:
             data: A dict (or ``AssemblerInput``) with the top-level keys
                   ``identification``, ``document``, ``population``, ``study_design``,
                   ``study``, and optionally ``amendments`` and ``soa``.
+                  With ``study_designs`` (GitHub 108) one study design is
+                  built per entry; see ``_execute_designs``.
 
         Returns:
             None
@@ -115,45 +123,54 @@ class Assembler:
             # Process document data - sets up protocol documents
             self._document_assembler.execute(data["document"])
 
-            # Process population data - defines subject populations and analysis sets
-            self._population_assembler.execute(data["population"])
+            if data.get("study_designs"):
+                # Amendments first, as for one design they follow the
+                # population; nothing in them depends on a design.
+                if data.get("amendments"):
+                    self._amendments_assembler.execute(
+                        data["amendments"], self._document_assembler
+                    )
+                self._execute_designs(data)
+            else:
+                # Process population data - defines subject populations and analysis sets
+                self._population_assembler.execute(data["population"])
 
-            # Process amendments data — truthy check, not key presence:
-            # ``amendments`` is always present on the validated dict (Pydantic
-            # default) but its value is ``None`` when no amendment was
-            # supplied. Mirrors the ``soa`` branch below — and prevents the
-            # sub-assembler from synthesising a default Global-scope amendment
-            # for every protocol that has none (regression hunted in 0.24.0).
-            if data.get("amendments"):
-                self._amendments_assembler.execute(
-                    data["amendments"], self._document_assembler
-                )
+                # Process amendments data — truthy check, not key presence:
+                # ``amendments`` is always present on the validated dict (Pydantic
+                # default) but its value is ``None`` when no amendment was
+                # supplied. Mirrors the ``soa`` branch below — and prevents the
+                # sub-assembler from synthesising a default Global-scope amendment
+                # for every protocol that has none (regression hunted in 0.24.0).
+                if data.get("amendments"):
+                    self._amendments_assembler.execute(
+                        data["amendments"], self._document_assembler
+                    )
 
-            # Timelines data — truthy check, not key presence: ``soa`` is
-            # always a key on the validated dict (Pydantic-injected default)
-            # but its value is ``None`` when no SoA was supplied. ``soa`` is a
-            # list of ``ScheduleTimelineInput`` timelines (issue 63).
-            if data.get("soa"):
-                self._timeline_assembler.execute(data["soa"])
+                # Timelines data — truthy check, not key presence: ``soa`` is
+                # always a key on the validated dict (Pydantic-injected default)
+                # but its value is ``None`` when no SoA was supplied. ``soa`` is a
+                # list of ``ScheduleTimelineInput`` timelines (issue 63).
+                if data.get("soa"):
+                    self._timeline_assembler.execute(data["soa"])
 
-            # Process study design data - requires population assembler for cross-references
-            self._study_design_assembler.execute(
-                data["study_design"],
-                self._population_assembler,
-                self._timeline_assembler,
-            )
-
-            # Objectives / endpoints / estimands — truthy check, mirroring
-            # ``amendments`` and ``soa``: the key is always present on the
-            # validated dict but ``None`` when not supplied. Runs after the
-            # study design assembler because estimands resolve intervention
-            # references and the results attach onto the created design.
-            if data.get("objectives"):
-                self._objectives_assembler.execute(
-                    data["objectives"],
-                    self._study_design_assembler,
+                # Process study design data - requires population assembler for cross-references
+                self._study_design_assembler.execute(
+                    data["study_design"],
                     self._population_assembler,
+                    self._timeline_assembler,
                 )
+
+                # Objectives / endpoints / estimands — truthy check, mirroring
+                # ``amendments`` and ``soa``: the key is always present on the
+                # validated dict but ``None`` when not supplied. Runs after the
+                # study design assembler because estimands resolve intervention
+                # references and the results attach onto the created design.
+                if data.get("objectives"):
+                    self._objectives_assembler.execute(
+                        data["objectives"],
+                        self._study_design_assembler,
+                        self._population_assembler,
+                    )
 
             # Process core study data - requires all other assemblers for final assembly
             self._study_assembler.execute(
@@ -164,10 +181,61 @@ class Assembler:
                 self._population_assembler,
                 self._amendments_assembler,
                 self._timeline_assembler,
+                self._designs or None,
             )
         except Exception as e:
             location = KlassMethodLocation(self.MODULE, "execute")
             self._errors.exception("Failed during assembler", e, location)
+
+    def _execute_designs(self, data: dict) -> None:
+        """Build one study design per ``study_designs`` entry (GitHub 108),
+        each with its own population, timeline, study design and objectives
+        assemblers, run in the single-design order.
+
+        Each design's population is the top-level ``population`` with the
+        design's cohorts and planned enrollment. The population-level
+        criteria are shared: the first design builds their items and every
+        later design references them, so each item is held once at
+        StudyVersion level. A design's ``eligibility`` adds criteria for that
+        design only.
+
+        Names are unique per class within a design, not across designs: each
+        design is built in its own cross-reference scope.
+        """
+        cross_reference = self._builder.cross_reference
+        shared = None
+        for index, design in enumerate(data["study_designs"]):
+            assemblers = DesignAssemblers.create(self._builder, self._errors)
+            self._designs.append(assemblers)
+            label = design["study_design"]["label"]
+            cross_reference.scope = f"DESIGN-{index + 1}"
+            try:
+                population = dict(data["population"])
+                population["cohorts"] = design["cohorts"]
+                population["planned_enrollment"] = design["planned_enrollment"]
+                assemblers.population.execute(
+                    population,
+                    shared=shared,
+                    design_criteria=design["eligibility"],
+                    design_prefix=f"{assemblers.population._label_to_name(label)}-",
+                )
+                if shared is None:
+                    shared = assemblers.population
+                if design.get("soa"):
+                    assemblers.timeline.execute(design["soa"])
+                assemblers.study_design.execute(
+                    design["study_design"],
+                    assemblers.population,
+                    assemblers.timeline,
+                )
+                if design.get("objectives"):
+                    assemblers.objectives.execute(
+                        design["objectives"],
+                        assemblers.study_design,
+                        assemblers.population,
+                    )
+            finally:
+                cross_reference.scope = ""
 
     @property
     def study(self) -> Study:

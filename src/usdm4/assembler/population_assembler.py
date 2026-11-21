@@ -46,8 +46,18 @@ class PopulationAssembler(BaseAssembler):
         self._ec_items: list[EligibilityCriterion] = []
         self._eci_items: list[EligibilityCriterionItem] = []
         self._raw_cohorts: list[dict] = []
+        # The items built for the population-level criteria, per category
+        # ("INC" / "EXC") in input order, so another design's population can
+        # share them (GitHub 108).
+        self._shared_items: dict[str, list[EligibilityCriterionItem | None]] = {}
 
-    def execute(self, data: dict) -> None:
+    def execute(
+        self,
+        data: dict,
+        shared: "PopulationAssembler | None" = None,
+        design_criteria: dict | None = None,
+        design_prefix: str = "",
+    ) -> None:
         """
         Processes population data and creates a StudyDesignPopulation object.
 
@@ -64,6 +74,18 @@ class PopulationAssembler(BaseAssembler):
                           planned_enrollment / arm_names
                         - "planned_enrollment": overall study enrollment count
 
+            shared (PopulationAssembler | None): For a study with several
+                designs (GitHub 108), another design's population assembler
+                whose population-level criteria this one shares: the
+                criteria here reference that assembler's criterion items
+                instead of building new ones, so the text is held once at
+                StudyVersion level. ``None`` builds the items.
+            design_criteria (dict | None): Criteria for this design only,
+                an ``inclusion_exclusion``-shaped dict, added after the
+                shared ones in each category's chain.
+            design_prefix (str): Prefix for the names of the design-only
+                criteria, so they cannot collide with the shared ones.
+
         Returns:
             None: The created population is stored in ``self._population``;
             cohort objects and the raw input cohort list are additionally
@@ -78,7 +100,13 @@ class PopulationAssembler(BaseAssembler):
                 )
                 return
 
-            population_criteria = self._ie(data["inclusion_exclusion"])
+            population_criteria = self._ie(
+                data["inclusion_exclusion"],
+                reuse=shared.shared_items if shared else None,
+                record=True,
+                extra=design_criteria,
+                extra_prefix=design_prefix,
+            )
 
             demographics = data.get("demographics") or {}
             includes_healthy = bool(demographics.get("healthy_volunteers", True))
@@ -122,7 +150,15 @@ class PopulationAssembler(BaseAssembler):
 
     @property
     def criteria_items(self) -> list[EligibilityCriterionItem]:
+        """The items built here; items shared from another assembler are
+        not repeated."""
         return self._eci_items
+
+    @property
+    def shared_items(self) -> dict[str, list[EligibilityCriterionItem | None]]:
+        """The population-level criteria's items, per category, for
+        another design to share."""
+        return self._shared_items
 
     @property
     def cohorts(self) -> list[StudyCohort]:
@@ -353,7 +389,20 @@ class PopulationAssembler(BaseAssembler):
     # Inclusion / Exclusion (unchanged logic)
     # ------------------------------------------------------------------
 
-    def _ie(self, criteria: dict, prefix: str = "") -> list[EligibilityCriterion]:
+    CATEGORIES = (
+        ("inclusion", "C25532", "INCLUSION", "INC", "Inclusion"),
+        ("exclusion", "C25370", "EXCLUSION", "EXC", "Exclusion"),
+    )
+
+    def _ie(
+        self,
+        criteria: dict,
+        prefix: str = "",
+        reuse: dict | None = None,
+        record: bool = False,
+        extra: dict | None = None,
+        extra_prefix: str = "",
+    ) -> list[EligibilityCriterion]:
         """Build both criteria categories; return the created criteria.
 
         ``prefix`` namespaces the generated names for cohort-level criteria
@@ -362,13 +411,40 @@ class PopulationAssembler(BaseAssembler):
         ``criterionIds`` from exactly the criteria built here — the shared
         ``_ec_items`` registry holds population AND cohort criteria and
         must not be used for that.
+
+        For a study with several designs (GitHub 108): ``reuse`` holds
+        another design's items per category, which the criteria here
+        reference instead of building their own; ``record`` keeps this
+        call's items for another design to reuse; ``extra`` adds this
+        design's own criteria (names prefixed ``extra_prefix``) after each
+        category's shared ones, in one chain.
         """
-        result = self._collection(
-            criteria["inclusion"], "C25532", "INCLUSION", f"{prefix}INC", "Inclusion"
-        )
-        result += self._collection(
-            criteria["exclusion"], "C25370", "EXCLUSION", f"{prefix}EXC", "Exclusion"
-        )
+        result: list[EligibilityCriterion] = []
+        for key, code, decode, tag, label in self.CATEGORIES:
+            items: list[EligibilityCriterionItem | None] = []
+            batch = self._collection(
+                criteria[key],
+                code,
+                decode,
+                f"{prefix}{tag}",
+                label,
+                reuse=(reuse or {}).get(tag),
+                items_out=items,
+                link=extra is None,
+            )
+            if record:
+                self._shared_items[tag] = items
+            if extra is not None:
+                batch += self._collection(
+                    extra.get(key) or [],
+                    code,
+                    decode,
+                    f"{extra_prefix}{tag}",
+                    label,
+                    link=False,
+                )
+                self._builder.double_link(batch, "previousId", "nextId")
+            result += batch
         return result
 
     def _collection(
@@ -378,6 +454,9 @@ class PopulationAssembler(BaseAssembler):
         decode: str,
         prefix: str,
         label: str,
+        reuse: list[EligibilityCriterionItem | None] | None = None,
+        items_out: list | None = None,
+        link: bool = True,
     ) -> list[EligibilityCriterion]:
         """Build criterion + item pairs from plain-string or structured input.
 
@@ -390,12 +469,18 @@ class PopulationAssembler(BaseAssembler):
 
         Criteria within the category are chained via ``previousId`` /
         ``nextId`` in input order (inclusion and exclusion form separate
-        chains — they are independent ordered lists).
+        chains — they are independent ordered lists). ``link=False`` leaves
+        the chaining to the caller.
+
+        ``reuse`` (GitHub 108) holds items, by input position, to reference
+        instead of building new ones; ``items_out`` receives each entry's
+        item, ``None`` where none was made.
         """
         batch: list[EligibilityCriterion] = []
         for index, entry in enumerate(criteria):
             item = {"text": entry} if isinstance(entry, str) else entry
             text = item.get("text") or ""
+            eci_item = None
             try:
                 category = self._builder.cdisc_code(code, decode)
                 custom_name = (item.get("name") or "").strip()
@@ -410,8 +495,12 @@ class PopulationAssembler(BaseAssembler):
                     "description": item.get("description") or "",
                     "text": text,
                 }
-                eci_item = self._builder.create(EligibilityCriterionItem, params)
-                self._eci_items.append(eci_item)
+                reused = reuse[index] if reuse and index < len(reuse) else None
+                if reused is not None:
+                    eci_item = reused
+                else:
+                    eci_item = self._builder.create(EligibilityCriterionItem, params)
+                    self._eci_items.append(eci_item)
                 params = {
                     "name": ec_name,
                     "label": item.get("label") or f"{label} criterion {index + 1} ",
@@ -429,7 +518,10 @@ class PopulationAssembler(BaseAssembler):
                 self._errors.exception(
                     f"Failed during creation of criterion '{text}", e, location
                 )
+            if items_out is not None:
+                items_out.append(eci_item)
         # Chain the category's criteria in input order; a single criterion
         # ends up with both ends null, matching double_link semantics.
-        self._builder.double_link(batch, "previousId", "nextId")
+        if link:
+            self._builder.double_link(batch, "previousId", "nextId")
         return batch

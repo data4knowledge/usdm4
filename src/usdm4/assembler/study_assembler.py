@@ -10,6 +10,7 @@ from usdm4.assembler.document_assembler import DocumentAssembler
 from usdm4.assembler.population_assembler import PopulationAssembler
 from usdm4.assembler.amendments_assembler import AmendmentsAssembler
 from usdm4.assembler.timeline_assembler import TimelineAssembler
+from usdm4.assembler.design_assemblers import DesignAssemblers
 from usdm4.builder.builder import Builder
 from usdm4.api.study import Study
 from usdm4.api.study_version import (
@@ -63,6 +64,7 @@ class StudyAssembler(BaseAssembler):
         population_assembler: PopulationAssembler,
         amendments_assembler: AmendmentsAssembler,
         timeline_assembler: TimelineAssembler,
+        designs: list[DesignAssemblers] | None = None,
     ) -> None:
         """
         Creates the top-level Study object and its associated StudyVersion from study data.
@@ -96,6 +98,13 @@ class StudyAssembler(BaseAssembler):
                 study design structure (arms, epochs, activities, etc.)
             document_assembler (DocumentAssembler): Assembler containing protocol documents
                 and governance dates
+            designs (list[DesignAssemblers] | None): For a study with several
+                designs (GitHub 108), the assemblers of each. ``None`` is the
+                single design given by ``study_design_assembler``,
+                ``population_assembler`` and ``timeline_assembler``. What a
+                design builds that lives on the StudyVersion (criterion
+                items, interventions, products, devices, conditions, BCs,
+                roles) is gathered from every design, in design order.
 
         Returns:
             None: The created study is stored in self._study property
@@ -107,6 +116,19 @@ class StudyAssembler(BaseAssembler):
             object serves as the root container.
         """
         try:
+            if designs is None:
+                designs = [
+                    DesignAssemblers(
+                        population_assembler,
+                        timeline_assembler,
+                        study_design_assembler,
+                        None,
+                    )
+                ]
+
+            def gather(read) -> list:
+                return [x for d in designs for x in read(d)]
+
             # Create the dates
             valid_date = self._create_date(data)
 
@@ -169,35 +191,44 @@ class StudyAssembler(BaseAssembler):
                 "titles": identification_assembler.titles,  # Study titles from identification
                 "dateValues": self._dates,  # Study-version-scoped governance dates
                 "studyDesigns": [
-                    study_design_assembler.study_design
-                ],  # Study design structure
+                    d.study_design.study_design for d in designs
+                ],  # Study design structure, one per design
                 "documentVersionIds": [document_assembler.document_version.id]
                 if document_assembler.document_version
                 else [],  # Document references
                 "studyIdentifiers": identification_assembler.identifiers,  # Study identifiers
                 "organizations": identification_assembler.organizations,  # Sponsor/organization info
-                "eligibilityCriterionItems": population_assembler.criteria_items,
+                "eligibilityCriterionItems": gather(
+                    lambda d: d.population.criteria_items
+                ),
                 "narrativeContentItems": document_assembler.contents,
                 "amendments": [amendments_assembler.amendment]
                 if amendments_assembler.amendment
                 else [],
-                "conditions": timeline_assembler.conditions,
-                "biomedicalConcepts": timeline_assembler.biomedical_concepts,
-                "bcSurrogates": timeline_assembler.biomedical_concept_surrogates,
+                "conditions": gather(lambda d: d.timeline.conditions),
+                "biomedicalConcepts": gather(lambda d: d.timeline.biomedical_concepts),
+                "bcSurrogates": gather(
+                    lambda d: d.timeline.biomedical_concept_surrogates
+                ),
                 "roles": self._merge_roles(
-                    identification_assembler.roles, study_design_assembler.roles
+                    identification_assembler.roles,
+                    gather(lambda d: d.study_design.roles),
                 ),
                 "extensionAttributes": extensions,
                 # Interventions live on StudyVersion, not StudyDesign —
                 # StudyDesign only holds the id references in
                 # studyInterventionIds.
-                "studyInterventions": study_design_assembler.study_interventions,
+                "studyInterventions": gather(
+                    lambda d: d.study_design.study_interventions
+                ),
                 # Products likewise live on StudyVersion; administrations
                 # reference them via administrableProductId.
-                "administrableProducts": study_design_assembler.administrable_products,
+                "administrableProducts": gather(
+                    lambda d: d.study_design.administrable_products
+                ),
                 # Devices likewise; administrations reference them via
                 # medicalDeviceId.
-                "medicalDevices": study_design_assembler.medical_devices,
+                "medicalDevices": gather(lambda d: d.study_design.medical_devices),
             }
             study_version = self._builder.create(StudyVersion, params)
 
@@ -215,9 +246,20 @@ class StudyAssembler(BaseAssembler):
             # each role at creation time with whether it applies to the
             # version or to specific designs, and this loop should resolve
             # the right ids accordingly.
+            #
+            # With several designs (GitHub 108), a role a design's input
+            # stated (blinded roles, committees) applies to that design;
+            # the identification roles still apply to the version.
             if study_version is not None:
+                design_of = {}
+                if len(designs) > 1:
+                    # Every design was built: a failed one would have
+                    # failed the StudyVersion above.
+                    for d in designs:
+                        for role in d.study_design.roles:
+                            design_of[id(role)] = d.study_design.study_design.id
                 for role in study_version.roles or []:
-                    role.appliesToIds = [study_version.id]
+                    role.appliesToIds = [design_of.get(id(role), study_version.id)]
 
             # Create the top-level Study container object
             study_name, study_label = self._get_study_name_label(data["name"])

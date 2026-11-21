@@ -10,19 +10,32 @@ class DuplicateError(Exception):
 
 
 class CrossReference:
+    """Objects by id and by class + name.
+
+    Names are unique per class within a ``scope``. The default scope is
+    empty, which is the whole build. A study with more than one design sets
+    a scope per design (GitHub 108), since two designs may each have, say, a
+    "Screening" epoch. Ids are unique whatever the scope.
+    """
+
     def __init__(self):
         self._by_name = {}
         self._by_id = {}
+        self.scope = ""
 
     def clear(self):
         self._by_name = {}
         self._by_id = {}
+        self.scope = ""
 
     def add(self, object: ApiBaseModelWithId, name: str = None) -> None:
         name = name if name else getattr(object, "name", None)
         if name:
-            self._add_to_collection(name, self._by_name, object)
+            self._add_to_collection(self._scoped(name), self._by_name, object)
         self._add_to_collection(object.id, self._by_id, object)
+
+    def _scoped(self, name: str) -> str:
+        return f"{self.scope}::{name}" if self.scope else name
 
     def _add_to_collection(self, key_text: str, collection: dict, object):
         if key_text:
@@ -36,7 +49,7 @@ class CrossReference:
                 )
 
     def get_by_name(self, klass, name: str) -> ApiBaseModelWithId:
-        return self._get(klass, name, self._by_name)
+        return self._get(klass, self._scoped(name), self._by_name)
 
     def get_by_id(self, klass, id: str) -> ApiBaseModelWithId:
         return self._get(klass, id, self._by_id)

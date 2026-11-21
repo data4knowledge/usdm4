@@ -7,6 +7,7 @@ from usdm4.assembler.schema.study_design_schema import StudyDesignInput
 from usdm4.assembler.schema.study_schema import StudyInput
 from usdm4.assembler.schema.schedule_timeline_schema import ScheduleTimelineInput
 from usdm4.assembler.schema.objectives_schema import ObjectivesInput
+from usdm4.assembler.schema.design_schema import DesignInput
 
 __all__ = [
     "AssemblerInput",
@@ -18,4 +19,5 @@ __all__ = [
     "StudyInput",
     "ScheduleTimelineInput",
     "ObjectivesInput",
+    "DesignInput",
 ]
