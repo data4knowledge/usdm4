@@ -1,3 +1,5 @@
+import pytest
+from pydantic import ValidationError
 from src.usdm4.assembler.schema.study_schema import StudyInput, StudyName
 
 
@@ -34,3 +36,19 @@ class TestStudyInput:
         assert result.name.identifier == "STUDY-001"
         assert result.version == "2.0"
         assert result.original_protocol == "Yes"
+
+    def test_safety_event_reporting(self):
+        assert StudyInput().safety_event_reporting == []
+        result = StudyInput.model_validate(
+            {"safety_event_reporting": [{"event_type": "Serious Adverse Event"}]}
+        )
+        row = result.safety_event_reporting[0].model_dump()
+        assert row.pop("event_type") == "Serious Adverse Event"
+        assert len(row) == 7
+        assert set(row.values()) == {""}
+
+    def test_safety_event_reporting_needs_event_type(self):
+        with pytest.raises(ValidationError):
+            StudyInput.model_validate(
+                {"safety_event_reporting": [{"reporting_method": "EDC"}]}
+            )

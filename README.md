@@ -586,7 +586,19 @@ Core study information and metadata.
   "description": "string",
   "sponsor_approval_date": "string",
   "confidentiality": "string",
-  "original_protocol": "string | boolean"
+  "original_protocol": "string | boolean",
+  "safety_event_reporting": [
+    {
+      "event_type": "string",
+      "other_event_type": "string",
+      "situational_scope": "string",
+      "reporting_period_start": "string",
+      "reporting_period_end": "string",
+      "reporting_timing": "string",
+      "reporting_method": "string",
+      "backup_reporting_method": "string"
+    }
+  ]
 }
 ```
 
@@ -599,6 +611,7 @@ Core study information and metadata.
 - `original_protocol` is converted to boolean: `"true"`, `"1"`, `"yes"`, `"y"` map to `true` (case-insensitive).
 - `sponsor_approval_date` should be in ISO format (e.g. `2024-01-15`).
 - When present, `confidentiality`, `original_protocol`, `compound_codes`, `compound_names`, `sponsor_signatory`, and `medical_expert` are stored as extension attributes on the study version.
+- `safety_event_reporting` is optional: the rows of the M11 9.2 reporting table. Only `event_type` is required in a row. It is text: a C217287 term, matched ignoring case and a trailing full stop, takes its code; any other text becomes Other with the text kept as the other event type. `other_event_type` is kept only when `event_type` is Other. A row with a blank `event_type` is left out with a warning. Each row is held as an extension attribute on the study version whose value is an extension class, read with `StudyVersion.safety_event_reporting()`.
 
 ---
 

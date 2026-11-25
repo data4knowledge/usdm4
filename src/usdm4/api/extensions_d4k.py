@@ -72,3 +72,30 @@ IAM_EXT_URL = "www.d4k.dk/usdm/extensions/020"  # Assignment method, valueCode
 IAS_EXT_URL = "www.d4k.dk/usdm/extensions/021"  # Is stratified, valueBoolean
 IAO_EXT_URL = "www.d4k.dk/usdm/extensions/022"  # Other method, valueString
 IAR_EXT_URL = "www.d4k.dk/usdm/extensions/023"  # Randomisation type, valueString
+
+# M11 9.2 trial-related safety event reporting table (GitHub 109). USDM 4.0 has
+# no home for it. CDISC has proposed a USDM 4.1 class with one row per event
+# type. One SER_EXT_URL attribute on the StudyVersion per row, in input order,
+# whose value (valueExtensionClass) is a SERC_EXT_URL extension class holding
+# one attribute per stated column. Nothing is defaulted.
+SER_EXT_URL = "www.d4k.dk/usdm/extensions/024"  # Safety event reporting row
+SERC_EXT_URL = "www.d4k.dk/usdm/extensions/025"  # Safety event reporting class
+SERT_EXT_URL = "www.d4k.dk/usdm/extensions/026"  # Event type (C217287), valueCode
+SERO_EXT_URL = "www.d4k.dk/usdm/extensions/027"  # Other event type, valueString
+SERU_EXT_URL = "www.d4k.dk/usdm/extensions/028"  # Situational scope, valueString
+SERS_EXT_URL = "www.d4k.dk/usdm/extensions/029"  # Reporting period start, valueString
+SERE_EXT_URL = "www.d4k.dk/usdm/extensions/030"  # Reporting period end, valueString
+SERG_EXT_URL = "www.d4k.dk/usdm/extensions/031"  # Reporting timing, valueString
+SERM_EXT_URL = "www.d4k.dk/usdm/extensions/032"  # Reporting method, valueString
+SERB_EXT_URL = "www.d4k.dk/usdm/extensions/033"  # Backup reporting method, valueString
+
+# The text columns of a row: assembler input name -> extension URL.
+SER_TEXT_URLS = {
+    "other_event_type": SERO_EXT_URL,
+    "situational_scope": SERU_EXT_URL,
+    "reporting_period_start": SERS_EXT_URL,
+    "reporting_period_end": SERE_EXT_URL,
+    "reporting_timing": SERG_EXT_URL,
+    "reporting_method": SERM_EXT_URL,
+    "backup_reporting_method": SERB_EXT_URL,
+}

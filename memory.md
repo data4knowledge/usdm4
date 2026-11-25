@@ -189,3 +189,24 @@ rules and decisions (U4-n) are in `docs/spec/timeline_assembler.md`.
 **Rejected.** Sharing objectives and endpoints across designs (Dave: they tend to be specific; criteria are shared).
 
 **Found, not this work.** None.
+
+## 2026-11-25 — GitHub 109: safety event reporting rows held as extension classes
+
+**Repos.** usdm4 (this entry), branch `109-safety-event-reporting-table-extension`. Used by usdm4_protocol GitHub 165 and usdm4_fhir GitHub 65 (full entries in their logs); checked in udp_prism.
+
+**What it was.** USDM 4.0 has no home for the M11 9.2 reporting table. CDISC has proposed a USDM 4.1 class, one row per event type (DDF5 SME meeting, 10 November 2026, a suggestion with open questions; Dave: good enough for the FHIR work). The strict 4.0 schema refuses it as an attribute.
+
+**What changed.**
+- `src/usdm4/api/extensions_d4k.py` — URLs 024 to 033 and `SER_TEXT_URLS` (input name → URL).
+- `src/usdm4/assembler/schema/study_schema.py` — `SafetyEventReportingInput`; `StudyInput.safety_event_reporting`.
+- `src/usdm4/assembler/study_assembler.py` — one ExtensionAttribute (024) per row on StudyVersion, in input order, its value an ExtensionClass (025) holding a child per stated column; nothing defaulted. First use of a class extension. A row with a blank event type is dropped with a warning; other event type given when the event type is not Other is dropped with a warning.
+- `src/usdm4/assembler/encoder.py` — `safety_event_type`: a C217287 term, ignoring case and a trailing full stop, gives its code; any other text is Other (C17649) with the text kept.
+- `src/usdm4/assembler/base_assembler.py`, `study_design_assembler.py` — `_base_code` moved to the base.
+- `src/usdm4/api/study_version.py` — `safety_event_reporting()`. `README.md` — the input.
+- Tests: `test_study_assembler_safety_event_reporting.py`, `test_study_schema.py`.
+
+**Figures.** Dave's pytest passed. udp_prism run 2026-11-25: 55 rows in 7 protocols, 0 unexplained. A script validated a small study against the 4.0 schema: the rows add no fault. The d4k rules add DDF00073 (M11 terminology date beside the CDISC one), as control type does. CORE not run. Version not changed.
+
+**Rejected.** Nested attribute extensions (table, row, column), built first and replaced by the class extension (Dave). StudyDesign as the home: M11 has one table per protocol and every column is text.
+
+**Found, not this work.** None.

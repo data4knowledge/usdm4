@@ -25,7 +25,13 @@ from usdm4.api.study_version import (
 )
 from usdm4.api.geographic_scope import GeographicScope
 from usdm4.api.governance_date import GovernanceDate
-from usdm4.api.extension import ExtensionAttribute
+from usdm4.api.extension import ExtensionAttribute, ExtensionClass
+from usdm4.api.extensions_d4k import (
+    SER_EXT_URL,
+    SERC_EXT_URL,
+    SERT_EXT_URL,
+    SER_TEXT_URLS,
+)
 
 
 class StudyAssembler(BaseAssembler):
@@ -84,6 +90,7 @@ class StudyAssembler(BaseAssembler):
                             # "indications": list,      # List of study indications
                             # "interventions": list,    # List of study interventions
                             # "sponsor_approval_date": str,  # Date of sponsor approval (ISO format)
+                            # "safety_event_reporting": list,  # M11 9.2 reporting table rows
                         }
 
                         Required fields:
@@ -177,6 +184,9 @@ class StudyAssembler(BaseAssembler):
                     MECDL_EXT_URL,
                     identification_assembler.medical_expert_contact_details_location,
                 )
+            extensions += self._safety_event_reporting_extensions(
+                data.get("safety_event_reporting")
+            )
 
             # Create StudyVersion parameters by combining data from all assemblers.
             #
@@ -299,6 +309,69 @@ class StudyAssembler(BaseAssembler):
                 e,
                 KlassMethodLocation(self.MODULE, "_create_extension"),
             )
+
+    def _safety_event_reporting_extensions(
+        self, rows: list[dict] | None
+    ) -> list[ExtensionAttribute]:
+        """The M11 9.2 reporting table as one SER_EXT_URL extension per row, or
+        none when there are no rows (GitHub 109)."""
+        try:
+            result = [self._safety_event_row(row) for row in rows or []]
+            return [extension for extension in result if extension]
+        except Exception as e:
+            self._errors.exception(
+                "Failed during creation of safety event reporting",
+                e,
+                KlassMethodLocation(self.MODULE, "_safety_event_reporting_extensions"),
+            )
+            return []
+
+    def _safety_event_row(self, row: dict) -> ExtensionAttribute | None:
+        """One row as a SER_EXT_URL extension whose value is a SERC_EXT_URL
+        extension class holding the event type and an attribute per stated
+        column. A row with a blank event type is warned and dropped: the event
+        type is required."""
+        location = KlassMethodLocation(self.MODULE, "_safety_event_row")
+        texts = {name: (row.get(name) or "").strip() for name in SER_TEXT_URLS}
+        event_type = (row.get("event_type") or "").strip()
+        if not event_type:
+            self._errors.warning(
+                f"Safety event reporting row has no event type; not recorded: {texts}",
+                location=location,
+            )
+            return None
+        code, other = self._encoder.safety_event_type(event_type)
+        given = texts["other_event_type"]
+        if given and (other or code.code != "C17649"):
+            self._errors.warning(
+                f"Other event type '{given}' stated but the event type "
+                f"'{event_type}' is not Other; not recorded",
+                location=location,
+            )
+            texts["other_event_type"] = ""
+        if other:
+            texts["other_event_type"] = other
+        values = [(SERT_EXT_URL, "valueCode", self._base_code(code))]
+        values += [
+            (url, "valueString", texts[name])
+            for name, url in SER_TEXT_URLS.items()
+            if texts[name]
+        ]
+        attributes = [
+            self._builder.create(ExtensionAttribute, {"url": url, name: value})
+            for url, name, value in values
+        ]
+        row_class = self._builder.create(
+            ExtensionClass,
+            {
+                "url": SERC_EXT_URL,
+                "extensionAttributes": [x for x in attributes if x],
+            },
+        )
+        return self._builder.create(
+            ExtensionAttribute,
+            {"url": SER_EXT_URL, "valueExtensionClass": row_class},
+        )
 
     def _create_date(self, data: dict) -> bool:
         result = False

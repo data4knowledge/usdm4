@@ -1106,6 +1106,19 @@ class Encoder:
             text, self.CONTROL_TYPE_MAP, "control_type", "Control type"
         )
 
+    def safety_event_type(self, text: str) -> tuple[Code, str]:
+        """M11 9.2 Event Type -> its C217287 term and the other event type.
+
+        A term matches ignoring case and a trailing full stop and has no other
+        event type. Any other text is Other (C17649) with the text as the
+        other event type (GitHub 109).
+        """
+        value = text.strip()
+        code = self.ct_term("C217287", value.rstrip(".").strip())
+        if code is not None:
+            return code, ""
+        return self._builder.cdisc_code("C17649", "Other"), value
+
     def blinding_schema(self, text: str | None) -> AliasCode | None:
         """M11 Trial Blind Schema -> InterventionalStudyDesign.blindingSchema."""
         code = self._lookup_optional(
