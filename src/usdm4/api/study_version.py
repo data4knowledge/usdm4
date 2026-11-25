@@ -32,7 +32,7 @@ from .study_definition_document import (
     StudyDefinitionDocumentVersion,
 )
 from .condition import Condition
-from .extension import ExtensionAttribute
+from .extension import BaseCode, ExtensionAttribute
 from .extensions_d4k import (
     CS_EXT_URL,
     OV_EXT_URL,
@@ -41,6 +41,9 @@ from .extensions_d4k import (
     MECDL_EXT_URL,
     SS_EXT_URL,
     SAL_EXT_URL,
+    SER_EXT_URL,
+    SERT_EXT_URL,
+    SER_TEXT_URLS,
 )
 
 
@@ -467,6 +470,23 @@ class StudyVersion(ApiBaseModelWithId):
     def sponsor_signatory(self) -> str:
         ext: ExtensionAttribute = self.get_extension(SS_EXT_URL)
         return ext.valueString if ext else ""
+
+    def safety_event_reporting(self) -> list[dict[str, BaseCode | str | None]]:
+        """The M11 9.2 reporting table rows, in order (GitHub 109). Each row is
+        a dict with the assembler input's names: ``event_type`` is the code,
+        the rest are text, "" when not stated."""
+        rows = []
+        for ext in self.extensionAttributes:
+            if ext.url != SER_EXT_URL or ext.valueExtensionClass is None:
+                continue
+            columns = {x.url: x for x in ext.valueExtensionClass.extensionAttributes}
+            event_type = columns.get(SERT_EXT_URL)
+            result = {"event_type": event_type.valueCode if event_type else None}
+            for name, url in SER_TEXT_URLS.items():
+                column = columns.get(url)
+                result[name] = (column.valueString if column else None) or ""
+            rows.append(result)
+        return rows
 
     def role_map(self) -> dict[str, StudyRole]:
         return {x.id: x for x in self.roles}

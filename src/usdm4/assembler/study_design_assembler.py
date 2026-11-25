@@ -21,7 +21,7 @@ from usdm4.ct.edqm import library as edqm_dose_forms
 from usdm4.api.ingredient import Ingredient
 from usdm4.api.substance import Substance
 from usdm4.api.strength import Strength
-from usdm4.api.extension import ExtensionAttribute, BaseCode
+from usdm4.api.extension import ExtensionAttribute
 from usdm4.api.indication import Indication
 from usdm4.api.study_role import StudyRole
 from usdm4.api.masking import Masking
@@ -307,22 +307,6 @@ class StudyDesignAssembler(BaseAssembler):
                 KlassMethodLocation(self.MODULE, "_control_type_extensions"),
             )
             return []
-
-    @staticmethod
-    def _base_code(code) -> BaseCode:
-        """valueCode is a BaseCode, not the API Code class (as for SIT_EXT_URL)."""
-        return BaseCode(
-            **code.model_dump(
-                include={
-                    "id",
-                    "code",
-                    "codeSystem",
-                    "codeSystemVersion",
-                    "decode",
-                    "instanceType",
-                }
-            )
-        )
 
     def _stratified(self, data: dict) -> bool | None:
         """As stated; when not stated, True if the method text says stratified,
