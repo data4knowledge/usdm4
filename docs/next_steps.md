@@ -15,6 +15,8 @@ Release first: GitHub 102 (with usdm4_protocol 150, usdm4_fhir 62) and GitHub 10
 
 GitHub 108 (several study designs in one assembly: `study_designs`, criteria shared, objectives per design) is built on `108-assembler-builds-multiple-studydesigns`, Dave's pytest passed at 100% coverage; it goes with usdm4_protocol 163.
 
+GitHub 110 (`RefResolver` replaced by `referencing`) is built on `110-replace-deprecated-jsonschema-refresolver`; Dave's full pytest passes with no warnings.
+
 Latest figures (NCT05676931, d4k, GitHub 106 fixer before the URI-safe pass): 3,259 → 1,538 findings; DDF00083 2,338 → 3; DDF00035 25 → 667, unmasked by unique ids (N30), now equal to CORE-000427's 667.
 
 Normal development: one issue at a time, gate is tests and pins. Test inputs are written here in `usdm4`'s structured form — nothing waits on
@@ -27,5 +29,4 @@ Normal development: one issue at a time, gate is tests and pins. Test inputs are
 4. N24.2–N24.11 in number order, one at a time; N24.4 and N24.5 together, N24.6 and N24.7
    together.
 5. Then N2 (from CORE-000938), N11, N3.
-6. The `RefResolver` deprecation warning.
-7. Products, for usdm4_fhir P-17. Devices with an embedded product are done (GitHub 103).
+6. Products, for usdm4_fhir P-17. Devices with an embedded product are done (GitHub 103).

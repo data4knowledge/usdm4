@@ -1,5 +1,7 @@
 """Tests for StudyIdentifier helpers: scoped_by, of_type, is_sponsor."""
 
+import pytest
+
 from src.usdm4.api.identifier import StudyIdentifier
 from src.usdm4.api.organization import Organization
 from src.usdm4.api.code import Code
@@ -63,13 +65,17 @@ def test_scoped_by_returns_organization():
 def test_is_sponsor_true_for_drug_company_code():
     sid = _make_study_identifier()
     org = _make_org("C54149")
-    assert sid.is_sponsor({"ORG1": org}) is True
+    with pytest.warns(DeprecationWarning, match="Use roles"):
+        result = sid.is_sponsor({"ORG1": org})
+    assert result is True
 
 
 def test_is_sponsor_false_for_other_code():
     sid = _make_study_identifier()
     org = _make_org("C93453")
-    assert sid.is_sponsor({"ORG1": org}) is False
+    with pytest.warns(DeprecationWarning, match="Use roles"):
+        result = sid.is_sponsor({"ORG1": org})
+    assert result is False
 
 
 def test_of_type_returns_none_when_no_extension():

@@ -6,6 +6,7 @@ validate_against_component and validate_file.
 """
 
 import json
+import warnings
 
 import pytest
 
@@ -116,3 +117,28 @@ def test_validate_file_round_trip(tmp_path):
     data_file.write_text(json.dumps({"name": "ok"}))
     sv = SchemaValidation(str(schema_file))
     assert sv.validate_file(str(data_file), "Simple") is True
+
+
+def test_references_resolve_against_the_whole_file_without_warnings(tmp_path):
+    """A component's #/components references resolve, and nothing deprecated is used."""
+    from jsonschema import ValidationError
+
+    schema = {
+        "components": {
+            "schemas": {
+                "Outer": {
+                    "type": "object",
+                    "properties": {"inner": {"$ref": "#/components/schemas/Inner"}},
+                },
+                "Inner": {"type": "string"},
+            }
+        }
+    }
+    f = _write_schema(tmp_path, schema)
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        sv = SchemaValidation(str(f))
+        assert sv.validate_against_component({"inner": "ok"}, "Outer") is True
+        with pytest.raises(ValidationError) as e:
+            sv.validate_against_component({"inner": 1}, "Outer")
+    assert e.value.json_path == "$.inner"

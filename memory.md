@@ -189,3 +189,22 @@ rules and decisions (U4-n) are in `docs/spec/timeline_assembler.md`.
 **Rejected.** Sharing objectives and endpoints across designs (Dave: they tend to be specific; criteria are shared).
 
 **Found, not this work.** None.
+
+## 2026-11-25 — GitHub 110: RefResolver replaced, the suite runs with no warnings and no filter
+
+**Repos.** usdm4 (GitHub 110, branch `110-replace-deprecated-jsonschema-refresolver`). Found from the usdm4_improve test run.
+
+**What it was.** `rules/schema/schema_validation.py` (DDF00082) used `jsonschema.RefResolver`, deprecated since 4.18. Two tests called the deprecated `StudyIdentifier.is_sponsor` without checking its warning. `pytest.ini` carried `ignore::DeprecationWarning:jsonschema`.
+
+**What changed.**
+- `src/usdm4/rules/schema/schema_validation.py` — the schema file is registered in a `referencing` Registry; the component is entered by `$ref`, so its own `#/components/...` references resolve against the whole file.
+- `tests/usdm4/rules/schema/test_schema_validation.py` — new test: references resolve, with warnings as errors.
+- `tests/usdm4/api/test_identifier.py` — both `is_sponsor` tests check the warning with `pytest.warns`.
+- `pytest.ini` — the `jsonschema` ignore removed.
+- `setup.py`, `requirements.txt`, `CLAUDE.md` — `jsonschema>=4.18`, `referencing>=0.28.4`.
+
+**Figures.** Dave's full pytest and ruff pass, no warnings. Old and new code gave identical results on 48 cases (12 corpus files and altered copies: 20 valid, 28 with an error).
+
+**Rejected.** Filtering the warning in the calling package (Dave: warnings are fixed, never hidden). Removing `is_sponsor`: a package change, not asked for.
+
+**Found, not this work.** None.
