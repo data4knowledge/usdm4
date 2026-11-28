@@ -81,6 +81,9 @@ class BuiltTimeline:
     epochs: list[StudyEpoch]
     encounters: list[Encounter]
     conditions: list[Condition]
+    # Each column's instance, by column id, so another timeline can name it
+    # (GitHub 111).
+    instances: dict[str, ScheduledActivityInstance] = field(default_factory=dict)
 
 
 class TimelineBuild:
@@ -159,7 +162,12 @@ class TimelineBuild:
         self._link_cells()
         conditions = self._add_conditions()
         timeline = self._add_timeline(instances, timings)
-        return BuiltTimeline(timeline, epochs, encounters, conditions)
+        by_column = {
+            column.id: self._sai_for[column.index]
+            for column in self._timeline.columns
+            if column.index in self._sai_for
+        }
+        return BuiltTimeline(timeline, epochs, encounters, conditions, by_column)
 
     def _qualify(self, name: str) -> str:
         return self._naming.qualify(name, self._t)

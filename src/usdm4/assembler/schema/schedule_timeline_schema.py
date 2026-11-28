@@ -29,8 +29,9 @@ applies the Day 0 rule using the timeline's ``day_zero`` flag.
 This module checks STRUCTURE only — required fields, types, value ranges and
 references inside one timeline (column ids, cell columns, activity parents,
 footnote markers). References ACROSS timelines — a column copied from another
-timeline (``copy_of``, issue 75, U4-37) — are checked by ``check_copies``,
-which ``AssemblerInput`` calls on its ``soa``.
+timeline (``copy_of``, issue 75, U4-37) — are checked by ``check_copies``, and
+the instances a profile is run from (``attaches_at``, GitHub 111) by
+``check_attachments``; ``AssemblerInput`` calls both on its ``soa``.
 
 Unknown keys are refused (``extra="forbid"``). An input that dropped them
 silently once hid a classification field from the assembler for some time; a
@@ -385,6 +386,14 @@ class CopyOf(_Model):
     column: str
 
 
+class InstanceRef(_Model):
+    """A column of another timeline, by that timeline's id and the column's
+    id there (GitHub 111): the instance a profile is run from."""
+
+    timeline: str
+    column: str
+
+
 class ColumnInput(_Model):
     """One column of the schedule, in document order. Footnote markers sit
     on the value they are printed on, not on the column (issue 64).
@@ -483,7 +492,11 @@ class ScheduleTimelineInput(_Model):
     description: str | None = None
     # Any type may carry one (#77); with none, a default from the type.
     entry_condition: str | None = None
+    # A profile hangs off an activity (R7, ``Activity.timelineId``) or is run
+    # from the instances of other timelines' columns (GitHub 111,
+    # ``ScheduledActivityInstance.timelineId``) — one or the other.
     attaches_to: str | None = None
+    attaches_at: list[InstanceRef] = []
     # Whether the protocol numbers a Day 0 (U4-35). Default: Day 1, no Day 0
     # — ``Day -1`` is the day before ``Day 1``.
     day_zero: bool = False
@@ -570,6 +583,19 @@ class ScheduleTimelineInput(_Model):
             raise ValueError(
                 f"attaches_to is for profile timelines; this one is {self.type!r}"
             )
+        if self.attaches_at and self.type != "profile":
+            raise ValueError(
+                f"attaches_at is for profile timelines; this one is {self.type!r}"
+            )
+        if self.attaches_at and self.attaches_to is not None:
+            raise ValueError("a profile gives attaches_to or attaches_at, not both")
+        refs = [(r.timeline, r.column) for r in self.attaches_at]
+        repeated = sorted({r for r in refs if refs.count(r) > 1})
+        if repeated:
+            raise ValueError(
+                "attaches_at names an instance more than once: "
+                + ", ".join(f"timeline {t!r} column {c!r}" for t, c in repeated)
+            )
         return self
 
 
@@ -623,4 +649,30 @@ def check_copies(timelines: list[ScheduleTimelineInput]) -> None:
                 raise ValueError(
                     f"{where}: copy_of names {ref.timeline!r} column "
                     f"{ref.column!r}, which is a gate, not a visit"
+                )
+
+
+def check_attachments(timelines: list[ScheduleTimelineInput]) -> None:
+    """The instances a profile is run from (GitHub 111). Raises
+    ``ValueError``. Each ``attaches_at`` entry names a timeline id in the
+    assembly — not the profile itself — and a column of that timeline. Run
+    after ``check_copies``, which checks the ids are unique."""
+    by_id = {tl.id: tl for tl in timelines if tl.id is not None}
+    for index, timeline in enumerate(timelines):
+        for ref in timeline.attaches_at:
+            where = f"timeline {index + 1}"
+            target = by_id.get(ref.timeline)
+            if target is None:
+                raise ValueError(
+                    f"{where}: attaches_at names timeline {ref.timeline!r}, which "
+                    f"is not a timeline id"
+                )
+            if target is timeline:
+                raise ValueError(
+                    f"{where}: attaches_at names its own timeline {ref.timeline!r}"
+                )
+            if not any(c.id == ref.column for c in target.columns):
+                raise ValueError(
+                    f"{where}: attaches_at names column {ref.column!r}, which is "
+                    f"not a column of timeline {ref.timeline!r}"
                 )

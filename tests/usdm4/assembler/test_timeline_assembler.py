@@ -462,14 +462,14 @@ class TestProfileAttachment:
         assert len(assembler.timelines) == 2
         assert all(a.timelineId is None for a in assembler.activities)
         assert self._attach_messages(errors) == [
-            "Profile timeline 2 has no attaches_to; built unattached"
+            "Profile timeline 2 has no attaches_to or attaches_at; built unattached"
         ]
 
     def test_blank_attaches_to_is_no_attaches_to(self, assembler, errors):
         assembler.execute([simple(), self._profile("  ")])
         assert all(a.timelineId is None for a in assembler.activities)
         assert self._attach_messages(errors) == [
-            "Profile timeline 2 has no attaches_to; built unattached"
+            "Profile timeline 2 has no attaches_to or attaches_at; built unattached"
         ]
 
     def test_unknown_activity_is_built_unattached_and_warned(self, assembler, errors):
@@ -605,6 +605,150 @@ class TestProfileAttachment:
         assembler.execute([simple(), simple(type)])
         assert all(a.timelineId is None for a in assembler.activities)
         assert self._attach_messages(errors) == []
+
+
+class TestProfileAttachedAtInstances:
+    """GitHub 111: a profile run from some of the instances where its activity
+    is marked hangs off those instances — ``ScheduledActivityInstance.timelineId``
+    — not off the activity (U4-40–U4-42)."""
+
+    @staticmethod
+    def _main():
+        return timeline(
+            [
+                column("c1", "Treatment", "Day 1", "Day 1"),
+                column("c2", "Treatment", "Day 2", "Day 2"),
+                column("c3", "Treatment", "Day 3", "Day 3"),
+                column("c4", "Treatment", "Day 4", "Day 4"),
+            ],
+            [activity("PK Sample", ["c1", "c2", "c3", "c4"])],
+            id="main",
+        )
+
+    @staticmethod
+    def _profile(at, rows=("PK Sample",), id=None):
+        return timeline(
+            [column("h1", timing="Hour 0"), column("h2", timing="Hour 1")],
+            [activity(name, ["h1", "h2"]) for name in rows],
+            type="profile",
+            attaches_at=[{"timeline": tl, "column": c} for tl, c in at],
+            id=id,
+        )
+
+    @staticmethod
+    def _messages(errors):
+        return [m for m in messages(errors) if m.startswith("Profile timeline")]
+
+    def test_attached_at_two_of_four_instances(self, assembler, errors):
+        assembler.execute(
+            [self._main(), self._profile([("main", "c1"), ("main", "c3")])]
+        )
+        main, profile = assembler.timelines
+        assert [i.timelineId for i in main.instances] == [
+            profile.id,
+            None,
+            profile.id,
+            None,
+        ]
+        assert all(a.timelineId is None for a in assembler.activities)
+        assert self._messages(errors) == []
+
+    def test_two_profiles_of_one_activity_at_different_instances(
+        self, assembler, errors
+    ):
+        full = self._profile([("main", "c1"), ("main", "c4")])
+        sparse = self._profile([("main", "c2")])
+        assembler.execute([self._main(), full, sparse])
+        main, prof_full, prof_sparse = assembler.timelines
+        assert [i.timelineId for i in main.instances] == [
+            prof_full.id,
+            prof_sparse.id,
+            None,
+            prof_full.id,
+        ]
+        assert self._messages(errors) == []
+
+    def test_an_instance_already_attached_first_wins(self, assembler, errors):
+        first = self._profile([("main", "c1")])
+        second = self._profile([("main", "c1"), ("main", "c2")])
+        assembler.execute([self._main(), first, second])
+        main, prof_first, prof_second = assembler.timelines
+        assert main.instances[0].timelineId == prof_first.id
+        assert main.instances[1].timelineId == prof_second.id
+        assert self._messages(errors) == [
+            (
+                "Profile timeline 3 attaches at timeline 'main' column 'c1', already "
+                "attached to profile timeline 2; not attached"
+            )
+        ]
+
+    def test_a_chain_of_instances_is_attached(self, assembler, errors):
+        """P is run from main c1 and Q from P's h1: nested, not a loop."""
+        p = self._profile([("main", "c1")], rows=("ECG",), id="p")
+        q = self._profile([("p", "h1")], rows=("Vitals",), id="q")
+        assembler.execute([self._main(), p, q])
+        main, prof_p, prof_q = assembler.timelines
+        assert main.instances[0].timelineId == prof_p.id
+        assert prof_p.instances[0].timelineId == prof_q.id
+        assert self._messages(errors) == []
+
+    def test_a_profile_scheduling_an_activity_that_runs_its_host_is_a_loop(
+        self, assembler, errors
+    ):
+        """T hangs off 'ECG' and is the host; U is run from T's h1 and
+        schedules ECG, which runs T: running U from T would close T → U → T."""
+        host = self._profile([("main", "c1")], rows=("Vitals",), id="t")
+        host["attaches_at"] = []
+        host["attaches_to"] = "ECG"
+        main = self._main()
+        main["activities"].append(activity("ECG", ["c2"]))
+        u = self._profile([("t", "h1")], rows=("ECG",), id="u")
+        assembler.execute([main, host, u])
+        _, prof_t, prof_u = assembler.timelines
+        assert prof_t.instances[0].timelineId is None
+        assert self._messages(errors) == [
+            (
+                "Profile timeline 3 attaches at timeline 't' column 'h1', whose "
+                "timeline the profile itself reaches; not attached (loop)"
+            )
+        ]
+
+    def test_a_timeline_not_built_is_an_error(self, assembler, errors):
+        """Reached only when the cross-timeline check was not run (the
+        assembler called directly)."""
+        assembler.execute([self._main(), self._profile([("nope", "c1")])])
+        assert all(i.timelineId is None for i in assembler.timelines[0].instances)
+        assert self._messages(errors) == [
+            (
+                "Profile timeline 2 attaches at timeline 'nope' column 'c1', which "
+                "was not built; not attached"
+            )
+        ]
+
+    def test_an_activity_attachment_follows_instance_links(self, assembler, errors):
+        """U4-31 over both kinds of link: X is run from R's h1 and schedules
+        ECG; R hanging off ECG would reach ECG again through X."""
+        main = self._main()
+        main["activities"].append(activity("ECG", ["c2"]))
+        x = self._profile([("r", "h1")], rows=("ECG",), id="x")
+        r = timeline(
+            [column("h1", timing="Hour 0"), column("h2", timing="Hour 1")],
+            [activity("Vitals", ["h1", "h2"])],
+            type="profile",
+            attaches_to="ECG",
+            id="r",
+        )
+        assembler.execute([main, x, r])
+        _, prof_x, prof_r = assembler.timelines
+        assert prof_r.instances[0].timelineId == prof_x.id
+        ecg = next(a for a in assembler.activities if a.label == "ECG")
+        assert ecg.timelineId is None
+        assert self._messages(errors) == [
+            (
+                "Profile timeline 3 attaches to 'ECG', which the profile itself "
+                "reaches; not attached (loop)"
+            )
+        ]
 
 
 class TestSkippedTimelines:

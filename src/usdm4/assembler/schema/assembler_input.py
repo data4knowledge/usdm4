@@ -15,6 +15,7 @@ from usdm4.assembler.schema.study_design_schema import StudyDesignInput
 from usdm4.assembler.schema.study_schema import StudyInput
 from usdm4.assembler.schema.schedule_timeline_schema import (
     ScheduleTimelineInput,
+    check_attachments,
     check_copies,
 )
 from usdm4.assembler.schema.objectives_schema import ObjectivesInput
@@ -174,6 +175,7 @@ class AssemblerInput(BaseModel):
         for _, soa in self._designs(lambda d: d.soa, self.soa):
             if soa:
                 check_copies(soa)
+                check_attachments(soa)
         return self
 
     @classmethod

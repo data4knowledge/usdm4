@@ -229,3 +229,22 @@ rules and decisions (U4-n) are in `docs/spec/timeline_assembler.md`.
 **Rejected.** Nested attribute extensions (table, row, column), built first and replaced by the class extension (Dave). StudyDesign as the home: M11 has one table per protocol and every column is text.
 
 **Found, not this work.** None.
+
+## 2026-11-28 — GitHub 111: a profile attached at the timepoints it runs from
+
+**Repos.** usdm4 (this entry), branch `111-attach-profiles-at-timepoints`. protocol_corpus states the attachment and checks it (its entry, 2026-11-28).
+
+**What it was.** A profile timeline could hang only off an activity (`attaches_to` → `Activity.timelineId`). A profile run at only some of the timepoints where its activity is marked, or several profiles of one activity, had no form: `ScheduledActivityInstance.timelineId` exists in the model but the assembler never set it (a stated non-goal of the spec). Dave's ruling: the same profile at every marked timepoint hangs off the activity; profiles that differ between timepoints hang off the timepoints.
+
+**What changed.**
+- `src/usdm4/assembler/schema/schedule_timeline_schema.py` — `InstanceRef {timeline, column}`; `ScheduleTimelineInput.attaches_at`, profile only, never with `attaches_to`, no instance twice; `check_attachments` across timelines (timeline exists, not the profile itself, has the column).
+- `src/usdm4/assembler/schema/assembler_input.py` — calls `check_attachments` beside `check_copies`.
+- `src/usdm4/assembler/timeline/columns.py` — `ParsedTimeline.attaches_at`.
+- `src/usdm4/assembler/timeline/build.py` — `BuiltTimeline.instances`, each column's instance by column id.
+- `src/usdm4/assembler/timeline_assembler.py` — `_attach_at_instances` sets the instance's `timelineId`; refused one by one: not built (U4-40), already attached, first wins (U4-41), a loop (U4-42). `_reached` walks activity and instance links; both loop checks use it. The no-attachment warning now names both fields.
+- `docs/spec/timeline_assembler.md` — the input, R7's timepoint pattern, U4-40 to U4-42; the non-goal removed.
+- Tests: `tests/usdm4/assembler/test_timeline_assembler.py` (`TestProfileAttachedAtInstances`), `tests/usdm4/assembler/schema/test_schedule_timeline_schema.py` (`TestAttachments`).
+
+**Figures.** Dave's full pytest passed. protocol_corpus NCT04573309: the reference builds a profile of 11 points (−30 min Before, 0 h Fixed Reference, 1–24 h After) run from 4 main-SoA instances (Days 1, 25, 29, 39). Version not changed.
+
+**Rejected.** Two activities for two profiles of one activity (Dave: the timepoint pattern instead).

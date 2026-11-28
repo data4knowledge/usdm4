@@ -21,6 +21,7 @@ from src.usdm4.assembler.schema.schedule_timeline_schema import (
     ScheduleTimelineInput,
     TimingValue,
     WindowValue,
+    check_attachments,
     check_copies,
     family_of,
 )
@@ -637,3 +638,76 @@ class TestTimingFromTheStart:
             ScheduleTimelineInput.model_validate(
                 _timeline(activities=[], columns=columns)
             )
+
+
+class TestAttachments:
+    """GitHub 111: a profile run from instances of other timelines names each
+    by timeline id and column id (``attaches_at``)."""
+
+    @staticmethod
+    def _tl(id, type="main", columns=("c1", "c2"), **extra):
+        return ScheduleTimelineInput.model_validate(
+            {
+                "type": type,
+                "id": id,
+                "columns": [{"id": c, "visit": {"text": c}} for c in columns],
+                **extra,
+            }
+        )
+
+    def _profile(self, *refs, id="pk"):
+        return self._tl(
+            id,
+            "profile",
+            ("h1",),
+            attaches_at=[{"timeline": t, "column": c} for t, c in refs],
+        )
+
+    def test_accepted(self):
+        profile = self._profile(("main", "c2"))
+        check_attachments([self._tl("main"), profile])
+        ref = profile.attaches_at[0]
+        assert (ref.timeline, ref.column) == ("main", "c2")
+
+    def test_defaults_to_none(self):
+        assert ScheduleTimelineInput.model_validate(_timeline()).attaches_at == []
+
+    def test_a_later_timeline_may_be_named(self):
+        check_attachments([self._profile(("main", "c1")), self._tl("main")])
+
+    def test_profile_only(self):
+        with pytest.raises(
+            ValidationError, match="attaches_at is for profile timelines"
+        ):
+            self._tl("x", attaches_at=[{"timeline": "main", "column": "c1"}])
+
+    def test_not_with_attaches_to(self):
+        with pytest.raises(
+            ValidationError, match="attaches_to or attaches_at, not both"
+        ):
+            self._tl(
+                "pk",
+                "profile",
+                attaches_to="PK",
+                attaches_at=[{"timeline": "main", "column": "c1"}],
+            )
+
+    def test_an_instance_named_twice(self):
+        with pytest.raises(ValidationError, match="more than once"):
+            self._profile(("main", "c1"), ("main", "c1"))
+
+    def test_needs_both_parts(self):
+        with pytest.raises(ValidationError):
+            self._tl("pk", "profile", attaches_at=[{"timeline": "main"}])
+
+    def test_unknown_timeline(self):
+        with pytest.raises(ValueError, match="'nope', which is not a timeline id"):
+            check_attachments([self._tl("main"), self._profile(("nope", "c1"))])
+
+    def test_own_timeline(self):
+        with pytest.raises(ValueError, match="names its own timeline 'pk'"):
+            check_attachments([self._tl("main"), self._profile(("pk", "h1"))])
+
+    def test_unknown_column(self):
+        with pytest.raises(ValueError, match="'c9', which is not a column"):
+            check_attachments([self._tl("main"), self._profile(("main", "c9"))])

@@ -21,6 +21,7 @@ from usdm4.api.biomedical_concept_surrogate import BiomedicalConceptSurrogate
 from usdm4.api.condition import Condition
 from usdm4.api.encounter import Encounter
 from usdm4.api.schedule_timeline import ScheduleTimeline
+from usdm4.api.scheduled_instance import ScheduledActivityInstance
 from usdm4.api.study_epoch import StudyEpoch
 from usdm4.assembler.base_assembler import BaseAssembler
 from usdm4.assembler.encoder import Encoder
@@ -44,6 +45,9 @@ class TimelineAssembler(BaseAssembler):
         self._epochs: list[StudyEpoch] = []
         self._encounters: list[Encounter] = []
         self._conditions: list[Condition] = []
+        # Each built timeline's instances by column id, by the timeline's
+        # caller id (GitHub 111).
+        self._instances: dict[str, dict[str, ScheduledActivityInstance]] = {}
 
     def execute(self, data) -> None:
         """Assemble every timeline in ``data`` (a list of timeline dicts; one
@@ -150,6 +154,8 @@ class TimelineAssembler(BaseAssembler):
             self._conditions += built.conditions
             if built.timeline:
                 self._timelines.append(built.timeline)
+                if timeline.id is not None:
+                    self._instances[timeline.id] = built.instances
             return built.timeline
         except Exception as e:
             self._errors.exception(
@@ -165,30 +171,49 @@ class TimelineAssembler(BaseAssembler):
     def _attach_profiles(
         self, built: list[tuple[ParsedTimeline, ScheduleTimeline, int]]
     ) -> None:
-        """Hang each profile timeline off the activity its ``attaches_to``
-        names: ``Activity.timelineId`` is set to the profile. The name is
-        matched on activity identity (U4-12) across every built timeline.
+        """Hang each profile timeline where its input says (R7, GitHub 111):
+        off the activity its ``attaches_to`` names (``Activity.timelineId``),
+        or from the instances its ``attaches_at`` names
+        (``ScheduledActivityInstance.timelineId``). The activity is matched on
+        identity (U4-12) across every built timeline; an instance by its
+        timeline's id and column id.
 
-        Not attached, profile built unattached:
-        - no ``attaches_to``, or no activity by that name — warning;
+        At an activity — not attached, profile built unattached:
+        - no ``attaches_to`` and no ``attaches_at``, or no activity by that
+          name — warning;
         - the activity has children — error (U4-32, DDF00160);
         - the activity is already attached to an earlier profile — error
           (U4-34: first in input order wins);
         - attaching would make a loop, directly or through other profiles —
           error (U4-31).
         Attached with a warning: the activity is scheduled on no other
-        timeline (U4-33)."""
+        timeline (U4-33).
+
+        At instances — each instance on its own; a refused one is left
+        unattached, the others attached:
+        - the instance's timeline was not built — error (U4-40);
+        - the instance is already attached to an earlier profile — error
+          (U4-41: first in input order wins);
+        - attaching would make a loop: the instance's timeline is reached
+          from the profile — error (U4-42)."""
         location = KlassMethodLocation(self.MODULE, "_attach_profiles")
         activity_by_id = {a.id: a for a in self._state.activities}
         timeline_by_id = {tl.id: tl for _, tl, _ in built}
         attached_by: dict[str, int] = {}
+        instance_by: dict[str, int] = {}
         for parsed, profile, t in built:
             if parsed.family != "profile":
+                continue
+            if parsed.attaches_at:
+                self._attach_at_instances(
+                    parsed, profile, t, activity_by_id, timeline_by_id, instance_by
+                )
                 continue
             name = (parsed.attaches_to or "").strip()
             if not name:
                 self._errors.warning(
-                    f"Profile timeline {t} has no attaches_to; built unattached",
+                    f"Profile timeline {t} has no attaches_to or attaches_at; "
+                    f"built unattached",
                     location,
                 )
                 continue
@@ -239,6 +264,53 @@ class TimelineAssembler(BaseAssembler):
             activity.timelineId = profile.id
             attached_by[activity.id] = t
 
+    def _attach_at_instances(
+        self,
+        parsed: ParsedTimeline,
+        profile: ScheduleTimeline,
+        t: int,
+        activity_by_id: dict[str, Activity],
+        timeline_by_id: dict[str, ScheduleTimeline],
+        instance_by: dict[str, int],
+    ) -> None:
+        """GitHub 111: the profile is run from each instance ``attaches_at``
+        names — ``ScheduledActivityInstance.timelineId``. Each instance is
+        attached or refused on its own (``_attach_profiles``)."""
+        location = KlassMethodLocation(self.MODULE, "_attach_at_instances")
+        for timeline_id, column_id in parsed.attaches_at:
+            where = (
+                f"Profile timeline {t} attaches at timeline '{timeline_id}' "
+                f"column '{column_id}'"
+            )
+            instance = self._instances.get(timeline_id, {}).get(column_id)
+            if instance is None:
+                self._errors.error(
+                    f"{where}, which was not built; not attached", location
+                )
+                continue
+            if instance.id in instance_by:
+                self._errors.error(
+                    f"{where}, already attached to profile timeline "
+                    f"{instance_by[instance.id]}; not attached",
+                    location,
+                )
+                continue
+            owner = next(
+                (tl for tl in timeline_by_id.values() if instance in tl.instances),
+                None,
+            )
+            if owner is not None and self._reaches_timeline(
+                profile, owner.id, activity_by_id, timeline_by_id
+            ):
+                self._errors.error(
+                    f"{where}, whose timeline the profile itself reaches; not "
+                    f"attached (loop)",
+                    location,
+                )
+                continue
+            instance.timelineId = profile.id
+            instance_by[instance.id] = t
+
     @staticmethod
     def _activity_ids(timeline: ScheduleTimeline) -> set[str]:
         """Every activity an instance of ``timeline`` schedules. Decision
@@ -257,22 +329,57 @@ class TimelineAssembler(BaseAssembler):
         timeline_by_id: dict[str, ScheduleTimeline],
     ) -> bool:
         """True when ``activity_id`` is scheduled on ``timeline`` or on any
-        timeline reached from it through an activity's ``timelineId`` — so
-        attaching ``timeline`` to that activity would close a loop."""
+        timeline reached from it (``_reached``) — so attaching ``timeline`` to
+        that activity would close a loop."""
+        return any(
+            activity_id in cls._activity_ids(reached)
+            for reached in cls._reached(timeline, activity_by_id, timeline_by_id)
+        )
+
+    @classmethod
+    def _reaches_timeline(
+        cls,
+        timeline: ScheduleTimeline,
+        target_id: str,
+        activity_by_id: dict[str, Activity],
+        timeline_by_id: dict[str, ScheduleTimeline],
+    ) -> bool:
+        """True when the timeline ``target_id`` is ``timeline`` or is reached
+        from it — so running ``timeline`` from an instance of the target would
+        close a loop (GitHub 111)."""
+        return any(
+            reached.id == target_id
+            for reached in cls._reached(timeline, activity_by_id, timeline_by_id)
+        )
+
+    @classmethod
+    def _reached(
+        cls,
+        timeline: ScheduleTimeline,
+        activity_by_id: dict[str, Activity],
+        timeline_by_id: dict[str, ScheduleTimeline],
+    ) -> list[ScheduleTimeline]:
+        """``timeline`` and every timeline reached from it: through an
+        activity it schedules whose ``timelineId`` is set, or an instance of
+        it whose ``timelineId`` is set (GitHub 111). Each once."""
         seen: set[str] = set()
+        out: list[ScheduleTimeline] = []
         todo = [timeline]
         while todo:
             current = todo.pop()
             if current.id in seen:
                 continue
             seen.add(current.id)
+            out.append(current)
             for scheduled in cls._activity_ids(current):
-                if scheduled == activity_id:
-                    return True
                 sub = activity_by_id.get(scheduled)
                 if sub is not None and sub.timelineId in timeline_by_id:
                     todo.append(timeline_by_id[sub.timelineId])
-        return False
+            for instance in current.instances:
+                target = getattr(instance, "timelineId", None)
+                if target in timeline_by_id:
+                    todo.append(timeline_by_id[target])
+        return out
 
     @property
     def timelines(self) -> list[ScheduleTimeline]:

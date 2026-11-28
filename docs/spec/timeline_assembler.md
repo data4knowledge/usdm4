@@ -43,6 +43,7 @@ soa:
     description: null                          # optional prose
     entry_condition: null      # printed text; any type (R1)
     attaches_to: null          # activity name; profile timelines (R7)
+    attaches_at: []            # [{timeline, column}] instances it is run from; profile timelines, not with attaches_to (R7, GitHub 111)
     day_zero: false            # does the protocol number a Day 0? default Day 1 (U4-35)
     classification:            # optional; emitted as d4k extensions
       orientation: null
@@ -162,8 +163,6 @@ timing clarification, an unassigned row — as `{role, text}`. Text only; never 
   A column printed in two timelines (a combined `EOT/ET` column) appears in both, and
   the later one names the original with `copy_of` (U4-37). `check_copies` requires the
   original to be in an earlier timeline, not itself a copy and not a gate.
-- **Per-visit profile attachment.** `ScheduledActivityInstance.timelineId` is never
-  set; a profile attaches to an activity (R7).
 
 ## 3. Structure
 
@@ -336,6 +335,18 @@ profile (error, U4-34); an attachment that would make a loop through the profile
 (U4-33). A profile's timings are relative to its own anchor (usually `Hour 0` /
 `Minute 0`).
 
+**At instances (GitHub 111).** A profile run at only some of the instances where its
+activity is marked, or one of several profiles of one activity, names those instances
+with `attaches_at` (`{timeline, column}`, timeline ids as `copy_of` names them) in place
+of `attaches_to`: `ScheduledActivityInstance.timelineId` is the profile; the activity
+gets no `timelineId`. Giving both is refused by the schema; `check_attachments` checks
+that each named timeline exists, is not the profile, and has the column. Each instance
+is attached or refused on its own, the profile built either way: an instance of a
+timeline not built (error, U4-40); an instance already attached to an earlier profile
+(error, U4-41); an instance whose timeline the profile reaches (error, loop, U4-42).
+Every loop check (U4-31 and U4-42) follows both kinds of link: an activity's
+`timelineId` and an instance's.
+
 ### R8 — gates
 
 A gate is a variable delay between two anchored periods — `Washout 7-28 days`: wait at
@@ -446,3 +457,6 @@ withdrawn decisions are kept, one line each, so the question isn't asked again.
 | U4-37 | How a copied column names its original (`protocol_corpus` N78, U4-5) | **Taken 2026-09-27 (Dave):** `ScheduleTimelineInput` gains an `id`; `ColumnInput.copy_of` is `{timeline, column}` — the original's timeline id and column id. A copy shares only the original's `Encounter` (the visit); it has its own instance, timing and activities, and normally no epoch — a subsidiary timeline rarely links to epochs. **Rejected:** referring to a timeline by its position in the input (breaks silently when a caller reorders timelines) |
 | U4-38 | A visit that repeats (issue 84, `protocol_corpus` N89) | **Taken 2026-10-07 (Dave):** `ColumnInput.repeat` — `visits {first, last?}`, `period {value, unit}?`, `end` (a printed bound, its text). Explicit visits (both ends printed: `2-17`, `V4 to V8`) create explicit encounters: one per visit number, each with the column's activities, timed at the start plus k periods, or — no period printed — each taking the column's range as its window, with a warning; nothing is invented between printed bounds. An open repeat (`Q12 Wks`, `Every 6 months`, `V2, V3 … VX`) is like `Cycle 3+`: never expanded — one encounter, then (amended 2026-10-22, issue 95: U4-39's loop — an entry taking the visit's timing, a pad, an untimed decision) a decision looping back to it and exiting to the next column (an end node when it is the last), its exit condition the printed bound else `repeat exit condition`; no period, no loop, a warning. A repeat and a cycle, or a repeat and a delay, on one column are refused. Concurrent repeats are sibling timelines, one loop each (`protocol_corpus` N89, Dave 2026-10-01) — stage 1 splits them |
 | U4-39 | The node pattern of a loop (issue 95) | **Taken 2026-10-22 (Dave; `protocol_soa_patterns` `docs/working/node_patterns.md`):** a decision never has a `Timing`; a normal node before it carries the timing. Every loop — a cycle range, an open repeat (U4-38), a gate (U4-10) — is Entry → loop start (`After` the entry by zero) → … → Pad → Decision. The entry (no encounter, no activities) takes the timing in from outside the loop, so a pass that loops back is not timed again from outside. The pad (no encounter, no activities) carries the pass: a cycle's `After` its `Day 1` by the length, an open repeat's `After` the visit by the period (the quoted period is its cycle time), a gate's `After` the gate by 1 day: each pad is the whole period, so the next pass starts on the pad's day (Dave, 2026-10-25, replacing the length / period less one day of 2026-10-22/23). The decision follows the pad untimed; its default loops back to the loop start. An end node after a loop is `After` the pad by zero. A single cycle gets a pad too, so each cycle has its full length; it does not loop, so no entry and no decision. **Was:** the decision timed `After` the loop's last node (a cycle range by the rest of the cycle, an open repeat by the period, a gate by 1 day) and the loop start carrying the outside timing |
+| U4-40 | `attaches_at` names an instance of a timeline that was not built (GitHub 111) | **Taken 2026-11-28 (Dave, issue):** not attached there, reported as an error; reached only when the assembler is called without `check_attachments` or the named timeline failed |
+| U4-41 | Two profiles naming the same instance (`ScheduledActivityInstance.timelineId` holds one timeline) | **Taken 2026-11-28 (Dave, issue):** the first profile in input order is attached; a later one is not attached there, reported as an error naming both profiles — as U4-34 |
+| U4-42 | A profile run from an instance of a timeline it reaches (GitHub 111) | **Taken 2026-11-28 (Dave, issue):** not attached there, reported as an error (loop) — as U4-31, over both kinds of link |

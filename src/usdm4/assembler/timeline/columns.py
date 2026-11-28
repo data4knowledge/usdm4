@@ -125,6 +125,9 @@ class ParsedTimeline:
     # The name of the activity a profile hangs off; the schema accepts it for
     # profile timelines only (R7). Resolved once every timeline is built.
     attaches_to: str | None = None
+    # (timeline id, column id) of each instance a profile is run from
+    # (GitHub 111). Resolved once every timeline is built.
+    attaches_at: list[tuple[str, str]] = field(default_factory=list)
     # Whether the protocol numbers a Day 0 (U4-35); default Day 1.
     day_zero: bool = False
     # The caller's id, for references across timelines (issue 75, U4-37).
@@ -401,5 +404,8 @@ def parse_timeline(
         rows=dict(data.get("rows") or {}),
         entry_condition=data.get("entry_condition"),
         attaches_to=data.get("attaches_to"),
+        attaches_at=[
+            (r["timeline"], r["column"]) for r in data.get("attaches_at") or []
+        ],
         day_zero=bool(data.get("day_zero")),
     )

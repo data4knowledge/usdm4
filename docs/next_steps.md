@@ -15,6 +15,8 @@ Release first: GitHub 102 (with usdm4_protocol 150, usdm4_fhir 62) and GitHub 10
 
 GitHub 108 (several study designs in one assembly: `study_designs`, criteria shared, objectives per design) is built on `108-assembler-builds-multiple-studydesigns`, Dave's pytest passed at 100% coverage; it goes with usdm4_protocol 163. GitHub 109 (9.2 reporting rows as extension classes) is built, Dave's pytest passed; it goes with usdm4_protocol 165 and usdm4_fhir 65. Replace the extensions when USDM 4.1 publishes the class.
 
+GitHub 111 (a profile attached at the timepoints it runs from: `attaches_at`, `ScheduledActivityInstance.timelineId`) is built on `111-attach-profiles-at-timepoints`; Dave's full pytest passed; protocol_corpus builds against it.
+
 GitHub 110 (`RefResolver` replaced by `referencing`) is built on `110-replace-deprecated-jsonschema-refresolver`; Dave's full pytest passes with no warnings.
 
 Latest figures (NCT05676931, d4k, GitHub 106 fixer before the URI-safe pass): 3,259 → 1,538 findings; DDF00083 2,338 → 3; DDF00035 25 → 667, unmasked by unique ids (N30), now equal to CORE-000427's 667.
